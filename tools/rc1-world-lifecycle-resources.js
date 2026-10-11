@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Read-only custody classification. Route authorization and random combat outcomes
 // remain the responsibility of the canonical command/native proofs.
 import assert from 'node:assert/strict';
@@ -176,7 +177,8 @@ function companionQueries(before, after, identity, evidence) {
   }
   if (!expirySourceChecked) {
     for (const [file, expected] of Object.entries(MARKET_EXPIRY_SOURCE_PINS)) {
-      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      const raw = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
       const baseline = file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
         ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
       assert.equal(sha256(baseline), expected, 'Expiry source changed: ' + file);

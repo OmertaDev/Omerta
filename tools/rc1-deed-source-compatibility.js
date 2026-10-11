@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -84,6 +85,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   assert(FRANCHISE_SOURCE_CURRENT_PINS[file], 'Unknown franchise compatibility source');
   const actualSha256 = hash(text);
   assert.equal(actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file], 'Franchise source changed: ' + file);
@@ -242,6 +247,10 @@ export const WAREHOUSE_ESTATE_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseEstateSourceChange(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/social/estate.js']) {
+    const transfer = qualifyIntelSource('src/social/estate.js', text), predecessor = assertWarehouseEstateSourceChange(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_ESTATE_PIN, 'Warehouse estate source changed');
   let baselineText = text;
@@ -518,6 +527,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -565,6 +578,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -658,6 +675,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -772,6 +793,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -843,6 +868,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -1218,6 +1247,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (file === 'src/server.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };

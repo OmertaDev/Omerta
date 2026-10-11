@@ -22,6 +22,7 @@ import {
   EDGE_TYPES,
   isMainModule,
   normalizeText,
+  extractIntelHelperReconciliations,
 } from '../tools/graph.js';
 
 // The graph is a developer-facing CLI as well as an importable module. Pin the two Windows failure
@@ -109,6 +110,36 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+const intelHelperSource = fs.readFileSync(new URL('../src/intelforecastinvariants.js', import.meta.url), 'utf8');
+const intelTerms = extractIntelHelperReconciliations(invariantSource, intelHelperSource);
+assert.deepEqual(intelTerms.map(term => [term.check, term.reason]), [
+  ['intel forecast escrow', 'intel_job:%'], ['intel forecast receipts', 'intel_job:%'],
+]);
+for (const term of intelTerms) {
+  const edge = g.edges.find(edge => edge.type === 'RECONCILES'
+    && edge.from === `Check:${term.check}` && edge.to === `Reason:${term.reason}`);
+  assert(edge, 'actual imported Intel cash accounting must reconcile its SQL prefix');
+  assert.equal(edge.prov.file, 'src/intelforecastinvariants.js');
+  assert(edge.prov.hash && edge.prov.binding.hash, 'helper and call binding need whole-source provenance');
+}
+for (const source of [
+  invariantSource.replace(/import \{ intelForecastAccounting \} from [^;]+;/, ''),
+  invariantSource.replace('await intelForecastAccounting(pool)', 'await unrelatedAccounting(pool)'),
+]) assert.deepEqual(extractIntelHelperReconciliations(source, intelHelperSource), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace("reason LIKE 'intel_job:%'", "reason = 'intel_job:post'")), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace("currency='cash'", "currency='rep'")), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace('return { escrow, expected, invalid }', 'return { unrelated }')), []);
+assert.deepEqual(extractIntelHelperReconciliations(invariantSource,
+  intelHelperSource.replace('export async function intelForecastAccounting', 'export async function unrelatedAccounting')), []);
+assert.deepEqual(extractIntelHelperReconciliations(
+  invariantSource.replace('intelForecasts.escrow, intelForecasts.expected', 'intelForecasts.unrelated, intelForecasts.expected'),
+  intelHelperSource).map(term => term.check), ['intel forecast receipts']);
+assert.deepEqual(extractIntelHelperReconciliations(
+  invariantSource.replace('intelForecasts.invalid', 'unrelated.invalid'), intelHelperSource).map(term => term.check),
+['intel forecast escrow']);
 // Franchise royalties move cash inside depot journals, not transaction reasons.
 // Keep this finite monetary classification separate from noncurrency checks.
 for (const name of ['franchise royalty conservation', 'franchise royalty provenance']) {
