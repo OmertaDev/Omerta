@@ -7942,7 +7942,7 @@ CREATE TABLE IF NOT EXISTS strategy_versions (
   UNIQUE(seller_account,request_key),
   CHECK ((outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL)
     OR (outcome IS NOT NULL AND resolved_at IS NOT NULL)),
-  CHECK ((outcome IS NULL OR outcome='unknown') OR (sample_started_at IS NOT NULL AND sample IS NOT NULL))
+  CHECK (CASE WHEN outcome IS NULL THEN TRUE WHEN outcome='unknown' THEN TRUE ELSE sample_started_at IS NOT NULL AND sample IS NOT NULL END)
 );
 CREATE INDEX IF NOT EXISTS ix_strategy_versions_seller ON strategy_versions(seller_account,created_at);
 CREATE TABLE IF NOT EXISTS strategy_licenses (
