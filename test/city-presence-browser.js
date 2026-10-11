@@ -454,19 +454,29 @@ try {
     const shots = process.env.CITY_PRESENCE_SHOTS;
     if (shots) { fs.mkdirSync(shots, { recursive: true }); await phone.screenshot({ path: path.join(shots, 'city-people-' + viewport.width + '.png') }); }
     const beforeTouch = mutations(mobile.requests).length;
-    // A 96px inspector map can legitimately crop every other person. Use its
-    // closed map for the 320px touch setup; 375px still tests resize during the tap.
-    if (viewport.width === 320) { await phone.locator('[data-city-actor-close]').click(); await frames(phone); }
-    const current = await state(phone), box = await phone.locator('.omerta-city__canvas canvas').boundingBox();
-    const marker = current.actorMarkers.find(marker => {
-      const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
-      return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
-    });
-    assert(marker, 'At least one real actor marker is visible on the phone.');
+    // Either phone's 96px inspector map can legitimately crop every person.
+    // Open the full map before choosing the actual tap target. Issued actor IDs
+    // hash into world slots, so inspect bounded real roster pages rather than
+    // assuming the randomly populated current page intersects this camera.
+    await phone.locator('[data-city-actor-close]').click(); await frames(phone);
+    let current, box, marker;
+    for (let rosterPage = 0; rosterPage < 40; rosterPage++) {
+      current = await state(phone); box = await phone.locator('.omerta-city__canvas canvas').boundingBox();
+      marker = current.actorMarkers.find(marker => {
+        const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
+        return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
+      });
+      if (marker || await phone.locator('[data-city-actors-more]').isDisabled()) break;
+      await phone.locator('[data-city-actors-more]').click();
+      await phone.waitForFunction(() => document.querySelector('[data-city-actors-more]')?.textContent === 'More people');
+      await frames(phone);
+    }
+    assert(marker, 'At least one real actor marker is visible on the full phone map: ' + JSON.stringify({ camera: current.camera, markers: current.actorMarkers }));
     const opening = current.actorOpening;
     await phone.locator('.omerta-city__canvas canvas').tap({ position: { x: (marker.x - current.camera.x) * current.camera.zoom, y: (marker.y - 15 - current.camera.y) * current.camera.zoom } });
     await phone.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, marker.id, { timeout: 15000 });
-    assert.equal((await state(phone)).actorOpening, opening + (viewport.width === 320 ? 1 : 2), 'One real tap opens exactly one inspector.');
+    assert.equal((await state(phone)).actorOpening, opening + 1, 'One real tap opens exactly one inspector.');
+    if (viewport.width === 375) await assertDockFrame(phone);
     assert.equal(mutations(mobile.requests).length, beforeTouch, 'Touch movement/inspection performs no gameplay POST.');
     await phone.locator('[data-city-actor-close]').click();
     await phone.keyboard.press('e');
