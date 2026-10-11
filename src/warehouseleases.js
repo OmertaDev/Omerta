@@ -162,14 +162,15 @@ export async function warehouseLeaseBoard(client, ch) {
 }
 // Called before ANY existing estate depot/order locks; never locks another character.
 export async function lockWarehouseEstateDepots(client, characterId) {
-  const { rows } = await client.query(`SELECT d.* FROM business_depots d WHERE d.owner_character=$1 OR d.id IN
-    (SELECT depot_id FROM business_warehouse_leases WHERE tenant_character=$1 AND status IN ('active','landlord_closed')) ORDER BY d.id FOR UPDATE`, [characterId]);
+  const { rows } = await client.query(`SELECT d.* FROM business_depots d WHERE (d.owner_character=$1 AND d.status='open') OR d.id IN
+    (SELECT depot_id FROM business_warehouse_leases WHERE tenant_character=$1 AND status IN ('active','landlord_closed')
+      AND ((status='active' AND expires_at>now()) OR held_qty>0)) ORDER BY d.id FOR UPDATE`, [characterId]);
   return rows;
 }
 export async function closeWarehouseClaimsAtDeath(client, characterId) {
   const depots = await lockWarehouseEstateDepots(client, characterId);
   for (const depot of depots) {
-    const { rows } = await client.query("SELECT * FROM business_warehouse_leases WHERE depot_id=$1 AND (tenant_character=$2 OR landlord_character=$2) AND status IN ('active','landlord_closed') ORDER BY id FOR UPDATE", [depot.id, characterId]);
+    const { rows } = await client.query("SELECT * FROM business_warehouse_leases WHERE depot_id=$1 AND (tenant_character=$2 OR landlord_character=$2) AND status IN ('active','landlord_closed') AND ((status='active' AND expires_at>now()) OR held_qty>0) ORDER BY id FOR UPDATE", [depot.id, characterId]);
     for (const row of rows) {
       if (row.tenant_character === characterId) {
         const held = Number(row.held_qty);

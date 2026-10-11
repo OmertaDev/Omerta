@@ -7486,7 +7486,9 @@ CREATE INDEX IF NOT EXISTS ix_warehouse_tenant_status ON business_warehouse_leas
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_id TEXT REFERENCES business_warehouse_leases(id);
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_delta INT NOT NULL DEFAULT 0 CHECK (lease_stock_delta BETWEEN -10 AND 10);
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_after INT CHECK (lease_stock_after BETWEEN 0 AND 10);
-CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_rent_once ON business_depot_journal(lease_id) WHERE reason='warehouse_rent';
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS warehouse_rent_lease_id TEXT UNIQUE REFERENCES business_warehouse_leases(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_sequence INT CHECK (lease_sequence >= 1);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_journal_sequence ON business_depot_journal(lease_id,lease_sequence);
 
 CREATE TABLE IF NOT EXISTS business_operating_policies (
   id TEXT PRIMARY KEY,

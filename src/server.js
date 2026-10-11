@@ -68,6 +68,7 @@ import * as Business from './business.js';
 import * as Depot from './depot.js';
 import * as Delivery from './delivery.js';
 import { register as registerDelivery } from './routes/delivery.js';
+import { register as registerWarehouses } from './routes/warehouses.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -2378,6 +2379,7 @@ export async function buildServer() {
   registerDepot(app, { pool, auth });
   registerResources(app, { pool, auth, modAuth });
   registerDelivery(app, { pool, auth });
+  registerWarehouses(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 

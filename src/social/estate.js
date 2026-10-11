@@ -12,6 +12,7 @@ import { rememberedSkills } from '../skills.js';
 import { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf } from '../rules.js';
 import { abandonRaidsAtDeath } from '../world.js';
 import { voidListingsAtDeath, burnBidsAtDeath } from '../market.js';
+import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';
 import { voidLoansAtDeath } from '../loans.js';
 import { voidFavorsAtDeath } from '../favors.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -114,6 +115,9 @@ export async function clearInboundPointers(client, charId, accountId) {
 }
 
 export async function runEstate(client, h, victim, killerName, opts = {}) {
+  // Lock the sorted union before any existing depot/order lock, including
+  // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  await closeWarehouseClaimsAtDeath(client, victim.id);
   const acct = h.victimAcct;
   const lvl = levelOf(Number(victim.respect));
   const legacy = Math.floor(lvl / 2);
