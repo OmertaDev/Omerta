@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "f5f7e00b045471a6be3b5db76daba9dafab93444",
+  "sourceRevision": "4c574d0c7a82803a013f3376ff4287f9494b273d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10940,
-    "edges": 44454,
+    "nodes": 10942,
+    "edges": 44460,
     "byNodeType": {
       "Artifact": 4455,
       "Command": 221,
-      "Commit": 2585,
+      "Commit": 2587,
       "Contract": 126,
       "Document": 716,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3595,
-      "CHANGED": 17639,
+      "CHANGED": 17643,
       "CONTAINS": 4476,
       "DECLARES": 221,
       "DEFINED_IN": 1420,
       "DEPENDS_ON": 67,
       "EXECUTES": 757,
       "HANDLED_BY": 791,
-      "HAS_COMMIT": 2585,
+      "HAS_COMMIT": 2587,
       "IMPLEMENTS": 124,
       "IMPORTS": 4304,
       "INHERITS": 42,
@@ -117958,6 +117958,22 @@
       ]
     },
     {
+      "key": "Commit:4c574d0c7a82803a013f3376ff4287f9494b273d",
+      "type": "Commit",
+      "id": "4c574d0c7a82803a013f3376ff4287f9494b273d",
+      "label": "Merge pull request #244 from OmertaDev/codex/warehouse-lease-integration",
+      "title": "Merge pull request #244 from OmertaDev/codex/warehouse-lease-integration",
+      "date": "2026-10-11T22:05:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4c574d0c7a82803a013f3376ff4287f9494b273d",
+      "provenance": [
+        {
+          "commit": "4c574d0c7a82803a013f3376ff4287f9494b273d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4c574d0c7a82803a013f3376ff4287f9494b273d"
+        }
+      ]
+    },
+    {
       "key": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
       "type": "Commit",
       "id": "4caf81ab9a1f883938f995448429449ec03fedb6",
@@ -125346,6 +125362,22 @@
         {
           "commit": "7ae8d3ef4198f15c86a87f3285b33376b510c5ad",
           "url": "https://github.com/OmertaDev/Omerta/commit/7ae8d3ef4198f15c86a87f3285b33376b510c5ad"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "type": "Commit",
+      "id": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "label": "Regenerate warehouse knowledge after current main integration",
+      "title": "Regenerate warehouse knowledge after current main integration",
+      "date": "2026-10-11T21:14:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "provenance": [
+        {
+          "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
         }
       ]
     },
@@ -168394,6 +168426,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
+        },
+        {
           "commit": "7b2a59e5ab7f542c76ab74a73c49c4c4396a727d"
         },
         {
@@ -169825,6 +169860,9 @@
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
         },
         {
+          "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
+        },
+        {
           "commit": "7b2a59e5ab7f542c76ab74a73c49c4c4396a727d"
         },
         {
@@ -171254,6 +171292,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
         },
         {
           "commit": "7b2a59e5ab7f542c76ab74a73c49c4c4396a727d"
@@ -173078,6 +173119,9 @@
         },
         {
           "commit": "7a6025496f71bab516b16eff152d8458dfaa57b7"
+        },
+        {
+          "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
         },
         {
           "commit": "7b2a59e5ab7f542c76ab74a73c49c4c4396a727d"
@@ -183628,8 +183672,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "f5f7e00b045471a6be3b5db76daba9dafab93444",
-      "currentBranch": "codex/warehouse-lease-integration",
+      "revision": "4c574d0c7a82803a013f3376ff4287f9494b273d",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -322847,6 +322891,38 @@
       "to": "Artifact:tools/rc1-npc-boat-fault.js",
       "provenance": {
         "commit": "7ae8d3ef4198f15c86a87f3285b33376b510c5ad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
       }
     },
     {
@@ -471458,6 +471534,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4c574d0c7a82803a013f3376ff4287f9494b273d",
+      "provenance": {
+        "commit": "4c574d0c7a82803a013f3376ff4287f9494b273d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
       "provenance": {
         "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
@@ -475149,6 +475233,14 @@
       "to": "Commit:7ae8d3ef4198f15c86a87f3285b33376b510c5ad",
       "provenance": {
         "commit": "7ae8d3ef4198f15c86a87f3285b33376b510c5ad"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7b1a86bbf2e8ebc829cafecaa47138b2bab7b449",
+      "provenance": {
+        "commit": "7b1a86bbf2e8ebc829cafecaa47138b2bab7b449"
       }
     },
     {
