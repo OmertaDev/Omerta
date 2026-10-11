@@ -114,6 +114,7 @@
     let player = null, selected = null, pendingVenue = null, path = [];
     let gameKind = '', gameOpening = 0, gameReturn = null;
     let pathInk = null, destinationInk = null;
+    let clearPlayerNameClamp = null;
     const actorSprites = new Map();
     let actorPage = 0, selectedActor = null, pendingActor = null, actorOpening = 0, actorView = '', actorReturn = null;
     let paging = false, encounterPending = false, pagingNotice = '', actorNotice = '', actorRenderSignature = '', presenceSignature = '';
@@ -893,6 +894,7 @@
     });
     function unavailable() {
       ready = false;
+      clearPlayerNameClamp?.(); clearPlayerNameClamp = null;
       if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
       root.classList.add('omerta-city--unavailable');
       status.textContent = 'The neighborhood view is unavailable. Choose a destination below to keep playing.';
@@ -1268,6 +1270,24 @@
         fontFamily: 'monospace', fontSize: artState.player === 'generated' ? 14 : 10, resolution: 2,
         color: '#f3d187', stroke: '#151d1e', strokeThickness: 3
       }).setOrigin(0.5).setDepth(367);
+      const nameCamera = s.cameras.main, nameEvents = s.sys.events;
+      function placePlayerName() {
+        if (destroyed || !ready || !player || !playerName.scene) return;
+        // Followupdate runs after the camera's rendered transform is refreshed,
+        // including stationary frames and viewport resizes. Keep the full label.
+        const half = playerName.displayWidth / 2, y = nameCamera.y + nameCamera.height / 2;
+        const left = nameCamera.getWorldPoint(nameCamera.x + 2, y).x + half;
+        const right = nameCamera.getWorldPoint(nameCamera.x + nameCamera.width - 2, y).x - half;
+        playerName.x = Math.max(left, Math.min(right, Math.round(player.x)));
+      }
+      nameCamera.on('followupdate', placePlayerName);
+      function removePlayerNameClamp() {
+        nameCamera.off('followupdate', placePlayerName);
+        nameEvents.off('shutdown', removePlayerNameClamp); nameEvents.off('destroy', removePlayerNameClamp);
+      }
+      nameEvents.once('shutdown', removePlayerNameClamp); nameEvents.once('destroy', removePlayerNameClamp);
+      clearPlayerNameClamp = removePlayerNameClamp;
+      listeners.push(clearPlayerNameClamp);
       s.data.set('playerRing', playerRing);
       s.data.set('playerName', playerName);
       s.data.set('npcs', npcs);
@@ -1469,6 +1489,7 @@
         worldUI?.destroy(); worldUI = null;
         document.getElementById('player-view-switch')?.classList.remove('has-world-tools');
         listeners.forEach(remove => remove());
+        clearPlayerNameClamp = null;
         keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null; pendingActor = null;
         selectedActor = null; actorOpening++; actorBody.replaceChildren(); options.intel = []; options.objectives = []; options.actors = [];
         gameKind = ''; gameOpening++; gameBody.replaceChildren();
