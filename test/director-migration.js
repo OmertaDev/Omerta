@@ -29,7 +29,7 @@ const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
 const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
-const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments'];
+const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 const goodsMarketTables = ['goods_market_liquidity'];
 const companyTables = ['agent_company_profiles'];
@@ -170,7 +170,12 @@ try {
   ], 'Goods-market migration installs exactly its four reviewed constraints, without waiving existing preservation');
   const economyConstraints = inventory.added.filter((row) => economyTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
-  assert.equal(economyConstraints.length, 23, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  assert.equal(economyConstraints.length, 31, 'All reviewed economy PK/FK/CHECK/uniqueness constraints must be catalogued');
+  assert.equal(economyConstraints.filter(row => row.table_name === 'business_supply_contracts').length, 8,
+    'All eight reviewed supply cadence constraints must be catalogued');
+  assert.deepEqual(inventory.notNullColumns.business_supply_contracts,
+    ['created_at', 'depot_id', 'dispatched', 'enabled', 'expires_at', 'id', 'interval_seconds', 'max_cycles', 'next_dispatch_at', 'revision'],
+    'All ten reviewed supply cadence columns must remain non-null');
   const resourceConstraints = inventory.added.filter(row => resourceTables.includes(row.table_name))
     .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
   assert.equal(resourceConstraints.length, 89, 'All resource constraints must be frozen');
@@ -187,9 +192,18 @@ try {
   const resourceNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) AND is_nullable='NO' ORDER BY table_name,column_name", resourceTables)).rows;
   assert.deepEqual(Object.fromEntries(resourceTables.map(table => [table, resourceNotNull.filter(row => row.table_name === table).map(row => row.column_name)])),
     Object.fromEntries(resourceTables.map(table => [table, inventory.notNullColumns[table]])));
-  assert.deepEqual(upgradedConstraints.filter((row) => economyTables.includes(row.table_name)), economyConstraints,
+  const verifyEconomyConstraints = rows => assert.deepEqual(rows.filter((row) => economyTables.includes(row.table_name)), economyConstraints,
     'Economy migration installs exactly its frozen constraints, without waiving existing preservation');
-  const economyNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5) AND is_nullable='NO' ORDER BY table_name,column_name", economyTables)).rows;
+  verifyEconomyConstraints(upgradedConstraints);
+  assert.throws(() => verifyEconomyConstraints(upgradedConstraints.filter(row => row.name !== 'business_supply_contracts_check')),
+    error => error.code === 'ERR_ASSERTION', 'Supply cadence cycle-bound removal must fail the exact economy verifier');
+  assert.throws(() => verifyEconomyConstraints(upgradedConstraints.map(row => row.name === 'business_supply_contracts_policy_id_fkey'
+    ? { ...row, definition: 'FOREIGN KEY (policy_id) REFERENCES unrelated(id)' } : row)), error => error.code === 'ERR_ASSERTION',
+  'Supply cadence policy foreign-key alteration must fail the exact economy verifier');
+  assert.throws(() => verifyEconomyConstraints([...upgradedConstraints,
+    { table_name: 'business_supply_contracts', name: 'unexpected_supply_constraint', definition: 'CHECK (true)' }]),
+  error => error.code === 'ERR_ASSERTION', 'Unexpected supply constraints must fail the exact economy verifier');
+  const economyNotNull = (await pool.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name IN ($1,$2,$3,$4,$5,$6) AND is_nullable='NO' ORDER BY table_name,column_name", economyTables)).rows;
   assert.deepEqual(Object.fromEntries(economyTables.map((table) => [table, economyNotNull.filter((row) => row.table_name === table).map((row) => row.column_name)])),
     Object.fromEntries(economyTables.map((table) => [table, inventory.notNullColumns[table]])),
     'Economy required columns match the frozen schema on every PostgreSQL version');
