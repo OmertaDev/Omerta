@@ -335,6 +335,7 @@
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
@@ -485,6 +486,7 @@
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
 | [docs/storefront-fulfillment-security-review.md](../../docs/storefront-fulfillment-security-review.md) | documentation | 202 | 2026-10-11 |
+| [docs/strategy-leagues-security-review.md](../../docs/strategy-leagues-security-review.md) | documentation | 18 | 2026-10-11 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
