@@ -617,6 +617,8 @@ const DISPOSITION = {
   business_depots: 'special', // voidListingsAtDeath closes the business, burns its idle treasury and stock, and resolves its procurement escrow
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
   delivery_commitments: 'special', // named buyer/supplier death closes reservations; history is retained with a terminal status
+  supply_tenders: 'ledger', // immutable buyer/order/award provenance; escrow remains in canonical market/depot/delivery estate paths, never inherited
+  supply_tender_offers: 'ledger', // signed supplier terms and acceptance history retain the original character; no separate escrow or authority passes to an heir
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,
