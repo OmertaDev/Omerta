@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5fdfdc806068b0a3f642060199fcf6d4fa7cfe76",
+  "sourceRevision": "1e47d9e8241900319dfebf15330a825d092b4787",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 10723,
-    "edges": 43726,
+    "nodes": 10729,
+    "edges": 43743,
     "byNodeType": {
-      "Artifact": 4434,
+      "Artifact": 4435,
       "Command": 216,
-      "Commit": 2429,
+      "Commit": 2433,
       "Contract": 126,
-      "Document": 710,
+      "Document": 711,
       "Domain": 13,
       "ExternalDependency": 30,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3568,
-      "CHANGED": 17274,
-      "CONTAINS": 4455,
+      "CHANGED": 17282,
+      "CONTAINS": 4456,
       "DECLARES": 216,
       "DEFINED_IN": 1405,
       "DEPENDS_ON": 67,
       "EXECUTES": 738,
       "HANDLED_BY": 779,
-      "HAS_COMMIT": 2429,
+      "HAS_COMMIT": 2433,
       "IMPLEMENTS": 124,
       "IMPORTS": 4259,
       "INHERITS": 42,
-      "REFERENCES": 3160,
-      "REPRESENTS": 1637,
+      "REFERENCES": 3163,
+      "REPRESENTS": 1638,
       "TESTS": 1471,
       "TRACKS": 126,
       "USES_TABLE": 1976
@@ -40312,6 +40312,29 @@
       "lastChangedCommit": "53671d23b4c8151d80e208756e1e5f456e66ac76"
     },
     {
+      "key": "Artifact:docs/supplier-continuity-security-review.md",
+      "type": "Artifact",
+      "id": "docs/supplier-continuity-security-review.md",
+      "label": "supplier-continuity-security-review.md",
+      "path": "docs/supplier-continuity-security-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 4877,
+      "lines": 86,
+      "version": "3d990ebc6bc0840e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/supplier-continuity-security-review.md",
+          "line": 1,
+          "version": "3d990ebc6bc0840e"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T09:43:02.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1e47d9e8241900319dfebf15330a825d092b4787"
+    },
+    {
       "key": "Artifact:docs/supply-cadence-security-review.md",
       "type": "Artifact",
       "id": "docs/supply-cadence-security-review.md",
@@ -78334,18 +78357,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "2785279cb201b2a5",
+      "version": "6ab3615c6a7d9629",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2785279cb201b2a5"
+          "version": "6ab3615c6a7d9629"
         }
       ],
-      "lastChangedAt": "2026-10-11T09:05:00.000Z",
+      "lastChangedAt": "2026-10-11T09:43:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8cfcfe68750b4a85dd0a162b342494b45d184300"
+      "lastChangedCommit": "1e47d9e8241900319dfebf15330a825d092b4787"
     },
     {
       "key": "Artifact:src/access.js",
@@ -85807,20 +85830,20 @@
       "path": "test/agent-alpha.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 96300,
-      "lines": 2486,
-      "version": "826171d132e86a03",
+      "bytes": 100733,
+      "lines": 2534,
+      "version": "ee536e2671a89e41",
       "text": true,
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "826171d132e86a03"
+          "version": "ee536e2671a89e41"
         }
       ],
-      "lastChangedAt": "2026-10-11T05:18:13.000Z",
+      "lastChangedAt": "2026-10-11T08:41:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08e554045e90fac2a2af673b606d8e23930511e8"
+      "lastChangedCommit": "6e3515c8d72e9e2391f2a27320e96044218aefb4"
     },
     {
       "key": "Artifact:test/agent-business-transactions.js",
@@ -97258,20 +97281,20 @@
       "path": "tools/agent-alpha.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 42410,
-      "lines": 1080,
-      "version": "f355299ed8be4f00",
+      "bytes": 44263,
+      "lines": 1111,
+      "version": "b5f57aa1df2e7f9f",
       "text": true,
       "provenance": [
         {
           "file": "tools/agent-alpha.js",
           "line": 1,
-          "version": "f355299ed8be4f00"
+          "version": "b5f57aa1df2e7f9f"
         }
       ],
-      "lastChangedAt": "2026-10-11T05:18:13.000Z",
+      "lastChangedAt": "2026-10-11T08:41:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "08e554045e90fac2a2af673b606d8e23930511e8"
+      "lastChangedCommit": "6e3515c8d72e9e2391f2a27320e96044218aefb4"
     },
     {
       "key": "Artifact:tools/allocate-drop.js",
@@ -106786,6 +106809,22 @@
       ]
     },
     {
+      "key": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "type": "Commit",
+      "id": "0f15a64abbbd4e615a011dcde31156c015be709d",
+      "label": "Regenerate storefront knowledge with strict migration qualification",
+      "title": "Regenerate storefront knowledge with strict migration qualification",
+      "date": "2026-10-11T09:28:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0f15a64abbbd4e615a011dcde31156c015be709d",
+      "provenance": [
+        {
+          "commit": "0f15a64abbbd4e615a011dcde31156c015be709d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0f15a64abbbd4e615a011dcde31156c015be709d"
+        }
+      ]
+    },
+    {
       "key": "Commit:0f25859a92cc971d28fc007b5c2d83c6bdb7250f",
       "type": "Commit",
       "id": "0f25859a92cc971d28fc007b5c2d83c6bdb7250f",
@@ -106958,6 +106997,22 @@
         {
           "commit": "0fec6c2c87b924fc5fe3290b941c048022b6f497",
           "url": "https://github.com/OmertaDev/Omerta/commit/0fec6c2c87b924fc5fe3290b941c048022b6f497"
+        }
+      ]
+    },
+    {
+      "key": "Commit:10338ec2bee6ea022ae589362633bc36c3e007e6",
+      "type": "Commit",
+      "id": "10338ec2bee6ea022ae589362633bc36c3e007e6",
+      "label": "Integrate final storefront release dependency for supplier continuity",
+      "title": "Integrate final storefront release dependency for supplier continuity",
+      "date": "2026-10-11T09:34:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/10338ec2bee6ea022ae589362633bc36c3e007e6",
+      "provenance": [
+        {
+          "commit": "10338ec2bee6ea022ae589362633bc36c3e007e6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/10338ec2bee6ea022ae589362633bc36c3e007e6"
         }
       ]
     },
@@ -109262,6 +109317,22 @@
         {
           "commit": "1e32720202120fad86bb38313e65f198cc81df43",
           "url": "https://github.com/OmertaDev/Omerta/commit/1e32720202120fad86bb38313e65f198cc81df43"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1e47d9e8241900319dfebf15330a825d092b4787",
+      "type": "Commit",
+      "id": "1e47d9e8241900319dfebf15330a825d092b4787",
+      "label": "Retain reviewed supplier continuity release evidence",
+      "title": "Retain reviewed supplier continuity release evidence",
+      "date": "2026-10-11T09:43:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1e47d9e8241900319dfebf15330a825d092b4787",
+      "provenance": [
+        {
+          "commit": "1e47d9e8241900319dfebf15330a825d092b4787",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1e47d9e8241900319dfebf15330a825d092b4787"
         }
       ]
     },
@@ -121518,6 +121589,22 @@
         {
           "commit": "6e34080fcb9d77e5e2a1a5d8734ddc131292d893",
           "url": "https://github.com/OmertaDev/Omerta/commit/6e34080fcb9d77e5e2a1a5d8734ddc131292d893"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "type": "Commit",
+      "id": "6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "label": "Finish accepted supplier commitments before taking new work",
+      "title": "Finish accepted supplier commitments before taking new work",
+      "date": "2026-10-11T08:41:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "provenance": [
+        {
+          "commit": "6e3515c8d72e9e2391f2a27320e96044218aefb4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6e3515c8d72e9e2391f2a27320e96044218aefb4"
         }
       ]
     },
@@ -154570,6 +154657,22 @@
       ]
     },
     {
+      "key": "Document:docs/supplier-continuity-security-review.md",
+      "type": "Document",
+      "id": "docs/supplier-continuity-security-review.md",
+      "label": "docs/supplier-continuity-security-review.md",
+      "documentType": "documentation",
+      "lines": 86,
+      "version": "3d990ebc6bc0840e",
+      "provenance": [
+        {
+          "file": "docs/supplier-continuity-security-review.md",
+          "line": 1,
+          "version": "3d990ebc6bc0840e"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/supply-cadence-security-review.md",
       "type": "Document",
       "id": "docs/supply-cadence-security-review.md",
@@ -157136,12 +157239,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "2785279cb201b2a5",
+      "version": "6ab3615c6a7d9629",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2785279cb201b2a5"
+          "version": "6ab3615c6a7d9629"
         }
       ]
     },
@@ -164606,6 +164709,9 @@
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
+          "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+        },
+        {
           "commit": "0f4aea47489fbe99b8663f969e762f08314f312a"
         },
         {
@@ -165896,6 +166002,9 @@
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
         },
         {
+          "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+        },
+        {
           "commit": "0f4aea47489fbe99b8663f969e762f08314f312a"
         },
         {
@@ -167184,6 +167293,9 @@
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
+        },
+        {
+          "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
         },
         {
           "commit": "0f4aea47489fbe99b8663f969e762f08314f312a"
@@ -168852,6 +168964,9 @@
         },
         {
           "commit": "0ef6dc73ac740942134d606acd180093a5e1359d"
+        },
+        {
+          "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
         },
         {
           "commit": "0f4aea47489fbe99b8663f969e762f08314f312a"
@@ -179741,12 +179856,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5fdfdc806068b0a3f642060199fcf6d4fa7cfe76",
-      "currentBranch": "codex/game-storefront-fulfillment",
+      "revision": "1e47d9e8241900319dfebf15330a825d092b4787",
+      "currentBranch": "codex/supplier-continuity",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4434,
+      "currentArtifactCount": 4435,
       "provenance": [
         {
           "file": "README.md",
@@ -209881,13 +209996,13 @@
       "type": "TestSuite",
       "id": "test/agent-alpha.js",
       "label": "test/agent-alpha.js",
-      "lines": 2486,
-      "version": "826171d132e86a03",
+      "lines": 2534,
+      "version": "ee536e2671a89e41",
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "826171d132e86a03"
+          "version": "ee536e2671a89e41"
         }
       ]
     },
@@ -254843,6 +254958,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0f25859a92cc971d28fc007b5c2d83c6bdb7250f",
       "to": "Artifact:public/index.html",
       "provenance": {
@@ -265223,6 +265370,22 @@
       "to": "Artifact:docs/superpowers/specs/2026-08-27-authored-content-runtime-design.md",
       "provenance": {
         "commit": "1e32720202120fad86bb38313e65f198cc81df43"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e47d9e8241900319dfebf15330a825d092b4787",
+      "to": "Artifact:docs/supplier-continuity-security-review.md",
+      "provenance": {
+        "commit": "1e47d9e8241900319dfebf15330a825d092b4787"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1e47d9e8241900319dfebf15330a825d092b4787",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "1e47d9e8241900319dfebf15330a825d092b4787"
       }
     },
     {
@@ -307175,6 +307338,22 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "6e34080fcb9d77e5e2a1a5d8734ddc131292d893"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "to": "Artifact:test/agent-alpha.js",
+      "provenance": {
+        "commit": "6e3515c8d72e9e2391f2a27320e96044218aefb4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "to": "Artifact:tools/agent-alpha.js",
+      "provenance": {
+        "commit": "6e3515c8d72e9e2391f2a27320e96044218aefb4"
       }
     },
     {
@@ -408015,6 +408194,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/supplier-continuity-security-review.md",
+      "provenance": {
+        "file": "docs/supplier-continuity-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/supply-cadence-security-review.md",
       "provenance": {
         "file": "docs/supply-cadence-security-review.md",
@@ -457974,6 +458162,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0f15a64abbbd4e615a011dcde31156c015be709d",
+      "provenance": {
+        "commit": "0f15a64abbbd4e615a011dcde31156c015be709d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0f25859a92cc971d28fc007b5c2d83c6bdb7250f",
       "provenance": {
         "commit": "0f25859a92cc971d28fc007b5c2d83c6bdb7250f"
@@ -458057,6 +458253,14 @@
       "to": "Commit:0fec6c2c87b924fc5fe3290b941c048022b6f497",
       "provenance": {
         "commit": "0fec6c2c87b924fc5fe3290b941c048022b6f497"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:10338ec2bee6ea022ae589362633bc36c3e007e6",
+      "provenance": {
+        "commit": "10338ec2bee6ea022ae589362633bc36c3e007e6"
       }
     },
     {
@@ -459209,6 +459413,14 @@
       "to": "Commit:1e32720202120fad86bb38313e65f198cc81df43",
       "provenance": {
         "commit": "1e32720202120fad86bb38313e65f198cc81df43"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:1e47d9e8241900319dfebf15330a825d092b4787",
+      "provenance": {
+        "commit": "1e47d9e8241900319dfebf15330a825d092b4787"
       }
     },
     {
@@ -465337,6 +465549,14 @@
       "to": "Commit:6e34080fcb9d77e5e2a1a5d8734ddc131292d893",
       "provenance": {
         "commit": "6e34080fcb9d77e5e2a1a5d8734ddc131292d893"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6e3515c8d72e9e2391f2a27320e96044218aefb4",
+      "provenance": {
+        "commit": "6e3515c8d72e9e2391f2a27320e96044218aefb4"
       }
     },
     {
@@ -537476,6 +537696,33 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/supplier-continuity-security-review.md",
+      "to": "Artifact:omerta-contracts/SECURITY-REVIEW-POLICY.md",
+      "provenance": {
+        "file": "docs/supplier-continuity-security-review.md",
+        "line": 49
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/supplier-continuity-security-review.md",
+      "to": "Artifact:test/agent-alpha.js",
+      "provenance": {
+        "file": "docs/supplier-continuity-security-review.md",
+        "line": 15
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/supplier-continuity-security-review.md",
+      "to": "Artifact:tools/agent-alpha.js",
+      "provenance": {
+        "file": "docs/supplier-continuity-security-review.md",
+        "line": 14
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/WIKI.md",
       "to": "Artifact:tools/agent-alpha.js",
       "provenance": {
@@ -549504,6 +549751,15 @@
       "to": "Artifact:docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md",
       "provenance": {
         "file": "docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/supplier-continuity-security-review.md",
+      "to": "Artifact:docs/supplier-continuity-security-review.md",
+      "provenance": {
+        "file": "docs/supplier-continuity-security-review.md",
         "line": 1
       }
     },
