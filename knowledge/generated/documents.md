@@ -525,6 +525,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 251 | 2026-09-14 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
+| [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |
@@ -544,7 +545,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-10 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-11 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |

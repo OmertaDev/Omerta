@@ -1335,6 +1335,46 @@
       "table_name": "agent_company_profiles",
       "name": "agent_company_profiles_revision_check",
       "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_check",
+      "definition": "CHECK (dispatched >= 0 AND dispatched <= max_cycles)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_depot_id_revision_key",
+      "definition": "UNIQUE (depot_id, revision)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_interval_seconds_check",
+      "definition": "CHECK (interval_seconds >= 3600 AND interval_seconds <= 604800)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_max_cycles_check",
+      "definition": "CHECK (max_cycles >= 1 AND max_cycles <= 100)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES business_operating_policies(id)"
+    },
+    {
+      "table_name": "business_supply_contracts",
+      "name": "business_supply_contracts_revision_check",
+      "definition": "CHECK (revision > 0)"
     }
   ],
   "removed": [
@@ -1911,6 +1951,18 @@
       "published",
       "revision",
       "updated_at"
+    ],
+    "business_supply_contracts": [
+      "created_at",
+      "depot_id",
+      "dispatched",
+      "enabled",
+      "expires_at",
+      "id",
+      "interval_seconds",
+      "max_cycles",
+      "next_dispatch_at",
+      "revision"
     ]
   }
 }

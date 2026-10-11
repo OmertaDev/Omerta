@@ -16,6 +16,15 @@ const purchase = { type: 'object', required: ['qty', 'maxUnitPrice'], properties
 const empty = { type: 'object', properties: {} };
 const mutation = (operationId, requestSchema = empty) => ({ operationId, requestSchema });
 export const DEPOT_CONTRACTS = {
+  'POST /v1/depot/:id/supply-contract': mutation('setBusinessSupplyCadence', {
+    type: 'object', required: ['expectedRevision', 'enabled', 'intervalSeconds', 'maxCycles', 'expiresInSeconds'],
+    properties: {
+      expectedRevision: { type: 'integer', minimum: 0 }, enabled: { type: 'boolean' },
+      intervalSeconds: { type: 'integer', minimum: 3600, maximum: 604800 },
+      maxCycles: { type: 'integer', minimum: 1, maximum: 100 },
+      expiresInSeconds: { type: 'integer', minimum: 3600, maximum: 604800 },
+    },
+  }),
   'POST /v1/depot/:id/policy': mutation('authorizeBusinessOperatingPolicy', {
     type: 'object', required: ['expectedRevision', 'enabled', 'allowRestock', 'allowReceive', 'businessPriority', 'maxSpend', 'reserveCash', 'expiresInSeconds'],
     properties: {
