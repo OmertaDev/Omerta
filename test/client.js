@@ -2548,6 +2548,47 @@ const describeFn = DESCRIBE.fn;
 // class this file exists to catch. `fmt` groups thousands, so the raw number never appears verbatim.
 const fmtLike = (n) => String(Math.round(Number(n))).replace(/\B(?=(\d{3})+(?!\d))/g, ',').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+// These are different obligations even when both receipts carry refunded.
+// Positive own-system markers keep the unchanged collision ledger meaningful.
+{
+  const loan = describeFn({ ok: true, loanAction: 'cancel_offer', refunded: 50000 }, 200);
+  assert(/offer/.test(loan) && /50,000/.test(loan) && /escrow/.test(loan));
+  const warehouse = describeFn({ ok: true, warehouseAction: 'close_lease', closed: 'lease', refunded: 0 }, 200);
+  assert(/Warehouse lease closed/.test(warehouse) && /not refunded/.test(warehouse) && !/offer|escrow/.test(warehouse));
+  for (const body of [{ ok: true, refunded: 50 }, { ok: true, loanAction: 'other', refunded: 50 },
+    { ok: true, warehouseAction: 'other', closed: 'lease', refunded: 0 }])
+    assert(!/took the offer off the street|Warehouse lease closed/.test(describeFn(body, 200)), 'missing or foreign markers claim neither receipt');
+  const previous = process.env.DEPOT_PILOT; process.env.DEPOT_PILOT = 'on';
+  try {
+    const make = async name => {
+      const token = (await inject('POST', '/v1/auth/guest', null, {})).body.token;
+      const created = await inject('POST', '/v1/character', token, { name }); assert(created.code < 400);
+      const character = (await inject('GET', '/v1/me', token)).body.character;
+      await app.pool.query('UPDATE characters SET cash=50000 WHERE id=$1', [character.id]);
+      const { ledger } = await import('../src/game.js');
+      await ledger(app.pool, { characterId: character.id, currency: 'cash', amount: 50000 - Number(character.cash), reason: 'crime:client-receipt-fixture' });
+      return { token, character };
+    };
+    const owner = await make('Receipt Warehouse Owner'), tenant = await make('Receipt Warehouse Tenant');
+    const opened = await inject('POST', '/v1/depot', owner.token,
+      { salePrice: 2000, bidPrice: 500, targetStock: 4, reorderAt: 0, restockBudget: 3000 });
+    assert.equal(opened.code, 200, JSON.stringify(opened.body));
+    const configured = await inject('POST', `/v1/depot/${opened.body.id}/warehouse-offer`, owner.token,
+      { expectedRevision: 0, enabled: true, slots: 1, cashPerUnitDay: 1 });
+    assert.equal(configured.code, 200, JSON.stringify(configured.body));
+    await app.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [tenant.character.id, owner.character.loc]);
+    const rented = await inject('POST', `/v1/warehouses/${opened.body.id}/lease`, tenant.token,
+      { units: 1, expectedOfferRevision: 1, maxTotalCash: 1 });
+    assert.equal(rented.code, 200, JSON.stringify(rented.body));
+    const before = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [tenant.character.id])).rows[0].cash);
+    const closed = await inject('POST', `/v1/warehouse-leases/${rented.body.lease.id}/close`, tenant.token, {});
+    assert.equal(closed.code, 200, JSON.stringify(closed.body));
+    assert.equal(closed.body.warehouseAction, 'close_lease'); assert.equal(closed.body.closed, rented.body.lease.id); assert.equal(closed.body.refunded, 0);
+    assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [tenant.character.id])).rows[0].cash), before, 'receipt marker changes no close settlement');
+    assert.equal(describeFn(closed.body, closed.code), warehouse, 'actual native warehouse receipt renders its own action');
+  } finally { if (previous === undefined) delete process.env.DEPOT_PILOT; else process.env.DEPOT_PILOT = previous; }
+}
+
 let respecWant = null;   // WAVE 55: the respec row computes its own conserving swap at drive time
 const ACTIONS = [
   ['POST', '/v1/travel/neon', null],
@@ -3685,6 +3726,7 @@ for (const [m, url0, payload] of ACTIONS) {
   const offer = await inject('POST', '/v1/loans', owner.t, { amount: 50000, rate: 0.2, hours: 24 });
   assert(offer.code < 400 && offer.body.id, 'WAVE 36: the loan offer never posted');
   const pulled = await drive36('POST', `/v1/loans/${offer.body.id}/cancel`, owner.t, null, 'pull a loan offer');
+  assert.equal(pulled.body.loanAction, 'cancel_offer', 'actual loan cancellation carries its own positive marker');
   assert(new RegExp(fmtLike(pulled.body.refunded)).test(L36.get('pull a loan offer')),
     `pulling a loan offer returns the whole escrowed principal and said nothing: ${JSON.stringify(L36.get('pull a loan offer'))}`);
   const mark = await mk36('Mark ' + Math.random().toString(36).slice(2, 7));

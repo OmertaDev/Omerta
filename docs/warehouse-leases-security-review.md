@@ -57,3 +57,19 @@ feature tables present in the frozen catalog, compares exact constraints and
 nullability, and preserves the pinned baseline plus unknown-addition controls.
 Native PostgreSQL 18.4 full-stack and new causal-negative retests passed;
 partial-stack native PostgreSQL 16/18.4 hosted retests remain release gates.
+
+Finding WAREHOUSE-RECEIPT-1: hosted revision
+`7388d145da0d05bdea13725bac08b806456fd6b6` failed the client collision ledger:
+warehouse closure's zero `refunded` field selected the loan-cancellation escrow
+message. Repair `1a1ca3637500126bbf99a9ce1a83c4d3be9d6374` adds explicit
+`warehouseAction: 'close_lease'` and `loanAction: 'cancel_offer'` response markers
+and positive formatter branches, preserving existing fields and cash transitions.
+Actual closure and loan-cancellation assertions, full client, loans and warehouse
+API tests passed. The unchanged collision ledger found no overlaps; no shared-line
+or absent-field exception was added. Transfer
+`8a6b558c4918bd40060acf09ba10d5d19da86485` reconstructs the complete original
+loan source through one exact return-line inverse, retains both original pins
+and custody exclusions, and rejects missing, duplicate or unknown drift.
+Its negative controls and both observer consumer suites passed. Integrated
+repository source and documentation gates passed; complete fresh hosted
+qualification remains required before releasing this revision.
