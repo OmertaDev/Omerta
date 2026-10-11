@@ -7917,3 +7917,64 @@ CREATE TABLE IF NOT EXISTS logistics_coverage_policies (
 CREATE UNIQUE INDEX IF NOT EXISTS ix_logistics_coverage_accepted_lease ON logistics_coverage_policies(lease_id) WHERE accepted_at IS NOT NULL;
 CREATE INDEX IF NOT EXISTS ix_logistics_coverage_insurer ON logistics_coverage_policies(insurer_account,created_at);
 CREATE INDEX IF NOT EXISTS ix_logistics_coverage_tenant ON logistics_coverage_policies(tenant_account,created_at);
+
+-- Immutable game strategy versions have prospective server holdouts, never execution authority.
+CREATE TABLE IF NOT EXISTS strategy_versions (
+  id TEXT PRIMARY KEY,
+  seller_account TEXT NOT NULL REFERENCES accounts(id),
+  seller_character TEXT NOT NULL REFERENCES characters(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  title TEXT NOT NULL CHECK (char_length(title) BETWEEN 1 AND 100),
+  rule JSONB NOT NULL,
+  rule_hash TEXT NOT NULL CHECK (char_length(rule_hash)=64),
+  fee_cash BIGINT NOT NULL CHECK (fee_cash BETWEEN 50 AND 5000),
+  created_at TIMESTAMPTZ NOT NULL,
+  reported_at TIMESTAMPTZ NOT NULL,
+  target_at TIMESTAMPTZ NOT NULL CHECK (target_at > reported_at),
+  price_block BIGINT NOT NULL CHECK (price_block >= 0),
+  observation JSONB NOT NULL,
+  predicts_available BOOLEAN NOT NULL,
+  outcome TEXT CHECK (outcome IS NULL OR outcome IN ('correct','incorrect','unknown')),
+  sample_started_at TIMESTAMPTZ,
+  sample JSONB,
+  resolved_at TIMESTAMPTZ,
+  retired_at TIMESTAMPTZ,
+  UNIQUE(seller_account,request_key),
+  CHECK ((outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL)
+    OR (outcome IS NOT NULL AND resolved_at IS NOT NULL)),
+  CHECK (CASE WHEN outcome IS NULL THEN TRUE WHEN outcome='unknown' THEN TRUE ELSE sample_started_at IS NOT NULL AND sample IS NOT NULL END)
+);
+CREATE INDEX IF NOT EXISTS ix_strategy_versions_seller ON strategy_versions(seller_account,created_at);
+CREATE TABLE IF NOT EXISTS strategy_licenses (
+  id TEXT PRIMARY KEY,
+  version_id TEXT NOT NULL REFERENCES strategy_versions(id),
+  buyer_account TEXT NOT NULL REFERENCES accounts(id),
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  seller_paid_character TEXT NOT NULL REFERENCES characters(id),
+  fee_cash BIGINT NOT NULL CHECK (fee_cash BETWEEN 50 AND 5000),
+  purchased_at TIMESTAMPTZ NOT NULL,
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  UNIQUE(buyer_account,version_id),
+  UNIQUE(buyer_account,request_key),
+  CHECK (buyer_character <> seller_paid_character)
+);
+CREATE INDEX IF NOT EXISTS ix_strategy_licenses_buyer ON strategy_licenses(buyer_account,purchased_at);
+-- Company continuity records explicit current-life consent after canonical estate closure.
+-- The replacement depot is newly funded through the existing game opening action.
+CREATE TABLE IF NOT EXISTS company_succession_receipts (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  request_terms JSONB NOT NULL,
+  predecessor_character TEXT NOT NULL REFERENCES characters(id),
+  successor_character TEXT NOT NULL REFERENCES characters(id),
+  successor_generation INT NOT NULL CHECK (successor_generation BETWEEN 2 AND 2147483647),
+  company_revision INT NOT NULL CHECK (company_revision BETWEEN 2 AND 2147483647),
+  depot_id TEXT NOT NULL UNIQUE REFERENCES business_depots(id),
+  opening_cash BIGINT NOT NULL CHECK (opening_cash=5000),
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  UNIQUE(account_id,request_key),
+  UNIQUE(successor_character),
+  CHECK (predecessor_character <> successor_character)
+);

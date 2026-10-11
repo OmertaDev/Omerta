@@ -1910,6 +1910,186 @@
       "table_name": "logistics_coverage_policies",
       "name": "logistics_coverage_policies_tenant_character_fkey",
       "definition": "FOREIGN KEY (tenant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_check",
+      "definition": "CHECK (target_at > reported_at)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_check1",
+      "definition": "CHECK (outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL OR outcome IS NOT NULL AND resolved_at IS NOT NULL)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_check2",
+      "definition": "CHECK (\nCASE\n    WHEN outcome IS NULL THEN true\n    WHEN outcome = 'unknown'::text THEN true\n    ELSE sample_started_at IS NOT NULL AND sample IS NOT NULL\nEND)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 50 AND fee_cash <= 5000)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_outcome_check",
+      "definition": "CHECK (outcome IS NULL OR (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text])))"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_price_block_check",
+      "definition": "CHECK (price_block >= 0)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_rule_hash_check",
+      "definition": "CHECK (char_length(rule_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_seller_account_request_key_key",
+      "definition": "UNIQUE (seller_account, request_key)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_versions",
+      "name": "strategy_versions_title_check",
+      "definition": "CHECK (char_length(title) >= 1 AND char_length(title) <= 100)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_buyer_account_request_key_key",
+      "definition": "UNIQUE (buyer_account, request_key)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_buyer_account_version_id_key",
+      "definition": "UNIQUE (buyer_account, version_id)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_check",
+      "definition": "CHECK (buyer_character <> seller_paid_character)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 50 AND fee_cash <= 5000)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_seller_paid_character_fkey",
+      "definition": "FOREIGN KEY (seller_paid_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_licenses",
+      "name": "strategy_licenses_version_id_fkey",
+      "definition": "FOREIGN KEY (version_id) REFERENCES strategy_versions(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_account_id_request_key_key",
+      "definition": "UNIQUE (account_id, request_key)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_check",
+      "definition": "CHECK (predecessor_character <> successor_character)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_company_revision_check",
+      "definition": "CHECK (company_revision >= 2 AND company_revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_depot_id_key",
+      "definition": "UNIQUE (depot_id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_opening_cash_check",
+      "definition": "CHECK (opening_cash = 5000)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_predecessor_character_fkey",
+      "definition": "FOREIGN KEY (predecessor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_character_fkey",
+      "definition": "FOREIGN KEY (successor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_character_key",
+      "definition": "UNIQUE (successor_character)"
+    },
+    {
+      "table_name": "company_succession_receipts",
+      "name": "company_succession_receipts_successor_generation_check",
+      "definition": "CHECK (successor_generation >= 2 AND successor_generation <= 2147483647)"
     }
   ],
   "removed": [
@@ -2616,6 +2796,46 @@
       "state",
       "tenant_account",
       "tenant_character"
+    ],
+    "strategy_versions": [
+      "created_at",
+      "fee_cash",
+      "id",
+      "observation",
+      "predicts_available",
+      "price_block",
+      "reported_at",
+      "request_key",
+      "rule",
+      "rule_hash",
+      "seller_account",
+      "seller_character",
+      "target_at",
+      "title"
+    ],
+    "strategy_licenses": [
+      "buyer_account",
+      "buyer_character",
+      "fee_cash",
+      "id",
+      "purchased_at",
+      "request_key",
+      "seller_paid_character",
+      "version_id"
+    ],
+    "company_succession_receipts": [
+      "account_id",
+      "company_revision",
+      "created_at",
+      "depot_id",
+      "id",
+      "opening_cash",
+      "predecessor_character",
+      "receipt",
+      "request_key",
+      "request_terms",
+      "successor_character",
+      "successor_generation"
     ]
   }
 }
