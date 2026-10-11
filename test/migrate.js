@@ -616,6 +616,8 @@ const DISPOSITION = {
   futurity_bets: 'escrow',  // same shape — resolveFuturity LEFT JOINs `alive` and burns a dead stake
   business_depots: 'special', // voidListingsAtDeath closes the business, burns its idle treasury and stock, and resolves its procurement escrow
   business_warehouse_leases: 'special', // closeWarehouseClaimsAtDeath scatters dead tenant custody; landlord-closed claims preserve surviving tenant goods and immutable history
+  strategy_versions: 'metadata', // immutable private rules and genuine prospective outcomes
+  strategy_licenses: 'metadata', // original-account access and paired game-cash receipts survive estate
   company_succession_receipts: 'metadata', // original-account canonical opening receipts survive later heirs
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir

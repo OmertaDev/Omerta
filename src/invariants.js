@@ -4,6 +4,7 @@
 // row with a reason outside the known vocabulary — is an alert.
 import crypto from 'node:crypto';
 import { logisticsCoverageFaults } from './logisticscoverageinvariants.js';
+import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -39,7 +40,7 @@ const KNOWN_REASONS = {
     // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
-    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
+    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'strategy:buy:', 'strategy:sell:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
@@ -662,6 +663,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const coverageEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM logistics_coverage_policies');
   push('logistics coverage escrow', coverageEscrow, -(await sum(pool, "currency='cash' AND reason LIKE 'coverage:%'")), 0);
   push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);
+  push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
+  push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
 
   // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow
