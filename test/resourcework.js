@@ -2,6 +2,10 @@ process.env.RESOURCE_ECONOMY = 'on';
 process.env.RESOURCE_PAYMENTS_MODE = 'test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { mkdtemp, writeFile, unlink, rmdir } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createResourceDeliveryTestRunner } from '../tools/resource-deliver.js';
 import Fastify from 'fastify';
 import { register as registerResources } from '../src/routes/resources.js';
 import { commandDatabase, addPlayer } from './lib/player-command-support.js';
@@ -189,6 +193,7 @@ try {
     await Promise.all([submitResourceJob(pool, outsider, concurrentAuthored.id, authoredReport), acceptResourceJob(pool, buyer, concurrentAuthored.id)]);
     assert.equal((await resourceAccounting(pool, outsider)).availableUsdMicros, beforeAccepted + 100000);
   }
+  const sdkJob = (await createResourceJob(pool, buyer, { ...authoredTerms, requestId: 'authored-sdk' })).job;
   await setResourceService(pool, outsider, { ...service, expectedRevision: 1, enabled: false });
   await addPlayer(pool, 'resource-uninvolved');
   const app = Fastify();
@@ -200,6 +205,41 @@ try {
   app.setErrorHandler((failure, _req, reply) => reply.code(failure.code?.startsWith('resource_') ? 400 : failure.statusCode || 500).send({ error: failure.code }));
   registerResources(app, { pool, auth, modAuth });
   try {
+    const directory = await mkdtemp(join(tmpdir(), 'omerta-authored-integration-'));
+    const file = join(directory, 'report.txt');
+    try {
+      await writeFile(file, authoredReport.text);
+      let monotonic = 0; const calls = [];
+      const options = { baseUrl: 'https://delivery.test', jobId: sdkJob.id, file, token: 'integration-only-token',
+        fetchImpl: async (url, init) => {
+          calls.push({ path: new URL(url).pathname, method: init.method });
+          const response = await app.inject({ method: init.method, url: new URL(url).pathname,
+            headers: { ...init.headers, 'test-account': outsider, 'test-agent': 'true' }, payload: init.body });
+          return new Response(response.body, { status: response.statusCode, headers: { 'content-type': 'application/json' } });
+        } };
+      const timing = { now: () => monotonic, wallNow: () => Date.now(), sleep: async ms => { monotonic += ms; } };
+      const delivered = await createResourceDeliveryTestRunner(options, timing)();
+      assert.equal(delivered.confirmed, true); assert.equal(delivered.state, 'submitted');
+      assert.deepEqual(calls.map(call => call.method), ['GET', 'POST', 'POST']);
+      await acceptResourceJob(pool, buyer, sdkJob.id);
+      calls.length = 0;
+      const recovered = await createResourceDeliveryTestRunner(options, timing)();
+      assert.equal(recovered.confirmed, true); assert.equal(recovered.state, 'accepted');
+      assert.deepEqual(calls.map(call => call.method), ['GET'], 'Accepted matching reports reconcile without another mutation');
+    } finally {
+      await unlink(file).catch(error => { if (error.code !== 'ENOENT') throw error; });
+      await rmdir(directory);
+    }
+    const targetUrl = `/v1/resources/jobs/${first.id}`;
+    assert.equal((await app.inject({ method: 'GET', url: targetUrl })).statusCode, 401);
+    for (const account of [buyer, seller]) {
+      const target = await app.inject({ method: 'GET', url: targetUrl, headers: { 'test-account': account, 'test-agent': 'true' } });
+      assert.equal(target.statusCode, 200); assert.equal(target.json().job.id, first.id);
+    }
+    for (const id of [first.id, 'missing-job']) {
+      const hidden = await app.inject({ method: 'GET', url: `/v1/resources/jobs/${id}`, headers: { 'test-account': outsider } });
+      assert.equal(hidden.statusCode, 400); assert.equal(hidden.json().error, 'resource_job');
+    }
     const submitUrl = `/v1/resources/jobs/${authored.id}/submit`;
     assert.equal((await app.inject({ method: 'POST', url: submitUrl, payload: authoredReport })).statusCode, 401);
     assert.equal((await app.inject({ method: 'POST', url: submitUrl, headers: { 'test-account': buyer }, payload: authoredReport })).json().error, 'resource_job');

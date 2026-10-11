@@ -2,13 +2,14 @@ import { resourceOutcomes } from '../resourceoutcomes.js';
 import { setAgentCompany, ownAgentCompany, getAgentCompany } from '../agentcompany.js';
 import { resourceStorefront } from '../resourcestorefront.js';
 import { businessSnapshot } from '../resourcebusiness.js';
+import { resourceEarnings } from '../resourceearnings.js';
 import { createResourceBounty, resourceLaborBoard, bidResourceBounty, awardResourceBounty, cancelResourceBounty, resourceLaborReputation, renewResourceJob } from '../resourcelabor.js';
 import { ResourceProviderError } from '../resourceproviders.js';
 import { resourceAccounting, setResourcePolicy, resourceEnabled, resourceError } from '../resourcebook.js';
 import { resourceComputeCatalog, resourceComputeState, runResourceCompute, reconcileResourceCompute,
   resourceAuctionBoard, createResourceRound, commitResourceBid, revealResourceBid, settleResourceRound } from '../resourcecompute.js';
 import { createResourceFunding, settleResourcePayment } from '../resourcepayments.js';
-import { setResourceService, resourceServiceBoard, listResourceJobs, createResourceJob, claimResourceJob,
+import { setResourceService, resourceServiceBoard, listResourceJobs, getResourceJob, createResourceJob, claimResourceJob,
   workResourceJob, submitResourceJob, acceptResourceJob, disputeResourceJob, adjudicateResourceJob } from '../resourcework.js';
 
 export function register(app, { pool, auth, modAuth }) {
@@ -32,6 +33,7 @@ export function register(app, { pool, auth, modAuth }) {
   app.get('/v1/resources/outcomes', { preHandler: auth }, async req => resourceOutcomes(pool, req.user.sub));
   app.get('/v1/resources/storefronts/:id', async req => resourceStorefront(pool, req.params.id));
   app.get('/v1/resources/business', { preHandler: auth }, async req => businessSnapshot(pool, req.user.sub));
+  app.get('/v1/resources/earnings', { preHandler: auth }, async req => resourceEarnings(pool, req.user.sub, req.query));
   app.get('/v1/resources/labor', { preHandler: auth }, async req => resourceLaborBoard(pool, req.user.sub));
   app.get('/v1/resources/labor/reputation/:id', { preHandler: auth }, async req => resourceLaborReputation(pool, req.params.id));
   app.post('/v1/resources/bounties', { preHandler: auth }, async req => createResourceBounty(pool, req.user.sub, req.body));
@@ -63,6 +65,7 @@ export function register(app, { pool, auth, modAuth }) {
   app.post('/v1/resources/compute/:id/reconcile', { preHandler: auth }, async req =>
     reconcileResourceCompute(pool, req.user.sub, req.params.id, req.body?.providerRequestId));
   app.get('/v1/resources/jobs', { preHandler: auth }, async req => listResourceJobs(pool, req.user.sub));
+  app.get('/v1/resources/jobs/:id', { preHandler: auth }, async req => getResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs', { preHandler: auth }, async req => createResourceJob(pool, req.user.sub, req.body));
   app.post('/v1/resources/jobs/:id/claim', { preHandler: auth }, async req => claimResourceJob(pool, req.user.sub, req.params.id));
   app.post('/v1/resources/jobs/:id/work', { preHandler: auth }, async req => workResourceJob(pool, req.user.sub, req.params.id, req.body));
