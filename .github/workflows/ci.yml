@@ -386,6 +386,51 @@ jobs:
           "
           npm run test:intel-forecasts:postgres
 
+      - name: Invoice finance canonical custody controls (real PostgreSQL)
+        env:
+          DELIVERY_FINANCE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/delivery_finance_domain_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE delivery_finance_domain_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:delivery-finance:postgres
+
+      - name: Invoice finance-guards canonical custody controls (real PostgreSQL)
+        env:
+          DELIVERY_FINANCE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/delivery_finance_guards_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE delivery_finance_guards_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:delivery-finance-guards:postgres
+
+      - name: Invoice finance-api canonical custody controls (real PostgreSQL)
+        env:
+          DELIVERY_FINANCE_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/delivery_finance_api_ci
+        run: |
+          node -e "
+            const { Client } = require('pg');
+            (async () => {
+              const c = new Client({ connectionString: 'postgres://postgres:pgcheck@localhost:5432/postgres' });
+              await c.connect();
+              await c.query('CREATE DATABASE delivery_finance_api_ci');
+              await c.end();
+            })().catch(e => { console.error(e); process.exit(1); });
+          "
+          npm run test:delivery-finance-api:postgres
+
       - name: Private forecast API replay, estate and invariant controls (real PostgreSQL)
         env:
           INTEL_FORECAST_TEST_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/intel_forecasts_api_ci
