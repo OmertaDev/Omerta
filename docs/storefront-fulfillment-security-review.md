@@ -117,6 +117,42 @@ the tested game-cash flow on the pinned runtime and fixture, not production
 deployment, general strategy profitability, external earnings or crypto backing.
 Required source-pinned release checks remain the coordinator's release gate.
 
+## Current City and courier composition compatibility — 2026-10-11
+
+The composed server's normalized SHA-256 is
+`59ce69a095d83b89e6664b91fed593e760d59b89b34f4c5805ce207a81bdbe12`;
+its immutable Git source blob is `0a5053e000198230ca9e7e036233611c1ab44c8e`.
+Explicit independently committed source parents are storefront
+`aab87060e775fb18ccf952c417b1583c40fca931` and courier/supply
+`1e1a1ea745a2801cec3c7ba33a545d1cf9148524`.
+No future self-referential merge revision is used as qualification evidence.
+
+A new separate exact two-chunk inverse removes only storefront dispatch and
+pair-lock selection, restoring the complete unchanged current City social/business
+server pin `87f05f32c9bf329e4c9f919c1d3313f718472f4ba4a454a5dd766e48a25be488`.
+Its existing independent source blob, parent checks and City social, Business,
+City presence, Goods and historical inverses continue unchanged. The original
+storefront `213491e5` pin, Git predecessor comparisons and tamper controls also
+remain independently exercised from its immutable historical source. Neither
+parent's qualification scope is silently replaced or widened.
+
+The composed-source controls compare the entire current server to its Git blob,
+reconstruct the entire courier parent's server, verify both explicit parents,
+and reject dispatch renaming, owner-branch weakening, missing-lender guard removal
+and unrelated additions. World review metadata version 12 records the separate
+composed phase: source compatibility with financial activation disabled.
+
+The preparation agent ran on Node v24.19.0; all commands exited 0:
+`node test/rc1-world-qualification.js`, `node test/rc1-car-melt-provenance.js`
+(24 controls), `node test/rc1-source-pair.js` (57 controls),
+`node test/rc1-checkpoint-recovery-review.js`,
+`node test/rc1-world-checkpoint-series.js`,
+`node test/rc1-world-duration-evidence.js` and `git diff --check`.
+These compatibility controls do not prove native execution of the newly composed
+storefront purchase/death flow. The coordinator must separately retain current
+native proof, exact revision checks and deployment verification; no real payment,
+compute purchase, crypto backing or activation is inherited from historic evidence.
+
 ## Final integration review and local discovery window
 
 The independent courier reviewer inspected exact full-flow proof revision
@@ -155,3 +191,11 @@ rollback and owner-death assertions. Raw output is retained at
 The local PostgreSQL server was stopped after completion.
 The correction requires final coordinator review and exact-head hosted release
 checks; the prior independent conclusion is retained for its original revision.
+
+## Current integrated runtime qualification
+
+The coordinator independently reviewed the composed transfer: its two exact inverse chunks restore the complete current City social/business server, retaining the original storefront and historical parent assertions. The staged runtime server blob is `0a5053e000198230ca9e7e036233611c1ab44c8e`, normalized SHA-256 `59ce69a095d83b89e6664b91fed593e760d59b89b34f4c5805ce207a81bdbe12`.
+
+The coordinator ran `node test/storefront-fulfillment-api.js --postgres` against fresh, dedicated local PostgreSQL 18.4 database `game_storefront_stack_20261011`; exit 0. This covers the continuous issued purchase/travel/delivery/customer-receipt loop, exact accounting, replay, price/stock/cap staleness, bounded local discovery, concurrent issued purchases and storefront-owner death. An initial preflight failure lacked the disposable test market seed; test-only environment configuration corrected it without modifying production or product code. Ignored `output/storefront-composed-native-proof.json` retains the command, source blob and result.
+
+No financial activation, real compute purchase, customer message or production transaction was performed by these checks. Deployment and exact-head hosted checks remain separate release gates.

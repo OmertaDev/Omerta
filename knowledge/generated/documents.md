@@ -324,8 +324,8 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
-| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 70 | 2026-10-10 |
-| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 50 | 2026-10-10 |
+| [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 96 | 2026-10-11 |
+| [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
@@ -333,6 +333,7 @@
 | [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 227 | 2026-10-10 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
+| [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
@@ -372,9 +373,8 @@
 | [docs/core-architecture/review-phase3.md](../../docs/core-architecture/review-phase3.md) | documentation | 37 | 2026-09-17 |
 | [docs/core-architecture/review-phase4.md](../../docs/core-architecture/review-phase4.md) | documentation | 92 | 2026-09-17 |
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
-| [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 14 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 67 | 2026-10-08 |
-| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 42 | 2026-10-11 |
+| [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 52 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
@@ -526,6 +526,7 @@
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-integration-amendment.md) | documentation | 251 | 2026-09-14 |
 | [docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md](../../docs/superpowers/specs/2026-09-07-world-graph-phase-2a-lot-transition-amendment.md) | documentation | 261 | 2026-09-08 |
 | [docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md](../../docs/superpowers/specs/2026-09-13-world-graph-phase-2a-development-workflow-amendment.md) | documentation | 23 | 2026-09-14 |
+| [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 51 | 2026-10-11 |
 | [docs/WIKI.md](../../docs/WIKI.md) | documentation | 2823 | 2026-10-08 |
 | [FINAL_LAUNCH_LEDGER.md](../../FINAL_LAUNCH_LEDGER.md) | documentation | 274 | 2026-09-25 |
 | [GRAPH.md](../../GRAPH.md) | documentation | 50 | 2026-09-25 |

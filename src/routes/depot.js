@@ -1,6 +1,7 @@
 import * as Depot from '../depot.js';
 import * as G from '../game.js';
 import { setOperatingPolicy, guardDelegatedControl, recordExternalCost } from '../operatingpolicy.js';
+import { setSupplyContract } from '../supplycontracts.js';
 
 export function register(app, { pool, auth }) {
   const controlled = (req, fn) => G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
@@ -10,6 +11,8 @@ export function register(app, { pool, auth }) {
   const ownerOnly = async (req) => { if (req.user.agent === true) throw new G.GameError('owner_authority', 'Use the separate owner session to authorize policies or declare outside costs.'); };
   app.post('/v1/depot/:id/policy', { preHandler: [auth, ownerOnly] }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client) => setOperatingPolicy(ch, req.params.id, req.body, client)));
+  app.post('/v1/depot/:id/supply-contract', { preHandler: [auth, ownerOnly] }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client) => setSupplyContract(ch, req.params.id, req.body, client)));
   app.post('/v1/depot/:id/external-costs', { preHandler: [auth, ownerOnly] }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client) => recordExternalCost(ch, req.params.id, req.body, client)));
   app.get('/v1/depots', async () => ({ enabled: Depot.depotPilotEnabled(), catalog: Depot.DEPOT, businesses: await Depot.depotBoard(pool) }));

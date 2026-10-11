@@ -22,6 +22,24 @@ const storefrontServerChanges = [
     "      // Player-loan repayment is the only issued two-party action. Preserve its existing stable\n      // character/account lock order; every other descriptor executes under the ordinary solo lock.\n      const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);\n      if (loanMatch && loanMatch[1] !== 'house') {\n"
   ]
 ];
+export const STOREFRONT_CITY_SERVER_PIN = '59ce69a095d83b89e6664b91fed593e760d59b89b34f4c5805ce207a81bdbe12';
+export const STOREFRONT_CITY_SERVER_BLOB = '0a5053e000198230ca9e7e036233611c1ab44c8e';
+export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
+  "aab87060e775fb18ccf952c417b1583c40fca931",
+  "1e1a1ea745a2801cec3c7ba33a545d1cf9148524"
+]);
+// Composition preserves both independently pinned parent qualification scopes.
+export function assertStorefrontCityServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, STOREFRONT_CITY_SERVER_PIN, 'Composed storefront/City transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const [current, previous] of storefrontServerChanges) {
+  assert.equal(baselineText.split(current).length, 2, 'Composed storefront inverse is not exact and unique');
+  baselineText = baselineText.replace(current, previous);
+ }
+ assert.equal(hash(baselineText), CITY_SOCIAL_BUSINESS_SERVER_PIN, 'Server differs beyond exact composed storefront dispatch and pair locks');
+ return { actualSha256, baselineText, baselineSha256: CITY_SOCIAL_BUSINESS_SERVER_PIN, sourceBlob: STOREFRONT_CITY_SERVER_BLOB, sourceParents: STOREFRONT_CITY_SOURCE_PARENTS, inverseChunks: 2 };
+}
 // New storefront execution retains separate current-source accounting and native proofs.
 export function assertStorefrontServerTransfer(text) {
  const actualSha256 = hash(text);
@@ -80,7 +98,50 @@ export function assertCityPresenceServerTransfer(text) {
     sourceRevision: CITY_PRESENCE_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_PRESENCE_SOURCE_PREDECESSOR_REVISION,
     inverseChunks: cityPresenceServerChunks.length };
 }
+export const CITY_SOCIAL_BUSINESS_SERVER_PIN = '87f05f32c9bf329e4c9f919c1d3313f718472f4ba4a454a5dd766e48a25be488';
+export const CITY_SOCIAL_BUSINESS_SERVER_BLOB = 'f48b59999ce6505c90015acf44de9cd5c202ab73';
+export const CITY_SOCIAL_BUSINESS_SOURCE_PARENTS = Object.freeze([
+  'd9dd10ac00593fcedd077d6593d86208bfcdeeef',
+  '5afd99aef81375a41702b2694fa39e4cb5b746ea',
+]);
+// A separate closed composition: both parent transfers retain their original complete pins.
+// This inverse qualifies only unchanged historical guards, never either new execution authority.
+export function assertCitySocialBusinessServerTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CITY_SOCIAL_BUSINESS_SERVER_PIN, 'City social/business transfer source changed: src/server.js');
+  let baselineText = text;
+  for (const [current, previous] of businessServerChanges) {
+    assert.equal(baselineText.split(current).length, 2, 'City social/business inverse is not exact and unique');
+    baselineText = baselineText.replace(current, previous);
+  }
+  assert.equal(hash(baselineText), CITY_SOCIAL_SERVER_PIN, 'Server differs beyond exact composed business dispatch');
+  return { actualSha256, baselineText, baselineSha256: CITY_SOCIAL_SERVER_PIN,
+    sourceBlob: CITY_SOCIAL_BUSINESS_SERVER_BLOB, sourceParents: CITY_SOCIAL_BUSINESS_SOURCE_PARENTS, inverseChunks: 3 };
+}
 export const DEED_RULES_CURRENT_PIN = '83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb';
+export const CITY_SOCIAL_SERVER_PIN = 'c50672019e746466be229950be32901ee809c5e7ee2102dde487c5d2c24bbaab';
+export const CITY_SOCIAL_SERVER_PREDECESSOR_PIN = CITY_PRESENCE_SERVER_PIN;
+export const CITY_SOCIAL_SOURCE_REVIEWED_REVISION = '33ef29b41e0b5b0b6b3eb8e857677aabf074b01f';
+export const CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION = '64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a';
+const citySocialServerChunks = [
+  "import { registerCitySocial } from './city-social.js';\n",
+  '  registerCitySocial(app, { pool, auth, onlineIds: () => [...wsClients.keys()], lastChatAt, capMap });\n',
+  "    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n",
+];
+// Only unchanged historical guards transfer; new social authority and execution do not.
+export function assertCitySocialServerTransfer(text) {
+  const actualSha256 = hash(text);
+  assert.equal(actualSha256, CITY_SOCIAL_SERVER_PIN, 'City social transfer source changed: src/server.js');
+  let baselineText = text;
+  for (const chunk of citySocialServerChunks) {
+    assert.equal(baselineText.split(chunk).length, 2, 'City social inverse is not exact and unique');
+    baselineText = baselineText.replace(chunk, '');
+  }
+  assert.equal(hash(baselineText), CITY_SOCIAL_SERVER_PREDECESSOR_PIN, 'Server differs beyond exact City social registration and assets');
+  return { actualSha256, baselineText, baselineSha256: CITY_SOCIAL_SERVER_PREDECESSOR_PIN,
+    sourceRevision: CITY_SOCIAL_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION,
+    inverseChunks: citySocialServerChunks.length };
+}
 export const DEED_SERVER_BASELINE_PIN = '12e8aeefcef09b1a8ef48433792c7c5bbc69e563f0c5a141cec05b447f2fc9ff';
 export const DEED_SERVER_CURRENT_PIN = 'bbbeb137b8b1baeff09985331bc70a57670ddb723925057ffa858f840880e453';
 export const DEED_SOURCE_REVIEWED_REVISION = '7222b0964606e944326da2e2cd0ac8c0e4d02b36';
@@ -159,13 +220,25 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_SERVER_PIN) {
     const transfer = assertStorefrontServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
   }
+  if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
+    const transfer = assertCitySocialBusinessServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
+  }
   if (hash(text) === BUSINESS_SERVER_PIN) {
     const transfer = assertBusinessServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
+  if (hash(text) === CITY_SOCIAL_SERVER_PIN) {
+    const transfer = assertCitySocialServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialSourceTransfer: transfer };
   }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
@@ -220,13 +293,25 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_SERVER_PIN) {
     const transfer = assertStorefrontServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
   }
+  if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
+    const transfer = assertCitySocialBusinessServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
+  }
   if (hash(text) === BUSINESS_SERVER_PIN) {
     const transfer = assertBusinessServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
+  if (hash(text) === CITY_SOCIAL_SERVER_PIN) {
+    const transfer = assertCitySocialServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialSourceTransfer: transfer };
   }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
@@ -302,13 +387,25 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_SERVER_PIN) {
     const transfer = assertStorefrontServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
   }
+  if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
+    const transfer = assertCitySocialBusinessServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
+  }
   if (hash(text) === BUSINESS_SERVER_PIN) {
     const transfer = assertBusinessServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
+  if (hash(text) === CITY_SOCIAL_SERVER_PIN) {
+    const transfer = assertCitySocialServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialSourceTransfer: transfer };
   }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
@@ -341,13 +438,25 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+    const transfer = assertStorefrontCityServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontCitySourceTransfer: transfer };
+  }
   if (hash(text) === STOREFRONT_SERVER_PIN) {
     const transfer = assertStorefrontServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), storefrontSourceTransfer: transfer };
   }
+  if (hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
+    const transfer = assertCitySocialBusinessServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialBusinessSourceTransfer: transfer };
+  }
   if (hash(text) === BUSINESS_SERVER_PIN) {
     const transfer = assertBusinessServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), businessSourceTransfer: transfer };
+  }
+  if (hash(text) === CITY_SOCIAL_SERVER_PIN) {
+    const transfer = assertCitySocialServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), citySocialSourceTransfer: transfer };
   }
   if (hash(text) === CITY_PRESENCE_SERVER_PIN) {
     const transfer = assertCityPresenceServerTransfer(text);
@@ -684,13 +793,25 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === STOREFRONT_CITY_SERVER_PIN) {
+  const transfer = assertStorefrontCityServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontCitySourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === STOREFRONT_SERVER_PIN) {
   const transfer = assertStorefrontServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, storefrontSourceTransfer: transfer };
  }
+ if (file === 'src/server.js' && hash(text) === CITY_SOCIAL_BUSINESS_SERVER_PIN) {
+  const transfer = assertCitySocialBusinessServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, citySocialBusinessSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === BUSINESS_SERVER_PIN) {
   const transfer = assertBusinessServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + 3, businessSourceTransfer: transfer };
+ }
+ if (file === 'src/server.js' && hash(text) === CITY_SOCIAL_SERVER_PIN) {
+  const social = assertCitySocialServerTransfer(text), predecessor = assertEconomySourceTransfer(file, social.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + social.inverseChunks, citySocialSourceTransfer: social };
  }
  if (file === 'src/server.js' && hash(text) === CITY_PRESENCE_SERVER_PIN) {
   const presence = assertCityPresenceServerTransfer(text), predecessor = assertEconomySourceTransfer(file, presence.baselineText);

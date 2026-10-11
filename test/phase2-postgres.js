@@ -199,7 +199,7 @@ async function child(url) {
       verifyUpgradeConstraintCatalog(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
-      console.log('phase2-postgres: fifteen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
+      console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -341,6 +341,10 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     (rows,index) => rows.splice(index,1)));
   rejected('operating-policy spend bound altered',mutate('business_operating_policies','business_operating_policies_check',
     (rows,index) => { rows[index].definition += ' altered'; }));
+  rejected('supply cadence cycle bound removed',mutate('business_supply_contracts','business_supply_contracts_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('supply cadence policy binding altered',mutate('business_supply_contracts','business_supply_contracts_policy_id_fkey',
+    (rows,index) => { rows[index].definition += ' altered'; }));
   rejected('delivery quantity bound removed',mutate('delivery_commitments','delivery_commitments_quantity_check',
     (rows,index) => rows.splice(index,1)));
   rejected('resource aggregate balance bound removed',mutate('resource_treasuries','resource_total_balance_check',
@@ -363,6 +367,18 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
     (rows,index) => { rows[index].definition = rows[index].definition.replace('9007199254740991','9007199254740992'); }));
   if (serverVersionNum >= 180000) for (const column of ['character_id','generation','journal','objectives','sequence']) {
     rejected('city '+column+' nullability removed',mutate('city_intel_progress',`city_intel_progress_${column}_not_null`,
+      (rows,index) => rows.splice(index,1)));
+  }
+  rejected('social character ownership foreign key removed',mutate('city_social_preferences','city_social_preferences_character_id_fkey',
+    (rows,index) => rows.splice(index,1)));
+  rejected('social generation identity weakened',mutate('city_social_preferences','city_social_preferences_pkey',
+    (rows,index) => { rows[index].definition = 'PRIMARY KEY (character_id)'; }));
+  rejected('social generation minimum removed',mutate('city_social_preferences','city_social_preferences_generation_check',
+    (rows,index) => rows.splice(index,1)));
+  rejected('social outfit catalog widened',mutate('city_social_preferences','city_social_preferences_outfit_check',
+    (rows,index) => { rows[index].definition = 'CHECK (true)'; }));
+  if (serverVersionNum >= 180000) for (const column of ['character_id','chat_enabled','generation','outfit','room_layout']) {
+    rejected('social '+column+' nullability removed',mutate('city_social_preferences',`city_social_preferences_${column}_not_null`,
       (rows,index) => rows.splice(index,1)));
   }
 }

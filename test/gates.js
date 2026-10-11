@@ -2136,24 +2136,61 @@ const SCENERY_WAIVED = {
     }
     return out;
   };
+  const rawKeyFields = lit => lit.matchAll(/\b(\w+):\s*(\w+)\.(id|kind)\b/g);
+  const hasPayloadName = (lit, k, src) => new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
+    || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
+    || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+  // These two exact City sites are selectors/discriminators, not raw narrative catalog labels.
+  // Bind the exception to the actual matched field; another field in this file/literal gets no waiver.
+  const exactCityField = (base, source, lit, match) => {
+    if (base !== 'city-social.js') return null;
+    const [, k, src, member] = match;
+    if (k === 'outfit' && src === 'outfit' && member === 'id') {
+      const factory = /const action\s*=\s*\(id,\s*label,\s*path,\s*body,\s*blockedBy\s*=\s*\[\],\s*inputFields\s*=\s*\[\]\)\s*=>\s*\(\{\s*id,\s*label,\s*method:\s*'POST',\s*path,\s*body,/;
+      if (!factory.test(source)) return null;
+      const issued = /\.\.\.CITY_OUTFITS\.map\(\s*outfit\s*=>\s*action\(\s*'outfit:'\s*\+\s*outfit\.id,\s*'Wear '\s*\+\s*outfit\.name,\s*'\/v1\/city\/social\/preferences',\s*\{\s*\.\.\.viewer,\s*(outfit:\s*outfit\.id)\s*\}\s*\)\s*\)/g;
+      for (const action of lit.matchAll(issued)) {
+        if (action.index + action[0].lastIndexOf(action[1]) === match.index) return 'issued outfit selector';
+      }
+    }
+    if (k === 'kind' && src === 'data' && member === 'kind') {
+      const start = source.indexOf('function decodeMessage(row) {');
+      const end = source.indexOf('\nasync function blockedAccounts', start);
+      if (start < 0 || end < 0 || source.split(lit).length !== 2) return null;
+      const decoder = source.slice(start, end);
+      if (decoder.includes(lit) && /!\['text',\s*'emote'\]\.includes\(data\.kind\)/.test(decoder)
+        && !/\bdata\.kind\s*=(?!=)/.test(decoder)) return 'closed text/emote discriminator';
+    }
+    return null;
+  };
+  const cityClassified = [];
+  const cityRawProblems = source => {
+    const problems = [];
+    for (const lit of literals(source)) for (const match of rawKeyFields(lit)) {
+      const [, k, src] = match;
+      if (k === 'id' || /Id$/.test(k) || /_id$/.test(k) || hasPayloadName(lit, k, src)) continue;
+      if (!exactCityField('city-social.js', source, lit, match)) problems.push(k + ': ' + src + '.' + match[3]);
+    }
+    return problems;
+  };
   for (const f of files) {
     const s = fs.readFileSync(f, 'utf8');
     const base = path.basename(f);
     for (const lit of literals(s)) {
-      for (const m of lit.matchAll(/\b(\w+):\s*(\w+)\.(id|kind)\b/g)) {
+      for (const m of rawKeyFields(lit)) {
         const [, k, src] = m;
         // a HANDLE says so in its own name — `carId`, `heistId`, `character_id`, or the bare `id`
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
         corpus++;
-        const named = new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
-          || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
-          // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
+        // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
           // extractor-only-knows-one-form class (the CATALOG LEDGER lesson). Only `<k>Name` gets
           // the shorthand form: a bare `name`/`title` shorthand would be some unrelated variable.
-          || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+        const named = hasPayloadName(lit, k, src);
         if (named) continue;
+        const cityField = exactCityField(base, s, lit, m);
+        if (cityField) { cityClassified.push(cityField); continue; }
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
         bad.push(`${f} — ${k}: ${src}.${m[3]}`);
@@ -2168,11 +2205,26 @@ const SCENERY_WAIVED = {
   assert.deepEqual(stale, [], 'RAW-KEY waiver(s) that no longer match a site. A waiver is a decision '
     + `about a field that exists; one pointing at nothing is a decision nobody is making:
    - ${stale.join('\n   - ')}`);
+  assert.deepEqual(cityClassified.sort(), ['closed text/emote discriminator', 'issued outfit selector'],
+    'The exact City selector/discriminator classifications must each govern one current site.');
+  const citySource = fs.readFileSync('src/city-social.js', 'utf8');
+  assert.deepEqual(cityRawProblems(citySource), [], 'The same payload matcher must accept the reviewed City sites.');
+  for (const [label, changed, expected] of [
+    ['missing issued outfit name', citySource.replace("'Wear ' + outfit.name", "'Wear ' + outfit.id"), 'outfit: outfit.id'],
+    ['missing actual action label', citySource.replace("=> ({ id, label, method: 'POST'", "=> ({ id, method: 'POST'"), 'outfit: outfit.id'],
+    ['lost finite message kind validation', citySource.replace("!['text', 'emote'].includes(data.kind)", '!data.kind'), 'kind: data.kind'],
+    ['message kind overwritten after validation', citySource.replace('return { id: row.id, characterId:', 'data.kind = row.kind;\n  return { id: row.id, characterId:'), 'kind: data.kind'],
+    ['extra unlabelled outfit', citySource + '\nfunction extraOutfit(outfit) { return { outfit: outfit.id }; }\n', 'outfit: outfit.id'],
+    ['extra unlabelled kind', citySource + '\nfunction extraKind(data) { return { kind: data.kind }; }\n', 'kind: data.kind'],
+  ]) {
+    assert.notEqual(changed, citySource, label + ' must mutate the actual current source.');
+    assert(cityRawProblems(changed).includes(expected), label + ' must fail the same raw-key matcher.');
+  }
   assert.deepEqual(bad, [], 'player-visible payload(s) sending a catalog id with no display name. The '
     + 'client has no catalog handle, so it can print nothing but the key — "the payroll came off HOT". '
     + `Send the name with the id, or declare the field in WAIVED with the property that makes it safe:
    - ${bad.join('\n   - ')}`);
-  console.log(`✓ all ${corpus} catalog ids in player-visible payloads carry a name (${Object.keys(WAIVED).length} declared handles)`);
+  console.log(`✓ all ${corpus} catalog ids in player-visible payloads carry a name (${Object.keys(WAIVED).length} declared handles; ${cityClassified.length} exact City selectors/discriminators)`);
 
   // ── THE WIRE HALF ─────────────────────────────────────────────────────────────────────────────
   // The rule above matches `k: X.id` — deliberately narrow and high-signal. The WIRE ships its ids
@@ -3416,22 +3468,27 @@ scopedSocialContext = async function(db) {
 
 // ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
 // The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
-// HANG bound cannot contain the expanded property coverage. The real-Postgres sibling is a separate
-// job with a separate 20-minute bound. Check each JOB BLOCK: whole-file substring checks let the two
-// values trade places, or let a third job inherit one, while still finding both numbers somewhere.
+// HANG bound cannot contain the expanded property coverage. Browser and real-Postgres checks have
+// separate 20-minute bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
+// places, or let an untracked job inherit one, while still finding both numbers somewhere.
 {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
   const ci = fs.readFileSync(path.join(ROOT, '.github/workflows/ci.yml'), 'utf8');
   const jobsHeader = /^jobs:\s*$/m.exec(ci);
   assert(jobsHeader, '.github/workflows/ci.yml has no top-level `jobs:` block');
   const jobsText = ci.slice(jobsHeader.index + jobsHeader[0].length);
+  for (const line of jobsText.split(/\r?\n/).filter(line => /^ {2}\S/.test(line) && !/^ {2}#/.test(line))) {
+    assert.match(line, /^ {2}[A-Za-z0-9_-]+:\s*$/,
+      'unsupported CI job key shape must not evade the closed job catalog');
+  }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'pgcheck'],
-    '.github/workflows/ci.yml must retain exactly the existing `suites` and `pgcheck` jobs');
+  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck'],
+    '.github/workflows/ci.yml must retain exactly `suites`, dependent `browser`, and `pgcheck` jobs');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
   const suites = jobs.get('suites');
+  const browser = jobs.get('browser');
   const pgcheck = jobs.get('pgcheck');
 
   assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
@@ -3446,15 +3503,53 @@ scopedSocialContext = async function(db) {
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [60],
     'the `suites` job must have exactly one 60-minute HANG bound');
+  assert.deepEqual(timeouts(browser), [20],
+    'the `browser` job must have exactly one 20-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [20],
     'the `pgcheck` job must retain exactly one 20-minute HANG bound');
 
-  const suitesCommands = ['npm test', 'npm run sim', 'npm run scale', 'npm run mobile'];
+  const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
   for (const command of suitesCommands) {
     const escaped = command.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     assert.equal([...suites.matchAll(new RegExp(`^\\s+run: ${escaped}\\s*$`, 'gm'))].length, 1,
       `the \`suites\` job must run \`${command}\` exactly once`);
   }
+  // Admit this exact fresh browser job, including every transferred command and
+  // preflight value. Unknown conditions, error continuations, setup changes or
+  // command substitutions fail closed; comments do not affect YAML execution.
+  const browserShape = browser.replaceAll('\r\n', '\n').split('\n')
+    .filter(line => line.trim() && !/^\s*#/.test(line))
+    .map(line => line.replace(/[ \t]+#.*$/, '').trimEnd()).join('\n');
+  assert.equal(browserShape, [
+    '  browser:',
+    '    name: City + mobile browser journeys',
+    '    needs: suites',
+    '    runs-on: ubuntu-latest',
+    '    timeout-minutes: 20',
+    '    steps:',
+    '      - uses: actions/checkout@v7',
+    '        with:',
+    '          fetch-depth: 0',
+    '      - uses: actions/setup-node@v7',
+    '        with:',
+    "          node-version: '22'",
+    '          cache: npm',
+    '      - run: npm ci',
+    '      - name: install chromium for the client harness',
+    '        run: npx playwright-core install --with-deps chromium',
+    '      - name: Invite gate and Crew invitation controls in the browser',
+    '        run: npm run test:invites:browser',
+    '      - name: City Mode and RPG desktop/mobile journeys',
+    '        run: npm run test:city:browser',
+    '      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)',
+    '        env:',
+    '          JWT_SECRET: ci-jwt-secret-not-a-real-one',
+    '          MOD_KEY: ci-mod-key-long-enough-to-pass-preflight',
+    '          MARKET_SEED: ciMarketSeed7Qx2mVb9PwLn4RtY6hJc',
+    "          SOCIAL_VERIFY_MODE: 'off'",
+    "          POPULATION_OFF: 'on'",
+    '        run: npm run mobile',
+  ].join('\n'), 'the `browser` job must preserve its dependency, unconditional gates, fresh setup and complete original commands/env');
   // This is deliberately the two run-scalar shapes THIS workflow uses, not a YAML/shell parser:
   // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.
   // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.
