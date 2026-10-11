@@ -627,6 +627,9 @@ try {
     // Search bounded real roster pages on the closed map first. If no page
     // intersects the camera, use actual walking to prepare the same phone tap.
     await phone.locator('[data-city-actor-close]').click(); await frames(phone);
+    // inspect(npc) can leave the roster on a later page. Search the complete
+    // bounded real roster, including the earlier pages, for the touch target.
+    while (!await phone.locator('[data-city-actors-previous]').isDisabled()) await phone.locator('[data-city-actors-previous]').click();
     for (let rosterPage = 0; rosterPage < 40; rosterPage++) {
       if (visibleMarker(await markerFrame(phone)) || await phone.locator('[data-city-actors-more]').isDisabled()) break;
       await phone.locator('[data-city-actors-more]').click();
