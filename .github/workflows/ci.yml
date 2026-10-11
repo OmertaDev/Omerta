@@ -44,7 +44,7 @@ jobs:
     # Keep the 60m hang bound for the full suite and simulations. Browser checks run in
     # their own bounded job after this one succeeds: the serial lane twice reached 60m
     # during mobile, most recently leaving only 79s for all phone sizes. No test command,
-    # assertion or production timeout changes. The separate pgcheck job stays at 20m.
+    # assertion or production timeout changes. The separate pgcheck job is bounded at 30m.
     timeout-minutes: 60
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
@@ -185,7 +185,9 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # Expanded native coverage exhausted the former 20m lane after loadtest's
+    # success report, before process exit and concurrency. Keep a 30m bound.
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
