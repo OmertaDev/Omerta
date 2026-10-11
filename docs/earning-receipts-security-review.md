@@ -80,3 +80,37 @@ hosted failure or prove its production cause. Native earnings proofs retain thei
 prior exact source scope; this integration adds no native earnings behavior.
 Clean authored-source knowledge regeneration and exact-head hosted checks remain
 required before merge or deployment.
+
+### Confirmed mobile pose setup correction
+
+After integrating the first-page roster reset from `95e7ada6` as `b66c8314`,
+one focused browser run failed the existing exact resize-pose assertion. Initial
+position `(488,264,down)` became `(488,276.67376,down)` during setup. Two bounded
+diagnostic repeats passed with zero path length and unchanged pose. The third
+diagnostic repeat failed and confirmed an active ordinary walking path: before
+resize setup `(340.832,488,left)`, path length 5; after the unchanged eight real
+frames `(328,488,left)`, path length 0. The earlier touch gesture could leave a
+real walking path finishing while the fixture measured supposedly stationary
+resize preservation. Native key/movement flags are not exposed by scene state;
+only bounded coordinates, facing and path length were captured.
+
+The fixture now lets the path finish naturally and observes zero path length
+with identical coordinates/facing on two animation frames before its initial
+pose snapshot. The wait fails after 15 seconds. It neither cancels movement nor
+injects input, relocates the player, retries an assertion or modifies runtime.
+The actual resize, player-view toggle, eight-frame wait and exact pose equality
+assertion remain intact. Temporary console diagnostics were removed.
+
+The focused corrected `node test/city-presence-browser.js` returned exit status
+0 on Node v24.19.0. Failure observations are retained in ignored
+`output/earnings-city-pose-diagnosis.txt`; raw corrected output is retained in
+`output/earnings-city-stationary-retest.log`. This is a proven fixture precondition
+correction, not a City runtime fix, new gameplay authority or financial activation.
+Exact-head hosted release checks remain required.
+
+The corrected fixture's SHA-256 is
+`DCAC881B671B6F52A3B4E58D37C4B649C3AEDA52442741EE43E16020E63779FC`.
+The corrected raw-output SHA-256 is
+`099AC63A62F7BFF5EDE23CD51C2A398147A16BB8ACAA53BAC361B1B11F565BD2`;
+the diagnosis record SHA-256 is
+`D3E2236FE4DDBEF73FCCDEC1E85C37BACD6B741621FC30AD11592ADA8AB6BA06`.

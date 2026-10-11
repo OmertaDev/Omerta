@@ -278,6 +278,22 @@ try {
     assert.fail('Actor pagination did not reach ' + id);
   };
   const assertPlayerNameEdge = async (page, actorId) => {
+    // The preceding real touch gesture may leave an ordinary walking path active.
+    // Let that path finish naturally before measuring resize-only pose preservation.
+    await page.evaluate(() => new Promise((resolve, reject) => {
+      const deadline = performance.now() + 15000;
+      let previous = null;
+      const observe = () => {
+        const current = window.__presenceHandles.at(-1).handle.getState(), pose = current.position;
+        if (current.pathLength === 0 && previous?.pathLength === 0
+            && pose.x === previous.position.x && pose.y === previous.position.y
+            && pose.facing === previous.position.facing) return resolve();
+        if (performance.now() >= deadline) return reject(new Error('Touch-gesture walking did not become stationary before the resize test.'));
+        previous = { pathLength: current.pathLength, position: { ...pose } };
+        requestAnimationFrame(observe);
+      };
+      requestAnimationFrame(observe);
+    }));
     const handles = await page.evaluate(() => window.__presenceHandles.length), initial = (await state(page)).position;
     await page.setViewportSize({ width: 1440, height: 1400 });
     await page.locator('#btn-player-view').click(); await frames(page);
