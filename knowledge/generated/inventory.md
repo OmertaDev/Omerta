@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `320a27836704`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `632650c54ec5`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 4,485 |
-| Text lines | 1,577,975 |
-| Repository bytes inventoried | 816,456,600 |
+| Text lines | 1,578,009 |
+| Repository bytes inventoried | 816,459,275 |
 | Backend/route modules | 339 |
 | HTTP route registrations / unique routes | 915 / 915 |
 | Database tables | 400 |
 | Solidity declarations | 126 |
-| Git commits | 2,715 |
+| Git commits | 2,720 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 11,158 / 45,250 |
+| Graph nodes / edges | 11,163 / 45,265 |
 
 ## Artifact kinds
 
@@ -68,7 +68,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,515 | test-suite | 2026-10-11 |
+| [test/client.js](../../test/client.js) | 9,518 | test-suite | 2026-10-11 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [schema.sql](../../schema.sql) | 7,877 | data-schema | 2026-10-11 |
