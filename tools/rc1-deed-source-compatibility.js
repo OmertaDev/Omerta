@@ -2,6 +2,26 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+export const SUPPLY_TENDER_SERVER_PIN = '0d222a2a3771758a28ac7bcda2124419cd9d9cebb6da65616120117bf34cae19';
+export const SUPPLY_TENDER_SOURCE_REVIEWED_REVISION = 'b243a283c6f55a37bada5897798bf65f9ddd5553';
+export const SUPPLY_TENDER_SERVER_BLOB = 'c102341216e7eb54b012d9dba41310116c21ec4a';
+export const SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB = '79771473a82bc7a088921dc254031b5e6a10801e';
+export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
+  "import { register as registerSupplyTenders } from './routes/supplytenders.js';\n",
+  "  registerSupplyTenders(app, { pool, auth });\n"
+]);
+// Registration transfers unchanged recovery guards, never new tender execution.
+export function assertSupplyTenderServerTransfer(text) {
+ const actualSha256 = hash(text);
+ assert.equal(actualSha256, SUPPLY_TENDER_SERVER_PIN, 'Supply tender transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const current of SUPPLY_TENDER_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(current).length, 2, 'Supply tender inverse is not exact and unique');
+  baselineText = baselineText.replace(current, '');
+ }
+ assert.equal(hash(baselineText), DECISION_CALL_SERVER_PIN, 'Server differs beyond exact supply tender registration');
+ return { actualSha256, baselineText, baselineSha256: DECISION_CALL_SERVER_PIN, sourceRevision: SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, sourceBlob: SUPPLY_TENDER_SERVER_BLOB, predecessorServerBlob: SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
 export const DECISION_CALL_SERVER_PIN = '7e599c49c28b6549182cb72f9e3ed7178b40549dea872bc7178ebb67a240ac8c';
 export const DECISION_CALL_SOURCE_REVIEWED_REVISION = 'cd048a8940fb524af1320bcb4b3cd40d8e547820';
 export const DECISION_CALL_SERVER_BLOB = '79771473a82bc7a088921dc254031b5e6a10801e';
@@ -286,6 +306,10 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
   if (hash(text) === DECISION_CALL_SERVER_PIN) {
     const transfer = assertDecisionCallServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
@@ -363,6 +387,10 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
   if (hash(text) === DECISION_CALL_SERVER_PIN) {
     const transfer = assertDecisionCallServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
@@ -461,6 +489,10 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
   if (hash(text) === DECISION_CALL_SERVER_PIN) {
     const transfer = assertDecisionCallServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
@@ -516,6 +548,10 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+    const transfer = assertSupplyTenderServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), supplyTenderSourceTransfer: transfer };
+  }
   if (hash(text) === DECISION_CALL_SERVER_PIN) {
     const transfer = assertDecisionCallServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), decisionCallSourceTransfer: transfer };
@@ -875,6 +911,10 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+ if (file === 'src/server.js' && hash(text) === SUPPLY_TENDER_SERVER_PIN) {
+  const transfer = assertSupplyTenderServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, supplyTenderSourceTransfer: transfer };
+ }
  if (file === 'src/server.js' && hash(text) === DECISION_CALL_SERVER_PIN) {
   const transfer = assertDecisionCallServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, decisionCallSourceTransfer: transfer };
