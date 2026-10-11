@@ -24,6 +24,10 @@ Authored reports record `source: "account_authored"`, a content hash, no compute
 
 The resource runner's final JSON output includes up to 1,000 sanitized `resourceObservations`: compute purchases, pending paid-work status and four-turn observational outcomes. Retain that output alongside the gameplay report when evaluating compute use. Reports never include a bearer token or raw paid-service output.
 
+## Authored delivery client
+
+Use `node tools/resource-deliver.js --base https://www.omerta.fun --job <job-id> --file <report.txt>` with the authorized bearer supplied through `OMERTA_RESOURCE_TOKEN` in the process environment. The operator chooses one existing authored job and a bounded UTF-8 text file. The client privately reads that specific job, claims it if open, then submits its text. It accepts only assigned authored work before the deadline, uses a 3,100 ms cadence, refuses redirects and stops on an ambiguous or explicitly pending mutation. An immutable matching delivered report can be reconciled on a later invocation. `confirmed` means the submitted bytes match the job record; customer acceptance and bank/wallet settlement remain separate. Output contains job state and request status, with no text, question, token or local path. The scoped job reader is available to the buyer and assigned seller, including delegated credentials, and exposes nothing to other accounts.
+
 ## Scarce compute
 
 Set explicit `RESOURCE_COMPUTE_DAILY_SLOTS` and `RESOURCE_SCARCE_PROVIDER_IDS`. Moderators create fixed-capacity commit/reveal rounds through `/v1/mod/resources/auctions`. Bids reserve their published maximum under owner authority. Reveal values remain hidden until settlement; tied bids use server-issued identities. Winning bids pay the lowest winning bid when oversubscribed, or the reserve otherwise. Losing and unrevealed bids receive all reserved funds. Credits expire after 24 hours and refund if unused. Provider cost and the winning customer's fixed slot price are recorded separately.

@@ -5,6 +5,7 @@ import { postOrder, orderCashQuote, maxListings } from './market.js';
 import { bookDepot, refundDepotOrder } from './depotbook.js';
 import { reservedQuantity } from './deliverybook.js';
 import { latestPolicy, policyLive, policyTermsMatch, policyView, requirePolicy } from './operatingpolicy.js';
+import { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';
 
 export const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });
 export const depotPilotEnabled = () => process.env.DEPOT_PILOT === 'on';
@@ -101,6 +102,7 @@ export async function restockDepot(ch, id, client, h, { automated = false, polic
   intake(); mobile(ch);
   const row = await own(ch, id, client); atDock(ch, row);
   const policy = automated ? await requirePolicy(client, row, policyId, 'restock') : null;
+  const cadence = automated ? await requireSupplyContract(client, row, policy.id) : null;
   if ((await pending(client, id)).length) throw new GameError('pending_order', 'Receive or cancel the previous procurement first.');
   const quote = procurementQuote(row, h, policy);
   if (!quote) throw new GameError('restock_budget', 'Stock is above the reorder threshold or the funded budget cannot preserve the cash reserve.');
@@ -113,7 +115,9 @@ export async function restockDepot(ch, id, client, h, { automated = false, polic
   await bookDepot(client, row, 'restock_escrow', { cash: -result.escrow, orderId: result.id, policyId: policy?.id || null });
   await bookDepot(client, row, 'restock_fee', { cash: -result.fee, expense: result.fee, orderId: result.id, policyId: policy?.id || null });
   if (policy) await client.query('UPDATE business_operating_policies SET spent=$2 WHERE id=$1', [policy.id, Number(policy.spent) + result.escrow + result.fee]);
-  return { ...result, depotId: id, treasury: Number(row.treasury) };
+  const dispatched = { ...result, depotId: id, treasury: Number(row.treasury) };
+  await recordSupplyDispatch(client, cadence, dispatched);
+  return dispatched;
 }
 
 export async function receiveDepot(ch, id, orderId, client, { automated = false, policyId = null } = {}) {
@@ -205,8 +209,10 @@ export async function depotState(client, ch, h) {
   const expenses = journal.reduce((n, entry) => n + Number(entry.expense), 0);
   const slots = Number((await client.query("SELECT COUNT(*) n FROM market_listings WHERE seller_character=$1 AND (status='live' OR (kind='order' AND filled_qty>0))", [ch.id])).rows[0].n);
   const policy = await latestPolicy(client, row.id);
+  const cadence = await latestSupplyContract(client, row.id);
   const quote = orders.length || slots >= maxListings(h) ? null : procurementQuote(row, h);
   const autoQuote = policyLive(policy) && policy.allow_restock && policyTermsMatch(policy, row)
+    && (!cadence?.enabled || (cadence.policy_id === policy.id && supplyDue(cadence)))
     && !orders.length && slots < maxListings(h) ? procurementQuote(row, h, policy) : null;
   const customers = (await client.query("SELECT customer_character,COUNT(*) purchases FROM business_depot_journal WHERE depot_id=$1 AND reason='sale' AND customer_character IS NOT NULL GROUP BY customer_character", [row.id])).rows;
   const external = (await client.query('SELECT category,SUM(usd_micros) usd_micros FROM business_external_costs WHERE depot_id=$1 GROUP BY category', [row.id])).rows;
@@ -217,7 +223,7 @@ export async function depotState(client, ch, h) {
     capacity: DEPOT.capacity, cashReserve: DEPOT.cashReserve,
     customerRevenue: revenue, costOfGoodsSold: cogs, operatingExpenses: expenses, operatingProfit: revenue - cogs - expenses,
     unitsSold: -sales.reduce((n, entry) => n + Number(entry.stock_delta), 0),
-    operatingPolicy: policyView(policy), automatedRestockQuote: autoQuote,
+    operatingPolicy: policyView(policy), supplyContract: supplyContractView(cadence), automatedRestockQuote: autoQuote,
     customerMetrics: { customerCharacters: customers.length, repeatCustomers: customers.filter((c) => Number(c.purchases) > 1).length,
       measuredPurchases: customers.reduce((n, c) => n + Number(c.purchases), 0), independentCustomersVerified: false },
     stockoutEvents: stockouts, externalCostsUsdMicros: external.reduce((n, e) => n + Number(e.usd_micros), 0),

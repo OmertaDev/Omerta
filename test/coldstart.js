@@ -22,12 +22,13 @@ process.env.WORLD_GRAPH_KERNEL = 'off';
 process.env.COORDINATION_OPERATIONS = 'off';
 process.env.CHAIN_RPC_URL = ''; // this fixture deliberately has no funded-chain configuration
 import assert from 'node:assert';
+import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
 
 const app = await buildServer();
 
-const j = async (method, url, token, payload) => {
-  const headers = { 'content-type': 'application/json' };
+const j = async (method, url, token, payload, extraHeaders = {}) => {
+  const headers = { 'content-type': 'application/json', ...extraHeaders };
   if (token) headers.authorization = `Bearer ${token}`;
   const res = await app.inject({ method, url, headers, payload });
   let body = null;
@@ -53,6 +54,7 @@ const DECLARED = {
   '/v1/coordination/operations': 'Family operation coordination is explicitly disabled by default; its authenticated catalog refuses with coordination_operation_unavailable',
   '/v1/projections/world': 'World projections reuse the explicitly disabled kernel rollout and refuse with projection_unavailable',
   '/v1/commands': 'the command pilot reuses the explicitly disabled kernel rollout; its opaque command_unavailable refusal intentionally does not distinguish disabled rollout, excluded cohort or unavailable current state',
+  '/v1/city/nearby-chat': 'nearby chat requires explicit consent; a first player who has not joined must receive city_chat_opt_in_required, even when the district has no messages',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -65,6 +67,27 @@ assert(token, 'and gets a token');
 
 const made = await j('POST', '/v1/character', token, { name: 'Cold Start' });
 assert(made.code < 400, `the first character can be created (got ${made.code} ${JSON.stringify(made.body)})`);
+
+// Nearby reads require the current viewer tuple issued by the private social board.
+const social = await j('GET', '/v1/city/social', token);
+assert.equal(social.code, 200, 'the first player can read their social preferences');
+assert.equal(social.body?.preferences?.chatEnabled, false, 'nearby consent begins off');
+assert.equal(social.body?.chat?.available, false);
+const nearbyReadPath = social.body?.chat?.readPath;
+const nearbyUrl = new URL(nearbyReadPath, 'http://cold-start.invalid');
+assert.equal(nearbyUrl.pathname, '/v1/city/nearby-chat');
+assert.deepEqual([...nearbyUrl.searchParams].sort(),
+  Object.entries(social.body.viewer).map(([key, value]) => [key, String(value)]).sort(),
+  'the issued nearby read is bound to the current character, generation and district');
+const assertNearbyRefusal = response => {
+  assert.equal(response.code, 403, 'an issued nearby read must refuse only because consent is off');
+  assert.equal(response.body?.error, 'city_chat_opt_in_required', 'nearby must report its exact consent gate');
+};
+const missingViewer = await j('GET', '/v1/city/nearby-chat', token);
+assert.equal(missingViewer.code, 400, 'omitting mandatory viewer query is malformed, not a declared opt-out');
+assert.throws(() => assertNearbyRefusal(missingViewer), { name: 'AssertionError' }, 'the same declaration oracle rejects the actual malformed request');
+assert.throws(() => assertNearbyRefusal({ code: 403, body: { error: 'unrelated_refusal' } }),
+  { name: 'AssertionError' }, 'a different refusal can never inherit the consent declaration');
 
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
@@ -88,6 +111,7 @@ const defaultOff = new Map([
   ['/v1/commands', 'command_unavailable'],
 ]);
 for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
+assert(paths.includes('/v1/city/nearby-chat'), 'the nearby route remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -97,7 +121,7 @@ assert(paths.length >= 120,
 const broke = [];
 const declaredHit = new Set();
 for (const p of paths) {
-  const r = await j('GET', p, token);
+  const r = await j('GET', p === '/v1/city/nearby-chat' ? nearbyReadPath : p, token);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (p === '/v1/genesis-auction') {
@@ -112,6 +136,7 @@ for (const p of paths) {
       assert.equal(r.code, p === '/v1/commands' ? 409 : 404, `${p} must fail closed for its disabled rollout`);
       assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);
     }
+    if (p === '/v1/city/nearby-chat') assertNearbyRefusal(r);
     declaredHit.add(p); continue;
   }
   broke.push(`${p} → ${r.code} ${JSON.stringify(r.body).slice(0, 120)}`);
@@ -127,6 +152,22 @@ assert.equal(broke.length, 0,
 const stale = Object.keys(DECLARED).filter((p) => paths.includes(p) && !declaredHit.has(p));
 assert.equal(stale.length, 0,
   `DECLARED lists route(s) that no longer refuse — remove them, or the waiver hides the next regression:\n   - ${stale.join('\n   - ')}`);
+
+// After the default-off enumeration, the actual issued Join action opens an empty district feed.
+const join = social.body.actions.find(action => action.id === 'chat:enable');
+assert(join, 'the first player is issued an explicit Join action');
+assert.equal(join.method, 'POST'); assert.equal(join.path, '/v1/city/social/preferences');
+assert.equal(join.available, true);
+assert.deepEqual(join.body, { ...social.body.viewer, chatEnabled: true });
+const joined = await j(join.method, join.path, token, join.body, { 'idempotency-key': crypto.randomUUID() });
+assert.equal(joined.code, 200, `issued Join succeeds with its own request key: ${JSON.stringify(joined.body)}`);
+const joinedSocial = await j('GET', '/v1/city/social', token);
+assert.equal(joinedSocial.code, 200); assert.equal(joinedSocial.body?.preferences?.chatEnabled, true);
+assert.equal(joinedSocial.body?.chat?.available, true);
+assert.deepEqual(joinedSocial.body.viewer, social.body.viewer);
+const emptyNearby = await j('GET', joinedSocial.body.chat.readPath, token);
+assert.equal(emptyNearby.code, 200, 'joining explicitly makes a valid empty-world nearby read succeed');
+assert.deepEqual(emptyNearby.body?.messages, [], 'the first joined player sees an actual empty feed');
 
 await app.close();
 console.log(`✅ cold start passed — all ${paths.length - declaredHit.size} parameterless authed GET routes answer for `
