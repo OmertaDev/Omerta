@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "df21c4695264be38f95db4b54de68a351fb55d9d",
+  "sourceRevision": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11104,
-    "edges": 45029,
+    "nodes": 11107,
+    "edges": 45041,
     "byNodeType": {
       "Artifact": 4475,
       "Command": 227,
-      "Commit": 2689,
+      "Commit": 2692,
       "Contract": 126,
       "Document": 719,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3624,
-      "CHANGED": 17858,
+      "CHANGED": 17865,
       "CONTAINS": 4496,
       "DECLARES": 227,
       "DEFINED_IN": 1435,
       "DEPENDS_ON": 67,
       "EXECUTES": 777,
       "HANDLED_BY": 803,
-      "HAS_COMMIT": 2689,
+      "HAS_COMMIT": 2692,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4383,
+      "IMPORTS": 4385,
       "INHERITS": 42,
       "REFERENCES": 3167,
       "REPRESENTS": 1676,
@@ -78541,18 +78541,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "a8abdac313001b87",
+      "version": "e66bcabb509dd08c",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a8abdac313001b87"
+          "version": "e66bcabb509dd08c"
         }
       ],
-      "lastChangedAt": "2026-10-11T21:29:31.000Z",
+      "lastChangedAt": "2026-10-11T22:50:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "df21c4695264be38f95db4b54de68a351fb55d9d"
+      "lastChangedCommit": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab"
     },
     {
       "key": "Artifact:src/access.js",
@@ -95464,20 +95464,20 @@
       "path": "test/rc1-world-duration-evidence.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4505,
-      "lines": 65,
-      "version": "de52dd3d59d390db",
+      "bytes": 6573,
+      "lines": 91,
+      "version": "8d163a80b32b565a",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-duration-evidence.js",
           "line": 1,
-          "version": "de52dd3d59d390db"
+          "version": "8d163a80b32b565a"
         }
       ],
-      "lastChangedAt": "2026-10-09T03:43:06.000Z",
+      "lastChangedAt": "2026-10-11T22:48:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "df0ee2bf53bfa214a7da63a08a18028a9fdc407a"
+      "lastChangedCommit": "0fadb5012f9fe1f55f124719315a025f536276a0"
     },
     {
       "key": "Artifact:test/rc1-world-economy-metrics.js",
@@ -102203,20 +102203,20 @@
       "path": "tools/rc1-world-duration-evidence.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 6086,
-      "lines": 89,
-      "version": "5583297d4c6a4c2a",
+      "bytes": 6454,
+      "lines": 94,
+      "version": "f0fa2fb24fa0f43b",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-duration-evidence.js",
           "line": 1,
-          "version": "5583297d4c6a4c2a"
+          "version": "f0fa2fb24fa0f43b"
         }
       ],
-      "lastChangedAt": "2026-09-24T16:11:52.000Z",
+      "lastChangedAt": "2026-10-11T22:48:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "03aa5199b7c9783b1be0883647fb6caf17979000"
+      "lastChangedCommit": "0fadb5012f9fe1f55f124719315a025f536276a0"
     },
     {
       "key": "Artifact:tools/rc1-world-economy-metrics.js",
@@ -108316,6 +108316,22 @@
         {
           "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e",
           "url": "https://github.com/OmertaDev/Omerta/commit/0f643f3fdccffbdacdd31dc603e2093bf618b25e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0fadb5012f9fe1f55f124719315a025f536276a0",
+      "type": "Commit",
+      "id": "0fadb5012f9fe1f55f124719315a025f536276a0",
+      "label": "fix: compose exact Intel worker source in duration evidence",
+      "title": "fix: compose exact Intel worker source in duration evidence",
+      "date": "2026-10-11T22:48:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0fadb5012f9fe1f55f124719315a025f536276a0",
+      "provenance": [
+        {
+          "commit": "0fadb5012f9fe1f55f124719315a025f536276a0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0fadb5012f9fe1f55f124719315a025f536276a0"
         }
       ]
     },
@@ -121868,6 +121884,22 @@
         {
           "commit": "5f8307651eb2636f702367e53a35c24c6a88d681",
           "url": "https://github.com/OmertaDev/Omerta/commit/5f8307651eb2636f702367e53a35c24c6a88d681"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+      "type": "Commit",
+      "id": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+      "label": "Measure Intel release repair census",
+      "title": "Measure Intel release repair census",
+      "date": "2026-10-11T22:50:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+      "provenance": [
+        {
+          "commit": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab"
         }
       ]
     },
@@ -139948,6 +139980,22 @@
         {
           "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47",
           "url": "https://github.com/OmertaDev/Omerta/commit/c6d17f1ca822689948bd55fe19167eb469be1d47"
+        }
+      ]
+    },
+    {
+      "key": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "type": "Commit",
+      "id": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "label": "Regenerate intelligence knowledge for current main",
+      "title": "Regenerate intelligence knowledge for current main",
+      "date": "2026-10-11T21:31:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "provenance": [
+        {
+          "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
         }
       ]
     },
@@ -162526,12 +162574,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "a8abdac313001b87",
+      "version": "e66bcabb509dd08c",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a8abdac313001b87"
+          "version": "e66bcabb509dd08c"
         }
       ]
     },
@@ -171181,6 +171229,9 @@
           "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
         },
         {
+          "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
+        },
+        {
           "commit": "c73c514dc4a113801fe1b45c99b680e897cdaa9f"
         },
         {
@@ -172657,6 +172708,9 @@
           "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
         },
         {
+          "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
+        },
+        {
           "commit": "c73c514dc4a113801fe1b45c99b680e897cdaa9f"
         },
         {
@@ -174131,6 +174185,9 @@
         },
         {
           "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
+        },
+        {
+          "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
         },
         {
           "commit": "c73c514dc4a113801fe1b45c99b680e897cdaa9f"
@@ -176015,6 +176072,9 @@
         },
         {
           "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
+        },
+        {
+          "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
         },
         {
           "commit": "c73c514dc4a113801fe1b45c99b680e897cdaa9f"
@@ -186262,7 +186322,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "df21c4695264be38f95db4b54de68a351fb55d9d",
+      "revision": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
       "currentBranch": "codex/intel-forecast-integration",
       "defaultBranch": "main",
       "visibility": "public",
@@ -222876,13 +222936,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-duration-evidence.js",
       "label": "test/rc1-world-duration-evidence.js",
-      "lines": 65,
-      "version": "de52dd3d59d390db",
+      "lines": 91,
+      "version": "8d163a80b32b565a",
       "provenance": [
         {
           "file": "test/rc1-world-duration-evidence.js",
           "line": 1,
-          "version": "de52dd3d59d390db"
+          "version": "8d163a80b32b565a"
         }
       ]
     },
@@ -263356,6 +263416,22 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "0f643f3fdccffbdacdd31dc603e2093bf618b25e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0fadb5012f9fe1f55f124719315a025f536276a0",
+      "to": "Artifact:test/rc1-world-duration-evidence.js",
+      "provenance": {
+        "commit": "0fadb5012f9fe1f55f124719315a025f536276a0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0fadb5012f9fe1f55f124719315a025f536276a0",
+      "to": "Artifact:tools/rc1-world-duration-evidence.js",
+      "provenance": {
+        "commit": "0fadb5012f9fe1f55f124719315a025f536276a0"
       }
     },
     {
@@ -307956,6 +308032,14 @@
       "to": "Artifact:CLAUDE.md",
       "provenance": {
         "commit": "5f7fb279d4a8dbbf67a39b12e2f9098526312ac5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab"
       }
     },
     {
@@ -366020,6 +366104,38 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
       }
     },
     {
@@ -472148,6 +472264,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0fadb5012f9fe1f55f124719315a025f536276a0",
+      "provenance": {
+        "commit": "0fadb5012f9fe1f55f124719315a025f536276a0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0fbde77281311dc2d3f5a26635f19c308c2d4f16",
       "provenance": {
         "commit": "0fbde77281311dc2d3f5a26635f19c308c2d4f16"
@@ -478919,6 +479043,14 @@
       "to": "Commit:5f8307651eb2636f702367e53a35c24c6a88d681",
       "provenance": {
         "commit": "5f8307651eb2636f702367e53a35c24c6a88d681"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab",
+      "provenance": {
+        "commit": "5f8ebd9dd066e6f71c5fdb96fb07a9af8ac49aab"
       }
     },
     {
@@ -487959,6 +488091,14 @@
       "to": "Commit:c6d17f1ca822689948bd55fe19167eb469be1d47",
       "provenance": {
         "commit": "c6d17f1ca822689948bd55fe19167eb469be1d47"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c6d7666309ea3de7a75b7803d0c3eb23856b55ae",
+      "provenance": {
+        "commit": "c6d7666309ea3de7a75b7803d0c3eb23856b55ae"
       }
     },
     {
@@ -522763,10 +522903,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-world-duration-evidence.js",
+      "to": "Artifact:tools/rc1-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-world-duration-evidence.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-duration-evidence.js",
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-world-duration-evidence.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -522775,7 +522924,7 @@
       "to": "Artifact:tools/rc1-native-worker.js",
       "provenance": {
         "file": "test/rc1-world-duration-evidence.js",
-        "line": 3
+        "line": 4
       }
     },
     {
@@ -522784,7 +522933,7 @@
       "to": "Artifact:tools/rc1-world-duration-evidence.js",
       "provenance": {
         "file": "test/rc1-world-duration-evidence.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -531767,6 +531916,15 @@
       "provenance": {
         "file": "tools/rc1-world-diagnostics.js",
         "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-duration-evidence.js",
+      "to": "Artifact:tools/rc1-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-duration-evidence.js",
+        "line": 5
       }
     },
     {
