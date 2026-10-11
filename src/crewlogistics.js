@@ -17,9 +17,9 @@ export function validateCrewLogisticsTarget(body) {
 // Whitelist projections intentionally omit prices, spending caps and warehouse holdings.
 export function crewLogisticsSourceView(kind, row, characterId, now = new Date()) {
   const clock = millis(now);
-  if (!row || !key(row.id) || typeof row.district !== 'string' || !row.district || row.district.length > 128) fail();
+  if (!key(characterId) || !row || !key(row.id) || typeof row.district !== 'string' || !row.district || row.district.length > 128) fail();
   if (kind === 'tender') {
-    if (row.buyer_character !== characterId || !['open', 'awarded', 'cancelled'].includes(row.status)
+    if (row.buyer_character !== characterId || row.order_good !== 'gin' || !['open', 'awarded', 'cancelled'].includes(row.status)
         || !integer(row.qty, 1, 40)) fail();
     return { kind, targetId: row.id, good: 'gin', district: row.district, status: row.status === 'open' && millis(row.offers_close_at) <= clock ? 'expired' : row.status,
       deadline: iso(row.offers_close_at) };
@@ -49,6 +49,7 @@ async function membership(client, ch) {
   return row;
 }
 async function source(client, kind, targetId, actorId, now) {
+  if (!kinds.includes(kind) || !key(targetId) || !key(actorId)) fail();
   let row;
   if (kind === 'tender') {
     row = (await client.query(`SELECT t.*,d.district,d.owner_character,d.status depot_status,m.seller_character,m.depot_id order_depot_id,m.kind order_kind,m.good_id order_good
@@ -62,6 +63,7 @@ async function source(client, kind, targetId, actorId, now) {
     row = (await client.query(`SELECT l.*,d.district FROM business_warehouse_leases l JOIN business_depots d ON d.id=l.depot_id
       WHERE l.id=$1 AND l.tenant_character=$2`, [targetId, actorId])).rows[0];
   }
+  if (row?.id !== targetId) fail();
   return { row, view: crewLogisticsSourceView(kind, row, actorId, now) };
 }
 function linkView(link, view, publisherName) {

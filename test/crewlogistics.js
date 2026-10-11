@@ -15,12 +15,16 @@ assert.equal(crewLogisticsSourceView('warehouse_claim', { ...warehouse, status: 
 const delivery = { id: 'delivery', district: 'Docks', supplier_character: actor.id, good_id: 'gin', status: 'accepted', quantity: 10, remaining: 3, deadline: future, spent: 70000, spend_limit: 100000 };
 assert.equal(crewLogisticsSourceView('delivery_commitment', delivery, actor.id, now).quantityDelivered, 7);
 assert.equal(crewLogisticsSourceView('delivery_commitment', { ...delivery, deadline: now }, actor.id, now).status, 'expired');
-const tender = { id: 'tender', buyer_character: actor.id, district: 'Docks', status: 'open', qty: 4, offers_close_at: future, unit_price: 100000 };
+const tender = { id: 'tender', order_good: 'gin', buyer_character: actor.id, district: 'Docks', status: 'open', qty: 4, offers_close_at: future, unit_price: 100000 };
 assert.equal(crewLogisticsSourceView('tender', tender, actor.id, now).status, 'open');
 assert.equal(crewLogisticsSourceView('tender', { ...tender, offers_close_at: now }, actor.id, now).status, 'expired');
 for (const [kind, row] of [['tender', tender], ['delivery_commitment', delivery], ['warehouse_claim', warehouse]]) {
   assert.throws(() => crewLogisticsSourceView(kind, row, 'foreign', now));
   assert.throws(() => crewLogisticsSourceView(kind, { ...row, status: 'invented' }, actor.id, now));
+  assert.throws(() => crewLogisticsSourceView(kind, { ...row, id: 'x'.repeat(129) }, actor.id, now));
+  assert.throws(() => crewLogisticsSourceView(kind, { ...row, id: '../target' }, actor.id, now));
+  assert.throws(() => crewLogisticsSourceView(kind, { ...row, good_id: 'unexpected', order_good: 'unexpected' }, actor.id, now));
+  assert.throws(() => crewLogisticsSourceView(kind, row, 'x'.repeat(129), now));
 }
 assert.throws(() => crewLogisticsSourceView('delivery_commitment', { ...delivery, remaining: 11 }, actor.id, now));
 assert.throws(() => crewLogisticsSourceView('warehouse_claim', { ...warehouse, held_qty: 11 }, actor.id, now));
