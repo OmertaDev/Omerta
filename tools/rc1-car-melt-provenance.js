@@ -15,6 +15,11 @@ const canonical = value => Array.isArray(value) ? '[' + value.map(canonical).joi
 import { assertCarMeltRulesCompatibility, assertEconomySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION } from './rc1-deed-source-compatibility.js';
 export { assertCarMeltRulesCompatibility, CAR_MELT_BASELINE_RULES_PIN } from './rc1-deed-source-compatibility.js';
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+export const CAR_MELT_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/game.js',
+  actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], inverseChunks: 2,
+  evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
+  scope: 'Exact full game inverse preserves unchanged car acquisition, custody and melt authority; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 export const CAR_MELT_SOURCE_PINS = Object.freeze({
   'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
   'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
@@ -33,6 +38,8 @@ export function assertCarMeltSources() {
   const sources = {};
   for (const [file, pin] of Object.entries(CAR_MELT_SOURCE_PINS)) {
     sources[file] = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    if (file === 'src/game.js' && hash(sources[file]) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file])
+      sources[file] = assertCrewLogisticsSourceTransfer(file, sources[file]).baselineText;
     assert.equal(hash(sources[file]), pin, 'Car melt provenance source changed: ' + file);
     if (file === 'src/economy.js') assertEconomySourceTransfer(file, sources[file]);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(sources[file]);

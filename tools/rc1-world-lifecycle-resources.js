@@ -147,6 +147,11 @@ export function reconcileLifecycleCash(before, after, { identity = null, receipt
   return result;
 }
 
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+export const MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/game.js',
+  actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], inverseChunks: 2,
+  evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
+  scope: 'Exact full game inverse preserves unchanged expiry accounting provenance; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 export const MARKET_EXPIRY_SOURCE_PINS = Object.freeze({
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
   'src/market.js': '1d7196656c0ee326ccd9761e4c8f57fc3f484a3cf55ca5907b4692e9639e23f2',
@@ -170,8 +175,12 @@ function companionQueries(before, after, identity, evidence) {
     assert(!(state.tables.market_listings || []).some(row => row.depot_id), 'Depot custody is outside this expiry resource scope');
   }
   if (!expirySourceChecked) {
-    for (const [file, expected] of Object.entries(MARKET_EXPIRY_SOURCE_PINS))
-      assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Expiry source changed: ' + file);
+    for (const [file, expected] of Object.entries(MARKET_EXPIRY_SOURCE_PINS)) {
+      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      const baseline = file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
+        ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
+      assert.equal(sha256(baseline), expected, 'Expiry source changed: ' + file);
+    }
     expirySourceChecked = true;
   }
   assert.equal(identity.kind, 'resource-quiescent-aggregate'); assert.equal(identity.outcome, 'QUIESCENT_AGGREGATE');

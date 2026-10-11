@@ -333,6 +333,15 @@ const OPERATION_CONTRACTS = {
       required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
   },
   'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
+  'GET /v1/crew/logistics': { operationId: 'getPrivateCrewLogistics' },
+  'POST /v1/crew/logistics-links': {
+    operationId: 'shareOwnCrewLogisticsReference', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['kind', 'targetId'], properties: {
+        kind: { type: 'string', enum: ['tender', 'delivery_commitment', 'warehouse_claim'] },
+        targetId: { type: 'string', minLength: 1, maxLength: 128 },
+      } },
+  },
+  'POST /v1/crew/logistics-links/:id/revoke': { operationId: 'revokeCrewLogisticsReference' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',

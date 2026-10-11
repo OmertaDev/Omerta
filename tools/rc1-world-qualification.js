@@ -10,6 +10,7 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS,
   GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB,
@@ -25,14 +26,14 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
-  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
+  'src/game.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'],
   'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
   'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  'src/server.js': WAREHOUSE_SERVER_PIN,
+  'src/server.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js'],
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -42,7 +43,13 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 15, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 16, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  crewLogisticsSourceReviewTransfer: { sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, predecessorRevision: CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION,
+    currentPins: CREW_LOGISTICS_SOURCE_CURRENT_PINS, predecessorPins: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS,
+    currentBlobs: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, predecessorBlobs: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS,
+    inverseChunks: { 'src/server.js': 2, 'src/game.js': 2, 'src/crew.js': 2 },
+    evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility; financial activation disabled',
+    scope: 'Exact route registration, serialized private read wrapper, read-only SQL lock guard and leave/kick consent revocation changes reconstruct complete warehouse predecessor sources. Only unchanged historical guards transfer. New Crew membership consent, private projections, death/character replacement visibility, revocation and locking require separate current-source native proofs; no historical runtime, native, deployment, onchain or financial qualification is inherited. No estate qualification is added.' },
   warehouseSourceReviewTransfer: { sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_SERVER_BLOB, predecessorServerBlob: WAREHOUSE_SERVER_PREDECESSOR_BLOB,
     actualServerSha256: WAREHOUSE_SERVER_PIN, predecessorServerSha256: SUPPLY_TENDER_SERVER_PIN, inverseChunks: 2,
     evidence: 'docs/warehouse-leases-security-review.md', phase: 'source compatibility; financial activation disabled',
@@ -137,6 +144,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   for (const [file, expected] of Object.entries(sourceFiles)) {
     const text = String(await readFile(file)).replace(/\r\n/g, '\n');
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
+    if (file === 'src/game.js') assertCrewLogisticsSourceTransfer(file, text);
     if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
     if (file === 'src/server.js') assertDeedServerCompatibility(text);

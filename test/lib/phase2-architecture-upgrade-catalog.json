@@ -1,6 +1,14 @@
 {
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_check", "definition": "CHECK (expires_at > created_at)" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_crew_id_fkey", "definition": "FOREIGN KEY (crew_id) REFERENCES crews(id) ON DELETE CASCADE" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_generation_check", "definition": "CHECK (generation > 0)" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_kind_check", "definition": "CHECK (kind = ANY (ARRAY['tender'::text, 'delivery_commitment'::text, 'warehouse_claim'::text]))" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_pkey", "definition": "PRIMARY KEY (id)" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_publisher_account_id_fkey", "definition": "FOREIGN KEY (publisher_account_id) REFERENCES accounts(id)" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_publisher_character_id_fkey", "definition": "FOREIGN KEY (publisher_character_id) REFERENCES characters(id)" },
+    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_target_id_check", "definition": "CHECK (char_length(target_id) >= 1 AND char_length(target_id) <= 128)" },
     {
       "table_name": "city_intel_progress",
       "name": "city_intel_progress_character_id_fkey",
@@ -1595,6 +1603,7 @@
     }
   ],
   "notNullColumns": {
+    "crew_logistics_links": ["created_at", "crew_id", "expires_at", "generation", "id", "kind", "publisher_account_id", "publisher_character_id", "target_id"],
     "city_social_preferences": [
       "character_id",
       "chat_enabled",

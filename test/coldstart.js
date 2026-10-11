@@ -55,6 +55,7 @@ const DECLARED = {
   '/v1/projections/world': 'World projections reuse the explicitly disabled kernel rollout and refuse with projection_unavailable',
   '/v1/commands': 'the command pilot reuses the explicitly disabled kernel rollout; its opaque command_unavailable refusal intentionally does not distinguish disabled rollout, excluded cohort or unavailable current state',
   '/v1/city/nearby-chat': 'nearby chat requires explicit consent; a first player who has not joined must receive city_chat_opt_in_required, even when the district has no messages',
+  '/v1/crew/logistics': 'private Crew logistics requires current membership; the first unaffiliated player must receive no_crew rather than a fabricated or foreign Crew view',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
 };
@@ -137,6 +138,10 @@ for (const p of paths) {
       assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);
     }
     if (p === '/v1/city/nearby-chat') assertNearbyRefusal(r);
+    if (p === '/v1/crew/logistics') {
+      assert.equal(r.code, 400, 'private logistics requires actual Crew membership');
+      assert.equal(r.body?.error, 'no_crew', 'logistics must report its exact membership prerequisite');
+    }
     declaredHit.add(p); continue;
   }
   broke.push(`${p} → ${r.code} ${JSON.stringify(r.body).slice(0, 120)}`);
