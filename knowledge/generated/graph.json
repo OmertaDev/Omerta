@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1e47d9e8241900319dfebf15330a825d092b4787",
+  "sourceRevision": "bca55150399cdb44065393f2c1c1899a5e96a26e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 10729,
-    "edges": 43743,
+    "nodes": 10735,
+    "edges": 43758,
     "byNodeType": {
-      "Artifact": 4435,
+      "Artifact": 4436,
       "Command": 216,
-      "Commit": 2433,
+      "Commit": 2437,
       "Contract": 126,
-      "Document": 711,
+      "Document": 712,
       "Domain": 13,
       "ExternalDependency": 30,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3568,
-      "CHANGED": 17282,
-      "CONTAINS": 4456,
+      "CHANGED": 17290,
+      "CONTAINS": 4457,
       "DECLARES": 216,
       "DEFINED_IN": 1405,
       "DEPENDS_ON": 67,
       "EXECUTES": 738,
       "HANDLED_BY": 779,
-      "HAS_COMMIT": 2433,
+      "HAS_COMMIT": 2437,
       "IMPLEMENTS": 124,
       "IMPORTS": 4259,
       "INHERITS": 42,
-      "REFERENCES": 3163,
-      "REPRESENTS": 1638,
+      "REFERENCES": 3164,
+      "REPRESENTS": 1639,
       "TESTS": 1471,
       "TRACKS": 126,
       "USES_TABLE": 1976
@@ -24302,6 +24302,29 @@
       "lastChangedAt": "2026-10-10T19:13:55.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "82d78fefa32d1ef548cd2e4f3d58bc42fe3a4dae"
+    },
+    {
+      "key": "Artifact:docs/city-successor-fixture-review.md",
+      "type": "Artifact",
+      "id": "docs/city-successor-fixture-review.md",
+      "label": "city-successor-fixture-review.md",
+      "path": "docs/city-successor-fixture-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 3353,
+      "lines": 63,
+      "version": "c8cacaae0d6e6f41",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/city-successor-fixture-review.md",
+          "line": 1,
+          "version": "c8cacaae0d6e6f41"
+        }
+      ],
+      "lastChangedAt": "2026-10-11T10:53:31.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "bca55150399cdb44065393f2c1c1899a5e96a26e"
     },
     {
       "key": "Artifact:docs/compute-value-experiments.md",
@@ -78357,18 +78380,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "6ab3615c6a7d9629",
+      "version": "31732b94cac51f98",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6ab3615c6a7d9629"
+          "version": "31732b94cac51f98"
         }
       ],
-      "lastChangedAt": "2026-10-11T09:43:02.000Z",
+      "lastChangedAt": "2026-10-11T10:53:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1e47d9e8241900319dfebf15330a825d092b4787"
+      "lastChangedCommit": "bca55150399cdb44065393f2c1c1899a5e96a26e"
     },
     {
       "key": "Artifact:src/access.js",
@@ -86586,20 +86609,20 @@
       "path": "test/city-world-host-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 69891,
-      "lines": 790,
-      "version": "c58f0c7190418e0b",
+      "bytes": 70162,
+      "lines": 794,
+      "version": "13bd6a920bbcc727",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "c58f0c7190418e0b"
+          "version": "13bd6a920bbcc727"
         }
       ],
-      "lastChangedAt": "2026-10-11T02:44:11.000Z",
+      "lastChangedAt": "2026-10-11T10:48:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "66268c30133b897646a1900c609efe3c934d47f6"
+      "lastChangedCommit": "1ee6b2397dd94edb68e59747e9db00bdec70e29d"
     },
     {
       "key": "Artifact:test/city-world-ui-browser.js",
@@ -109385,6 +109408,22 @@
       ]
     },
     {
+      "key": "Commit:1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+      "type": "Commit",
+      "id": "1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+      "label": "Observe successor social reads before replacing City actor",
+      "title": "Observe successor social reads before replacing City actor",
+      "date": "2026-10-11T10:48:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+      "provenance": [
+        {
+          "commit": "1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1ee6b2397dd94edb68e59747e9db00bdec70e29d"
+        }
+      ]
+    },
+    {
       "key": "Commit:1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7",
       "type": "Commit",
       "id": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7",
@@ -113653,6 +113692,22 @@
         {
           "commit": "39c3b145ff6aac88f619c6b57f48d335be524e0e",
           "url": "https://github.com/OmertaDev/Omerta/commit/39c3b145ff6aac88f619c6b57f48d335be524e0e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:39c930cbd4bd8448a1294a19e4684d156917db76",
+      "type": "Commit",
+      "id": "39c930cbd4bd8448a1294a19e4684d156917db76",
+      "label": "Integrate reviewed supplier continuity before City fixture repair",
+      "title": "Integrate reviewed supplier continuity before City fixture repair",
+      "date": "2026-10-11T10:51:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/39c930cbd4bd8448a1294a19e4684d156917db76",
+      "provenance": [
+        {
+          "commit": "39c930cbd4bd8448a1294a19e4684d156917db76",
+          "url": "https://github.com/OmertaDev/Omerta/commit/39c930cbd4bd8448a1294a19e4684d156917db76"
         }
       ]
     },
@@ -129881,6 +129936,22 @@
       ]
     },
     {
+      "key": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "type": "Commit",
+      "id": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "label": "Generate reviewed supplier continuity knowledge",
+      "title": "Generate reviewed supplier continuity knowledge",
+      "date": "2026-10-11T09:44:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "provenance": [
+        {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+        }
+      ]
+    },
+    {
       "key": "Commit:a10dc441a7e79bb01cdd818e43b5fad6a6fa6a1a",
       "type": "Commit",
       "id": "a10dc441a7e79bb01cdd818e43b5fad6a6fa6a1a",
@@ -134261,6 +134332,22 @@
         {
           "commit": "bca01026b642a2632cc9476e8a664287eac281ea",
           "url": "https://github.com/OmertaDev/Omerta/commit/bca01026b642a2632cc9476e8a664287eac281ea"
+        }
+      ]
+    },
+    {
+      "key": "Commit:bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "type": "Commit",
+      "id": "bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "label": "Record source-pinned City successor fixture review",
+      "title": "Record source-pinned City successor fixture review",
+      "date": "2026-10-11T10:53:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "provenance": [
+        {
+          "commit": "bca55150399cdb44065393f2c1c1899a5e96a26e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/bca55150399cdb44065393f2c1c1899a5e96a26e"
         }
       ]
     },
@@ -151569,6 +151656,22 @@
       ]
     },
     {
+      "key": "Document:docs/city-successor-fixture-review.md",
+      "type": "Document",
+      "id": "docs/city-successor-fixture-review.md",
+      "label": "docs/city-successor-fixture-review.md",
+      "documentType": "documentation",
+      "lines": 63,
+      "version": "c8cacaae0d6e6f41",
+      "provenance": [
+        {
+          "file": "docs/city-successor-fixture-review.md",
+          "line": 1,
+          "version": "c8cacaae0d6e6f41"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/compute-value-experiments.md",
       "type": "Document",
       "id": "docs/compute-value-experiments.md",
@@ -157239,12 +157342,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "6ab3615c6a7d9629",
+      "version": "31732b94cac51f98",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6ab3615c6a7d9629"
+          "version": "31732b94cac51f98"
         }
       ]
     },
@@ -164388,6 +164491,9 @@
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+        },
+        {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
@@ -165460,6 +165566,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
@@ -166755,6 +166864,9 @@
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
         },
         {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+        },
+        {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
         },
         {
@@ -168046,6 +168158,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
@@ -169717,6 +169832,9 @@
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
+        },
+        {
+          "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
         },
         {
           "commit": "a18c63cc0c1eb15c7a89df99d7a1428616eb3b58"
@@ -179856,12 +179974,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1e47d9e8241900319dfebf15330a825d092b4787",
-      "currentBranch": "codex/supplier-continuity",
+      "revision": "bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "currentBranch": "codex/city-successor-read-repair",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4435,
+      "currentArtifactCount": 4436,
       "provenance": [
         {
           "file": "README.md",
@@ -210491,13 +210609,13 @@
       "type": "TestSuite",
       "id": "test/city-world-host-browser.js",
       "label": "test/city-world-host-browser.js",
-      "lines": 790,
-      "version": "c58f0c7190418e0b",
+      "lines": 794,
+      "version": "13bd6a920bbcc727",
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "c58f0c7190418e0b"
+          "version": "13bd6a920bbcc727"
         }
       ]
     },
@@ -265506,6 +265624,14 @@
       "to": "Artifact:test/rc1-native-world-workload.js",
       "provenance": {
         "commit": "1ec074ff4ea49c794947659ab3e194a0ad89987a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "commit": "1ee6b2397dd94edb68e59747e9db00bdec70e29d"
       }
     },
     {
@@ -335174,6 +335300,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a10dc441a7e79bb01cdd818e43b5fad6a6fa6a1a",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -348738,6 +348904,22 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "bca01026b642a2632cc9476e8a664287eac281ea"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "to": "Artifact:docs/city-successor-fixture-review.md",
+      "provenance": {
+        "commit": "bca55150399cdb44065393f2c1c1899a5e96a26e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "bca55150399cdb44065393f2c1c1899a5e96a26e"
       }
     },
     {
@@ -401924,6 +402106,15 @@
       "to": "Artifact:docs/city-social-security-review.md",
       "provenance": {
         "file": "docs/city-social-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/city-successor-fixture-review.md",
+      "provenance": {
+        "file": "docs/city-successor-fixture-review.md",
         "line": 1
       }
     },
@@ -459450,6 +459641,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1ee6b2397dd94edb68e59747e9db00bdec70e29d",
+      "provenance": {
+        "commit": "1ee6b2397dd94edb68e59747e9db00bdec70e29d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7",
       "provenance": {
         "commit": "1f05eb9eb3b1de8ce8f24fc3ea9fa9bdba801ca7"
@@ -461581,6 +461780,14 @@
       "to": "Commit:39c3b145ff6aac88f619c6b57f48d335be524e0e",
       "provenance": {
         "commit": "39c3b145ff6aac88f619c6b57f48d335be524e0e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:39c930cbd4bd8448a1294a19e4684d156917db76",
+      "provenance": {
+        "commit": "39c930cbd4bd8448a1294a19e4684d156917db76"
       }
     },
     {
@@ -469698,6 +469905,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a10398ea66c234aa4b5c0dab47115b7f31dbb7ea",
+      "provenance": {
+        "commit": "a10398ea66c234aa4b5c0dab47115b7f31dbb7ea"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a10dc441a7e79bb01cdd818e43b5fad6a6fa6a1a",
       "provenance": {
         "commit": "a10dc441a7e79bb01cdd818e43b5fad6a6fa6a1a"
@@ -471885,6 +472100,14 @@
       "to": "Commit:bca01026b642a2632cc9476e8a664287eac281ea",
       "provenance": {
         "commit": "bca01026b642a2632cc9476e8a664287eac281ea"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:bca55150399cdb44065393f2c1c1899a5e96a26e",
+      "provenance": {
+        "commit": "bca55150399cdb44065393f2c1c1899a5e96a26e"
       }
     },
     {
@@ -526419,6 +526642,15 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/city-successor-fixture-review.md",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "file": "docs/city-successor-fixture-review.md",
+        "line": 13
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/coordination-engine/ARCHITECTURE.md",
       "to": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "provenance": {
@@ -548014,6 +548246,15 @@
       "to": "Artifact:docs/city-social-security-review.md",
       "provenance": {
         "file": "docs/city-social-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/city-successor-fixture-review.md",
+      "to": "Artifact:docs/city-successor-fixture-review.md",
+      "provenance": {
+        "file": "docs/city-successor-fixture-review.md",
         "line": 1
       }
     },
