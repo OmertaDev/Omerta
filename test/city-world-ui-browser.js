@@ -22,12 +22,12 @@ try {
     await page.evaluate(() => {
       window.__reads = []; window.__sent = []; window.__waypoints = []; window.__looks = []; window.__recoveries = 0;
       window.__observedConsent = []; window.__captureConsent = false;
-      window.__chatTicks = []; const realInterval = window.setInterval;
-      window.setInterval = (callback, interval, ...args) => { if (interval === 5000) window.__chatTicks.push(callback); return realInterval(callback, interval, ...args); };
+      window.__chatTicks = []; window.__chatIntervalIds = []; const realInterval = window.setInterval;
+      window.setInterval = (callback, interval, ...args) => { const id = realInterval(callback, interval, ...args); if (interval === 5000) { window.__chatTicks.push(callback); window.__chatIntervalIds.push(id); } return id; };
       window.__character = { id: 'owner-a', generation: 1, name: 'Viewer', level: 1, stats: { muscle: 5, cunning: 5, speed: 5 }, guns: ['starter'], gun: null, ammo: 10, cb: 2 };
       window.__social = { preferences: { outfit: 'classic', chatEnabled: false, room: { furniture: [{ id: 'chair', x: 1, y: 1 }, { id: 'lamp', x: 3, y: 2 }] } },
         outfits: [{ id: 'classic', name: 'Classic', color: '#a89c7b' }, { id: 'moss', name: 'Moss', color: '#8ea986' }], emotes: [{ id: 'wave', name: 'Wave' }], furniture: [{ id: 'chair', name: 'Chair' }, { id: 'lamp', name: 'Lamp' }] };
-      window.__ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+      window.__fixture = {
         scopeKey: 'session-a', character: window.__character, district: { id: 'harbor', name: 'Harbor' },
         viewport: document.querySelector('#viewport'), mapLayer: document.querySelector('#map'), toolbar: document.querySelector('#toolbar'),
         toolsHost: document.querySelector('#tools-host'), trackerHost: document.querySelector('#guidance'),
@@ -36,7 +36,12 @@ try {
         getState: () => ({ world: { width: 960, height: 640 }, position: { x: 430, y: 366 }, obstacles: [] }),
         onWaypoint: id => window.__waypoints.push(id), onLook: id => window.__looks.push(id), onOpenIntel: () => { window.__intelOpened = true; },
         onPanelChange: () => { if (window.__captureConsent && window.__ui) window.__observedConsent.push(window.__ui.getState().chatJoined); },
-        onRead: async kind => { window.__reads.push(kind); const denied = kind === 'chat' && window.__chat403;
+        onRead: async kind => { window.__reads.push(kind);
+          if (window.__heldReads) {
+            window.__chatIntervalIds.forEach(id => clearInterval(id));
+            return new Promise((resolve, reject) => window.__heldReads.push({ kind, resolve, reject }));
+          }
+          const denied = kind === 'chat' && window.__chat403;
           if (kind === 'chat' && window.__holdChat) await new Promise(resolve => { window.__releaseChat = resolve; });
           if (denied) return { code: 403, body: { error: 'city_chat_opt_in_required' } };
           if (window.__holdRead) await new Promise(resolve => { window.__releaseRead = resolve; });
@@ -56,7 +61,8 @@ try {
           return { code: 200, body: { ok: true } };
         },
         onRetry: async () => { window.__recoveries++; window.__ui.update({ recovery: false, receipt: { label: 'Recovered', summary: 'The original action is confirmed.' } }); }
-      });
+      };
+      window.__ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), window.__fixture);
     });
     const click = async selector => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
     assert.equal(await page.locator('[data-city-objective-tracker]').innerText(), '◆ Meet a different face');
@@ -226,6 +232,152 @@ try {
     await page.evaluate(() => window.__ui.destroy());
     assert.equal(await page.locator('.city-world__dock').count(), 0); assert.equal(await page.locator('.city-world__toolbar').count(), 0);
     assert.equal(await page.locator('#tools-host button').count(), 0); assert.equal(await page.locator('#guidance button').count(), 0, 'External controls are disposed with their scene.');
+    const actionsBeforeReads = await page.evaluate(() => window.__sent.length);
+    await page.evaluate(() => {
+      window.__heldReads = [];
+      window.__ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        ...window.__fixture, scopeKey: 'loading-session', character: window.__character,
+        receipt: { label: 'Existing action', summary: 'Already confirmed.' }, recovery: false
+      });
+    });
+    let heldCount = 0;
+    const heldRead = async kind => {
+      const index = heldCount++;
+      await page.waitForFunction(({ index, kind }) => window.__heldReads[index]?.kind === kind, { index, kind });
+      return index;
+    };
+    const settleRead = async (index, result, rejection = false) => {
+      await page.evaluate(({ index, result, rejection }) => {
+        const read = window.__heldReads[index];
+        if (rejection) read.reject(new Error('Controlled read rejection')); else read.resolve(result);
+      }, { index, result, rejection });
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    };
+    const readState = () => page.evaluate(() => ({
+      busy: document.querySelector('.city-world__content').getAttribute('aria-busy'),
+      title: document.querySelector('.city-world__dock-bar > strong').textContent,
+      notice: document.querySelector('.city-world__notice').textContent
+    }));
+    await click('[data-city-world-tools]');
+    await click('[data-city-world-panel="bag"]');
+    const firstInventory = await heldRead('inventory');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag · Loading…', notice: 'Loading Bag…' }, 'The first held read identifies the panel and announces loading before a reply exists.');
+    assert.equal(await page.locator('.city-world__notice').getAttribute('role'), 'status');
+    assert.equal(await page.locator('.city-world__notice').getAttribute('aria-live'), 'polite');
+    assert.equal(await page.locator('.city-world__dock-bar').evaluate(node => getComputedStyle(node).position), 'sticky');
+    assert.equal(await page.locator('[data-city-equip="starter"]').isEnabled(), true, 'Reading does not disable a confirmed equipment control.');
+    const unchangedReceipt = await page.locator('.city-world__receipt').innerText();
+    await settleRead(firstInventory, { code: 200, body: { currentCharacterItems: [{ templateId: 'notebook', state: 'held' }] } });
+    await page.waitForFunction(() => document.querySelector('.city-world__content').textContent.includes('notebook'));
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Bag', notice: '' }, 'The winning reply retires both loading cues.');
+    await click('[data-city-world-panel="bag"]');
+    const cachedInventory = await heldRead('inventory');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Bag', notice: '' }, 'A refresh leaves the cached panel usable without a first-load announcement.');
+    assert.match(await page.locator('.city-world__content').innerText(), /notebook/);
+    assert.equal(await page.locator('[data-city-equip="starter"]').isEnabled(), true);
+    await settleRead(cachedInventory, { code: 503, body: { error: 'db_down' } });
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Bag', notice: 'Could not refresh this panel. Your character has not changed. Try again.' }, 'A current error takes priority over a loading message and preserves cached content.');
+    assert.match(await page.locator('.city-world__content').innerText(), /notebook/);
+    assert.equal(await page.locator('.city-world__receipt').innerText(), unchangedReceipt, 'Read success or failure never changes the action receipt.');
+
+    await click('[data-city-world-panel="style"]');
+    const firstSocial = await heldRead('social');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Style · Loading…', notice: 'Loading Style…' });
+    await click('[data-city-world-panel="map"]');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Map', notice: '' }, 'A local panel switch retires the former loader.');
+    await settleRead(firstSocial, { code: 503, body: {} });
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Map', notice: '' }, 'An old opening error cannot repaint the current panel.');
+    assert.equal(await page.locator('[data-city-minimap]').count(), 1);
+
+    await click('[data-city-world-panel="chat"]');
+    const chatSocial = await heldRead('social');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    const joinedSocial = await page.evaluate(() => ({ ...structuredClone(window.__social), preferences: { ...structuredClone(window.__social.preferences), chatEnabled: true } }));
+    await settleRead(chatSocial, { code: 200, body: joinedSocial });
+    const olderChat = await heldRead('chat');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.', 'An unanswered history request never claims that a loaded room is quiet.');
+    const chatOpening = await page.evaluate(() => window.__ui.getState().opening);
+    await click('button:has-text("Refresh messages")');
+    const newerChat = await heldRead('chat');
+    assert.equal(await page.evaluate(() => window.__ui.getState().opening), chatOpening, 'Both chat requests belong to the same opening.');
+    await settleRead(olderChat, null, true);
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'An older rejection cannot replace or clear the newer pending read.');
+    await settleRead(newerChat, { code: 200, body: { messages: [{ id: 'winning-read', who: 'Neighbor', text: 'Current room reply.' }], participants: [] } });
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: '' });
+    assert.match(await page.locator('[data-city-nearby-feed]').innerText(), /Current room reply\./);
+
+    await page.evaluate(() => window.__ui.update({ chat: null }));
+    await click('[data-city-world-panel="chat"]');
+    const partialSocialError = await heldRead('social');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'Cached joined consent still waits for the current social dependency when history is missing.');
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.');
+    assert.equal(await page.locator('[data-city-nearby-input]').isEnabled(), true);
+    await settleRead(partialSocialError, { code: 503, body: { error: 'db_down' } });
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: 'Could not refresh this panel. Your character has not changed. Try again.' }, 'A failed dependency clears its loader and reports the current error.');
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.', 'A failed read leaves history unloaded rather than inventing an empty room.');
+    await click('[data-city-world-panel="chat"]');
+    const partialSocial = await heldRead('social');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    await settleRead(partialSocial, { code: 200, body: joinedSocial });
+    const partialChatError = await heldRead('chat');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'Loading remains active across the social-to-history handoff.');
+    await settleRead(partialChatError, null, true);
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: 'Could not refresh this panel. Try again.' });
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.');
+    await click('button:has-text("Refresh messages")');
+    const loadedEmptyChat = await heldRead('chat');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Could not refresh this panel. Try again.' }, 'An ongoing retry retains the current error ahead of the loading status.');
+    await settleRead(loadedEmptyChat, { code: 200, body: { messages: [], participants: [] } });
+    assert.equal((await readState()).busy, 'false');
+    assert.equal((await readState()).title, 'Nearby chat');
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'The room is quiet. Say hello.', 'Only a successful loaded empty history may use the quiet-room copy.');
+    await click('[data-city-world-panel="chat"]');
+    const completeCachedSocial = await heldRead('social');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: '' }, 'A complete cached consent/history panel remains usable during a social refresh.');
+    assert.equal(await page.locator('[data-city-nearby-input]').isEnabled(), true);
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'The room is quiet. Say hello.');
+    await settleRead(completeCachedSocial, { code: 503, body: { error: 'db_down' } });
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: 'Could not refresh this panel. Your character has not changed. Try again.' });
+    assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'The room is quiet. Say hello.');
+    assert.equal(await page.locator('.city-world__receipt').innerText(), unchangedReceipt);
+
+    await click('[data-city-world-panel="map"]');
+    await click('[data-city-world-panel="chat"]');
+    const consentSocial = await heldRead('social');
+    await settleRead(consentSocial, { code: 200, body: joinedSocial });
+    const consentHistory = await heldRead('chat');
+    await settleRead(consentHistory, { code: 200, body: { messages: [], participants: [] } });
+    await page.evaluate(() => window.__ui.update({ chat: null }));
+    await click('button:has-text("Refresh messages")');
+    const retiredChat = await heldRead('chat');
+    assert.equal((await readState()).busy, 'true');
+    await page.evaluate(() => window.__ui.update({ social: { ...structuredClone(window.__social), preferences: { ...structuredClone(window.__social.preferences), chatEnabled: false } } }));
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: '' }, 'Retired consent clears the first-load marker immediately.');
+    await settleRead(retiredChat, { code: 200, body: { messages: [{ id: 'retired-room', who: 'Old neighbor', text: 'Retired private conversation.' }] } });
+    assert.equal(await page.locator('[data-city-nearby-feed]').count(), 0);
+    assert.equal((await page.locator('.city-world__dock').innerText()).includes('Retired private conversation.'), false);
+    assert.equal((await readState()).busy, 'false');
+
+    await page.evaluate(() => window.__ui.update({ social: null }));
+    await click('[data-city-world-panel="style"]');
+    const oldOwnerSocial = await heldRead('social');
+    assert.equal((await readState()).busy, 'true');
+    await page.evaluate(() => window.__ui.update({ scopeKey: 'loading-successor', character: { id: 'loading-successor', generation: 2, guns: ['starter'] } }));
+    assert.deepEqual(await readState(), { busy: 'false', title: 'World tools', notice: '' }, 'An identity change retires loading UI with the old owner.');
+    assert.equal(await page.locator('.city-world__dock').isVisible(), false);
+    await click('[data-city-world-tools]'); await click('[data-city-world-panel="bag"]');
+    const newOwnerInventory = await heldRead('inventory');
+    await settleRead(oldOwnerSocial, null, true);
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag · Loading…', notice: 'Loading Bag…' }, 'Old-owner settlement cannot clear the successor pending read.');
+    assert.equal(await page.locator('.city-world__receipt').innerText(), '');
+    await click('[data-city-world-close]');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'World tools', notice: '' }, 'Closing retires loading indicators before the response settles.');
+    await settleRead(newOwnerInventory, { code: 200, body: { currentCharacterItems: [{ templateId: 'closed-reply', state: 'held' }] } });
+    assert.equal(await page.locator('.city-world__dock').isVisible(), false);
+    assert.deepEqual(await readState(), { busy: 'false', title: 'World tools', notice: '' });
+    assert.equal(await page.evaluate(() => window.__sent.length), actionsBeforeReads, 'Read feedback and cancellation issue no extra actions.');
+    await page.evaluate(() => { window.__heldReads = null; window.__ui.destroy(); });
     const hydrated = await page.evaluate(() => {
       const colors = [], ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
         scopeKey: 'cached-session', character: { id: 'cached-owner', generation: 2 }, district: { id: 'harbor' },
