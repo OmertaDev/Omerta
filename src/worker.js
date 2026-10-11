@@ -45,6 +45,7 @@ import { sweepSecrets } from './secrets.js';
 import { sweepRivals } from './rivals.js';
 import { generateContactCalls, sweepCalls } from './contacts.js';
 import { sweepFavors } from './favors.js';
+import { expireIntelForecastJobs } from './intelforecastjobs.js';
 import { sweepCrewInvites } from './crew.js';
 import { sweepMentorOffers } from './mentor.js';
 import { settlePrimeTime } from './primetime.js';
@@ -482,6 +483,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     if (ct?.resolved > 0) console.log(`🏙  turf: resolved ${ct.resolved} contest(s), ${ct.seized} district(s) changed hands`);
     const fv = await safe('favor sweep', () => sweepFavors(pool));
     if (fv?.refunded > 0) console.log(`🤝 favors: ${fv.refunded} expired, escrow refunded to the posters`);
+    await safe('intel forecast refund sweep', () => expireIntelForecastJobs(pool));
     const cw = await safe('crew invite sweep', () => sweepCrewInvites(pool));
     if (cw?.swept > 0) console.log(`👥 crew: swept ${cw.swept} stale invite(s)`);
     await safe('mentor offer sweep', () => sweepMentorOffers(pool));

@@ -1,3 +1,5 @@
+import { NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER, NPC_FAMILY_SOURCE_PINS } from '../tools/rc1-npc-family-provenance.js';
+import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -5,6 +7,9 @@ import { createNativeCommitObserver } from '../tools/rc1-native-commit-observer.
 import { createNpcFamilyCommitObserver } from '../tools/rc1-npc-family-provenance.js';
 import { verifyArtifactIndex } from '../tools/rc1-native-proof.js';
 import { verifyNpcFamilyBoundary, npcFamilyCorruptions } from './lib/rc1-npc-family-controls.js';
+assert.equal(NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, NPC_FAMILY_SOURCE_PINS['src/game.js']);
+assert.equal(NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.match(NPC_FAMILY_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
 
 // This is an adapter control, not PostgreSQL or original-caller evidence.
 const deliveries = [], marker = { preservedInnerWitness: true };

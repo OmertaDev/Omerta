@@ -131,10 +131,15 @@ for (const branch of ['preserve', 'expose']) {
     await claim(accounts.organizer, 'duplicate-accounts.location');
     await start(accounts.organizer, ids.deduction);
     await mystery(accounts.organizer, ids.deduction, 'discover');
-    const choiceView = await engine.snapshot(accounts.organizer, { mysteryGraphId: ids.deduction });
-    const oppositeChoice = findCommand(choiceView, 'mystery.choice', { optionId: branch === 'preserve' ? 'expose' : 'preserve' });
-    await mystery(accounts.organizer, ids.deduction, 'choice', branch);
-    await assert.rejects(() => executeIssued(engine, accounts.organizer, oppositeChoice), { code: 'command_stale' });
+    // Prove state invalidation inside the TTL; player-commands.js proves expiry independently.
+    const serverNow = Date.now, choiceNow = serverNow();
+    try {
+      Date.now = () => choiceNow;
+      const choiceView = await engine.snapshot(accounts.organizer, { mysteryGraphId: ids.deduction });
+      const oppositeChoice = findCommand(choiceView, 'mystery.choice', { optionId: branch === 'preserve' ? 'expose' : 'preserve' });
+      await mystery(accounts.organizer, ids.deduction, 'choice', branch);
+      await assert.rejects(() => executeIssued(engine, accounts.organizer, oppositeChoice), { code: 'command_stale' });
+    } finally { Date.now = serverNow; }
     await mystery(accounts.organizer, ids.deduction, 'complete');
     const chosen = content.manifest.branches.find((entry) => entry.optionId === branch);
     const opposite = content.manifest.branches.find((entry) => entry.optionId !== branch);

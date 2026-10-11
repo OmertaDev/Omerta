@@ -12,8 +12,10 @@ import { rememberedSkills } from '../skills.js';
 import { M3, LOAN, levelOf, dayOf, VENDETTA, feudTierOf, UNDERWORLD, LAW, MASTERY, estateTierOf, HONOR, seasonModOf } from '../rules.js';
 import { abandonRaidsAtDeath } from '../world.js';
 import { voidListingsAtDeath, burnBidsAtDeath } from '../market.js';
+import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';
 import { voidLoansAtDeath } from '../loans.js';
 import { voidFavorsAtDeath } from '../favors.js';
+import { voidIntelForecastJobsAtDeath } from '../intelforecastjobs.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -114,6 +116,9 @@ export async function clearInboundPointers(client, charId, accountId) {
 }
 
 export async function runEstate(client, h, victim, killerName, opts = {}) {
+  // Lock the sorted union before any existing depot/order lock, including
+  // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  await closeWarehouseClaimsAtDeath(client, victim.id);
   const acct = h.victimAcct;
   const lvl = levelOf(Number(victim.respect));
   const legacy = Math.floor(lvl / 2);
@@ -390,6 +395,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // offer — a PLAYER fire-kill takes its share, the rest burns (never a loot-proof vault).
   const fv = await voidFavorsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
   if (opts.killerCh && fv.looted) report.favorLoot = fv.looted;
+  const intel = await voidIntelForecastJobsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
+  if (opts.killerCh && intel.looted) report.intelForecastLoot = intel.looted;
   if (h.victimOwned.gangId) await removeMember(client, h.victimOwned.gangId, victim.id);
 
   victim.alive = false;

@@ -1,13 +1,17 @@
+import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
+import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { createCarMeltCommitObserver, verifySoloCarMelt, CAR_MELT_SOURCE_PINS, CAR_MELT_BASELINE_RULES_PIN,
-  CAR_MELT_SOURCE_REVIEW_TRANSFER, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
+  CAR_MELT_SOURCE_REVIEW_TRANSFER, CAR_MELT_CREW_SOURCE_REVIEW_TRANSFER, assertCarMeltRulesCompatibility } from '../tools/rc1-car-melt-provenance.js';
 import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION,
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
+  WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
   DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
   STOREFRONT_CITY_SERVER_PIN, STOREFRONT_CITY_SERVER_BLOB, STOREFRONT_CITY_SOURCE_PARENTS, assertStorefrontCityServerTransfer,
@@ -19,6 +23,9 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   CITY_SOCIAL_SOURCE_PREDECESSOR_REVISION, assertCitySocialServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { carMelt } from '../src/rules.js';
 
+assert.equal(CAR_MELT_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, CAR_MELT_SOURCE_PINS['src/game.js']);
+assert.equal(CAR_MELT_CREW_SOURCE_REVIEW_TRANSFER.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.match(CAR_MELT_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
 const hash = text => createHash('sha256').update(text).digest('hex');
 assert.equal(CAR_MELT_SOURCE_REVIEW_TRANSFER.predecessorEconomySha256, ECONOMY_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.match(CAR_MELT_SOURCE_REVIEW_TRANSFER.scope, /New goods availability, reachability, bucket\/counter accounting and authority.*outside/);
@@ -28,15 +35,37 @@ assert.equal(oldStorefront.baselineSha256, BUSINESS_SERVER_PIN);
 assert.equal(oldStorefront.inverseChunks, 2);
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const rawCurrent = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const currentFranchise = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, rawCurrent).baselineText : rawCurrent;
+  const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, currentFranchise) : null;
+  if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
+  const actual = franchise ? franchise.baselineText : currentFranchise;
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const tender = file === 'src/server.js' ? assertSupplyTenderServerTransfer(actual) : null;
+  const crew = file === 'src/server.js' ? assertCrewLogisticsSourceTransfer(file, actual) : null;
+  const warehouseInput = crew ? crew.baselineText : actual;
+  if (crew) {
+    assert.equal(hash(actual), CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
+    assert.equal(crew.baselineSha256, WAREHOUSE_SERVER_PIN);
+    assert.equal(crew.inverseChunks, 2);
+    assert.equal(actual, execFileSync('git', ['show', CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file]], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(warehouseInput, execFileSync('git', ['show', CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file]], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  }
+  const warehouse = file === 'src/server.js' ? assertWarehouseServerTransfer(warehouseInput) : null;
+  const tenderInput = warehouse ? warehouse.baselineText : actual;
+  if (warehouse) {
+    assert.equal(hash(warehouseInput), WAREHOUSE_SERVER_PIN);
+    assert.equal(warehouse.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
+    assert.equal(warehouse.inverseChunks, 2);
+    assert.equal(warehouseInput, execFileSync('git', ['show', WAREHOUSE_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(tenderInput, execFileSync('git', ['show', WAREHOUSE_SERVER_PREDECESSOR_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  }
+  const tender = file === 'src/server.js' ? assertSupplyTenderServerTransfer(tenderInput) : null;
   const decisionInput = tender ? tender.baselineText : actual;
   if (tender) {
-    assert.equal(hash(actual), SUPPLY_TENDER_SERVER_PIN);
+    assert.equal(hash(tenderInput), SUPPLY_TENDER_SERVER_PIN);
     assert.equal(tender.baselineSha256, DECISION_CALL_SERVER_PIN);
     assert.equal(tender.inverseChunks, 2);
-    assert.equal(actual, execFileSync('git', ['show', SUPPLY_TENDER_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(tenderInput, execFileSync('git', ['show', SUPPLY_TENDER_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
     assert.equal(decisionInput, execFileSync('git', ['show', SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
   const decision = file === 'src/server.js' ? assertDecisionCallServerTransfer(decisionInput) : null;

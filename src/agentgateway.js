@@ -309,6 +309,69 @@ const OPERATION_CONTRACTS = {
   'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
   'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },
   'GET /v1/invites': { operationId: 'getLaunchInvites' },
+  'GET /v1/warehouses': { operationId: 'getGameWarehouseOffersAndOwnLeases' },
+  'POST /v1/depot/:id/warehouse-offer': {
+    operationId: 'configureGameWarehouseOffer', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['expectedRevision', 'enabled', 'slots', 'cashPerUnitDay'], properties: {
+        expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, enabled: { type: 'boolean' },
+        slots: { type: 'integer', minimum: 0, maximum: 40 }, cashPerUnitDay: { type: 'integer', minimum: 0, maximum: 100000 },
+      } },
+  },
+  'POST /v1/warehouses/:id/lease': {
+    operationId: 'rentGameWarehouseCapacity', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['units', 'expectedOfferRevision', 'maxTotalCash'], properties: {
+        units: { type: 'integer', minimum: 1, maximum: 10 }, expectedOfferRevision: { type: 'integer', minimum: 1, maximum: 2147483647 },
+        maxTotalCash: { type: 'integer', minimum: 1, maximum: 1000000 },
+      } },
+  },
+  'POST /v1/warehouse-leases/:id/deposit': {
+    operationId: 'storeOwnCargoInGameWarehouse', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
+  },
+  'POST /v1/warehouse-leases/:id/withdraw': {
+    operationId: 'retrieveOwnGameWarehouseCargo', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['qty'], properties: { qty: { type: 'integer', minimum: 1, maximum: 10 } } },
+  },
+  'POST /v1/warehouse-leases/:id/close': { operationId: 'closeOwnEmptyGameWarehouseLease' },
+  'GET /v1/crew/logistics': { operationId: 'getPrivateCrewLogistics' },
+  'POST /v1/crew/logistics-links': {
+    operationId: 'shareOwnCrewLogisticsReference', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['kind', 'targetId'], properties: {
+        kind: { type: 'string', enum: ['tender', 'delivery_commitment', 'warehouse_claim'] },
+        targetId: { type: 'string', minLength: 1, maxLength: 128 },
+      } },
+  },
+  'POST /v1/crew/logistics-links/:id/revoke': { operationId: 'revokeCrewLogisticsReference' },
+  'GET /v1/franchise-licenses': { operationId: 'getOwnGameFranchiseLicenses' },
+  'POST /v1/depot/:id/franchise-offers': {
+    operationId: 'offerOwnGameStorefrontBrand', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['operatorDepotId', 'companyRevision', 'presetId', 'royaltyBps', 'royaltyCap', 'expiresAt'], properties: {
+        operatorDepotId: { type: 'string', minLength: 1, maxLength: 128 },
+        companyRevision: { type: 'integer', minimum: 1, maximum: 2147483647 },
+        presetId: { type: 'string', enum: ['gin_storefront'] },
+        royaltyBps: { type: 'integer', minimum: 1, maximum: 1000 },
+        royaltyCap: { type: 'integer', minimum: 1, maximum: 1000000 },
+        expiresAt: { type: 'string', format: 'date-time', maxLength: 64 },
+      } },
+  },
+  'POST /v1/franchise-licenses/:id/accept': { operationId: 'acceptOwnGameFranchiseOffer' },
+  'POST /v1/franchise-licenses/:id/end': { operationId: 'endOwnGameFranchiseLicense' },
+  'GET /v1/intel-forecasts': { operationId: 'getOwnGameForecastJobs' },
+  'POST /v1/intel-forecasts/reporters/:id/jobs': {
+    operationId: 'fundGameForecastJob', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['districtId', 'minimumStock', 'feeCash', 'targetAt'], properties: {
+        districtId: { type: 'string', minLength: 1, maxLength: 128 },
+        minimumStock: { type: 'integer', minimum: 1, maximum: 40 },
+        feeCash: { type: 'integer', minimum: 50, maximum: 5000 },
+        targetAt: { type: 'string', format: 'date-time', maxLength: 64 },
+      } },
+  },
+  'POST /v1/intel-forecasts/:id/report': {
+    operationId: 'submitOwnGameForecastReport', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['predictsAvailable'], properties: { predictsAvailable: { type: 'boolean' } } },
+  },
+  'POST /v1/intel-forecasts/:id/cancel': { operationId: 'refundOwnOpenGameForecastJob' },
+  'POST /v1/intel-forecasts/:id/resolve': { operationId: 'resolveOwnObservedGameForecast' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',

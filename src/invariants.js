@@ -9,6 +9,7 @@ import { withItemRead } from './items.js';
 import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { definitionByHash } from './itemdefinitions.js';
 import { canonicalBytes } from './content/canonical.js';
+import { intelForecastAccounting } from './intelforecastinvariants.js';
 import { DESK, DESK_RECYCLE_REASON } from './rules.js';
 import {
   PHASE1_HARDENING_CASH_COST,
@@ -35,7 +36,7 @@ const KNOWN_REASONS = {
     // the pool and proven a redistribution by `exchange pool backed` (paid <= funded) in exchange.js.
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
-    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
+    'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
@@ -100,6 +101,7 @@ const KNOWN_REASONS = {
     // `favor:refund` cancel/expiry, `favor:loot`/`favor:death` the dead poster's escrow. Reconciled
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
+    'intel_job:',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -552,8 +554,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
 
   // Pilot business custody is independently journaled. Cash funding/withdrawals and
   // customer receipts must also reconcile with the existing character ledger.
-  const depots = (await pool.query('SELECT id,treasury,stock,stock_cost FROM business_depots')).rows;
-  const depotJournal = (await pool.query('SELECT depot_id,reason,cash_delta,stock_delta,cost_delta FROM business_depot_journal')).rows;
+  const depots = (await pool.query('SELECT id,owner_character,treasury,stock,stock_cost FROM business_depots')).rows;
+  const depotJournal = (await pool.query('SELECT id,depot_id,reason,cash_delta,stock_delta,cost_delta,expense,customer_character,lease_id,lease_stock_delta,lease_stock_after,lease_sequence,source_journal_id,franchise_license_id FROM business_depot_journal')).rows;
+  const franchiseLicenses = (await pool.query('SELECT * FROM depot_brand_licenses')).rows;
+  const warehouseLeases = (await pool.query('SELECT * FROM business_warehouse_leases')).rows;
+  const warehouseNow = Date.now();
   const depotOrders = (await pool.query("SELECT depot_id,qty,filled_qty,status FROM market_listings WHERE depot_id IS NOT NULL AND (status='live' OR filled_qty>0)")).rows;
   for (const depot of depots) {
     const entries = depotJournal.filter((entry) => entry.depot_id === depot.id);
@@ -561,16 +566,88 @@ async function collectLedgerChecks(pool, activationPolicy) {
       push(`depot ${column}:${depot.id}`, Number(depot[column]), entries.reduce((n, entry) => n + Number(entry[delta]), 0), 0);
     const promised = Number(depot.stock) + depotOrders.filter((order) => order.depot_id === depot.id)
       .reduce((n, order) => n + Number(order.filled_qty) + (order.status === 'live' ? Number(order.qty) : 0), 0);
-    push(`depot capacity:${depot.id}`, Math.max(0, promised - 40), 0, 0);
+    const warehouseReserved = warehouseLeases.filter(l => l.depot_id === depot.id)
+      .reduce((n, l) => n + (l.status === 'active' && new Date(l.expires_at).getTime() > warehouseNow
+        ? Number(l.units) : ['active', 'landlord_closed'].includes(l.status) ? Number(l.held_qty) : 0), 0);
+    push(`depot capacity:${depot.id}`, Math.max(0, promised + warehouseReserved - 40), 0, 0);
   }
   const depotCash = (reason) => depotJournal.filter((entry) => entry.reason === reason).reduce((n, entry) => n + Number(entry.cash_delta), 0);
   push('depot funding', depotCash('fund'), -(await sum(pool, "currency='cash' AND reason='depot:fund' AND character_id IS NOT NULL")), 0);
   push('depot withdrawals', -depotCash('withdraw'), await sum(pool, "currency='cash' AND reason='depot:withdraw' AND character_id IS NOT NULL"), 0);
   push('depot sales', depotCash('sale'), -(await sum(pool, "currency='cash' AND reason='depot:buy'")) + await sum(pool, "currency='cash' AND reason='depot:take'"), 0);
+  push('franchise royalty conservation', -depotCash('royalty_expense'), depotCash('royalty_income'), 0);
+  const royaltyEntries = depotJournal.filter(j => j.franchise_license_id || j.source_journal_id || ['royalty_expense', 'royalty_income'].includes(j.reason));
+  let royaltyFaults = 0;
+  const royaltySources = new Map();
+  for (const j of royaltyEntries) {
+    if (!j.franchise_license_id || !j.source_journal_id || !['royalty_expense', 'royalty_income'].includes(j.reason)) royaltyFaults++;
+    const sourceLicenses = royaltySources.get(j.source_journal_id) || new Set();
+    sourceLicenses.add(j.franchise_license_id); royaltySources.set(j.source_journal_id, sourceLicenses);
+    if (!franchiseLicenses.some(l => l.id === j.franchise_license_id)) royaltyFaults++;
+  }
+  royaltyFaults += [...royaltySources.values()].filter(ids => ids.size !== 1).length;
+  for (const license of franchiseLicenses) {
+    const entries = royaltyEntries.filter(j => j.franchise_license_id === license.id);
+    let earned = 0, paid = 0;
+    for (const sourceId of new Set(entries.map(j => j.source_journal_id))) {
+      const pair = entries.filter(j => j.source_journal_id === sourceId);
+      const debit = pair.find(j => j.reason === 'royalty_expense'), credit = pair.find(j => j.reason === 'royalty_income');
+      const sale = depotJournal.find(j => j.id === sourceId);
+      if (pair.length !== 2 || !debit || !credit || !sale || sale.reason !== 'sale' || sale.depot_id !== license.operator_depot_id
+          || !sale.customer_character || Number(sale.cash_delta) <= 0 || Number(sale.stock_delta) >= 0
+          || debit.depot_id !== license.operator_depot_id || credit.depot_id !== license.recipient_depot_id
+          || Number(credit.cash_delta) < 0 || Number(debit.cash_delta) !== -Number(credit.cash_delta)
+          || Number(debit.expense) !== Number(credit.cash_delta) || Number(credit.expense) !== 0
+          || pair.some(j => Number(j.stock_delta) !== 0 || Number(j.cost_delta) !== 0)) royaltyFaults++;
+      if (sale?.reason === 'sale') earned += Number(sale.cash_delta);
+      if (credit) paid += Number(credit.cash_delta);
+    }
+    if (!depots.some(d => d.id === license.operator_depot_id && d.owner_character === license.operator_character)
+        || !depots.some(d => d.id === license.recipient_depot_id && d.owner_character === license.licensor_character)) royaltyFaults++;
+    push(`franchise paid:${license.id}`, Number(license.paid), paid, 0);
+    push(`franchise earned:${license.id}`, Number(license.earned_net), earned, 0);
+    const expected = Number(BigInt(earned) * BigInt(license.royalty_bps) / 10000n);
+    push(`franchise rounding:${license.id}`, paid, Math.min(Number(license.royalty_cap), expected), 0);
+  }
+  push('franchise royalty provenance', royaltyFaults, 0, 0);
   push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL")), 0);
   push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
   push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);
   push('depot death burn', -depotCash('death'), -(await sum(pool, "currency='cash' AND reason='depot:death'")), 0);
+  push('warehouse rent ledger', depotCash('warehouse_rent'), -(await sum(pool, "currency='cash' AND reason='warehouse:rent'")), 0);
+  push('warehouse journal ownership', depotJournal.filter(j => j.lease_id ? !warehouseLeases.some(l =>
+    l.id === j.lease_id && l.depot_id === j.depot_id && l.tenant_character === j.customer_character)
+    : Number(j.lease_stock_delta) !== 0 || j.lease_stock_after !== null || j.lease_sequence !== null).length, 0, 0);
+  const warehousePayments = (await pool.query("SELECT character_id,counterparty,amount FROM transactions WHERE currency='cash' AND reason='warehouse:rent'")).rows;
+  const rentalPairs = new Map();
+  for (const row of depotJournal.filter(j => j.reason === 'warehouse_rent')) {
+    const key = JSON.stringify([row.customer_character, row.depot_id]);
+    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };
+    pair.receipts += Number(row.cash_delta); rentalPairs.set(key, pair);
+  }
+  for (const row of warehousePayments) {
+    const key = JSON.stringify([row.character_id, row.counterparty]);
+    const pair = rentalPairs.get(key) || { receipts: 0, debits: 0 };
+    pair.debits -= Number(row.amount); rentalPairs.set(key, pair);
+  }
+  for (const [key, pair] of rentalPairs) push(`warehouse rent pairing:${key}`, pair.receipts, pair.debits, 0);
+  for (const lease of warehouseLeases) {
+    const entries = depotJournal.filter(j => j.lease_id === lease.id).sort((a, b) => Number(a.lease_sequence) - Number(b.lease_sequence));
+    const rent = entries.filter(j => j.reason === 'warehouse_rent');
+    push(`warehouse rent event:${lease.id}`, rent.length, 1, 0);
+    push(`warehouse rent terms:${lease.id}`, rent.reduce((n, j) => n + Number(j.cash_delta), 0), Number(lease.fee_cash), 0);
+    push(`warehouse custody:${lease.id}`, Number(lease.held_qty), entries.reduce((n, j) => n + Number(j.lease_stock_delta), 0), 0);
+    push(`warehouse landlord:${lease.id}`, depots.some(d => d.id === lease.depot_id && d.owner_character === lease.landlord_character) ? 0 : 1, 0, 0);
+    let held = 0, discontinuities = 0;
+    for (const [index, entry] of entries.entries()) {
+      held += Number(entry.lease_stock_delta);
+      if (Number(entry.lease_sequence) !== index + 1 || held < 0 || held > Number(lease.units)
+          || (Number(entry.lease_stock_delta) !== 0 && entry.lease_stock_after === null)
+          || (entry.lease_stock_after !== null && Number(entry.lease_stock_after) !== held)
+          || (index === 0 && entry.reason !== 'warehouse_rent')) discontinuities++;
+    }
+    push(`warehouse custody sequence:${lease.id}`, discontinuities, 0, 0);
+  }
   const policyRows = (await pool.query('SELECT id,spent,max_spend FROM business_operating_policies')).rows;
   const policyJournal = (await pool.query("SELECT policy_id,cash_delta FROM business_depot_journal WHERE policy_id IS NOT NULL AND reason IN ('restock_escrow','restock_fee')")).rows;
   for (const policy of policyRows) {
@@ -628,6 +705,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const fvDeath = -(await sum(pool, "currency='cash' AND reason='favor:death'"));
   const fvLoot = -(await sum(pool, "currency='cash' AND reason='favor:loot'"));
   push('favor escrow', favorEscrow, fvPosted - fvPaid - fvTakes - fvRefunded - fvDeath - fvLoot);
+
+  const intelForecasts = await intelForecastAccounting(pool);
+  push('intel forecast escrow', intelForecasts.escrow, intelForecasts.expected, 0);
+  push('intel forecast receipts', intelForecasts.invalid, 0, 0);
 
   // (f4c) THE TURF CONTEST ESCROW (the strategy package's sealed bid) — the market-escrow shape on
   // the family side. Every open stake sits in district_bids, not a treasury, so the open pot must

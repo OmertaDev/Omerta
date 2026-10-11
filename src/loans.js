@@ -340,7 +340,7 @@ export async function cancelLoan(ch, loanId, client, h) {
   ch.cash = Number(ch.cash) + Number(loan.principal);
   await client.query("UPDATE loans SET status='cancelled' WHERE id=$1", [loanId]);
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: Number(loan.principal), reason: 'loan:refund' });
-  return { ok: true, refunded: Number(loan.principal) };
+  return { ok: true, loanAction: 'cancel_offer', refunded: Number(loan.principal) };
 }
 
 // POST /v1/loans/:id/repay — two-party: ch=borrower (actor), victim=lender. Borrower pays principal +

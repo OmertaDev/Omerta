@@ -7460,6 +7460,36 @@ CREATE TABLE IF NOT EXISTS delivery_commitments (
 CREATE INDEX IF NOT EXISTS ix_delivery_order ON delivery_commitments(order_id);
 CREATE INDEX IF NOT EXISTS ix_delivery_supplier ON delivery_commitments(supplier_character,status);
 
+-- Paid game storage keeps tenant goods separate from merchant stock.
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_enabled BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_revision INT NOT NULL DEFAULT 0 CHECK (warehouse_revision >= 0);
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_slots INT NOT NULL DEFAULT 0 CHECK (warehouse_slots BETWEEN 0 AND 40);
+ALTER TABLE business_depots ADD COLUMN IF NOT EXISTS warehouse_cash_per_unit_day INT NOT NULL DEFAULT 0 CHECK (warehouse_cash_per_unit_day BETWEEN 0 AND 100000);
+CREATE TABLE IF NOT EXISTS business_warehouse_leases (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  tenant_character TEXT NOT NULL REFERENCES characters(id) CHECK (tenant_character <> landlord_character),
+  good_id TEXT NOT NULL CHECK (good_id='gin'),
+  units INT NOT NULL CHECK (units BETWEEN 1 AND 10),
+  held_qty INT NOT NULL DEFAULT 0 CHECK (held_qty BETWEEN 0 AND units),
+  cash_per_unit_day INT NOT NULL CHECK (cash_per_unit_day BETWEEN 1 AND 100000),
+  fee_cash INT NOT NULL CHECK (fee_cash=units*cash_per_unit_day),
+  offer_revision INT NOT NULL CHECK (offer_revision > 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','closed','landlord_closed','tenant_dead')),
+  CHECK (status NOT IN ('closed','tenant_dead') OR held_qty=0)
+);
+CREATE INDEX IF NOT EXISTS ix_warehouse_depot_status ON business_warehouse_leases(depot_id,status);
+CREATE INDEX IF NOT EXISTS ix_warehouse_tenant_status ON business_warehouse_leases(tenant_character,status);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_id TEXT REFERENCES business_warehouse_leases(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_delta INT NOT NULL DEFAULT 0 CHECK (lease_stock_delta BETWEEN -10 AND 10);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_stock_after INT CHECK (lease_stock_after BETWEEN 0 AND 10);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS warehouse_rent_lease_id TEXT UNIQUE REFERENCES business_warehouse_leases(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_sequence INT CHECK (lease_sequence >= 1);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_journal_sequence ON business_depot_journal(lease_id,lease_sequence);
+
 -- Fixed-price offers against existing funded orders; these rows hold no money.
 CREATE TABLE IF NOT EXISTS supply_tenders (
   id TEXT PRIMARY KEY,
@@ -7488,6 +7518,31 @@ CREATE TABLE IF NOT EXISTS supply_tender_offers (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(tender_id,supplier_character)
 );
+-- Finite game brand licences split earned retail receipts, not principal or custody.
+CREATE TABLE IF NOT EXISTS depot_brand_licenses (
+  id TEXT PRIMARY KEY,
+  operator_depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  operator_character TEXT NOT NULL REFERENCES characters(id),
+  recipient_depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  licensor_character TEXT NOT NULL REFERENCES characters(id),
+  company_account_id TEXT NOT NULL REFERENCES accounts(id),
+  company_revision INT NOT NULL CHECK (company_revision > 0),
+  brand_name TEXT NOT NULL,
+  preset_id TEXT NOT NULL CHECK (preset_id='gin_storefront'),
+  royalty_bps INT NOT NULL CHECK (royalty_bps BETWEEN 1 AND 1000),
+  royalty_cap NUMERIC NOT NULL CHECK (royalty_cap BETWEEN 1 AND 1000000),
+  paid NUMERIC NOT NULL DEFAULT 0 CHECK (paid BETWEEN 0 AND royalty_cap),
+  earned_net NUMERIC NOT NULL DEFAULT 0 CHECK (earned_net BETWEEN 0 AND 1000000000000),
+  expires_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'offered' CHECK (status IN ('offered','active','ended')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK (operator_depot_id <> recipient_depot_id AND operator_character <> licensor_character)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_brand_license_active ON depot_brand_licenses(operator_depot_id) WHERE status='active';
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS source_journal_id TEXT REFERENCES business_depot_journal(id);
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS franchise_license_id TEXT REFERENCES depot_brand_licenses(id);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_brand_sale_receipt ON business_depot_journal(franchise_license_id,source_journal_id,reason)
+  WHERE franchise_license_id IS NOT NULL AND source_journal_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS business_operating_policies (
   id TEXT PRIMARY KEY,
@@ -7736,6 +7791,53 @@ CREATE TABLE IF NOT EXISTS city_social_preferences (
   last_chat_at TIMESTAMPTZ,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Explicit member consent to display native logistics references; no execution authority.
+CREATE TABLE IF NOT EXISTS crew_logistics_links (
+  id TEXT PRIMARY KEY,
+  crew_id TEXT NOT NULL REFERENCES crews(id) ON DELETE CASCADE,
+  publisher_account_id TEXT NOT NULL REFERENCES accounts(id),
+  publisher_character_id TEXT NOT NULL REFERENCES characters(id),
+  generation INT NOT NULL CHECK (generation > 0),
+  kind TEXT NOT NULL CHECK (kind IN ('tender','delivery_commitment','warehouse_claim')),
+  target_id TEXT NOT NULL CHECK (char_length(target_id) BETWEEN 1 AND 128),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL CHECK (expires_at > created_at),
+  revoked_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_crew_logistics_member ON crew_logistics_links (crew_id,publisher_account_id,revoked_at);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_crew_logistics_consent ON crew_logistics_links (crew_id,publisher_account_id,kind,target_id) WHERE revoked_at IS NULL;
+
+-- A prepaid game-cash report service. Accuracy never determines its fixed payment.
+CREATE TABLE IF NOT EXISTS intel_forecast_jobs (
+  id TEXT PRIMARY KEY,
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  reporter_character TEXT NOT NULL REFERENCES characters(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  district_id TEXT NOT NULL,
+  minimum_stock INT NOT NULL CHECK (minimum_stock BETWEEN 1 AND 40),
+  fee_cash INT NOT NULL CHECK (fee_cash BETWEEN 50 AND 5000),
+  price_block INT NOT NULL CHECK (price_block >= 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  target_at TIMESTAMPTZ NOT NULL CHECK (target_at > created_at),
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','reported','cancelled','expired','buyer_dead')),
+  predicts_available BOOLEAN,
+  reported_at TIMESTAMPTZ,
+  observation JSONB,
+  outcome TEXT CHECK (outcome IS NULL OR outcome IN ('correct','incorrect','unknown')),
+  resolved_at TIMESTAMPTZ,
+  sample_started_at TIMESTAMPTZ,
+  sample JSONB,
+  UNIQUE(buyer_character,request_key),
+  CHECK (buyer_character <> reporter_character),
+  CHECK ((status='reported' AND predicts_available IS NOT NULL AND reported_at IS NOT NULL AND observation IS NOT NULL)
+    OR (status<>'reported' AND predicts_available IS NULL AND reported_at IS NULL AND observation IS NULL)),
+  CHECK (reported_at IS NULL OR (reported_at >= created_at AND reported_at <= target_at - INTERVAL '60 seconds')),
+  CHECK ((outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL)
+    OR (status='reported' AND outcome IS NOT NULL AND resolved_at IS NOT NULL)),
+  CHECK ((sample_started_at IS NULL AND sample IS NULL) OR (sample_started_at IS NOT NULL AND sample IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS ix_intel_forecast_parties ON intel_forecast_jobs (buyer_character,reporter_character,status,target_at);
 
 -- Directed advances reuse canonical loan escrow and repayment. This table holds
 -- consent/history only; a quote is neither reserved capital nor a second debt.

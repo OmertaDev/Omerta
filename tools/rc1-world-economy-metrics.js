@@ -1,9 +1,11 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Test-only measurements. Consume isolated committed world snapshots; never
 // import game/db or feed this observer's information back to actor policies.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { CRIMES, CAMPAIGNS } from '../src/rules.js';
 import { exactDecimal, exactSum, negate, sha256 } from './rc1-resource-journal.js';
+import { qualifyLoanCancelSource } from './rc1-loan-source-compatibility.js';
 
 const DAY = 86400000;
 const clone = value => structuredClone(value);
@@ -31,6 +33,11 @@ const ratio = (numerator, denominator) => {
 export const economySnapshotHash = ({ boundary, ...state }) => sha256(state);
 const resourceId = (kind, ...parts) => `${kind}:${JSON.stringify(parts)}`;
 
+import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+export const LOAN_REFUND_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/game.js',
+  actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], inverseChunks: 2,
+  evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
+  scope: 'Exact full game inverse preserves unchanged loan refund accounting provenance; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 export const LOAN_REFUND_METRIC_SOURCE_PINS = Object.freeze({
   'src/loans.js': '663f71b15332367689b5b4db5cf7fc8d94e49249d8697cc6b98bb986607cb14e',
   'src/worker.js': '7072264895a874fbcc1f068c85a8668c4cc34819918868459d71194c5f1eabf6',
@@ -49,8 +56,14 @@ export function loanRefundCustodyFromJournal(journal) {
     .filter(check => check.kind === 'receipt-parity' && check.resource === 'cash' && check.owner === owner));
   if (checks.some(matches => matches.length !== 1)) return null;
   if (!refundSourceChecked) {
-    for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS))
-      assert.equal(sha256(readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n')), expected, 'Loan refund source changed: ' + file);
+    for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS)) {
+      const raw = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
+      const baseline = file === 'src/loans.js' ? qualifyLoanCancelSource(text).baselineText
+        : file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
+        ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
+      assert.equal(sha256(baseline), expected, 'Loan refund source changed: ' + file);
+    }
     refundSourceChecked = true;
   }
   for (const [i, [check]] of checks.entries()) {
