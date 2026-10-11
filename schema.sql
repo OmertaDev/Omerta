@@ -7779,7 +7779,7 @@ CREATE TABLE IF NOT EXISTS logistics_coverage_policies (
   tenant_character TEXT NOT NULL REFERENCES characters(id),
   insurer_account TEXT NOT NULL REFERENCES accounts(id),
   tenant_account TEXT NOT NULL REFERENCES accounts(id),
-  request_key TEXT NOT NULL CHECK (length(request_key) BETWEEN 1 AND 200),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
   offer JSONB NOT NULL,
   terms JSONB,
   max_benefit_cash BIGINT NOT NULL CHECK (max_benefit_cash BETWEEN 1 AND 1000000),
