@@ -617,6 +617,7 @@ const DISPOSITION = {
   business_depots: 'special', // voidListingsAtDeath closes the business, burns its idle treasury and stock, and resolves its procurement escrow
   business_warehouse_leases: 'special', // closeWarehouseClaimsAtDeath scatters dead tenant custody; landlord-closed claims preserve surviving tenant goods and immutable history
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
+  depot_brand_licenses: 'ledger', // immutable signed brand terms and earned receipt counters retain original parties; closed/dead businesses receive no further royalty and heirs inherit no licence authority
   delivery_commitments: 'special', // named buyer/supplier death closes reservations; history is retained with a terminal status
   supply_tenders: 'ledger', // immutable buyer/order/award provenance; escrow remains in canonical market/depot/delivery estate paths, never inherited
   supply_tender_offers: 'ledger', // signed supplier terms and acceptance history retain the original character; no separate escrow or authority passes to an heir
