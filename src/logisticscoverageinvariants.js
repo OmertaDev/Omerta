@@ -5,7 +5,7 @@ import { canonicalBytes } from './content/canonical.js';
 // receive a stored obligation, but cannot create another acceptance or payment.
 export async function logisticsCoverageFaults(pool) {
   const policies = (await pool.query('SELECT * FROM logistics_coverage_policies')).rows;
-  const ledger = (await pool.query("SELECT t.*,c.account_id FROM transactions t LEFT JOIN characters c ON c.id=t.character_id WHERE t.reason LIKE 'coverage:%'")).rows;
+  const ledger = (await pool.query("SELECT t.*,c.account_id AS character_account_id FROM transactions t LEFT JOIN characters c ON c.id=t.character_id WHERE t.reason LIKE 'coverage:%'")).rows;
   const characters = new Map((await pool.query('SELECT id,account_id FROM characters')).rows.map(c => [c.id, c.account_id]));
   const leases = new Map((await pool.query('SELECT * FROM business_warehouse_leases')).rows.map(l => [l.id, l]));
   const events = new Map((await pool.query("SELECT * FROM business_depot_journal WHERE reason='warehouse_tenant_death'")).rows.map(j => [j.id, j]));
@@ -14,7 +14,7 @@ export async function logisticsCoverageFaults(pool) {
   const rowsByPolicy = new Map();
   for (const row of ledger) {
     const match = /^coverage:(reserve|premium|claim|refund):(.+)$/.exec(row.reason);
-    if (!match || !byId.has(match[2]) || row.currency !== 'cash' || !row.character_id || !row.account_id || !Number.isFinite(Number(row.amount))) { faults++; continue; }
+    if (!match || !byId.has(match[2]) || row.currency !== 'cash' || !row.character_id || !row.character_account_id || !Number.isFinite(Number(row.amount))) { faults++; continue; }
     const rows = rowsByPolicy.get(match[2]) || []; rows.push({ ...row, kind: match[1] }); rowsByPolicy.set(match[2], rows);
   }
   for (const p of policies) {
@@ -42,7 +42,7 @@ export async function logisticsCoverageFaults(pool) {
       || premiums.filter(r => r.character_id === p.tenant_character && Number(r.amount) === -premium).length !== 1
       || premiums.filter(r => r.character_id === p.insurer_character && Number(r.amount) === premium).length !== 1) faults++;
     const claims = rows.filter(r => r.kind === 'claim'), refunds = rows.filter(r => r.kind === 'refund');
-    if (claims.some(r => r.account_id !== p.tenant_account || Number(r.amount) <= 0) || refunds.some(r => r.account_id !== p.insurer_account || Number(r.amount) <= 0)) faults++;
+    if (claims.some(r => r.character_account_id !== p.tenant_account || Number(r.amount) <= 0) || refunds.some(r => r.character_account_id !== p.insurer_account || Number(r.amount) <= 0)) faults++;
     if (refunds.reduce((n,r) => n + Number(r.amount),0) !== refunded) faults++;
     if (p.state === 'paid') {
       if (claims.length !== 1 || Number(claims[0]?.amount) !== benefit || !p.paid_at || !p.receipt
