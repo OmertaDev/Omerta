@@ -1,6 +1,7 @@
 import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
   coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
@@ -454,7 +455,7 @@ const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(
 // sources back to its unchanged pins, never by trusting a supplied transfer tag.
 let coverageSourceControls = 0;
 for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
-  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')));
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))));
   assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
   const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
