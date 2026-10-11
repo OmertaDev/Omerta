@@ -11,6 +11,7 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS,
   GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION,
   CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB,
@@ -26,7 +27,7 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
 
 const DAY = 86400000, digest = value => /^[a-f0-9]{64}$/.test(value || ''), hash = value => sha256(canonicalJson(value));
 const sourceFiles = Object.freeze({
-  'src/game.js': 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05',
+  'src/game.js': CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js'],
   'src/economy.js': GOODS_SOURCE_CURRENT_PINS['src/economy.js'],
   'src/accrual.js': '0c6393ff9780dccda0eebd9f1533598f1bb2810443b210bfc84150f20fb0ef6e',
   'src/social/gangs.js': 'f8ac8bdd2ee2706619d2d5cfd5ef8901f05415703c67cdd08d4e6e5554f53ad7',
@@ -43,11 +44,17 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 16, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 17, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
   cityHomesSourceReviewTransfer: { sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB, predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB,
-    actualServerSha256: CITY_HOMES_SERVER_PIN, predecessorServerSha256: WAREHOUSE_SERVER_PIN, inverseChunks: 2,
+    actualServerSha256: CITY_HOMES_SERVER_PIN, predecessorServerSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js'], inverseChunks: 2,
     evidence: 'docs/city-homes-security-review.md', phase: 'source compatibility; financial activation disabled',
-    scope: 'Exact City homes import and registration inverses reconstruct the entire Warehouse predecessor from the immutable source base. Only unchanged historical recovery guards transfer. New directory authentication, living-steward selection, private projection, pagination, external/estate labels and native read snapshot require separate current-source proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited.' },
+    scope: 'Exact City homes import and registration inverses reconstruct the entire Crew logistics predecessor from the immutable source base. Only unchanged historical recovery guards transfer. New directory authentication, living-steward selection, private projection, pagination, external/estate labels and native read snapshot require separate current-source proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited.' },
+  crewLogisticsSourceReviewTransfer: { sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, predecessorRevision: CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION,
+    currentPins: CREW_LOGISTICS_SOURCE_CURRENT_PINS, predecessorPins: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS,
+    currentBlobs: CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, predecessorBlobs: CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS,
+    inverseChunks: { 'src/server.js': 2, 'src/game.js': 2, 'src/crew.js': 2 },
+    evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility; financial activation disabled',
+    scope: 'Exact route registration, serialized private read wrapper, read-only SQL lock guard and leave/kick consent revocation changes reconstruct complete warehouse predecessor sources. Only unchanged historical guards transfer. New Crew membership consent, private projections, death/character replacement visibility, revocation and locking require separate current-source native proofs; no historical runtime, native, deployment, onchain or financial qualification is inherited. No estate qualification is added.' },
   warehouseSourceReviewTransfer: { sourceRevision: WAREHOUSE_SOURCE_REVIEWED_REVISION, sourceBlob: WAREHOUSE_SERVER_BLOB, predecessorServerBlob: WAREHOUSE_SERVER_PREDECESSOR_BLOB,
     actualServerSha256: WAREHOUSE_SERVER_PIN, predecessorServerSha256: SUPPLY_TENDER_SERVER_PIN, inverseChunks: 2,
     evidence: 'docs/warehouse-leases-security-review.md', phase: 'source compatibility; financial activation disabled',
@@ -142,6 +149,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   for (const [file, expected] of Object.entries(sourceFiles)) {
     const text = String(await readFile(file)).replace(/\r\n/g, '\n');
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
+    if (file === 'src/game.js') assertCrewLogisticsSourceTransfer(file, text);
     if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(text);
     if (file === 'src/server.js') assertDeedServerCompatibility(text);

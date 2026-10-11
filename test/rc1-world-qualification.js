@@ -12,6 +12,7 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
   CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesServerTransfer,
+  CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
   DECISION_CALL_SERVER_PIN, DECISION_CALL_SOURCE_REVIEWED_REVISION, DECISION_CALL_SERVER_BLOB, DECISION_CALL_PREDECESSOR_SERVER_BLOB, DECISION_CALL_SOURCE_INVERSES, assertDecisionCallServerTransfer,
@@ -32,7 +33,7 @@ const hash = value => sha256(canonicalJson(value)), clone = value => structuredC
 const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const homesProof = assertCityHomesServerTransfer(homesServerText);
 assert.equal(homesProof.actualSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(homesProof.baselineSha256, WAREHOUSE_SERVER_PIN);
+assert.equal(homesProof.baselineSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(homesProof.sourceBlob, CITY_HOMES_SERVER_BLOB);
 assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_PREDECESSOR_SERVER_BLOB);
@@ -46,7 +47,29 @@ for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
     assert.throws(() => assertCityHomesServerTransfer(changed), /source changed/);
 }
 assert.throws(() => assertCityHomesServerTransfer(homesServerText + '\n// unsupported City homes drift\n'), /source changed/);
-const warehouseServerText = homesProof.baselineText;
+const crewSources = new Map();
+for (const file of Object.keys(CREW_LOGISTICS_SOURCE_CURRENT_PINS)) {
+  const text = file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const proof = assertCrewLogisticsSourceTransfer(file, text);
+  crewSources.set(file, proof);
+  assert.equal(proof.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
+  assert.equal(proof.baselineSha256, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file]);
+  assert.equal(proof.inverseChunks, 2);
+  assert.equal(proof.sourceRevision, CREW_LOGISTICS_SOURCE_REVIEWED_REVISION);
+  for (const spec of [CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file], CREW_LOGISTICS_SOURCE_REVIEWED_REVISION + ':' + file])
+    assert.equal(text, execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  for (const spec of [CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file], CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION + ':' + file])
+    assert.equal(proof.baselineText, execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES[file]) {
+    assert.equal(text.split(chunk).length, 2);
+    for (const changed of [text.replace(chunk, ''), text.replace(chunk, chunk + chunk)])
+      assert.throws(() => assertCrewLogisticsSourceTransfer(file, changed), /source changed/);
+  }
+  assert.throws(() => assertCrewLogisticsSourceTransfer(file, text + '\n// unknown Crew drift\n'), /source changed/);
+}
+assert.equal(CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/game.js'], 'bb8d9f1b9b63c4775631e0938888f2d85d1b5eb879bcf47f218d6ccd3b862f05');
+assert.equal(CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/crew.js'], 'e13d9e745f62292ef47766c756ece7c9d14e10368cc30784053a8e5e4c2487ed');
+const warehouseServerText = crewSources.get('src/server.js').baselineText;
 const warehouseProof = assertWarehouseServerTransfer(warehouseServerText);
 assert.equal(warehouseProof.actualSha256, WAREHOUSE_SERVER_PIN);
 assert.equal(warehouseProof.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
@@ -411,10 +434,14 @@ assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\n
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 assert.equal(source.sourceFiles['src/server.js'], CITY_HOMES_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, WAREHOUSE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
 assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
+assert.equal(source.sourceFiles['src/game.js'], CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.predecessorPins, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS);
+assert.match(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.scope, /separate current-source native proofs/);
+assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['src/crew.js'], undefined);
 assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.actualServerSha256, WAREHOUSE_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.predecessorServerSha256, SUPPLY_TENDER_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.warehouseSourceReviewTransfer.sourceBlob, WAREHOUSE_SERVER_BLOB);
@@ -453,7 +480,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 16);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 17);
 assert.equal(WORLD_RECOVERY_REVIEW.warehouseEstateSourceChange.inverseChunks, 2);
 assert.equal(WORLD_RECOVERY_REVIEW.sourceFiles['src/social/estate.js'], undefined);
 assert.match(WORLD_RECOVERY_REVIEW.warehouseEstateSourceChange.scope, /no legacy estate qualification/);

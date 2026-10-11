@@ -1,3 +1,5 @@
+import { MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER } from '../tools/rc1-world-lifecycle-resources.js';
+import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { WORLD_RESOURCE_TABLES, reconcileWorldResources } from '../tools/rc1-world-resource-observer.js';
 import { reconcileMembershipResources, reconcileLifecycleCash, reconcileOrderExpiry, MARKET_EXPIRY_SOURCE_PINS } from '../tools/rc1-world-lifecycle-resources.js';
@@ -7,6 +9,9 @@ import { createNativeQuiescentGroupObserver } from '../tools/rc1-native-quiescen
 import { actorValueHash } from '../tools/rc1-native-actor-replay.js';
 import { sha256 } from '../tools/rc1-resource-journal.js';
 import { QUERY_ORDER_SCOPE } from '../tools/rc1-native-query-order.js';
+assert.equal(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.predecessorSha256, MARKET_EXPIRY_SOURCE_PINS['src/game.js']);
+assert.equal(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
+assert.match(MARKET_EXPIRY_CREW_SOURCE_REVIEW_TRANSFER.scope, /separate current-source native proofs/);
 
 const at = '2026-09-20T12:00:00.000Z', logicalAt = Date.parse(at);
 const initial = () => {
