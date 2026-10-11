@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5c101b2a2c5a05103a73c78b120af06d4f9a8ce7",
+  "sourceRevision": "cc884c56bc4ee11712e71098e2d0472dfa02e877",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 10599,
-    "edges": 43250,
+    "nodes": 10601,
+    "edges": 43257,
     "byNodeType": {
       "Artifact": 4420,
       "Command": 216,
-      "Commit": 2337,
+      "Commit": 2339,
       "Contract": 126,
       "Document": 707,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3553,
-      "CHANGED": 17013,
+      "CHANGED": 17018,
       "CONTAINS": 4441,
       "DECLARES": 216,
       "DEFINED_IN": 1400,
       "DEPENDS_ON": 67,
       "EXECUTES": 732,
       "HANDLED_BY": 775,
-      "HAS_COMMIT": 2337,
+      "HAS_COMMIT": 2339,
       "IMPLEMENTS": 124,
       "IMPORTS": 4234,
       "INHERITS": 42,
@@ -77481,20 +77481,20 @@
       "path": "public/city-world-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 8198,
-      "lines": 73,
-      "version": "59dde09fcb76f3f3",
+      "bytes": 8730,
+      "lines": 76,
+      "version": "1bae80ccd0e88387",
       "text": true,
       "provenance": [
         {
           "file": "public/city-world-ui.css",
           "line": 1,
-          "version": "59dde09fcb76f3f3"
+          "version": "1bae80ccd0e88387"
         }
       ],
-      "lastChangedAt": "2026-10-10T15:21:20.000Z",
+      "lastChangedAt": "2026-10-11T08:57:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "063d3621bbf3a7f49e767c9b9c66d90158d6cd80"
+      "lastChangedCommit": "cc884c56bc4ee11712e71098e2d0472dfa02e877"
     },
     {
       "key": "Artifact:public/city-world-ui.js",
@@ -111360,6 +111360,22 @@
       ]
     },
     {
+      "key": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "type": "Commit",
+      "id": "300b7e4b586c0274f0313585b77c28659e424b73",
+      "label": "chore(knowledge): refresh generated artifacts for 5c101b2a",
+      "title": "chore(knowledge): refresh generated artifacts for 5c101b2a",
+      "date": "2026-10-11T08:22:05.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/300b7e4b586c0274f0313585b77c28659e424b73",
+      "provenance": [
+        {
+          "commit": "300b7e4b586c0274f0313585b77c28659e424b73",
+          "url": "https://github.com/OmertaDev/Omerta/commit/300b7e4b586c0274f0313585b77c28659e424b73"
+        }
+      ]
+    },
+    {
       "key": "Commit:3033d75a6b62334701b2ea8a79c36fd12ffdd529",
       "type": "Commit",
       "id": "3033d75a6b62334701b2ea8a79c36fd12ffdd529",
@@ -134844,6 +134860,22 @@
         {
           "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
           "url": "https://github.com/OmertaDev/Omerta/commit/cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "type": "Commit",
+      "id": "cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "label": "Match world tool controls to the city palette",
+      "title": "Match world tool controls to the city palette",
+      "date": "2026-10-11T08:57:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "provenance": [
+        {
+          "commit": "cc884c56bc4ee11712e71098e2d0472dfa02e877",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cc884c56bc4ee11712e71098e2d0472dfa02e877"
         }
       ]
     },
@@ -162874,6 +162906,9 @@
           "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
         },
         {
+          "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+        },
+        {
           "commit": "304598c63515eec78308b30d14798cbc1e18dca7"
         },
         {
@@ -164101,6 +164136,9 @@
           "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
         },
         {
+          "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+        },
+        {
           "commit": "304598c63515eec78308b30d14798cbc1e18dca7"
         },
         {
@@ -165326,6 +165364,9 @@
         },
         {
           "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+        },
+        {
+          "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
         },
         {
           "commit": "304598c63515eec78308b30d14798cbc1e18dca7"
@@ -166889,6 +166930,9 @@
         },
         {
           "commit": "2fc052ac49923400a09ec274e7b4e90432299ea2"
+        },
+        {
+          "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
         },
         {
           "commit": "304598c63515eec78308b30d14798cbc1e18dca7"
@@ -177367,8 +177411,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5c101b2a2c5a05103a73c78b120af06d4f9a8ce7",
-      "currentBranch": "main",
+      "revision": "cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "currentBranch": "codex/city-panel-discovery",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -271162,6 +271206,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:3033d75a6b62334701b2ea8a79c36fd12ffdd529",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -351798,6 +351874,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "to": "Artifact:public/city-world-ui.css",
+      "provenance": {
+        "commit": "cc884c56bc4ee11712e71098e2d0472dfa02e877"
       }
     },
     {
@@ -455356,6 +455440,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:300b7e4b586c0274f0313585b77c28659e424b73",
+      "provenance": {
+        "commit": "300b7e4b586c0274f0313585b77c28659e424b73"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3033d75a6b62334701b2ea8a79c36fd12ffdd529",
       "provenance": {
         "commit": "3033d75a6b62334701b2ea8a79c36fd12ffdd529"
@@ -467095,6 +467187,14 @@
       "to": "Commit:cc7dcadc075d9d9e7484ec01e61a6c132413e7f7",
       "provenance": {
         "commit": "cc7dcadc075d9d9e7484ec01e61a6c132413e7f7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cc884c56bc4ee11712e71098e2d0472dfa02e877",
+      "provenance": {
+        "commit": "cc884c56bc4ee11712e71098e2d0472dfa02e877"
       }
     },
     {
