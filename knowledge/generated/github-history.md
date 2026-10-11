@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bdcd1dcff9d3`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `0d39ddd64a1e`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2663 |
+| Commits in clone | 2671 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Refresh franchise source census |
+| Latest commit | 2026-10-11 — Merge reviewed release PR 241 preserving exact checked source tree |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1730 |
+| OmertaDev | 1736 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 88 |
+| github-actions[bot] | 90 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -31,10 +31,10 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| knowledge/generated/github-history.md | 486 | historical |
-| knowledge/generated/graph-summary.md | 486 | historical |
-| knowledge/generated/graph.json | 486 | historical |
-| knowledge/generated/inventory.md | 486 | historical |
+| knowledge/generated/github-history.md | 489 | historical |
+| knowledge/generated/graph-summary.md | 489 | historical |
+| knowledge/generated/graph.json | 489 | historical |
+| knowledge/generated/inventory.md | 489 | historical |
 | [public/index.html](../../public/index.html) | 450 | yes |
 | [SPEC.md](../../SPEC.md) | 410 | yes |
 | [src/server.js](../../src/server.js) | 386 | yes |
