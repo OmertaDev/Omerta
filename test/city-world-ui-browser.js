@@ -127,6 +127,15 @@ try {
       return box.height >= 44 && box.top >= dock.top && box.bottom <= dock.bottom && document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2) === node;
     });
     assert.equal(closeFits, true, 'Close remains a visible real target after internal scrolling.');
+    const backFits = await page.locator('[data-city-world-back]').evaluate(node => {
+      const dock = node.closest('.city-world__dock').getBoundingClientRect(), box = node.getBoundingClientRect();
+      return box.height >= 44 && box.width >= 44 && box.top >= dock.top && box.bottom <= dock.bottom && [box.top + 2, box.bottom - 2].every(y => document.elementFromPoint(box.left + box.width / 2, y) === node);
+    });
+    assert.equal(backFits, true, 'The return-to-choices control is also a usable 44px target in the minimum dock.');
+    const beforeReturn = await page.evaluate(() => ({ reads: window.__reads.length, sent: window.__sent.length }));
+    await click('[data-city-world-back]');
+    assert.deepEqual(await page.evaluate(() => ({ scroll: document.querySelector('.city-world__dock').scrollTop, focus: document.activeElement.dataset.cityWorldPanel, panel: window.__ui.getState().panel, reads: window.__reads.length, sent: window.__sent.length })),
+      { scroll: 0, focus: 'map', panel: 'bag', ...beforeReturn }, 'Returning to choices focuses their first control without changing the selected panel or issuing a read/action.');
     await click('[data-city-world-close]');
     await page.evaluate(() => window.__ui.setHeight(240));
     await page.evaluate(() => window.__ui.open('chat'));
@@ -142,6 +151,9 @@ try {
     await page.locator('[data-city-nearby-input]').evaluate(node => node.setSelectionRange(3, 3));
     await page.evaluate(() => window.__ui.update({ chat: { messages: [] } }));
     assert.deepEqual(await page.locator('[data-city-nearby-input]').evaluate(node => [node.value, node.selectionStart, document.activeElement === node]), ['A draft stays here', 3, true]);
+    await page.locator('[data-city-world-back]').focus(); await page.keyboard.press('Enter');
+    assert.equal(await page.locator('[data-city-nearby-input]').inputValue(), 'A draft stays here', 'Returning to the chooser leaves an unsent message draft intact.');
+    assert.equal(await page.evaluate(() => window.__ui.getState().panel), 'chat');
     await page.locator('[data-city-chat-consent]').focus();
     await page.evaluate(() => window.__ui.update({ chat: { messages: [] } }));
     assert.equal(await page.locator('[data-city-chat-consent]').evaluate(node => document.activeElement === node), true, 'A passive update does not move focus into the send field.');
