@@ -3,6 +3,7 @@ import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-c
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
+import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -16,7 +17,7 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INTEL_SOURCE_CURRENT_PINS)) {
   const raw = normalize(fs.readFileSync(file, 'utf8'));
-  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, text)))));
+  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, text))))));
   const current = compose(raw), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
   const unknown = raw + '\n// unreviewed composed source\n';
   assert.equal(compose(unknown), unknown, 'Exact wrappers never manufacture historical bytes for unknown stacked source');
