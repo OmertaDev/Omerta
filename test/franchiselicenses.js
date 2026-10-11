@@ -63,6 +63,7 @@ process.env.MARKET_SEED = 'franchise-local-proof-seed';
 const { buildServer } = await import('../src/server.js');
 const G = await import('../src/game.js'), D = await import('../src/depot.js');
 const { bookDepot, closeDepotsAtDeath } = await import('../src/depotbook.js');
+const { runLedgerInvariants } = await import('../src/invariants.js');
 const app = await buildServer();
 const actors = [];
 async function player(name) {
@@ -109,18 +110,23 @@ try {
   await assert.rejects(accept(rival.id), e => e.code === 'franchise_active');
   await owned(licensor, (ch, client) => endFranchiseLicense(ch, rival.id, client));
   await assert.rejects(accept(rival.id), e => e.code === 'franchise_ended');
-  // Real native buy writes full fee-adjusted revenue and cargo first. Coordinator
-  // integration separately proves prepare precedes the existing asset lock.
+  // The canonical purchase itself performs prepare/book/settle. An explicit
+  // post-sale settle below tests cached source replay, never funds the royalty.
   const buy = (repeat = true) => paired(buyer, operator, async (ch, owner, client, h) => {
     ch.loc = owner.loc;
-    const prepared = await prepareFranchiseSale(client, operatorId);
-    const stale = { cash: Number(prepared.operator.treasury), stock: Number(prepared.operator.stock), cost: Number(prepared.operator.stock_cost) };
+    const beforeRow = (await client.query('SELECT * FROM business_depots WHERE id=$1', [operatorId])).rows[0];
+    const stale = { cash: Number(beforeRow.treasury), stock: Number(beforeRow.stock), cost: Number(beforeRow.stock_cost) };
     const prior = new Set((await client.query("SELECT id FROM business_depot_journal WHERE depot_id=$1 AND reason='sale'", [operatorId])).rows.map(row => row.id));
     const sale = await D.buyFromDepot(ch, owner, operatorId, 1, 101, client, h);
     const receipt = (await client.query("SELECT * FROM business_depot_journal WHERE depot_id=$1 AND reason='sale'", [operatorId])).rows.find(row => !prior.has(row.id));
     assert(receipt); assert.equal(Number(receipt.cash_delta), sale.businessRevenue);
-    const royalty = await settleFranchiseSale(client, prepared.context, receipt.id);
-    if (repeat) assert.deepEqual(await settleFranchiseSale(client, prepared.context, receipt.id), { ...royalty, replayed: true });
+    const credit = (await client.query("SELECT cash_delta FROM business_depot_journal WHERE source_journal_id=$1 AND reason='royalty_income'", [receipt.id])).rows[0];
+    const royalty = { royaltyCash: credit ? Number(credit.cash_delta) : 0 };
+    if (repeat) {
+      assert(credit, 'native buy must itself create the royalty pair, including zero royalties');
+      const prepared = await prepareFranchiseSale(client, operatorId);
+      assert.deepEqual(await settleFranchiseSale(client, prepared.context, receipt.id), { ...royalty, replayed: true });
+    }
     const after = (await client.query('SELECT * FROM business_depots WHERE id=$1', [operatorId])).rows[0];
     assert.equal(Number(after.treasury), stale.cash + sale.businessRevenue - royalty.royaltyCash);
     assert.equal(Number(after.stock), stale.stock - 1, 'settlement must not restore stale pre-sale stock');
@@ -139,13 +145,44 @@ try {
       pair.find(row => row.reason === 'royalty_income').cash_delta * 1);
   }
   assert.equal(Number((await state(recipientId)).treasury), 1);
+  const franchiseChecks = async () => (await runLedgerInvariants(app.pool, { alert: false })).checks.filter(c => c.name.startsWith('franchise '));
+  const assertFranchiseClean = async () => {
+    const checks = await franchiseChecks(); assert(checks.length >= 5);
+    assert.deepEqual(checks.filter(c => !c.ok), [], 'all franchise checks must reconcile real canonical sales');
+  };
+  await assertFranchiseClean();
+  const zeroCredit = entries.find(row => row.source_journal_id === first.receiptId && row.reason === 'royalty_income');
+  const positiveDebit = entries.find(row => row.source_journal_id === second.receiptId && row.reason === 'royalty_expense');
+  const positiveCredit = entries.find(row => row.source_journal_id === second.receiptId && row.reason === 'royalty_income');
+  const corrupt = async (write, restore, expected) => {
+    await write();
+    try { assert((await franchiseChecks()).some(c => c.name === expected && !c.ok), `detect ${expected}`); }
+    finally { await restore(); }
+    await assertFranchiseClean();
+  };
+  await corrupt(() => app.pool.query('UPDATE business_depot_journal SET franchise_license_id=NULL,source_journal_id=NULL WHERE id=$1', [zeroCredit.id]),
+    () => app.pool.query('UPDATE business_depot_journal SET franchise_license_id=$2,source_journal_id=$3 WHERE id=$1', [zeroCredit.id, offered.id, first.receiptId]),
+    'franchise royalty provenance');
+  await corrupt(() => app.pool.query('UPDATE business_depot_journal SET depot_id=$2 WHERE id=$1', [positiveCredit.id, operatorId]),
+    () => app.pool.query('UPDATE business_depot_journal SET depot_id=$2 WHERE id=$1', [positiveCredit.id, recipientId]), 'franchise royalty provenance');
+  const nonsale = (await app.pool.query("SELECT id FROM business_depot_journal WHERE depot_id=$1 AND reason='fixture_stock'", [operatorId])).rows[0].id;
+  await corrupt(() => app.pool.query('UPDATE business_depot_journal SET source_journal_id=$2 WHERE source_journal_id=$1', [second.receiptId, nonsale]),
+    () => app.pool.query('UPDATE business_depot_journal SET source_journal_id=$2 WHERE source_journal_id=$1', [nonsale, second.receiptId]), 'franchise royalty provenance');
+  await corrupt(() => app.pool.query('UPDATE business_depot_journal SET expense=2 WHERE id=$1', [positiveDebit.id]),
+    () => app.pool.query('UPDATE business_depot_journal SET expense=1 WHERE id=$1', [positiveDebit.id]), 'franchise royalty provenance');
+  await corrupt(() => app.pool.query('UPDATE depot_brand_licenses SET paid=2 WHERE id=$1', [offered.id]),
+    () => app.pool.query('UPDATE depot_brand_licenses SET paid=1 WHERE id=$1', [offered.id]), `franchise paid:${offered.id}`);
+  await corrupt(() => app.pool.query('UPDATE depot_brand_licenses SET earned_net=1 WHERE id=$1', [offered.id]),
+    () => app.pool.query('UPDATE depot_brand_licenses SET earned_net=$2 WHERE id=$1', [offered.id, first.sale.businessRevenue + second.sale.businessRevenue]), `franchise earned:${offered.id}`);
+  console.log('franchiselicenses canonical sale + invariant provenance/zero-half/recipient/source/expense/counter tamper detection PASS');
   await owned(operator, async (ch, client) => {
     const prepared = await prepareFranchiseSale(client, operatorId);
     const row = (await client.query('SELECT * FROM business_depots WHERE id=$1', [operatorId])).rows[0];
-    for (const reason of ['fund', 'warehouse_rent', 'royalty_income']) {
+    for (const reason of ['fund', 'warehouse_rent']) {
       const id = await bookDepot(client, row, reason, { cash: 10 });
       await assert.rejects(settleFranchiseSale(client, prepared.context, id), e => e.code === 'franchise_proof');
     }
+    await assert.rejects(settleFranchiseSale(client, prepared.context, positiveCredit.id), e => e.code === 'franchise_proof', 'royalty income never becomes a retail sale');
     await assert.rejects(settleFranchiseSale({ query: () => assert.fail('different client must reject before storage') },
       prepared.context, second.receiptId), e => e.code === 'franchise_proof');
   });
@@ -200,5 +237,6 @@ try {
   assert.equal((await buy(false)).royalty.royaltyCash, 0, 'closed recipient stops future royalties');
   await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [operator.id]);
   await assert.rejects(buy(false), e => ['dead', 'no_depot', 'no_target'].includes(e.code));
+  await assertFranchiseClean();
   console.log(`franchiselicenses ${postgres ? 'PostgreSQL' : 'memory'} domain PASS: consent/lifecycle, real buy/cargo/net journals, cumulative zero-pair replay, refreshed stock/cost, caps/expiry/death; root route integration separate`);
 } finally { await app.close(); }
