@@ -68,6 +68,20 @@ async function funded(f) {
 }
 const claim = (who, policy) => single(who, (ch, client, h) => L.claimCoverage(ch, policy.id, client, h));
 const refund = (who, policy) => single(who, (ch, client, h) => L.refundCoverage(ch, policy.id, client, h));
+// Canonical native transactions may abort a race with retryable contention.
+// Await every original attempt before retrying only those aborted operations;
+// never turn an authority/state refusal into a successful client retry.
+async function raceWithContentionReplay(tasks) {
+  const outcomes = await Promise.allSettled(tasks.map(task => task()));
+  for (let i = 0; i < outcomes.length; i++) {
+    for (let attempt = 0; outcomes[i].status === 'rejected' && outcomes[i].reason?.code === 'contention' && attempt < 3; attempt++) {
+      console.log(`coverage race client retry: operation ${i}, contention attempt ${attempt + 1}`);
+      try { outcomes[i] = { status: 'fulfilled', value: await tasks[i]() }; }
+      catch (reason) { outcomes[i] = { status: 'rejected', reason }; }
+    }
+  }
+  return outcomes;
+}
 try {
   owner = await player(); depot = await single(owner, (ch, client, h) => D.openDepot(ch, { salePrice: 2000, bidPrice: 500, targetStock: 4, reorderAt: 0, restockBudget: 3000 }, client, h));
   await single(owner, (ch, client) => W.configureWarehouseOffer(ch, depot.id, { expectedRevision: 0, enabled: true, slots: 40, cashPerUnitDay: 25 }, client));
@@ -78,7 +92,7 @@ try {
   await app.pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [f.insurer.id, f.before[0]]);
   process.env.DEPOT_PILOT = 'off'; await assert.rejects(f.accept(), { code: 'logistics_coverage' }); process.env.DEPOT_PILOT = 'on';
   if (native) {
-    const accepted = await Promise.allSettled([f.accept(), f.accept()]); assert(accepted.every(r => r.status === 'fulfilled'));
+    const accepted = await raceWithContentionReplay([f.accept, f.accept]); assert(accepted.every(r => r.status === 'fulfilled'));
     assert.equal(accepted.filter(r => r.value.replayed).length, 1);
   } else await f.accept();
   assert.equal(Number((await row(f.policy)).escrow_cash), 200);
@@ -97,8 +111,10 @@ try {
   process.env.DEPOT_PILOT = 'off';
   const cashBefore = await balance(heir);
   if (native) {
-    const outcomes = await Promise.all([claim(heir, f.policy), claim(heir, f.policy), refund(f.insurer, f.policy)]);
-    assert.equal(outcomes.slice(0, 2).filter(r => r.replayed).length, 1);
+    const outcomes = await raceWithContentionReplay([
+      () => claim(heir, f.policy), () => claim(heir, f.policy), () => refund(f.insurer, f.policy)]);
+    assert(outcomes.every(result => result.status === 'fulfilled'), 'All races settle through success or documented contention retry');
+    assert.equal(outcomes.slice(0, 2).filter(r => r.value.replayed).length, 1);
   } else { await claim(heir, f.policy); await refund(f.insurer, f.policy); }
   assert.equal(await balance(heir), cashBefore + 200); assert.equal(Number((await row(f.policy)).escrow_cash), 0);
   assert.equal((await ledger(f.policy)).filter(r => r.reason.startsWith('coverage:claim:')).length, 1);
@@ -141,7 +157,7 @@ try {
   if (native) {
     const competition = await fixture();
     const competing = await pair(competition.insurer, competition.tenant, (ch, target, client, h) => L.offerCoverage(ch, target, competition.offer, 'competing', client, h));
-    const contenders = await Promise.allSettled([competition.accept(), pair(competition.tenant, competition.insurer,
+    const contenders = await raceWithContentionReplay([competition.accept, () => pair(competition.tenant, competition.insurer,
       (ch, target, client, h) => L.acceptCoverage(ch, target, competing.policy.id, client, h))]);
     assert.equal(contenders.filter(r => r.status === 'fulfilled').length, 1);
     assert.equal(contenders.find(r => r.status === 'rejected').reason.code, 'logistics_coverage');
