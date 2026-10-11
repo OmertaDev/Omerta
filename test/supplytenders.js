@@ -6,8 +6,10 @@ process.env.DEPOT_PILOT = 'on';
 process.env.DELIVERY_CONTRACTS = 'on';
 const postgres = process.argv.includes('--postgres');
 if (postgres) {
-  if (!process.env.SUPPLY_TENDER_TEST_DATABASE_URL) throw new Error('Set SUPPLY_TENDER_TEST_DATABASE_URL to a dedicated disposable PostgreSQL database.');
-  process.env.DATABASE_URL = process.env.SUPPLY_TENDER_TEST_DATABASE_URL;
+  const url = new URL(process.env.SUPPLY_TENDER_TEST_DATABASE_URL || 'http://missing');
+  if (url.protocol !== 'postgresql:' || url.hostname !== '127.0.0.1' || !url.pathname.startsWith('/supply_tenders_'))
+    throw new Error('Use an isolated local supply_tenders_ PostgreSQL database.');
+  process.env.DATABASE_URL = url.href;
 }
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
