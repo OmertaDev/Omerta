@@ -7736,3 +7736,39 @@ CREATE TABLE IF NOT EXISTS city_social_preferences (
   last_chat_at TIMESTAMPTZ,
   PRIMARY KEY (character_id,generation)
 );
+
+-- Directed advances reuse canonical loan escrow and repayment. This table holds
+-- consent/history only; a quote is neither reserved capital nor a second debt.
+CREATE TABLE IF NOT EXISTS delivery_loan_requests (
+  id TEXT PRIMARY KEY,
+  commitment_id TEXT NOT NULL,
+  order_id TEXT NOT NULL,
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  requested_lender_character TEXT NOT NULL REFERENCES characters(id),
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  terms JSONB NOT NULL,
+  quote JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  state TEXT NOT NULL CHECK (state IN ('requested','offered','active','settled','cancelled','closed')),
+  loan_id TEXT UNIQUE,
+  funded_at TIMESTAMPTZ,
+  accepted_at TIMESTAMPTZ,
+  settled_at TIMESTAMPTZ,
+  settlement JSONB,
+  UNIQUE(supplier_character, request_key),
+  CHECK (supplier_character <> requested_lender_character AND supplier_character <> buyer_character
+    AND requested_lender_character <> buyer_character),
+  CHECK ((state IN ('requested','cancelled') AND loan_id IS NULL AND funded_at IS NULL AND accepted_at IS NULL
+      AND settled_at IS NULL AND settlement IS NULL)
+    OR (state='offered' AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NULL
+      AND settled_at IS NULL AND settlement IS NULL)
+    OR (state='active' AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL
+      AND settled_at IS NULL AND settlement IS NULL)
+    OR (state='settled' AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL
+      AND settled_at IS NOT NULL AND settlement IS NOT NULL)
+    OR (state='closed' AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND settled_at IS NULL AND settlement IS NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS delivery_loan_one_live ON delivery_loan_requests(commitment_id)
+  WHERE state IN ('requested','offered','active');
+CREATE INDEX IF NOT EXISTS delivery_loan_parties ON delivery_loan_requests(supplier_character, requested_lender_character);
