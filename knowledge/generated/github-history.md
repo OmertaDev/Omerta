@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `632650c54ec5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cb966e54761e`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2720 |
+| Commits in clone | 2724 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-11 — Measure delivery finance release repair census |
+| Latest commit | 2026-10-11 — Merge commit '15bbce99' into codex/invoice-finance-integration |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1787 |
+| OmertaDev | 1791 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 88 |
@@ -31,12 +31,12 @@
 | Path | Commits touching path | Current? |
 |---|---:|---|
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| knowledge/generated/github-history.md | 492 | historical |
-| knowledge/generated/graph-summary.md | 492 | historical |
-| knowledge/generated/graph.json | 492 | historical |
-| knowledge/generated/inventory.md | 492 | historical |
+| knowledge/generated/github-history.md | 494 | historical |
+| knowledge/generated/graph-summary.md | 494 | historical |
+| knowledge/generated/graph.json | 494 | historical |
+| knowledge/generated/inventory.md | 494 | historical |
 | [public/index.html](../../public/index.html) | 450 | yes |
-| [SPEC.md](../../SPEC.md) | 416 | yes |
+| [SPEC.md](../../SPEC.md) | 417 | yes |
 | [src/server.js](../../src/server.js) | 388 | yes |
 | [schema.sql](../../schema.sql) | 318 | yes |
 | [package.json](../../package.json) | 268 | yes |
