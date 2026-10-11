@@ -10,6 +10,7 @@ if (postgres) {
   if (url.protocol !== 'postgresql:' || url.hostname !== '127.0.0.1' || !url.pathname.startsWith('/supply_tenders_'))
     throw new Error('Use an isolated local supply_tenders_ PostgreSQL database.');
   process.env.DATABASE_URL = url.href;
+  process.env.MARKET_SEED = 'supply-tenders-local-test-seed-2026';
 }
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
