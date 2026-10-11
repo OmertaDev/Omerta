@@ -7490,6 +7490,35 @@ ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS warehouse_rent_lease
 ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS lease_sequence INT CHECK (lease_sequence >= 1);
 CREATE UNIQUE INDEX IF NOT EXISTS ix_warehouse_journal_sequence ON business_depot_journal(lease_id,lease_sequence);
 
+-- Fixed-price offers against existing funded orders; these rows hold no money.
+CREATE TABLE IF NOT EXISTS supply_tenders (
+  id TEXT PRIMARY KEY,
+  order_id TEXT NOT NULL REFERENCES market_listings(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  buyer_character TEXT NOT NULL REFERENCES characters(id),
+  qty INT NOT NULL CHECK (qty BETWEEN 1 AND 40),
+  unit_price NUMERIC NOT NULL CHECK (unit_price BETWEEN 50 AND 1000000),
+  offers_close_at TIMESTAMPTZ NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','awarded','cancelled')),
+  winning_offer_id TEXT,
+  commitment_id TEXT REFERENCES delivery_commitments(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_supply_tender_open ON supply_tenders(order_id) WHERE status='open';
+CREATE TABLE IF NOT EXISTS supply_tender_offers (
+  id TEXT PRIMARY KEY,
+  tender_id TEXT NOT NULL REFERENCES supply_tenders(id),
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  qty INT NOT NULL CHECK (qty BETWEEN 1 AND 40),
+  unit_price NUMERIC NOT NULL CHECK (unit_price BETWEEN 50 AND 1000000),
+  spend_limit NUMERIC NOT NULL CHECK (spend_limit BETWEEN 1 AND 100000),
+  accept_until TIMESTAMPTZ NOT NULL,
+  delivery_deadline TIMESTAMPTZ NOT NULL CHECK (delivery_deadline >= accept_until + interval '60 seconds'),
+  status TEXT NOT NULL DEFAULT 'offered' CHECK (status IN ('offered','withdrawn','accepted')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE(tender_id,supplier_character)
+);
+
 CREATE TABLE IF NOT EXISTS business_operating_policies (
   id TEXT PRIMARY KEY,
   depot_id TEXT NOT NULL REFERENCES business_depots(id),
@@ -7626,6 +7655,7 @@ CREATE TABLE IF NOT EXISTS resource_calls (
   settled_at TIMESTAMPTZ,
   UNIQUE(account_id,request_key)
 );
+ALTER TABLE resource_calls ADD COLUMN IF NOT EXISTS decision_execution_receipt JSONB;
 CREATE TABLE IF NOT EXISTS resource_payments (
   id TEXT PRIMARY KEY,
   account_id TEXT NOT NULL REFERENCES resource_treasuries(account_id),

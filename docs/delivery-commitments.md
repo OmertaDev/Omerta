@@ -19,6 +19,14 @@ release an accepted quantity early. No collateral or failure compensation is add
 
 - `GET /v1/deliveries`: authenticated buyer/supplier obligations plus up to 100 recent
   terminal records. Active obligations are never hidden by the history limit.
+  `supplierHistory` summarizes only the current character's buyer commitments,
+  grouped by supplier: fulfilled, missed deadline, buyer interruption, supplier
+  interruption, active and unknown, with delivered cargo units. Human and agent
+  credentials see the same character scope. The history window combines both
+  buyer and supplier roles, so this is a limited recent view rather than a
+  supplier's lifetime record. Death is separate from a missed deadline; unknown
+  or conflicting records do not create successful outcomes or delivered units.
+  These summaries expose no additional balances, spending authority or rewards.
 - `POST /v1/market/:id/accept-delivery`:
   `{ "qty": 3, "unitPrice": 123, "deadlineSeconds": 3600, "maxProcurementCash": 1000 }`.
   The price must match and the quantity must still be available.
