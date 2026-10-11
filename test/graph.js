@@ -69,6 +69,7 @@ assert.deepEqual(inv.mute.sort(), [
   'family operation history',
   'franchise royalty conservation',
   'franchise royalty provenance',
+  'logistics coverage bindings',
   'reason vocabulary',
   'warehouse journal ownership',
   'world graph object transitions',

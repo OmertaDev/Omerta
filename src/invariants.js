@@ -658,7 +658,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
     push(`operating policy budget:${policy.id}`, Math.max(0, Number(policy.spent) - Number(policy.max_spend)), 0, 0);
   }
 
-  push('logistics coverage escrow', await logisticsCoverageFaults(pool), 0, 0);
+  const coverageEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM logistics_coverage_policies');
+  push('logistics coverage escrow', coverageEscrow, -(await sum(pool, "currency='cash' AND reason LIKE 'coverage:%'")), 0);
+  push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);
 
   // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow
   // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.
