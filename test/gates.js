@@ -2163,6 +2163,18 @@ const SCENERY_WAIVED = {
     }
     return null;
   };
+  const exactLogisticsField = (base, source, lit, match) => {
+    if (base !== 'crewlogistics.js' || match[1] !== 'kind' || match[2] !== 'body' || match[3] !== 'kind') return false;
+    const start = source.indexOf('export function validateCrewLogisticsTarget(body) {');
+    const end = source.indexOf('// Whitelist projections', start);
+    if (start < 0 || end < 0 || source.split(lit).length !== 2) return false;
+    const validator = source.slice(start, end);
+    return validator.includes(lit)
+      && /const kinds = \['tender', 'delivery_commitment', 'warehouse_claim'\];/.test(source)
+      && /!kinds\.includes\(body\.kind\)/.test(validator)
+      && !/\bbody\.kind\s*=(?!=)|\bkinds\.(?:push|pop|shift|unshift|splice)\s*\(/.test(source);
+  };
+  let logisticsClassified = 0;
   const cityClassified = [];
   const cityRawProblems = source => {
     const problems = [];
@@ -2191,6 +2203,7 @@ const SCENERY_WAIVED = {
         if (named) continue;
         const cityField = exactCityField(base, s, lit, m);
         if (cityField) { cityClassified.push(cityField); continue; }
+        if (exactLogisticsField(base, s, lit, m)) { logisticsClassified++; continue; }
         const key = `${base}:${k}`;
         if (WAIVED[key]) { seen.add(key); continue; }
         bad.push(`${f} — ${k}: ${src}.${m[3]}`);
@@ -2207,6 +2220,17 @@ const SCENERY_WAIVED = {
    - ${stale.join('\n   - ')}`);
   assert.deepEqual(cityClassified.sort(), ['closed text/emote discriminator', 'issued outfit selector'],
     'The exact City selector/discriminator classifications must each govern one current site.');
+  assert.equal(logisticsClassified, 1, 'Exactly one closed Crew source discriminator must be classified.');
+  const logisticsSource = fs.readFileSync('src/crewlogistics.js', 'utf8');
+  for (const changed of [
+    logisticsSource.replace('!kinds.includes(body.kind)', '!body.kind'),
+    logisticsSource.replace("'warehouse_claim'];", "'warehouse_claim', 'unbounded'];"),
+    logisticsSource.replace('return { kind: body.kind', "body.kind = 'unbounded';\n  return { kind: body.kind"),
+  ]) {
+    assert.notEqual(changed, logisticsSource, 'Crew discriminator negative must mutate the actual source.');
+    assert(![...literals(changed)].some(lit => [...rawKeyFields(lit)].some(match =>
+      exactLogisticsField('crewlogistics.js', changed, lit, match))), 'Unvalidated or changed Crew kinds cannot inherit the exact classification.');
+  }
   const citySource = fs.readFileSync('src/city-social.js', 'utf8');
   assert.deepEqual(cityRawProblems(citySource), [], 'The same payload matcher must accept the reviewed City sites.');
   for (const [label, changed, expected] of [
@@ -3620,7 +3644,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
