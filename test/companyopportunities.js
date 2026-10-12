@@ -75,6 +75,13 @@ try {
   assert.equal(missing.status, 'not_observed'); assert.equal(missing.quote, null, 'disappearance never claims expiry without a known expired quote');
   await pool.query('UPDATE supply_tenders SET offers_close_at=$2 WHERE id=$1', ['opportunity-tender', new Date(Date.now() - 1000)]);
   assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.kind === 'tender').quote, null);
+  const shortExpiry = new Date(Date.now() + 250);
+  await pool.query("INSERT INTO market_listings(id,seller_character,kind,good_id,district,qty,price,expires_at) VALUES('known-expiry',$1,'order','gin','docks',1,500,$2)", [character, shortExpiry]);
+  await tx(db => O.refreshCompanyOpportunities(ch, db));
+  assert.equal((await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry').status, 'observed');
+  await new Promise(resolve => setTimeout(resolve, 275));
+  const expired = (await O.companyOpportunityInbox(ch, {}, pool)).notices.find(n => n.sourceId === 'known-expiry');
+  assert.equal(expired.status, 'expired'); assert.equal(expired.quote, null, 'known captured deadline proves expiry honestly');
   if (native) {
     await pool.query('UPDATE business_depots SET sale_price=1200 WHERE id=$1', ['opportunity-depot']);
     const hashBefore = (await pool.query('SELECT source_hash FROM company_opportunity_notices WHERE id=$1', [notice.id])).rows[0].source_hash;
