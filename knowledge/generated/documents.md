@@ -405,6 +405,7 @@
 | [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
+| [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
 | [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |

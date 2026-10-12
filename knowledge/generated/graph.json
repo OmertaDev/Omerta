@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+  "sourceRevision": "db5e8450380e5878d80b44bb3530877b2fadbc66",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 11658,
-    "edges": 47265,
+    "nodes": 11664,
+    "edges": 47281,
     "byNodeType": {
-      "Artifact": 4554,
+      "Artifact": 4555,
       "Command": 245,
-      "Commit": 3037,
+      "Commit": 3041,
       "Contract": 126,
-      "Document": 734,
+      "Document": 735,
       "Domain": 13,
       "ExternalDependency": 32,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3712,
-      "CHANGED": 18833,
-      "CONTAINS": 4575,
+      "CHANGED": 18843,
+      "CONTAINS": 4576,
       "DECLARES": 245,
       "DEFINED_IN": 1471,
       "DEPENDS_ON": 67,
       "EXECUTES": 830,
       "HANDLED_BY": 827,
-      "HAS_COMMIT": 3037,
+      "HAS_COMMIT": 3041,
       "IMPLEMENTS": 124,
       "IMPORTS": 4695,
       "INHERITS": 42,
       "REFERENCES": 3208,
-      "REPRESENTS": 1747,
+      "REPRESENTS": 1748,
       "TESTS": 1621,
       "TRACKS": 126,
       "USES_TABLE": 2105
@@ -7521,20 +7521,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 44559,
+      "bytes": 44614,
       "lines": 898,
-      "version": "fa5b8c29f9e9b379",
+      "version": "12c320ddf578965b",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "fa5b8c29f9e9b379"
+          "version": "12c320ddf578965b"
         }
       ],
-      "lastChangedAt": "2026-10-12T17:29:40.000Z",
+      "lastChangedAt": "2026-10-12T19:51:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bc63d2b8cc00a405fb318a2590162ca89bf0deee"
+      "lastChangedCommit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -28281,6 +28281,29 @@
       "lastChangedAt": "2026-10-08T06:29:06.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "d7f15047043e4fff594e7e1207eaf923fff81aed"
+    },
+    {
+      "key": "Artifact:docs/postgres-ci-registry-recovery-review.md",
+      "type": "Artifact",
+      "id": "docs/postgres-ci-registry-recovery-review.md",
+      "label": "postgres-ci-registry-recovery-review.md",
+      "path": "docs/postgres-ci-registry-recovery-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 1269,
+      "lines": 11,
+      "version": "4fa72c92e1057a7d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/postgres-ci-registry-recovery-review.md",
+          "line": 1,
+          "version": "4fa72c92e1057a7d"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T19:52:07.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1fc6049c91036fab811603c9eccb969bdf629350"
     },
     {
       "key": "Artifact:docs/public-market-feed-security-review.md",
@@ -78886,18 +78909,18 @@
       "extension": ".md",
       "bytes": 55481,
       "lines": 743,
-      "version": "8b1d36bf1c4e9779",
+      "version": "ebba9c97aa0dd5be",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "8b1d36bf1c4e9779"
+          "version": "ebba9c97aa0dd5be"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:37:12.000Z",
+      "lastChangedAt": "2026-10-12T19:52:51.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f"
+      "lastChangedCommit": "db5e8450380e5878d80b44bb3530877b2fadbc66"
     },
     {
       "key": "Artifact:src/access.js",
@@ -90841,20 +90864,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 296999,
-      "lines": 4383,
-      "version": "d555943c73bce52b",
+      "bytes": 297666,
+      "lines": 4390,
+      "version": "8ff20adbfb26143a",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "d555943c73bce52b"
+          "version": "8ff20adbfb26143a"
         }
       ],
-      "lastChangedAt": "2026-10-12T17:29:40.000Z",
+      "lastChangedAt": "2026-10-12T19:52:07.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bc63d2b8cc00a405fb318a2590162ca89bf0deee"
+      "lastChangedCommit": "1fc6049c91036fab811603c9eccb969bdf629350"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -113987,6 +114010,22 @@
       ]
     },
     {
+      "key": "Commit:1fc6049c91036fab811603c9eccb969bdf629350",
+      "type": "Commit",
+      "id": "1fc6049c91036fab811603c9eccb969bdf629350",
+      "label": "Retain registry acquisition finding and exact image drift controls",
+      "title": "Retain registry acquisition finding and exact image drift controls",
+      "date": "2026-10-12T19:52:07.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1fc6049c91036fab811603c9eccb969bdf629350",
+      "provenance": [
+        {
+          "commit": "1fc6049c91036fab811603c9eccb969bdf629350",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1fc6049c91036fab811603c9eccb969bdf629350"
+        }
+      ]
+    },
+    {
       "key": "Commit:1fd1de3ea5287f934863c7c0eb4330319363c8e2",
       "type": "Commit",
       "id": "1fd1de3ea5287f934863c7c0eb4330319363c8e2",
@@ -124687,6 +124726,22 @@
         {
           "commit": "56777b9661ea27daa71d57346f33c2af2e451325",
           "url": "https://github.com/OmertaDev/Omerta/commit/56777b9661ea27daa71d57346f33c2af2e451325"
+        }
+      ]
+    },
+    {
+      "key": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "type": "Commit",
+      "id": "567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "label": "Refresh payroll reviewed knowledge snapshot",
+      "title": "Refresh payroll reviewed knowledge snapshot",
+      "date": "2026-10-12T19:38:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "provenance": [
+        {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/567a9295fde581d2af35febc0b5cb684ce6d0fb3"
         }
       ]
     },
@@ -149859,6 +149914,22 @@
       ]
     },
     {
+      "key": "Commit:db5e8450380e5878d80b44bb3530877b2fadbc66",
+      "type": "Commit",
+      "id": "db5e8450380e5878d80b44bb3530877b2fadbc66",
+      "label": "Refresh payroll census after registry recovery evidence",
+      "title": "Refresh payroll census after registry recovery evidence",
+      "date": "2026-10-12T19:52:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/db5e8450380e5878d80b44bb3530877b2fadbc66",
+      "provenance": [
+        {
+          "commit": "db5e8450380e5878d80b44bb3530877b2fadbc66",
+          "url": "https://github.com/OmertaDev/Omerta/commit/db5e8450380e5878d80b44bb3530877b2fadbc66"
+        }
+      ]
+    },
+    {
       "key": "Commit:db706de676ea16580776e9f730b59cdaebf3c420",
       "type": "Commit",
       "id": "db706de676ea16580776e9f730b59cdaebf3c420",
@@ -150927,6 +150998,22 @@
         {
           "commit": "e19551968a66ec712eac28ba9021c1ff574f23cd",
           "url": "https://github.com/OmertaDev/Omerta/commit/e19551968a66ec712eac28ba9021c1ff574f23cd"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "type": "Commit",
+      "id": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "label": "Pin official PostgreSQL 18.4 image after public mirror quota failure",
+      "title": "Pin official PostgreSQL 18.4 image after public mirror quota failure",
+      "date": "2026-10-12T19:51:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "provenance": [
+        {
+          "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
         }
       ]
     },
@@ -165483,6 +165570,22 @@
       ]
     },
     {
+      "key": "Document:docs/postgres-ci-registry-recovery-review.md",
+      "type": "Document",
+      "id": "docs/postgres-ci-registry-recovery-review.md",
+      "label": "docs/postgres-ci-registry-recovery-review.md",
+      "documentType": "documentation",
+      "lines": 11,
+      "version": "4fa72c92e1057a7d",
+      "provenance": [
+        {
+          "file": "docs/postgres-ci-registry-recovery-review.md",
+          "line": 1,
+          "version": "4fa72c92e1057a7d"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/public-market-feed-security-review.md",
       "type": "Document",
       "id": "docs/public-market-feed-security-review.md",
@@ -170385,12 +170488,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 743,
-      "version": "8b1d36bf1c4e9779",
+      "version": "ebba9c97aa0dd5be",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "8b1d36bf1c4e9779"
+          "version": "ebba9c97aa0dd5be"
         }
       ]
     },
@@ -177548,6 +177651,9 @@
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+        },
+        {
           "commit": "5726fcd767c512cf42d3491d89b2c7a09c869e6a"
         },
         {
@@ -178686,6 +178792,9 @@
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
+        },
+        {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
         },
         {
           "commit": "56c4247bd65fd1404e03e745e99f8b2d2bc9ecec"
@@ -180377,6 +180486,9 @@
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+        },
+        {
           "commit": "56c4247bd65fd1404e03e745e99f8b2d2bc9ecec"
         },
         {
@@ -182064,6 +182176,9 @@
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
+        },
+        {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
         },
         {
           "commit": "56c4247bd65fd1404e03e745e99f8b2d2bc9ecec"
@@ -184215,6 +184330,9 @@
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
+        },
+        {
+          "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
         },
         {
           "commit": "56c4247bd65fd1404e03e745e99f8b2d2bc9ecec"
@@ -195806,12 +195924,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "revision": "db5e8450380e5878d80b44bb3530877b2fadbc66",
       "currentBranch": "codex/game-employment-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4554,
+      "currentArtifactCount": 4555,
       "provenance": [
         {
           "file": "README.md",
@@ -229597,13 +229715,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4383,
-      "version": "d555943c73bce52b",
+      "lines": 4390,
+      "version": "8ff20adbfb26143a",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "d555943c73bce52b"
+          "version": "8ff20adbfb26143a"
         }
       ]
     },
@@ -235418,12 +235536,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 898,
-      "version": "fa5b8c29f9e9b379",
+      "version": "12c320ddf578965b",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "fa5b8c29f9e9b379"
+          "version": "12c320ddf578965b"
         }
       ]
     },
@@ -286418,6 +286536,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1fc6049c91036fab811603c9eccb969bdf629350",
+      "to": "Artifact:docs/postgres-ci-registry-recovery-review.md",
+      "provenance": {
+        "commit": "1fc6049c91036fab811603c9eccb969bdf629350"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1fc6049c91036fab811603c9eccb969bdf629350",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "1fc6049c91036fab811603c9eccb969bdf629350"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1fd1de3ea5287f934863c7c0eb4330319363c8e2",
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
@@ -319430,6 +319564,46 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "56777b9661ea27daa71d57346f33c2af2e451325"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
       }
     },
     {
@@ -394042,6 +394216,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:db5e8450380e5878d80b44bb3530877b2fadbc66",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "db5e8450380e5878d80b44bb3530877b2fadbc66"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:db706de676ea16580776e9f730b59cdaebf3c420",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -399734,6 +399916,22 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "e19551968a66ec712eac28ba9021c1ff574f23cd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
       }
     },
     {
@@ -435661,6 +435859,15 @@
       "to": "Artifact:docs/operating-policy-review.json",
       "provenance": {
         "file": "docs/operating-policy-review.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/postgres-ci-registry-recovery-review.md",
+      "provenance": {
+        "file": "docs/postgres-ci-registry-recovery-review.md",
         "line": 1
       }
     },
@@ -495248,6 +495455,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1fc6049c91036fab811603c9eccb969bdf629350",
+      "provenance": {
+        "commit": "1fc6049c91036fab811603c9eccb969bdf629350"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1fd1de3ea5287f934863c7c0eb4330319363c8e2",
       "provenance": {
         "commit": "1fd1de3ea5287f934863c7c0eb4330319363c8e2"
@@ -500595,6 +500810,14 @@
       "to": "Commit:56777b9661ea27daa71d57346f33c2af2e451325",
       "provenance": {
         "commit": "56777b9661ea27daa71d57346f33c2af2e451325"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:567a9295fde581d2af35febc0b5cb684ce6d0fb3",
+      "provenance": {
+        "commit": "567a9295fde581d2af35febc0b5cb684ce6d0fb3"
       }
     },
     {
@@ -513184,6 +513407,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:db5e8450380e5878d80b44bb3530877b2fadbc66",
+      "provenance": {
+        "commit": "db5e8450380e5878d80b44bb3530877b2fadbc66"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:db706de676ea16580776e9f730b59cdaebf3c420",
       "provenance": {
         "commit": "db706de676ea16580776e9f730b59cdaebf3c420"
@@ -513715,6 +513946,14 @@
       "to": "Commit:e19551968a66ec712eac28ba9021c1ff574f23cd",
       "provenance": {
         "commit": "e19551968a66ec712eac28ba9021c1ff574f23cd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb",
+      "provenance": {
+        "commit": "e19badf9f0a5a5ffc1bdc00811a06bc5745eb0fb"
       }
     },
     {
@@ -592868,6 +593107,15 @@
       "to": "Artifact:docs/OMR-MARKETING-PACK.md",
       "provenance": {
         "file": "docs/OMR-MARKETING-PACK.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/postgres-ci-registry-recovery-review.md",
+      "to": "Artifact:docs/postgres-ci-registry-recovery-review.md",
+      "provenance": {
+        "file": "docs/postgres-ci-registry-recovery-review.md",
         "line": 1
       }
     },
