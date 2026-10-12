@@ -68,14 +68,21 @@ async function homeAccess(client, accountId, key, { body = null, lock = false, t
   if (external(deed) || deed.account_id !== initial.account_id || actor.loc !== deed.district) fail();
   const owner = deed.account_id === accountId;
   if (!owner && activating) fail();
-  const room = deed.home_authority_token ? (await client.query(`SELECT * FROM city_home_rooms
-    WHERE home_key=$1 AND authority_token=$2${lock ? ' FOR UPDATE' : ''}`, [key, deed.home_authority_token])).rows[0] : null;
+  const room = deed.home_authority_token ? (lock
+    ? await client.query(`SELECT * FROM city_home_rooms
+      WHERE home_key=$1 AND authority_token=$2 FOR UPDATE`, [key, deed.home_authority_token])
+    : await client.query(`SELECT * FROM city_home_rooms
+      WHERE home_key=$1 AND authority_token=$2`, [key, deed.home_authority_token])).rows[0] : null;
   if (room && room.owner_account_id !== deed.account_id) fail('item_integrity_error');
   let rights = ['visit', 'workbench'], permission = null;
   if (!owner) {
-    const grants = (await client.query(`SELECT * FROM city_home_visitors WHERE home_key=$1 AND authority_token=$2
-      AND guest_account_id=$3 AND guest_character_id=$4 AND guest_generation=$5 AND status='active'${lock ? ' FOR UPDATE' : ''}`,
-    [key, deed.home_authority_token, accountId, actor.id, Number(actor.generation)])).rows;
+    const grants = (lock
+      ? await client.query(`SELECT * FROM city_home_visitors WHERE home_key=$1 AND authority_token=$2
+        AND guest_account_id=$3 AND guest_character_id=$4 AND guest_generation=$5 AND status='active' FOR UPDATE`,
+      [key, deed.home_authority_token, accountId, actor.id, Number(actor.generation)])
+      : await client.query(`SELECT * FROM city_home_visitors WHERE home_key=$1 AND authority_token=$2
+        AND guest_account_id=$3 AND guest_character_id=$4 AND guest_generation=$5 AND status='active'`,
+      [key, deed.home_authority_token, accountId, actor.id, Number(actor.generation)])).rows;
     const grant = grants.find(row => row.host_character_id === host.id && Number(row.host_generation) === Number(host.generation)
       && new Date(row.expires_at).getTime() > Date.now());
     if (!room || !grant || host.loc !== deed.district) fail();
@@ -142,7 +149,9 @@ export function updateHomeLayout(pool, accountId, body, receipt) {
   }, { owner: true });
 }
 async function grantRow(client, id, lock = false) {
-  return (await client.query('SELECT * FROM city_home_visitors WHERE id=$1' + (lock ? ' FOR UPDATE' : ''), [id])).rows[0];
+  return (lock
+    ? await client.query('SELECT * FROM city_home_visitors WHERE id=$1 FOR UPDATE', [id])
+    : await client.query('SELECT * FROM city_home_visitors WHERE id=$1', [id])).rows[0];
 }
 function restoreGrant(client, row) {
   registerItemTransactionUndo(client, () => client.query(`UPDATE city_home_visitors SET status=$2,accepted_at=$3,revoked_at=$4 WHERE id=$1`,

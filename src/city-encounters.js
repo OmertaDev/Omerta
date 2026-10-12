@@ -29,8 +29,12 @@ export function validateEncounterBody(kind, body) {
   }
 }
 async function actorFor(client, accountId, lock = false) {
-  const actor = (await client.query(`SELECT id,account_id,generation,loc,name,muscle,cunning,speed FROM characters
-    WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1${lock ? ' FOR UPDATE' : ''}`, [accountId])).rows[0];
+  const rows = lock
+    ? (await client.query(`SELECT id,account_id,generation,loc,name,muscle,cunning,speed FROM characters
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`, [accountId])).rows
+    : (await client.query(`SELECT id,account_id,generation,loc,name,muscle,cunning,speed FROM characters
+      WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1`, [accountId])).rows;
+  const actor = rows[0];
   const account = (await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])).rows[0];
   if (!actor || account?.status === 'banned') fail('encounter_unavailable', 'A current living character is required.');
   const skills = (await client.query('SELECT skill_id FROM character_skills WHERE character_id=$1', [actor.id])).rows;

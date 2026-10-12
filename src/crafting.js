@@ -673,13 +673,15 @@ export function recipeActionCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING
 }
 
 async function actorContext(client, accountId, { readOnly = false } = {}) {
-  const character = (await client.query(
-    `SELECT id, account_id, loc, respect, cash, alive
-       FROM characters WHERE account_id=$1 AND alive${readOnly ? '' : ' FOR UPDATE'}`,
-    [accountId],
-  )).rows[0];
+  const character = (readOnly
+    ? await client.query(`SELECT id, account_id, loc, respect, cash, alive
+       FROM characters WHERE account_id=$1 AND alive`, [accountId])
+    : await client.query(`SELECT id, account_id, loc, respect, cash, alive
+       FROM characters WHERE account_id=$1 AND alive FOR UPDATE`, [accountId])).rows[0];
   if (!character) fail('no_character', 'Create a character first.');
-  const account = (await client.query('SELECT status FROM accounts WHERE id=$1' + (readOnly ? '' : ' FOR SHARE'), [accountId])).rows[0];
+  const account = (readOnly
+    ? await client.query('SELECT status FROM accounts WHERE id=$1', [accountId])
+    : await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [accountId])).rows[0];
   if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
   // One node-pg client executes sequentially. Overlapping queries on a checked-out client are
   // deprecated and disappear in pg@9; pg-mem would hide that production-only failure mode.

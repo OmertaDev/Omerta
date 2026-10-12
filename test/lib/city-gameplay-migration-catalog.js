@@ -91,6 +91,10 @@ function reviewedSchema(pin) {
   return source;
 }
 
+export function cityGameplayMigrationPredecessorSchema() {
+  return reviewedSchema(PREVIOUS_SOURCE);
+}
+
 // These four closed clauses are extracted only after verifying the entire incoming source.
 // The final declaration is authoritative for its idempotently rebuilt guard/event vocabulary.
 function previousPredicate(source, name, count) {
@@ -182,7 +186,7 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
       return sortBy(actual.filter(row => !tables.has(row.table_name) && !added.has(constraintKey(row)))
         .map(row => replaced.has(constraintKey(row)) ? { ...row, definition: oldDefinitions.get(row.name) } : row), constraintKey);
     };
-    return Object.freeze({ normalize, verifyMetadata, keys: Object.freeze([...expectedKeys]),
+    return Object.freeze({ normalize, verifyMetadata, keys: Object.freeze([...expectedKeys]), referenceColumns: metadata.columns,
       tableCount: tables.size, constraintCount: rows.length, source: CITY_GAMEPLAY_MIGRATION_SOURCE });
   } finally {
     if (client) { await client.query('ROLLBACK').catch(() => {}); await client.end(); }

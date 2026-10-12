@@ -3,23 +3,30 @@
 // name-only constraint or normalizing away an unknown custody condition.
 const CHECKS = Object.freeze([
   { name: 'item_instance_state',
-    acceptsPrevious: true,
-    drop: 'ALTER TABLE item_instances DROP CONSTRAINT item_instance_state',
-    add: "ALTER TABLE item_instances ADD CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed','stored')) NOT VALID",
-    validate: 'ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_state' },
+    acceptsPrevious: true },
   { name: 'item_instance_escrow_owner',
-    acceptsPrevious: true,
-    drop: 'ALTER TABLE item_instances DROP CONSTRAINT item_instance_escrow_owner',
-    add: "ALTER TABLE item_instances ADD CONSTRAINT item_instance_escrow_owner CHECK ((state='active' AND owner_scope IN ('character','account')) OR (state='escrowed' AND owner_scope='operation') OR (state='stored' AND owner_scope='account') OR state='consumed') NOT VALID",
-    validate: 'ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_escrow_owner' },
-  { name: 'item_instance_storage_legacy', acceptsPrevious: false, acceptsMissing: true,
-    add: "ALTER TABLE item_instances ADD CONSTRAINT item_instance_storage_legacy CHECK (state<>'stored' OR definition_hash IS NULL) NOT VALID",
-    validate: 'ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy' },
+    acceptsPrevious: true },
+  { name: 'item_instance_storage_legacy', acceptsPrevious: false, acceptsMissing: true },
 ]);
 function invalid(detail) {
   const error = new Error(`Home custody migration refused: ${detail}`);
   error.code = 'city_home_storage_migration_invalid';
   return error;
+}
+// Keep every admitted DDL branch literal so the shared SQL scanner can classify it.
+async function installKnown(q, name) {
+  if (name === 'item_instance_state') {
+    await q.query('ALTER TABLE item_instances DROP CONSTRAINT item_instance_state');
+    await q.query("ALTER TABLE item_instances ADD CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed','stored')) NOT VALID");
+    await q.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_state');
+  } else if (name === 'item_instance_escrow_owner') {
+    await q.query('ALTER TABLE item_instances DROP CONSTRAINT item_instance_escrow_owner');
+    await q.query("ALTER TABLE item_instances ADD CONSTRAINT item_instance_escrow_owner CHECK ((state='active' AND owner_scope IN ('character','account')) OR (state='escrowed' AND owner_scope='operation') OR (state='stored' AND owner_scope='account') OR state='consumed') NOT VALID");
+    await q.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_escrow_owner');
+  } else if (name === 'item_instance_storage_legacy') {
+    await q.query("ALTER TABLE item_instances ADD CONSTRAINT item_instance_storage_legacy CHECK (state<>'stored' OR definition_hash IS NULL) NOT VALID");
+    await q.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy');
+  } else throw invalid('unknown installation');
 }
 export async function migrateCityHomeStorage(q, { compatibility = 'postgres' } = {}) {
   if (compatibility === 'pg-mem') return Object.freeze({ compatibility, verified: false, replaced: 0 });
@@ -47,8 +54,7 @@ export async function migrateCityHomeStorage(q, { compatibility = 'postgres' } =
       // predicate after both custody predicates above have passed their closed checks.
       // An existing predicate is never dropped or implicitly trusted by schema replay.
       if (!rows.length && spec.acceptsMissing && target) {
-        await q.query(spec.add);
-        await q.query(spec.validate);
+        await installKnown(q, spec.name);
         replaced++;
         continue;
       }
@@ -57,9 +63,7 @@ export async function migrateCityHomeStorage(q, { compatibility = 'postgres' } =
       }
       if (row.definition === target) continue;
       if (!spec.acceptsPrevious || row.definition !== expected.get(`${spec.name}_old`)) throw invalid(`unknown ${spec.name}`);
-      await q.query(spec.drop);
-      await q.query(spec.add);
-      await q.query(spec.validate);
+      await installKnown(q, spec.name);
       const installed = (await q.query(`SELECT convalidated,pg_get_constraintdef(oid,true) AS definition
         FROM pg_constraint WHERE conrelid='item_instances'::regclass AND conname=$1`, [spec.name])).rows;
       if (installed.length !== 1 || installed[0].convalidated !== true || installed[0].definition !== target) {

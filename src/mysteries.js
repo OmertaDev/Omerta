@@ -827,9 +827,10 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
     }
     // This is the first character lock in every NPC-bound native callback. Never lock the
     // owner first and then acquire a second resident in the opposite order.
-    const rows = (await client.query(`SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
-      FROM characters WHERE id IN ($1,$2) ORDER BY id${lock ? ' FOR UPDATE' : ''}`,
-    [owner.id, npcAuthority.npcCharacterId])).rows;
+    const rows = (lock ? await client.query(`SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
+      FROM characters WHERE id IN ($1,$2) ORDER BY id FOR UPDATE`, [owner.id, npcAuthority.npcCharacterId])
+      : await client.query(`SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
+      FROM characters WHERE id IN ($1,$2) ORDER BY id`, [owner.id, npcAuthority.npcCharacterId])).rows;
     row = rows.find(actor => actor.id === owner.id);
     target = rows.find(actor => actor.id === npcAuthority.npcCharacterId);
     const current = (await client.query(`SELECT id FROM characters WHERE account_id=$1 AND alive
@@ -1185,9 +1186,12 @@ async function conditionBlocker({
   if (adapter === 'npc_present') return actor?.npcTarget ? null : { adapter };
   if (adapter === 'npc_favor') {
     if (!actor?.npcTarget) return { adapter };
-    const row = (await client.query(`SELECT favor FROM city_npc_favors
-      WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4${lock ? ' FOR UPDATE' : ''}`,
-    [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation])).rows[0];
+    const row = (lock ? await client.query(`SELECT favor FROM city_npc_favors
+      WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4 FOR UPDATE`,
+      [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation])
+      : await client.query(`SELECT favor FROM city_npc_favors
+      WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4`,
+      [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation])).rows[0];
     const current = Number(row?.favor || 0);
     return current >= normalized.minimum ? null : { adapter, minimum: normalized.minimum, current };
   }
