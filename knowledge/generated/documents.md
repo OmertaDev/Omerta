@@ -345,6 +345,10 @@
 | [docs/commercial-premises-migration-review.md](../../docs/commercial-premises-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/commercial-premises-security-review.md](../../docs/commercial-premises-security-review.md) | documentation | 37 | 2026-10-12 |
 | [docs/commercial-premises-source-transfer-review.md](../../docs/commercial-premises-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/commercial-reputation-integration-review.md](../../docs/commercial-reputation-integration-review.md) | documentation | 32 | 2026-10-12 |
+| [docs/commercial-reputation-migration-review.md](../../docs/commercial-reputation-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/commercial-reputation-security-review.md](../../docs/commercial-reputation-security-review.md) | documentation | 61 | 2026-10-12 |
+| [docs/commercial-reputation-source-transfer-review.md](../../docs/commercial-reputation-source-transfer-review.md) | documentation | 18 | 2026-10-12 |
 | [docs/company-bank-migration-review.md](../../docs/company-bank-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/company-bank-portfolio-integration-review.md](../../docs/company-bank-portfolio-integration-review.md) | documentation | 47 | 2026-10-12 |
 | [docs/company-bank-portfolios-security-review.md](../../docs/company-bank-portfolios-security-review.md) | documentation | 141 | 2026-10-12 |
