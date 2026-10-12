@@ -8,6 +8,7 @@ import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { employmentCashInvariant } from './gameemploymentinvariants.js';
+import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -668,6 +669,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const employment = await employmentCashInvariant(pool);
   push('game employment escrow', employment.actual, employment.expected, 0);
   push('game employment loot ledger', employment.lootedCash, employment.lootedCash - employment.lootDelta, 0);
+  const workflows = await runCompanyWorkflowInvariants(pool);
+  push('company workflow provenance', workflows.issues.length, 0, 0, { issues: workflows.issues });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
