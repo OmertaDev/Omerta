@@ -16,6 +16,7 @@ import * as Loans from '../src/loans.js';
 import * as S from '../src/businessseasons.js';
 import { buyGood } from '../src/economy.js';
 import { LOAN } from '../src/rules.js';
+import { runEstate } from '../src/social/estate.js';
 const app = await buildServer(); let sequence = 0;
 async function player() {
   const token = (await app.inject({ method: 'POST', url: '/v1/auth/guest' })).json().token;
@@ -151,5 +152,21 @@ try {
   for (let index = 0; index < 1001; index++) await app.pool.query("INSERT INTO business_depot_journal(id,depot_id,reason) VALUES($1,$2,'fund')", [`season-limit-${index}`, depot]);
   assert.equal((await observe(owner, bounded)).baseline.reason, 'source_limit');
   await finishClock(bounded); assert.equal((await observe(owner, bounded)).result.known, false);
+  await app.pool.query("DELETE FROM business_depot_journal WHERE depot_id=$1 AND id LIKE 'season-limit-%'", [depot]);
+  const terminal = (await make(owner, 'original-estate-close')).season.id;
+  await single(owner, (ch, db) => S.enrollBusinessSeason(ch, { ...enrollment, seasonId: terminal }, db));
+  await startClock(terminal); assert.equal((await observe(owner, terminal)).baseline.known, true);
+  await finishClock(terminal);
+  assert.equal((await S.dueBusinessSeasonEntries(app.pool, 25)).some(e => e.season_id === terminal), true);
+  await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [owner.id]);
+  assert.equal((await S.dueBusinessSeasonEntries(app.pool, 25)).some(e => e.account_id === owner.account), false, 'no-living account never occupies the dispatcher window');
+  await app.pool.query('UPDATE characters SET alive=true WHERE id=$1', [owner.id]);
+  await pair(customer, owner, (ch, target, db, h) => runEstate(db, h, target, 'business season canonical estate closure'));
+  const heir = (await app.pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [owner.account])).rows[0];
+  assert(heir); assert.notEqual(heir.id, owner.id);
+  assert.equal((await S.dueBusinessSeasonEntries(app.pool, 25)).some(e => e.season_id === terminal), true, 'same original-account heir is eligible only to observe historical source');
+  const terminalResult = await observe({ account: owner.account, id: heir.id }, terminal);
+  assert.equal(terminalResult.result.known, false); assert.equal(terminalResult.result.reason, 'source_identity');
+  assert.equal((await app.pool.query('SELECT status FROM business_depots WHERE id=$1', [depot])).rows[0].status, 'closed');
   console.log(`business seasons: canonical prospective net sales/COGS/fees, borrowed principal exclusion, unsold inventory exclusion, source baseline, explicit observed/partial/missed windows, private/coarse standings, revocation and metadata-only replay passed${native ? '; native concurrent snapshots and atomic rollback passed' : ''}`);
 } finally { await app.close(); await app.pool.end(); }

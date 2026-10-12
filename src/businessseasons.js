@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { GameError } from './game.js';
+import { dbCaps } from './db.js';
 
 const sourceFiles = ['businessseasons.js', 'depot.js', 'depotbook.js', 'warehouseleases.js', 'franchiselicenses.js'];
 const sourceFingerprint = crypto.createHash('sha256').update(sourceFiles.map(name => `${name}\n${fs.readFileSync(new URL(name, import.meta.url), 'utf8').replace(/\r\n/g, '\n')}`).join('\n')).digest('hex');
@@ -149,7 +150,12 @@ export async function businessSeasonBoard(client, account) {
 }
 export async function dueBusinessSeasonEntries(client, limit = 25) {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 25) fail('candidate_limit');
-  return (await client.query('SELECT e.season_id,e.account_id,e.original_character FROM business_season_entries e JOIN business_seasons s ON s.id=e.season_id WHERE e.final_result IS NULL AND s.starts_at<=clock_timestamp() AND (e.baseline IS NULL OR s.ends_at<=clock_timestamp()) ORDER BY s.ends_at,e.season_id,e.account_id LIMIT $1', [limit])).rows;
+  // PostgreSQL semijoin; pg-mem cannot evaluate correlated EXISTS. The uncorrelated
+  // fallback has the same account membership and never dispatches an absent actor.
+  const living = dbCaps.skipLocked
+    ? 'EXISTS (SELECT 1 FROM characters c WHERE c.account_id=e.account_id AND c.alive AND NOT c.is_npc)'
+    : 'e.account_id IN (SELECT account_id FROM characters WHERE alive AND NOT is_npc)';
+  return (await client.query(`SELECT e.season_id,e.account_id,e.original_character FROM business_season_entries e JOIN business_seasons s ON s.id=e.season_id WHERE e.final_result IS NULL AND ${living} AND s.starts_at<=clock_timestamp() AND (e.baseline IS NULL OR s.ends_at<=clock_timestamp()) ORDER BY s.ends_at,e.season_id,e.account_id LIMIT $1`, [limit])).rows;
 }
 export async function publicBusinessSeason(client, seasonId) {
   id(seasonId);
