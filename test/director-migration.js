@@ -34,7 +34,8 @@ const economyTables = ['business_depots', 'business_depot_journal', 'business_op
 // inventory. Nothing discovered from the backend becomes an expected constraint.
 const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_offers: [9, 10],
   business_warehouse_leases: [14, 13], logistics_coverage_policies: [17, 18], crew_logistics_links: [8, 9], depot_brand_licenses: [14, 16],
-  intel_forecast_jobs: [16, 11], delivery_loan_requests: [10, 11], strategy_versions: [13, 14], strategy_licenses: [10, 8], company_succession_receipts: [13, 12], strategy_leagues: [13, 9], strategy_league_entries: [9, 8] });
+  intel_forecast_jobs: [16, 11], delivery_loan_requests: [10, 11], strategy_versions: [13, 14], strategy_licenses: [10, 8], company_succession_receipts: [13, 12], strategy_leagues: [13, 9], strategy_league_entries: [9, 8],
+  company_operators: [6, 8], company_operator_receipts: [5, 7] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -263,6 +264,16 @@ try {
   }
   rejected(verifyPreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
     { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
+  // Frozen operator catalog was reviewed once against source/native PG18.4.
+  // Every operator FK/PK/CHECK is causal; live rows never define expectations.
+  for (const constraint of featureConstraints.filter(row => ['company_operators', 'company_operator_receipts'].includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} operator constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} operator constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
+    { table_name: 'company_operators', column_name: 'price_policy' }]);
   for (const constraint of economyExtensions) {
     rejected(verifyEconomyConstraints, `${constraint.name} reviewed extension removed`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => rows.splice(index, 1)));
