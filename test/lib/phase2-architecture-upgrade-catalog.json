@@ -2255,6 +2255,131 @@
       "table_name": "company_operators",
       "name": "company_operators_revision_check",
       "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_accounting",
+      "definition": "CHECK (total_cash = (escrow_cash + paid_cash + refunded_cash + burned_cash + looted_cash))"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_burned_cash_check",
+      "definition": "CHECK (burned_cash >= 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_check1",
+      "definition": "CHECK (state <> 'closed'::text OR escrow_cash = 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_employer_account_fkey",
+      "definition": "FOREIGN KEY (employer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_employer_character_fkey",
+      "definition": "FOREIGN KEY (employer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_looted_cash_check",
+      "definition": "CHECK (looted_cash >= 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0::numeric)"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "game_employment_jobs",
+      "name": "game_employment_jobs_total_cash_check",
+      "definition": "CHECK (total_cash > 0::numeric AND total_cash <= 500000::numeric)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_check",
+      "definition": "CHECK ((state = 'paid'::text) = (paid_at IS NOT NULL))"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_commitment_id_fkey",
+      "definition": "FOREIGN KEY (commitment_id) REFERENCES delivery_commitments(id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_commitment_id_key",
+      "definition": "UNIQUE (commitment_id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_employment_id_fkey",
+      "definition": "FOREIGN KEY (employment_id) REFERENCES game_employment_jobs(id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['assigned'::text, 'paid'::text]))"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_worker_account_fkey",
+      "definition": "FOREIGN KEY (worker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_worker_character_fkey",
+      "definition": "FOREIGN KEY (worker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "game_employment_assignments",
+      "name": "game_employment_assignments_worker_kind_check",
+      "definition": "CHECK (worker_kind = ANY (ARRAY['human'::text, 'agent'::text]))"
+    },
+    {
+      "table_name": "game_employment_requests",
+      "name": "game_employment_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "game_employment_requests",
+      "name": "game_employment_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['create'::text, 'accept'::text, 'claim'::text, 'close'::text]))"
+    },
+    {
+      "table_name": "game_employment_requests",
+      "name": "game_employment_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
     }
   ],
   "removed": [
@@ -3041,6 +3166,38 @@
       "owner_character",
       "request_key",
       "result"
+    ],
+    "game_employment_jobs": [
+      "burned_cash",
+      "depot_id",
+      "employer_account",
+      "employer_character",
+      "escrow_cash",
+      "expires_at",
+      "id",
+      "looted_cash",
+      "paid_cash",
+      "refunded_cash",
+      "state",
+      "terms",
+      "total_cash"
+    ],
+    "game_employment_assignments": [
+      "accepted_at",
+      "commitment_id",
+      "employment_id",
+      "id",
+      "state",
+      "worker_account",
+      "worker_character",
+      "worker_kind"
+    ],
+    "game_employment_requests": [
+      "account_id",
+      "action",
+      "receipt",
+      "request_key",
+      "terms"
     ]
   }
 }
