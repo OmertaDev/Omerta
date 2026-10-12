@@ -1,8 +1,10 @@
+import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS } from '../tools/rc1-invoice-source-compatibility.js';
 import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
+import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { cityHomesFeedSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
@@ -17,7 +19,7 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INTEL_SOURCE_CURRENT_PINS)) {
   const raw = normalize(fs.readFileSync(file, 'utf8'));
-  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, cityHomesFeedSourceBaseline(file, text))))));
+  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, text)))))));
   const current = compose(raw), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
   const unknown = raw + '\n// unreviewed composed source\n';
   assert.equal(compose(unknown), unknown, 'Exact wrappers never manufacture historical bytes for unknown stacked source');

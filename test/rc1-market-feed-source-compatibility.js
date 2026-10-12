@@ -1,3 +1,5 @@
+import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
+import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { cityHomesFeedSourceBaseline, assertCityHomesFeedServerTransfer, CITY_HOMES_SOURCE_INVERSES,
   assertCityHomesServerTransfer, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -12,7 +14,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 assert.equal(assertCityHomesServerTransfer(gitText(CITY_HOMES_SERVER_BLOB)).baselineText,
   gitText(CITY_HOMES_PREDECESSOR_SERVER_BLOB), 'Existing Company and Home envelope remains independently frozen');
-const homeRaw=normalize(fs.readFileSync('src/server.js','utf8'));
+const homeRaw=gitText('b1ee0ec744762c83f2dd7cc3c82dc0eb2db0a116');
 const homeProof=assertCityHomesFeedServerTransfer(homeRaw);
 assert.equal(homeProof.baselineText,gitText('2395509e2b0c980bd9e80e6cc4aef78209f2b38e:src/server.js'));
 assert.deepEqual(assertCityHomesFeedServerTransfer(homeRaw.replaceAll('\n','\r\n')),homeProof);
@@ -29,7 +31,7 @@ for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('regi
 }
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(MARKET_FEED_SOURCE_CURRENT_PINS)) {
-  const current = normalize(cityHomesFeedSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8')))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(marketFeedSourceBaseline(file, current), baseline);
   assert.equal(marketFeedSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

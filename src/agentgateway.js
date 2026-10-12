@@ -409,6 +409,19 @@ const OPERATION_CONTRACTS = {
     schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Reuse the original purchase identity for recovery; a different identity cannot alias an existing license.' }],
     requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/strategy-leagues': { operationId: 'getPublicPrizeFreeStrategyBenchmarks' },
+  'GET /v1/strategy-leagues/own': { operationId: 'getOwnPrizeFreeStrategyBenchmarks' },
+  'POST /v1/strategy-leagues': {
+    operationId: 'createOwnPrizeFreeStrategyBenchmark', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 200 } }],
+    requestSchema: { type: 'object', additionalProperties: false, required: ['districtId', 'minimumStock'], properties: {
+      districtId: { type: 'string' }, minimumStock: { type: 'integer', minimum: 1, maximum: 40 },
+    } },
+  },
+  'POST /v1/strategy-leagues/:id/join': { operationId: 'enterOwnLicensedStrategyBenchmark', requestSchema: { type: 'object', additionalProperties: false,
+    required: ['versionId'], properties: { versionId: { type: 'string', minLength: 1, maxLength: 128 } } } },
+  'POST /v1/strategy-leagues/:id/start': { operationId: 'startOwnSharedStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/strategy-leagues/:id/resolve': { operationId: 'resolveOwnSharedStrategyBenchmark', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'GET /v1/market/feed': { operationId: 'getPublicGameMarketFeed', requestParameters: [
     { name: 'districtId', in: 'query', required: true, schema: { type: 'string', enum: DISTRICTS.map(d => d.id) } },
     { name: 'goodId', in: 'query', required: true, schema: { type: 'string', const: 'gin' } },
