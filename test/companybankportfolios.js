@@ -8,14 +8,18 @@ import Fastify from 'fastify';
 import { register } from '../src/routes/companybankportfolios.js';
 
 assert(!process.env.DATABASE_URL, 'Refuse ambient database endpoints');
-const native = process.argv.includes('--postgres'); let pool;
+const native = process.argv.includes('--postgres'); let pool, nativeVersion;
 if (native) {
   const url = new URL(process.env.COMPANY_BANK_PORTFOLIO_TEST_DATABASE_URL || 'http://missing');
-  assert.equal(url.protocol, 'postgresql:'); assert.equal(url.hostname, '127.0.0.1'); assert.equal(url.port, '35439'); assert.equal(url.username, 'pilot_runner'); assert.equal(url.password, '');
+  assert(['postgres:','postgresql:'].includes(url.protocol)); assert.equal(url.hostname,'127.0.0.1');
+  const pilot=url.username==='pilot_runner'&&['35439','35449'].includes(url.port), ci=['postgres','pgcheck'].includes(url.username)&&url.port==='5432';
+  assert(pilot||ci,'Only explicit named local pilot or hosted-CI loopback roles/ports'); if(pilot) assert.equal(url.password,'');
   assert(/^\/company_bank_portfolio_[a-z0-9_]+$/.test(url.pathname)); assert(!url.search && !url.hash);
   const { default: pg } = await import('pg'); pool = new pg.Pool({ connectionString: url.href });
   const c = await pool.connect(); await c.query('BEGIN READ ONLY'); assert.equal((await c.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
-  console.log((await c.query('SELECT version(),current_user,current_database()')).rows[0]); assert.match((await c.query('SELECT version()')).rows[0].version, /PostgreSQL 18\.4/);
+  console.log((await c.query('SELECT version(),current_user,current_database()')).rows[0]);
+  const version=(await c.query('SHOW server_version')).rows[0].server_version; nativeVersion=version.split(' ')[0];
+  assert.match(version,pilot?/^18\.4(?:\D|$)/:/^(?:16(?:\D|$)|18\.4(?:\D|$))/);
   await c.query('ROLLBACK'); c.release();
 } else {
   const { newDb, DataType } = await import('pg-mem'); const { registerPgMemCompatibility } = await import('../src/db.js');
@@ -102,12 +106,13 @@ try {
   await due(defaulted); assert.equal((await run(defaulted, 'afterdefault')).borrowerId, defaulted.other.id);
   const death = await fixture(); await grant(death); const inherited = await run(death);
   await tx(death.borrower, (ch, c, h) => Loans.takeLoan(ch, inherited.loanId, null, c, h));
-  const heir = { ...death.owner, id: `${death.prefix}_heir`, generation: 2 };
-  await tx(death.owner, async (ch, c, h) => { await Loans.voidLoansAtDeath(c, ch.id, h, null, 0, heir.id); await Portfolio.closeCompanyBankPortfoliosAtDeath(c, ch.id); await c.query('UPDATE characters SET alive=false WHERE id=$1', [ch.id]); await c.query('INSERT INTO characters(id,account_id,name,season,generation,cash) VALUES($1,$2,$1,1,2,30000)', [heir.id, heir.account_id]); });
+  const { runEstate }=await import('../src/social/estate.js');
+  const estate=await G.withTwoCharacters(pool,death.other.account_id,death.owner.id,(_ch,target,c,h)=>runEstate(c,h,target,'portfolio canonical estate proof'),{ meet:false });
+  const heir=(await pool.query('SELECT * FROM characters WHERE id=$1',[estate.heirId])).rows[0];
   assert.equal((await pool.query('SELECT lender_character FROM loans WHERE id=$1', [inherited.loanId])).rows[0].lender_character, heir.id);
   assert.equal((await tx(heir, (ch, c, h) => Portfolio.runCompanyBankPortfolio(ch, { expectedRevision: 1 }, 'run', c, h))).replayed, true);
   await assert.rejects(tx(heir, (ch, c, h) => Portfolio.runCompanyBankPortfolio(ch, { expectedRevision: 1 }, 'newkey', c, h)), e => e.reason === 'consent');
-  const heirBoard = await Portfolio.companyBankPortfolioBoard(pool, heir.account_id); assert.equal(heirBoard.loans[0].loanId, inherited.loanId); assert.equal(heirBoard.loans[0].currentLenderId, heir.id); assert.equal(heirBoard.exposure.activePrincipal, 5000);
+  const heirBoard = await Portfolio.companyBankPortfolioBoard(pool, heir.account_id); assert.equal(heirBoard.policy.enabled,false,'Actual estate closes old portfolio grant'); assert.equal(heirBoard.loans[0].loanId, inherited.loanId); assert.equal(heirBoard.loans[0].currentLenderId, heir.id); assert.equal(heirBoard.exposure.activePrincipal, 5000);
   await tx(heir, (ch, c) => Portfolio.setCompanyBankPortfolioPolicy(ch, { ...death.terms, expectedRevision: 1 }, 'heirconsent', c, { ownerSession: true }));
   assert.equal((await Portfolio.companyBankPortfolioBoard(pool, heir.account_id)).policy.lifetimeSpent, 5000);
   const http = await fixture();
@@ -149,5 +154,5 @@ try {
   let seed = 1947;
   for (let n = 0; n < 300; n++) { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; const rateBps = seed % 5000 + 1; assert.equal(Portfolio.companyBankPortfolioPolicyTerms({ ...f.terms, rateBps }).rateBps, rateBps); assert.throws(() => Portfolio.companyBankPortfolioPolicyTerms({ ...f.terms, rateBps: rateBps + 5000 })); }
   for (const change of [{ consent: false }, { borrowerIds: [f.borrower.id, f.borrower.id] }, { principal: 4999 }, { principal: 100001 }, { url: 'https://example.com' }, { termHours: 73 }, { rateBps: '500' }]) assert.throws(() => Portfolio.companyBankPortfolioPolicyTerms({ ...f.terms, ...change }));
-  console.log(`companybankportfolios: PASS ${native ? 'PostgreSQL18.4 concurrency/budget/rollback/source-lock-expiry' : 'memory'}; canonical offer/take/repay/cancel/default/death; sticky budget; escrow+debt reserves; foreign-source exclusion; heir authority/replay; seed1947 300 bounds`);
+  console.log(`companybankportfolios: PASS ${native ? `PostgreSQL${nativeVersion} concurrency/budget/rollback/source-lock-expiry` : 'memory'}; canonical offer/take/repay/cancel/default/death; sticky budget; escrow+debt reserves; foreign-source exclusion; heir authority/replay; seed1947 300 bounds`);
 } finally { await pool.end(); }
