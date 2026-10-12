@@ -23,6 +23,7 @@ import {
   isMainModule,
   normalizeText,
   extractIntelHelperReconciliations,
+  extractEmploymentHelperReconciliations,
 } from '../tools/graph.js';
 
 // The graph is a developer-facing CLI as well as an importable module. Pin the two Windows failure
@@ -61,8 +62,13 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 // read that one — which is why the literal lives in its SQL.
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
+  'buyer cooperative settlement provenance', // no money bucket; cash and GIN have separate ledger checks
   'character cash',
+  // These inspect consent/proof bindings against canonical component books; they
+  // introduce no currency bucket or ledger reason. Cash coverage stays with those books.
+  'company bank portfolio authority and lifetime budget',
   'company succession bindings',
+  'company workflow provenance',
   'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
@@ -81,6 +87,10 @@ assert.deepEqual(inv.mute.sort(), [
   'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
+for (const [check, reasons] of [
+  ['buyer cooperative cash custody', ['buyer_cooperative:fund', 'buyer_cooperative:refund', 'market:order', 'market:list', 'market:refund', 'buyer_cooperative:death_cash', 'buyer_cooperative:loot_cash']],
+  ['buyer cooperative GIN custody', ['buyer_cooperative:claim', 'buyer_cooperative:death_gin']],
+]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
@@ -138,6 +148,46 @@ assert.match(invariantSource, /push\('delivery finance bindings', financeFaults,
 assert(g.edges.some(edge => edge.type === 'RECONCILES'
   && edge.from === 'Check:loan escrow' && edge.to === 'Reason:loan:offer'));
 const intelHelperSource = fs.readFileSync(new URL('../src/intelforecastinvariants.js', import.meta.url), 'utf8');
+const employmentHelperSource = fs.readFileSync(new URL('../src/gameemploymentinvariants.js', import.meta.url), 'utf8');
+const employmentTerms = extractEmploymentHelperReconciliations(invariantSource, employmentHelperSource);
+assert.deepEqual(employmentTerms.map(term => [term.check, term.reason]), [
+  ['game employment escrow', 'employment:%'], ['game employment escrow', 'death:employment:%'],
+  ['game employment escrow', 'employment:estate:loot:%'], ['game employment loot ledger', 'employment:estate:loot:%'],
+]);
+assert.deepEqual(extractEmploymentHelperReconciliations(normalizeText(invariantSource).replaceAll('\n', '\r\n'),
+  normalizeText(employmentHelperSource).replaceAll('\n', '\r\n')), employmentTerms);
+for (const term of employmentTerms) {
+  const edge = g.edges.find(edge => edge.type === 'RECONCILES'
+    && edge.from === `Check:${term.check}` && edge.to === `Reason:${term.reason}`);
+  assert(edge, 'imported employment cash terms must have actual helper provenance');
+  assert.equal(edge.prov.file, 'src/gameemploymentinvariants.js');
+  assert(edge.prov.hash && edge.prov.binding.hash);
+}
+assert(!g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:game employment loot ledger' && edge.to === 'Reason:employment:%'));
+for (const source of [
+  invariantSource.replace(/import \{ employmentCashInvariant \} from [^;]+;/, ''),
+  invariantSource.replace('await employmentCashInvariant(pool)', 'await unrelatedAccounting(pool)'),
+  invariantSource.replace('await employmentCashInvariant(pool)', 'await employmentCashInvariant(null)'),
+]) assert.deepEqual(extractEmploymentHelperReconciliations(source, employmentHelperSource), []);
+for (const helper of [
+  employmentHelperSource.replace("currency='cash'", "currency='rep'"),
+  employmentHelperSource.replace("reason LIKE 'employment:%'", "reason = 'employment:reserve'"),
+  employmentHelperSource.replace('AND character_id IS NOT NULL', 'AND character_id IS NULL'),
+  employmentHelperSource.replace('expected = -transfers + death + loot', 'expected = -transfers + death'),
+  employmentHelperSource.replace('lootedCash:bookLoot', 'lootedCash:unrelated'),
+  employmentHelperSource.replace('lootDelta:bookLoot+loot', 'lootDelta:bookLoot'),
+  employmentHelperSource.replace('export async function employmentCashInvariant', 'export async function unrelatedAccounting'),
+  employmentHelperSource.replace('SUM(looted_cash)', 'SUM(cash)'),
+  employmentHelperSource.replace(/  const death = [^\r\n]+/, ''),
+  normalizeText(employmentHelperSource).replace(/  const loot = [^\n]+/, '$&\n$&'),
+]) assert.deepEqual(extractEmploymentHelperReconciliations(invariantSource, helper), []);
+assert.deepEqual(extractEmploymentHelperReconciliations(
+  invariantSource.replace('employment.actual, employment.expected', 'employment.actual, unrelated.expected'),
+  employmentHelperSource).map(term => term.check), ['game employment loot ledger']);
+assert.deepEqual(extractEmploymentHelperReconciliations(
+  invariantSource.replace('employment.lootedCash - employment.lootDelta', 'employment.lootedCash + employment.lootDelta'),
+  employmentHelperSource).map(term => term.check), ['game employment escrow', 'game employment escrow', 'game employment escrow']);
 const intelTerms = extractIntelHelperReconciliations(invariantSource, intelHelperSource);
 assert.deepEqual(intelTerms.map(term => [term.check, term.reason]), [
   ['intel forecast escrow', 'intel_job:%'], ['intel forecast receipts', 'intel_job:%'],

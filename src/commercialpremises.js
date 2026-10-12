@@ -40,14 +40,17 @@ async function save(ch,action,key,terms,result,client) {
   return result;
 }
 async function backing(client,profile,lock) {
-  const suffix=lock ? ' FOR UPDATE' : '';
   if (profile?.premises_kind==='estate') {
-    const estate=(await client.query(`SELECT tier FROM estates WHERE account_id=$1${suffix}`,[profile.account_id])).rows[0];
+    const estate=(await (lock
+      ? client.query('SELECT tier FROM estates WHERE account_id=$1 FOR UPDATE',[profile.account_id])
+      : client.query('SELECT tier FROM estates WHERE account_id=$1',[profile.account_id]))).rows[0];
     if (profile.premises_key!==profile.account_id || !Number.isSafeInteger(estate?.tier) || estate.tier<1) return null;
     return { kind:'estate',key:profile.account_id,district:null,tier:estate.tier };
   }
   if (profile?.premises_kind==='street') {
-    const deed=(await client.query(`SELECT name_lc,district,onchain_token_id FROM street_deeds WHERE account_id=$1${suffix}`,[profile.account_id])).rows[0];
+    const deed=(await (lock
+      ? client.query('SELECT name_lc,district,onchain_token_id FROM street_deeds WHERE account_id=$1 FOR UPDATE',[profile.account_id])
+      : client.query('SELECT name_lc,district,onchain_token_id FROM street_deeds WHERE account_id=$1',[profile.account_id]))).rows[0];
     if (!deed || deed.onchain_token_id!==null || deed.name_lc!==profile.premises_key || deed.district!==profile.premises_district) return null;
     return { kind:'street',key:deed.name_lc,district:deed.district,tier:null };
   }
@@ -61,10 +64,14 @@ const same = (row,b,depot) => b && row.premises_kind===b.kind && row.premises_ke
 // sorted profiles -> estate/deed backing -> offer -> leases. No peer discovery.
 async function context(client,accountId,depotId,participants=[],lock=true) {
   let depot=null;
-  if (depotId) depot=(await client.query(`SELECT * FROM business_depots WHERE id=$1${lock?' FOR UPDATE':''}`,[depotId])).rows[0];
+  if (depotId) depot=(await (lock
+    ? client.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[depotId])
+    : client.query('SELECT * FROM business_depots WHERE id=$1',[depotId]))).rows[0];
   const profiles={};
   for (const account of [...new Set([accountId,...participants])].sort()) {
-    profiles[account]=(await client.query(`SELECT * FROM agent_company_profiles WHERE account_id=$1${lock?' FOR UPDATE':''}`,[account])).rows[0];
+    profiles[account]=(await (lock
+      ? client.query('SELECT * FROM agent_company_profiles WHERE account_id=$1 FOR UPDATE',[account])
+      : client.query('SELECT * FROM agent_company_profiles WHERE account_id=$1',[account]))).rows[0];
   }
   const profile=profiles[accountId], premises=await backing(client,profile,lock);
   return { depot,profile,premises,profiles };
