@@ -1,3 +1,4 @@
+import { invoiceSourceBaseline } from '../tools/rc1-invoice-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -10,7 +11,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INTEL_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
+  const current = invoiceSourceBaseline(file, normalize(fs.readFileSync(file, 'utf8'))), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(current, gitText(INTEL_SOURCE_CURRENT_BLOBS[file]), 'Complete runtime bytes match frozen current Git blob: ' + file);
   assert.equal(current, gitText(INTEL_SOURCE_REVIEWED_REVISION + ':' + file));
   assert.equal(baseline, gitText(INTEL_SOURCE_PREDECESSOR_REVISION + ':' + file));

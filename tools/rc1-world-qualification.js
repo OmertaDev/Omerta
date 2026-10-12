@@ -1,3 +1,4 @@
+import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from './rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
@@ -153,7 +154,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
     const raw = String(await readFile(file)).replace(/\r\n/g, '\n');
-    const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
+    const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceSourceBaseline(file, raw)).baselineText : invoiceSourceBaseline(file, raw);
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
     if (file === 'src/game.js') assertCrewLogisticsSourceTransfer(file, text);
     if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
@@ -161,7 +162,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
     if (file === 'src/server.js') assertDeedServerCompatibility(text);
     if (file === 'src/operations.js') assertCitySourceTransfer(file, text);
   }
-  return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles }, intelSourceTransfer: INTEL_SOURCE_TRANSFER };
+  return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles }, intelSourceTransfer: INTEL_SOURCE_TRANSFER, invoiceSourceTransfer: INVOICE_SOURCE_TRANSFER };
 }
 function binding(source, checkpoint) {
   assert.equal(source.reviewSha256, hash(WORLD_RECOVERY_REVIEW)); assert.deepEqual(source.sourceFiles, sourceFiles);

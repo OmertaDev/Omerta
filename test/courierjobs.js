@@ -42,6 +42,12 @@ assert.equal(local.kind, 'delivery_deliver', 'delivery needs no fresh spending o
 assert.deepEqual(local.body, { commitmentId: contract.id, qty: 3 });
 assert.equal(local.travelCash, 0);
 assert.equal(local.incrementalCash, local.net);
+const fractional = plan(contract, { ...ch, loc: contract.district, cash: 0.5 });
+assert.equal(fractional.kind, 'delivery_deliver', 'canonical fractional pocket cash must not hide a valid agent delivery');
+assert.equal(fractional.net, local.net, 'a fractional pocket does not change the actual delivery credit');
+assert.equal(plan(contract, { ...ch, cash: ch.cash + 0.5 }).kind, 'delivery_travel');
+for (const cash of [NaN, Infinity, -0.5, Number.MAX_SAFE_INTEGER + 1])
+  assert.equal(plan(contract, { ...ch, cash }).blockedReason, 'terms');
 assert.equal(plan(contract, ch, { cargo: { gin: 40 } }).quantity, 3, 'never over-deliver commitment');
 // Exhaustive small quantities demonstrate telescoping fees across partial settlements.
 for (let price = 1; price <= 200; price++) for (let done = 0; done < 10; done++) {

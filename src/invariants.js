@@ -10,7 +10,8 @@ import { collectDefinitionChecks } from './content/definition-invariants.js';
 import { definitionByHash } from './itemdefinitions.js';
 import { canonicalBytes } from './content/canonical.js';
 import { intelForecastAccounting } from './intelforecastinvariants.js';
-import { DESK, DESK_RECYCLE_REASON } from './rules.js';
+import { deliveryFinanceTerms } from './deliveryfinanceterms.js';
+import { DESK, DESK_RECYCLE_REASON, loanOwed, loanVig } from './rules.js';
 import {
   PHASE1_HARDENING_CASH_COST,
   PHASE1_HARDENING_CASH_REASON,
@@ -670,6 +671,53 @@ async function collectLedgerChecks(pool, activationPolicy) {
   // the escrow-side outflow (the rest of the escrow burns as loan:death). The market:loot precedent.
   const loanLoot = -(await sum(pool, "currency='cash' AND reason='loan:loot'"));
   push('loan escrow', loanEscrow, loanOffered - loanTaken - loanRefunded - loanDeath - loanLoot);
+
+  // Advances add no cash bucket. Verify their consent/receipt binding to the
+  // canonical debt; loan escrow and character cash still reconcile all value.
+  const financeRequests = (await pool.query('SELECT * FROM delivery_loan_requests')).rows;
+  const financeLoans = (await pool.query('SELECT * FROM loans')).rows;
+  const financeCommitments = (await pool.query('SELECT * FROM delivery_commitments')).rows;
+  let financeFaults = 0;
+  for (const request of financeRequests) {
+    try {
+      const terms = deliveryFinanceTerms(request.terms), quote = request.quote;
+      const loan = financeLoans.find(row => row.id === request.loan_id);
+      const commitment = financeCommitments.find(row => row.id === request.commitment_id);
+      const owed = loanOwed(terms.principal, terms.rate), gross = quote.quantity * quote.unitPrice;
+      if (quote.eligible !== true || quote.good !== 'gin' || !Number.isSafeInteger(quote.quantity) || quote.quantity < 1 || quote.quantity > 40
+          || !Number.isSafeInteger(quote.unitPrice) || quote.unitPrice < 50 || quote.unitPrice > 1000000
+          || !Number.isSafeInteger(quote.takeBps) || quote.takeBps < 0 || quote.takeBps > 10000
+          || quote.gross !== gross || quote.take !== Math.ceil(gross * quote.takeBps / 10000)
+          || quote.fullSettlementNet !== gross - quote.take || quote.fullSettlementNet < owed
+          || quote.owed !== owed || quote.vig !== loanVig(owed)
+          || quote.projectedLenderReceipt !== owed - loanVig(owed)
+          || quote.projectedCashRemainder !== quote.fullSettlementNet - owed) throw new Error('quote');
+      if (terms.supplierId !== request.supplier_character || terms.lenderId !== request.requested_lender_character
+          || terms.commitmentId !== request.commitment_id || quote.supplierId !== terms.supplierId
+          || quote.lenderId !== terms.lenderId || quote.commitmentId !== terms.commitmentId
+          || quote.buyerId !== request.buyer_character || quote.orderId !== request.order_id
+          || quote.principal !== terms.principal || quote.rate !== terms.rate || quote.hours !== terms.hours
+          || quote.fundsReserved !== false || quote.guaranteedIncome !== false) throw new Error('binding');
+      if (commitment && (commitment.order_id !== request.order_id || commitment.supplier_character !== request.supplier_character
+          || commitment.buyer_character !== request.buyer_character || Number(commitment.quantity) !== quote.quantity
+          || Number(commitment.unit_price) !== quote.unitPrice || Number(commitment.take_bps) !== quote.takeBps)) throw new Error('commitment');
+      if (loan && (Number(loan.principal) !== terms.principal || Number(loan.rate) !== terms.rate
+          || Number(loan.hours) !== terms.hours || Number(loan.collateral_min) !== 0 || Number(loan.collateral_omr) !== 0
+          || loan.collateral_car || (loan.status === 'open' && loan.offered_to !== request.supplier_character)
+          || (loan.borrower_character && loan.borrower_character !== request.supplier_character))) throw new Error('debt');
+      if (loan && ((request.state === 'offered' && loan.status === 'active')
+          || (request.state === 'active' && loan.status === 'open')
+          || (request.state === 'closed' && ['open', 'active'].includes(loan.status)))) throw new Error('state');
+      if (request.state === 'settled') {
+        const { delivery, repayment } = request.settlement || {}, owed = loanOwed(terms.principal, terms.rate);
+        if (!delivery || !repayment || delivery.delivered !== quote.quantity || delivery.earned !== quote.fullSettlementNet
+            || delivery.earned < owed || repayment.paid !== owed || repayment.vig !== loanVig(owed)
+            || repayment.toLender !== owed - loanVig(owed) || (loan && loan.status !== 'repaid')
+            || (commitment && (commitment.status !== 'delivered' || Number(commitment.remaining) !== 0))) throw new Error('receipt');
+      }
+    } catch { financeFaults++; }
+  }
+  push('delivery finance bindings', financeFaults, 0, 0);
 
   // (f4b) Drop 5 (B) — THE $OMR PLEDGE ESCROW: active pledged $OMR == pledged in − returned − seized
   // − death-looted. Every pledge row is a single-leg transfer (the auction:bid shape): loan:pledge is

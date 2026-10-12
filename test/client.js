@@ -1548,6 +1548,9 @@ async function seedLists() {
     const car2 = (await si('GET', '/v1/races', t2)).body?.cars?.[0]?.id;
     if (car2) await si('POST', `/v1/races/list/${car2}`, t2, { limit: 50000 });
   });
+  // The preceding random boost can leave the second shape-fixture player jailed.
+  // These boards require a free player; crime odds are exercised by gameplay suites.
+  await q('UPDATE characters SET jail_until=NULL WHERE id=$1', [two]);
   // THE GALA — a live party in the city, so the guest-side list has a row to render. The host needs
   // a Row House (tier 2 — two upgrades, the ladder is sequential) AND a Butler on the door, and the
   // household must be square, which is why this is four calls rather than one.
