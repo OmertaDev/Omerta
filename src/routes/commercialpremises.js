@@ -2,7 +2,8 @@ import * as G from '../game.js';
 import * as Premises from '../commercialpremises.js';
 
 export function register(app,{ pool,auth }) {
-  const base='/v1/company/premises', key=req=>req.headers['idempotency-key'];
+  const base='/v1/company/premises';
+  const key=req=>req.headers['idempotency-key'];
   app.get(base,{ preHandler:auth },req=>G.readCharacter(pool,req.user.sub,(ch,client)=>Premises.ownPremisesBoard(client,ch)));
   app.get(`${base}/offers`,{ preHandler:auth },req=>G.readCharacter(pool,req.user.sub,(_ch,client)=>Premises.publicPremisesOffers(client)));
   app.post(`${base}/offers`,{ preHandler:auth },req=>G.withCharacter(pool,req.user.sub,(ch,client)=>Premises.offerPremises(ch,req.body,key(req),client)));

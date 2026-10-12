@@ -38,7 +38,14 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   company_operators: [6, 8], company_operator_receipts: [5, 7],
   game_employment_jobs: [13, 13], game_employment_assignments: [9, 8], game_employment_requests: [3, 5],
   company_workflows: [13, 13], company_workflow_receipts: [3, 5], company_workflow_proofs: [5, 6],
-  commercial_premises_offers: [13, 13], commercial_premises_leases: [16, 15], commercial_premises_requests: [3, 5] });
+  commercial_premises_offers: [13, 13], commercial_premises_leases: [16, 15], commercial_premises_requests: [3, 5],
+  company_bank_portfolios: [5, 9], company_bank_portfolio_receipts: [3, 5],
+  company_bank_portfolio_loans: [5, 6],
+  company_logistics_hubs: [12, 13], company_logistics_hub_sources: [10, 6],
+  company_logistics_hub_requests: [3, 5],
+  buyer_cooperatives: [13, 17], buyer_cooperative_members: [18, 15],
+  buyer_cooperative_orders: [3, 2], buyer_cooperative_receipts: [3, 5], buyer_cooperative_journal: [5, 7],
+  company_opportunity_subscriptions: [3, 5], company_opportunity_notices: [5, 7] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -275,6 +282,41 @@ try {
     rejected(verifyFeatureConstraints, `${constraint.name} operator constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+  // Each bank identity, authority and cap constraint is independently causal.
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_bank_'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} bank constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} bank constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_logistics_hub'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} hub constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} hub constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  for (const column of ['withdrawal_journal_id', 'settlement', 'completed_at'])
+    rejected(verifyFeatureNotNull, `hub pending ${column} remains optional`, [...featureNotNull,
+      { table_name: 'company_logistics_hub_sources', column_name: column }]);
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('buyer_cooperative'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} cooperative constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} cooperative constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  for (const [table, column] of [['buyer_cooperatives', 'order_id'], ['buyer_cooperative_journal', 'order_id'],
+    ['buyer_cooperative_journal', 'member_account']])
+    rejected(verifyFeatureNotNull, `${table}.${column} remains optional`, [...featureNotNull, { table_name: table, column_name: column }]);
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_opportunity_'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} opportunity constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} opportunity constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  rejected(verifyFeatureNotNull, 'opportunity acknowledgment remains optional', [...featureNotNull,
+    { table_name: 'company_opportunity_notices', column_name: 'acknowledged_at' }]);
+  rejected(verifyFeatureNotNull, 'bank finance request identity remains optional', [...featureNotNull,
+    { table_name: 'company_bank_portfolio_loans', column_name: 'finance_request_id' }]);
   rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
     { table_name: 'company_operators', column_name: 'price_policy' }]);
   for (const constraint of economyExtensions) {

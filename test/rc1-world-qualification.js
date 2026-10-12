@@ -1,4 +1,10 @@
+import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from '../tools/rc1-company-opportunity-source-compatibility.js';
+import { BUYER_COOPERATIVE_SOURCE_TRANSFER } from '../tools/rc1-buyer-cooperative-source-compatibility.js';
+import { COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER } from '../tools/rc1-company-logistics-hub-source-compatibility.js';
+import { COMPANY_BANK_SOURCE_TRANSFER } from '../tools/rc1-company-bank-source-compatibility.js';
 import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
+import { GAME_EMPLOYMENT_SOURCE_TRANSFER } from '../tools/rc1-game-employment-source-compatibility.js';
+import { COMPANY_WORKFLOW_SOURCE_TRANSFER } from '../tools/rc1-company-workflow-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
@@ -13,6 +19,7 @@ import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-sourc
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
   coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
+import { COMMERCIAL_PREMISES_SOURCE_TRANSFER } from '../tools/rc1-commercial-premises-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
   FRANCHISE_SOURCE_PREDECESSOR_PINS, FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
@@ -558,7 +565,11 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 24);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 31);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER);
+assert.match(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer.scope, /require separate current-source workflow proofs/);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
+assert.match(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer.scope, /require separate current-source employment proofs/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
 assert.match(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer.scope, /require separate current-source operator proofs/);
 assert.match(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer.scope, /no world-soak, native, financial, deployment or onchain qualification/);
@@ -777,3 +788,13 @@ for (const change of [
   assert.throws(() => evaluateWorldDuration(value), /opening and closing/);
 }
 console.log('PASS rc1-world-qualification: source pins, exact checkpoint subjects, canonical cash/ammo/Family guards, unknown preservation, lifecycle executions, distinct season boundaries and reviewed window joins; no native-world qualification');
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer, COMMERCIAL_PREMISES_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer, COMPANY_BANK_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer, COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.buyerCooperativeSourceReviewTransfer, BUYER_COOPERATIVE_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOpportunitySourceReviewTransfer, COMPANY_OPPORTUNITY_SOURCE_TRANSFER);

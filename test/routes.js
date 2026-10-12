@@ -32,6 +32,7 @@ const app = await buildServer();
 // reason. Now an entry costs a sentence, so the cheapest way past this test is to add `auth`.
 const PUBLIC = {
   'GET /v1/company/reputation/public/:accountId': 'bounded coarse bands only under current company and reputation publication consent; source, performer and counterparty identities remain private',
+  'GET /v1/buyer-cooperatives/public': 'bounded published frozen terms only; member funding, allocations, receipts and claims require their original authenticated account',
   'GET /v1/strategy-leagues': 'public bounded prize-free league cohorts and descriptive standings; private strategy rules, rule hashes and original-account entries require authentication',
   'GET /v1/market/feed': 'public bounded canonical gin stock, price and demand with observation provenance; no private inventory, credentials or execution authority',
   'GET /v1/strategies': 'public bounded strategy offers, prices and descriptive publisher outcomes; private rules, rule hashes and paid libraries require original-account authentication',

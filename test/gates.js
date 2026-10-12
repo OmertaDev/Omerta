@@ -3521,8 +3521,15 @@ scopedSocialContext = async function(db) {
     'the `pgcheck` job must identify each required PostgreSQL major');
   assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
     'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
-  assert.match(pgcheck, /^        image: \$\{\{ matrix\.postgres == '16' && 'docker\.io\/library\/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' \|\| 'public\.ecr\.aws\/docker\/library\/postgres:18\.4' \}\}\s*$/m,
-    'retain the verified immutable official PostgreSQL 16 image and unchanged PostgreSQL 18.4 mirror');
+  assert.match(pgcheck, /^        image: \$\{\{ matrix\.postgres == '16' && 'docker\.io\/library\/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' \|\| 'docker\.io\/library\/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' \}\}\s*$/m,
+    'retain verified immutable official PostgreSQL 16 and 18.4 images');
+  const official18Image = 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636';
+  const imageLine = pgcheck.match(/^        image: .*$/m)[0];
+  for (const drift of ['docker.io/library/postgres:18.4', 'public.ecr.aws/docker/library/postgres:18.4', official18Image.replace('a02db8', 'b02db8')]) {
+    assert.notEqual(imageLine.replace(official18Image, drift), imageLine, 'mutable, mirrored or changed image must fail the exact service-image boundary');
+    assert(!imageLine.replace(official18Image, drift).includes(official18Image), 'negative image substitution must remove the verified pin');
+  }
+
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [75],
@@ -3644,7 +3651,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -4322,7 +4329,17 @@ scopedSocialContext = async function(db) {
   // the corpus is every bucket the TREE has, never the two lists — a ledger that enumerates itself
   // cannot notice a twelfth bucket landing tomorrow.
   const found = new Set();
-  for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/\b(\w+)_used\b/g)) found.add(`${m[1]}_used`);
+  // These two workflow refusal reasons describe immutable source uniqueness,
+  // not wall-clock counters. Mask only their exact local error calls; a real
+  // SQL column or variable with the same name must still fail closed.
+  const bucketSource = (file, source) => file === 'src/companyworkflows.js'
+    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '') : source;
+  const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
+  assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
+  assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
+    'Actual counter columns cannot hide behind same-named workflow refusal reasons');
+  assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
+  for (const f of files) for (const name of bucketNames(`src/${relPath(SRC, f)}`, fs.readFileSync(f, 'utf8'))) found.add(name);
   assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
     + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
 

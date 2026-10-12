@@ -2,11 +2,20 @@ import assert from 'node:assert/strict';
 import * as Hub from '../src/companylogisticshubs.js';
 import { logisticsHubInvariant } from '../src/companylogisticshubsinvariants.js';
 const native=process.argv.includes('--postgres'); assert(!process.env.DATABASE_URL,'Hub proofs reject ambient DATABASE_URL');
+let serverVersion='memory';
 if(native) {
-  const url=new URL(process.env.COMPANY_LOGISTICS_HUB_TEST_DATABASE_URL);
-  assert.equal(url.hostname,'127.0.0.1'); assert(['35439','35449'].includes(url.port)); assert.equal(url.username,'pilot_runner'); assert.match(url.pathname,/^\/logistics_hub_proof_[a-z0-9_]+$/);
+  const url=new URL(process.env.LOGISTICS_HUB_TEST_DATABASE_URL);
+  assert(['postgresql:','postgres:'].includes(url.protocol)); assert(['127.0.0.1','localhost'].includes(url.hostname));
+  const localPilot=['35439','35449'].includes(url.port) && url.username==='pilot_runner' && url.password==='';
+  const ci=url.port==='5432' && url.username==='postgres' && url.password==='pgcheck';
+  assert(localPilot||ci,'Only approved isolated local pilot or CI endpoints'); assert(!url.search && !url.hash);
+  assert.match(url.pathname,/^\/logistics_hub_proof_[a-z0-9_]+$/);
   const { default:pg }=await import('pg'), p=new pg.Pool({ connectionString:url.href });
-  try { assert.match((await p.query('SHOW server_version')).rows[0].server_version,/^18\.4/); assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0); } finally { await p.end(); }
+  try {
+    await p.query('BEGIN READ ONLY'); serverVersion=(await p.query('SHOW server_version')).rows[0].server_version;
+    assert.match(serverVersion,localPilot?/^18\.4(?:[.\s]|$)/:/^(?:16(?:[.\s]|$)|18\.4(?:[.\s]|$))/);
+    assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0); await p.query('ROLLBACK');
+  } finally { await p.end(); }
   process.env.DATABASE_URL=url.href;
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',DELIVERY_CONTRACTS:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'logistics-hub-local-proof-secret',MARKET_SEED:'logistics-hub-local-native-seed',MOD_KEY:'logistics-hub-local-test-mod' });
@@ -16,7 +25,7 @@ const { setAgentCompany }=await import('../src/agentcompany.js'), { runEstate }=
 const { buyGood }=await import('../src/economy.js');
 const app=await buildServer(); let serial=0;
 if(!native) await app.pool.query('DROP INDEX ix_depot_owner_open');
-if(!app.hasRoute({ method:'GET',url:'/v1/company/logistics-hubs' })) (await import('../src/routes/companylogisticshubs.js')).register(app,{ pool:app.pool,auth:async req=>req.jwtVerify() });
+assert(app.hasRoute({ method:'GET',url:'/v1/company/logistics-hubs' }),'Core proof requires actual registered runtime routes');
 const single=(p,fn)=>G.withCharacter(app.pool,p.account,fn);
 const pair=(p,other,fn)=>G.withTwoCharacters(app.pool,p.account,other.id,fn,{ meet:false });
 async function player() {
@@ -111,7 +120,7 @@ try {
   await assert.rejects(run(expired,expiredHub.hub.id,2),/lease_expired/);
   const dead=await fixture(1), deadHub=await setup(dead); await accept(dead,deadHub.hub.id);
   const estate=await pair(dead.landlord,dead.supplier,async (_ch,target,client,h)=>{
-    const result=await runEstate(client,h,target,'hub actual estate proof'); await Hub.voidLogisticsHubsAtDeath(client,target); return result;
+    return runEstate(client,h,target,'hub actual estate proof');
   });
   assert.equal((await app.pool.query('SELECT state FROM company_logistics_hubs WHERE id=$1',[deadHub.hub.id])).rows[0].state,'closed');
   await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1',[estate.heirId,new Date(Date.now()+3600000)]);
@@ -119,6 +128,26 @@ try {
   assert.equal((await pair(heir,dead.landlord,(ch,owner,client)=>Hub.setupLogisticsHub(ch,owner,dead.body,'setup',client))).replayed,true);
   await assert.rejects(pair(heir,dead.landlord,(ch,owner,client)=>Hub.acceptLogisticsHub(ch,owner,deadHub.hub.id,{ expectedRevision:3,consent:true },'new-authority',client)),/party/);
   if(native) {
+    const rebound=await fixture(1), reboundHub=await setup(rebound); await accept(rebound,reboundHub.hub.id);
+    const foreign=await fixture(1), beforeRebound=await state(rebound,reboundHub.hub.id);
+    const leaseHold=await app.pool.connect();
+    try {
+      await leaseHold.query('BEGIN');
+      await leaseHold.query('SELECT id FROM business_warehouse_leases WHERE id=$1 FOR UPDATE',[rebound.warehouse.lease.id]);
+      const pending=run(rebound,reboundHub.hub.id,2,'warehouse-binding-wait');
+      let observed=false;
+      for(let attempt=0;attempt<60;attempt++) {
+        if((await app.pool.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM business_warehouse_leases%' LIMIT 1")).rows.length){observed=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,5));
+      }
+      assert.equal(observed,true,'Canonical pair waits on the warehouse leaf after the unlocked hint');
+      await leaseHold.query('UPDATE business_warehouse_leases SET depot_id=$2 WHERE id=$1',[rebound.warehouse.lease.id,foreign.warehouseDepot.id]);
+      await leaseHold.query('COMMIT');
+      await assert.rejects(pending,/custody_pairing/,'Authoritative locked lease must still match its hinted and premises depot');
+    } finally { await leaseHold.query('ROLLBACK'); leaseHold.release(); }
+    await app.pool.query('UPDATE business_warehouse_leases SET depot_id=$2 WHERE id=$1',[rebound.warehouse.lease.id,rebound.warehouseDepot.id]);
+    assert.deepEqual(await state(rebound,reboundHub.hub.id),beforeRebound,'Drift refusal withdraws nothing and leaves source settlement/progress unchanged');
+    await run(rebound,reboundHub.hub.id,2,'warehouse-binding-restored');
     const raced=await fixture(2), racedHub=await setup(raced); await accept(raced,racedHub.hub.id);
     const result=await Promise.allSettled([run(raced,racedHub.hub.id,2,'race-a'),run(raced,racedHub.hub.id,2,'race-b')]); assert.equal(result.filter(row=>row.status==='fulfilled').length,1);
     assert.equal((await app.pool.query("SELECT position FROM company_logistics_hub_sources WHERE hub_id=$1 AND state='pending'",[racedHub.hub.id])).rows.length,1);
@@ -141,5 +170,5 @@ try {
   assert.equal((await logisticsHubInvariant(app.pool)).ok,false,'Fake progress/settlement JSON cannot satisfy canonical source invariant');
   await app.pool.query('UPDATE company_logistics_hub_sources SET settlement=$2 WHERE hub_id=$1 AND position=1',[draft.hub.id,original]);
   assert.equal((await logisticsHubInvariant(app.pool)).ok,true);
-  console.log(`companylogisticshubs ${native?'PostgreSQL18.4 race/rollback/source-expiry':'memory'}: actual warehouse withdrawal+financed settlement, batch bounds, replay, foreign custody/privacy, premises/warehouse expiry and canonical death passed`);
-} finally { await app.close(); }
+  console.log(`companylogisticshubs ${native?`PostgreSQL ${serverVersion} race/rollback/source-expiry`:'memory'}: actual warehouse withdrawal+financed settlement, batch bounds, replay, foreign custody/privacy, premises/warehouse expiry and actual registered/integrated canonical death passed`);
+} finally { await app.close(); await app.pool.end(); }

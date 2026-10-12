@@ -1,0 +1,53 @@
+# Commercial premises registered-runtime integration proof
+
+Date: 2026-10-12. Phase: registered gameplay API/global invariant/canonical estate integration; real financial activation remains unchanged and OFF.
+Runtime source: `194ca68721886ad5bce8f5d32d25ad48ec6b3ff0` (`codex/commercial-premises-release`). Validated proof source: `317fe65b992f41b18f2ecb60fb61a3a60c6a094d`. Changes are limited to `test/commercialpremises.js`, new `test/commercialpremises-integration.js` and this report. No runtime, schema, gateway, census, catalog, package, CI or knowledge-graph edits were made.
+
+Scope includes real `buildServer` registration/authentication, company metadata setup, paired lease gameplay, exact rent ledger reasons, global invariant collection, current property/occupancy read and mutation guards, and actual `runEstate` integration. Included inspected runtime files/functions: `src/server.js` registration/auth/idempotency/error handling, `src/routes/commercialpremises.js`, `src/commercialpremises.js`, `src/commercialpremisesinvariants.js`, `src/invariants.js`, canonical character pair wrappers, company metadata and `src/social/estate.js`. Source hashes for these files, schema and tests are retained. Excluded: remaining unrelated game/financial surfaces, final release routing/catalog/CI gates and deployment.
+
+## Trust boundaries and actual execution
+
+The core test no longer injects a fallback premises route with a raw JWT verifier, and no longer calls `voidCommercialPremisesAtDeath` to perform the first invalidation after death. It requires actual runtime route registration and invokes `runEstate` only. The new integration test creates actual guest/human sessions, issues actual agent JWTs through `/v1/auth/agent-key`, sets company metadata through its real owner-session HTTP route, and uses the registered premises offer/lease/access/cancel endpoints. Both human and agent sessions participate in ordinary offer and paired rent gameplay. No token claims or request users are fabricated.
+
+Fixtures seed controlled game property holdings in the authoritative existing `estates` / `street_deeds` tables, with ledger-backed controlled character capital. The actual company metadata setter and premises source validators check those owned holdings. This is evidence of property-source verification, not a claim that additional property acquisition, chain extraction or real assets were created. Source drift is simulated by changing extraction/ownership fields in the owned test database, then restoring them; no blockchain or external provider is invoked.
+
+Rent is a direct backed character transfer, not an escrow: exactly one `commercial_premises:rent:pay` negative tenant cash entry and one `commercial_premises:rent:receive` positive landlord entry share the lease counterparty ID and sum to zero. The registered global collector includes the paid-occupancy invariant and both literal known reasons. The API fixture checks all global invariants, then deliberately changes the original payer ID to a foreign fixture character and proves that the actual global collector rejects it; restoration reconciles all checks again. Expired, surrendered and estate-voided leases retain their original two-leg rent backing and never mint a refund.
+
+Private access requires the original live character role and current backed property. Public offers disclose verified property kind, permitted street district and advertised gameplay terms, without private estate/street keys, owner account/character or tenant data. Current company unpublication hides offers while preserving still-backed paid occupancy; offer-intake withdrawal likewise preserves paid access. Street extraction or current ownership drift revokes access and public availability. The paired mutation guard is checked positively before source loss and negatively against an original landlord's heir.
+
+`runEstate` source inspection confirms ordering after ordinary Depot/loan/payroll/workflow transitions and before heir insertion. Actual tenant and landlord estate executions are tested through canonical paired character transactions, with no test-side first invalidation. Landlord death invalidates the original offer and voids paid occupancy; tenant death marks its own occupancy dead. Paid landlord cash stays ordinary wallet cash and follows existing estate rules. Heir cash equals exactly the canonical `500 + 100 * prestige` stake, with no extra old rent/refund. Historical lease receipt recovery does not recharge, refund or grant current occupancy. Fresh legitimate heir property offers require a new explicit request/revision. A separately repeated invalidation is used only after observing the actual integrated estate's invalidated state, to test idempotence.
+
+## Replay, native locks and recovery
+
+HTTP middleware replay is intentionally tested as a preserved original receipt: a cached HTTP response can omit the core helper's `replayed` flag. A changed body with the same HTTP key returns the actual `422 idempotency_key_reuse` perimeter result; it cannot produce a second payment. Module-level replay remains covered by the adapted core test. Cached historical receipt fields are not treated as current occupancy authority; fresh access/mutation guards reject the old rights after estate or surrender.
+
+The PostgreSQL API test sends competing real human/agent lease requests for one slot. Exactly one succeeds and exactly one pays; the other reports occupied. Its late-failure test temporarily instruments only test-owned connection wrappers, preserving both pg promise and callback APIs. It witnesses two successful canonical rent ledger inserts and one occupancy insert, then injects failure at the final lease request receipt. The actual HTTP handler returns the expected injected 500; the transaction rolls back both cash, all occupancy/request rows and rent backing, then the same HTTP key succeeds on retry. The retained 500 log is intentional test evidence, not a production failure.
+
+A separate real HTTP lease request is observed waiting for the original landlord character lock through `pg_stat_activity`. The source offer deadline crosses while that lock is held; after release the actual transaction rejects the expired offer and moves no money. Core native evidence separately covers slot exclusion, rollback and lock/expiry behavior.
+
+## Database guards and executed evidence
+
+Both suites reject ambient `DATABASE_URL` before server construction. Each has a distinct explicit input: `COMMERCIAL_PREMISES_TEST_DATABASE_URL` or `COMMERCIAL_PREMISES_INTEGRATION_TEST_DATABASE_URL`. Accepted database names are only fresh `commercial_premises_proof_*`; preflight checks an empty public schema. Endpoints are loopback only, without URL query/fragment overrides: local `pilot_runner`, empty URL password, ports 35439/35449 require PostgreSQL 18.4; configured CI `postgres`/`pgcheck` at port 5432 permits PostgreSQL 16 or 18.4. Both print the actual observed server version, never an unconditional 18.4 label. PostgreSQL 16 was not run locally and no local-16 claim is made; CI wiring/execution is root-owned.
+
+Retained ignored package: `output/commercial-premises-integration-20261012/`. Node `v24.19.0`; actual local PostgreSQL `18.4`, role `pilot_runner`, loopback port `35439`, verified read-only before provisioning. Fresh core DB: `commercial_premises_proof_core_e3a4800daca568f0`; fresh final API DB: `commercial_premises_proof_api_b869b1a304e70bd1`.
+
+| Evidence | Actual result |
+| --- | --- |
+| `node test/commercialpremises.js` | Memory exit 0, actual registered routes and integrated estate |
+| `node test/commercialpremises-integration.js` | Memory exit 0, real JWT/API/paired guards and all global invariants |
+| `node test/commercialpremises.js --postgres` | PostgreSQL 18.4 exit 0, native core race/rollback/expiry |
+| `node test/commercialpremises-integration.js --postgres` | PostgreSQL 18.4 exit 0, real API slot race, witnessed late rollback, expiry after observed lock wait |
+| Retained `guard-proof.mjs` | Twelve pre-connection rejections across both suites: ambient, remote, unowned name, wrong role, wrong CI password and URL options |
+| Node syntax checks / `git diff --check` | Exit 0, no actionable diagnostics |
+
+Core native execution was at proof commit `82378e949859ea7b8c22837f9ba7bd2ba219f1b3`; the core test and runtime files are byte-identical at the final proof source. Matching core Git blob IDs are retained in `core-proof-blob-identity.log`; the later change only corrects API test instrumentation. Final API native evidence is at `317fe65b992f41b18f2ecb60fb61a3a60c6a094d`. Logs include `core-memory.log`, `integration-memory-final.log`, `core-native.log`, `api-native-final.log`, `guard-proof.log`, `native-probe.log`, `static.log`, `source-revision.log` and `source-hashes.log`.
+
+## Review methods, findings and conclusion
+
+Applied native adaptations of the three method sources pinned in `omerta-contracts/SECURITY-REVIEW-POLICY.md`: Trail of Bits entry/caller/trust-boundary and specification comparison; Pashov access/replay/cash/expiry execution traces; Plamen canonical state/accounting/estate and verified failure hypotheses. No upstream orchestration or Solidity tooling is claimed. Static SQL/input triage follows parameterized core predicates and test source ownership; tests introduce no production dynamic SQL, endpoint or financial logic.
+
+CPI-H01 (resolved harness issue): initial replay assumptions expected the core helper flag and 400 conflict code, while the real HTTP perimeter preserves cached response bodies and uses 422 for key reuse. Correction: assert exact receipt and no second transfer, and recognize the actual key-conflict result.
+
+CPI-H02 (resolved harness issue): the first native rollback wrapper handled promise-style `pool.connect` only; native pg's `Pool.query` also uses callback connection acquisition. It failed before the intended injected lease failure. Correction: preserve both connection styles and restore each client's query/release functions. Raw failure retained in `api-callback-harness-failure.log`; fresh native retest witnesses all three intended writes, successful atomic rollback, same-key recovery and global reconciliation.
+
+No confirmed runtime defect was found and no runtime/core fix was made. This proof supports the actual registered-rent/global-invariant/canonical-estate integration at the pinned source, not a blanket audit of the game or every estate dependency. Root still owns final merged source verification, gateway/catalog/source guards, package/CI wiring and release/deployment gates. No real financial activation, external message, new provider, infrastructure or real asset operation occurred.
