@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `9402e2d8a586`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `e9a505c40c4c`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,527 |
-| Text lines | 1,582,779 |
-| Repository bytes inventoried | 816,882,292 |
-| Backend/route modules | 354 |
-| HTTP route registrations / unique routes | 930 / 930 |
+| Current artifacts | 4,531 |
+| Text lines | 1,585,082 |
+| Repository bytes inventoried | 817,077,970 |
+| Backend/route modules | 356 |
+| HTTP route registrations / unique routes | 931 / 931 |
 | Database tables | 406 |
 | Solidity declarations | 126 |
-| Git commits | 2,973 |
+| Git commits | 2,962 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 11,530 / 46,636 |
+| Graph nodes / edges | 11,526 / 46,581 |
 
 ## Artifact kinds
 
@@ -25,15 +25,15 @@
 | media-asset | 1,204 |
 | artifact | 674 |
 | contract-project | 646 |
-| test-suite | 526 |
-| documentation | 442 |
-| backend-module | 310 |
+| test-suite | 527 |
+| documentation | 443 |
+| backend-module | 311 |
 | engineering-harness | 216 |
 | contract-test | 111 |
 | contract-source | 105 |
 | audit | 98 |
 | design | 82 |
-| route-module | 44 |
+| route-module | 45 |
 | web-surface | 33 |
 | operations | 11 |
 | knowledge-base | 11 |
@@ -61,7 +61,7 @@
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [public/index.html](../../public/index.html) | 14,710 | web-surface | 2026-10-12 |
+| [public/index.html](../../public/index.html) | 14,831 | web-surface | 2026-10-11 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
 | [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |

@@ -45,7 +45,7 @@ try {
   await app.listen({ host: '127.0.0.1', port: 0 });
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
-  const newPage = async (viewport, { noResizeObserver = false, capturePlayer = false } = {}) => {
+  const newPage = async (viewport, { noResizeObserver = false, capturePlayer = false, playerToken = viewer.token } = {}) => {
     const context = await browser.newContext({ viewport, serviceWorkers: 'block', isMobile: viewport.width <= 680, hasTouch: viewport.width <= 680 });
     if (noResizeObserver) await context.addInitScript(() => { window.ResizeObserver = undefined; });
     await context.addInitScript(token => {
@@ -82,7 +82,7 @@ try {
             destroy() { record.destroyed = true; return handle.destroy(); } };
         } };
       } });
-    }, viewer.token);
+    }, playerToken);
     const page = await context.newPage(); await page.bringToFront();
     page.on('pageerror', error => errors.push(error.message));
     const playerReply = capturePlayer ? page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/projections/player' && reply.status() === 200) : null;
@@ -847,6 +847,48 @@ try {
   await session.page.evaluate(() => window.__expiredEncounter.click()); await frames(session.page);
   assert.equal(session.requests.slice(beforeExpired).filter(request => request.path.startsWith('/v1/city/encounters/')).length, 0);
   await session.context.close();
+
+  // Property signs are real directory records, not live character positions.
+  const propertyViewer = await player('Property Explorer');
+  for (const [owner, street] of [[propertyViewer, 'Reader Home'], [human, 'Legacy <b> Lane'], [agent, 'Agent Stead'], [npc, 'Resident Row']]) {
+    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,corner_at) VALUES($1,$2,$3,$4,now())',
+      [owner.account_id, street, street.toLowerCase(), 'docks']);
+  }
+  await app.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [agent.id, 'brick']);
+  for (const viewport of [{ width: 1366, height: 768 }, { width: 375, height: 812 }]) {
+    const property = await newPage(viewport, { playerToken: propertyViewer.token }), p = property.page;
+    await p.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().homes?.length === 4);
+    const homes = (await state(p)).homes, record = await p.evaluateHandle(() => window.__presenceHandles.at(-1));
+    const agentHome = homes.find(home => home.key === 'agent stead');
+    assert.equal(agentHome.owner.kind, 'agent');
+    assert.deepEqual(Object.keys(agentHome.owner).sort(), ['kind', 'name'], 'Property facts expose no steward position or private account identifier.');
+    assert.equal((await state(p)).actorMarkers.some(marker => marker.id === agent.id), false, 'An away agent has a property marker without a fabricated live-person marker.');
+    assert.equal(new Set(homes.map(home => home.key)).size, 4);
+    const beforeProperty = mutations(property.requests).length;
+    await p.locator('[data-city-home="legacy <b> lane"]').click();
+    await p.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().selectedHome === 'legacy <b> lane'
+      && window.__presenceHandles.at(-1).handle.getState().pathLength === 0);
+    assert.equal(await p.locator('.omerta-city__actor-body h4').innerText(), 'Legacy <b> Lane');
+    assert((await p.locator('.omerta-city__actor-body').innerText()).includes(hostileName));
+    assert.equal(await p.locator('.omerta-city__actor-body img, .omerta-city__actor-body b').count(), 0, 'Legacy street markup and hostile owner names remain literal text.');
+    assert.equal(await p.evaluate(() => window.__actorInjection), undefined);
+    assert.equal(await p.locator('[data-city-home-action="hideout"]').count(), 0);
+    const homePose = (await state(p)).position, currentHomes = JSON.stringify((await state(p)).homes);
+    const board = (await app.inject({ method: 'GET', url: '/v1/city/homes?district=docks', headers: propertyViewer.headers })).json();
+    await p.evaluate(board => window.__presenceHandles.at(-1).handle.update({ worldHomes: { ...board, viewer: { ...board.viewer, generation: board.viewer.generation + 1 } } }), board);
+    assert.equal(JSON.stringify((await state(p)).homes), currentHomes, 'A stale generation cannot replace accepted physical properties.');
+    const remote = (await app.inject({ method: 'GET', url: '/v1/city/homes?district=brick', headers: propertyViewer.headers })).json();
+    await p.evaluate(board => window.__presenceHandles.at(-1).handle.update({ worldHomes: board }), remote);
+    assert.equal(JSON.stringify((await state(p)).homes), currentHomes, 'A remote district directory never replaces the current physical neighborhood.');
+    assert.deepEqual((await state(p)).position, homePose);
+    assert(await p.evaluate(record => window.__presenceHandles.at(-1) === record && !record.destroyed, record));
+    await p.locator('[data-city-actor-close]').click();
+    await p.locator('[data-city-world-map]').click();
+    await p.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().worldUI.mapView === 'world');
+    assert.deepEqual((await state(p)).position, homePose, 'Atlas inspection preserves the actual local walking pose.');
+    assert.equal(mutations(property.requests).length, beforeProperty, 'Property and district inspection issue no gameplay command.');
+    await property.context.close();
+  }
   assert.deepEqual(errors, []);
   console.log('city-presence-browser: public types/pagination/escaping, read-only inspection, fresh intel/objectives/replay, pose, queued cancellation, dispatched receipt and mobile touch/keyboard geometry pass');
 } finally { await browser?.close(); await app.close(); }
