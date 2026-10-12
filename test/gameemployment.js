@@ -5,11 +5,14 @@ const native = process.argv.includes('--postgres');
 assert(!process.env.DATABASE_URL, 'Employment proofs reject ambient DATABASE_URL');
 if (native) {
   const url = new URL(process.env.GAME_EMPLOYMENT_TEST_DATABASE_URL);
-  assert.equal(url.hostname, '127.0.0.1'); assert(['35439','35449'].includes(url.port));
-  assert.equal(url.username, 'pilot_runner'); assert.match(url.pathname, /^\/employment_proof_[a-z0-9_]+$/);
+  assert(['postgres:','postgresql:'].includes(url.protocol)); assert.equal(url.hostname, '127.0.0.1');
+  const pilot=url.username==='pilot_runner'&&['35439','35449'].includes(url.port);
+  const ci=url.username==='postgres'&&url.port==='5432'; assert(pilot||ci,'Only named local pilot or hosted-CI loopback test roles/ports');
+  assert.match(url.pathname, /^\/employment_proof_[a-z0-9_]+$/);
   const { default: pg } = await import('pg'); const pre = new pg.Pool({ connectionString: url.href });
   try {
-    const version = (await pre.query('SHOW server_version')).rows[0].server_version; assert.match(version, /^18\.4/);
+    const version = (await pre.query('SHOW server_version')).rows[0].server_version;
+    assert.match(version,pilot?/^18\.4(?:\D|$)/:/^(?:16(?:\D|$)|18\.4(?:\D|$))/);
     assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
   } finally { await pre.end(); }
   process.env.DATABASE_URL = url.href;
@@ -21,6 +24,7 @@ const { buildServer } = await import('../src/server.js'), G = await import('../s
 const D = await import('../src/depot.js'), M = await import('../src/market.js'), Delivery = await import('../src/delivery.js');
 const { setAgentCompany } = await import('../src/agentcompany.js');
 const { runEstate } = await import('../src/social/estate.js');
+const { M3,seasonModOf } = await import('../src/rules.js');
 const app = await buildServer(); let serial = 0;
 // Core worktree does not own server wiring. Exercise its actual route module
 // using the server's signed JWT verifier; integrated builds already register it.
@@ -118,9 +122,7 @@ try {
   const d = await fixture(1);
   const died = await pair(d.worker, d.owner, async (_ch, target, client, h) => {
     const result = await runEstate(client,h,target,'employment proof');
-    // Core proof calls the exported estate hook in the same transaction; the
-    // coordinator's shared integration suite must also verify runEstate wiring.
-    await E.voidEmploymentAtDeath(client,h,target); return result;
+    return result; // The actual canonical estate now owns this hook.
   });
   await assert.rejects(claim(d));
   // An heir inherits metadata/receipts, never this street-wealth escrow.
@@ -145,28 +147,31 @@ try {
   await assert.rejects(pair(looted.worker,looted.owner,(ch,target,client,h)=>E.voidEmploymentAtDeath(client,h,target,{ ...ch,account_id:target.account_id },0.25)),/estate_party/);
   await assert.rejects(single(looted.owner,(ch,client,h)=>E.voidEmploymentAtDeath(client,h,ch,{ id:deadWorker.worker.id,account_id:deadWorker.worker.account,alive:true,is_npc:false,cash:0 },0.25)),/estate_party/);
   const playerEstate=await pair(looted.worker,looted.owner,async (ch,target,client,h)=>{
+    const rate=Math.min(0.5,M3.CASH_LOOT_RATE*(seasonModOf().lootMult||1));
     const result=await runEstate(client,h,target,'employment PLAYER kill proof',{ killerCh:ch,loot:true });
-    const before=Number(ch.cash), first=await E.voidEmploymentAtDeath(client,h,target,ch,0.25);
-    assert.equal(first.lootedCash,25); assert.equal(first.burnedCash,75); assert.equal(Number(ch.cash),before+25);
-    const repeated=await E.voidEmploymentAtDeath(client,h,target,ch,0.25);
-    assert.equal(repeated.closedJobs,0); assert.equal(repeated.lootedCash,0); assert.equal(Number(ch.cash),before+25);
-    return { ...result,killerCash:Number(ch.cash) };
+    const paid=Math.floor(100*rate), resolved=(await client.query('SELECT looted_cash,burned_cash FROM game_employment_jobs WHERE id=$1',[looted.job.employmentId])).rows[0];
+    assert.equal(Number(resolved.looted_cash),paid); assert.equal(Number(resolved.burned_cash),100-paid);
+    assert.equal(result.report.employmentLoot,paid);
+    const before=Number(ch.cash), repeated=await E.voidEmploymentAtDeath(client,h,target,ch,rate);
+    assert.equal(repeated.closedJobs,0); assert.equal(repeated.lootedCash,0); assert.equal(Number(ch.cash),before);
+    return { ...result,killerCash:Number(ch.cash),employmentLoot:paid };
   });
   assert.equal(await balance(looted.worker),playerEstate.killerCash,'Canonical outer persist retains in-memory loot credit');
   const payroll=(await app.pool.query('SELECT * FROM game_employment_jobs WHERE id=$1',[looted.job.employmentId])).rows[0];
-  assert.equal(Number(payroll.escrow_cash),0); assert.equal(Number(payroll.looted_cash),25); assert.equal(Number(payroll.burned_cash),75);
+  assert.equal(Number(payroll.escrow_cash),0); assert.equal(Number(payroll.looted_cash),playerEstate.employmentLoot); assert.equal(Number(payroll.burned_cash),100-playerEstate.employmentLoot);
   const lootRows=(await app.pool.query("SELECT character_id,amount FROM transactions WHERE reason=$1",[`employment:estate:loot:${looted.job.employmentId}`])).rows;
-  assert.equal(lootRows.length,1); assert.equal(lootRows[0].character_id,null); assert.equal(Number(lootRows[0].amount),-25);
+  assert.equal(lootRows.length,1); assert.equal(lootRows[0].character_id,null); assert.equal(Number(lootRows[0].amount),-playerEstate.employmentLoot);
   const clamped=await fixture(1);
   await pair(clamped.worker,clamped.owner,async (ch,target,client,h)=>{
-    await runEstate(client,h,target,'employment maximum loot proof',{ killerCh:ch,loot:true });
-    assert.equal((await E.voidEmploymentAtDeath(client,h,target,ch,0.5)).lootedCash,50);
+    const result=await runEstate(client,h,target,'employment maximum loot proof',{ killerCh:ch,loot:true,bloodOathMult:2 });
+    assert.equal(result.report.employmentLoot,50);
+    assert.equal(Number((await client.query('SELECT looted_cash FROM game_employment_jobs WHERE id=$1',[clamped.job.employmentId])).rows[0].looted_cash),50);
   });
   if (native) {
     const rollbackDeath=await fixture(1), killerCash=await balance(rollbackDeath.worker), employerCash=await balance(rollbackDeath.owner);
     await assert.rejects(pair(rollbackDeath.worker,rollbackDeath.owner,async (ch,target,client,h)=>{
       await runEstate(client,h,target,'employment rollback kill',{ killerCh:ch,loot:true });
-      await E.voidEmploymentAtDeath(client,h,target,ch,0.25); throw new Error('death rollback');
+      throw new Error('death rollback');
     }),/death rollback/);
     assert.equal(await balance(rollbackDeath.worker),killerCash); assert.equal(await balance(rollbackDeath.owner),employerCash);
     const unchanged=(await app.pool.query('SELECT state,escrow_cash,looted_cash,burned_cash FROM game_employment_jobs WHERE id=$1',[rollbackDeath.job.employmentId])).rows[0];
@@ -189,9 +194,9 @@ try {
     assert.equal(Number((await app.pool.query("SELECT looted_cash FROM employment_upgrade_proof.game_employment_jobs WHERE id='legacy'")).rows[0].looted_cash),25);
   }
   assert.equal((await employmentCashInvariant(app.pool)).ok,true);
-  await app.pool.query('UPDATE transactions SET amount=-24 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`]);
+  await app.pool.query('UPDATE transactions SET amount=$2 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`,1-playerEstate.employmentLoot]);
   assert.equal((await employmentCashInvariant(app.pool)).ok,false,'Missing escrow-side loot dollar must alert');
-  await app.pool.query('UPDATE transactions SET amount=-25 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`]);
+  await app.pool.query('UPDATE transactions SET amount=$2 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`,-playerEstate.employmentLoot]);
   assert.equal((await employmentCashInvariant(app.pool)).ok,true);
   console.log(`gameemployment ${native?'PostgreSQL (including concurrent claims and rollback)':'memory'}: canonical work, once-only wages, replay, expiry, canonical death/heir and conservation passed`);
 } finally { await app.close(); }
