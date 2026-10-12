@@ -7,7 +7,26 @@ export const COMMERCIAL_REPUTATION = Object.freeze({ sourceLimit: 100, proofLimi
 const fail = reason => { throw new GameError('commercial_reputation', reason); };
 const person = ch => { if (!ch?.alive || ch.is_npc || !ch.account_id) fail('character'); };
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
-const one = async (client, sql, values) => (await client.query(sql, values)).rows[0] || null;
+const one = async (client, sql, values) => {
+  switch (sql) {
+    case 'SELECT account_id FROM characters WHERE id=$1': return (await client.query('SELECT account_id FROM characters WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM market_listings WHERE id=$1': return (await client.query('SELECT * FROM market_listings WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM game_employment_jobs WHERE id=$1': return (await client.query('SELECT * FROM game_employment_jobs WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM delivery_commitments WHERE id=$1': return (await client.query('SELECT * FROM delivery_commitments WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT owner_character FROM business_depots WHERE id=$1': return (await client.query('SELECT owner_character FROM business_depots WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM business_warehouse_leases WHERE id=$1': return (await client.query('SELECT * FROM business_warehouse_leases WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM delivery_loan_requests WHERE id=$1': return (await client.query('SELECT * FROM delivery_loan_requests WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM loans WHERE id=$1': return (await client.query('SELECT * FROM loans WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM business_depot_journal WHERE id=$1': return (await client.query('SELECT * FROM business_depot_journal WHERE id=$1', values)).rows[0] || null;
+    case 'SELECT * FROM commercial_reputation_proofs WHERE category=$1 AND source_id=$2': return (await client.query('SELECT * FROM commercial_reputation_proofs WHERE category=$1 AND source_id=$2', values)).rows[0] || null;
+    case 'SELECT * FROM commercial_reputation_publications WHERE account_id=$1 FOR UPDATE': return (await client.query('SELECT * FROM commercial_reputation_publications WHERE account_id=$1 FOR UPDATE', values)).rows[0] || null;
+    case 'SELECT published FROM agent_company_profiles WHERE account_id=$1': return (await client.query('SELECT published FROM agent_company_profiles WHERE account_id=$1', values)).rows[0] || null;
+    case 'SELECT published,revision FROM commercial_reputation_publications WHERE account_id=$1': return (await client.query('SELECT published,revision FROM commercial_reputation_publications WHERE account_id=$1', values)).rows[0] || null;
+    case 'SELECT name,published FROM agent_company_profiles WHERE account_id=$1': return (await client.query('SELECT name,published FROM agent_company_profiles WHERE account_id=$1', values)).rows[0] || null;
+    case 'SELECT published FROM commercial_reputation_publications WHERE account_id=$1': return (await client.query('SELECT published FROM commercial_reputation_publications WHERE account_id=$1', values)).rows[0] || null;
+    default: throw new Error('Unknown commercial reputation query');
+  }
+};
 const originalAccount = async (client, character) => (await one(client, 'SELECT account_id FROM characters WHERE id=$1', [character]))?.account_id;
 const independent = (account, other) => !!other && other !== account;
 async function deliveryProof(client, row, account) {
@@ -94,18 +113,18 @@ async function workflowProof(client, row, account) {
 }
 
 const definitions = {
-  deliveries: { table: 'delivery_commitments', role: 'supplier_character', validate: deliveryProof },
-  paidWork: { table: 'game_employment_assignments', role: 'worker_character', validate: workProof },
-  closedStorage: { table: 'business_warehouse_leases', role: 'landlord_character', validate: storageProof },
-  repaidLoans: { table: 'loans', role: 'lender_character', validate: loanProof },
-  workflows: { table: 'company_workflows', role: 'original_character', validate: workflowProof },
+  deliveries: { role: 'supplier_character', read: async (client, account) => (await client.query('SELECT s.* FROM delivery_commitments s JOIN characters c ON c.id=s.supplier_character WHERE c.account_id=$1 ORDER BY s.id LIMIT 100', [account])).rows, validate: deliveryProof },
+  paidWork: { role: 'worker_character', read: async (client, account) => (await client.query('SELECT s.* FROM game_employment_assignments s JOIN characters c ON c.id=s.worker_character WHERE c.account_id=$1 ORDER BY s.id LIMIT 100', [account])).rows, validate: workProof },
+  closedStorage: { role: 'landlord_character', read: async (client, account) => (await client.query('SELECT s.* FROM business_warehouse_leases s JOIN characters c ON c.id=s.landlord_character WHERE c.account_id=$1 ORDER BY s.id LIMIT 100', [account])).rows, validate: storageProof },
+  repaidLoans: { role: 'lender_character', read: async (client, account) => (await client.query('SELECT s.* FROM loans s JOIN characters c ON c.id=s.lender_character WHERE c.account_id=$1 ORDER BY s.id LIMIT 100', [account])).rows, validate: loanProof },
+  workflows: { role: 'original_character', read: async (client, account) => (await client.query('SELECT s.* FROM company_workflows s JOIN characters c ON c.id=s.original_character WHERE c.account_id=$1 ORDER BY s.id LIMIT 100', [account])).rows, validate: workflowProof },
 };
 async function evidence(client, account) {
   const result = [], usedSettlements = new Set();
   for (const category of COMMERCIAL_REPUTATION.categories) {
     const def = definitions[category];
     // Table and role identifiers are fixed module constants, never caller input.
-    const rows = (await client.query(`SELECT s.* FROM ${def.table} s JOIN characters c ON c.id=s.${def.role} WHERE c.account_id=$1 ORDER BY s.id LIMIT 100`, [account])).rows;
+    const rows = await def.read(client, account);
     for (const row of rows) {
       if ((category === 'paidWork' && row.worker_account !== account) || (category === 'workflows' && row.account_id !== account)) continue;
       const proof = await def.validate(client, row, account, usedSettlements);
