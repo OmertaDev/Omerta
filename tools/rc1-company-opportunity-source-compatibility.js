@@ -1,3 +1,4 @@
+import { commercialReputationSourceBaseline } from './rc1-commercial-reputation-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -100,7 +101,7 @@ export function qualifyCompanyOpportunitySource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function companyOpportunitySourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = commercialReputationSourceBaseline(file, input);
   return Object.hasOwn(COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, file) && hash(text) === COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file]
     ? assertCompanyOpportunitySourceTransfer(file, text).baselineText : text;
 }
