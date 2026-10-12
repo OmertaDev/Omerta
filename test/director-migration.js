@@ -38,7 +38,9 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   company_operators: [6, 8], company_operator_receipts: [5, 7],
   game_employment_jobs: [13, 13], game_employment_assignments: [9, 8], game_employment_requests: [3, 5],
   company_workflows: [13, 13], company_workflow_receipts: [3, 5], company_workflow_proofs: [5, 6],
-  commercial_premises_offers: [13, 13], commercial_premises_leases: [16, 15], commercial_premises_requests: [3, 5] });
+  commercial_premises_offers: [13, 13], commercial_premises_leases: [16, 15], commercial_premises_requests: [3, 5],
+  company_bank_portfolios: [5, 9], company_bank_portfolio_receipts: [3, 5],
+  company_bank_portfolio_loans: [5, 6] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -275,6 +277,15 @@ try {
     rejected(verifyFeatureConstraints, `${constraint.name} operator constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+  // Each bank identity, authority and cap constraint is independently causal.
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_bank_'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} bank constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} bank constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  rejected(verifyFeatureNotNull, 'bank finance request identity remains optional', [...featureNotNull,
+    { table_name: 'company_bank_portfolio_loans', column_name: 'finance_request_id' }]);
   rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
     { table_name: 'company_operators', column_name: 'price_policy' }]);
   for (const constraint of economyExtensions) {
