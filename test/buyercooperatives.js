@@ -19,7 +19,7 @@ function nativeEndpoint(value) {
 }
 for (const allowed of ['postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35449/buyer_cooperative_guard', 'postgres://postgres:pgcheck@127.0.0.1:5432/buyer_cooperative_guard']) assert(nativeEndpoint(allowed).url);
 for (const refused of ['postgresql://pilot_runner@remote.example:35439/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35439/omerta', 'postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard?host=remote.example', 'postgresql://postgres:wrong@127.0.0.1:5432/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard#override']) assert.throws(() => nativeEndpoint(refused));
-const native = process.argv.includes('--postgres'); let pool;
+const native = process.argv.includes('--postgres'); let pool, nativeVersion;
 if (native) {
   const { url, local } = nativeEndpoint(process.env.BUYER_COOPERATIVE_TEST_DATABASE_URL || 'http://missing');
   const { default: pg } = await import('pg'); pool = new pg.Pool({ connectionString: url.href });
@@ -27,6 +27,7 @@ if (native) {
   const identity = (await client.query('SELECT version(),current_user,current_database()')).rows[0]; console.log(identity);
   assert.equal(identity.current_user, url.username); assert.equal(identity.current_database, url.pathname.slice(1));
   assert.match(identity.version, local ? /PostgreSQL 18\.4\b/ : /PostgreSQL (16\b|18\.4\b)/);
+  nativeVersion = /^PostgreSQL ([0-9.]+)/.exec(identity.version)[1];
   await client.query('ROLLBACK'); client.release();
 } else {
   const { newDb, DataType } = await import('pg-mem'), { registerPgMemCompatibility } = await import('../src/db.js');
@@ -171,5 +172,5 @@ try {
   for (let n = 0; n < 500; n++) { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; const weights = [seed % 8 + 1, (seed >>> 4) % 8 + 1, (seed >>> 8) % 8 + 1], total = seed % 810001; const allocation = Custody.buyerCooperativeApportion(total, weights); assert.equal(allocation.reduce((sum, v) => sum + v, 0), total); assert.deepEqual(Custody.buyerCooperativeApportion(total, weights), allocation); assert(allocation.every(v => Number.isSafeInteger(v) && v >= 0)); }
   assert.equal((await runBuyerCooperativeInvariants(pool)).ok, true);
   for (const change of [{ members: f.terms.members.map(m => ({ ...m, units: 8 })) }, { unitPrice: '100' }, { feeCap: 0 }, { url: 'https://example.com' }, { partialPolicy: 'code' }]) assert.throws(() => Cooperative.buyerCooperativeTerms({ ...f.terms, ...change }));
-  console.log(`buyercooperatives: PASS ${native ? 'PostgreSQL18.4 multi-funder/replay/claim contention/rollback/post-lock expiry' : 'memory'}; canonical funded order/fill; full+partial deterministic cash/GIN claims; original-member burn/loot; heir replay no wealth; private/opt-in projection; seed1947 500 conservation allocations. Root market/estate integration remains separately required.`);
+  console.log(`buyercooperatives: PASS ${native ? `PostgreSQL${nativeVersion} multi-funder/replay/claim contention/rollback/post-lock expiry` : 'memory'}; canonical funded order/fill; full+partial deterministic cash/GIN claims; original-member burn/loot; heir replay no wealth; private/opt-in projection; seed1947 500 conservation allocations. Root market/estate integration remains separately required.`);
 } finally { await pool.end(); }
