@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ce3e36a10de7a07353c8ecd55f78832a12e2e6dd",
+  "sourceRevision": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 11652,
-    "edges": 47244,
+    "nodes": 11658,
+    "edges": 47265,
     "byNodeType": {
-      "Artifact": 4553,
+      "Artifact": 4554,
       "Command": 245,
-      "Commit": 3033,
+      "Commit": 3037,
       "Contract": 126,
-      "Document": 733,
+      "Document": 734,
       "Domain": 13,
       "ExternalDependency": 32,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3712,
-      "CHANGED": 18820,
-      "CONTAINS": 4574,
+      "CHANGED": 18833,
+      "CONTAINS": 4575,
       "DECLARES": 245,
       "DEFINED_IN": 1471,
       "DEPENDS_ON": 67,
       "EXECUTES": 830,
       "HANDLED_BY": 827,
-      "HAS_COMMIT": 3033,
+      "HAS_COMMIT": 3037,
       "IMPLEMENTS": 124,
       "IMPORTS": 4695,
       "INHERITS": 42,
-      "REFERENCES": 3206,
-      "REPRESENTS": 1746,
+      "REFERENCES": 3208,
+      "REPRESENTS": 1747,
       "TESTS": 1621,
       "TRACKS": 126,
       "USES_TABLE": 2105
@@ -27177,6 +27177,29 @@
       "lastChangedAt": "2026-10-08T06:29:06.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "d7f15047043e4fff594e7e1207eaf923fff81aed"
+    },
+    {
+      "key": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "type": "Artifact",
+      "id": "docs/employment-accounting-graph-fix-review.md",
+      "label": "employment-accounting-graph-fix-review.md",
+      "path": "docs/employment-accounting-graph-fix-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 3168,
+      "lines": 16,
+      "version": "672c6fe574c55d1d",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/employment-accounting-graph-fix-review.md",
+          "line": 1,
+          "version": "672c6fe574c55d1d"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T19:36:17.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "5528859cddf86b6ca917022398b04ce5c969ae0e"
     },
     {
       "key": "Artifact:docs/franchise-licenses-security-review.md",
@@ -78863,18 +78886,18 @@
       "extension": ".md",
       "bytes": 55481,
       "lines": 743,
-      "version": "2639bfe1e1324bbf",
+      "version": "8b1d36bf1c4e9779",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2639bfe1e1324bbf"
+          "version": "8b1d36bf1c4e9779"
         }
       ],
-      "lastChangedAt": "2026-10-12T18:16:19.000Z",
+      "lastChangedAt": "2026-10-12T19:37:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ce3e36a10de7a07353c8ecd55f78832a12e2e6dd"
+      "lastChangedCommit": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f"
     },
     {
       "key": "Artifact:src/access.js",
@@ -91140,20 +91163,20 @@
       "path": "test/graph.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22198,
-      "lines": 310,
-      "version": "4514e1f21e8c02a5",
+      "bytes": 25463,
+      "lines": 351,
+      "version": "0eba2406b3f88482",
       "text": true,
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "4514e1f21e8c02a5"
+          "version": "0eba2406b3f88482"
         }
       ],
-      "lastChangedAt": "2026-10-12T03:02:46.000Z",
+      "lastChangedAt": "2026-10-12T19:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77b490168641552ecfe9a106d6d14335f8723fba"
+      "lastChangedCommit": "64bd562de6d1349f527f21684ca9429de53c1d74"
     },
     {
       "key": "Artifact:test/growth.js",
@@ -100823,20 +100846,20 @@
       "path": "tools/graph.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 42630,
-      "lines": 717,
-      "version": "f0bda65a0454ff82",
+      "bytes": 46011,
+      "lines": 766,
+      "version": "0719929b7909d688",
       "text": true,
       "provenance": [
         {
           "file": "tools/graph.js",
           "line": 1,
-          "version": "f0bda65a0454ff82"
+          "version": "0719929b7909d688"
         }
       ],
-      "lastChangedAt": "2026-10-11T20:13:12.000Z",
+      "lastChangedAt": "2026-10-12T19:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b78fe3de7da9046a9e7b3db16cead502bdd5e278"
+      "lastChangedCommit": "64bd562de6d1349f527f21684ca9429de53c1d74"
     },
     {
       "key": "Artifact:tools/hype.js",
@@ -122908,6 +122931,22 @@
       ]
     },
     {
+      "key": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "type": "Commit",
+      "id": "4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "label": "chore(knowledge): snapshot reviewed payroll release",
+      "title": "chore(knowledge): snapshot reviewed payroll release",
+      "date": "2026-10-12T18:17:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "provenance": [
+        {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4c7912be8c661490ad82ffe48e3786ef0149434b"
+        }
+      ]
+    },
+    {
       "key": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
       "type": "Commit",
       "id": "4caf81ab9a1f883938f995448429449ec03fedb6",
@@ -124328,6 +124367,22 @@
         {
           "commit": "551dcffb3ad688c443bfd3a9a34d063e964b77d3",
           "url": "https://github.com/OmertaDev/Omerta/commit/551dcffb3ad688c443bfd3a9a34d063e964b77d3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5528859cddf86b6ca917022398b04ce5c969ae0e",
+      "type": "Commit",
+      "id": "5528859cddf86b6ca917022398b04ce5c969ae0e",
+      "label": "Record source-pinned employment graph attribution review",
+      "title": "Record source-pinned employment graph attribution review",
+      "date": "2026-10-12T19:36:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5528859cddf86b6ca917022398b04ce5c969ae0e",
+      "provenance": [
+        {
+          "commit": "5528859cddf86b6ca917022398b04ce5c969ae0e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5528859cddf86b6ca917022398b04ce5c969ae0e"
         }
       ]
     },
@@ -127160,6 +127215,22 @@
         {
           "commit": "64875e7d5021c498bf1369bc6b4eda9ff66c8078",
           "url": "https://github.com/OmertaDev/Omerta/commit/64875e7d5021c498bf1369bc6b4eda9ff66c8078"
+        }
+      ]
+    },
+    {
+      "key": "Commit:64bd562de6d1349f527f21684ca9429de53c1d74",
+      "type": "Commit",
+      "id": "64bd562de6d1349f527f21684ca9429de53c1d74",
+      "label": "Attribute imported employment cash helper reconciliation in graph",
+      "title": "Attribute imported employment cash helper reconciliation in graph",
+      "date": "2026-10-12T19:35:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/64bd562de6d1349f527f21684ca9429de53c1d74",
+      "provenance": [
+        {
+          "commit": "64bd562de6d1349f527f21684ca9429de53c1d74",
+          "url": "https://github.com/OmertaDev/Omerta/commit/64bd562de6d1349f527f21684ca9429de53c1d74"
         }
       ]
     },
@@ -137848,6 +137919,22 @@
         {
           "commit": "9b3b5db9c56fe959d125717426d5c47a16907bd7",
           "url": "https://github.com/OmertaDev/Omerta/commit/9b3b5db9c56fe959d125717426d5c47a16907bd7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "type": "Commit",
+      "id": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "label": "Refresh payroll census after accounting graph repair",
+      "title": "Refresh payroll census after accounting graph repair",
+      "date": "2026-10-12T19:37:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "provenance": [
+        {
+          "commit": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f"
         }
       ]
     },
@@ -165092,6 +165179,22 @@
       ]
     },
     {
+      "key": "Document:docs/employment-accounting-graph-fix-review.md",
+      "type": "Document",
+      "id": "docs/employment-accounting-graph-fix-review.md",
+      "label": "docs/employment-accounting-graph-fix-review.md",
+      "documentType": "documentation",
+      "lines": 16,
+      "version": "672c6fe574c55d1d",
+      "provenance": [
+        {
+          "file": "docs/employment-accounting-graph-fix-review.md",
+          "line": 1,
+          "version": "672c6fe574c55d1d"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/franchise-licenses-security-review.md",
       "type": "Document",
       "id": "docs/franchise-licenses-security-review.md",
@@ -170282,12 +170385,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 743,
-      "version": "2639bfe1e1324bbf",
+      "version": "8b1d36bf1c4e9779",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "2639bfe1e1324bbf"
+          "version": "8b1d36bf1c4e9779"
         }
       ]
     },
@@ -177415,6 +177518,9 @@
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -178523,6 +178629,9 @@
         },
         {
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
+        },
+        {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
         },
         {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
@@ -180211,6 +180320,9 @@
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -181897,6 +182009,9 @@
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -183157,6 +183272,9 @@
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -184040,6 +184158,9 @@
         },
         {
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
+        },
+        {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
         },
         {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
@@ -185359,6 +185480,9 @@
           "commit": "4b9db47901c143f94bd31d9d3159f33695d729c0"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -185881,6 +186005,9 @@
           "commit": "492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53"
         },
         {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+        },
+        {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
         },
         {
@@ -186170,6 +186297,9 @@
         },
         {
           "commit": "492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53"
+        },
+        {
+          "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
         },
         {
           "commit": "4cd8c62d86d157865567bd1a958115156df328ec"
@@ -195676,12 +195806,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ce3e36a10de7a07353c8ecd55f78832a12e2e6dd",
+      "revision": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
       "currentBranch": "codex/game-employment-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4553,
+      "currentArtifactCount": 4554,
       "provenance": [
         {
           "file": "README.md",
@@ -229677,13 +229807,13 @@
       "type": "TestSuite",
       "id": "test/graph.js",
       "label": "test/graph.js",
-      "lines": 310,
-      "version": "4514e1f21e8c02a5",
+      "lines": 351,
+      "version": "0eba2406b3f88482",
       "provenance": [
         {
           "file": "test/graph.js",
           "line": 1,
-          "version": "4514e1f21e8c02a5"
+          "version": "0eba2406b3f88482"
         }
       ]
     },
@@ -312528,6 +312658,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
       "to": "Artifact:src/resourcecontracts.js",
       "provenance": {
@@ -317812,6 +318014,14 @@
       "to": "Artifact:test/earningreceipts.js",
       "provenance": {
         "commit": "551dcffb3ad688c443bfd3a9a34d063e964b77d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5528859cddf86b6ca917022398b04ce5c969ae0e",
+      "to": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "provenance": {
+        "commit": "5528859cddf86b6ca917022398b04ce5c969ae0e"
       }
     },
     {
@@ -328084,6 +328294,22 @@
       "to": "Artifact:tools/sim.js",
       "provenance": {
         "commit": "64875e7d5021c498bf1369bc6b4eda9ff66c8078"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64bd562de6d1349f527f21684ca9429de53c1d74",
+      "to": "Artifact:test/graph.js",
+      "provenance": {
+        "commit": "64bd562de6d1349f527f21684ca9429de53c1d74"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64bd562de6d1349f527f21684ca9429de53c1d74",
+      "to": "Artifact:tools/graph.js",
+      "provenance": {
+        "commit": "64bd562de6d1349f527f21684ca9429de53c1d74"
       }
     },
     {
@@ -358796,6 +359022,14 @@
       "to": "Artifact:test/rc1-worker-restart-equivalence.js",
       "provenance": {
         "commit": "9b3b5db9c56fe959d125717426d5c47a16907bd7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f"
       }
     },
     {
@@ -435001,6 +435235,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "provenance": {
+        "file": "docs/employment-accounting-graph-fix-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/franchise-licenses-security-review.md",
       "provenance": {
         "file": "docs/franchise-licenses-security-review.md",
@@ -499477,6 +499720,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4c7912be8c661490ad82ffe48e3786ef0149434b",
+      "provenance": {
+        "commit": "4c7912be8c661490ad82ffe48e3786ef0149434b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4caf81ab9a1f883938f995448429449ec03fedb6",
       "provenance": {
         "commit": "4caf81ab9a1f883938f995448429449ec03fedb6"
@@ -500184,6 +500435,14 @@
       "to": "Commit:551dcffb3ad688c443bfd3a9a34d063e964b77d3",
       "provenance": {
         "commit": "551dcffb3ad688c443bfd3a9a34d063e964b77d3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5528859cddf86b6ca917022398b04ce5c969ae0e",
+      "provenance": {
+        "commit": "5528859cddf86b6ca917022398b04ce5c969ae0e"
       }
     },
     {
@@ -501600,6 +501859,14 @@
       "to": "Commit:64875e7d5021c498bf1369bc6b4eda9ff66c8078",
       "provenance": {
         "commit": "64875e7d5021c498bf1369bc6b4eda9ff66c8078"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:64bd562de6d1349f527f21684ca9429de53c1d74",
+      "provenance": {
+        "commit": "64bd562de6d1349f527f21684ca9429de53c1d74"
       }
     },
     {
@@ -506944,6 +507211,14 @@
       "to": "Commit:9b3b5db9c56fe959d125717426d5c47a16907bd7",
       "provenance": {
         "commit": "9b3b5db9c56fe959d125717426d5c47a16907bd7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f",
+      "provenance": {
+        "commit": "9b51be0e899ecf28bfcbb94a98d79bb5f8657d7f"
       }
     },
     {
@@ -573545,6 +573820,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "to": "Artifact:test/graph.js",
+      "provenance": {
+        "file": "docs/employment-accounting-graph-fix-review.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "to": "Artifact:tools/graph.js",
+      "provenance": {
+        "file": "docs/employment-accounting-graph-fix-review.md",
+        "line": 3
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/game-employment-integration-review.md",
       "to": "Artifact:src/gameemployment.js",
       "provenance": {
@@ -592404,6 +592697,15 @@
       "to": "Artifact:docs/economy-pilot.md",
       "provenance": {
         "file": "docs/economy-pilot.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/employment-accounting-graph-fix-review.md",
+      "to": "Artifact:docs/employment-accounting-graph-fix-review.md",
+      "provenance": {
+        "file": "docs/employment-accounting-graph-fix-review.md",
         "line": 1
       }
     },
