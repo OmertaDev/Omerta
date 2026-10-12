@@ -52,7 +52,7 @@ try {
   await app.pool.query('UPDATE business_depots SET bid_price=501 WHERE id=$1', [depotId]);
   await assert.rejects(run({ ...request, requestKey: 'drift' }), /unchanged/);
   await app.pool.query('UPDATE business_depots SET bid_price=500 WHERE id=$1', [depotId]);
-  await assert.rejects(run({ ...request, requestKey: 'pending' }), /previous procurement/);
+  await assert.rejects(run({ ...request, requestKey: 'pending' }), /No authorized/);
   const supplier = (await call('POST', '/v1/auth/guest')).token;
   await call('POST', '/v1/character', supplier, { name: 'Operator Supplier' });
   const supplierCh = (await call('GET', '/v1/me', supplier)).character;
@@ -89,10 +89,30 @@ try {
   const original = { ...(await app.pool.query('SELECT * FROM characters WHERE id=$1', [ch.id])).rows[0] };
   await assert.rejects(O.runCompanyOperator({ ...original, alive: false }, { ...request, requestKey: 'dead' }, app.pool, {}), /living/);
   await assert.rejects(O.runCompanyOperator({ ...original, id: 'heir' }, request, app.pool, {}), /another operator/);
+  const beforePrice = (await app.pool.query('SELECT * FROM business_depots WHERE id=$1', [depotId])).rows[0];
+  const beforePolicy = (await app.pool.query('SELECT * FROM business_operating_policies WHERE id=$1', [policy.id])).rows[0];
+  const pricePolicy = { minSalePrice: 800, maxSalePrice: 1200, targetMarginBps: 5000, expiresInSeconds: 600 };
+  await assert.rejects(tx((c, db) => O.setCompanyOperator(c, { ...enrollment, expectedRevision: 1, pricePolicy: { ...pricePolicy, maxSpend: 100000 } }, db)), /documented/);
+  await assert.rejects(tx((c, db) => O.setCompanyOperator(c, { ...enrollment, expectedRevision: 1, pricePolicy: { ...pricePolicy, minSalePrice: 50, maxSalePrice: 100 } }, db)), /margin/);
+  await tx((c, db) => O.setCompanyOperator(c, { ...enrollment, expectedRevision: 1, pricePolicy }, db));
+  const priceRequest = { ...request, requestKey: 'owner-consented-price' };
+  const prices = process.argv.includes('--postgres') ? await Promise.all([run(priceRequest), run(priceRequest)]) : [await run(priceRequest)];
+  assert.equal(prices[0].action, 'reprice'); assert.equal(prices[0].result.salePrice, 800);
+  for (const price of prices) assert.deepEqual(price, prices[0]);
+  const afterPrice = (await app.pool.query('SELECT * FROM business_depots WHERE id=$1', [depotId])).rows[0];
+  for (const field of ['bid_price', 'target_stock', 'reorder_at', 'restock_budget', 'treasury', 'stock'])
+    assert.equal(Number(afterPrice[field]), Number(beforePrice[field]), `price consent cannot change ${field}`);
+  const afterPolicy = (await app.pool.query('SELECT * FROM business_operating_policies WHERE id=$1', [policy.id])).rows[0];
+  for (const field of ['spent', 'max_spend', 'reserve_cash']) assert.equal(Number(afterPolicy[field]), Number(beforePolicy[field]));
+  await app.pool.query('UPDATE business_depots SET sale_price=2000 WHERE id=$1', [depotId]);
+  const expiredPrice = { minSalePrice: 800, maxSalePrice: 1200, targetMarginBps: 5000, expiresAt: new Date(Date.now() - 1000).toISOString() };
+  await app.pool.query('UPDATE company_operators SET price_policy=$2,next_run_at=$3 WHERE depot_id=$1', [depotId, JSON.stringify(expiredPrice), new Date(Date.now() - 1000)]);
+  await assert.rejects(run({ ...request, requestKey: 'expired-price' }), /No authorized/);
+  assert.deepEqual(await run(priceRequest), prices[0], 'price replay is independent of consent expiry');
   await app.pool.query('UPDATE business_operating_policies SET expires_at=$2 WHERE id=$1', [policy.id, new Date(Date.now() - 1000)]);
   await assert.rejects(run({ ...request, requestKey: 'expired' }), /unexpired/);
   assert.deepEqual(await run(), result);
   const inv = await runLedgerInvariants(app.pool, { alert: false });
   assert.equal(inv.checks.filter((r) => !r.ok).length, 0, JSON.stringify(inv.checks.filter((r) => !r.ok)));
-  console.log(`company operators: canonical restock/receive, identity, replay, revocation, expiry, terms, bounds and ledger invariants passed${process.argv.includes('--postgres') ? '; native duplicate/distinct-key races and atomic rollback passed' : ''}`);
+  console.log(`company operators: canonical restock/receive/reprice, explicit finite price consent, unchanged spending terms, identity, replay, revocation, expiry, bounds and ledger invariants passed${process.argv.includes('--postgres') ? '; native duplicate/distinct-key races and atomic rollback passed' : ''}`);
 } finally { await app.close(); }

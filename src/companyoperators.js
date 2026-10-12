@@ -2,7 +2,9 @@ import crypto from 'node:crypto';
 import { GameError } from './game.js';
 import * as Depot from './depot.js';
 import { latestPolicy, policyLive, policyTermsMatch } from './operatingpolicy.js';
-import { latestSupplyContract } from './supplycontracts.js';
+import { latestSupplyContract, supplyDue } from './supplycontracts.js';
+import { warehouseReservedUnits } from './warehouseleases.js';
+import { BLACK_MARKET } from './rules.js';
 
 const fail = (code, message) => { throw new GameError(code, message); };
 const keys = (body, allowed) => {
@@ -21,8 +23,30 @@ function eligible(ch, depot, policy, operator = null) {
     fail('operator_policy', 'Enroll the current unexpired policy and unchanged business terms.');
 }
 
+function priceConsent(body, policy) {
+  if (body === undefined || body === null) return null;
+  keys(body, ['minSalePrice', 'maxSalePrice', 'targetMarginBps', 'expiresInSeconds']);
+  if (!Number.isSafeInteger(body.minSalePrice) || body.minSalePrice < 50
+      || !Number.isSafeInteger(body.maxSalePrice) || body.maxSalePrice < body.minSalePrice || body.maxSalePrice > 1000000
+      || !Number.isSafeInteger(body.targetMarginBps) || body.targetMarginBps < 1 || body.targetMarginBps > 100000
+      || !Number.isSafeInteger(body.expiresInSeconds) || body.expiresInSeconds < 60 || body.expiresInSeconds > 604800)
+    fail('operator_price', 'Consent requires bounded sale prices, a 1–100000 bps net cost margin and a 1-minute–7-day expiry.');
+  return { minSalePrice: body.minSalePrice, maxSalePrice: body.maxSalePrice, targetMarginBps: body.targetMarginBps,
+    expiresAt: new Date(Math.min(Date.now() + body.expiresInSeconds * 1000, new Date(policy.expires_at).getTime())).toISOString() };
+}
+
+export function companyOperatorSalePrice(depot, consent, now = Date.now()) {
+  if (!consent || new Date(consent.expiresAt).getTime() <= now) return null;
+  // Target net sale proceeds relative to the current owner-approved procurement bid.
+  const target = Math.ceil(Number(depot.bid_price) * (10000 + consent.targetMarginBps) / (10000 - BLACK_MARKET.TAKE_BPS));
+  const price = Math.max(consent.minSalePrice, Math.min(consent.maxSalePrice, target));
+  if (price - Math.ceil(price * BLACK_MARKET.TAKE_BPS / 10000) <= Number(depot.bid_price))
+    fail('operator_price', 'The consent range cannot preserve the canonical margin.');
+  return price;
+}
+
 export async function setCompanyOperator(ch, body, client) {
-  keys(body, ['depotId', 'policyId', 'expectedRevision', 'enabled']);
+  keys(body, ['depotId', 'policyId', 'expectedRevision', 'enabled', 'pricePolicy']);
   if (typeof body.depotId !== 'string' || typeof body.policyId !== 'string'
       || typeof body.enabled !== 'boolean' || !Number.isSafeInteger(body.expectedRevision) || body.expectedRevision < 0 || body.expectedRevision >= Number.MAX_SAFE_INTEGER)
     fail('operator_terms', 'Specify depotId, policyId, enabled and the current operator revision.');
@@ -34,15 +58,17 @@ export async function setCompanyOperator(ch, body, client) {
     fail('operator_owner', 'Only the original living business owner can enroll this operator.');
   if (body.enabled) {
     eligible(ch, depot, policy);
-    if (policy.id !== body.policyId || (!policy.allow_receive && !policy.allow_restock))
+    if (policy.id !== body.policyId || (!policy.allow_receive && !policy.allow_restock && !body.pricePolicy))
       fail('operator_policy', 'Select the current policy with an authorized operator duty.');
   } else if (previous?.policy_id !== body.policyId) fail('operator_policy', 'Disable the enrolled policy.');
+  const pricePolicy = body.enabled ? priceConsent(body.pricePolicy, policy) : previous.price_policy;
+  if (body.enabled && pricePolicy) companyOperatorSalePrice(depot, pricePolicy);
   const revision = body.expectedRevision + 1;
-  if (previous) await client.query('UPDATE company_operators SET policy_id=$2,policy_revision=$3,enabled=$4,revision=$5,next_run_at=clock_timestamp() WHERE depot_id=$1',
-    [body.depotId, body.policyId, body.enabled ? policy.revision : previous.policy_revision, body.enabled, revision]);
-  else await client.query('INSERT INTO company_operators (depot_id,owner_character,owner_account,policy_id,policy_revision,enabled,revision) VALUES ($1,$2,$3,$4,$5,$6,$7)',
-    [body.depotId, ch.id, ch.account_id, body.policyId, policy.revision, body.enabled, revision]);
-  return { ok: true, depotId: body.depotId, enabled: body.enabled, revision };
+  if (previous) await client.query('UPDATE company_operators SET policy_id=$2,policy_revision=$3,enabled=$4,revision=$5,price_policy=$6,next_run_at=clock_timestamp() WHERE depot_id=$1',
+    [body.depotId, body.policyId, body.enabled ? policy.revision : previous.policy_revision, body.enabled, revision, pricePolicy ? JSON.stringify(pricePolicy) : null]);
+  else await client.query('INSERT INTO company_operators (depot_id,owner_character,owner_account,policy_id,policy_revision,enabled,revision,price_policy) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+    [body.depotId, ch.id, ch.account_id, body.policyId, policy.revision, body.enabled, revision, pricePolicy ? JSON.stringify(pricePolicy) : null]);
+  return { ok: true, depotId: body.depotId, enabled: body.enabled, revision, pricePolicy };
 }
 
 // Caller owns a transaction and the character lock (G.withCharacter). The receipt
@@ -68,7 +94,7 @@ export async function runCompanyOperator(ch, request, client, h) {
   const depot = await lockDepot(ch, request.depotId, client);
   const policy = await latestPolicy(client, request.depotId, true);
   // Acquire the existing cadence dependency before taking the fresh authority clock.
-  await latestSupplyContract(client, request.depotId, true);
+  const cadence = await latestSupplyContract(client, request.depotId, true);
   const operator = (await client.query('SELECT * FROM company_operators WHERE depot_id=$1 FOR UPDATE', [request.depotId])).rows[0];
   const raced = await replay();
   if (raced) return raced;
@@ -81,9 +107,21 @@ export async function runCompanyOperator(ch, request, client, h) {
     action = 'receive';
     canonical = await Depot.receiveDepot(ch, depot.id, delivery.id, client, { automated: true, policyId: policy.id });
   } else {
-    if (!policy.allow_restock) fail('operator_idle', 'No authorized delivery is ready.');
-    action = 'restock';
-    canonical = await Depot.restockDepot(ch, depot.id, client, h, { automated: true, policyId: policy.id });
+    const pending = (await client.query("SELECT id FROM market_listings WHERE depot_id=$1 AND (status='live' OR filled_qty>0) LIMIT 1", [depot.id])).rows.length > 0;
+    const due = !cadence?.enabled || (cadence.policy_id === policy.id && supplyDue(cadence));
+    const quote = policy.allow_restock && !pending && due
+      ? Depot.procurementQuote(depot, h, policy, await warehouseReservedUnits(client, depot.id)) : null;
+    if (quote) {
+      action = 'restock';
+      canonical = await Depot.restockDepot(ch, depot.id, client, h, { automated: true, policyId: policy.id });
+    } else {
+      const salePrice = companyOperatorSalePrice(depot, operator.price_policy);
+      if (salePrice === null || salePrice === Number(depot.sale_price)) fail('operator_idle', 'No authorized procurement or price change is due.');
+      action = 'reprice';
+      await Depot.configureDepot(ch, depot.id, { salePrice, bidPrice: Number(depot.bid_price), targetStock: Number(depot.target_stock),
+        reorderAt: Number(depot.reorder_at), restockBudget: Number(depot.restock_budget) }, client);
+      canonical = { ok: true, id: depot.id, previousSalePrice: Number(depot.sale_price), salePrice };
+    }
   }
   const result = { ok: true, depotId: depot.id, policyId: policy.id, policyRevision: Number(policy.revision),
     operatorRevision: Number(operator.revision), requestKey: request.requestKey, action, result: canonical };
@@ -94,7 +132,7 @@ export async function runCompanyOperator(ch, request, client, h) {
 }
 
 export async function companyOperatorBoard(client, account) {
-  return (await client.query('SELECT depot_id,owner_character,policy_id,policy_revision,enabled,revision,next_run_at FROM company_operators WHERE owner_account=$1 ORDER BY depot_id LIMIT 100', [account])).rows;
+  return (await client.query('SELECT depot_id,owner_character,policy_id,policy_revision,enabled,revision,price_policy,next_run_at FROM company_operators WHERE owner_account=$1 ORDER BY depot_id LIMIT 100', [account])).rows;
 }
 export async function dueCompanyOperators(client, limit = 25) {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100) throw new Error('Bound operator candidate limit to 1–100.');

@@ -8047,3 +8047,4 @@ CREATE TABLE IF NOT EXISTS company_operator_receipts (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (owner_account,request_key)
 );
+ALTER TABLE company_operators ADD COLUMN IF NOT EXISTS price_policy JSONB;
