@@ -2,15 +2,22 @@ import assert from 'node:assert/strict';
 import * as P from '../src/commercialpremises.js';
 import { commercialPremisesInvariant } from '../src/commercialpremisesinvariants.js';
 const native=process.argv.includes('--postgres');
+let serverVersion='memory';
 assert(!process.env.DATABASE_URL,'Commercial premises proof rejects ambient DATABASE_URL');
 if (native) {
   const url=new URL(process.env.COMMERCIAL_PREMISES_TEST_DATABASE_URL);
-  assert.equal(url.hostname,'127.0.0.1'); assert(['35439','35449'].includes(url.port)); assert.equal(url.username,'pilot_runner');
+  assert(['postgresql:','postgres:'].includes(url.protocol)); assert(['127.0.0.1','localhost'].includes(url.hostname));
+  const localPilot=['35439','35449'].includes(url.port) && url.username==='pilot_runner' && url.password==='';
+  const ci=url.port==='5432' && url.username==='postgres' && url.password==='pgcheck';
+  assert(localPilot||ci,'Only approved isolated local pilot or CI endpoints'); assert(!url.search && !url.hash);
   assert.match(url.pathname,/^\/commercial_premises_proof_[a-z0-9_]+$/);
   const { default:pg }=await import('pg'), pre=new pg.Pool({ connectionString:url.href });
   try {
-    assert.match((await pre.query('SHOW server_version')).rows[0].server_version,/^18\.4/);
+    await pre.query('BEGIN READ ONLY');
+    serverVersion=(await pre.query('SHOW server_version')).rows[0].server_version;
+    assert.match(serverVersion,localPilot?/^18\.4(?:[.\s]|$)/:/^(?:16(?:[.\s]|$)|18\.4(?:[.\s]|$))/);
     assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0,'Native proof must own an empty database');
+    await pre.query('ROLLBACK');
   } finally { await pre.end(); }
   process.env.DATABASE_URL=url.href;
 }
@@ -20,9 +27,7 @@ const { buildServer }=await import('../src/server.js'), G=await import('../src/g
 const { setAgentCompany }=await import('../src/agentcompany.js'), { runEstate }=await import('../src/social/estate.js');
 const app=await buildServer(); let serial=0;
 if (!native) await app.pool.query('DROP INDEX ix_depot_owner_open');
-if (!app.hasRoute({ method:'GET',url:'/v1/company/premises' })) {
-  (await import('../src/routes/commercialpremises.js')).register(app,{ pool:app.pool,auth:async req=>req.jwtVerify() });
-}
+assert(app.hasRoute({ method:'GET',url:'/v1/company/premises' }),'Core proof requires actual registered runtime routes');
 async function player() {
   const token=(await app.inject({ method:'POST',url:'/v1/auth/guest' })).json().token;
   const result=await app.inject({ method:'POST',url:'/v1/character',headers:{ authorization:`Bearer ${token}`,'idempotency-key':`commercial-player-${++serial}` },payload:{ name:`Premises ${serial}` } });
@@ -54,9 +59,7 @@ const call=(p,method,url,payload,key='commercial-http')=>app.inject({ method,url
 async function death(killer,victim) {
   const result=await pair(killer,victim,async (_ch,target,client,h)=>{
     const estate=await runEstate(client,h,target,'commercial premises proof');
-    // Core proof uses the actual canonical estate transition and the exported
-    // invalidation hook in its transaction; shared hook wiring is coordinator-owned.
-    await P.voidCommercialPremisesAtDeath(client,target); return estate;
+    return estate;
   });
   await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1',[result.heirId,new Date(Date.now()+3600000)]);
   return { ...victim,id:result.heirId };
@@ -160,5 +163,5 @@ try {
   assert.equal((await commercialPremisesInvariant(app.pool)).ok,false,'Invariant rejects a wrong-party rent receipt');
   await app.pool.query('UPDATE transactions SET character_id=$2 WHERE id=$1',[originalPay.id,originalPay.character_id]);
   assert.equal((await commercialPremisesInvariant(app.pool)).ok,true);
-  console.log(`commercialpremises ${native?'PostgreSQL18.4 race/rollback/lock-expiry':'memory'}: verified estate/street slots, upfront rent, exact replay, capacity, privacy, drift, canonical estate and ledger backing passed`);
-} finally { await app.close(); }
+  console.log(`commercialpremises ${native?`PostgreSQL ${serverVersion} race/rollback/lock-expiry`:'memory'}: verified estate/street slots, upfront rent, exact replay, capacity, privacy, drift, registered runtime routes, canonical integrated estate and ledger backing passed`);
+} finally { await app.close(); await app.pool.end(); }
