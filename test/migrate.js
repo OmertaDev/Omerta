@@ -628,6 +628,7 @@ const DISPOSITION = {
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value
   commercial_premises_offers: 'special', // canonical estate invalidates the dead original landlord's published offer
   commercial_premises_leases: 'special', // canonical estate closes occupancy for either original party; rent is already settled
+  commercial_reputation_proofs: 'metadata', // immutable original-performer proof bindings; no funds or fresh heir performance claim
   company_bank_portfolios: 'metadata', // canonical estate disables the original owner grant; no custody or new heir authority
   company_bank_portfolio_loans: 'metadata', // immutable original lender provenance; canonical loans own all debt and inherited active claims
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds

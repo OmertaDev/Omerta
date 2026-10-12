@@ -428,6 +428,10 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/company/reputation': { operationId: 'getOwnCanonicalCommercialReputation' },
+  'GET /v1/company/reputation/public/:accountId': { operationId: 'getCurrentlyPublishedCoarseCommercialReputation' },
+  'POST /v1/company/reputation': { operationId: 'SetOwnCommercialReputationPublication', requestSchema: { type: 'object', additionalProperties: false, required: ['published','expectedRevision'], properties: { published: { type: 'boolean' }, expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 } } } },
+  'POST /v1/company/reputation/refresh': { operationId: 'RefreshOwnCanonicalCommercialProofs', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'GET /v1/company/bank': { operationId: 'getOwnGameCashBankPortfolio' },
   'POST /v1/company/bank/policy': { operationId: 'SetOwnerConsentedGameCashBankPolicy', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
     schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { oneOf: [
