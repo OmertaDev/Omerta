@@ -152,5 +152,5 @@ export async function publicBuyerCooperatives(client) {
 }
 export async function buyerCooperativeDueCandidates(client, limit = 20) {
   integer(limit, 1, 100);
-  return (await client.query("SELECT id,organizer_account,organizer_character FROM buyer_cooperatives WHERE status='funding' AND funding_deadline<=clock_timestamp() ORDER BY funding_deadline,id LIMIT $1", [limit])).rows;
+  return (await client.query("SELECT c.id,c.organizer_account,c.organizer_character FROM buyer_cooperatives c JOIN characters ch ON ch.id=c.organizer_character AND ch.account_id=c.organizer_account AND ch.alive AND ch.is_npc=false WHERE c.status='funding' AND c.funding_deadline<=clock_timestamp() ORDER BY c.funding_deadline,c.id LIMIT $1", [limit])).rows;
 }
