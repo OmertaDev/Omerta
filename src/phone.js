@@ -85,7 +85,7 @@ export async function sendDm(pool, fromAccountId, targetCharacterId, text) {
     [id, fromAccountId, target.account_id, me.name, toName, body]);
   // ringing someone reveals YOUR number to them — the recipient can now call back (best-effort)
   await recordContact(pool, target.account_id, fromAccountId, 'called');
-  await recordPlayerIntel(pool, target.account_id, me, { source: 'called', sourceName: me.name, location: false });
+  await recordPlayerIntel(pool, target.account_id, me, { source: 'called', sourceName: me.name, location: false }).catch(() => {});
   // ring the recipient's LIVING street: a normal notification (inbox row + live WS push).
   // notify() only needs a query()-capable handle — the pool works outside a txn (best-effort:
   // the DM row is already committed; a dead line just waits for the heir).

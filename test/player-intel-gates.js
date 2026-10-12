@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import { recordPlayerIntel, readPlayerIntel } from '../src/playerintel.js';
+import { sendDm } from '../src/phone.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -108,6 +109,27 @@ try {
   assert.equal(r.body.messages.length, 1);
   assert.equal((await call('POST', `/v1/phone/block/${caller.id}`, stranger)).code, 200,
     'a caller can still be blocked after a real message');
+
+  const noteSender = await mk('Note Failure Sender', 'neon');
+  const noteRecipient = await mk('Note Failure Reader', 'canal');
+  await pool.query("INSERT INTO contacts (owner_account, contact_account, how) VALUES ($1,$2,'met')",
+    [noteSender.account_id, noteRecipient.account_id]);
+  let failedNotes = 0;
+  const failingIntelPool = { query: async (sql, args) => {
+    if (/^\s*INSERT INTO player_intel\b/i.test(sql)) {
+      failedNotes += 1;
+      throw new Error('injected intel note failure');
+    }
+    return pool.query(sql, args);
+  } };
+  const sent = await sendDm(failingIntelPool, noteSender.account_id, noteRecipient.id, 'The line still lands.');
+  assert.equal(failedNotes, 1, 'the fault injection exercised the caller intel write');
+  assert.equal(sent.ok, true, 'a committed DM succeeds when its auxiliary intel note fails');
+  const landed = (await pool.query('SELECT body FROM dm_messages WHERE id=$1 AND from_account=$2 AND to_account=$3',
+    [sent.id, noteSender.account_id, noteRecipient.account_id])).rows;
+  assert.equal(landed[0]?.body, 'The line still lands.', 'the successful DM response refers to a persisted message');
+  assert.equal(await readPlayerIntel(pool, noteRecipient.account_id, noteSender.id), null,
+    'the note really failed while the message remained delivered');
 
   await pool.query("UPDATE characters SET gun='orchestra', ammo=500, energy=200, jail_until=NULL, hosp_until=NULL, shoot_cd_until=NULL WHERE id=$1", [watcher.id]);
   assert.equal((await call('POST', `/v1/streets/${mark.id}/search`, watcher)).code, 200);
