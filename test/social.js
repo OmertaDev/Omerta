@@ -26,6 +26,7 @@ import { runBuyback } from '../src/worker.js';
 import { huntWanted, sweepContests } from '../src/social.js';
 import { familyTaskOf, weekOf, M3, BLACK_MARKET, bustProbOf, TERRITORY_RACKETS, territoryTypeOf, territoryRankOf, territoryBuildCost, PORT, SHIPMENT, cityHourOf, DISTRICTS, DISTRICT_ADJ, MAP, CHARTERS, FAMILY_CHARTER, FAMILY_CHARTER_FX, VANITY, M8, GANG_SEALS, FOUNDATION } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -35,6 +36,13 @@ const call = async (method, url, { token, body } = {}) => {
 };
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// Combat fixtures introduce the intended mark before calling a search. Identity gossip gives
+// no phone number, so anonymous-hire and mutual-meeting assertions keep their own preconditions.
+const know = async (hunter, targetId) => {
+  const owner = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [hunter.id])).rows[0];
+  const target = (await pool.query('SELECT * FROM characters WHERE id=$1', [targetId])).rows[0];
+  await recordPlayerIntel(pool, owner.account_id, target, { source: 'gossip', location: false });
+};
 
 // ── three players: Don (gang A boss), Rocco (gang B boss, the victim), Mook (clean books) ──
 const mk = async (name) => {
@@ -334,6 +342,8 @@ assert.equal(r.code, 200, 'vest bought with $OMR'); assert.equal(r.body.characte
 await pool.query(`INSERT INTO cars (id, character_id, model_id, trim_id, dmg) VALUES ('roccocar','${rocco.id}','junker','stock',0)`);
 await pool.query(`UPDATE account_persistent SET omr = 7 WHERE account_id = (SELECT account_id FROM characters WHERE id='${rocco.id}')`);
 assert.equal((await call('POST', `/v1/streets/${rocco.id}/fire`, { token: don.token, body: { rounds: 2200 } })).code, 400, 'no fire without a search');
+await know(don, rocco.id);
+await know(don, mook.id);
 assert.equal((await call('POST', `/v1/streets/${rocco.id}/search`, { token: don.token })).code, 200, 'search started');
 assert.equal((await call('POST', `/v1/streets/${mook.id}/search`, { token: don.token })).code, 400, 'one active search');
 // YOUR OWN TAIL — the search has to be on the SHEET, not only in the browser that placed it.
@@ -524,6 +534,7 @@ assert.equal(donMe.hitmanTitle, 'Associate', 'rank reflects rep (33 < 50)');
 const whack = async (tid, rounds = 6000) => {
   await seedCh(don.id, "energy=200, ammo=8000, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
   await seedCh(tid, "hosp_until=NULL, jail_until=NULL, loc='docks'");
+  await know(don, tid);
   await call('POST', `/v1/streets/${tid}/search`, { token: don.token });
   return (await call('POST', `/v1/streets/${tid}/fire`, { token: don.token, body: { rounds } })).body;
 };
@@ -705,6 +716,7 @@ await seedCh(agent.id, `gun='${donGun}', muscle=500, speed=500, energy=200, ammo
 const aMark = await mk('Agent Mark'); await seedCh(aMark.id, "respect=1000, muscle=1, hosp_until=NULL, loc='docks'"); // level 11
 await pool.query(`UPDATE account_persistent SET omr=50 WHERE account_id=(SELECT account_id FROM characters WHERE id='${aMark.id}')`);
 const agentOmrPre = (await meOf(agent.token)).omr;
+await know(agent, aMark.id);
 await call('POST', `/v1/streets/${aMark.id}/search`, { token: agent.token });
 k = (await call('POST', `/v1/streets/${aMark.id}/fire`, { token: agent.token, body: { rounds: 6000 } })).body;
 assert(k.kill, 'agent whacks a qualifying mark'); assert.equal(k.hitman.repGain, 0, 'an agent earns NO feared-rep');
@@ -721,6 +733,7 @@ const hirer = await mk('Hiram the Hirer'); await seedCh(hirer.id, 'cash=5000000'
 // a high-level mark for the hire/cooldown checks — near-impossible to actually drop, so it
 // survives to test the deterministic parts (fee burn, heat, cooldown)
 const tough = await mk('Tough Tony'); await seedCh(tough.id, 'respect=25000'); // ~level 51 → legbreaker clamps to the 2% floor
+await know(hirer, tough.id);
 assert.equal((await call('POST', `/v1/streets/${tough.id}/npchit`, { token: hirer.token, body: { tier: 'nope' } })).code, 400, 'bad tier rejected');
 const hirerPre = (await meOf(hirer.token)).cash;
 r = await call('POST', `/v1/streets/${tough.id}/npchit`, { token: hirer.token, body: { tier: 'legbreaker' } });
@@ -739,6 +752,7 @@ assert.equal((await call('POST', `/v1/streets/${tough.id}/npchit`, { token: hire
 }
 // a rookie target is off-limits
 const rook2 = await mk('Nobody Nick');
+await know(hirer, rook2.id);
 assert.equal((await call('POST', `/v1/streets/${rook2.id}/npchit`, { token: hirer.token, body: { tier: 'professional' } })).code, 400, 'no sanctioned hits on nobodies (level floor)');
 
 // ═══ AUDIT-full-system-v2 C-HIGH-1 / C-MED-1: a jailed inmate is unreachable from the STREET ═══
@@ -748,9 +762,11 @@ assert.equal((await call('POST', `/v1/streets/${rook2.id}/npchit`, { token: hire
   const inmate = await mk('Jailbird Joe');
   await seedCh(inmate.id, "respect=250, hosp_until=NULL, loc='docks', jail_until = now() + interval '1 hour'");
   await seedCh(don.id, "energy=200, ammo=8000, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
+  await know(don, inmate.id);
   await call('POST', `/v1/streets/${inmate.id}/search`, { token: don.token });
   assert.equal((await call('POST', `/v1/streets/${inmate.id}/fire`, { token: don.token, body: { rounds: 8000 } })).body.error, 'jailed', 'no firing a jailed inmate from the street (C-HIGH-1)');
   await seedCh(hirer.id, 'cash=5000000, npchit_at=NULL'); await pool.query('DELETE FROM npc_hits');
+  await know(hirer, inmate.id);
   assert.equal((await call('POST', `/v1/streets/${inmate.id}/npchit`, { token: hirer.token, body: { tier: 'professional' } })).body.error, 'jailed', 'no contractor reaches a jailed inmate (C-MED-1)');
   // a pen-PROTECTED inmate (also jailed) reports the shield first (penSafe checked before bare jail)
   await seedCh(inmate.id, "pen_safe_until = now() + interval '1 hour'");
@@ -766,6 +782,7 @@ assert.equal((await call('POST', `/v1/streets/${rook2.id}/npchit`, { token: hire
   await seedCh(wp.id, "witpro_until = now() + interval '1 hour', energy=200, ammo=8000, cash=5000000, respect=500000, jail_until=NULL, hosp_until=NULL, safe_until=NULL, shoot_cd_until=NULL, loc='docks'");
   await seedCh(mark.id, "hosp_until=NULL, jail_until=NULL, safe_until=NULL, witpro_until=NULL, loc='docks', respect=500");
   assert.equal((await call('POST', `/v1/streets/${mark.id}/jump`, { token: wp.token })).body.error, 'witpro', 'a witpro-protected actor cannot jump');
+  await know(wp, mark.id);
   await call('POST', `/v1/streets/${mark.id}/search`, { token: wp.token }); // SEARCH_MS=0 → matured; the actor witpro gate still refuses the fire
   assert.equal((await call('POST', `/v1/streets/${mark.id}/fire`, { token: wp.token, body: { rounds: 2200 } })).body.error, 'witpro', 'a witpro-protected actor cannot fire');
   assert.equal((await call('POST', `/v1/streets/${mark.id}/npchit`, { token: wp.token, body: { tier: 'professional' } })).body.error, 'witpro', 'a witpro-protected actor cannot arrange an NPC hit');
@@ -777,6 +794,7 @@ assert.equal((await call('POST', `/v1/streets/${rook2.id}/npchit`, { token: hire
 
 // a fresh, killable mark: loop the server roll until the contractor lands a kill → the estate runs
 const kt = await mk('Killable Kelly'); await seedCh(kt.id, 'respect=250'); // level ~6 → professional ≈ 0.52
+await know(hirer, kt.id);
 let killed = false;
 for (let i = 0; i < 80 && !killed; i++) {
   await seedCh(hirer.id, 'cash=5000000, npchit_at=NULL'); await pool.query('DELETE FROM npc_hits');
@@ -791,6 +809,7 @@ assert.equal((await meOf(hirer.token)).kills, 0, 'nor any kills on the legend');
 
 // pre-paid revive insurance absorbs an NPC hit too (the target paid ETH to survive)
 const insured = await mk('Insured Izzy'); await seedCh(insured.id, 'respect=250');
+await know(hirer, insured.id);
 await pool.query(`UPDATE account_persistent SET respawn_tokens=1 WHERE account_id=(SELECT account_id FROM characters WHERE id='${insured.id}')`);
 let absorbed = false;
 for (let i = 0; i < 60 && !absorbed; i++) {
@@ -807,6 +826,7 @@ assert.equal((await meOf(insured.token)).respawnTokens, 0, 'the token was consum
 // audit HIGH: a payer who funded an EXCLUSIVE directed pot on the victim is REFUNDED on the NPC
 // kill — else refundPot's SQL credit is clobbered by persistCharacter (§10.4 drift + stolen escrow)
 const rival = await mk('Rival Rick'); await seedCh(rival.id, 'respect=250'); // level ~6
+await know(hirer, rival.id);
 await seedCh(hirer.id, 'cash=200000000, npchit_at=NULL'); await pool.query('DELETE FROM npc_hits');
 assert.equal((await call('POST', `/v1/streets/${rival.id}/bounty`, { token: hirer.token, body: { amount: 12000, kind: 'kill', hitman: mook.id, exclusiveHours: 24 } })).code, 200, 'hirer funds a directed contract on the rival');
 let refundOk = false;
@@ -843,14 +863,17 @@ assert.equal((await meOf(dave.token)).cash, daveCash - 25000, 'safehouse fee bur
 assert((await meOf(dave.token)).safeSeconds > 0, 'off the grid for a window');
 await seedCh(don.id, "energy=200, ammo=8000, shoot_cd_until=NULL, jail_until=NULL, loc='docks'");
 await seedCh(dave.id, "loc='docks'"); // same district — but he's in the safehouse
+await know(don, dave.id);
 await call('POST', `/v1/streets/${dave.id}/search`, { token: don.token });
 const blocked = await call('POST', `/v1/streets/${dave.id}/fire`, { token: don.token, body: { rounds: 6000 } });
 assert.equal(blocked.code, 400, 'a fire on a safe-housed target is blocked'); assert.equal(blocked.body.error, 'safe', 'because they went to ground');
 await seedCh(hirer.id, 'cash=5000000, npchit_at=NULL'); await pool.query('DELETE FROM npc_hits');
+await know(hirer, dave.id);
 const npcBlocked = await call('POST', `/v1/streets/${dave.id}/npchit`, { token: hirer.token, body: { tier: 'professional' } });
 assert.equal(npcBlocked.code, 400, 'an NPC hit on a safe-housed target is blocked'); assert.equal(npcBlocked.body.error, 'safe', 'the contractor can\'t find them');
 // Risk-to-Earn P1.3 — SHIELD, NOT BUNKER: while safe, DAVE himself can't do offense or extraction.
 await seedCh(dave.id, "energy=200, ammo=8000, health=100, loc='docks'"); // still safe_until in the future
+await know(dave, don.id);
 await call('POST', `/v1/streets/${don.id}/search`, { token: dave.token }); // (search itself isn't gated; firing is)
 assert.equal((await call('POST', `/v1/streets/${don.id}/fire`, { token: dave.token, body: { rounds: 6000 } })).body.error, 'safe', "a safe-housed player can't fire (shield, not bunker)");
 assert.equal((await call('POST', `/v1/streets/${don.id}/jump`, { token: dave.token })).body.error, 'safe', "a safe-housed player can't jump");
@@ -921,6 +944,7 @@ assert.equal(kCarl.bounty, 0, "no member of the funding family collects the fami
 assert.equal(Number((await pool.query(`SELECT COUNT(*) n FROM bounties WHERE target_character='${carl.id}'`)).rows[0].n), 0, 'the unclaimed pot died with the mark (burned, ledgered death:bounty)');
 // cancel → the pot goes home to the treasury (the 2% take is spent)
 const carla = await mk('Contract Carla'); await seedCh(carla.id, "respect=1000, muscle=1, speed=1, loc='docks'");
+await know(hirer, carla.id);
 tre = (await call('GET', `/v1/gangs/${gangA}`, {})).body.gang.treasury;
 assert.equal((await call('POST', `/v1/gangs/contract/${carla.id}`, { token: don.token, body: { amount: 5000 } })).code, 200, 'second family contract posted');
 r = await call('POST', `/v1/gangs/contract/${carla.id}/kill/cancel`, { token: don.token });
@@ -973,6 +997,8 @@ assert.equal((await call('POST', '/v1/bodyguard/offer', { token: barry.token, bo
 assert.equal((await call('POST', '/v1/bodyguard/offer', { token: barry.token, body: { price: 'Infinity' } })).body.error, 'price', 'a non-finite price is refused (no NUMERIC-write 500)'); // audit: Number("Infinity")===Infinity
 assert.equal((await call('POST', `/v1/bodyguard/hire/${barry.id}`, { token: paula.token })).body.error, 'not_offering', 'no hiring a guard who is not listed');
 assert.equal((await call('POST', '/v1/bodyguard/offer', { token: barry.token, body: { price: 15000 } })).code, 200, 'barry lists himself');
+assert.equal((await call('POST', `/v1/streets/${barry.id}/meet`, { token: paula.token })).code, 200,
+  'Paula meets the listed guard before learning his offer');
 // audit: the offer is discoverable on the streets board (else the whole hire market is dead)
 const barryOnBoard = (await call('GET', '/v1/streets', { token: paula.token })).body.streets.find((s) => s.id === barry.id);
 assert.equal(barryOnBoard.guardPrice, 15000, 'the guard price is surfaced on the streets board');
@@ -999,6 +1025,7 @@ assert.equal(kb.revived, true, 'with the guard spent, the respawn token is the l
 await seedCh(barry.id, "hosp_until=NULL, jail_until=NULL, energy=200, ammo=8000, cash=100000, cb=5, loc='docks'");
 assert.equal((await call('POST', '/v1/armory/gun/lastresort/buy', { token: barry.token })).code, 200, 'barry armed');
 assert.equal((await call('POST', `/v1/bodyguard/hire/${barry.id}`, { token: paula.token })).code, 200, 'paula, ever trusting, re-hired him');
+await know(barry, paula.id);
 assert.equal((await call('POST', `/v1/streets/${paula.id}/search`, { token: barry.token })).code, 200, 'her own guard put eyes on her');
 await seedCh(paula.id, "hosp_until=NULL, loc='docks'"); await seedCh(barry.id, "energy=200, shoot_cd_until=NULL, loc='docks'");
 const betrayal = (await call('POST', `/v1/streets/${paula.id}/fire`, { token: barry.token, body: { rounds: 6000 } })).body;
@@ -1025,6 +1052,7 @@ await seedCh(hirer.id, 'npchit_at=NULL');
 assert.equal((await call('POST', `/v1/streets/${carla.id}/npchit`, { token: hirer.token, body: { tier: 'professional' } })).body.error,
   'target_cd', 'the same mark cannot be hit again for a day');
 const otherMark = await mk('Other Mark'); await seedCh(otherMark.id, 'respect=1000');
+await know(hirer, otherMark.id);
 const om = await call('POST', `/v1/streets/${otherMark.id}/npchit`, { token: hirer.token, body: { tier: 'professional' } });
 assert.equal(om.code, 200, 'a DIFFERENT mark is fair game immediately');
 // sim-audit regression (F8): a DEAD guard releases his principals — protection was already void,
@@ -1217,6 +1245,7 @@ assert.equal((await call('POST', `/v1/streets/${jmember.id}/jump`, { token: jbos
 // search — making the fire rat-waiver unreachable for them. ──
 await seedCh(jmember.id, 'wanted_until = NULL'); // clear the wanted mark from the jump test above
 await pool.query(`DELETE FROM searches WHERE hunter='${jboss.id}'`);
+await know(jboss, jmember.id);
 assert.equal((await call('POST', `/v1/streets/${jmember.id}/search`, { token: jboss.token })).body.error, 'family', 'startSearch: a loyal family member has omertà — no search placed');
 const jmAcct = (await pool.query(`SELECT account_id a FROM characters WHERE id='${jmember.id}'`)).rows[0].a;
 await pool.query(`UPDATE account_persistent SET rat=true WHERE account_id='${jmAcct}'`);
@@ -1239,6 +1268,7 @@ await pool.query(`UPDATE account_persistent SET rat=false WHERE account_id='${jm
   assert.equal((await pool.query(`SELECT count(*)::int n FROM searches WHERE hunter='${jboss.id}'`)).rows[0].n, 0,
     'and the search is really gone — "it\'s off" has to be true, not just said');
   assert.equal((await meOf(jboss.token)).hunt, null, 'the sheet that ships with the refusal agrees — no hunt');
+  await know(jboss, mook.id);
   assert.equal((await call('POST', `/v1/streets/${mook.id}/search`, { token: jboss.token })).code, 200,
     'so the slot is free — the hunter can take a new contract instead of being told they already have one');
   await pool.query(`DELETE FROM searches WHERE hunter='${jboss.id}'`);
@@ -1690,6 +1720,7 @@ const vitoB = await mk('Vito Vendetta');
 await seedCh(vitoB.id, "respect=1000, muscle=1, loc='docks', hosp_until=NULL");
 await seedCh(kane.id, "respect=1000, muscle=1, cash=100000, cb=5, energy=200, ammo=8000, loc='docks'");
 assert.equal((await call('POST', '/v1/armory/gun/lastresort/buy', { token: kane.token })).code, 200, 'kane armed');
+await know(kane, vitoB.id);
 assert.equal((await call('POST', `/v1/streets/${vitoB.id}/search`, { token: kane.token })).code, 200, 'kane hunts');
 k = (await call('POST', `/v1/streets/${vitoB.id}/fire`, { token: kane.token, body: { rounds: 6000 } })).body;
 assert.equal(k.kill, true, 'first blood'); assert.equal(k.vendetta, false, 'no debt settled — this kill STARTS one');
@@ -1721,6 +1752,7 @@ await seedCh(vHeir.id, "respect=1000, muscle=100, cash=100000, cb=5, energy=200,
 assert.equal((await call('POST', '/v1/armory/gun/lastresort/buy', { token: vitoB.token })).code, 200, 'the heir armed');
 const kaneStreet = (await meOf(kane.token)).id;
 await seedCh(kaneStreet, "muscle=1, loc='docks', hosp_until=NULL");
+await know(vitoB, kaneStreet);
 assert.equal((await call('POST', `/v1/streets/${kaneStreet}/search`, { token: vitoB.token })).code, 200, 'the heir hunts');
 k = (await call('POST', `/v1/streets/${kaneStreet}/fire`, { token: vitoB.token, body: { rounds: 6000 } })).body;
 assert.equal(k.kill, true, 'the debt is collected');
@@ -1741,6 +1773,7 @@ const esK = await mk('Escalation Kane'); const esV = await mk('Escalation Vito')
 await seedCh(esK.id, "respect=1000, muscle=100, cash=100000, cb=5, energy=200, ammo=8000, loc='docks', hosp_until=NULL, jail_until=NULL");
 await seedCh(esV.id, "respect=1000, muscle=1, loc='docks', hosp_until=NULL");
 assert.equal((await call('POST', '/v1/armory/gun/lastresort/buy', { token: esK.token })).code, 200, 'armed');
+await know(esK, esV.id);
 await call('POST', `/v1/streets/${esV.id}/search`, { token: esK.token });
 k = (await call('POST', `/v1/streets/${esV.id}/fire`, { token: esK.token, body: { rounds: 6000 } })).body;
 assert.equal(k.kill, true, 'first blood — a Vendetta opens');
@@ -1756,6 +1789,7 @@ await seedCh(esVheir.id, "muscle=1, loc='docks', hosp_until=NULL, jail_until=NUL
 // the miss alone), so a killer running it back on the heir must have his own trigger reset the way
 // `whack()` already does — restoring the precondition, not weakening what is asserted below.
 await seedCh(esK.id, "muscle=100, energy=200, ammo=8000, loc='docks', hosp_until=NULL, jail_until=NULL, shoot_cd_until=NULL");
+await know(esK, esVheir.id);
 await call('POST', `/v1/streets/${esVheir.id}/search`, { token: esK.token });
 k = (await call('POST', `/v1/streets/${esVheir.id}/fire`, { token: esK.token, body: { rounds: 6000 } })).body;
 assert.equal(k.kill, true, 'blood again');

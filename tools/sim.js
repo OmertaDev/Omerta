@@ -22,6 +22,7 @@ process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game';
 process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 import { runBuyback } from '../src/worker.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { CRIMES, GUNS, CONSTANTS, M3, LOAN, btkOf,
@@ -51,6 +52,11 @@ const newChar = async (name) => {
 };
 // state warps (never value)
 const warp = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// The named simulation targets have been introduced; identity gossip moves no value or phone numbers.
+const knowMark = async (observerId, targetId) => recordPlayerIntel(pool,
+  (await pool.query('SELECT account_id FROM characters WHERE id=$1', [observerId])).rows[0].account_id,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [targetId])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 // levelOf inverse — reads the PACING divisor so the sim tracks the live curve instead of a
 // hardcoded copy of it (this is what silently under-seeded every probe when the curve moved).
 const lvlRespect = (lvl) => PACING.LEVEL_DIVISOR * (lvl - 1) * (lvl - 1);
@@ -196,6 +202,7 @@ note('kill', 'ammo price', `$${fmt(perRound)}/round`, `gun: ${gunOk ? `${gun.id}
 
 // the victim: a careless mid-level grinder with everything in pocket
 const mark = await newChar('Sim Mark');
+await knowMark(hunter.id, mark.id);
 await warp(mark.id, `respect=${lvlRespect(12)}, muscle=5, speed=5`);
 guard = 0;
 while ((await meOf(mark.token)).cash < 40000 && guard++ < 200) {
@@ -220,7 +227,8 @@ while (!killed && attempts++ < 8) {
   }
   await warp(hunter.id, "energy=200, jail_until=NULL, shoot_cd_until=NULL, heat=0, loc='docks'");
   await warp(mark.id, "hosp_until=NULL, jail_until=NULL, loc='docks'");
-  await call('POST', `/v1/streets/${mark.id}/search`, { token: hunter.token });
+  const placed = await call('POST', `/v1/streets/${mark.id}/search`, { token: hunter.token });
+  assert.equal(placed.code, 200, `Sim Mark search: ${JSON.stringify(placed.body)}`);
   const f = await call('POST', `/v1/streets/${mark.id}/fire`, { token: hunter.token, body: { rounds: volley } });
   if (f.code !== 200) continue;
   rounds += volley;
@@ -241,6 +249,7 @@ note('kill', 'contract break-even (mid mark)', `pot ≥ $${fmt(Math.max(0, round
 // MAKE-RISK-PAY CHECK: a mark caught MID-DEPOSIT — the in-transit window is the new loot surface.
 // The mark banks their whole roll; the killer strikes inside BANK_CLEAR_MS.
 const mark2 = await newChar('Sim Courier');
+await knowMark(hunter.id, mark2.id);
 await warp(mark2.id, `respect=${lvlRespect(12)}, muscle=5, speed=5`);
 guard = 0;
 while ((await meOf(mark2.token)).cash < 40000 && guard++ < 200) {
@@ -261,7 +270,8 @@ while (!killed2 && tries2++ < 8) {
   }
   await warp(hunter.id, "energy=200, jail_until=NULL, shoot_cd_until=NULL, heat=0, loc='docks'");
   await warp(mark2.id, "hosp_until=NULL, jail_until=NULL, loc='docks'");
-  await call('POST', `/v1/streets/${mark2.id}/search`, { token: hunter.token });
+  const placed = await call('POST', `/v1/streets/${mark2.id}/search`, { token: hunter.token });
+  assert.equal(placed.code, 200, `Sim Courier search: ${JSON.stringify(placed.body)}`);
   const f = await call('POST', `/v1/streets/${mark2.id}/fire`, { token: hunter.token, body: { rounds: volley2 } });
   if (f.code !== 200) continue;
   rounds2 += volley2;

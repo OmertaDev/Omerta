@@ -16,6 +16,7 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { BUSINESSES } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -26,6 +27,10 @@ const call = async (method, url, { token, body } = {}) => {
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
 const mk = async (name) => { const { body: { token } } = await call('POST', '/v1/auth/guest'); await call('POST', '/v1/character', { token, body: { name } }); return { token, id: (await meOf(token)).id }; };
+const knowMark = async (observerId, targetId) => recordPlayerIntel(pool,
+  (await pool.query('SELECT account_id FROM characters WHERE id=$1', [observerId])).rows[0].account_id,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [targetId])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 let _bid = 0;
 const seedFront = (charId, kind, tier) => pool.query(
   `INSERT INTO businesses (id, character_id, kind, tier, last_collect_at, upkeep_at, scrutiny_at, launder_at)
@@ -40,6 +45,7 @@ assert.equal((await call('POST', '/v1/armory/gun/lastresort/buy', { token: don.t
 const whack = async (tid, rounds = 8000) => {
   await seedCh(don.id, "energy=200, ammo=8000, nerve=50, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
   await seedCh(tid, "hosp_until=NULL, jail_until=NULL, safe_until=NULL, loc='docks', respect=1000");
+  await knowMark(don.id, tid);
   await call('POST', `/v1/streets/${tid}/search`, { token: don.token });
   return (await call('POST', `/v1/streets/${tid}/fire`, { token: don.token, body: { rounds } })).body;
 };
@@ -102,6 +108,7 @@ const whale = await mk('Casino Carl');
 await seedFront(whale.id, 'casino', 3);        // lvl58 to run
 await seedCh(whale.id, "respect=1000, hosp_until=NULL, jail_until=NULL, safe_until=NULL, loc='docks'");
 await seedCh(rookie.id, "energy=200, ammo=8000, nerve=50, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
+await knowMark(rookie.id, whale.id);
 await call('POST', `/v1/streets/${whale.id}/search`, { token: rookie.token });
 const d2 = driftMap(await runLedgerInvariants(pool, { alert: false }));
 const k3 = (await call('POST', `/v1/streets/${whale.id}/fire`, { token: rookie.token, body: { rounds: 8000 } })).body;

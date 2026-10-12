@@ -537,6 +537,7 @@ assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the mig
 // resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log
 // (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).
 const DISPOSITION = {
+  player_intel: 'log', // Account-owned historical sightings retain the observed character; never follow heirs.
   // Durable command/receipt linkage is historical, never inherited authority.
   // Execution binds the original living character; the command race/API suites
   // prove that succession cannot execute or recover the old character's view.

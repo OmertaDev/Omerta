@@ -177,7 +177,8 @@ export function register(app, { pool, auth, modAuth }) {
           ch, seller, req.params.namespace, req.params.listingId,
           { expectedContentHash: req.body?.expectedContentHash }, client, h,
         ),
-        { meet: false },
+        // The named public listing authorizes a trade without exposing a remote sighting.
+        { meet: false, requireKnown: false },
       ));
     });
 

@@ -20,6 +20,7 @@ import * as Hustle from './hustle.js';
 import * as Career from './career.js';
 import * as Corner from './corner.js';
 import * as Contacts from './contacts.js';
+import * as PlayerIntel from './playerintel.js';
 import * as Favors from './favors.js';
 import * as Crew from './crew.js';
 import * as Invites from './invites.js';
@@ -2573,38 +2574,13 @@ export async function buildServer() {
       Drop.claimColors(ch, client, h, { communities: req.body?.communities, pick: req.body?.pick })));
 
   // ── M3: the streets (§5.2) ──
-  app.get('/v1/streets', { preHandler: auth }, async () => {
-    const r = await pool.query(`SELECT c.id, c.name, c.respect, c.loc, c.jail_until, c.hosp_until, c.guard_price, c.is_npc, g.tag
-      FROM characters c LEFT JOIN gang_members m ON m.character_id = c.id LEFT JOIN gangs g ON g.id = m.gang_id
-      WHERE c.alive ORDER BY c.respect DESC LIMIT 100`);
-    // THE STREET WAR discovery: each mark's fronts as {id, kind} — EXISTENCE, never the books
-    // (pending/scrutiny stay the owner's; the anti-precise-kill-EV info rule). perf: restricted to the
-    // 100 characters on THIS board via a parameterized IN-list (pg-mem-safe, unlike `= ANY`), so the
-    // scan does not grow unbounded with the front economy; grouped in JS (the /v1/gangs posture).
-    const frontsBy = new Map();
-    const ids = r.rows.map((c) => c.id);
-    if (ids.length) {
-      const fr = await pool.query(
-        `SELECT id, character_id, kind FROM businesses WHERE character_id IN (${ids.map((_, i) => `$${i + 1}`).join(',')})`, ids);
-      for (const b of fr.rows) {
-        if (!frontsBy.has(b.character_id)) frontsBy.set(b.character_id, []);
-        frontsBy.get(b.character_id).push({ id: b.id, kind: b.kind });
-      }
-    }
-    return { streets: r.rows.map((c) => ({ id: c.id, name: c.name, level: levelOf(Number(c.respect)),
-      respect: Number(c.respect), loc: c.loc, gangTag: c.tag || null,
-      // THE POPULATION: residents are mechanically indistinguishable — every interaction runs the
-      // same audited code — but the flag is EXPOSED rather than hidden. In a game with real-money
-      // extraction, quietly passing scenery off as people is not a call to make silently; the client
-      // shows a subtle marker. Founder can override the presentation; the API stays honest.
-      npc: !!c.is_npc,
-      // surface the bodyguard offer so the hire market is discoverable (a guard lists a price,
-      // consent-by-listing; without this the whole earnable-defense feature is unreachable)
-      guardPrice: c.guard_price != null ? Math.floor(Number(c.guard_price)) : null,
-      fronts: frontsBy.get(c.id) || [],
-      jailed: jailed(c),
-      hospitalized: hospitalized(c) })) };
-  });
+  app.get('/v1/streets', { preHandler: auth }, async (req) =>
+    G.readCharacter(pool, req.user.sub, (ch, client) => PlayerIntel.playerIntelBoard(client, ch)));
+  app.post('/v1/streets/:targetId/meet', { preHandler: auth }, async (req) =>
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, PlayerIntel.meetPlayer));
+  app.post('/v1/intel/share/:recipientId', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      PlayerIntel.sharePlayerIntel(ch, req.params.recipientId, req.body?.targetId, client, h)));
   app.post('/v1/streets/:targetId/jump', { preHandler: auth }, async (req) =>
     G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.jump(ch, victim, client, h, req.body?.intent)));
   // THE STREET WAR (omerta-street-rivals-design.md): grand theft PvP — the server draws a random
@@ -3457,7 +3433,7 @@ export async function buildServer() {
     // book, or the mark can identify and retaliate against a source whose anonymity was the whole
     // mechanic. The sibling exposeSecret already carries this flag (AUDIT-street-war-street-life D1).
     return G.withTwoCharacters(pool, req.user.sub, s.holder_character,
-      (ch, holder, client, h) => Secrets.payHush(ch, holder, req.params.id, client, h), { meet: false });
+      (ch, holder, client, h) => Secrets.payHush(ch, holder, req.params.id, client, h), { meet: false, requireKnown: false });
   });
   // expose — two-party (the holder + the mark's living street; both rows held so the meter bump
   // rides the mark's positional persist)

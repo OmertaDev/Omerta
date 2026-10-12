@@ -34,7 +34,7 @@ export function register(app, { pool, auth, closeSocketsOnKill }) {
     app.post('/v1/pen/break/:id/go', { preHandler: auth }, async (req) =>
       G.withCharacter(pool, req.user.sub, (ch, client, h) => Pen.executeBreak(ch, req.params.id, client, h)));
     app.post('/v1/pen/shank/:targetId', { preHandler: auth }, async (req) => {
-      const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.shank(ch, victim, client, h));
+      const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.shank(ch, victim, client, h), { requireKnown: false });
       await closeSocketsOnKill(r, req.params.targetId);
       return r;
     });

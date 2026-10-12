@@ -2,20 +2,17 @@
 //
 // The cohesion layer (Cast/Story/Situation) and the ROLODEX made relationships DISCOVERABLE and READ-able,
 // but they were almost all PULL — you go look. THE CIRCLE is the ambient half: a scoped, live view of the
-// people in your circle — your crew, your mentor, your protégés, your spouse — showing who's ONLINE right
-// now, who's in TROUBLE (lockup / hospital / wanted), and the recent BLOOD in your circle (kills involving
+// people in your circle — your crew, your mentor, your protégés, your spouse — showing the intel you
+// actually learned and the recent BLOOD in your circle (kills involving
 // anyone in it, both directions). So three crewmates and a mentor feel like they're living in the city.
 //
 // Two halves, both PURE READS — zero §10.4, zero write hooks:
-//   • RIGHT NOW — a snapshot of each circle member's current living street (name/level/district + online +
-//     trouble flags), keyed by the living characterId (NO account UUID ever leaves — the people.js rule).
+//   • PEOPLE — each member's identity with last-known level/district, keyed by the living characterId
+//     (NO account UUID ever leaves — the people.js rule). Membership grants no live location or status.
 //   • LATELY — the recent kills involving any circle account, derived from kill_log (timestamped, and the
 //     one persistent public-safe activity source), enriched with the actor's CURRENT living name. The
 //     info-economy rule holds by construction: a kill is already public to both parties + the streets feed.
-import { levelOf } from './rules.js';
-
-const lvl = (respect) => levelOf(Number(respect));
-const future = (ts) => !!(ts && new Date(ts) > new Date());
+import { playerIntelMap } from './playerintel.js';
 
 // ── resolve the set of ACCOUNT ids in your circle → { account: relation }. Crew mates, your mentor, your
 // protégés, your spouse. A handful of cheap keyed reads; the sets can overlap (a crewmate who's also your
@@ -39,29 +36,33 @@ export async function circleAccounts(client, meAccount) {
   return rel;
 }
 
-// ── THE BOARD — RIGHT NOW (a live snapshot) + LATELY (the blood feed). `online` is the account-id set of
-// live WS connections, passed in from the route (the board has no socket access — the discovery precedent). ──
+// ── THE BOARD — stored intel + LATELY (the blood feed). The legacy `online` argument is intentionally
+// unused: socket presence must not become an automatic intelligence source. ──
 export async function circleBoard(client, ch, online) {
   const me = ch.account_id;
   const rel = await circleAccounts(client, me);
-  const onlineSet = new Set(online || []);
   if (!rel.size) return { people: [], feed: [], empty: true };
+  const intel = await playerIntelMap(client, me);
   const accts = [...rel.keys()];
   // pg-mem returns zero rows for `= ANY($1::text[])` (the MY PROFILE lesson) — build a parameterized IN list.
   const inList = accts.map((_, i) => `$${i + 1}`).join(',');
 
-  // RIGHT NOW — each member's CURRENT living street (a member with no living character is skipped)
+  // Relationships preserve identity; learned fields come from the owner's stored observations.
   const chars = (await client.query(
-    `SELECT id, account_id, name, respect, loc, jail_until, hosp_until, wanted_until
+    `SELECT id, account_id, name
        FROM characters WHERE account_id IN (${inList}) AND alive`, accts)).rows;
-  const people = chars.map((c) => ({
-    charId: c.id,                            // client-keyed by the LIVING character — never the account UUID
-    name: c.name, level: lvl(c.respect), district: c.loc, relation: rel.get(c.account_id),
-    online: onlineSet.has(c.account_id),
-    jailed: future(c.jail_until),
-    hospital: future(c.hosp_until),
-    wanted: future(c.wanted_until),
-  })).sort((a, b) => (b.online - a.online) || (b.level - a.level));   // online first, then the biggest
+  const people = chars.map((c) => {
+    const seen = intel.get(c.id);
+    return {
+      charId: c.id,
+      name: seen?.name || c.name, level: seen?.level ?? null,
+      district: seen?.loc ?? null, relation: rel.get(c.account_id),
+      observedAt: seen?.observedAt || null, source: seen?.source || null,
+      sourceName: seen?.sourceName || null,
+      // A relationship is not a live tracker or an automatic health report.
+      online: null, jailed: null, hospital: null, wanted: null,
+    };
+  }).sort((a, b) => (b.level ?? -1) - (a.level ?? -1));
 
   // LATELY — recent kills involving anyone in the circle (either side), newest first. kill_log is the one
   // timestamped public-safe activity source; the killer's CURRENT living name is resolved at read.

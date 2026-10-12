@@ -12,6 +12,7 @@ process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { M3 } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -22,6 +23,10 @@ const call = async (method, url, { token, body } = {}) => {
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
 const mk = async (name) => { const { body: { token } } = await call('POST', '/v1/auth/guest'); await call('POST', '/v1/character', { token, body: { name } }); return { token, id: (await meOf(token)).id }; };
+const knowMark = async (observerId, targetId) => recordPlayerIntel(pool,
+  (await pool.query('SELECT account_id FROM characters WHERE id=$1', [observerId])).rows[0].account_id,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [targetId])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 
 // ════════ L3b — THE SHIELD CAP ════════
 const hider = await mk('Ducking Dino');
@@ -54,6 +59,7 @@ await seedCh(funder.id, 'cash=200000');
 const whack = async (tid, rounds) => {
   await seedCh(don.id, "energy=200, ammo=8000, nerve=50, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
   await seedCh(tid, "hosp_until=NULL, jail_until=NULL, safe_until=NULL, loc='docks', respect=1000");
+  await knowMark(don.id, tid);
   await call('POST', `/v1/streets/${tid}/search`, { token: don.token });
   return (await call('POST', `/v1/streets/${tid}/fire`, { token: don.token, body: { rounds } })).body;
 };

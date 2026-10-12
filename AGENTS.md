@@ -556,11 +556,15 @@ Capo ladder and the organization they join create durable strategic power:
 
 **The in-game playbook (all live routes — use them):**
 
-1. **Work the streets like a recruiter.** `GET /v1/streets` and `GET /v1/live`
-   show who's around. DM promising players (`POST /v1/phone/dm/:characterId` —
-   earn their number first via any two-party act, or a wiretap). Open with
-   VALUE, not a pitch: a loan offer, a bodyguard contract, intel, backup on a
-   contract. Recruit by being useful.
+1. **Work the streets like a recruiter.** `GET /v1/streets` shows your recorded
+   intel and anonymous nearby faces. Introduce yourself locally with
+   `POST /v1/streets/:characterId/meet` to learn their identity and exchange numbers.
+   `GET /v1/live` uses last-known sightings; it does not track current locations.
+   Pass a recorded sighting to a phone contact with `POST /v1/intel/share/:recipientId`
+   and `{targetId}`; gossip preserves its original observation time. DM promising players
+   (`POST /v1/phone/dm/:characterId`; earn their number via an encounter or paid intel
+   on someone already known). Offer something
+   useful, such as a loan, bodyguard work, intel or backup on a contract.
 2. **Found a crew and flag it recruiting** (`POST /v1/crew`, then
    `POST /v1/crew/recruiting {on:true}`) — you'll surface on the discovery
    board's "crews recruiting" list. Accept join requests fast; a slow yes

@@ -10,7 +10,8 @@
 // column, so the estate wipe never touches it by construction; the CURRENT living street on each
 // side is resolved at read (the feud-ledger pattern).
 import { randomUUID as uid } from 'node:crypto';
-import { RIVALS, levelOf } from './rules.js';
+import { RIVALS } from './rules.js';
+import { playerIntelMap } from './playerintel.js';
 
 // Best-effort by design (the logCollect discipline VERBATIM, including its pg-mem lesson): a failed
 // intel write must never roll back the landed action it rides in. In real Postgres that needs a
@@ -40,6 +41,7 @@ export async function recordRival(client, victimAccountId, aggressorCh, kind, de
 // step one adds no revenge teeth, only the memory). Two flat queries + a JS aggregate (the
 // /v1/gangs pg-mem posture — no correlated subqueries).
 export async function rivalsBoard(pool, accountId) {
+  const intel = await playerIntelMap(pool, accountId);
   const rows = (await pool.query(
     'SELECT aggressor_account, kind, at FROM rival_events WHERE victim_account=$1 ORDER BY at DESC LIMIT 500',
     [accountId])).rows;
@@ -60,7 +62,7 @@ export async function rivalsBoard(pool, accountId) {
     // `byAgg.size` guard above meant it worked right up until it mattered); pg-mem compared the two
     // happily, so no suite saw it. The bridge was a `::text` on the rival_events side; it went with the
     // column type, and `tools/pgcheck.js` §7c fails by name if any account column comes back as uuid.
-    `SELECT c.account_id, c.id, c.name, c.respect, c.loc FROM characters c
+    `SELECT c.account_id, c.id, c.name FROM characters c
        JOIN rival_events e ON e.aggressor_account = c.account_id
       WHERE c.alive AND e.victim_account = $1`, [accountId])).rows : [];
   const liveBy = new Map();
@@ -69,12 +71,16 @@ export async function rivalsBoard(pool, accountId) {
     .sort((a, b) => b.total - a.total || new Date(b.lastAt) - new Date(a.lastAt))
     .map((a) => {
       const live = liveBy.get(a.account);
+      const seen = live && intel.get(live.id);
       return {
         total: a.total, kinds: a.kinds, lastAt: a.lastAt,
         // the bloodline's CURRENT face — null when the line has no living street (the ledger keeps
         // the grudge; the name returns with the heir). Account UUIDs are NEVER exposed (the
         // closeSocketsOnKill discipline) — the client keys revenge on the living characterId.
-        street: live ? { id: live.id, name: live.name, level: levelOf(Number(live.respect)), loc: live.loc } : null,
+        street: live ? { id: live.id, name: seen?.name || live.name,
+          level: seen?.level ?? null, loc: seen?.loc ?? null,
+          observedAt: seen?.observedAt || null, source: seen?.source || null,
+          sourceName: seen?.sourceName || null } : null,
       };
     });
   return { rivals, retentionDays: RIVALS.RETENTION_D };

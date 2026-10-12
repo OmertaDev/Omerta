@@ -11,6 +11,7 @@ import { GameError, notify, ledger } from './game.js';
 import { WIRE, wireActive, wireTierOf, wireSubTier, disinfoActive, spyRankOf, spyPerksOf, intelCost, rapStageOf, cityForecast, levelOf, dayOf, hash01, RIVALS, capoPerksOf } from './rules.js';
 import { spendOmr } from './vanity.js';
 import { recordContact } from './contacts.js';
+import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
 
 // STEP FOUR — the account's lifetime intel-ops (the SPYMASTER rank basis) → its TRADECRAFT perks
 const spyOps = async (client, accountId) =>
@@ -76,6 +77,7 @@ async function tapIntel(client, watcherId, t) {
 // POST /v1/wire/tap/:targetId — place (or refresh) a wiretap. A $OMR sink, time-boxed, capped concurrent.
 export async function placeTap(ch, targetId, client, h) {
   if (targetId === ch.id) throw new GameError('self', "You don't need a wire to know your own business.");
+  await requireKnownPlayer(client, ch, targetId);
   const t = (await client.query('SELECT id, account_id FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
   if (!t) throw new GameError('gone', 'No such mark on the street.');
   const ops = await spyOps(client, ch.account_id);            // step four: your spymaster tradecraft
@@ -100,6 +102,8 @@ export async function placeTap(ch, targetId, client, h) {
   const upd = await client.query('UPDATE wiretaps SET expires_at=$3, created_at=now(), alerted_hunt=false, alerted_wanted=false, alerted_indicted=false WHERE watcher_character=$1 AND target_character=$2', [ch.id, targetId, exp]);
   if (!upd.rowCount) await client.query('INSERT INTO wiretaps (watcher_character, target_character, expires_at) VALUES ($1,$2,$3)', [ch.id, targetId, exp]);
   await bumpIntelOps(client, ch.account_id);
+  const observation = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
+  await recordPlayerIntel(client, ch.account_id, observation, { source: 'wiretap', sourceName: ch.name });
   // STREET LIFE (the black book): a paid wire IS how you get a number without meeting the man —
   // intel earns the line ONE-WAY (they don't get yours). Best-effort, never blocks the tap.
   await recordContact(client, ch.account_id, t.account_id, 'intel');
@@ -142,6 +146,7 @@ export async function plantDisinfo(ch, client, h) {
 // isn't fooled by cooked books). One per (watcher, target).
 export async function recruitInformant(ch, targetId, client, h) {
   if (targetId === ch.id) throw new GameError('self', "You don't need an informant on yourself.");
+  await requireKnownPlayer(client, ch, targetId);
   const t = (await client.query('SELECT id FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
   if (!t) throw new GameError('gone', 'No such mark on the street.');
   const active = (await client.query(
@@ -156,6 +161,8 @@ export async function recruitInformant(ch, targetId, client, h) {
   const upd = await client.query('UPDATE wire_informants SET paid_until=$3 WHERE watcher_character=$1 AND target_character=$2', [ch.id, targetId, until]);
   if (!upd.rowCount) await client.query('INSERT INTO wire_informants (watcher_character, target_character, paid_until) VALUES ($1,$2,$3)', [ch.id, targetId, until]);
   await bumpIntelOps(client, ch.account_id);
+  const observation = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
+  await recordPlayerIntel(client, ch.account_id, observation, { source: 'informant', sourceName: ch.name });
   await h.track(client, ch.account_id, 'wire_informant', { target: targetId });
   return { ok: true, target: targetId, spent: infCost, paidSeconds: Math.ceil((until - Date.now()) / 1000) };
 }
@@ -172,12 +179,14 @@ async function informantIntel(client, watcherId, t) {
 // NOT clear the bugs (that's the cheaper sweep's job) — the layered intel economy. FREE when clean.
 export async function traceBugs(ch, client, h) {
   const watchers = (await client.query(
-    `SELECT c.id, c.name, w.expires_at FROM wiretaps w JOIN characters c ON c.id = w.watcher_character AND c.alive
+    `SELECT c.id, c.name, c.account_id, c.is_npc, w.expires_at FROM wiretaps w JOIN characters c ON c.id = w.watcher_character AND c.alive
        WHERE w.target_character=$1 AND w.expires_at > now() ORDER BY w.created_at`, [ch.id])).rows;
   if (!watchers.length) return { ok: true, bugsFound: 0, clean: true, spent: 0, watchers: [] }; // nothing to trace — no charge (the sweep/peek precedent)
   await spendOmr(client, h, WIRE.TRACE_OMR, 'intel:trace');
   await bumpIntelOps(client, ch.account_id);
   await h.track(client, ch.account_id, 'wire_trace', { bugs: watchers.length });
+  for (const watcher of watchers)
+    await recordPlayerIntel(client, ch.account_id, watcher, { source: 'trace', sourceName: ch.name, location: false });
   return { ok: true, spent: WIRE.TRACE_OMR, bugsFound: watchers.length,
     watchers: watchers.map((w) => ({ id: w.id, name: w.name, expiresSeconds: Math.max(0, Math.ceil((new Date(w.expires_at) - Date.now()) / 1000)) })) };
 }
@@ -187,6 +196,7 @@ export async function traceBugs(ch, client, h) {
 // cash (the banded wealth read holds — the audit's anti-precise-kill-EV rule). A $OMR sink; pay to know.
 export async function pullDossier(ch, targetId, client, h) {
   if (targetId === ch.id) throw new GameError('self', "You don't compile a dossier on yourself.");
+  await requireKnownPlayer(client, ch, targetId);
   const t = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
   if (!t) throw new GameError('gone', 'No such mark on the street.');
   const dosCost = intelCost(WIRE.DOSSIER_OMR, await spyOps(client, ch.account_id)); // step four: rank discount
@@ -202,6 +212,7 @@ export async function pullDossier(ch, targetId, client, h) {
     `SELECT c.name FROM wiretaps w JOIN characters c ON c.id = w.target_character AND c.alive
        WHERE w.watcher_character=$1 AND w.expires_at > now()`, [t.id])).rows.map((r) => r.name);
   await h.track(client, ch.account_id, 'wire_dossier', { target: targetId });
+  await recordPlayerIntel(client, ch.account_id, t, { source: 'dossier', sourceName: ch.name });
   return { ok: true, spent: dosCost,
     dossier: {
       name: t.name, level: levelOf(Number(t.respect)), loc: t.loc,
@@ -240,6 +251,7 @@ export async function subscribeWire(ch, tier, client, h) {
 // cycle, bounded by your $OMR). A pure automation over the existing tap — no new value flow at enroll.
 export async function enrollWatch(ch, targetId, client, h) {
   if (targetId === ch.id) throw new GameError('self', "You don't stand a watch on your own line.");
+  await requireKnownPlayer(client, ch, targetId);
   const tierN = wireTierOf(ch);
   if (!tierN) throw new GameError('no_sub', 'A standing watch needs an active Street Wire subscription.');
   const slots = wireSubTier(tierN).watchSlots;

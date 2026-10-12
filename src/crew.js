@@ -24,6 +24,7 @@
 import crypto from 'node:crypto';
 import { GameError, cleanText, notify, notifyOnce, bus } from './game.js';
 import { CREW, DISTRICTS, levelOf, weekOf, crewObjectiveOf, districtName } from './rules.js';
+import { playerIntelMap } from './playerintel.js';
 
 const uid = () => crypto.randomUUID();
 
@@ -267,24 +268,33 @@ export async function crewBoard(ch, client) {
   const objectivesDone = Number((await client.query(
     'SELECT COUNT(*) n FROM crew_objectives WHERE crew_id=$1 AND done', [crewId],
   )).rows[0].n);
-  // members' live state — flat JOIN, never `= ANY($1)` (pg-mem returns zero rows for it — the rivals lesson)
+  const intel = await playerIntelMap(client, ch.account_id);
+  // Membership identifies the current street, but location/level remain last known for other people.
   const mem = (await client.query(
-    `SELECT cm.account_id, cm.name AS snap, cm.joined_at, c.id AS char_id, c.name, c.loc, c.respect,
+    `SELECT cm.account_id, cm.name AS snap, cm.joined_at, c.id AS char_id, c.name,
             gm.gang_id, g.name AS gang_name
        FROM crew_members cm
        LEFT JOIN characters c ON c.account_id=cm.account_id AND c.alive
        LEFT JOIN gang_members gm ON gm.character_id=c.id
        LEFT JOIN gangs g ON g.id=gm.gang_id
       WHERE cm.crew_id=$1 ORDER BY cm.joined_at, cm.account_id`, [crewId])).rows;
-  const members = mem.map((m) => ({
-    characterId: m.char_id || null,
-    name: m.name || m.snap,
-    level: m.respect != null ? levelOf(Number(m.respect)) : null,
-    district: m.loc || null, districtName: m.loc ? districtName(m.loc) : null,
-    family: m.gang_name || null,
-    leader: m.account_id === crew.leader_account,
-    isMe: m.account_id === ch.account_id,
-  }));
+  const members = mem.map((m) => {
+    const isMe = m.account_id === ch.account_id;
+    const seen = intel.get(m.char_id);
+    const loc = isMe ? ch.loc : seen?.loc;
+    return {
+      characterId: m.char_id || null,
+      name: isMe ? ch.name : seen?.name || m.name || m.snap,
+      level: isMe ? levelOf(Number(ch.respect)) : seen?.level ?? null,
+      district: loc || null, districtName: loc ? districtName(loc) : null,
+      observedAt: isMe ? null : seen?.observedAt || null,
+      source: isMe ? 'self' : seen?.source || null,
+      sourceName: isMe ? null : seen?.sourceName || null,
+      family: isMe ? m.gang_name || null : null,
+      leader: m.account_id === crew.leader_account,
+      isMe,
+    };
+  });
   // pending offers OUT of my crew (so the crew can see who's been asked)
   const pending = (await client.query(
     'SELECT account_id, from_name FROM crew_invites WHERE crew_id=$1 ORDER BY at DESC', [crewId])).rows.length;

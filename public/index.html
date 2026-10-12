@@ -2539,6 +2539,8 @@
     const txt = (s) => String(s == null ? '' : s);
     const contentItems = (items) => (Array.isArray(items) ? items : [])
       .map((item) => `${fmt(item.quantity || 0)}× ${txt(item.title || item.itemId || 'material')}`).join(', ');
+    if (body?.ok && body.op === 'intel_meet' && body.met) return `you met ${txt(body.met.name || 'them')} — their number and this sighting are in your notebook`;
+    if (body?.ok && body.op === 'intel_share' && body.intel) return `you passed on what you know about ${txt(body.intel.name || 'them')} — the original sighting time stays with it`;
     // THE CONTENT DESK. These mutations move story authority and exact-hash authored objects, not
     // ordinary inventory. Naming the file, lot, or durable result is the confirmation that matters.
     if (body?.left === true && body.instance) return 'you left the forming case; your seat is open again';
@@ -6575,6 +6577,7 @@
     // shape as the book above, so the mirror guard can see every field this card reads.
     const favorBoard = (await api('GET', '/v1/favors')).body || {};
     const lines = (book.contacts || []).filter((c) => c.street);
+    const intelRows = ((await api('GET', '/v1/streets')).body?.streets || []).filter((s) => s.name && s.observedAt && s.source !== 'phone');
     const HOW_CHIP = { met: 'met', intel: 'tapped', called: 'they called' };
     const opts = lines.map((c) => `<option value="${c.street.id}">${esc(c.street.name)}${c.street.npc ? ' (resident)' : ''}</option>`).join('');
     const call = book.call;
@@ -6617,10 +6620,15 @@
         ${lines.length ? lines.slice(0, 30).map((c) => `
           <div class="ph-thread" data-th="${c.street.id}">
             <span class="nm">${esc(c.street.name)}${c.street.npc ? ' <span class="chip cold">RESIDENT</span>' : ''} <span class="chip">${HOW_CHIP[c.how] || esc(c.how)}</span>${c.jobs ? ` <span class="chip good">${c.jobs} job${c.jobs === 1 ? '' : 's'} · ${esc(c.standing)}</span>` : ''}</span>
-            <span class="lp">lvl ${c.street.level} · ${esc(c.street.loc || '')}</span>
+            <span class="lp">${c.street.level != null ? `last known level ${c.street.level} · ` : ''}${c.street.loc ? `last seen in ${esc(c.street.loc)}` : 'whereabouts unknown'}</span>
           </div>`).join('') : '<div class="d">empty. A number is EARNED: meet someone (any face-to-face — a jump, a hire, a fade), put a wire on them, or answer when they call you.</div>'}
         <div class="d" style="color:var(--dim);font-size:11px;margin-top:4px">Run a contact's errands and they treat you better — a regular gets asked for bigger loads, and paid for them.</div>
       </div>
+      <div class="card" style="margin-top:8px"><span class="t">PASS A WORD — share intel</span>
+        <div class="d">Tell a contact about someone you have encountered or heard about. They receive your recorded sighting and its original time.</div>
+        <div class="row" style="margin-top:6px"><select id="ph-intel-about">${intelRows.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('') || '<option value="">no intel yet</option>'}</select>
+          <span class="d">tell</span><select id="ph-intel-to">${opts || '<option value="">no contacts yet</option>'}</select>
+          <button class="act" id="ph-intel-share"${intelRows.length && opts ? '' : ' disabled'}>share what you know</button></div></div>
       <div class="card" style="margin-top:8px"><span class="t">THE LINE — your threads</span>
         ${b.threads.length ? b.threads.map((t) => `
           <div class="ph-thread" data-th="${t.characterId || ''}">
@@ -6640,6 +6648,8 @@
           : '<div class="d">a quiet week. It will not last.</div>'}
       </div>`;
     $('#ph-send').onclick = () => sendPhoneDm($('#ph-to').value, $('#ph-text').value);
+    $('#ph-intel-share').onclick = () =>
+      act('POST', `/v1/intel/share/${$('#ph-intel-to').value}`, { targetId: $('#ph-intel-about').value }).then(() => renderPhone());
     m.querySelectorAll('[data-daily-cash-go]').forEach((button) => button.onclick = () => {
       $('#phone-close').click();
       setTab('start');
@@ -8586,7 +8596,7 @@
       <div class="card" style="margin-top:8px"><span class="t">Your Circle</span> <span class="d" style="font-size:11px">— your people: crew, mentor, protégés, family</span>
         <div class="grid" style="margin-top:6px">${cir.people.map((cp) => `
           <div class="card">${av(cp.charId, 30)}<span class="t">${esc(cp.name)}</span> <span class="chip">${esc(cp.relation)}</span>${cp.online ? ' <span class="chip good">online</span>' : ''}
-            <div class="d">lvl ${cp.level}${cp.district ? ' · ' + esc(cp.district) : ''}${cp.jailed ? ' · <span style="color:var(--bad)">in lockup</span>' : ''}${cp.hospital ? ' · <span style="color:var(--bad)">in the hospital</span>' : ''}${cp.wanted ? ' · <span style="color:var(--bad)">WANTED</span>' : ''}</div></div>`).join('')}</div>
+            <div class="d">${cp.level != null ? `last known level ${cp.level}` : 'level unknown'}${cp.district ? ' · last seen in ' + esc(cp.district) : ' · whereabouts unknown'}</div></div>`).join('')}</div>
         ${(cir.feed && cir.feed.length) ? `<div class="d" style="margin-top:8px"><b>Lately in your circle:</b></div>
           <div style="margin-top:4px;font-size:12.5px">${cir.feed.slice(0, 8).map((cf) => `<div class="ev">${esc(cf.who)} ${cf.kind === 'whacked' ? 'whacked' : 'fell to'} ${esc(cf.other)}${cf.relation ? ` <span style="color:var(--dim)">· ${esc(cf.relation)}</span>` : ''}</div>`).join('')}</div>` : ''}</div>` : '';
     // BRING ONE — the first-crewmate incentive. Founding a crew and getting a real friend to actually
@@ -9878,8 +9888,8 @@
     // the row template, kept inline at each map site so the mirror guard sees every field read
     // (a `.map(namedFn)` is a documented mirror blind spot). All three lists share the same server
     // card shape, so peers — reliably non-empty in the fixture — carries the coverage.
-    const row = (r) => `<div class="card">${av(r.id, 30)}<span class="t">${esc(r.name)}</span> <span class="chip">lvl ${r.level}</span>${r.online ? ' <span class="chip good">online</span>' : ''}${r.hasCrew ? ' <span class="chip">in a crew</span>' : ''}${r.lfg ? ' <span class="chip good">looking</span>' : ''}${r.seekingMentor ? ' <span class="chip good">wants a mentor</span>' : ''}${vouchChip(r)}
-        <div class="d">${r.districtName ? esc(r.districtName) : ''}${r.gangTag ? ' · [' + esc(r.gangTag) + ']' : ''}</div>
+    const row = (r) => `<div class="card">${av(r.id, 30)}<span class="t">${esc(r.name)}</span> <span class="chip">${r.level != null ? `last known level ${r.level}` : 'level unknown'}</span>${vouchChip(r)}
+        <div class="d">${r.districtName ? 'last seen in ' + esc(r.districtName) : 'whereabouts unknown'}</div>
         ${canInvite && !r.hasCrew ? `<button class="act" data-inv="${esc(r.name)}" style="border-color:var(--neon)">invite to my crew</button>` : ''}
         ${canMentor && r.seekingMentor ? `<button class="act" data-mentor="${r.id}" style="border-color:var(--gold)">offer to mentor</button>` : ''}
         ${vouchBtn(r)}</div>`;
@@ -9918,8 +9928,6 @@
       <div class="card" style="margin-top:8px"><span class="t">Filter</span>
         <div class="d" style="margin-top:4px">
           <select id="disc-district"><option value="">any district</option>${districts.map((d) => `<option value="${esc(d.id)}"${discFilters.district === d.id ? ' selected' : ''}>${esc(d.name)}</option>`).join('')}</select>
-          <label style="margin-left:8px"><input type="checkbox" id="disc-nofam"${discFilters.nofam ? ' checked' : ''}> no family</label>
-          <label style="margin-left:8px"><input type="checkbox" id="disc-online"${discFilters.online ? ' checked' : ''}> online now</label>
           ${discFilters.district || discFilters.nofam || discFilters.online ? '<button class="act" id="disc-clear" style="margin-left:8px">clear</button>' : ''}</div></div>
 
       ${!dm.inCrew && crews.length ? `<div class="card" style="margin-top:8px;border-color:var(--gold)"><span class="t" style="color:var(--gold)">Crews recruiting — near you</span>
@@ -9938,8 +9946,8 @@
           ${vouchBtn(r)}</div>`).join('')}</div>`
           : '<div class="d" style="color:var(--dim);margin-top:4px">Nobody around your level yet — check Fresh Blood below, or come back once the city fills up.</div>'}</div>
 
-      <div class="card" style="margin-top:8px"><span class="t">Fresh blood</span> <span class="d" style="font-size:11px">the newest faces in the city</span>
-        ${newcomers.length ? `<div class="grid" style="margin-top:6px">${newcomers.map(row).join('')}</div>` : '<div class="d" style="color:var(--dim);margin-top:4px">No one new yet.</div>'}</div>`;
+      <div class="card" style="margin-top:8px"><span class="t">Recently learned about</span> <span class="d" style="font-size:11px">from encounters and shared intel</span>
+        ${newcomers.length ? `<div class="grid" style="margin-top:6px">${newcomers.map(row).join('')}</div>` : '<div class="d" style="color:var(--dim);margin-top:4px">Meet someone nearby in Wet Work, or ask a phone contact to share a sighting.</div>'}</div>`;
 
     const lt = t.querySelector('#lfg-toggle');
     if (lt) lt.onclick = () => act('POST', '/v1/discovery/lfg', { on: !dm.lfg }).then(() => renderDiscover());
@@ -10284,25 +10292,21 @@
     const away = (s) => s >= 86400 ? `${Math.floor(s / 86400)}d ${Math.floor((s % 86400) / 3600)}h` : `${Math.floor(s / 3600)}h`;
     const paperCard = pr.fresh ? `
       <div class="card" style="border-color:var(--gold)"><span class="t" style="color:var(--gold)">📰 WHILE YOU WERE GONE <span class="d" style="font-size:11px">(${away(pr.awaySeconds)})</span></span>
-        ${pr.totalIn || pr.totalOut ? `<div class="d">the books: <b style="color:var(--neon)">+$${fmt(pr.totalIn)}</b> in${pr.totalOut ? ` · <b style="color:var(--bad)">−$${fmt(pr.totalOut)}</b> out` : ''}${(pr.earned || []).length ? ` — mostly ${pr.earned.slice(0, 3).map((e) => `${esc(e.what)} $${fmt(e.total)}`).join(', ')}` : ''}</div>` : ''}
+        ${pr.totalIn || pr.totalOut ? `<div class="d">the books: <b style="color:var(--neon)">+${fmt(pr.totalIn)}</b> in${pr.totalOut ? ` · <b style="color:var(--bad)">−${fmt(pr.totalOut)}</b> out` : ''}${(pr.earned || []).length ? ` — mostly ${pr.earned.slice(0, 3).map((e) => `${esc(e.what)} ${fmt(e.total)}`).join(', ')}` : ''}</div>` : ''}
         ${(pr.headlines || []).length ? `<div class="d">${pr.headlines.slice(0, 6).map((h) => `${PAPER_LINES[h.type] || esc(String(h.type).replace(/_/g, ' '))} ×${h.n}`).join(' · ')}</div>` : ''}
         <div class="row"><button class="act" id="paper-fold">read — fold the paper</button></div></div>` : '';
-    // ── THE COLLISION — real players, online, reachable RIGHT NOW. The city is full of NPC scenery, so a
-    // real human being around is RARE and easy to miss; this makes it VISIBLE the second it exists. HERE
-    // (your district — the live collision: go to Wet Work and act) leads; NEARBY + HOT DISTRICTS are the
-    // convergence nudge (travel to where the humans are). Hidden when nobody real is on (the empty-state
-    // rule — never a dead "0 online" card).
+    // Places in your notebook describe sightings, not live player positions.
     const lvHere = lv.here || [], lvNear = lv.nearby || [], lvHot = lv.hotDistricts || [];
     const lvOn = lv.onlineNow || 0;
     const lvRow = (p) => `<span style="display:inline-flex;align-items:center;gap:5px;margin:2px 8px 2px 0${p.online ? '' : ';opacity:.6'}">${p.online ? '<span style="color:var(--neon)">●</span>' : ''}${av(p.id, 22)}<b>${esc(p.name)}</b> <span class="d" style="font-size:11px">L${p.level}${p.gangTag ? ` [${esc(p.gangTag)}]` : ''}</span>${p.wanted ? '<span class="chip bad" style="font-size:9px;padding:0 4px">WANTED</span>' : ''}${p.sameFamily ? '<span class="chip" style="font-size:9px;padding:0 4px">family</span>' : ''}</span>`;
     const liveCard = (lvHere.length || lvNear.length) ? `
       <div class="card" style="border-color:var(--neon);background:linear-gradient(180deg,rgba(93,214,168,.06),transparent)">
-        <span class="t" style="color:var(--neon)">${lvOn ? '● ' : ''}REAL PLAYERS ${lvOn ? 'ON THE WIRE' : 'AROUND YOU'}</span>
+        <span class="t" style="color:var(--neon)">FROM YOUR NOTEBOOK</span>
         ${lvOn ? `<span class="chip good">${lvOn} online now</span>` : ''}
-        ${lvHere.length ? `<div class="d" style="margin-top:4px"><b style="color:var(--neon)">${lvHere.length}</b> real player${lvHere.length === 1 ? '' : 's'} in ${esc(lv.you?.districtName || 'your district')} with you${lvHere.some((p) => p.online) ? ' — some ON RIGHT NOW' : ''}:</div>
+        ${lvHere.length ? `<div class="d" style="margin-top:4px"><b style="color:var(--neon)">${lvHere.length}</b> player${lvHere.length === 1 ? '' : 's'} last seen in ${esc(lv.you?.districtName || 'your district')}. They may have moved:</div>
           <div style="margin:4px 0">${lvHere.map(lvRow).join('')}</div>
           <div class="row"><button class="act prime" data-go-tab="pvp">the Wet Work roster →</button></div>` : ''}
-        ${lvNear.length ? `<div class="d" style="margin-top:6px">${lvNear.length} more near your level${lvHot.length ? ` — busiest: ${lvHot.slice(0, 3).map((h) => `${esc(h.districtName)} (${h.count})`).join(', ')}` : ''}.</div>
+        ${lvNear.length ? `<div class="d" style="margin-top:6px">${lvNear.length} more with a similar last known level${lvHot.length ? ` — recorded sightings: ${lvHot.slice(0, 3).map((h) => `${esc(h.districtName)} (${h.count})`).join(', ')}` : ''}.</div>
           <div style="margin:2px 0">${lvNear.slice(0, 6).map(lvRow).join('')}</div>
           ${lvHot.length ? `<div class="row">${lvHot.slice(0, 3).map((h) => `<button class="act" data-do="POST /v1/travel/${h.district}">go to ${esc(h.districtName)} →</button>`).join('')}</div>` : ''}` : ''}
       </div>` : '';
@@ -11585,6 +11589,8 @@
     const bookRes = await api('GET', '/v1/contacts');
     const bookIds = new Set(bookRes.code < 400
       ? (bookRes.body?.contacts || []).map((c) => c.street && c.street.id).filter(Boolean) : []);
+    const strangers = streets.filter((s) => !s.name);
+    const knownStreets = streets.filter((s) => s.name);
     const dmBtn = (id) => bookIds.has(id)
       ? `<button class="act" data-dm="${id}" title="ring them on the cell">📱</button>`
       : `<button class="act" data-nodm="1" style="opacity:.45" title="no number — meet them face to face, or put a wire on them">📵</button>`;
@@ -11611,19 +11617,19 @@
         : '<span class="d" style="color:var(--dim)">no open contracts — the city is at peace. fix that.</span>'}
 
       <h2 style="margin-top:12px">Put Out a Contract</h2>
-      <select id="ct-target">${streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
+      <select id="ct-target">${knownStreets.map((s) => `<option value="${s.id}">${esc(s.name)}${s.level != null ? ` (last known level ${s.level})` : ''}</option>`).join('')}</select>
       <select id="ct-kind"><option value="hospitalize">hospitalize</option><option value="kill">kill</option></select>
       <input id="ct-amt" placeholder="pot $" size="9">
       <label style="font-size:12.5px;color:var(--dim)"><input type="checkbox" id="ct-anon"> anonymous (${rules?.contracts?.anonOmr ?? ''} $OMR)</label>
       <input id="ct-reason" placeholder="reason (public)" size="18">
       <button class="act" id="ct-post">post it</button>
       <div style="margin-top:4px"><span class="d" style="color:var(--dim);font-size:12.5px">name a gun (optional — directed contract, $10k floor):</span>
-        <select id="ct-hitman"><option value="">— open to all —</option>${streets.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
+        <select id="ct-hitman"><option value="">— open to all —</option>${knownStreets.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select>
         <input id="ct-excl" placeholder="exclusive hrs" size="10"></div>
 
       ${me.gang && (me.gang.role === 'boss' || me.gang.role === 'underboss') ? `
       <h2 style="margin-top:12px">Family Contract <span class="d" style="font-size:11px">(boss/underboss — funded from the family treasury, posted as the family; rides the same board)</span></h2>
-      <select id="fc-target">${streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''})</option>`).join('')}</select>
+      <select id="fc-target">${knownStreets.map((s) => `<option value="${s.id}">${esc(s.name)}${s.level != null ? ` (last known level ${s.level})` : ''}</option>`).join('')}</select>
       <select id="fc-kind"><option value="kill">kill</option><option value="hospitalize">hospitalize</option></select>
       <input id="fc-amt" placeholder="pot $ from treasury" size="16">
       <button class="act" id="fc-post" style="border-color:var(--bad)">put the family on it</button>` : ''}
@@ -11706,14 +11712,20 @@
       <div class="grid">${rivals.slice(0, 8).map((r) => `
         <div class="card" style="border-color:var(--blood)"><span class="t">${r.street ? esc(r.street.name) : 'a dead line — the heir will carry the name'}</span>
           <div class="d">${r.total} offense${r.total === 1 ? '' : 's'} — ${Object.entries(r.kinds).map(([k, n]) => `${k.replace('_', ' ')} ×${n}`).join(' · ')}</div>
-          ${r.street ? `<div class="d">lvl ${r.street.level} · ${r.street.loc}</div>
+          ${r.street ? `<div class="d">${r.street.level != null ? `last known level ${r.street.level} · ` : ''}${r.street.loc ? `last seen in ${esc(r.street.loc)}` : 'whereabouts unknown'}</div>
           <button class="act prime" data-jump="${r.street.id}" data-intent="standard">jump</button>
           <button class="act" data-search="${r.street.id}" data-name="${esc(r.street.name)}">search</button>
           <button class="act" data-story="${r.street.id}" data-story-name="${esc(r.street.name)}" title="everything recorded between your bloodlines">the story</button>
           ${dmBtn(r.street.id)}` : ''}</div>`).join('')}</div>` : ''}
-      <h2 style="margin-top:12px">The Streets (${streets.length})</h2>
+      <h2 style="margin-top:12px">People you know (${knownStreets.length})</h2>
+      <p class="d">Intel comes from encounters and what people share with you. A last sighting stays in your notebook; it does not follow someone around the city.</p>
+      ${strangers.length ? `<div class="card" style="margin-bottom:12px"><span class="t">Unfamiliar faces nearby</span>
+        <div class="d">Introduce yourself to learn who they are and exchange numbers.</div>
+        ${strangers.map((s) => `<div class="row" style="margin-top:6px"><span>Unfamiliar ${s.npc ? 'resident' : 'player'}</span>
+          <button class="act prime" data-meet="${s.id}">introduce yourself</button></div>`).join('')}</div>` : ''}
+      ${!knownStreets.length ? '<div class="d">Your notebook is empty. Meet people nearby, or ask a contact to share what they know on the phone.</div>' : ''}
       ${me.bustAttemptsLeft != null && streets.some((s) => s.jailed) ? `<div class="d" style="font-size:11px;color:var(--dim);margin-bottom:6px">springing anyone runs on a daily allowance — <b>${me.bustAttemptsLeft}</b> ${me.bustAttemptsLeft === 1 ? 'try' : 'tries'} left${me.bustAttemptsLeft === 0 && me.bustRefillSeconds ? `, the next in ${minsTxt(me.bustRefillSeconds)}` : ''} (a miss spends one too)</div>` : ''}
-      <div class="grid">${streets.map((s) => {
+      <div class="grid">${knownStreets.map((s) => {
         // The mark's own state decides what the server will even entertain, and it SENDS both flags
         // (jailed/hospitalized) on every row — so read them here rather than letting the player find
         // out on press. This row already disables `steal their ride`/`steal boat` on MY state; the
@@ -11728,9 +11740,10 @@
         const noBody = away ? ` disabled title="${away}"` : '';                    // them, and what they carry
         const noStuff = s.hospitalized ? ` disabled title="${away}"` : '';         // what they leave behind
         return `
-        <div class="card">${av(s.id, 30)}<span class="t">${esc(s.name)}</span> <span class="d">lvl ${s.level}${s.gangTag ? ' · ' + s.gangTag : ''}</span>
+        <div class="card">${av(s.id, 30)}<span class="t">${esc(s.name)}</span> <span class="d">${s.level != null ? `last known level ${s.level}` : 'level unknown'}${s.gangTag ? ' · ' + esc(s.gangTag) : ''}</span>
           ${s.jailed ? '<span class="chip cold">LOCKUP</span>' : ''}${s.hospitalized ? '<span class="chip cold">HOSPITAL</span>' : ''}${s.npc ? '<span class="chip" title="a resident of the city — a real target on every board, but not another player">RESIDENT</span>' : ''}${rivalIds.has(s.id) ? '<span class="chip bad" title="this bloodline has moved against you — the rivals ledger remembers">RIVAL</span>' : ''}
-          <div class="d">${s.loc}${s.guardPrice != null ? ` · guards for $${fmt(s.guardPrice)}` : ''}</div>
+          <div class="d">${s.loc ? `last seen in ${esc(s.loc)}` : 'whereabouts unknown'}${s.observedAt ? ` · ${esc(new Date(s.observedAt).toLocaleString())}` : ''}${s.source === 'gossip' ? ` · heard from ${esc(s.sourceName || 'a contact')}` : ''}${s.guardPrice != null ? ` · guards for ${fmt(s.guardPrice)}` : ''}</div>
+          ${s.nearby ? `<button class="act" data-meet="${s.id}">talk again</button>` : ''}
           ${dmBtn(s.id)}
           ${s.jailed ? `<button class="act prime" data-pbust="${s.id}" title="spring them from lockup — a success frees them and PAYS you (more time left = bigger reward, worse odds; the sweet spot is near the end of a stretch). A miss puts YOU inside for a few minutes.">bust them out</button>` : ''}
           <button class="act" data-jump="${s.id}" data-intent="rob"${noBody || ' title="you\'re there for the wallet — a bigger cut, but nobody\'s impressed"'}>roll them</button>
@@ -11756,9 +11769,11 @@
           <button class="act risk" data-psab="${s.id}"${noStuff || ' title="wreck their stable — one random racer or fighter laid up for hours; stealth. A miss is lockup."'}>sabotage</button>
           <select data-npctier="${s.id}" style="font-size:11px"${noBody}>${npcs.map(([id, n]) => `<option value="${id}">${n}</option>`).join('')}</select>
           <button class="act risk" data-npchit="${s.id}"${noBody}>NPC hit</button>
-          ${s.guardPrice != null ? `<button class="act" data-hire="${s.id}"${noBody || ''} title="$${fmt(s.guardPrice)} up front — he absorbs ONE lethal shot for you and the contract is spent (he goes to hospital in your place). The window comes back on the receipt.">hire guard</button>` : ''}
+          ${s.guardPrice != null ? `<button class="act" data-hire="${s.id}"${noBody || ''} title="${fmt(s.guardPrice)} up front — he absorbs ONE lethal shot for you and the contract is spent (he goes to hospital in your place). The window comes back on the receipt.">hire guard</button>` : ''}
           <button class="act" data-feud="${s.id}">feud</button></div>`; }).join('')}</div>`;
 
+    t.querySelectorAll('[data-meet]').forEach((b) => b.onclick = () =>
+      act('POST', `/v1/streets/${b.dataset.meet}/meet`, {}).then(() => renderPvp()));
     t.querySelectorAll('[data-psteal]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/streets/${b.dataset.psteal}/steal`, {}).then(() => renderPvp()));
     t.querySelectorAll('[data-prob]').forEach((b) => b.onclick = () =>
@@ -11964,7 +11979,7 @@
         ${L.witpro.active ? `<span class="chip cold">WITPRO — untargetable ${mins(L.witpro.seconds)}</span>` : ''}
       </div>`;
     const streets = ((await api('GET', '/v1/streets')).body?.streets || []).filter((s) => s.id !== me.id);
-    $('#flip-target').innerHTML = streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level})</option>`).join('');
+    $('#flip-target').innerHTML = streets.filter((s) => s.name).map((s) => `<option value="${s.id}">${esc(s.name)}${s.level != null ? ` (last known level ${s.level})` : ''}</option>`).join('');
     $('#flip-go').onclick = async () => {
       if (!await ask('Give them a name?', 'Your case goes away and theirs begins. You are branded a RAT for good — omertà no longer protects you, and your own family can hunt you. It follows your bloodline.',
         { yes: 'name him', no: 'keep your mouth shut', danger: true })) return;
@@ -12098,7 +12113,7 @@
       <div class="grid">${(() => { const today = (W.premium.forecast || [])[0]?.day || 0; return (W.premium.forecast || []).map((f) => `<div class="card"><span class="t">${f.day === today ? 'today' : '+' + (f.day - today) + 'd'}</span><div class="d">${f.city || ''} · law: ${f.law || ''}</div></div>`).join(''); })()}</div>
       ` : ''}`;
     const streets = ((await api('GET', '/v1/streets')).body?.streets || []).filter((s) => s.id !== me.id);
-    const opts = streets.map((s) => `<option value="${s.id}">${esc(s.name)} (lvl ${s.level})</option>`).join('');
+    const opts = streets.filter((s) => s.name).map((s) => `<option value="${s.id}">${esc(s.name)}${s.level != null ? ` (last known level ${s.level})` : ''}</option>`).join('');
     $('#wire-target').innerHTML = opts;
     $('#wire-dossier-target').innerHTML = opts;
     $('#wire-informant-target').innerHTML = opts;
@@ -13097,7 +13112,7 @@
       <input id="ln-amt" placeholder="principal $" size="10">
       <input id="ln-rate" placeholder="rate (0.2 = 20%)" size="12">
       <input id="ln-hours" placeholder="term hrs" size="8">
-      <select id="ln-to"><option value="">— open offer —</option>${streets.map((s) => `<option value="${s.id}">${esc(s.name)} only${s.id === me.id ? '' : ''}</option>`).join('')}</select>
+      <select id="ln-to"><option value="">— open offer —</option>${streets.filter((s) => s.name).map((s) => `<option value="${s.id}">${esc(s.name)} only</option>`).join('')}</select>
       <input id="ln-coll" placeholder="collateral min $ (opt)" size="16">
       <input id="ln-collomr" placeholder="$OMR pledge (opt, ≤${fmt(b.terms?.collateralOmrMax ?? 2000)})" size="18">
       <button class="act" id="ln-offer">escrow it</button>
@@ -14041,7 +14056,7 @@
     {
       const fillPicker = async (sel) => { if (!sel) return;
         const streets = (await api('GET', '/v1/streets')).body?.streets || [];
-        sel.innerHTML = streets.filter((x) => x.id !== me.id).map((x) => `<option value="${x.id}">${esc(x.name)} (lvl ${x.level})</option>`).join(''); };
+        sel.innerHTML = streets.filter((x) => x.id !== me.id && x.name).map((x) => `<option value="${x.id}">${esc(x.name)}${x.level != null ? ` (last known level ${x.level})` : ''}</option>`).join(''); };
       fillPicker($('#dyn-target')); fillPicker($('#cons-target'));
       const dp = $('#dyn-propose'); if (dp) dp.onclick = () => { const v = $('#dyn-target')?.value; if (v) act('POST', `/v1/dynasty/propose/${v}`, {}).then(() => renderLife()); };
       const cn = $('#cons-name'); if (cn) cn.onclick = () => { const v = $('#cons-target')?.value; if (v) act('POST', `/v1/dynasty/consigliere/${v}`, {}).then(() => renderLife()); };
@@ -14358,9 +14373,10 @@
       estate: () => `your street fell${d.by ? ` to ${d.by}` : ''} — the heir rises`,
       vendetta: () => `blood was sworn — ${d.by ? `${d.by}'s` : 'a'} bloodline owes yours`,
       dm: () => `📱 ${d.from}: ${d.preview || 'new message'} — open the cell to reply`,
-      contact_call: () => `📞 ${d.from} is asking for you — ${d.kind === 'freight' ? `bring ${d.qty} × ${goodName(d.good)} to ${$d(d.district)} for $${fmt(d.pay)}` : `come see them at ${$d(d.district)} ($${fmt(d.pay)})`}. Open the cell.`,
-      crew_objective_done: () => `🤝 YOUR CREW CRACKED THE WEEK'S JOB — collect your cut${d.reward ? ` ($${fmt(d.reward)})` : ''} on The Crew screen`,
-      streak_milestone: () => `🏅 ${d.day}-DAY STREAK — you're now ${d.title}${d.bonus ? ` (+$${fmt(d.bonus)})` : ''}`,
+      intel_shared: () => `${d.from} passed you a word about ${d.name || 'someone'} — the sighting is in your notebook`,
+      contact_call: () => `📞 ${d.from} is asking for you — ${d.kind === 'freight' ? `bring ${d.qty} × ${goodName(d.good)} to ${$d(d.district)} for ${fmt(d.pay)}` : `come see them at ${$d(d.district)} (${fmt(d.pay)})`}. Open the cell.`,
+      crew_objective_done: () => `🤝 YOUR CREW CRACKED THE WEEK'S JOB — collect your cut${d.reward ? ` (${fmt(d.reward)})` : ''} on The Crew screen`,
+      streak_milestone: () => `🏅 ${d.day}-DAY STREAK — you're now ${d.title}${d.bonus ? ` (+${fmt(d.bonus)})` : ''}`,
       mastery_up: () => `your ${d.name || d.track} trade hit L${d.lvl}${d.rank ? ` — ${d.rank}` : ''}`,
       first_claimed: () => d.name && d.blurb === undefined && !d.id ? `${d.who || 'somebody'} took ${d.first}` : `✦ ${d.name} — you were FIRST in this city, and nobody can take it`,
       limited_run: () => (d.who ? `🚗 ${d.who} took delivery of ${d.name || d.run} — number ${d.serial} of ${d.cap}`
@@ -14572,17 +14588,6 @@
       const c = championCine(ev.type, ev.payload || {});
       haptic('big'); sfx('win');
       playCine({ kicker: c.kicker, title: c.title, sub: c.sub, accent: 'var(--gold)', fx: 'payday', clip: 'cine-champion.mp4', hold: 2400 });
-    }
-    // THE CONVERGENCE NUDGE — a real human walked into a district. Only act on it when it's YOUR
-    // district and it isn't you: a quiet presence toast (not a feed line — for everyone else it's
-    // noise). Presence is public, so this leaks nothing the /v1/live board doesn't already show.
-    if (channel === 'streets' && ev && ev.type === 'arrival') {
-      if (me && ev.district === me.loc && ev.cid !== me.id) {
-        const dn = (rules?.districts || []).find((d) => d.id === ev.district)?.name || ev.district;
-        toast(`👣 ${esc(ev.who)} just showed up in ${esc(dn)}`, false);
-        if (currentTab === 'start') renderActive();
-      }
-      return;
     }
     if (channel === 'me' && ev && ev.type === 'dm') phoneRing(ev.payload || {});
     if (channel === 'me' && ev?.type === 'daily_cash_reminder') {

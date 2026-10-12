@@ -19,6 +19,7 @@
 import crypto from 'crypto';
 import { GameError, cleanText, notify } from './game.js';
 import { hasContact, recordContact } from './contacts.js';
+import { recordPlayerIntel, readPlayerIntel } from './playerintel.js';
 
 const DM_MAX_LEN = 240;
 const DM_BRAKE_MS = 2000;
@@ -27,6 +28,23 @@ const capMap = (m, cap = 20000) => { while (m.size > cap) m.delete(m.keys().next
 
 const livingChar = async (pool, accountId) =>
   (await pool.query('SELECT id, name, account_id FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
+
+const UNKNOWN_LINE = 'Unknown caller';
+async function knownLineName(pool, accountId, target) {
+  const intel = await readPlayerIntel(pool, accountId, target.id);
+  if (intel?.name) return intel.name;
+  const message = (await pool.query(
+    `SELECT from_account, from_name, to_name FROM dm_messages
+      WHERE (from_account=$1 AND to_account=$2) OR (from_account=$2 AND to_account=$1)
+      ORDER BY at DESC LIMIT 1`, [accountId, target.account_id])).rows[0];
+  if (message) return message.from_account === accountId ? message.to_name : message.from_name;
+  if (await hasContact(pool, accountId, target.account_id)) {
+    const live = await livingChar(pool, target.account_id);
+    if (live) return live.name;
+    return (await pool.query('SELECT name FROM characters WHERE id=$1', [target.id])).rows[0]?.name || UNKNOWN_LINE;
+  }
+  return UNKNOWN_LINE;
+}
 
 // ── send a DM to the player behind a character id (alive or dead — the ACCOUNT is the line) ──
 export async function sendDm(pool, fromAccountId, targetCharacterId, text) {
@@ -67,6 +85,7 @@ export async function sendDm(pool, fromAccountId, targetCharacterId, text) {
     [id, fromAccountId, target.account_id, me.name, toName, body]);
   // ringing someone reveals YOUR number to them — the recipient can now call back (best-effort)
   await recordContact(pool, target.account_id, fromAccountId, 'called');
+  await recordPlayerIntel(pool, target.account_id, me, { source: 'called', sourceName: me.name, location: false });
   // ring the recipient's LIVING street: a normal notification (inbox row + live WS push).
   // notify() only needs a query()-capable handle — the pool works outside a txn (best-effort:
   // the DM row is already committed; a dead line just waits for the heir).
@@ -134,28 +153,26 @@ export async function phoneBoard(pool, accountId) {
 
 // ── STEP TWO: block / unblock a line (by any character id on that bloodline) ──
 export async function blockLine(pool, accountId, targetCharacterId) {
-  const target = (await pool.query('SELECT id, name, account_id FROM characters WHERE id=$1',
+  const target = (await pool.query('SELECT id, account_id FROM characters WHERE id=$1',
     [targetCharacterId])).rows[0];
   if (!target) throw new GameError('gone', 'Nobody answers that number.');
   if (target.account_id === accountId) throw new GameError('self', 'You cannot block your own line.');
-  const live = await livingChar(pool, target.account_id);
+  // An unfamiliar line can be blocked without turning its ID into a name lookup.
+  const name = await knownLineName(pool, accountId, target);
   await pool.query(
     `INSERT INTO dm_blocks (blocker_account, blocked_account, name) VALUES ($1,$2,$3)
      ON CONFLICT (blocker_account, blocked_account) DO NOTHING`,
-    [accountId, target.account_id, live?.name || target.name]);
-  return { ok: true, phone: 'blocked', blocked: live?.name || target.name };
+    [accountId, target.account_id, name]);
+  return { ok: true, phone: 'blocked', blocked: name };
 }
 export async function unblockLine(pool, accountId, targetCharacterId) {
-  const target = (await pool.query('SELECT name, account_id FROM characters WHERE id=$1',
+  const target = (await pool.query('SELECT account_id FROM characters WHERE id=$1',
     [targetCharacterId])).rows[0];
   if (!target) throw new GameError('gone', 'Nobody answers that number.');
-  const r = await pool.query('DELETE FROM dm_blocks WHERE blocker_account=$1 AND blocked_account=$2',
+  const r = await pool.query('DELETE FROM dm_blocks WHERE blocker_account=$1 AND blocked_account=$2 RETURNING name',
     [accountId, target.account_id]);
   if (!r.rowCount) throw new GameError('not_blocked', 'That line was never blocked.');
-  // the forgotten sibling: blockLine three lines up has always named the man, so the client could
-  // not say whose line it had just re-opened. Same resolution — the bloodline's CURRENT holder.
-  const live = await livingChar(pool, target.account_id);
-  return { ok: true, phone: 'unblocked', unblocked: live?.name || target.name };
+  return { ok: true, phone: 'unblocked', unblocked: r.rows[0].name };
 }
 // my block list, client-keyed by the blocked bloodline's LIVING character (the no-UUID discipline);
 // a line with no living street still shows (snapshot name) — unblockable once the heir rises.
@@ -165,12 +182,12 @@ async function blockList(pool, accountId) {
   if (!rows.length) return { list: [], set: new Set() };
   const ph = rows.map((_, i) => `$${i + 1}`).join(',');
   const live = (await pool.query(
-    `SELECT id, name, account_id FROM characters WHERE alive AND account_id IN (${ph})`,
+    `SELECT id, account_id FROM characters WHERE alive AND account_id IN (${ph})`,
     rows.map((r) => r.blocked_account))).rows;
   const byAcct = new Map(live.map((c) => [c.account_id, c]));
   return {
     list: rows.map((r) => { const c = byAcct.get(r.blocked_account);
-      return { name: c?.name || r.name, characterId: c?.id || null }; }),
+      return { name: r.name, characterId: c?.id || null }; }),
     set: new Set(rows.map((r) => r.blocked_account)),
   };
 }
@@ -185,6 +202,8 @@ export async function readThread(pool, accountId, counterpartCharacterId) {
     `SELECT * FROM dm_messages
       WHERE (from_account=$1 AND to_account=$2) OR (from_account=$2 AND to_account=$1)
       ORDER BY at DESC LIMIT 100`, [accountId, target.account_id])).rows;
+  if (!rows.length && !(await hasContact(pool, accountId, target.account_id)))
+    throw new GameError('no_number', "You don't have their number — meet them on the street first.");
   await pool.query('UPDATE dm_messages SET seen=true WHERE to_account=$1 AND from_account=$2 AND NOT seen',
     [accountId, target.account_id]);
   const live = await livingChar(pool, target.account_id);
