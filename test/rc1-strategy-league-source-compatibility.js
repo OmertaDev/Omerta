@@ -1,4 +1,3 @@
-import { cityHomesLeagueSourceBaseline, assertCityHomesLeagueServerTransfer, CITY_HOMES_SOURCE_INVERSES, CITY_HOMES_LEAGUE_SERVER_BLOB, CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB } from '../tools/rc1-deed-source-compatibility.js';
 import { marketFeedSourceBaseline, MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { qualifyCompanySuccessionSource, COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS } from '../tools/rc1-company-succession-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
@@ -12,26 +11,9 @@ import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, STRATEGY_LEAGUE_SOURCE_BASELINE_PI
 const normalize = text => text.replaceAll('\r\n', '\n');
 const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-const homeRaw=normalize(fs.readFileSync('src/server.js','utf8'));
-const homeProof=assertCityHomesLeagueServerTransfer(homeRaw);
-assert.equal(homeRaw,gitText(CITY_HOMES_LEAGUE_SERVER_BLOB));
-assert.equal(homeProof.baselineText,gitText(CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB));
-assert.equal(homeProof.baselineText,gitText('e018820492ce00eeae766455164067ff5ecfcc10:src/server.js'));
-assert.deepEqual(assertCityHomesLeagueServerTransfer(homeRaw.replaceAll('\n','\r\n')),homeProof);
-for(const chunk of CITY_HOMES_SOURCE_INVERSES) {
- for(const altered of [homeRaw.replace(chunk,''),homeRaw.replace(chunk,chunk+chunk),homeRaw.replace(chunk,chunk.replace('registerCityHomes','registerOtherHomes'))]) {
-  assert.equal(cityHomesLeagueSourceBaseline('src/server.js',altered),altered);
-  assert.throws(()=>assertCityHomesLeagueServerTransfer(altered),/source changed/);
- }
-}
-for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('registerStrategyLeagues(app','registerOtherLeagues(app')]) {
- assert.notEqual(altered,homeRaw);
- assert.equal(cityHomesLeagueSourceBaseline('src/server.js',altered),altered);
- assert.throws(()=>assertCityHomesLeagueServerTransfer(altered),/source changed/);
-}
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(STRATEGY_LEAGUE_SOURCE_CURRENT_PINS)) {
-  const current = normalize(cityHomesLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(STRATEGY_LEAGUE_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(fs.readFileSync(file, 'utf8')), baseline = gitText(STRATEGY_LEAGUE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(strategyLeagueSourceBaseline(file, current), baseline);
   assert.equal(strategyLeagueSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

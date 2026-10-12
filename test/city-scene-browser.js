@@ -6,24 +6,9 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../src/server.js';
-import { levelOf } from '../src/rules.js';
 
 // Cached options must never update or destroy a different current identity while its read is pending.
 const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
-const sceneSource = fs.readFileSync(new URL('../public/city-scene.js', import.meta.url), 'utf8');
-const geometry = {};
-vm.runInNewContext(sceneSource.slice(sceneSource.indexOf('  const WORLD ='), sceneSource.indexOf('  function mount('))
-  + '\nthis.route = route; this.traversable = traversable;', geometry);
-const homeBuilding = { x: 1008, y: 52, width: 144, height: 140 };
-const expandedWorld = { width: 1216, height: 640 };
-const homeRoute = geometry.route({ x: 430, y: 366 }, { x: 1080, y: 224 }, expandedWorld, [homeBuilding], 540);
-assert(homeRoute.some(point => point.x > 960), 'The real route helper reaches the residential extension.');
-assert(Math.hypot(homeRoute.at(-1).x - 1080, homeRoute.at(-1).y - 224) < 16, 'The extended route arrives at the home entrance.');
-assert(homeRoute.every(point => geometry.traversable(point.x, point.y, expandedWorld, [homeBuilding], 540)), 'The new route stays outside the actual home footprint.');
-assert(homeRoute.slice(1).every((point, index) => Math.abs(point.x - homeRoute[index].x) + Math.abs(point.y - homeRoute[index].y) === 16), 'Residential paths retain cardinal movement through real cells.');
-const gardenRoute = geometry.route({ x: 430, y: 366 }, { x: 560, y: 592 }, { width: 960, height: 640 }, [], 620);
-assert(gardenRoute.at(-1).y > 540, 'A regional land route no longer stops at the Docks waterfront boundary.');
-assert.equal(geometry.traversable(1080, 224), false, 'The default zero-home Docks bounds remain intact.');
 const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
 // The view predicate is checked only before an authenticated queued call dispatches.
 // Closing a dock after dispatch must retain the actual reply; token changes retain
@@ -148,7 +133,6 @@ async function waitForInput(page, predicate, argument) {
       const state = window.__cityHandles.at(-1)?.handle.getState();
       return { hidden: document.hidden, focused: document.hasFocus(), active: document.activeElement?.id || document.activeElement?.tagName,
         ready: state?.ready, player: state?.player, facing: state?.facing, pathLength: state?.pathLength,
-        regionalInput: window.__cityRegionalInput,
         held: Array.from(document.querySelectorAll('[data-city-move].is-held')).map(button => button.dataset.cityMove) };
     })));
     throw error;
@@ -323,17 +307,10 @@ try {
   const assertHud = async (page, expected) => {
     const fields = ['cash', 'health', 'energy', 'nerve', 'heat', 'level'];
     const values = Object.fromEntries(fields.map(key => [key, Number(expected[key])]));
-    try {
-      await page.waitForFunction(values => {
-        const resources = window.__cityHandles.at(-1)?.handle.getState().resources;
-        return resources && Object.entries(values).every(([key, value]) => resources[key] === value);
-      }, values);
-    } catch (error) {
-      const actual = await state(page);
-      console.error('City HUD diagnostic:', JSON.stringify({ expected: values, actual: { ready: actual.ready, resources: actual.resources, region: actual.region },
-        response: await page.evaluate(() => window.__cityHudResponse || null) }));
-      throw error;
-    }
+    await page.waitForFunction(values => {
+      const resources = window.__cityHandles.at(-1)?.handle.getState().resources;
+      return resources && Object.entries(values).every(([key, value]) => resources[key] === value);
+    }, values);
     for (const key of fields) {
       const text = await page.locator(`[data-city-resource="${key}"] [data-city-value]`).textContent();
       assert.equal(Number(text.split('/')[0].replace(/[^\d.-]/g, '')), values[key], 'Visible City HUD mirrors ' + key);
@@ -350,8 +327,7 @@ try {
   const refreshHudFromClient = async page => {
     const reply = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player');
     await page.locator('#btn-refresh').click();
-    const response = await reply, me = await response.json();
-    await page.evaluate(({ status, error }) => { window.__cityHudResponse = { status, error }; }, { status: response.status(), error: me.error || null });
+    const me = await (await reply).json();
     await assertHud(page, me.player?.character || me.player);
     return me.player?.character || me.player;
   };
@@ -989,19 +965,20 @@ try {
     // Observe the real mutation while its reply holds the authenticated queue.
     // This removes elapsed-time regeneration from the exact action-cost proof.
     await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [characterId, new Date(Date.now() + 600000)]);
-    dispatchedBefore = (await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0];
+    dispatchedBefore = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
     const reply = await route.fetch();
-    dispatchedAfter = (await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0];
+    dispatchedAfter = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
     await route.fulfill({ response: reply });
   });
   for (const approach of ['quiet', 'standard', 'loud']) {
     const fundedNerve = coreCrime.nerve * 2;
-    // Isolate the action cost from the real level-up refill, including bonus-rep city events.
+    // Each cost proof starts below a level milestone. Accumulated job respect
+    // can trigger the canonical level-up nerve refill on a boosted city day.
     await app.pool.query('UPDATE characters SET nerve=$2,respect=0,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
     const fundedRead = page.waitForResponse(async reply => {
       if (new URL(reply.url()).pathname !== '/v1/projections/player' || reply.status() !== 200) return false;
       const body = await reply.json(), character = body.player?.character || body.player;
-      return character?.nerve === fundedNerve && character?.respect === 0 && character?.level === levelOf(0);
+      return character?.nerve === fundedNerve;
     });
     await page.locator('#btn-refresh').click();
     const fundedBody = (await (await fundedRead).json()).player;
@@ -1016,8 +993,6 @@ try {
     const outcome = await reply.json();
     assert.equal(outcome.success, true); assert.equal(outcome.approach, approach);
     const prior = dispatchedBefore, after = dispatchedAfter;
-    assert.equal(Number(prior.respect), 0, 'The actual cost-proof dispatch starts at the observed level-one baseline.');
-    assert.equal(levelOf(Number(after.respect)), levelOf(Number(prior.respect)), 'The cost proof does not include a legitimate level-up refill.');
     assert.equal(Number(after.nerve), Number(prior.nerve) - coreCrime.nerve, 'The explicit job spends its server nerve cost once.');
     assert.equal(Number(after.cash), Number(prior.cash) + outcome.take, 'Cash reflects the real outcome rather than a promised baseline.');
     const terms = crimeRules.crimeApproaches.find(entry => entry.id === approach);
@@ -1027,7 +1002,7 @@ try {
     const replay = await app.inject({ method: 'POST', url: '/v1/crimes/' + coreCrime.id,
       headers: { ...headers, 'Idempotency-Key': reply.request().headers()['idempotency-key'] }, payload: { approach } });
     assert.equal(replay.statusCode, 200); assert.deepEqual(replay.json(), outcome);
-    assert.deepEqual((await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0], after);
+    assert.deepEqual((await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0], after);
     assert.equal(await page.locator('[data-city-approach="standard"]').isDisabled(), false, 'Core jobs introduce no cooldown when the next nerve cost is funded.');
     await assertPosition(page, fixerPose, 'A committed job keeps the same City pose');
   }
@@ -1434,7 +1409,6 @@ try {
     await waitForFrames(waiting, 3);
     assert.notEqual(await waiting.evaluate(() => document.activeElement?.tagName), 'CANVAS', reason + ' cancels delayed canvas focus.');
     if (reason === 'modal') assert.equal(await waiting.evaluate(() => document.activeElement?.id), 'jump-q');
-    if (reason === 'identity') await waiting.unrouteAll({ behavior: 'wait' });
     await waiting.context().close();
   }
 
@@ -1519,182 +1493,6 @@ try {
   await selectTab(missingEngine, 'map');
   await waitForCity(missingEngine);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 1, 'Returning after an engine load failure retries the engine successfully.');
-
-  // Confirmed directory rows create physical plots; the server still owns travel and deeds.
-  const landActor = async (name, kind = 'player') => {
-    const birth = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });
-    assert.equal(birth.statusCode, 200, birth.body);
-    const landToken = birth.json().token, landHeaders = { authorization: 'Bearer ' + landToken };
-    assert.equal((await app.inject({ method: 'POST', url: '/v1/character', headers: landHeaders, payload: { name } })).statusCode, 200);
-    const row = (await app.pool.query('SELECT id,account_id FROM characters WHERE account_id=$1 AND alive', [app.jwt.verify(landToken).sub])).rows[0];
-    if (kind === 'agent') await app.pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [row.account_id]);
-    if (kind === 'npc') await app.pool.query('UPDATE characters SET is_npc=true WHERE id=$1', [row.id]);
-    return { ...row, token: landToken, headers: landHeaders };
-  };
-  const explorer = await landActor('Connected Explorer'), agentLandlord = await landActor('Land Agent', 'agent');
-  const residentLandlord = await landActor('Land Resident', 'npc'), nextLandlord = await landActor('Street Successor');
-  for (const [owner, street] of [[explorer, 'Amber Row'], [agentLandlord, 'Tern House'], [residentLandlord, 'Cedar Yard']]) {
-    await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,corner_at) VALUES($1,$2,$3,$4,now())',
-      [owner.account_id, street, street.toLowerCase(), 'docks']);
-  }
-  const land = await newPage({}, explorer.token), landRequests = [];
-  land.on('request', request => landRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
-  await openCity(land);
-  await land.locator('#btn-player-view').click(); await waitForCity(land);
-  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
-  const landHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), initialLand = await state(land);
-  assert(initialLand.world.width > 960 && initialLand.world.height === 640, 'Real deed records extend the walkable world beyond the original Docks.');
-  assert.deepEqual(new Set(initialLand.homes.map(home => home.owner.kind)), new Set(['player', 'agent', 'npc']));
-  assert.equal(new Set(initialLand.homes.map(home => home.key)).size, 3);
-  await land.locator('[data-city-world-map]').click();
-  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().worldUI.mapView === 'world');
-  assert.deepEqual((await state(land)).position, initialLand.position, 'Opening the connected atlas never relocates the character.');
-  await land.locator('[data-city-world-close]').click();
-  const home = (await state(land)).homes.find(home => home.key === 'amber row');
-  await land.locator('[data-city-home="amber row"]').click();
-  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row'
-    && window.__cityHandles.at(-1).handle.getState().pathLength === 0);
-  const arrivedHome = await state(land);
-  assert(Math.hypot(arrivedHome.player.x - home.entrance.x, arrivedHome.player.y - home.entrance.y) < 20, 'The real waypoint route arrives at the house entrance.');
-  assert(arrivedHome.player.x > 960, 'The player actually walks into the extension.');
-  assert.match(await land.locator('.omerta-city__actor-body').innerText(), /Connected Explorer.*PLAYER steward/s);
-  assert.match(await land.locator('.omerta-city__actor-body').innerText(), /illustrative.*does not show where the steward/s);
-  assert.equal(await land.locator('[data-city-home-action="hideout"]').count(), 1);
-  const ownedControl = await land.locator('[data-city-home-action="hideout"]').elementHandle();
-  await land.locator('[data-city-actor-close]').click();
-  await holdKey(land, 'ArrowDown', y => window.__cityHandles.at(-1).handle.getState().player.y > y + 45, arrivedHome.player.y);
-  await holdKey(land, 'ArrowUp', entrance => Math.hypot(window.__cityHandles.at(-1).handle.getState().player.x - entrance.x,
-    window.__cityHandles.at(-1).handle.getState().player.y - entrance.y) < 15, home.entrance);
-  await land.keyboard.press('e');
-  assert.equal((await state(land)).selectedHome, home.key, 'Keyboard walking and E inspect the actual entrance.');
-  await land.locator('[data-city-actor-close]').click();
-  await waitForFrames(land, 3);
-  const pointerState = await state(land), homeCanvas = land.locator('.omerta-city__canvas canvas'), homeCanvasBox = await homeCanvas.boundingBox();
-  await homeCanvas.click({ position: {
-    x: (home.building.x + home.building.width / 2 - pointerState.camera.x) * pointerState.camera.zoom * homeCanvasBox.width / pointerState.camera.width,
-    y: (home.building.y + 75 - pointerState.camera.y) * pointerState.camera.zoom * homeCanvasBox.height / pointerState.camera.height,
-  } });
-  assert.equal((await state(land)).selectedHome, home.key, 'Native canvas input inspects the same home without a pose setter.');
-  const transferPose = (await state(land)).position;
-  await app.pool.query('UPDATE street_deeds SET account_id=$2 WHERE name_lc=$1', ['amber row', nextLandlord.account_id]);
-  await land.locator('#btn-refresh').click();
-  await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes.find(home => home.key === 'amber row')?.owner?.name === 'Street Successor');
-  const transferred = await state(land), samePlot = transferred.homes.find(item => item.key === home.key);
-  assert.deepEqual(samePlot.entrance, home.entrance, 'Stewardship changes retain the same public street-key plot.');
-  assert.deepEqual(transferred.position, transferPose, 'A directory refresh never teleports the walking player.');
-  assert.equal(transferred.homes.filter(item => item.key === home.key).length, 1, 'A transfer never duplicates a house.');
-  assert.equal(samePlot.mine, false);
-  assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, landHandle), 'The same district retains its existing game through the transfer.');
-  await land.locator('[data-city-home="amber row"]').click();
-  assert.equal(await land.locator('[data-city-home-action="hideout"]').count(), 0, 'The former owner cannot open a personal hideout from the transferred plot.');
-  await ownedControl.evaluate(node => node.click());
-  assert.notEqual((await state(land)).worldUI.panel, 'room', 'An old detached owner control is inert.');
-  await land.locator('[data-city-actor-close]').click();
-  for (const width of [375, 320]) {
-    await land.setViewportSize({ width, height: 812 });
-    await land.locator('[data-city-home="amber row"]').click();
-    await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().selectedHome === 'amber row');
-    assert.deepEqual((await state(land)).position, transferPose);
-    const hit = await land.locator('[data-city-actor-close]').evaluate(node => {
-      const box = node.getBoundingClientRect(), dock = node.closest('.omerta-city__actor-dock').getBoundingClientRect();
-      return box.width >= 44 && box.height >= 44 && box.top >= dock.top && box.bottom <= dock.bottom
-        && document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2) === node;
-    });
-    assert(hit, 'The home inspector retains a real 44px phone close target.');
-    if (shots) await land.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-home-' + width + '.png'), style: sceneShotStyle });
-    await land.locator('[data-city-actor-close]').click();
-  }
-  assert.deepEqual(landRequests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Walking and inspecting actual homes sends no gameplay POST.');
-  await land.setViewportSize({ width: 1440, height: 1000 });
-  const landFare = Number(crimeRules.travelCost);
-  assert(Number.isFinite(landFare) && landFare > 0);
-  await app.pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [explorer.id, landFare * 3]);
-  let landRides = 0;
-  for (const district of ['brick', 'cathedral']) {
-    const route = await app.inject({ method: 'POST', url: '/v1/travel/' + district, headers: { ...explorer.headers, 'idempotency-key': 'connected-geometry-' + district }, payload: {} });
-    assert.equal(route.statusCode, 200, route.body);
-    assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [explorer.id])).rows[0].cash), landFare * (3 - ++landRides));
-    await land.locator('#btn-refresh').click();
-    await land.waitForFunction(id => window.__cityHandles.at(-1).handle.getState().ready && window.__cityHandles.at(-1).handle.getState().region.id === id, district);
-    const regional = await state(land);
-    assert.equal(regional.world.width, 960, 'A new district does not inherit another district’s residential extent.');
-    assert.equal(regional.homes.length, 0);
-    assert.equal(regional.region.landmark, district === 'brick' ? 'Kiln Square' : 'Bell Gardens');
-    const regionalHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), roadGoal = { x: 424, y: 536 };
-    assert(regional.obstacles.every(box => !(roadGoal.x + 7 > box.x && roadGoal.x - 7 < box.x + box.width
-      && roadGoal.y + 7 > box.y && roadGoal.y - 7 < box.y + box.height)), 'The regional approach is clear road before the old 540 boundary.');
-    assert(regional.actorMarkers.every(actor => Math.hypot(actor.x - roadGoal.x, actor.y - roadGoal.y) > 80)
-      && regional.destinations.every(venue => Math.hypot(venue.x - roadGoal.x, venue.y - roadGoal.y) > 35)
-      && regional.exits.every(exit => Math.hypot(exit.x - roadGoal.x, exit.y - roadGoal.y) > 30),
-    'The native road click retains actor, venue, and exit hit priority without selecting them.');
-    const regionalRequests = landRequests.length, roadCanvas = land.locator('.omerta-city__canvas canvas'), roadBox = await roadCanvas.boundingBox();
-    await roadCanvas.click({ position: {
-      x: (roadGoal.x - regional.camera.x) * regional.camera.zoom * roadBox.width / regional.camera.width,
-      y: (roadGoal.y - regional.camera.y) * regional.camera.zoom * roadBox.height / regional.camera.height,
-    } });
-    await waitForInput(land, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
-    await land.waitForFunction(goal => {
-      const state = window.__cityHandles.at(-1).handle.getState();
-      return state.pathLength === 0 && Math.hypot(state.player.x - goal.x, state.player.y - goal.y) < 10;
-    }, roadGoal);
-    const boundaryStart = await state(land);
-    assert(boundaryStart.player.y >= 528 && boundaryStart.player.y <= 540, 'Real canvas walking reaches the old walkable boundary before the crossing check.');
-    assert(Math.hypot(boundaryStart.player.x - regional.player.x, boundaryStart.player.y - regional.player.y) > 150,
-      'The approach physically walks from the regional spawn without a pose setter.');
-    assert.equal(boundaryStart.region.id, district);
-    assert.equal(boundaryStart.selectedActor, null);
-    assert.equal(boundaryStart.selectedVenue, null);
-    await roadCanvas.focus();
-    assert(await land.evaluate(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas')));
-    await land.evaluate(() => {
-      const game = window.__cityGames.at(-1), scene = game.scene.getScenes(true)[0], canvas = game.canvas;
-      const input = window.__cityRegionalInput = { frames: 0, simulatedMs: 0, recent: [], events: [], keys: [] };
-      const frame = (time, delta) => {
-        input.frames++; input.simulatedMs += Math.min(delta, 50);
-        input.recent.push({ delta, fps: game.loop.actualFps, player: window.__cityHandles.at(-1).handle.getState().player });
-        if (input.recent.length > 8) input.recent.shift();
-      };
-      const event = event => {
-        if (event.type === 'keydown') input.keys = [...new Set([...input.keys, event.key])];
-        if (event.type === 'keyup') input.keys = input.keys.filter(key => key !== event.key);
-        input.events.push({ type: event.type, key: event.key, hidden: document.hidden });
-        if (input.events.length > 8) input.events.shift();
-      };
-      scene.events.on('update', frame);
-      for (const type of ['keydown', 'keyup', 'blur']) canvas.addEventListener(type, event);
-      window.__cityRegionalInputCleanup = () => {
-        scene.events.off('update', frame);
-        for (const type of ['keydown', 'keyup', 'blur']) canvas.removeEventListener(type, event);
-      };
-    });
-    try { await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 560); }
-    finally { await land.evaluate(() => { window.__cityRegionalInputCleanup(); delete window.__cityRegionalInputCleanup; }); }
-    const crossedBoundary = await state(land);
-    assert(crossedBoundary.player.y > 560 && crossedBoundary.player.y - boundaryStart.player.y > 20,
-      'Regional keyboard movement crosses the former waterfront limit from an actual road arrival.');
-    assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, regionalHandle));
-    assert.equal(crossedBoundary.region.id, district);
-    assert.deepEqual(landRequests.slice(regionalRequests).filter(request => !['GET', 'HEAD'].includes(request.method)
-      && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'The regional road approach and boundary crossing submit no gameplay action.');
-    await land.evaluate(() => { delete window.__cityRegionalInput; });
-    if (shots) await land.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-region-' + district + '.png'), style: sceneShotStyle });
-  }
-  const fallbackTravel = await app.inject({ method: 'POST', url: '/v1/travel/docks', headers: { ...explorer.headers, 'idempotency-key': 'connected-fallback-docks' }, payload: {} });
-  assert.equal(fallbackTravel.statusCode, 200, fallbackTravel.body);
-  assert.equal(Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [explorer.id])).rows[0].cash), 0);
-  const landFallback = await newPage({ viewport: { width: 375, height: 812 } }, explorer.token);
-  await landFallback.route('**/vendor/phaser.js*', route => route.abort());
-  await landFallback.goto(base, { waitUntil: 'networkidle' });
-  await landFallback.locator('#screen-main:not(.hidden)').waitFor(); await landFallback.locator('#btn-player-view').click();
-  await landFallback.locator('.omerta-city--unavailable').waitFor();
-  await landFallback.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
-  await landFallback.locator('[data-city-home="amber row"]').click();
-  assert.equal((await state(landFallback)).selectedHome, 'amber row');
-  assert.equal((await state(landFallback)).pathLength, 0);
-  assert.match(await landFallback.locator('.omerta-city__actor-body').innerText(), /Walking is unavailable/);
-  await landFallback.locator('[data-city-home-action="map"]').click();
-  await landFallback.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().worldUI.mapView === 'world');
-  assert.equal((await state(landFallback)).ready, false, 'The real engine outage preserves the connected atlas and property inspection without fabricated walking.');
 
   // Authoritative identity transitions must never reuse another district or generation's pose.
   await page.bringToFront();

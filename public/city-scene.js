@@ -44,14 +44,6 @@
     { x: 832, y: 502, width: 32, height: 34 }
   ]);
   const ACTOR_PAGE_SIZE = 24;
-  const REGIONS = {
-    docks: { ground: 0x55564d, road: 0x3e4445, water: 0x243b43 },
-    brick: { ground: 0x735c4d, road: 0x493b35, water: 0x3e4037, landmark: { name: 'Kiln Square', x: 548, y: 52, width: 80, height: 112 } },
-    cathedral: { ground: 0x63705d, road: 0x444d47, water: 0x35483e, landmark: { name: 'Bell Gardens', x: 530, y: 32, width: 112, height: 144 } },
-    foundry: { ground: 0x645f57, road: 0x373d40, water: 0x2d393b, landmark: { name: 'Iron Yard', x: 544, y: 48, width: 88, height: 120 } },
-    canal: { ground: 0x5f6c63, road: 0x3d4946, water: 0x294e51, landmark: { name: 'Lockkeeper Garden', x: 542, y: 44, width: 96, height: 128 } },
-    neon: { ground: 0x635860, road: 0x3d3540, water: 0x353a4b, landmark: { name: 'Lantern Court', x: 544, y: 44, width: 88, height: 128 } }
-  };
   let instanceSequence = 0;
 
   function element(tag, className, text) {
@@ -61,18 +53,17 @@
     return node;
   }
 
-  function traversable(x, y, world = WORLD, obstacles = OBSTACLES, walkBottom = 540) {
+  function traversable(x, y) {
     if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
-    if (x < 12 || x > world.width - 12 || y < 20 || y > walkBottom) return false;
-    return !obstacles.some(r => x + PLAYER_RADIUS > r.x && x - PLAYER_RADIUS < r.x + r.width &&
+    if (x < 12 || x > WORLD.width - 12 || y < 20 || y > 540) return false;
+    return !OBSTACLES.some(r => x + PLAYER_RADIUS > r.x && x - PLAYER_RADIUS < r.x + r.width &&
       y + PLAYER_RADIUS > r.y && y - PLAYER_RADIUS < r.y + r.height);
   }
 
   // Cardinal grid movement prevents paths cutting diagonally through building corners.
-  function route(start, end, world = WORLD, obstacles = OBSTACLES, walkBottom = 540) {
-    const cols = Math.floor(world.width / CELL);
-    const rows = Math.ceil(walkBottom / CELL);
-    const walk = (x, y) => traversable(x, y, world, obstacles, walkBottom);
+  function route(start, end) {
+    const cols = WORLD.width / CELL;
+    const rows = 34;
     const center = i => ({ x: (i % cols) * CELL + CELL / 2, y: Math.floor(i / cols) * CELL + CELL / 2 });
     const index = p => Math.max(0, Math.min(rows - 1, Math.floor(p.y / CELL))) * cols +
       Math.max(0, Math.min(cols - 1, Math.floor(p.x / CELL)));
@@ -81,12 +72,12 @@
       for (let i = 0; i < cols * rows; i++) {
         const q = center(i);
         const d = Math.abs(q.x - p.x) + Math.abs(q.y - p.y);
-        if (d < distance && walk(q.x, q.y)) { distance = d; chosen = i; }
+        if (d < distance && traversable(q.x, q.y)) { distance = d; chosen = i; }
       }
       return chosen;
     }
     const originCandidate = index(start);
-    const origin = walk(center(originCandidate).x, center(originCandidate).y) ? originCandidate : closest(start);
+    const origin = traversable(center(originCandidate).x, center(originCandidate).y) ? originCandidate : closest(start);
     const goal = closest(end);
     if (origin < 0 || goal < 0) return [];
     const queue = [origin], previous = new Map([[origin, -1]]);
@@ -101,7 +92,7 @@
       if (y < rows - 1) neighbors.push(current + cols);
       for (const next of neighbors) {
         const p = center(next);
-        if (!previous.has(next) && walk(p.x, p.y)) { previous.set(next, current); queue.push(next); }
+        if (!previous.has(next) && traversable(p.x, p.y)) { previous.set(next, current); queue.push(next); }
       }
     }
     if (!previous.has(goal)) return [];
@@ -116,21 +107,11 @@
     options = options || {};
     let district = options.district || {};
     let character = options.character || {};
-    let region = REGIONS[district.id] || REGIONS.docks;
-    const world = { ...WORLD };
-    let walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
-    let obstacles = baseObstacles();
-    let homeBoard = null, homes = [], exits = [], selectedHome = null, selectedExit = null;
-    const homeSlots = new Map(), homeMarkers = new Map(), exitLabels = new Map(), permeableHomes = new Set();
-    let extensionGround = null, regionInk = null;
-    const canWalk = (x, y) => traversable(x, y, world, obstacles, walkBottom);
-    const findRoute = (start, end) => route(start, end, world, obstacles, walkBottom);
-    world.width = widthForHomes(district.deeds);
     const reducedMotion = Boolean(options.reducedMotion);
     let destroyed = false, ready = false, game = null, scene = null, bootTimer = null;
     let worldUI = null, worldOpening = false, look = 'classic';
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
-    let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, path = [];
+    let player = null, selected = null, pendingVenue = null, path = [];
     let gameKind = '', gameOpening = 0, gameReturn = null;
     let pathInk = null, destinationInk = null;
     let clearPlayerNameClamp = null;
@@ -139,7 +120,7 @@
     let paging = false, encounterPending = false, pagingNotice = '', actorNotice = '', actorRenderSignature = '', presenceSignature = '';
     const sceneIdentity = () => [character.id, character.generation, district.id].join(':');
     const requestedPosition = options.position || {};
-    const validPosition = canWalk(requestedPosition.x, requestedPosition.y);
+    const validPosition = traversable(requestedPosition.x, requestedPosition.y);
     const initialPosition = validPosition
       ? { x: requestedPosition.x, y: requestedPosition.y } : { x: 430, y: 366 };
     let playerFacing = validPosition && ['up', 'down', 'left', 'right'].includes(requestedPosition.facing) ? requestedPosition.facing : 'down';
@@ -148,9 +129,6 @@
     const keys = new Set();
     const heldMoves = new Set();
     const listeners = [];
-    listen(document, 'keydown', event => { if (queuedHome && (event.key === 'Escape' || /^(arrow(up|down|left|right)|[wasd])$/i.test(event.key))) queuedHome = null; });
-    listen(document, 'visibilitychange', () => { if (document.hidden) queuedHome = null; });
-    listen(window, 'blur', () => { queuedHome = null; });
     const root = element('section', 'omerta-city');
     root.setAttribute('aria-label', 'Explore your current neighborhood');
     const header = element('div', 'omerta-city__header');
@@ -179,11 +157,6 @@
     worldHud.setAttribute('role', 'group');
     worldHud.setAttribute('aria-label', 'Walking resources and readiness');
     const worldResources = element('dl', 'omerta-city__resources omerta-city__resources--walking');
-    const worldHead = element('div', 'omerta-city__world-head');
-    const worldMapButton = element('button', 'omerta-city__world-map', 'World map');
-    worldMapButton.type = 'button'; worldMapButton.setAttribute('data-city-world-map', '');
-    worldMapButton.setAttribute('aria-label', 'Open the connected world map, district routes and street homes');
-    listen(worldMapButton, 'click', openWorldMap);
     const resourceNodes = new Map();
     for (const [key, label] of [['cash', 'Cash'], ['health', 'Health'], ['energy', 'Energy'], ['nerve', 'Nerve'], ['heat', 'Heat'], ['level', 'Level']]) {
       const group = element('div', 'omerta-city__resource');
@@ -214,8 +187,7 @@
     journal.type = 'button';
     journal.setAttribute('data-city-journal', '');
     hud.append(resourceGrid, progressRow, journal);
-    worldHead.append(worldResources, worldMapButton);
-    worldHud.append(worldHead, readiness);
+    worldHud.append(worldResources, readiness);
     const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
     presenceCaption.hidden = true;
     worldHud.append(presenceCaption);
@@ -370,21 +342,7 @@
     actorCount.setAttribute('role', 'status');
     actorPager.append(actorsPrevious, actorCount, actorsMore);
     presence.append(presenceHead, placement, actorList, actorPager);
-    const homeSection = element('section', 'omerta-city__homes'); homeSection.hidden = true;
-    homeSection.setAttribute('aria-label', 'Confirmed street homes and district routes');
-    const homeCaption = element('p', 'omerta-city__placement');
-    const homeList = element('div', 'omerta-city__home-list');
-    const exitList = element('div', 'omerta-city__exit-list');
-    homeSection.append(element('h4', '', 'Street homes & district routes'), homeCaption, exitList, homeList);
-    root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence);
-    listen(homeList, 'click', event => {
-      const button = event.target.closest('[data-city-home]');
-      if (button && homeList.contains(button) && !walkHome(button.dataset.cityHome)) showHome(button.dataset.cityHome, button);
-    });
-    listen(exitList, 'click', event => {
-      const button = event.target.closest('[data-city-exit]');
-      if (button && exitList.contains(button)) walkExit(button.dataset.cityExit, button);
-    });
+    root.append(header, hud, nextMove, viewport, instructions, controls, destinations, presence);
     renderPresence();
     host.replaceChildren(root);
     if (typeof window.OmertaCityWorldUI?.mount === 'function') {
@@ -405,17 +363,13 @@
             stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
             game.canvas.focus({ preventScroll: true });
             if (Math.hypot(player.x - venue.x, player.y - venue.y) < 42) showVenue(venue);
-            else { pendingVenue = venue; path = findRoute(player, venue); redrawPath(); }
+            else { pendingVenue = venue; path = route(player, venue); redrawPath(); }
           },
-          onHome: key => { if (!walkHome(key)) showHome(key); }, onHomes: acceptHomes,
-          onTravel: options.onWorldTravel,
           onRead: options.onWorldRead, onAction: options.onWorldAction, onRetry: options.onWorldRetry,
           onLook: preset => { look = Object.hasOwn(lookTints, preset) ? preset : 'classic'; player?.setTint(lookTints[look]); } });
         document.getElementById('player-view-switch')?.classList.add('has-world-tools');
       } catch (_) { /* A tools failure must preserve the playable neighborhood and original doors. */ }
     }
-    acceptHomes(options.worldHomes);
-    updateGeometry();
     updateHud();
 
     function worldOptions() {
@@ -423,219 +377,7 @@
       return { character, district, rules: options.rules, actors: options.actors || [], objectives: options.objectives || [],
         intel: options.intel || [], npcQuests: options.npcQuests || {}, progress: options.progress, reducedMotion,
         scopeKey: options.worldScopeKey, receipt: options.worldReceipt, recovery: options.worldRecovery === true,
-        social: options.worldSocial, chat: options.worldChat, atlas: options.worldAtlas,
-        collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, trackerVisible: tracked };
-    }
-    function widthForHomes(count) {
-      const bounded = Math.max(0, Math.min(64, Math.floor(Number(count) || 0)));
-      return bounded ? WORLD.width + 64 + Math.ceil(bounded / 2) * 192 : WORLD.width;
-    }
-    function baseObstacles() {
-      const result = OBSTACLES.map(item => ({ ...item }));
-      if (region.landmark) {
-        const { x, y, width, height } = region.landmark;
-        result.push({ x, y, width, height });
-      }
-      return result;
-    }
-    function homeState() {
-      return homes.map(home => ({ key: home.key, street: home.street, districtId: home.districtId,
-        owner: home.owner ? { ...home.owner } : null, mine: home.mine, ownership: home.ownership,
-        x: home.entrance.x, y: home.entrance.y, entrance: { ...home.entrance }, building: { ...home.building } }));
-    }
-    function roadState() {
-      const roads = [{ x: 0, y: 248, width: world.width, height: 48 }, { x: 334, y: 226, width: 140, height: 326 },
-        { x: 732, y: 210, width: 44, height: 342 }];
-      for (let x = WORLD.width + 208; x < world.width; x += 192) roads.push({ x, y: 192, width: 32, height: Math.max(336, walkBottom - 192) });
-      if (district.id !== 'docks') roads.push({ x: 510, y: 180, width: 154, height: 32 });
-      return roads;
-    }
-    function acceptHomes(board) {
-      if (destroyed || !board || board.placement !== 'illustrative' || board.districtId !== district.id
-        || board.viewer?.characterId !== character.id || Number(board.viewer?.generation) !== Number(character.generation)
-        || board.viewer?.district !== district.id) return false;
-      const rows = new Map();
-      for (const item of [...(Array.isArray(board.homes) ? board.homes : []), board.myHome]) {
-        if (!item || typeof item.key !== 'string' || !item.key || item.districtId !== district.id
-          || typeof item.street !== 'string' || !['city', 'external', 'estate'].includes(item.ownership)) continue;
-        const owner = item.owner && typeof item.owner.name === 'string' && ['player', 'agent', 'npc'].includes(item.owner.kind)
-          ? { name: item.owner.name, kind: item.owner.kind } : null;
-        rows.set(item.key, { key: item.key, street: item.street, districtId: item.districtId, owner,
-          mine: item.mine === true, ownership: item.ownership });
-      }
-      const own = board.myHome?.key;
-      const ordered = Array.from(rows.values()).sort((a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0);
-      homes = ordered.slice(0, 64);
-      if (own && rows.has(own) && !homes.some(home => home.key === own)) homes[63] = rows.get(own);
-      const active = new Set(homes.map(home => home.key));
-      for (const key of homeSlots.keys()) if (!active.has(key)) homeSlots.delete(key);
-      const used = new Set(homeSlots.values());
-      const capacity = Math.max(1, Math.min(64, Math.max(homes.length, Number(district.deeds) || 0)));
-      for (const home of homes) {
-        if (!homeSlots.has(home.key)) {
-          let hash = 0; for (const c of home.key) hash = (Math.imul(hash, 31) + c.charCodeAt(0)) >>> 0;
-          let slot = hash % capacity; while (used.has(slot)) slot = (slot + 1) % 64;
-          homeSlots.set(home.key, slot); used.add(slot);
-        }
-        const slot = homeSlots.get(home.key), upper = slot % 2 === 0;
-        home.building = { x: WORLD.width + 48 + Math.floor(slot / 2) * 192, y: upper ? 52 : 330, width: 144, height: upper ? 140 : 132 };
-        home.entrance = { x: home.building.x + 72, y: upper ? 224 : 504 };
-      }
-      homeBoard = { total: Math.max(homes.length, Number(board.total) || 0), nextCursor: board.nextCursor || null };
-      updateGeometry(); renderActorDock(); return true;
-    }
-    function updateGeometry() {
-      const count = Math.max(Number(district.deeds) || 0, homes.length, ...Array.from(homeSlots.values(), slot => slot + 1));
-      // A page window or failed read cannot erase the ground below a walking player.
-      world.width = Math.max(world.width, widthForHomes(count));
-      for (const key of permeableHomes) if (!homes.some(home => home.key === key)) permeableHomes.delete(key);
-      for (const home of homes) {
-        const pose = player || initialPosition, b = home.building;
-        if (!homeMarkers.has(home.key) && pose.x + PLAYER_RADIUS > b.x && pose.x - PLAYER_RADIUS < b.x + b.width
-          && pose.y + PLAYER_RADIUS > b.y && pose.y - PLAYER_RADIUS < b.y + b.height) permeableHomes.add(home.key);
-      }
-      obstacles = baseObstacles().concat(homes.filter(home => !permeableHomes.has(home.key)).map(home => ({ ...home.building })));
-      const atlas = options.worldAtlas?.districts || [];
-      const here = atlas.find(item => item?.id === district.id);
-      exits = (Array.isArray(here?.neighbours) ? here.neighbours : []).filter(id => REGIONS[id]).slice(0, 3).map((id, index) => ({
-        id, name: atlas.find(item => item?.id === id)?.name || id,
-        x: index === 0 ? world.width - 32 : index === 1 ? 32 : 560,
-        y: index < 2 ? 264 : walkBottom - 28
-      }));
-      renderHomeDirectory(); drawHomes(); fitCamera();
-    }
-    function renderHomeDirectory() {
-      const focused = homeList.contains(document.activeElement) ? document.activeElement.dataset.cityHome : null;
-      homeSection.hidden = !homes.length && !exits.length && !(Number(district.deeds) > 0);
-      homeCaption.textContent = (homeBoard ? 'Showing ' + homes.length + ' of ' + homeBoard.total + ' confirmed street homes.' : Number(district.deeds) > 0 ? 'The street directory is loading.' : 'Choose a district route.')
-        + ' Plot placement is illustrative; a property marker does not show where its steward is standing. More streets are available in World map.';
-      homeList.replaceChildren(); exitList.replaceChildren();
-      for (const exit of exits) {
-        const button = element('button', '', 'Route to ' + exit.name); button.type = 'button'; button.dataset.cityExit = exit.id;
-        exitList.append(button);
-      }
-      for (const home of homes) {
-        const button = element('button', 'omerta-city__home'); button.type = 'button'; button.dataset.cityHome = home.key;
-        button.append(element('strong', '', home.street), element('span', '', home.owner ? home.owner.name + ' · ' + home.owner.kind.toUpperCase() : home.ownership === 'external' ? 'External deed · no in-city steward' : home.ownership === 'estate' ? 'Estate street · no living steward' : 'Steward not published'));
-        if (home.mine) button.append(element('span', '', 'Your street'));
-        homeList.append(button);
-      }
-      if (focused) (Array.from(homeList.children).find(button => button.dataset.cityHome === focused) || worldMapButton).focus({ preventScroll: true });
-    }
-    function drawHomes() {
-      if (!scene || !ready) return;
-      if (!extensionGround) extensionGround = scene.add.graphics().setDepth(0);
-      extensionGround.clear();
-      if (world.width > WORLD.width) {
-        extensionGround.fillStyle(region.ground).fillRect(WORLD.width, 0, world.width - WORLD.width, WORLD.height);
-        extensionGround.fillStyle(region.road).fillRect(WORLD.width, 248, world.width - WORLD.width, 48);
-        for (const road of roadState().filter(road => road.x > WORLD.width)) extensionGround.fillRect(road.x, road.y, road.width, road.height);
-        for (let y = 252; y < 294; y += 10) for (let x = WORLD.width + (y % 20 ? 12 : 0); x < world.width; x += 24) {
-          extensionGround.fillStyle(y % 20 ? 0x55534c : 0x484a45).fillRect(x, y, 21, 7);
-        }
-        extensionGround.fillStyle(region.water).fillRect(WORLD.width, walkBottom + 14, world.width - WORLD.width, WORLD.height - walkBottom - 14);
-        extensionGround.lineStyle(2, 0xb0a184, 0.6).lineBetween(WORLD.width, 246, world.width, 246).lineBetween(WORLD.width, 298, world.width, 298);
-      }
-      if (!regionInk) regionInk = scene.add.graphics().setDepth(1);
-      regionInk.clear();
-      if (region.landmark) {
-        const mark = region.landmark;
-        regionInk.fillStyle(district.id === 'cathedral' ? 0x87937b : 0x8b6552).fillRect(mark.x, mark.y, mark.width, mark.height);
-        regionInk.fillStyle(district.id === 'cathedral' ? 0xd3c6a5 : 0x42342d).fillRect(mark.x + mark.width / 2 - 12, mark.y + 18, 24, mark.height - 34);
-      }
-      const exitIds = new Set(exits.map(exit => exit.id));
-      for (const [id, label] of exitLabels) if (!exitIds.has(id)) { label.destroy(); exitLabels.delete(id); }
-      for (const exit of exits) {
-        regionInk.lineStyle(2, 0xe8b34b, 0.8).strokeRect(exit.x - 10, exit.y - 10, 20, 20);
-        let label = exitLabels.get(exit.id);
-        if (!label) { label = scene.add.text(0, 0, '', { fontFamily: 'monospace', fontSize: 10, color: '#e8d7b2', stroke: '#18201e', strokeThickness: 2 }).setOrigin(0.5); exitLabels.set(exit.id, label); }
-        label.setPosition(exit.x, exit.y - 25).setText('→ ' + exit.name).setDepth(3);
-      }
-      const active = new Set(homes.map(home => home.key));
-      for (const [key, marker] of homeMarkers) if (!active.has(key)) { marker.ink.destroy(); marker.name.destroy(); homeMarkers.delete(key); }
-      for (const home of homes) {
-        let marker = homeMarkers.get(home.key);
-        if (!marker) {
-          marker = { ink: scene.add.graphics().setDepth(1), name: scene.add.text(0, 0, '', { fontFamily: 'monospace', fontSize: 10,
-            color: '#e8d7b2', stroke: '#18201e', strokeThickness: 2, align: 'center', wordWrap: { width: 136 } }).setOrigin(0.5) };
-          homeMarkers.set(home.key, marker);
-        }
-        const b = home.building, g = marker.ink; g.clear();
-        const roof = home.mine ? 0x706c49 : home.owner?.kind === 'agent' ? 0x506275 : 0x73544b;
-        g.fillStyle(0x111819, 0.4).fillRect(b.x + 10, b.y + 9, b.width, b.height);
-        g.fillStyle(0x272b28).fillRect(b.x - 4, b.y - 4, b.width + 8, b.height + 8);
-        g.fillStyle(0x79634e).fillRect(b.x, b.y, b.width, b.height);
-        for (let y = b.y + 32; y < b.y + b.height; y += 8) {
-          g.fillStyle(0x9a8060, 0.4).fillRect(b.x + 2, y, b.width - 4, 1);
-          for (let x = b.x + (y % 16 ? 10 : 2); x < b.x + b.width - 4; x += 20) g.fillStyle(0x493e33, 0.55).fillRect(x, y, 1, 7);
-        }
-        g.fillStyle(roof).fillTriangle(b.x - 5, b.y + 30, b.x + b.width / 2, b.y - 12, b.x + b.width + 5, b.y + 30);
-        g.lineStyle(1, 0xb5a37c, 0.45);
-        for (let y = b.y - 3; y < b.y + 30; y += 7) {
-          const inset = (b.y + 30 - y) * b.width / 84;
-          g.lineBetween(b.x + inset, y, b.x + b.width - inset, y);
-        }
-        g.fillStyle(0x252e2c).fillRect(b.x - 6, b.y + 30, b.width + 12, 6);
-        for (const x of [b.x + 17, b.x + b.width - 40]) {
-          g.fillStyle(0x2d332e).fillRect(x - 3, b.y + 49, 29, 35);
-          g.fillStyle(0xc7ac70).fillRect(x, b.y + 52, 23, 29);
-          g.fillStyle(0x675e47).fillRect(x + 10, b.y + 52, 2, 29).fillRect(x, b.y + 65, 23, 2);
-        }
-        g.fillStyle(0x262621).fillRect(b.x + b.width / 2 - 16, b.y + b.height - 40, 32, 40);
-        g.fillStyle(0x66503b).fillRect(b.x + b.width / 2 - 12, b.y + b.height - 36, 24, 36);
-        g.fillStyle(0xd2b879).fillRect(b.x + b.width / 2 + 7, b.y + b.height - 18, 2, 3);
-        g.fillStyle(0x9b9174).fillRect(home.entrance.x - 16, b.y + b.height, 32, home.entrance.y - b.y - b.height + 4);
-        g.fillStyle(0x252e2c).fillRect(b.x + 8, b.y + 102, b.width - 16, 28);
-        g.lineStyle(2, home.mine ? 0xe8b34b : 0x9da99b, 0.8).strokeRect(home.entrance.x - 9, home.entrance.y - 9, 18, 18);
-        const sign = home.street.length > 32 ? home.street.slice(0, 31) + '…' : home.street;
-        marker.name.setPosition(b.x + b.width / 2, b.y + 112).setText(sign + '\n' + (home.owner ? home.owner.kind.toUpperCase() : home.ownership.toUpperCase())).setDepth(b.y + 1);
-      }
-    }
-    function openWorldMap(districtId, fallback = true) {
-      if (destroyed || (!fallback && typeof worldUI?.openMapOverview !== 'function')) return false;
-      stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
-      if (typeof worldUI?.openMapOverview === 'function') {
-        worldUI.openMapOverview(typeof districtId === 'string' ? districtId : undefined);
-        const state = worldUI.getState();
-        return worldUI.isOpen() && state.panel === 'map' && state.mapView === 'world';
-      }
-      else if (worldUI) worldUI.open('map');
-      else navigate('city', 'waterfront');
-      return false;
-    }
-    function walkHome(key) {
-      const home = homes.find(item => item.key === key);
-      if (destroyed || !home) return false;
-      if (!ready || !player) {
-        if (root.classList.contains('omerta-city--unavailable')) showHome(key);
-        else queuedHome = { key, identity: sceneIdentity(), scope: options.worldScopeKey };
-        return true;
-      }
-      worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false); game.canvas.focus({ preventScroll: true });
-      if (Math.hypot(player.x - home.entrance.x, player.y - home.entrance.y) < 42) showHome(key);
-      else { pendingHome = key; path = findRoute(player, home.entrance); redrawPath(); revealVenue(viewport); }
-      return true;
-    }
-    function showHome(key, trigger) {
-      if (destroyed || !homes.some(home => home.key === key)) return;
-      worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
-      selectedHome = key; selectedExit = null; selectedActor = null; actorView = 'home'; actorOpening++;
-      actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
-      renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
-    }
-    function walkExit(id, trigger) {
-      const exit = exits.find(item => item.id === id); if (destroyed || !exit) return;
-      if (!ready || !player) { showExit(id, trigger); return; }
-      worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false); game.canvas.focus({ preventScroll: true });
-      if (Math.hypot(player.x - exit.x, player.y - exit.y) < 42) showExit(id, trigger);
-      else { pendingExit = id; path = findRoute(player, exit); redrawPath(); revealVenue(viewport); }
-    }
-    function showExit(id, trigger) {
-      if (destroyed || !exits.some(item => item.id === id)) return;
-      worldUI?.close(false); stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
-      selectedExit = id; selectedHome = null; selectedActor = null; actorView = 'exit'; actorOpening++;
-      actorReturn = trigger; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
-      renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
+        social: options.worldSocial, chat: options.worldChat, trackerVisible: tracked };
     }
 
     function publicActors() {
@@ -684,7 +426,7 @@
     function actorSlots() {
       const slots = [];
       for (let y = 224; y <= 532; y += 44) for (let x = 64; x < 930; x += 44) {
-        if (canWalk(x, y) && Math.hypot(x - initialPosition.x, y - initialPosition.y) > 54
+        if (traversable(x, y) && Math.hypot(x - initialPosition.x, y - initialPosition.y) > 54
           && !VENUES.some(venue => Math.hypot(x - venue.x, y - venue.y) < 42)) slots.push({ x, y });
       }
       return slots;
@@ -725,11 +467,10 @@
       const actor = findActor(selectedActor);
       const journalEntries = Array.isArray(options.intel) ? options.intel : options.intel?.journal || [];
       const objectives = Array.isArray(options.objectives) ? options.objectives : [];
-      const home = homes.find(item => item.key === selectedHome), exit = exits.find(item => item.id === selectedExit);
-      const signature = JSON.stringify([actorView, actor, home, exit, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
+      const signature = JSON.stringify([actorView, actor, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
       if (signature === actorRenderSignature) return;
       actorRenderSignature = signature;
-      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || '' : null;
+      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || '' : null;
       const scroll = actorDock.scrollTop;
       actorBody.replaceChildren();
       if (actorView === 'person') {
@@ -754,28 +495,6 @@
             actorBody.append(element('p', '', 'Your issued encounter objectives are complete.'));
           }
         }
-      } else if (actorView === 'home') {
-        actorBody.append(element('h4', '', home?.street || 'Street directory'));
-        if (home) {
-          actorBody.append(element('p', 'omerta-city__actor-facts', home.owner ? home.owner.name + ' · ' + home.owner.kind.toUpperCase() + ' steward'
-            : home.ownership === 'external' ? 'External deed · no in-city steward published' : home.ownership === 'estate' ? 'Estate street · no living steward published' : 'Steward not published'));
-          actorBody.append(element('p', '', 'This is an illustrative home plot for a confirmed street deed. It does not show where the steward is standing.'));
-          if (!ready) actorBody.append(element('p', '', 'Walking is unavailable. You can inspect the street or use World map and the deed board.'));
-          if (home.mine) {
-            actorBody.append(element('p', '', 'This is your street. Your account keeps the deed across character generations.'));
-            for (const [kind, label] of [['hideout', 'Your hideout'], ['deeds', 'Your deed board']]) {
-              const button = element('button', '', label); button.type = 'button'; button.dataset.cityHomeAction = kind; actorBody.append(button);
-              if (kind === 'hideout' && !worldUI) button.disabled = true;
-            }
-          }
-        } else actorBody.append(element('p', '', 'This street is outside the current directory window. Open World map to inspect more homes.'));
-        const map = element('button', '', 'World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
-      } else if (actorView === 'exit') {
-        actorBody.append(element('h4', '', exit ? 'Route to ' + exit.name : 'District routes'));
-        const fare = Number(options.rules?.travelCost);
-        actorBody.append(element('p', '', 'Choose your destination on World map. District travel is an explicit choice'
-          + (Number.isFinite(fare) ? ' with a $' + fare.toLocaleString('en-US') + ' ride fare.' : '; check its current fare before confirming.')));
-        const map = element('button', '', 'Choose a district on World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else {
         actorBody.append(element('h4', '', 'Street intel & objectives'));
         actorBody.append(element('p', '', 'Public world tips collected through confirmed encounters. Objectives advance through later encounters, not by reading this journal.'));
@@ -799,7 +518,7 @@
           actorBody.append(item);
         }
       }
-      const receipt = ['person', 'journal'].includes(actorView) ? options.encounterReceipt : null;
+      const receipt = options.encounterReceipt;
       if (receipt) {
         const region = element('section', 'omerta-city__encounter-receipt');
         region.setAttribute('data-city-encounter-receipt', ''); region.setAttribute('aria-label', 'Encounter receipt');
@@ -815,13 +534,13 @@
       }
       if (actorNotice) { const notice = element('p', 'omerta-city__actor-notice', actorNotice); notice.setAttribute('role', 'status'); actorBody.append(notice); }
       actorDock.scrollTop = scroll;
-      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus)) || actorBody).focus({ preventScroll: true });
+      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus)) || actorBody).focus({ preventScroll: true });
     }
     function showActor(id, trigger) {
       if (destroyed || !findActor(id)) return;
       worldUI?.close(false);
       hideGameDock(false);
-      stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = id; actorView = 'person'; actorOpening++;
+      stopMovement(); hideVenue(false); selectedActor = id; actorView = 'person'; actorOpening++;
       actorReturn = trigger || Array.from(actorList.children).find(button => button.dataset.cityActor === id);
       actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); renderPresence(); fitWorldFrame(); revealVenue(viewport);
@@ -831,14 +550,14 @@
       if (destroyed) return;
       worldUI?.close(false);
       hideGameDock(false);
-      stopMovement(); hideVenue(false); selectedHome = null; selectedExit = null; selectedActor = null; actorView = 'journal'; actorOpening++;
+      stopMovement(); hideVenue(false); selectedActor = null; actorView = 'journal'; actorOpening++;
       actorReturn = intelOpen; actorNotice = ''; actorRenderSignature = ''; actorDock.hidden = false; actorDock.scrollTop = 0;
       renderActorDock(); fitWorldFrame(); revealVenue(viewport); actorBody.focus({ preventScroll: true }); syncPointerBounds();
     }
     function hideActor(focus) {
       if (actorDock.hidden) return;
       const previousActor = selectedActor;
-      actorDock.hidden = true; selectedActor = null; selectedHome = null; selectedExit = null; actorView = ''; actorOpening++; actorRenderSignature = '';
+      actorDock.hidden = true; selectedActor = null; actorView = ''; actorOpening++; actorRenderSignature = '';
       actorBody.replaceChildren(); renderPresence(); fitWorldFrame();
       if (focus) {
         const currentButton = Array.from(actorList.children).find(button => button.dataset.cityActor === previousActor);
@@ -851,14 +570,6 @@
     listen(actorClose, 'click', () => hideActor(true));
     listen(intelOpen, 'click', showIntel);
     listen(actorDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideActor(true); } });
-    listen(actorBody, 'click', event => {
-      const button = event.target.closest('[data-city-home-action]'); if (!button || !actorBody.contains(button)) return;
-      if (button.dataset.cityHomeAction === 'map') openWorldMap(selectedExit || district.id);
-      else if (homes.some(home => home.key === selectedHome && home.mine)) {
-        if (button.dataset.cityHomeAction === 'hideout') { hideActor(false); worldUI?.open('room'); }
-        else if (button.dataset.cityHomeAction === 'deeds') navigate('deeds', 'directory');
-      }
-    });
     listen(actorsPrevious, 'click', () => { if (actorPage && !paging) { actorPage--; renderPresence(); } });
     listen(actorsMore, 'click', async () => {
       if (paging || destroyed) return;
@@ -964,9 +675,7 @@
       else if (character.wanted) condition = { label: 'WANTED', detail: 'Check The Law and your protection before taking another risk.', tone: 'blocked' };
       else if (numeric(character.hospSeconds) > 0) condition = { label: "DOC'S CARE", detail: 'Fighting is restricted while you recover.', tone: 'caution' };
       else if (numeric(character.health) !== null && numeric(character.health) < 30) condition = { label: 'LOW HEALTH', detail: 'Heal before taking a risky fight.', tone: 'caution' };
-      const destinationName = pendingHome ? homes.find(home => home.key === pendingHome)?.street
-        : pendingExit ? exits.find(exit => exit.id === pendingExit)?.name : pendingVenue?.name;
-      const walking = path.length && destinationName ? 'Walking to ' + destinationName + '…' : '';
+      const walking = path.length && pendingVenue ? 'Walking to ' + pendingVenue.name + '…' : '';
       const copy = walking ? (condition.tone === 'ready' ? walking : condition.detail + ' · ' + walking) : condition.detail;
       const changed = readinessCopy.textContent !== copy;
       if (readiness.dataset.tone !== condition.tone) readiness.dataset.tone = condition.tone;
@@ -992,10 +701,9 @@
       }
       return Array.from(result.values());
     }
-    function navigate(tab, context) {
+    function navigate(tab, venueId) {
       reportPosition(true);
-      const details = context && Object.getPrototypeOf(context) === Object.prototype ? { ...context } : { venueId: context };
-      if (typeof options.onNavigate === 'function') options.onNavigate(tab, details);
+      if (typeof options.onNavigate === 'function') options.onNavigate(tab, { venueId });
     }
     function renderActions(venue) {
       const actions = actionsFor(venue);
@@ -1043,7 +751,7 @@
       if (focused) (Array.from(questButtons.children).find(button => button.dataset.cityQuestAction === focused && !button.disabled) || open).focus({ preventScroll: true });
     }
     function stopMovement() {
-      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; queuedHome = null;
+      keys.clear(); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null;
       for (const button of moveButtons.values()) button.classList.remove('is-held');
       redrawPath();
       updateReadiness();
@@ -1200,10 +908,7 @@
       status.textContent = 'The neighborhood view is unavailable. Choose a destination below to keep playing.';
       controls.hidden = true;
       if (game) { game.destroy(true); game = null; }
-      homeMarkers.clear(); exitLabels.clear(); extensionGround = null; regionInk = null;
       scene = null; player = null;
-      const waiting = queuedHome; queuedHome = null;
-      if (waiting && waiting.identity === sceneIdentity() && waiting.scope === options.worldScopeKey) showHome(waiting.key);
     }
     function redrawPath() {
       if (!pathInk || !player) return;
@@ -1234,20 +939,10 @@
     }
     function nearTarget() {
       const venue = nearVenue(), actor = nearActor();
-      if (!player) return null;
-      const targets = [];
-      if (actor) targets.push({ actor, x: actor.x, y: actor.y });
-      if (venue) targets.push({ venue, x: venue.x, y: venue.y });
-      for (const home of homes) if (Math.hypot(home.entrance.x - player.x, home.entrance.y - player.y) < 42) targets.push({ home, ...home.entrance });
-      for (const exit of exits) if (Math.hypot(exit.x - player.x, exit.y - player.y) < 42) targets.push({ exit, x: exit.x, y: exit.y });
-      targets.sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));
-      return targets[0] || null;
+      if (actor && (!venue || Math.hypot(actor.x - player.x, actor.y - player.y) < Math.hypot(venue.x - player.x, venue.y - player.y))) return { actor };
+      return venue ? { venue } : null;
     }
-    function inspectNearby() {
-      const target = nearTarget();
-      if (target?.actor) showActor(target.actor.id); else if (target?.home) showHome(target.home.key);
-      else if (target?.exit) showExit(target.exit.id); else if (target?.venue) showVenue(target.venue);
-    }
+    function inspectNearby() { const target = nearTarget(); if (target?.actor) showActor(target.actor.id); else if (target?.venue) showVenue(target.venue); }
     function dimensions() {
       const phone = window.innerWidth <= 680;
       const fitted = !!canvasHost.style.getPropertyValue('--city-map-height');
@@ -1321,7 +1016,7 @@
       const camera = scene.cameras.main;
       const zoom = size.width >= 720 ? Math.min(size.width / WORLD.width, size.height / WORLD.height) : 0.82;
       camera.setZoom(zoom);
-      camera.setBounds(0, 0, world.width, world.height);
+      camera.setBounds(0, 0, WORLD.width, WORLD.height);
       // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = size.height < 160 ? (160 - size.height) / (2 * zoom) : 0;
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
@@ -1366,7 +1061,7 @@
         fontFamily: 'monospace', fontSize: size || 10, color: color || '#dfd1ad',
         resolution: 2, stroke: '#161719', strokeThickness: 2, padding: { x: 1, y: 1 }
       }).setOrigin(center ? 0.5 : 0, 0).setDepth(2);
-      if (s.textures.exists('city-art-background') && district.id === 'docks') {
+      if (s.textures.exists('city-art-background')) {
         artState.background = 'generated';
         s.add.image(0, 0, 'city-art-background').setOrigin(0).setDisplaySize(WORLD.width, WORLD.height).setDepth(0);
         for (const v of VENUES.filter(v => v.building)) {
@@ -1384,14 +1079,14 @@
         const g = s.add.graphics();
         const rect = (x, y, w, h, color, alpha) => g.fillStyle(color, alpha === undefined ? 1 : alpha).fillRect(x, y, w, h);
         // Cobblestones, drainage channels, and the worn main road.
-        rect(0, 0, 960, 640, region.ground);
+        rect(0, 0, 960, 640, 0x55564d);
         for (let y = 0; y < 560; y += 12) for (let x = 0; x < 960; x += 22) {
           const offset = y % 24 ? 11 : 0;
           const shade = [0x616256, 0x55574f, 0x5c5d51, 0x67655a][Math.floor(random() * 4)];
           rect(x + offset, y + 1, 20, 10, shade);
           rect(x + offset + 2, y + 2, 16, 1, 0x767468, 0.3);
         }
-        rect(0, 248, 960, 48, region.road);
+        rect(0, 248, 960, 48, 0x3e4445);
         rect(334, 226, 140, 326, 0x3e4445);
         rect(732, 210, 44, 342, 0x3e4445);
         for (let x = 0; x < 960; x += 24) { rect(x, 247, 21, 3, 0x9b9279); rect(x, 297, 21, 3, 0x9b9279); }
@@ -1401,7 +1096,7 @@
           rect(x, y, 2 + Math.floor(random() * 7), 1, 0x7c7967, 0.4);
         }
         // Canal and old stone quay; the water is a physical boundary.
-        rect(0, 554, 960, 86, region.water);
+        rect(0, 554, 960, 86, 0x243b43);
         for (let y = 562; y < 640; y += 12) for (let x = 0; x < 960; x += 48) {
           rect(x + Math.floor(random() * 25), y, 18 + Math.floor(random() * 26), 2, 0x456571, 0.55);
         }
@@ -1524,14 +1219,6 @@
         rect(822, 341, 4, 17, 0x2b302a); rect(864, 341, 4, 17, 0x2b302a);
         label(404, 310, 'CANAL STREET', 10, '#b4b09b', true);
         // Bake thousands of masonry and paving pixels once, keeping mobile redraws light.
-        if (district.id !== 'docks') {
-          rect(0, 546, 960, 94, region.ground);
-          rect(0, 552, 960, 36, region.road);
-          for (let x = 24; x < 930; x += 120) {
-            rect(x, 604, 48, 12, district.id === 'cathedral' ? 0x87937b : 0x8b6552);
-            rect(x + 8, 600, 32, 4, 0xb6ab89);
-          }
-        }
         g.generateTexture('city-neighborhood', WORLD.width, WORLD.height);
         g.destroy();
         s.add.image(0, 0, 'city-neighborhood').setOrigin(0).setDepth(0);
@@ -1557,7 +1244,6 @@
       artState.player = s.textures.exists('city-art-player-down') ? 'generated' : 'fallback';
       const generatedNpcs = ['fixer', 'worker', 'neighbor'].filter(type => s.textures.exists('city-art-' + type)).length;
       artState.npcs = generatedNpcs === 3 ? 'generated' : generatedNpcs ? 'mixed' : 'fallback';
-      if (region.landmark) placeNames.push(label(region.landmark.x + region.landmark.width / 2, region.landmark.y + 10, region.landmark.name, 10, '#ead6a1', true));
       pathInk = s.add.graphics().setDepth(3);
       destinationInk = s.add.graphics().setDepth(3);
       const markerObjects = [];
@@ -1612,8 +1298,6 @@
         };
         placeNames.forEach(reveal);
         for (const marker of actorSprites.values()) reveal(marker.name);
-        for (const marker of homeMarkers.values()) reveal(marker.name);
-        for (const label of exitLabels.values()) reveal(label);
       }
       nameCamera.on('followupdate', placePlayerName);
       function removePlayerNameClamp() {
@@ -1638,7 +1322,7 @@
           event.preventDefault();
           worldUI?.close(false);
           hideGameDock(false);
-          keys.add(key); heldMoves.clear(); path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; redrawPath();
+          keys.add(key); heldMoves.clear(); path = []; pendingVenue = null; redrawPath();
         } else if (key === 'e' || key === 'enter') {
           event.preventDefault(); inspectNearby();
         } else if (key === 'escape') { event.preventDefault(); stopMovement(); hideGameDock(true); hideVenue(false); hideActor(false); }
@@ -1664,46 +1348,30 @@
         if (actor) {
           pointer.event?.stopPropagation();
           if (Math.hypot(player.x - actor.x, player.y - actor.y) < 42) showActor(actor.id);
-          else { pendingActor = actor.id; path = findRoute(player, actor); redrawPath(); }
+          else { pendingActor = actor.id; path = route(player, actor); redrawPath(); }
           return;
         }
-        const home = homes.find(home => point.x >= home.building.x && point.x <= home.building.x + home.building.width
-          && point.y >= home.building.y - 12 && point.y <= home.entrance.y + 14);
-        if (home) { walkHome(home.key); return; }
-        const exit = exits.find(exit => Math.hypot(point.x - exit.x, point.y - exit.y) < 30);
-        if (exit) { walkExit(exit.id); return; }
         const venue = VENUES.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
           (v.building && point.x >= v.building.x && point.x <= v.building.x + v.building.width &&
            point.y >= v.building.y && point.y <= v.building.y + v.building.height));
         if (venue && Math.hypot(player.x - venue.x, player.y - venue.y) < 42) { showVenue(venue); return; }
         const target = venue || point;
         pendingVenue = venue || null;
-        path = findRoute(player, target);
+        path = route(player, target);
         redrawPath();
       });
       ready = true;
       syncActorSprites();
-      drawHomes();
       for (const button of moveButtons.values()) button.disabled = false;
       if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }
       status.textContent = '';
       fitCamera();
       updateScene(0, 0);
       reportPosition(true);
-      const waiting = queuedHome; queuedHome = null;
-      if (waiting && waiting.identity === sceneIdentity() && waiting.scope === options.worldScopeKey) walkHome(waiting.key);
     }
 
     function updateScene(time, delta) {
       const dt = Math.min(delta / 1000, 0.05);
-      for (const key of permeableHomes) {
-        const home = homes.find(item => item.key === key), b = home?.building;
-        if (!b || !(player.x + PLAYER_RADIUS > b.x && player.x - PLAYER_RADIUS < b.x + b.width
-          && player.y + PLAYER_RADIUS > b.y && player.y - PLAYER_RADIUS < b.y + b.height)) {
-          permeableHomes.delete(key);
-          obstacles = baseObstacles().concat(homes.filter(home => !permeableHomes.has(home.key)).map(home => ({ ...home.building })));
-        }
-      }
       const previousX = player.x, previousY = player.y;
       let dx = 0, dy = 0, moving = false;
       if (game && document.activeElement === game.canvas) {
@@ -1715,8 +1383,8 @@
       if (dx || dy) {
         const length = Math.hypot(dx, dy);
         const stepX = dx / length * SPEED * dt, stepY = dy / length * SPEED * dt;
-        if (canWalk(player.x + stepX, player.y)) player.x += stepX;
-        if (canWalk(player.x, player.y + stepY)) player.y += stepY;
+        if (traversable(player.x + stepX, player.y)) player.x += stepX;
+        if (traversable(player.x, player.y + stepY)) player.y += stepY;
         moving = true;
       } else if (path.length) {
         const point = path[0];
@@ -1724,12 +1392,12 @@
         if (distance < SPEED * dt + 0.25) {
           player.setPosition(point.x, point.y);
           path.shift();
-          if (!path.length) { redrawPath(); if (pendingActor) showActor(pendingActor); else if (pendingHome) showHome(pendingHome); else if (pendingExit) showExit(pendingExit); else if (pendingVenue) showVenue(pendingVenue); }
+          if (!path.length) { redrawPath(); if (pendingActor) showActor(pendingActor); else if (pendingVenue) showVenue(pendingVenue); }
         } else {
           const nextX = player.x + (point.x - player.x) / distance * SPEED * dt;
           const nextY = player.y + (point.y - player.y) / distance * SPEED * dt;
-          if (canWalk(nextX, nextY)) player.setPosition(nextX, nextY);
-          else { path = []; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; redrawPath(); }
+          if (traversable(nextX, nextY)) player.setPosition(nextX, nextY);
+          else { path = []; pendingVenue = null; pendingActor = null; redrawPath(); }
         }
         moving = true;
       }
@@ -1761,14 +1429,14 @@
         scene.data.get('npcs').forEach((npc, i) => {
           if (!npc.title) {
             const pose = window.OmertaCityWorldUI?.ambientPose?.(decorative++, time);
-            if (pose && canWalk(pose.x, pose.y)) npc.sprite.setPosition(pose.x, pose.y).setDepth(pose.y);
+            if (pose && traversable(pose.x, pose.y)) npc.sprite.setPosition(pose.x, pose.y).setDepth(pose.y);
             else npc.sprite.x = npc.x + Math.sin(time / 2300 + i) * 13;
           }
         });
       }
-      const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
+      const target = nearTarget(), nearby = target?.venue || target?.actor;
       interact.disabled = !nearby;
-      const nearbyName = target?.actor ? target.actor.actor.name : target?.home?.street || target?.exit?.name || target?.venue?.name;
+      const nearbyName = target?.actor ? target.actor.actor.name : target?.venue?.name;
       for (const [id, marker] of actorSprites) {
         const copy = id === selectedActor || id === target?.actor?.id
           ? String(marker.actor.name || 'Unnamed person').slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
@@ -1780,7 +1448,7 @@
       if (status.textContent !== nextStatus) status.textContent = nextStatus;
       updateReadiness();
       reportPosition(false);
-      worldUI?.frame({ position: positionState(), world: { ...world }, obstacles, homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
+      worldUI?.frame({ position: positionState(), world: WORLD, obstacles: OBSTACLES,
         actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })) });
     }
 
@@ -1795,11 +1463,10 @@
           actions: Object.fromEntries(VENUES.map(v => [v.id, actionsFor(v)])),
           player: player ? { x: player.x, y: player.y } : null,
           destinations: VENUES.map(v => ({ id: v.id, x: v.x, y: v.y, tab: v.tab })),
-          obstacles: obstacles.map(r => ({ ...r })), homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
-          selectedHome, selectedExit, region: { id: district.id, landmark: region.landmark?.name || 'The Waterfront' },
+          obstacles: OBSTACLES.map(r => ({ ...r })),
           ambient: scene && ready ? scene.data.get('npcs').filter(n => !n.title).map(n => ({ x: n.sprite.x, y: n.sprite.y })) : [],
           camera: camera ? { x: camera.worldView.x, y: camera.worldView.y, zoom: camera.zoom, width: camera.width, height: camera.height } : null,
-          world: { ...world }, pathLength: path.length
+          world: { ...WORLD }, pathLength: path.length
         };
       }
 
@@ -1817,8 +1484,6 @@
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
-          options.worldAtlas = null; options.worldCollection = null; options.worldHomes = null;
-          homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); hideActor(false); stopMovement();
           look = 'classic'; player?.setTint(lookTints.classic);
         }
         if (typeof nextOptions.onNavigate === 'function') options.onNavigate = nextOptions.onNavigate;
@@ -1827,12 +1492,7 @@
         for (const key of ['renderTraining', 'renderFixer']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
-        for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
-        region = REGIONS[district.id] || REGIONS.docks;
-        walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
-        if ('worldHomes' in nextOptions && nextOptions.worldHomes === null) { homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); }
-        if (!worldUI) acceptHomes(options.worldHomes);
-        updateGeometry();
+        for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
         updateLabels();
         updateHud();
         if (selected) { renderActions(selected); renderQuest(selected); }
@@ -1850,19 +1510,16 @@
         document.getElementById('player-view-switch')?.classList.remove('has-world-tools');
         listeners.forEach(remove => remove());
         clearPlayerNameClamp = null;
-        keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null; pendingActor = null; pendingHome = null; pendingExit = null; queuedHome = null;
+        keys.clear(); heldMoves.clear(); path = []; selected = null; pendingVenue = null; pendingActor = null;
         selectedActor = null; actorOpening++; actorBody.replaceChildren(); options.intel = []; options.objectives = []; options.actors = [];
         gameKind = ''; gameOpening++; gameBody.replaceChildren();
         options.encounterReceipt = null; options.encounterRecovery = false;
         actorSprites.clear();
-        homeMarkers.clear(); exitLabels.clear(); homeSlots.clear(); permeableHomes.clear(); homes = []; homeBoard = null;
         if (game) { game.destroy(true); game = null; }
         player = null; scene = null;
         root.remove();
       },
-      getState: sceneState,
-      walkHome,
-      showWorldMap: districtId => openWorldMap(districtId, false)
+      getState: sceneState
     };
   }
 

@@ -165,7 +165,6 @@ import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard } from './opportunities.js';
 import { arenaBoard } from './arena.js';
 import { registerCity } from './routes/city.js';
-import { registerCityHomes } from './routes/cityhomes.js';
 import { registerCitySocial } from './city-social.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
@@ -2244,7 +2243,6 @@ export async function buildServer() {
   registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
-  registerCityHomes(app, { pool, auth });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerProjections(app, { pool, auth,

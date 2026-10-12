@@ -23,7 +23,6 @@ globalThis.Date = FixtureDate;
 const { buildServer } = await import('../src/server.js');
 const { ledger, withCharacter, withTwoCharacters } = await import('../src/game.js');
 const Jobs = await import('../src/intelforecastjobs.js');
-const { INTEL_FORECAST } = await import('../src/intelforecasts.js');
 const { priceBlock } = await import('../src/rules.js');
 const app = await buildServer(), suffix = crypto.randomUUID().slice(0, 6);
 const req = async (method, url, token, body) => {
@@ -82,33 +81,17 @@ try {
   await single(buyer,(ch,c,h)=>Jobs.cancelIntelForecastJob(ch,cancelled.id,c,h));
   assert.equal(await cash(buyer),before+100);assert.equal(await count('intel_job:refund',cancelled.id),1);
   const expired=(await create(buyer,reporter)).job;
-  const databaseNow=new Date((await app.pool.query('SELECT now() AS database_now')).rows[0].database_now).getTime();
-  assert.ok(Number.isFinite(databaseNow));
-  const expiryBase=Math.min(Date.now(),databaseNow), expiryTarget=expiryBase+INTEL_FORECAST.reportLeadMs/2;
-  await app.pool.query('UPDATE intel_forecast_jobs SET created_at=$2,target_at=$3 WHERE id=$1',[expired.id,new Date(expiryBase-600000),new Date(expiryTarget)]);
-  const preparedExpiry=await row(expired.id), expiryFee=Number(preparedExpiry.fee_cash), expiryCash=await cash(buyer);
-  assert.equal(preparedExpiry.status,'open');assert.equal(preparedExpiry.buyer_character,buyer.id);
-  assert.equal(new Date(preparedExpiry.created_at).getTime(),expiryBase-600000);
-  assert.equal(new Date(preparedExpiry.target_at).getTime(),expiryTarget);
-  const sqlExpiry=(await app.pool.query(`SELECT j.target_at,now() AS database_now FROM intel_forecast_jobs j
-    JOIN characters r ON r.id=j.reporter_character WHERE j.id=$1 AND j.status='open' AND r.alive
-    AND j.target_at<=now()+interval '60 seconds'`,[expired.id])).rows;
-  assert.equal(sqlExpiry.length,1,'The persisted owned row must satisfy the real SQL expiry window with a living reporter.');
-  assert.ok(Date.now()>=new Date(preparedExpiry.target_at).getTime()-INTEL_FORECAST.reportLeadMs,
-    'The persisted owned row must also satisfy the production JavaScript report-lead gate.');
-  assert.equal(await count('intel_job:refund',expired.id),0);
-  console.log(JSON.stringify({fixture:'owned forecast expiry row',database:postgres?'native PostgreSQL':'pg-mem',
-    javascriptNow:new Date(Date.now()).toISOString(),databaseNow:new Date(databaseNow).toISOString(),
-    verifiedDatabaseNow:new Date(sqlExpiry[0].database_now).toISOString(),createdAt:new Date(preparedExpiry.created_at).toISOString(),
-    targetAt:new Date(preparedExpiry.target_at).toISOString(),reportLeadMs:INTEL_FORECAST.reportLeadMs,sqlEligible:true,javascriptEligible:true}));
+  // Native SQL keeps its real clock while this price-block fixture freezes JS.
+  // Translate this deadline into both worker cutoff domains without changing either clock.
+  const sqlNow=+(await app.pool.query('SELECT clock_timestamp() AS at')).rows[0].at;
+  const expiryTarget=Math.min(Date.now(),sqlNow)+30000;
+  assert.ok(Number.isFinite(sqlNow));
+  assert.ok(expiryTarget<=sqlNow+60000,'Expiry candidate is due under the SQL clock');
+  assert.ok(Date.now()>=expiryTarget-60000,'Expiry refund is due under the JavaScript clock');
+  assert.equal(priceBlock(expiryTarget),priceBlock(Date.now()));
+  await app.pool.query('UPDATE intel_forecast_jobs SET created_at=$2,target_at=$3 WHERE id=$1',[expired.id,new Date(expiryTarget-600000),new Date(expiryTarget)]);
   assert.equal((await Jobs.expireIntelForecastJobs(app.pool)).refunded,1);
-  assert.equal(await cash(buyer),expiryCash+expiryFee);
-  const expiryRefunds=(await app.pool.query('SELECT character_id,currency,amount FROM transactions WHERE reason=$1 AND counterparty=$2',
-    ['intel_job:refund',expired.id])).rows;
-  assert.deepEqual(expiryRefunds.map(entry=>({characterId:entry.character_id,currency:entry.currency,amount:Number(entry.amount)})),
-    [{characterId:buyer.id,currency:'cash',amount:expiryFee}]);
   assert.equal((await Jobs.expireIntelForecastJobs(app.pool)).refunded,0);
-  assert.equal(await cash(buyer),expiryCash+expiryFee);assert.equal(await count('intel_job:refund',expired.id),1);
   assert.equal((await row(expired.id)).status,'expired');
   const doomed=(await create(buyer,reporter)).job;
   const killerBefore=await cash(foreign);

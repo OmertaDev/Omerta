@@ -32,7 +32,6 @@
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
-    let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
     let scope = identity(), lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
@@ -77,9 +76,8 @@
       if (panel === 'bag') kinds = ['inventory'];
       else if (['room', 'style'].includes(panel)) kinds = ['social'];
       else if (panel === 'chat') kinds = ['social', 'chat'];
-      else if (panel === 'map' && mapView === 'world') kinds = ['atlas', 'collection', 'homes'];
       const missing = panel === 'chat' ? !Object.hasOwn(boards, 'social') || (socialPreferences().chatEnabled === true && !Object.hasOwn(boards, 'chat'))
-        : kinds.some(kind => kind === 'homes' ? selectedDistrict && homeDistrict !== selectedDistrict : !Object.hasOwn(boards, kind));
+        : kinds.some(kind => !Object.hasOwn(boards, kind));
       const loading = !!(missing && kinds.some(kind => {
         const marker = readPending[kind];
         return marker && current(marker.token, marker.owner) && marker.ticket === readTickets[kind];
@@ -93,17 +91,14 @@
       return altered;
     }
     function resultBody(result) { return result?.body && typeof result.body === 'object' ? result.body : {}; }
-    async function read(kind, token = opening, input = {}) {
+    async function read(kind, token = opening) {
       if (typeof options.onRead !== 'function') return null;
       const owner = scope, socialAtStart = boards.social, ticket = (readTickets[kind] || 0) + 1; readTickets[kind] = ticket;
-      const marker = { token, owner, ticket, ...input }; readPending[kind] = marker;
+      const marker = { token, owner, ticket }; readPending[kind] = marker;
       if (panel && paintReadState()) changed();
       try {
-        const result = await options.onRead(kind, { ...input, isCurrent: () => !destroyed && owner === scope && owner === identity()
-          && (!['atlas', 'collection', 'homes'].includes(kind) || current(token, owner) && ticket === readTickets[kind] && panel === 'map' && mapView === 'world')
-          && (kind !== 'homes' || selectedDistrict === input.districtId) });
-        if (!current(token, owner) || ticket !== readTickets[kind] || result?.ignored
-          || kind === 'homes' && (mapView !== 'world' || selectedDistrict !== input.districtId)) return null;
+        const result = await options.onRead(kind, { isCurrent: () => !destroyed && owner === scope && owner === identity() });
+        if (!current(token, owner) || ticket !== readTickets[kind] || result?.ignored) return null;
         if (!result || result.code >= 400) {
           if (kind === 'chat' && result?.code === 403 && result.body?.error === 'city_chat_opt_in_required') {
             if (boards.social === socialAtStart) {
@@ -116,13 +111,7 @@
           return null;
         }
         if (kind === 'chat' && socialPreferences().chatEnabled !== true) { delete boards.chat; return null; }
-        if (kind === 'homes') {
-          if (resultBody(result).districtId !== input.districtId || !acceptHomes(resultBody(result), input.cursor)) return null;
-        } else boards[kind] = resultBody(result);
-        if (kind === 'atlas' && panel === 'map' && mapView === 'world') {
-          if (!atlasDistricts().some(district => district.id === selectedDistrict)) selectedDistrict = actualDistrict();
-          if (atlasDistricts().some(district => district.id === selectedDistrict) && !readPending.homes) readHomes();
-        }
+        boards[kind] = resultBody(result);
         if (kind === 'social') {
           options.onLook?.(socialPreferences().outfit || 'classic');
           if (socialPreferences().chatEnabled !== true) { delete boards.chat; options.chat = null; readTickets.chat = (readTickets.chat || 0) + 1; stopPolling(); clearSpeech(); lastChatId = ''; lastChatAt = 0; }
@@ -166,20 +155,14 @@
       } catch { if (current(token, owner)) setNotice('Confirmation is unavailable. Check the action receipt before trying a new choice.'); }
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
     }
-    function open(id = 'map', { world = false } = {}) {
+    function open(id = 'map') {
       if (destroyed || !tabs.has(id)) return;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
       stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
-      if (id === 'map') mapView = world ? 'world' : 'neighborhood';
       setNotice(''); render(); changed(); content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
       if (['room', 'style', 'chat'].includes(id)) read('social');
       else if (socialPreferences().chatEnabled === true) startPolling();
-      if (id === 'map' && world) {
-        if (!selectedDistrict) selectedDistrict = actualDistrict();
-        read('atlas'); read('collection');
-        if (atlasDistricts().some(district => district.id === selectedDistrict)) readHomes();
-      }
     }
     function close(focus = true) {
       if (dock.hidden) return;
@@ -209,127 +192,7 @@
     }
     function heading(text, copy) { content.append(el('h4', '', text)); if (copy) content.append(el('p', 'city-world__hint', copy)); }
     function catalogName(id, catalog) { return list(catalog).find(item => item?.id === id)?.name || caption(id); }
-    function actualDistrict() { return String(options.character?.loc || options.district?.id || ''); }
-    function atlasDistricts() { return list(boards.atlas?.districts).filter(district => district && typeof district.id === 'string' && typeof district.name === 'string'); }
-    function currentHomes(board) {
-      return board && board.viewer?.characterId === options.character?.id
-        && Number(board.viewer?.generation) === Number(options.character?.generation)
-        && board.viewer?.district === actualDistrict() && typeof board.districtId === 'string' && board.placement === 'illustrative';
-    }
-    function validHome(home, districtId) {
-      return home && typeof home.key === 'string' && typeof home.street === 'string' && home.districtId === districtId
-        && ['city', 'external', 'estate'].includes(home.ownership) && typeof home.mine === 'boolean'
-        && (home.ownership !== 'external' || home.owner === null && home.mine === false)
-        && (home.ownership !== 'estate' || home.owner === null)
-        && (home.owner === null || home.owner && typeof home.owner.name === 'string' && ['player', 'agent', 'npc'].includes(home.owner.kind));
-    }
-    function acceptHomes(board, cursor = null) {
-      if (!currentHomes(board) || !Array.isArray(board.homes)) return false;
-      if (board === lastHomesInput && homeDistrict === board.districtId) return true;
-      const fresh = list(board.homes).filter(home => validHome(home, board.districtId));
-      const mine = validHome(board.myHome, board.districtId) ? board.myHome : null;
-      const keep = cursor && homeDistrict === board.districtId ? homeRows.filter(home => home.key !== pinnedHome?.key || fresh.some(item => item.key === home.key)) : [];
-      const rows = new Map([...keep, ...fresh].map(home => [home.key, home]));
-      if (mine) rows.set(mine.key, mine);
-      homeRows = Array.from(rows.values()).slice(-64);
-      if (mine && !homeRows.some(home => home.key === mine.key)) homeRows = [...homeRows.slice(-63), mine];
-      homeDistrict = board.districtId; homeCursor = typeof board.nextCursor === 'string' ? board.nextCursor : null;
-      homeTotal = Math.max(0, Math.floor(number(board.total))); pinnedHome = mine;
-      homePaged = !!cursor;
-      if (!homeRows.some(home => home.key === selectedHome)) selectedHome = '';
-      boards.homes = { ...board, homes: homeRows, myHome: mine };
-      lastHomesInput = board;
-      if (board.districtId === actualDistrict()) { localHomesBoard = boards.homes; localHomesPaged = homePaged; }
-      options.onHomes?.(boards.homes);
-      return true;
-    }
-    function mergeHydratedHomes(board, previous, cursor) {
-      const fresh = list(board.homes).filter(home => validHome(home, board.districtId));
-      const mine = validHome(board.myHome, board.districtId) ? board.myHome : null;
-      const known = new Map(fresh.map(home => [home.key, home]));
-      const rows = new Map(list(previous).filter(home => validHome(home, board.districtId)).map(home => known.get(home.key) || home)
-        .filter(home => !home.mine || home.key === mine?.key).map(home => [home.key, home]));
-      if (mine) rows.set(mine.key, mine);
-      let visible = Array.from(rows.values()).slice(-64);
-      if (mine && !visible.some(home => home.key === mine.key)) visible = [...visible.slice(-63), mine];
-      return { ...board, homes: visible, myHome: mine, nextCursor: cursor };
-    }
-    function hydrateHomes(board) {
-      if (!currentHomes(board) || !Array.isArray(board.homes)) return false;
-      const fresh = list(board.homes).filter(home => validHome(home, board.districtId));
-      const mine = validHome(board.myHome, board.districtId) ? board.myHome : null;
-      const fields = home => home && [home.key, home.street, home.districtId, home.mine, home.ownership, home.owner?.name, home.owner?.kind];
-      const fingerprint = JSON.stringify([board.viewer, board.districtId, fresh.map(fields), fields(mine), board.nextCursor, board.total]);
-      if (fingerprint === lastHomesHydration) return true;
-      lastHomesHydration = fingerprint;
-      if (homeDistrict && homeDistrict !== board.districtId) {
-        // The host's current-district hydration cannot replace an inspected remote page.
-        if (board.districtId === actualDistrict()) {
-          localHomesBoard = localHomesPaged && currentHomes(localHomesBoard)
-            ? mergeHydratedHomes(board, localHomesBoard.homes, localHomesBoard.nextCursor)
-            : mergeHydratedHomes(board, fresh, typeof board.nextCursor === 'string' ? board.nextCursor : null);
-          options.onHomes?.(localHomesBoard);
-        }
-        return true;
-      }
-      if (!homePaged) return acceptHomes(board);
-      // Reconcile only published fields for known rows, preserving the loaded
-      // window and its issued cursor. An old own peek loses its private links
-      // when the fresh first page no longer publishes it as the viewer's deed.
-      const merged = mergeHydratedHomes(board, homeRows, homeCursor); homeRows = merged.homes;
-      homeTotal = Math.max(0, Math.floor(number(board.total))); pinnedHome = mine;
-      if (!homeRows.some(home => home.key === selectedHome)) selectedHome = '';
-      boards.homes = merged;
-      if (board.districtId === actualDistrict()) { localHomesBoard = boards.homes; localHomesPaged = homePaged; }
-      options.onHomes?.(boards.homes); return true;
-    }
-    function readHomes(cursor = null) {
-      if (!atlasDistricts().some(district => district.id === selectedDistrict)) return;
-      return read('homes', opening, { districtId: selectedDistrict, cursor });
-    }
-    function inspectDistrict(id) {
-      if (!atlasDistricts().some(district => district.id === id)) return;
-      selectedDistrict = id; selectedHome = ''; setNotice(''); render(); changed(); focusMapDetail('[data-city-district-detail]'); readHomes();
-    }
-    function focusMapDetail(selector) {
-      const target = content.querySelector(selector); if (!target) return;
-      const bounds = target.getBoundingClientRect(), box = dock.getBoundingClientRect(), barHeight = bar.getBoundingClientRect().height;
-      dock.scrollTo({ top: Math.max(0, dock.scrollTop + bounds.top - box.top - barHeight - 8), behavior: 'instant' });
-      target.tabIndex = -1; target.focus({ preventScroll: true });
-    }
-    async function travelDistrict() {
-      if (pending || options.recovery === true || typeof options.onTravel !== 'function' || !travelEligible(selectedDistrict)) return;
-      const owner = scope, token = opening, district = selectedDistrict;
-      const homeKey = homeRows.find(home => home.key === selectedHome && home.mine)?.key;
-      pending = true; setNotice('Confirming your destination…'); render();
-      try {
-        const result = await options.onTravel(district, {
-          homeKey,
-          beforeDispatch: () => current(token, owner) && panel === 'map' && mapView === 'world' && selectedDistrict === district && travelEligible(district),
-          // This describes the view only. The host preserves sent receipts with
-          // its own session/character guard across district changes and teardown.
-          isCurrent: () => !destroyed && owner === scope && owner === identity()
-        });
-        if (!current(token, owner) || result?.ignored) return;
-        setNotice(result?.code < 400 ? 'Travel confirmed. Updating your district…'
-          : result?.code === 499 ? 'That travel choice was closed before it was sent.' : 'Travel is not confirmed. Check the action receipt before trying again.');
-      } catch { if (current(token, owner)) setNotice('Travel confirmation is unavailable. Check the action receipt before trying again.'); }
-      finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
-    }
-    function travelFare() { const value = options.rules?.travelCost; return value !== null && value !== undefined && value !== '' ? Number(value) : NaN; }
-    function travelEligible(id) {
-      const fare = travelFare();
-      return atlasDistricts().some(district => district.id === id) && id !== actualDistrict() && Number.isFinite(fare) && fare >= 0
-        && number(options.character?.jailSeconds) <= 0 && number(options.character?.cash) >= fare;
-    }
     function renderMap() {
-      const modes = el('div', 'city-world__map-modes');
-      for (const [id, label] of [['neighborhood', 'Neighborhood'], ['world', 'World overview']]) {
-        const choose = button(label, () => open('map', { world: id === 'world' })); choose.dataset.cityMapView = id;
-        choose.setAttribute('aria-pressed', String(mapView === id)); modes.append(choose);
-      }
-      content.append(modes);
-      if (mapView === 'world') { renderAtlas(); return; }
       heading(String(options.district?.name || 'Your neighborhood'), 'Choose a waypoint to walk there. People markers show approximate district presence.');
       const map = el('canvas', 'city-world__minimap'); map.width = 480; map.height = 320; map.dataset.cityMinimap = '';
       map.setAttribute('role', 'img'); map.setAttribute('aria-label', 'Neighborhood minimap with venue waypoints and your local walking position. Accessible destinations follow.');
@@ -339,96 +202,7 @@
         const go = button(venue.name, () => { close(false); options.onWaypoint?.(venue.id); });
         go.dataset.cityWaypoint = venue.id; grid.append(go);
       }
-      content.append(grid);
-      const localHomes = currentHomes(localHomesBoard) ? list(lastFrame?.homes || options.getState?.()?.homes).filter(home => localHomesBoard.homes.some(item => item.key === home.key)) : [];
-      if (localHomes.length && options.onHome) {
-        heading('Neighborhood streets', 'Walk to a recorded street. House placement is illustrative.');
-        const homes = el('div', 'city-world__destination-grid');
-        for (const home of localHomes) {
-          const go = button('Walk to ' + home.street, () => { close(false); options.onHome?.(home.key); });
-          go.dataset.cityHomeWalk = home.key; homes.append(go);
-        }
-        content.append(homes);
-      }
-      paintMap();
-    }
-    function renderAtlas() {
-      const districts = atlasDistricts(), category = list(boards.collection?.categories).find(item => item.id === 'districts');
-      const visits = category ? new Set(list(category.items).filter(item => item.got === true).map(item => item.id)) : null;
-      heading('The city beyond this block', 'Inspect districts and their recorded streets. Choosing a district does not travel or spend cash.');
-      content.append(el('p', 'city-world__hint', visits ? visits.size + ' / ' + districts.length + ' districts recorded in your Collection' : 'Your recorded visits are loading…'));
-      if (!districts.length) { content.append(el('p', 'city-world__hint', 'The world overview is not available yet.')); return; }
-      const diagram = el('div', 'city-world__atlas-diagram');
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 480 280'); svg.setAttribute('aria-hidden', 'true');
-      const positions = new Map(districts.map((district, index) => [district.id, { x: 90 + index % 3 * 150, y: 70 + Math.floor(index / 3) * 140 }])), drawn = new Set();
-      for (const district of districts) for (const neighbor of list(district.neighbours)) {
-        const to = positions.get(neighbor), from = positions.get(district.id), key = [district.id, neighbor].sort().join(':');
-        if (!to || drawn.has(key)) continue; drawn.add(key);
-        const line = document.createElementNS(svg.namespaceURI, 'line');
-        for (const [name, value] of Object.entries({ x1: from.x, y1: from.y, x2: to.x, y2: to.y })) line.setAttribute(name, value);
-        svg.append(line);
-      }
-      for (const district of districts) {
-        const point = positions.get(district.id), circle = document.createElementNS(svg.namespaceURI, 'circle');
-        circle.setAttribute('cx', point.x); circle.setAttribute('cy', point.y); circle.setAttribute('r', '42'); circle.dataset.cityAtlasDistrict = district.id;
-        onRender(circle, 'click', () => inspectDistrict(district.id));
-        circle.classList.toggle('is-here', district.id === actualDistrict()); circle.classList.toggle('is-selected', district.id === selectedDistrict); svg.append(circle);
-        const name = document.createElementNS(svg.namespaceURI, 'text'); name.setAttribute('x', point.x); name.setAttribute('y', point.y + 56); name.textContent = district.name; svg.append(name);
-      }
-      diagram.append(svg); content.append(diagram, el('p', 'city-world__hint', 'Tap a district or use the list. Overview positions are illustrative.'));
-      const grid = el('div', 'city-world__districts');
-      for (const district of districts) {
-        const choose = button('', () => inspectDistrict(district.id), 'city-world__district'); choose.dataset.cityDistrict = district.id;
-        choose.dataset.worldControl = 'district:' + district.id;
-        choose.setAttribute('aria-pressed', String(district.id === selectedDistrict));
-        choose.append(el('strong', '', district.name), el('span', '', [district.id === actualDistrict() ? 'Here' : '', visits?.has(district.id) ? 'Visited' : visits ? 'Not recorded' : 'Visits loading', number(district.deeds) + ' street deeds'].filter(Boolean).join(' · ')));
-        grid.append(choose);
-      }
-      content.append(grid);
-      const district = districts.find(item => item.id === selectedDistrict); if (!district) return;
-      const details = el('section', 'city-world__district-detail'); details.dataset.cityDistrictDetail = district.id;
-      details.append(el('h4', '', district.name), el('p', '', district.perk || ''), el('p', 'city-world__hint', 'Connected districts: ' + list(district.neighbours).map(id => districts.find(item => item.id === id)?.name || id).join(' · ')));
-      const fare = travelFare();
-      const here = district.id === actualDistrict(), jailed = number(options.character?.jailSeconds) > 0;
-      const travel = button(here ? 'You are here' : Number.isFinite(fare) ? 'Travel here · $' + fare.toLocaleString('en-US') : 'Travel fare unavailable', travelDistrict);
-      travel.dataset.cityTravel = district.id; travel.disabled = !travelEligible(district.id) || pending || options.recovery === true || !options.onTravel;
-      details.append(travel);
-      if (!here && jailed) details.append(el('p', 'city-world__hint', 'Travel is unavailable from lockup.'));
-      else if (!here && Number.isFinite(fare) && number(options.character?.cash) < fare) details.append(el('p', 'city-world__hint', 'You need $' + fare.toLocaleString('en-US') + ' cash for the ride.'));
-      content.append(details); renderHomes(district);
-    }
-    function renderHomes(district) {
-      const section = el('section', 'city-world__homes'); section.dataset.cityHomesDistrict = district.id;
-      section.append(el('h4', '', 'Street directory'), el('p', 'city-world__hint', 'Deed records and public stewards. House placement is illustrative, not a tracked residence.'));
-      if (homeDistrict !== district.id) { section.append(el('p', 'city-world__hint', 'This district’s streets have not loaded yet.')); content.append(section); return; }
-      section.append(el('p', 'city-world__hint', homeRows.length + ' shown · ' + homeTotal + ' recorded streets'));
-      const grid = el('div', 'city-world__home-list');
-      for (const home of homeRows) {
-        const inspect = button('', () => { selectedHome = home.key; render(); changed(); focusMapDetail('[data-city-home-detail]'); }, 'city-world__home'); inspect.dataset.cityHome = home.key;
-        inspect.dataset.worldControl = 'home:' + home.key;
-        inspect.setAttribute('aria-pressed', String(selectedHome === home.key));
-        inspect.append(el('strong', '', home.street), el('span', '', home.mine ? 'Your street deed' : home.owner ? home.owner.name + ' · ' + caption(home.owner.kind) : home.ownership === 'external' ? 'External deed record' : 'Estate record · no living steward'));
-        grid.append(inspect);
-      }
-      section.append(grid);
-      if (!homeRows.length) section.append(el('p', 'city-world__hint', 'No street deeds are recorded in this district.'));
-      const selected = homeRows.find(home => home.key === selectedHome);
-      if (selected) {
-        const detail = el('section', 'city-world__home-detail'); detail.dataset.cityHomeDetail = selected.key;
-        detail.append(el('h4', '', selected.street), el('p', '', selected.owner ? 'Public steward: ' + selected.owner.name + ' (' + caption(selected.owner.kind) + ')' : selected.ownership === 'external' ? 'This is an external deed record. No in-city owner is asserted.' : 'An estate record without a living steward.'));
-        if (selected.districtId === actualDistrict() && options.onHome && list(lastFrame?.homes || options.getState?.()?.homes).some(home => home.key === selected.key)) {
-          const walk = button('Walk to this street →', () => { close(false); options.onHome?.(selected.key); }); walk.dataset.cityHomeWalk = selected.key; detail.append(walk);
-        }
-        if (selected.mine) {
-          detail.append(button('Open Street Deeds →', () => { close(false); options.onNavigate?.('deeds', { venueId: 'clubhouse', streetKey: selected.key, districtId: selected.districtId, focus: 'owned-deed' }); }));
-          detail.append(button('Your cosmetic Hideout →', () => open('room')));
-        }
-        section.append(detail);
-      }
-      const refresh = button('Refresh streets', () => readHomes()); section.append(refresh);
-      if (homeCursor) { const more = button('Load more streets →', () => readHomes(homeCursor)); more.dataset.cityHomesMore = ''; section.append(more); }
-      if (homeRows.length >= 64) section.append(button('Back to first streets', () => readHomes()));
-      content.append(section);
+      content.append(grid); paintMap();
     }
     function renderBag() {
       const character = options.character || {}, rules = options.rules || {}, owned = list(character.guns);
@@ -592,14 +366,8 @@
       const state = lastFrame || options.getState?.() || {}, world = state.world || { width: 960, height: 640 };
       const sx = canvas.width / world.width, sy = canvas.height / world.height;
       context.fillStyle = '#182c2c'; context.fillRect(0, 0, canvas.width, canvas.height);
-      context.fillStyle = '#47554b';
-      if (Array.isArray(state.roads)) for (const road of list(state.roads, 96)) context.fillRect(road.x * sx, road.y * sy, road.width * sx, road.height * sy);
-      else { context.fillRect(0, 96, canvas.width, 72); context.fillRect(145, 0, 55, canvas.height); }
-      for (const obstacle of list(state.obstacles, 160)) { context.fillStyle = '#927854'; context.fillRect(obstacle.x * sx, obstacle.y * sy, obstacle.width * sx, obstacle.height * sy); }
-      for (const home of list(state.homes)) if (currentHomes(localHomesBoard) && localHomesBoard.homes.some(item => item.key === home.key) && home.entrance) {
-        context.fillStyle = home.mine ? '#b1d88f' : '#b0b8a7'; context.fillRect(home.entrance.x * sx - 3, home.entrance.y * sy - 3, 6, 6);
-      }
-      for (const exit of list(state.exits, 16)) { context.fillStyle = '#9fc4da'; context.fillRect(exit.x * sx - 3, exit.y * sy - 3, 6, 6); }
+      context.fillStyle = '#47554b'; context.fillRect(0, 96, canvas.width, 72); context.fillRect(145, 0, 55, canvas.height);
+      for (const obstacle of list(state.obstacles, 30)) { context.fillStyle = '#927854'; context.fillRect(obstacle.x * sx, obstacle.y * sy, obstacle.width * sx, obstacle.height * sy); }
       for (const venue of list(options.venues, 16)) {
         context.fillStyle = '#e7b65d'; context.fillRect(venue.x * sx - 4, venue.y * sy - 4, 8, 8);
         context.fillStyle = '#eae1c3'; context.font = '10px monospace'; context.fillText(String(venue.name || '').slice(0, 14), Math.max(2, Math.min(canvas.width - 86, venue.x * sx - 30)), venue.y * sy + 17);
@@ -640,12 +408,9 @@
     const handle = {
       update(next) {
         if (destroyed || !next) return;
-        options = { ...options, ...next }; const owner = identity(), ownerChanged = owner !== scope;
-        if (ownerChanged) {
+        options = { ...options, ...next }; const owner = identity();
+        if (owner !== scope) {
           close(false); stopPolling(); scope = owner; boards = Object.create(null); options.social = null; options.chat = null; options.receipt = null; options.recovery = false;
-          options.atlas = null; options.collection = null; options.homes = null;
-          selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
-          options.onHomes?.(null);
           options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
           pending = false; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
           lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
@@ -667,13 +432,6 @@
           if (next.chat && socialPreferences().chatEnabled === true) boards.chat = next.chat;
           else { delete boards.chat; options.chat = null; clearSpeech(); }
         }
-        for (const kind of ['atlas', 'collection']) if (!ownerChanged && Object.hasOwn(next, kind)) {
-          if (next[kind]) boards[kind] = next[kind]; else delete boards[kind];
-        }
-        if (!ownerChanged && Object.hasOwn(next, 'homes')) {
-          if (next.homes) { if (!readPending.homes) hydrateHomes(next.homes); }
-          else { delete boards.homes; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; selectedHome = ''; options.onHomes?.(null); }
-        }
         renderTracker(); if (panel) render();
       },
       frame(frame) {
@@ -690,21 +448,11 @@
         if (speechUntil && now > speechUntil) clearSpeech();
       },
       open, close,
-      openMapOverview(districtId) {
-        const allowed = atlasDistricts().some(district => district.id === districtId)
-          || list(options.rules?.districts).some(district => (district.id || district) === districtId);
-        selectedDistrict = allowed ? districtId : actualDistrict();
-        open('map', { world: true });
-      },
-      inspectHome(key, focus = false) {
-        if (panel !== 'map' || mapView !== 'world' || homeDistrict !== selectedDistrict || !homeRows.some(home => home.key === key)) return false;
-        selectedHome = key; render(); changed(); if (focus) focusMapDetail('[data-city-home-detail]'); return true;
-      },
       isOpen: () => !dock.hidden,
       panelHeight: () => dock.hidden ? 0 : dock.getBoundingClientRect().height,
       setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); } },
-      getState: () => ({ panel, opening, pending, scope, mapView, districtId: selectedDistrict, selectedHome, chatJoined: socialPreferences().chatEnabled === true }),
-      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
+      getState: () => ({ panel, opening, pending, scope, chatJoined: socialPreferences().chatEnabled === true }),
+      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
     };
     handle.update(input);
     return handle;

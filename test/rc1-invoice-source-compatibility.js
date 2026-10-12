@@ -1,11 +1,9 @@
-import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import assert from 'node:assert/strict';
-import { cityHomesFeedSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -18,13 +16,13 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INVOICE_SOURCE_CURRENT_PINS)) {
-  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8')))))))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, fs.readFileSync(file, 'utf8'))))))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(invoiceSourceBaseline(file, current), baseline);
   assert.equal(invoiceSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
   assert.equal(invoiceSourceBaseline(file, unknown), unknown, 'composition must not manufacture historical bytes for unreviewed source');
   assert.throws(() => qualifyInvoiceSource(file, invoiceSourceBaseline(file, unknown)), /source changed/);
-  assert.equal(current, gitText(INVOICE_SOURCE_CURRENT_BLOBS[file]), 'Complete Invoice bytes after any exact Home inverse match frozen current Git blob: ' + file);
+  assert.equal(current, gitText(INVOICE_SOURCE_CURRENT_BLOBS[file]), 'Complete runtime bytes match frozen current Git blob: ' + file);
   assert.equal(current, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':' + file));
   assert.equal(baseline, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':' + file));
   assert.equal(hash(current), INVOICE_SOURCE_CURRENT_PINS[file]);
