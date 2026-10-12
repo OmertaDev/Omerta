@@ -387,6 +387,10 @@
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
+| [docs/game-employment-integration-review.md](../../docs/game-employment-integration-review.md) | documentation | 51 | 2026-10-12 |
+| [docs/game-employment-migration-review.md](../../docs/game-employment-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/game-employment-security-review.md](../../docs/game-employment-security-review.md) | documentation | 58 | 2026-10-12 |
+| [docs/game-employment-source-transfer-review.md](../../docs/game-employment-source-transfer-review.md) | documentation | 136 | 2026-10-12 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
