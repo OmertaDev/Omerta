@@ -450,13 +450,17 @@ step 3 returned the true counts, step 4 came back `"ok": true` with every §10.4
 - [ ] `POST /v1/auth/guest` → token; `POST /v1/character {name}` → 200; `POST /v1/crimes/pick` → a result.
       **Name it `smoke <date>` and know that it PERSISTS** — this line creates a real player on the
       live box, once per deploy, forever. Measured 2026-08-29, the two consequences:
-      it ages off the player-facing boards after `DISCOVERY.SEEN_DAYS` (30) — `/v1/live` and the
-      ROLODEX gate on `last_accrued_at`, so debris self-clears there and needs no sweep — but
+      live public discovery lists must use `seenSince()` and `DISCOVERY.SEEN_DAYS` (30) to age out
+      inactive smoke characters. Historical notebooks are different: `/v1/streets`, `/v1/live` and
+      the ROLODEX show earned observations with `observedAt`, not a live player directory. They
+      do not discover smoke characters automatically, and retain learned sightings when a person
+      goes offline; filtering those notes on live activity would reveal presence. `/v1/online`
+      counts current connections and telemetry from the last 15 minutes. Meanwhile,
       `/v1/mod/overview`'s `total`/`alive`/`dead` carry **no recency gate**, so every smoke character
       counts in YOUR OWN headline player figure permanently. `active24h` is gated and is the honest
-      one to read. The launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1
-      accounts from old smoke runs; the recency gate closed the board half, and this note closes the
-      other. If a clean count matters (a launch report, a funnel figure), subtract the smoke
+      one to read. The launch rehearsal found 10 of 12 entries on the former live directory were
+      dead level-1 accounts from old smoke runs. If a clean count matters (a launch report, a funnel
+      figure), subtract the smoke
       characters by name — they are the only ones this checklist creates. **There is no sweep, and the
       obvious lever makes it worse**: nothing in `src/` deletes a character row (a bloodline's dead
       streets are its record), so a smoke character is permanent, and `POST /v1/mod/kill` runs the
