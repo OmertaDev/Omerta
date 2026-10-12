@@ -1,4 +1,5 @@
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from './rc1-strategy-league-source-compatibility.js';
+import { cityGameplaySourceBaseline } from './rc1-city-gameplay-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from './rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from './rc1-strategy-source-compatibility.js';
@@ -169,7 +170,7 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 23, reviewedRevisi
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
-    const raw = String(await readFile(file)).replace(/\r\n/g, '\n');
+    const raw = cityGameplaySourceBaseline(file, String(await readFile(file))).replace(/\r\n/g, '\n');
     const homeBaseline = file === 'src/server.js' && sha256(raw) === CITY_HOMES_LEAGUE_SERVER_PIN
       ? assertCityHomesLeagueServerTransfer(raw).baselineText : raw;
     const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, homeBaseline));

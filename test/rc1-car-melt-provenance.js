@@ -1,4 +1,5 @@
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
+import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
@@ -49,7 +50,7 @@ assert.equal(oldHomes.inverseChunks,2);
 assert.equal(oldHomes.baselineText,gitServer(CITY_HOMES_SOURCE_BASE_REVISION+':src/server.js'));
 assert.equal(oldHomes.baselineText,gitServer(CITY_HOMES_PREDECESSOR_SERVER_BLOB));
 const normalizeCityHomesSource = input => {
- const text=input.replaceAll('\r\n','\n');
+ const text=cityGameplaySourceBaseline('src/server.js',input).replaceAll('\r\n','\n');
  if(hash(text)===CITY_HOMES_SERVER_PIN) return assertCityHomesServerTransfer(text);
  return hash(text)===CITY_HOMES_FEED_SERVER_PIN ? assertCityHomesFeedServerTransfer(text) : assertCityHomesLeagueServerTransfer(text);
 };
@@ -70,7 +71,7 @@ for(const changed of [currentHomeText+'\n// unknown GUI suffix\n',currentHomeTex
 }
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const actual = cityGameplaySourceBaseline(file,fs.readFileSync(file, 'utf8')).replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
   const homes = file === 'src/server.js' ? normalizeCityHomesSource(actual) : null;
   const invoiceInput = homes ? homes.baselineText : actual;

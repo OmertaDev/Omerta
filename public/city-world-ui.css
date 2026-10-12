@@ -19,6 +19,9 @@
 .omerta-city .city-world__tabs button { min-height: 44px; flex: 1 1 72px; font-size: 12px; padding: 4px 8px; }
 .city-world__tabs button[aria-pressed="true"], .city-world__look[aria-pressed="true"] { color: #fff1c1; border-color: #e8b34b; background: #3d3d2b; }
 .city-world__content { min-width: 0; outline-offset: -2px; }
+.city-world__card { margin-block: 10px; padding: 10px; border: 1px solid #4b5146; border-radius: 3px; background: #1c292b; overflow-wrap: anywhere; }
+.city-world__card p { margin-block: 6px; }
+.city-world__opportunity { margin-block: 8px; padding-block: 6px; border-top: 1px solid #4b5146; }
 .city-world__dock.is-compact { padding-block: 8px; }
 .city-world__dock.is-compact .city-world__dock-bar { height: 0; min-height: 0; border: 0; background: none; }
 .city-world__dock.is-compact .city-world__dock-bar > strong { display: none; }
@@ -67,7 +70,8 @@
 .city-world__atlas-diagram circle:hover { fill: #40584a; }
 .city-world__atlas-diagram circle.is-here { fill: #466b50; stroke: #c5d8a6; }
 .city-world__atlas-diagram circle.is-selected { stroke: #ffcf77; stroke-width: 4; }
-.city-world__atlas-diagram text { fill: #f0e2be; text-anchor: middle; font: 11px ui-monospace, monospace; }
+.city-world__atlas-diagram text { fill: #f0e2be; text-anchor: middle; font: 11px ui-monospace, monospace; cursor: pointer; }
+.city-world__atlas-diagram text:hover { fill: #ffcf77; }
 .city-world__districts, .city-world__home-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .omerta-city .city-world__district, .omerta-city .city-world__home { text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 4px; min-height: 44px; min-width: 0; overflow-wrap: anywhere; }
 .city-world__district span, .city-world__home span { font-size: 10px; line-height: 1.35; font-weight: normal; }

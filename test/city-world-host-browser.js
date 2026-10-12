@@ -172,7 +172,7 @@ try {
         return dock.scrollTop > 0 && [...dock.querySelectorAll('[data-city-world-panel]')].every(node => node.getBoundingClientRect().bottom < box.top);
       });
       const scrolled = await choices();
-      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all six choices out of view.');
+      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all seven choices out of view.');
       assert(scrolled.backHit && scrolled.backHeight >= 44, 'The sticky return control remains reachable: ' + JSON.stringify(scrolled));
       const at = requests.length, reads = await page.evaluate(() => window.__worldReads.length);
       if (keyboard) {
@@ -185,7 +185,7 @@ try {
       else await page.locator('[data-city-world-back]').click();
       await frames(page);
       const returned = await choices();
-      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 6, 'Returning exposes every real panel choice.');
+      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 7, 'Returning exposes every real panel choice.');
       assert(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), 'Return focuses the first choice without selecting it.');
       assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
       assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
@@ -1113,6 +1113,64 @@ try {
       && read.districtId === id && read.settled && read.current && read.code === 200 && !read.ignored), { start, id });
     assert.equal((await state(cityPage)).worldUI.districtId, id);
   };
+  const assertCaptionInspection = async () => {
+    await cityPage.waitForFunction(() => window.__worldReadResults.every(read => read.settled));
+    await frames(cityPage);
+    const before = await state(cityPage), handle = await cityPage.evaluateHandle(() => window.__worldHandles.at(-1));
+    const previous = before.worldUI.districtId, readStart = await cityPage.evaluate(() => window.__worldReadResults.length);
+    assert.notEqual(previous, 'cathedral', 'Caption activation must change the currently inspected district.');
+    const requestStart = cityRequests.length, name = mapBoard.districts.find(district => district.id === 'cathedral').name;
+    const caption = cityPage.locator('.city-world__atlas-diagram text').filter({ hasText: name });
+    assert.equal(await caption.count(), 1);
+    await caption.scrollIntoViewIfNeeded();
+    await cityPage.evaluate(() => {
+      window.__atlasCaptionActivation = null;
+      window.__atlasCaptionObserver = event => {
+        const target = event.target, trusted = event.isTrusted, pointerType = event.pointerType;
+        queueMicrotask(() => { window.__atlasCaptionActivation = {
+          target: target.tagName, trusted, pointerType,
+          selected: window.__worldHandles.at(-1).handle.getState().worldUI.districtId,
+          focusedDetail: document.activeElement?.dataset.cityDistrictDetail
+        }; });
+      };
+      document.addEventListener('click', window.__atlasCaptionObserver, { once: true });
+    });
+    try {
+      await activate(caption);
+      const clicked = await cityPage.evaluate(() => window.__atlasCaptionActivation);
+      assert(clicked?.trusted, 'The atlas caption uses actual native pointer input.');
+      if (cityPage.viewportSize().width > 680) {
+        assert.equal(clicked.target, 'text', 'The desktop mouse activates the district name itself, not the nearby circle.');
+        assert.equal(clicked.pointerType, 'mouse');
+      }
+      assert.equal(clicked.selected, 'cathedral', 'Native district caption activation selects Cathedral Hill.');
+      assert.equal(clicked.focusedDetail, 'cathedral', 'Caption activation focuses its district details.');
+    } finally {
+      await cityPage.evaluate(() => {
+        document.removeEventListener('click', window.__atlasCaptionObserver);
+        delete window.__atlasCaptionObserver; delete window.__atlasCaptionActivation;
+      });
+    }
+    const settled = async (start, id) => {
+      await cityPage.waitForFunction(({ start, id }) => window.__worldReadResults.slice(start).some(read => read.kind === 'homes'
+        && read.districtId === id && read.settled && read.current && read.code === 200 && !read.ignored), { start, id });
+      assert.equal((await state(cityPage)).worldUI.districtId, id);
+      assert.equal(await cityPage.locator(`[data-city-district="${id}"]`).getAttribute('aria-pressed'), 'true');
+      assert.match(await cityPage.locator(`[data-city-district-detail="${id}"]`).textContent(),
+        new RegExp(mapBoard.districts.find(district => district.id === id).name));
+      assert(await cityPage.evaluate(() => document.querySelector('.city-world__content').contains(document.activeElement)),
+        'A real directory settlement retains keyboard focus within the atlas.');
+    };
+    await settled(readStart, 'cathedral');
+    const keyboardRead = await cityPage.evaluate(() => window.__worldReadResults.length);
+    const districtButton = cityPage.locator(`[data-city-district="${previous}"]`);
+    await districtButton.focus(); await districtButton.press('Enter');
+    await settled(keyboardRead, previous);
+    assert.deepEqual((await state(cityPage)).position, before.position, 'Caption and keyboard inspection preserve the actual walking pose.');
+    assert(await cityPage.evaluate(entry => window.__worldHandles.at(-1) === entry && !entry.destroyed, handle));
+    await handle.dispose();
+    assert.deepEqual(mutations(cityRequests.slice(requestStart)), [], 'Caption and accessible-list inspection submit no gameplay POST.');
+  };
   const travelPrompt = async id => {
     await activate(cityPage.locator(`[data-city-travel="${id}"]`));
     const modal = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await modal.waitFor({ state: 'visible' });
@@ -1161,6 +1219,7 @@ try {
     const row = cityPage.locator(`[data-city-district="${visit.id}"]`);
     assert.equal((await row.textContent()).includes('Visited'), visit.got, 'Only the actual Collection GET records a visit.');
   }
+  await assertCaptionInspection();
   await selectDistrict('neon');
   assert.match(await cityPage.locator('[data-city-district-detail="neon"]').textContent(), /\$250/);
   let confirmation = await travelPrompt('neon'); await activate(confirmation.locator('[data-no]'));
@@ -1379,7 +1438,8 @@ try {
   await cityPage.setViewportSize({ width: 1440, height: 1000 }); await frames(cityPage);
   assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, desktopHandle));
   assert.deepEqual((await state(cityPage)).position, desktopPose, 'Passive resizing preserves the current home arrival pose.');
-  await openAtlas(); await selectDistrict(propertyDistrict); await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
+  await openAtlas(); await selectDistrict(propertyDistrict); await assertCaptionInspection();
+  await activate(cityPage.locator(`.city-world__home[data-city-home="${key}"]`));
   await assertFrame(cityPage);
   assert(await cityPage.evaluate(handle => window.__worldHandles.at(-1) === handle && !handle.destroyed, desktopHandle));
   assert.deepEqual((await state(cityPage)).position, desktopPose, 'Explicit desktop atlas entry reveals the same canvas and pose.');

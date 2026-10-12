@@ -672,14 +672,14 @@ export function recipeActionCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING
   });
 }
 
-async function actorContext(client, accountId) {
+async function actorContext(client, accountId, { readOnly = false } = {}) {
   const character = (await client.query(
     `SELECT id, account_id, loc, respect, cash, alive
-       FROM characters WHERE account_id=$1 AND alive FOR UPDATE`,
+       FROM characters WHERE account_id=$1 AND alive${readOnly ? '' : ' FOR UPDATE'}`,
     [accountId],
   )).rows[0];
   if (!character) fail('no_character', 'Create a character first.');
-  const account = (await client.query('SELECT status FROM accounts WHERE id=$1 FOR SHARE', [accountId])).rows[0];
+  const account = (await client.query('SELECT status FROM accounts WHERE id=$1' + (readOnly ? '' : ' FOR SHARE'), [accountId])).rows[0];
   if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
   // One node-pg client executes sequentially. Overlapping queries on a checked-out client are
   // deprecated and disappear in pg@9; pg-mem would hide that production-only failure mode.
@@ -934,12 +934,13 @@ export async function planCraftingSnapshot(client, accountId, craftingContext, r
     } };
 }
 
-export async function recipeCatalogForPlayer(client, accountId, craftingContext, recipeIds) {
+export async function recipeCatalogForPlayer(client, accountId, craftingContext, recipeIds, { readOnly = false } = {}) {
   const context = contextOf(craftingContext);
   if (!Array.isArray(recipeIds) || recipeIds.length > 50 || recipeIds.some((id) => typeof id !== 'string')) {
     fail('bad_crafting_request', 'A bounded recipe selection is required.');
   }
-  const actor = await actorContext(client, canonicalString(accountId, 'Authenticated account id'));
+  if (readOnly) assertItemRead(client);
+  const actor = await actorContext(client, canonicalString(accountId, 'Authenticated account id'), { readOnly });
   const recipes = recipeIds.map((recipeId) => recipeOf(context, recipeId)).filter((recipe) => publicRecipe(context, recipe)), asOf = Date.now();
   await resolveRecipeAuthority(client, context, recipes, accountId, actor, asOf);
   actor.scarcity = new Map();
@@ -949,6 +950,15 @@ export async function recipeCatalogForPlayer(client, accountId, craftingContext,
   const selected = new Set(recipes.map((recipe) => recipe.id));
   const catalog = recipeCatalog(actor, context);
   return catalog.filter((recipe) => selected.has(recipe.id));
+}
+
+/** Private home workbench read; the authored recipe mutation retains every existing gate. */
+export async function homeRecipeCatalogForPlayer(client, accountId, craftingContext = DEFAULT_CRAFTING_CONTEXT) {
+  assertItemRead(client);
+  const context = contextOf(craftingContext);
+  const ids = [...CRAFTING_DEFINITIONS.get(context).values()].filter(recipe => recipe.visibility === 'public')
+    .slice(0, 50).map(recipe => recipe.id);
+  return recipeCatalogForPlayer(client, accountId, context, ids, { readOnly: true });
 }
 
 /** Execute one non-salvage recipe inside an active `withItemTransaction` callback. */

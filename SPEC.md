@@ -12,18 +12,18 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **356** files, **114915** lines (recursive source inventory) |
-| Test suites | **527** files, **156405** lines (recursive source inventory) |
-| HTTP routes | **948** registrations (**948** unique; 897 under `/v1`) |
-| Database tables | **406** (`schema.sql`, 8026 lines) |
-| Client | **14709** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
+| Backend modules | **371** files, **117172** lines (recursive source inventory) |
+| Test suites | **539** files, **159250** lines (recursive source inventory) |
+| HTTP routes | **979** registrations (**979** unique; 926 under `/v1`) |
+| Database tables | **413** (`schema.sql`, 8154 lines) |
+| Client | **15004** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **739** markdown files, **138246** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **740** markdown files, **138359** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **75** checks — **69** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
-Roughly **277,000 lines** of backend code, tests, schema and top-level contracts.
+Roughly **296,000 lines** of backend code, tests, schema and top-level contracts.
 
 ---
 
@@ -174,6 +174,22 @@ All 20 endpoints are authenticated; their 13 mutations require idempotency keys,
 remain direct actions and grant no `/v1/agent/act` authority. `npm run worldgraph:check` validates
 the manifest, closed executable schemas, and exact zero-OMR/cash policy independently of the authored-
 content compiler and `content:check`; server boot runs that same gate before accepting requests.
+
+**City gameplay, API 1.5 source** — six district story arcs add branching clues and inert keepsakes;
+deed interiors provide real storage, the existing recipe workbench and explicitly accepted visitors.
+Learned Bruiser, Pack Mule and Fast Talker skills open different lock, route and negotiation accounts.
+Actual living NPCs earn character/target-generation-scoped favor from 0 to 3, opening later dialogue
+and secret evidence; permanent choices can raise canonical heat by at most 6 once and close quiet
+branches. Four cases rotate on fixed six-hour server-clock windows. The Quiet Pier Run uses three
+consenting Crew accounts for planning, lookout, execution and getaway. District PvE drills expose
+enemy intent and separate encounter health/stamina; they preserve core health and economic resources.
+Hosted furnishing puzzles require explicit guest participation and save private outcomes. The graph
+manifest contains 20 packages, 151 nodes and the same three recipes. New content introduces no cash
+or $OMR reward source. API discovery begins at `/v1/worldgraph/ui`, `/v1/city/home/interior`,
+`/v1/city/opportunities` and `/v1/city/encounters`; callers execute issued direct actions with exact
+request bodies and idempotency keys. These are current working-tree implementations; final native,
+release and production qualification remain separate. Scope is recorded in
+[`docs/city-gameplay-security-review.md`](docs/city-gameplay-security-review.md).
 
 **Authored Content** — immutable operator-activated graph bundles, hash/version-pinned instances,
 revision-checked server-issued actions, the playable four-role **Sixth Chair**, and six short

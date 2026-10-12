@@ -1630,6 +1630,9 @@ ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS controller_account TEXT;      
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS control_until TIMESTAMPTZ;            -- when the rival's control lapses back to the owner
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS corner_at TIMESTAMPTZ;               -- the corner-take accrual clock (reset on claim + on a seizure/collect)
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS shakedown_at TIMESTAMPTZ;            -- per-deed cooldown on a corner shakedown
+-- A fresh epoch on canonical ownership transitions prevents a visitor permit reviving after resale.
+-- Existing deeds are activated explicitly by their authenticated owner; reads never mint this token.
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS home_authority_token TEXT;
 -- Phase 3 — THE SECONDARY MARKET (off-chain core). A deed holder LISTS their street for sale; a DEEDLESS
 -- buyer buys it → the deed + its provenance transfer to the buyer's account, control resets (the buyer
 -- earns the corner). §10.4: `deed:sale` a taxed cash transfer (the bodyguard:hire pattern). No escrow.
@@ -4502,6 +4505,7 @@ CREATE INDEX IF NOT EXISTS ix_item_stacks_owner
 CREATE TABLE IF NOT EXISTS item_instances (
   id TEXT PRIMARY KEY,
   template_id TEXT NOT NULL,
+  definition_hash TEXT,
   owner_scope TEXT NOT NULL,
   owner_id TEXT NOT NULL,
   state TEXT NOT NULL DEFAULT 'active',
@@ -4512,7 +4516,8 @@ CREATE TABLE IF NOT EXISTS item_instances (
   CONSTRAINT item_instance_template_id CHECK (char_length(template_id) BETWEEN 1 AND 200),
   CONSTRAINT item_instance_owner_scope CHECK (owner_scope IN ('character','account','operation')),
   CONSTRAINT item_instance_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
-  CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed')),
+  CONSTRAINT item_instance_state CHECK (state IN ('active','escrowed','consumed','stored')),
+  CONSTRAINT item_instance_storage_legacy CHECK (state<>'stored' OR definition_hash IS NULL),
   CONSTRAINT item_instance_state_time CHECK (
     (state = 'consumed' AND consumed_at IS NOT NULL)
     OR (state <> 'consumed' AND consumed_at IS NULL)
@@ -4520,6 +4525,7 @@ CREATE TABLE IF NOT EXISTS item_instances (
   CONSTRAINT item_instance_escrow_owner CHECK (
     (state = 'active' AND owner_scope IN ('character','account'))
     OR (state = 'escrowed' AND owner_scope = 'operation')
+    OR (state = 'stored' AND owner_scope = 'account')
     OR state = 'consumed'
   ),
   UNIQUE (id, owner_scope, owner_id, state)
@@ -4568,7 +4574,8 @@ CREATE TABLE IF NOT EXISTS item_mutation_guards (
   CONSTRAINT item_guard_key CHECK (char_length(idempotency_key) BETWEEN 1 AND 200),
   CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
     'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
-    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action'
+    'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action',
+    'store_item','retrieve_stored_item'
   )),
   CONSTRAINT item_guard_owner_scope CHECK (owner_scope IN ('character','account','operation')),
   CONSTRAINT item_guard_owner_id CHECK (char_length(owner_id) BETWEEN 1 AND 200),
@@ -4602,7 +4609,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS ix_item_mutation_v2_scope
 ALTER TABLE item_mutation_guards DROP CONSTRAINT IF EXISTS item_guard_kind;
 ALTER TABLE item_mutation_guards ADD CONSTRAINT item_guard_kind CHECK (mutation_kind IN (
   'grant_stack','consume_stack','create_item','transfer_item','consume_item','escrow_item','release_escrow',
-  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action'
+  'assign_current_character','craft','salvage_car','mystery_action','operation_action','reward_claim','world_action',
+  'store_item','retrieve_stored_item'
 ));
 
 -- All stack movements are recorded too, but unique-item provenance is the hard contract: every
@@ -4630,7 +4638,7 @@ CREATE TABLE IF NOT EXISTS item_events (
   UNIQUE (idempotency_key, event_key),
   CONSTRAINT item_event_key CHECK (char_length(event_key) BETWEEN 1 AND 200),
   CONSTRAINT item_event_kind CHECK (event_kind IN (
-    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'
+    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'
   )),
   CONSTRAINT item_event_provenance_kind CHECK (
     provenance_kind IS NULL OR provenance_kind IN (
@@ -7001,7 +7009,7 @@ ALTER TABLE item_events ADD CONSTRAINT item_event_template_id CHECK (
   OR (event_branch<>'legacy' AND char_length(template_id) BETWEEN 1 AND 258));
 ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_kind;
 ALTER TABLE item_events ADD CONSTRAINT item_event_kind CHECK (
-  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released'))
+  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'))
   OR (event_branch='lot' AND event_kind IN ('lot_granted','lot_consumed','lot_split_debit','lot_split_output','lot_escrowed','lot_released','lot_escrow_consumed'))
   OR (event_branch='unique' AND event_kind IN ('unique_granted','unique_escrowed','unique_released','unique_transferred','unique_consumed'))
   OR (event_branch='observation' AND event_kind='migration_origin'));
@@ -8024,3 +8032,123 @@ CREATE TABLE IF NOT EXISTS strategy_league_entries (
   UNIQUE(league_id,account_id)
 );
 CREATE INDEX IF NOT EXISTS ix_strategy_league_entries_account ON strategy_league_entries(account_id,joined_at);
+
+-- Functional rooms use a canonical deed epoch. Archived rooms retain only their original
+-- account's private contents; resale never transfers an item or revives a visitor grant.
+CREATE TABLE IF NOT EXISTS city_home_rooms (
+  home_key TEXT NOT NULL CHECK (char_length(home_key) BETWEEN 1 AND 128),
+  authority_token TEXT NOT NULL CHECK (char_length(authority_token) BETWEEN 1 AND 200),
+  owner_account_id TEXT NOT NULL REFERENCES accounts(id),
+  layout_json TEXT NOT NULL DEFAULT '[]',
+  revision INT NOT NULL DEFAULT 1 CHECK (revision >= 1),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY(home_key,authority_token)
+);
+CREATE INDEX IF NOT EXISTS ix_city_home_rooms_owner ON city_home_rooms(owner_account_id,home_key);
+CREATE TABLE IF NOT EXISTS city_home_visitors (
+  id TEXT PRIMARY KEY CHECK (char_length(id) BETWEEN 1 AND 200),
+  home_key TEXT NOT NULL,
+  authority_token TEXT NOT NULL,
+  host_character_id TEXT NOT NULL REFERENCES characters(id),
+  host_generation INT NOT NULL CHECK (host_generation >= 1),
+  guest_account_id TEXT NOT NULL REFERENCES accounts(id),
+  guest_character_id TEXT NOT NULL REFERENCES characters(id),
+  guest_generation INT NOT NULL CHECK (guest_generation >= 1),
+  rights_json TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('invited','active','revoked')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  accepted_at TIMESTAMPTZ,
+  revoked_at TIMESTAMPTZ,
+  FOREIGN KEY(home_key,authority_token) REFERENCES city_home_rooms(home_key,authority_token) ON DELETE RESTRICT
+);
+CREATE INDEX IF NOT EXISTS ix_city_home_visitors_guest ON city_home_visitors(guest_account_id,status,expires_at);
+CREATE INDEX IF NOT EXISTS ix_city_home_visitors_room ON city_home_visitors(home_key,authority_token,status);
+CREATE TABLE IF NOT EXISTS city_home_storage_items (
+  item_id TEXT PRIMARY KEY,
+  owner_scope TEXT NOT NULL CHECK (owner_scope='account'),
+  owner_id TEXT NOT NULL REFERENCES accounts(id),
+  item_state TEXT NOT NULL CHECK (item_state='stored'),
+  home_key TEXT NOT NULL,
+  authority_token TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  FOREIGN KEY(item_id,owner_scope,owner_id,item_state)
+    REFERENCES item_instances(id,owner_scope,owner_id,state) ON DELETE RESTRICT,
+  FOREIGN KEY(home_key,authority_token) REFERENCES city_home_rooms(home_key,authority_token) ON DELETE RESTRICT
+);
+CREATE INDEX IF NOT EXISTS ix_city_home_storage_room ON city_home_storage_items(home_key,authority_token,owner_id);
+
+-- Optional real-NPC bindings distinguish legacy solo cases from generation-bound favors.
+-- A binding never accepts client-selected account authority or survives replacement of either actor.
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS owner_generation INT;
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS npc_character_id TEXT REFERENCES characters(id);
+ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS npc_generation INT;
+ALTER TABLE mystery_instances DROP CONSTRAINT IF EXISTS mystery_instance_npc_binding;
+ALTER TABLE mystery_instances ADD CONSTRAINT mystery_instance_npc_binding CHECK (
+  (owner_generation IS NULL AND npc_character_id IS NULL AND npc_generation IS NULL)
+  OR (owner_scope='character' AND owner_generation IS NOT NULL AND owner_generation>=1
+    AND npc_character_id IS NOT NULL AND npc_character_id<>owner_id AND npc_generation IS NOT NULL AND npc_generation>=1)
+);
+CREATE TABLE IF NOT EXISTS city_npc_favors (
+  owner_character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  owner_generation INT NOT NULL CHECK (owner_generation>=1),
+  npc_character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  npc_generation INT NOT NULL CHECK (npc_generation>=1),
+  favor INT NOT NULL DEFAULT 0 CHECK (favor BETWEEN 0 AND 3),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY(owner_character_id,owner_generation,npc_character_id,npc_generation),
+  CHECK (owner_character_id<>npc_character_id)
+);
+
+CREATE TABLE IF NOT EXISTS city_encounters (
+  id TEXT PRIMARY KEY,
+  owner_character_id TEXT NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  owner_generation INT NOT NULL CHECK (owner_generation>=1),
+  scenario_id TEXT NOT NULL CHECK (scenario_id IN ('docks-patrol','neon-patrol','foundry-patrol','brick-patrol','canal-patrol','cathedral-patrol')),
+  district TEXT NOT NULL CHECK (district IN ('docks','neon','foundry','brick','canal','cathedral')),
+  revision INT NOT NULL CHECK (revision>=1),
+  status TEXT NOT NULL CHECK (status IN ('active','won','truce','lost','retreated','stalemate')),
+  model_json TEXT NOT NULL CHECK (char_length(model_json) BETWEEN 1 AND 10000),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  CHECK ((status='active' AND completed_at IS NULL) OR (status<>'active' AND completed_at IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_city_encounter_active ON city_encounters(owner_character_id,owner_generation) WHERE status='active';
+CREATE INDEX IF NOT EXISTS ix_city_encounter_history ON city_encounters(owner_character_id,owner_generation,created_at DESC,id DESC);
+
+ALTER TABLE city_home_rooms ADD COLUMN IF NOT EXISTS layout_revision INT NOT NULL DEFAULT 1;
+CREATE TABLE IF NOT EXISTS city_home_activities (
+  id TEXT PRIMARY KEY,
+  home_key TEXT NOT NULL,
+  authority_token TEXT NOT NULL,
+  host_account_id TEXT NOT NULL REFERENCES accounts(id),
+  host_character_id TEXT NOT NULL REFERENCES characters(id),
+  host_generation INT NOT NULL CHECK (host_generation>=1),
+  puzzle_id TEXT NOT NULL CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome')),
+  layout_revision INT NOT NULL CHECK (layout_revision>=1),
+  layout_json TEXT NOT NULL CHECK (char_length(layout_json) BETWEEN 1 AND 10000),
+  status TEXT NOT NULL CHECK (status IN ('open','closed')),
+  close_reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ,
+  FOREIGN KEY(home_key,authority_token) REFERENCES city_home_rooms(home_key,authority_token) ON DELETE RESTRICT,
+  CHECK ((status='open' AND closed_at IS NULL AND close_reason IS NULL) OR (status='closed' AND closed_at IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_city_home_activity_open ON city_home_activities(home_key,authority_token) WHERE status='open';
+CREATE TABLE IF NOT EXISTS city_home_activity_members (
+  activity_id TEXT NOT NULL REFERENCES city_home_activities(id) ON DELETE RESTRICT,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  character_id TEXT NOT NULL REFERENCES characters(id),
+  generation INT NOT NULL CHECK (generation>=1),
+  name_snapshot TEXT NOT NULL CHECK (char_length(name_snapshot) BETWEEN 1 AND 100),
+  step INT NOT NULL DEFAULT 0 CHECK (step BETWEEN 0 AND 3),
+  status TEXT NOT NULL CHECK (status IN ('active','solved','left')),
+  consent_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  left_at TIMESTAMPTZ,
+  solved_at TIMESTAMPTZ,
+  outcome_json TEXT,
+  PRIMARY KEY(activity_id,account_id),
+  CHECK (status<>'solved' OR (solved_at IS NOT NULL AND outcome_json IS NOT NULL)),
+  CHECK (status<>'left' OR left_at IS NOT NULL)
+);
+CREATE INDEX IF NOT EXISTS ix_city_home_activity_member_owner ON city_home_activity_members(account_id,character_id,generation);
