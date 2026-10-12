@@ -137,17 +137,36 @@ export async function publicEmploymentOffers(client) {
 export const employmentConservationQuery = 'SELECT COALESCE(SUM(escrow_cash),0) AS employment_cash FROM game_employment_jobs';
 
 // Canonical runEstate calls under original character/account mutex, after
-// depot/order/delivery processing. Reserve follows the street-wealth burn rule.
-export async function voidEmploymentAtDeath(client, h, victim) {
-  const jobs = (await client.query("SELECT * FROM game_employment_jobs WHERE employer_character=$1 AND employer_account=$2 AND state='open' ORDER BY id FOR UPDATE", [victim.id, victim.account_id])).rows;
-  let burnedCash = 0;
-  for (const job of jobs) {
-    const burn = Number(job.escrow_cash);
-    await client.query("UPDATE game_employment_jobs SET state='closed',escrow_cash=0,burned_cash=burned_cash+$2 WHERE id=$1", [job.id, burn]);
-    if (burn) await h.ledger(client, { currency: 'cash', amount: -burn, reason: `death:employment:${job.id}`, counterparty: victim.id });
-    burnedCash += burn;
+// depot/order/delivery processing. Like open loan/favor escrow, caller-approved
+// player fire kills loot a bounded share and burn the remainder. The caller must
+// pass its original locked in-memory killer; SQL cash writes would be clobbered.
+export async function voidEmploymentAtDeath(client, h, victim, killerCh = null, lootRate = 0) {
+  if (typeof lootRate!=='number' || !Number.isFinite(lootRate) || lootRate<0 || lootRate>0.5
+      || (!killerCh && lootRate!==0)) fail('estate_loot');
+  const original=(await client.query('SELECT id,account_id FROM characters WHERE id=$1',[id(victim.id)])).rows[0];
+  if (!original || original.account_id!==victim.account_id) fail('estate_party');
+  if (killerCh) {
+    person(killerCh);
+    const killer=(await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[killerCh.id])).rows[0];
+    if (!killer || !killer.alive || killer.is_npc || killer.account_id!==killerCh.account_id
+        || killerCh.id===victim.id || killerCh.account_id===victim.account_id) fail('estate_party');
   }
-  return { burnedCash, closedJobs: jobs.length };
+  const jobs = (await client.query("SELECT * FROM game_employment_jobs WHERE employer_character=$1 AND employer_account=$2 AND state='open' ORDER BY id FOR UPDATE", [victim.id, victim.account_id])).rows;
+  let burnedCash = 0, lootedCash = 0;
+  for (const job of jobs) {
+    const reserve=Number(job.escrow_cash), loot=killerCh ? Math.floor(reserve*lootRate) : 0, burn=reserve-loot;
+    if (loot) {
+      const next=Number(killerCh.cash)+loot;
+      if (!Number.isFinite(next) || next<0 || next>Number.MAX_SAFE_INTEGER) fail('cash');
+      await h.ledger(client,{ characterId:killerCh.id,currency:'cash',amount:loot,reason:'whack:loot',counterparty:victim.id });
+      await h.ledger(client,{ currency:'cash',amount:-loot,reason:`employment:estate:loot:${job.id}`,counterparty:victim.id });
+      killerCh.cash=next;
+    }
+    await client.query("UPDATE game_employment_jobs SET state='closed',escrow_cash=0,burned_cash=burned_cash+$2,looted_cash=looted_cash+$3 WHERE id=$1", [job.id, burn,loot]);
+    if (burn) await h.ledger(client, { currency: 'cash', amount: -burn, reason: `death:employment:${job.id}`, counterparty: victim.id });
+    burnedCash += burn; lootedCash += loot;
+  }
+  return { burnedCash, lootedCash, closedJobs: jobs.length };
 }
 
 // Immutable account-scoped request receipts may replay after a peer's death.
