@@ -8086,3 +8086,42 @@ CREATE TABLE IF NOT EXISTS game_employment_requests (
   receipt JSONB NOT NULL,
   PRIMARY KEY(account_id,action,request_key)
 );
+
+
+-- Company workflow metadata never holds funds or repeats a canonical payment.
+CREATE TABLE IF NOT EXISTS company_workflows (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  commitment_id TEXT NOT NULL UNIQUE REFERENCES delivery_commitments(id),
+  lease_id TEXT NOT NULL UNIQUE REFERENCES business_warehouse_leases(id),
+  terms JSONB NOT NULL,
+  quantity INT NOT NULL CHECK (quantity BETWEEN 1 AND 10),
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','completed','cancelled','expired','failed')),
+  completed_stages INT NOT NULL DEFAULT 0 CHECK (completed_stages BETWEEN 0 AND 3),
+  deadline TIMESTAMPTZ NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  CHECK (deadline > created_at),
+  CHECK ((status='completed' AND completed_stages=3) OR (status<>'completed' AND completed_stages<3))
+);
+CREATE INDEX IF NOT EXISTS company_workflow_due ON company_workflows(status,deadline,id);
+CREATE INDEX IF NOT EXISTS company_workflow_account ON company_workflows(account_id,created_at);
+CREATE TABLE IF NOT EXISTS company_workflow_receipts (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  identity JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS company_workflow_proofs (
+  workflow_id TEXT NOT NULL REFERENCES company_workflows(id),
+  stage TEXT NOT NULL CHECK (stage IN ('procurement','custody','delivery')),
+  source_type TEXT NOT NULL CHECK (source_type IN ('depot_journal','finance')),
+  source_id TEXT NOT NULL,
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(source_type,source_id),
+  CHECK ((stage='delivery' AND source_type='finance') OR (stage<>'delivery' AND source_type='depot_journal'))
+);
