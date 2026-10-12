@@ -86,6 +86,7 @@ import { register as registerGameEmployment } from './routes/gameemployment.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
 import { register as registerCompanyOpportunities } from './routes/companyopportunities.js';
 import { register as registerCommercialReputation } from './routes/commercialreputation.js';
+import { register as registerBusinessSeasons } from './routes/businessseasons.js';
 import { register as registerCommercialPremises } from './routes/commercialpremises.js';
 import { register as registerCompanyBankPortfolios } from './routes/companybankportfolios.js';
 import { register as registerCompanyLogisticsHubs } from './routes/companylogisticshubs.js';
@@ -2418,6 +2419,7 @@ export async function buildServer() {
   registerCompanyWorkflows(app, { pool, auth });
   registerCompanyOpportunities(app, { pool, auth });
   registerCommercialReputation(app, { pool, auth });
+  registerBusinessSeasons(app, { pool, auth });
   registerCommercialPremises(app, { pool, auth });
   registerCompanyBankPortfolios(app, { pool, auth });
   registerCompanyLogisticsHubs(app, { pool, auth });

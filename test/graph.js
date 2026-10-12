@@ -62,10 +62,10 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 // read that one — which is why the literal lives in its SQL.
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
-  'buyer cooperative settlement provenance', // no money bucket; cash and GIN have separate ledger checks
+  // Consent/provenance checks introduce no money bucket; canonical cash/GIN
+  // custody remains independently reconciled by the corresponding ledger checks.
+  'buyer cooperative settlement provenance',
   'character cash',
-  // These inspect consent/proof bindings against canonical component books; they
-  // introduce no currency bucket or ledger reason. Cash coverage stays with those books.
   'company bank portfolio authority and lifetime budget',
   'company succession bindings',
   'company workflow provenance',

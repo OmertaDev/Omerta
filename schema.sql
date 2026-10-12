@@ -8370,3 +8370,37 @@ CREATE TABLE IF NOT EXISTS commercial_reputation_settlements (
   source_id TEXT NOT NULL REFERENCES loans(id),
   account_id TEXT NOT NULL REFERENCES accounts(id)
 );
+
+-- Prospective prize-free Depot journal observations; no escrow or money authority.
+CREATE TABLE IF NOT EXISTS business_seasons (
+  id TEXT PRIMARY KEY,
+  creator_account TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL,
+  body_hash TEXT NOT NULL CHECK (char_length(body_hash)=64),
+  name TEXT NOT NULL,
+  starts_at TIMESTAMPTZ NOT NULL,
+  ends_at TIMESTAMPTZ NOT NULL CHECK (ends_at>starts_at),
+  max_companies INT NOT NULL CHECK (max_companies BETWEEN 2 AND 10),
+  source_pin JSONB NOT NULL,
+  UNIQUE(creator_account,request_key)
+);
+CREATE TABLE IF NOT EXISTS business_season_entries (
+  season_id TEXT NOT NULL REFERENCES business_seasons(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  body_hash TEXT NOT NULL CHECK (char_length(body_hash)=64),
+  published BOOLEAN NOT NULL,
+  visibility_revision INT NOT NULL DEFAULT 1 CHECK (visibility_revision BETWEEN 1 AND 2147483647),
+  enrollment_receipt JSONB NOT NULL,
+  next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  baseline JSONB,
+  end_snapshot JSONB,
+  final_result JSONB,
+  PRIMARY KEY(season_id,account_id),
+  UNIQUE(season_id,depot_id)
+);
+CREATE INDEX IF NOT EXISTS business_season_owned ON business_season_entries(account_id,season_id);
+
+ALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
+CREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;

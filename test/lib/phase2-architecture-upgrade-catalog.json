@@ -3145,6 +3145,76 @@
       "table_name": "commercial_reputation_settlements",
       "name": "commercial_reputation_settlements_transaction_id_fkey",
       "definition": "FOREIGN KEY (transaction_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_pkey",
+      "definition": "PRIMARY KEY (season_id, account_id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_season_id_depot_id_key",
+      "definition": "UNIQUE (season_id, depot_id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_season_id_fkey",
+      "definition": "FOREIGN KEY (season_id) REFERENCES business_seasons(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_visibility_revision_check",
+      "definition": "CHECK (visibility_revision >= 1 AND visibility_revision <= 2147483647)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_check",
+      "definition": "CHECK (ends_at > starts_at)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_creator_account_fkey",
+      "definition": "FOREIGN KEY (creator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_creator_account_request_key_key",
+      "definition": "UNIQUE (creator_account, request_key)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_max_companies_check",
+      "definition": "CHECK (max_companies >= 2 AND max_companies <= 10)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_pkey",
+      "definition": "PRIMARY KEY (id)"
     }
   ],
   "removed": [
@@ -4178,6 +4248,28 @@
       "account_id",
       "source_id",
       "transaction_id"
+    ],
+    "business_seasons": [
+      "body_hash",
+      "creator_account",
+      "ends_at",
+      "id",
+      "max_companies",
+      "name",
+      "request_key",
+      "source_pin",
+      "starts_at"
+    ],
+    "business_season_entries": [
+      "account_id",
+      "body_hash",
+      "depot_id",
+      "enrollment_receipt",
+      "next_observation_at",
+      "original_character",
+      "published",
+      "season_id",
+      "visibility_revision"
     ]
   }
 }
