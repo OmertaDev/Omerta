@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
 import { carMelt, ladderFenceMult, CONSTANTS } from '../src/rules.js';
@@ -37,7 +38,8 @@ export function carMeltQueryShapes() { assertCarMeltSources(); return { ...shape
 export function assertCarMeltSources() {
   const sources = {};
   for (const [file, pin] of Object.entries(CAR_MELT_SOURCE_PINS)) {
-    sources[file] = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    sources[file] = playerIntelSourceBaseline(file,
+      fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n'));
     if (file === 'src/game.js' && hash(sources[file]) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file])
       sources[file] = assertCrewLogisticsSourceTransfer(file, sources[file]).baselineText;
     assert.equal(hash(sources[file]), pin, 'Car melt provenance source changed: ' + file);

@@ -43,6 +43,16 @@ try {
   assert.equal((await call('POST', `/v1/streets/${stranger.id}/search`, watcher)).body.error, 'unknown_player');
   assert.equal((await pool.query('SELECT 1 FROM searches WHERE hunter=$1', [watcher.id])).rows.length, 0,
     'an unknown target cannot occupy the search slot');
+  await pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [stranger.id]);
+  const covertCash = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [watcher.id])).rows[0].cash);
+  for (const path of [`/v1/streets/${stranger.id}/npchit`, `/v1/pen/burner/${stranger.id}`]) {
+    const covert = await call('POST', path, watcher, { tier: 'legbreaker' });
+    assert.equal(covert.body.error, 'unknown_player', 'a covert hire requires learned identity even in the same district');
+    assert(!JSON.stringify(covert.body).includes(stranger.name), 'an unknown covert target yields no identity');
+    assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [watcher.id])).rows[0].cash), covertCash,
+      'an unfamiliar covert target never incurs a hire fee');
+  }
+  await pool.query("UPDATE characters SET loc='foundry' WHERE id=$1", [stranger.id]);
   let blocked = await call('GET', `/v1/phone/thread/${stranger.id}`, caller);
   assert.equal(blocked.body.error, 'no_number', 'a thread cannot resolve an arbitrary stranger ID');
   assert(!JSON.stringify(blocked.body).includes(stranger.name), 'an unfamiliar thread reveals no name');

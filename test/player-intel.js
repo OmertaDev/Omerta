@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
-import { bus } from '../src/game.js';
+import { bus, withTwoCharacters } from '../src/game.js';
 import { recordContact } from '../src/contacts.js';
 import { recordPlayerIntel, readPlayerIntel, playerIntelMap, playerIntelBoard,
   requireKnownPlayer, sharePlayerIntel, meetPlayer } from '../src/playerintel.js';
@@ -42,6 +42,8 @@ try {
   assert.equal(stranger.level, null);
   assert(!JSON.stringify(stranger).includes(target.ch.account_id), 'account identifiers never enter intel');
   await rejectsCode(requireKnownPlayer(pool, a.ch, remote.ch.id), 'unknown_player');
+  await rejectsCode(withTwoCharacters(pool, a.ch.account_id, remote.ch.id,
+    async () => ({ ok: true }), { meet: false, requireKnown: true }), 'unknown_player');
   let result = await call('POST', `/v1/streets/${remote.ch.id}/meet`, a.token);
   assert.equal(result.body.error, 'unknown_player', 'guessing a remote ID cannot introduce a player');
 

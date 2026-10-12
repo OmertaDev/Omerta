@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -103,7 +104,7 @@ export function qualifyCommercialPremisesSource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function commercialPremisesSourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = playerIntelSourceBaseline(file, input);
   return Object.hasOwn(COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, file) && hash(text) === COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file]
     ? assertCommercialPremisesSourceTransfer(file, text).baselineText : text;
 }

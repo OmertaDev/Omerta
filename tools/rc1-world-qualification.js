@@ -1,4 +1,5 @@
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from './rc1-strategy-league-source-compatibility.js';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from './rc1-company-operator-source-compatibility.js';
 import { GAME_EMPLOYMENT_SOURCE_TRANSFER } from './rc1-game-employment-source-compatibility.js';
 import { COMMERCIAL_PREMISES_SOURCE_TRANSFER } from './rc1-commercial-premises-source-compatibility.js';
@@ -177,7 +178,7 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 27, reviewedRevisi
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
-    const raw = companyOperatorSourceBaseline(file, String(await readFile(file)));
+    const raw = companyOperatorSourceBaseline(file, playerIntelSourceBaseline(file, String(await readFile(file))));
     const homeBaseline = file === 'src/server.js' && sha256(raw) === CITY_HOMES_LEAGUE_SERVER_PIN
       ? assertCityHomesLeagueServerTransfer(raw).baselineText : raw;
     const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, homeBaseline));

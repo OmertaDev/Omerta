@@ -2,6 +2,7 @@ import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from 
 import { GAME_EMPLOYMENT_SOURCE_TRANSFER } from '../tools/rc1-game-employment-source-compatibility.js';
 import { COMPANY_WORKFLOW_SOURCE_TRANSFER } from '../tools/rc1-company-workflow-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
+import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
@@ -100,7 +101,8 @@ for (const [file, predecessor] of [['src/server.js', CREW_LOGISTICS_SOURCE_REVIE
     'Complete independent family predecessor bytes must match');
 assert.throws(() => assertFranchiseSourceTransfer('src/unknown.js', ''), /Unknown franchise/);
 for (const file of Object.keys(CREW_LOGISTICS_SOURCE_CURRENT_PINS)) {
-  const text = franchiseSources.get(file)?.baselineText || (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'), proof = assertCrewLogisticsSourceTransfer(file, text);
+  const text = franchiseSources.get(file)?.baselineText || playerIntelSourceBaseline(file,
+    (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')), proof = assertCrewLogisticsSourceTransfer(file, text);
   crewSources.set(file, proof);
   assert.equal(proof.actualSha256, CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
   assert.equal(proof.baselineSha256, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file]);
@@ -443,7 +445,7 @@ for (const changed of [
   assert.throws(() => assertCitySourceTransfer('src/operations.js', changed), /source changed/);
 }
 for (const file of ['src/server.js', 'src/economy.js']) {
- const text = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+ const text = playerIntelSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'));
  const proof = assertEconomySourceTransfer(file, text);
  assert(proof.inverseChunks > 0);
  assert.equal(sha256(proof.baselineText), proof.baselineSha256);
