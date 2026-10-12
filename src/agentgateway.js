@@ -428,6 +428,31 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/company/premises': { operationId: 'getOwnCommercialPremises' },
+  'GET /v1/company/premises/offers': { operationId: 'getPublishedVerifiedPremisesOffers' },
+  'GET /v1/company/premises/leases/:id': { operationId: 'getOwnPaidCommercialOccupancy' },
+  'POST /v1/company/premises/offers': { operationId: 'OfferOwnVerifiedCommercialPremises', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['depotId', 'durationSeconds', 'expectedCompanyRevision', 'expectedRevision', 'offerExpiresAt', 'published', 'rentCash', 'slots'], properties: {
+      depotId: { type: ['string', 'null'], pattern: '^[A-Za-z0-9_-]{1,128}$' }, durationSeconds: { type: 'integer', minimum: 60, maximum: 86400 },
+      expectedCompanyRevision: { type: 'integer', minimum: 1, maximum: 2147483647 }, expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 },
+      offerExpiresAt: { type: 'string', format: 'date-time' }, published: { type: 'boolean' }, rentCash: { type: 'integer', minimum: 1, maximum: 100000 },
+      slots: { type: 'integer', minimum: 1, maximum: 2 },
+    } } },
+  'POST /v1/company/premises/offers/:id/lease': { operationId: 'LeaseVerifiedCommercialPremises', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['consent', 'expectedRevision', 'maxRentCash', 'slot'], properties: {
+      consent: { type: 'boolean', const: true }, expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483647 },
+      maxRentCash: { type: 'integer', minimum: 1, maximum: 100000 }, slot: { type: 'integer', minimum: 1, maximum: 2 },
+    } } },
+  'POST /v1/company/premises/offers/:id/cancel': { operationId: 'WithdrawOwnCommercialPremisesOffer', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483647 } },
+  } },
+  'POST /v1/company/premises/leases/:id/cancel': { operationId: 'SurrenderOwnPaidCommercialOccupancy', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483647 } },
+  } },
   'GET /v1/company/workflows': { operationId: 'getOwnExecutableCompanyContracts' },
   'POST /v1/company/workflows': { operationId: 'createExecutableCompanyContract', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
     schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
