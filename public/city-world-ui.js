@@ -374,6 +374,7 @@
         onRender(circle, 'click', () => inspectDistrict(district.id));
         circle.classList.toggle('is-here', district.id === actualDistrict()); circle.classList.toggle('is-selected', district.id === selectedDistrict); svg.append(circle);
         const name = document.createElementNS(svg.namespaceURI, 'text'); name.setAttribute('x', point.x); name.setAttribute('y', point.y + 56); name.textContent = district.name; svg.append(name);
+        onRender(name, 'click', () => inspectDistrict(district.id));
       }
       diagram.append(svg); content.append(diagram, el('p', 'city-world__hint', 'Tap a district or use the list. Overview positions are illustrative.'));
       const grid = el('div', 'city-world__districts');
