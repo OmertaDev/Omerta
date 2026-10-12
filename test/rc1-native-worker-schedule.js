@@ -73,6 +73,45 @@ execFileSync(process.execPath, ['--input-type=module', '-e', `
   } finally { seam.restore(); }
 `], { stdio: 'pipe' });
 console.log('PASS: cached uninstrumented database refuses before creating any pool');
+for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknown-prior']) {
+  execFileSync(process.execPath, ['--input-type=module', '-e', `
+    import assert from 'node:assert/strict';
+    import fs from 'node:fs';
+    import { execFileSync } from 'node:child_process';
+    import { registerHooks } from 'node:module';
+    import { COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_CURRENT_PINS } from './tools/rc1-logistics-coverage-source-compatibility.js';
+    import { createWorkerSchedule, installWorkerInstrumentation, WORKER_SOURCE_PINS } from './tools/rc1-native-worker.js';
+    import { sha256 } from './tools/rc1-native-proof.js';
+    const sourceCase = ${JSON.stringify(sourceCase)};
+    const target = new URL('./src/db.js', 'file://' + process.cwd().replaceAll('\\\\', '/') + '/').href;
+    const current = fs.readFileSync('./src/db.js', 'utf8').replaceAll('\\r\\n', '\\n');
+    const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS['src/db.js']], { encoding: 'utf8' });
+    let supplied = sourceCase.includes('prior') ? prior : current;
+    if (sourceCase === 'crlf') supplied = supplied.replaceAll('\\n', '\\r\\n');
+    if (sourceCase.startsWith('unknown')) supplied += '\\n// unsupported database source change\\n';
+    const fixture = registerHooks({ load(url, context, nextLoad) {
+      const result = nextLoad(url, context); return url === target ? { ...result, source: supplied } : result;
+    } });
+    const controller = createWorkerSchedule({ start: 0, setClock() {} });
+    const seam = installWorkerInstrumentation(controller, { namespace: 'rc1_source_guard' });
+    try {
+      if (sourceCase.startsWith('unknown')) {
+        await assert.rejects(import(target), /Pinned production source changed: src\\/db.js/);
+        assert.equal(controller.transformations.length, 0);
+      } else {
+        await import(target);
+        const transform = controller.transformations.find(row => row.file === 'src/db.js');
+        assert(transform); assert.equal(transform.originalSource, supplied);
+        assert.equal(transform.originalSourceSha256, sha256(supplied));
+        assert.equal(transform.pinnedLfSha256, WORKER_SOURCE_PINS['src/db.js']);
+        if (sourceCase === 'prior') assert.equal(transform.coverageSourceTransfer, null);
+        else assert.equal(transform.coverageSourceTransfer.actualSha256, COVERAGE_SOURCE_CURRENT_PINS['src/db.js']);
+      }
+      assert.equal(controller.pools.length, 0, 'Source-only regression never creates a database or boots a worker');
+    } finally { seam.restore(); fixture.deregister(); await controller.close(); }
+  `], { stdio: 'pipe' });
+}
+console.log('PASS: loader exact database current/prior/CRLF transfer preserves raw source and unknown edits reject without pools');
 
 // A non-UTC boot phase must survive preparation. Alignment neither invents an
 // hourly tick at boot nor skips five-minute work or same-time seasonal callbacks.

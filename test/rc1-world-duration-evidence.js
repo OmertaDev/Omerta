@@ -5,6 +5,8 @@ import { createWorkerSchedule, WORKER_SOURCE_PINS } from '../tools/rc1-native-wo
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
+import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
+  COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 
 const DAY = 86400000, season = 28 * DAY, start = 739 * season - 3600000;
 const end = start + 90 * DAY, hash = value => sha256(canonicalJson(value));
@@ -15,7 +17,8 @@ for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
   controller.transformations.push({ file, pinnedLfSha256, originalSource,
     transformedSource: originalSource, transformedSourceSha256: sha256(originalSource) });
 }
-const dbSource = controller.transformations.find(row => row.file === 'src/db.js').originalSource;
+const rawDbSource = controller.transformations.find(row => row.file === 'src/db.js').originalSource;
+const dbSource = coverageSourceBaseline('src/db.js', rawDbSource);
 const compatibilityAddition = "  mem.public.registerFunction({\n    name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,\n    implementation: (value, divisor) => value % divisor,\n  });\n";
 assert.equal(dbSource.split(compatibilityAddition).length, 2);
 assert.equal(sha256(dbSource.replace(compatibilityAddition, '')), '9e6360ea61c840bd92cde9a90330e29156fc137dc27ba5fa1e0d99cb432feb97', 'Only the isolated pg-mem function may differ from the prior native boot pin');
@@ -61,6 +64,30 @@ for (const originalSource of [currentWorker, baselineWorker]) {
   const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = originalSource + '\n// unreviewed suffix\n';
   assert.throws(() => measureWorldWorkerDuration(value), /Intel source changed/); sourceCorruptions++;
 }
+const dbFile = 'src/db.js';
+assert.equal(sha256(rawDbSource), COVERAGE_SOURCE_CURRENT_PINS[dbFile]);
+assert.equal(WORKER_SOURCE_PINS[dbFile], COVERAGE_SOURCE_BASELINE_PINS[dbFile]);
+const baselineDb = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[dbFile]], { encoding: 'utf8' }).replaceAll('\r\n', '\n');
+assert.equal(dbSource, baselineDb, 'Coverage composes complete prior DB bytes before the unchanged mod assertion');
+for (const originalSource of [rawDbSource.replaceAll('\n', '\r\n'), baselineDb, baselineDb.replaceAll('\n', '\r\n')]) {
+  const value = fixture(); value.trace.transformations.find(row => row.file === dbFile).originalSource = originalSource;
+  assert.deepEqual(measureWorldWorkerDuration(value), measured);
+}
+let dbCorruptions = 0;
+const unknownDb = originalSource => {
+  assert.equal(coverageSourceBaseline(dbFile, originalSource), originalSource, 'Unknown DB source is never rewritten into reviewed bytes');
+  const value = fixture(); value.trace.transformations.find(row => row.file === dbFile).originalSource = originalSource;
+  assert.throws(() => measureWorldWorkerDuration(value)); dbCorruptions++;
+};
+for (const chunk of COVERAGE_SOURCE_INVERSES[dbFile]) {
+  for (const originalSource of [rawDbSource.replace(chunk.current, ''), rawDbSource.replace(chunk.current, chunk.current + chunk.current),
+    rawDbSource.replace(chunk.current, chunk.current + '// unreviewed DB change\n')]) unknownDb(originalSource);
+  const context = chunk.current.split('\n').find(line => line.trim() && chunk.baseline.includes(line + '\n'));
+  assert(context); unknownDb(rawDbSource.replace(chunk.current, chunk.current.replace(context, context + ' /* altered context */')));
+}
+for (const originalSource of [rawDbSource, baselineDb]) unknownDb(originalSource + '\n// unreviewed DB suffix\n');
+assert(rawDbSource.includes('export async function makeDb()'));
+unknownDb(rawDbSource.replace('export async function makeDb()', 'export async function changedDb()'));
 const reseal = value => {
   value.trace.events.forEach((event, index) => { event.sequence = index + 1; });
   value.trace.scheduleSha256 = hash(value.trace.events.filter(row => row.kind !== 'callback.wall-duration'));
@@ -87,4 +114,4 @@ for (const change of [
   assert.equal(measureWorldWorkerDuration(value).workerCoverage.complete, true);
 }
 await controller.close();
-console.log(`PASS rc1-world-duration-evidence: original deadline coverage, complete season cycles, partial-cycle exclusion, 10 schedule controls and ${sourceCorruptions} exact Intel source controls; synthetic unit trace only, no new worker qualification`);
+console.log(`PASS rc1-world-duration-evidence: original deadline coverage, complete season cycles, partial-cycle exclusion, 10 schedule controls, ${sourceCorruptions} exact Intel source controls and ${dbCorruptions} closed Coverage DB controls; synthetic unit trace only, no new worker qualification`);

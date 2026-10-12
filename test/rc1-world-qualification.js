@@ -1,4 +1,11 @@
+import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
+import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
+import { COVERAGE_SOURCE_TRANSFER } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
+import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
+import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
+import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
+  coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
@@ -38,7 +45,7 @@ const hash = value => sha256(canonicalJson(value)), clone = value => structuredC
 const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const homesProof = assertCityHomesServerTransfer(homesServerText);
 assert.equal(homesProof.actualSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(homesProof.baselineSha256, INVOICE_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(homesProof.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(homesProof.sourceBlob, CITY_HOMES_SERVER_BLOB);
 assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_PREDECESSOR_SERVER_BLOB);
@@ -56,7 +63,7 @@ const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
   const raw = file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
-  const invoiceBaseline = invoiceSourceBaseline(file, raw);
+  const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, raw));
   const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline;
   const proof = assertFranchiseSourceTransfer(file, text);
   franchiseSources.set(file, proof);
@@ -466,12 +473,43 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-assert.equal(source.sourceFiles['src/server.js'], CITY_HOMES_SERVER_PIN);
+for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
+  for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
+    await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+      readFile: file => file === 'src/server.js' ? changed : fs.readFile(file) }), /source changed/);
+}
+await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+  readFile: file => file === 'src/server.js' ? homesServerText + '\n// unknown Home envelope change\n' : fs.readFile(file) }), /source changed/);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, INVOICE_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
 assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
+// The recovery consumer closes complete current Coverage -> Invoice -> Intel
+// sources back to its unchanged pins, never by trusting a supplied transfer tag.
+let coverageSourceControls = 0;
+for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')));
+  assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
+  const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
+    assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), source);
+  const reject = async bytes => {
+    assert.equal(coverageSourceBaseline(file, bytes), bytes, 'Unknown outer source is never rewritten into historical bytes');
+    await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), /source changed/); coverageSourceControls++;
+  };
+  for (const chunk of COVERAGE_SOURCE_INVERSES[file]) {
+    for (const changed of [current.replace(chunk.current, ''), current.replace(chunk.current, chunk.current + chunk.current),
+      current.replace(chunk.current, chunk.current + '// unsupported Coverage change\n')]) await reject(changed);
+    const context = chunk.current.split('\n').find(line => line.trim() && chunk.baseline.includes(line + '\n'));
+    assert(context); await reject(current.replace(chunk.current, chunk.current.replace(context, context + ' /* altered context */')));
+  }
+  for (const bytes of [current, prior]) await reject(bytes + '\n// unsupported source suffix\n');
+}
+console.log(`PASS recovery source composition: full current/prior/CRLF parity and ${coverageSourceControls} closed Coverage controls`);
+assert.equal(source.sourceFiles['src/server.js'], FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(source.sourceFiles['src/game.js'], CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.predecessorPins, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS);
 assert.match(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.scope, /separate current-source native proofs/);
@@ -514,7 +552,13 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 20);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 23);
+for (const [name, transfer] of [['companySuccessionSourceReviewTransfer', COMPANY_SUCCESSION_SOURCE_TRANSFER],
+  ['strategySourceReviewTransfer', STRATEGY_SOURCE_TRANSFER], ['coverageSourceReviewTransfer', COVERAGE_SOURCE_TRANSFER]]) {
+  assert.deepEqual(WORLD_RECOVERY_REVIEW[name], transfer);
+  assert.match(transfer.scope, /separate current-source native proof/);
+  assert.match(transfer.scope, /no historical runtime, native, deployment or financial qualification/);
+}
 assert.deepEqual(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer, source.invoiceSourceTransfer);
 assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /separate current-source native proof/);
 assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /no historical runtime, native, deployment or financial qualification/);

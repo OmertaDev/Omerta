@@ -390,6 +390,47 @@ const OPERATION_CONTRACTS = {
   },
   'POST /v1/intel-forecasts/:id/cancel': { operationId: 'refundOwnOpenGameForecastJob' },
   'POST /v1/intel-forecasts/:id/resolve': { operationId: 'resolveOwnObservedGameForecast' },
+  'GET /v1/strategies': { operationId: 'getPublicGameStrategyCatalog' },
+  'GET /v1/strategies/library': { operationId: 'getOwnGameStrategyLibrary' },
+  'POST /v1/strategies': {
+    operationId: 'publishOwnGameStrategyVersion', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Persist this logical command identity before posting; exact retries recover the original publication.' }],
+    requestSchema: { type: 'object', additionalProperties: false,
+      required: ['title', 'rule', 'feeCash'], properties: {
+        title: { type: 'string', minLength: 1, maxLength: 100 }, feeCash: { type: 'integer', minimum: 50, maximum: 5000 },
+        rule: { type: 'object', additionalProperties: false, required: ['kind', 'districtId', 'minimumStock', 'triggerStock'], properties: {
+          kind: { type: 'string', const: 'gin_availability_v1' }, districtId: { type: 'string' },
+          minimumStock: { type: 'integer', minimum: 1, maximum: 40 }, triggerStock: { type: 'integer', minimum: 1, maximum: 40 },
+        } },
+      } },
+  },
+  'POST /v1/strategies/:id/buy': { operationId: 'buyOwnGameStrategyLicense', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Reuse the original purchase identity for recovery; a different identity cannot alias an existing license.' }],
+    requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
+  'POST /v1/company-succession': {
+    operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Persist this consent identity before posting; exact retries recover the original opening receipt.' }],
+    requestSchema: { type: 'object', additionalProperties: false,
+      required: ['expectedCompanyRevision', 'predecessorCharacterId', 'maxOpeningCash', 'consent'], properties: {
+        expectedCompanyRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+        predecessorCharacterId: { type: 'string', minLength: 1, maxLength: 128 }, maxOpeningCash: { type: 'integer', const: 5000 }, consent: { type: 'boolean', const: true },
+      } },
+  },
+  'GET /v1/logistics-coverage': { operationId: 'getOwnGameLogisticsCoverage' },
+  'POST /v1/logistics-coverage/offers': {
+    operationId: 'offerOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['leaseId', 'coveredUnits', 'cashPerUnit', 'premiumCash', 'expiresAt'], properties: {
+        leaseId: { type: 'string', minLength: 1, maxLength: 200 }, coveredUnits: { type: 'integer', minimum: 1, maximum: 10 },
+        cashPerUnit: { type: 'integer', minimum: 1, maximum: 100000 }, premiumCash: { type: 'integer', minimum: 0, maximum: 1000000 },
+        expiresAt: { type: 'string', format: 'date-time' },
+      } },
+  },
+  'POST /v1/logistics-coverage/:id/accept': { operationId: 'acceptOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/cancel': { operationId: 'cancelOwnUnfundedGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/claim': { operationId: 'claimOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/logistics-coverage/:id/refund': { operationId: 'refundOwnGameLogisticsCoverageReserve', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',

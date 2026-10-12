@@ -148,6 +148,7 @@ async function waitForInput(page, predicate, argument) {
       const state = window.__cityHandles.at(-1)?.handle.getState();
       return { hidden: document.hidden, focused: document.hasFocus(), active: document.activeElement?.id || document.activeElement?.tagName,
         ready: state?.ready, player: state?.player, facing: state?.facing, pathLength: state?.pathLength,
+        regionalInput: window.__cityRegionalInput,
         held: Array.from(document.querySelectorAll('[data-city-move].is-held')).map(button => button.dataset.cityMove) };
     })));
     throw error;
@@ -1619,9 +1620,63 @@ try {
     assert.equal(regional.world.width, 960, 'A new district does not inherit another district’s residential extent.');
     assert.equal(regional.homes.length, 0);
     assert.equal(regional.region.landmark, district === 'brick' ? 'Kiln Square' : 'Bell Gardens');
-    await land.locator('.omerta-city__canvas canvas').focus();
-    await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 560);
-    assert((await state(land)).player.y > 540, 'Regional land is walkable beyond the former waterfront limit.');
+    const regionalHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), roadGoal = { x: 424, y: 536 };
+    assert(regional.obstacles.every(box => !(roadGoal.x + 7 > box.x && roadGoal.x - 7 < box.x + box.width
+      && roadGoal.y + 7 > box.y && roadGoal.y - 7 < box.y + box.height)), 'The regional approach is clear road before the old 540 boundary.');
+    assert(regional.actorMarkers.every(actor => Math.hypot(actor.x - roadGoal.x, actor.y - roadGoal.y) > 80)
+      && regional.destinations.every(venue => Math.hypot(venue.x - roadGoal.x, venue.y - roadGoal.y) > 35)
+      && regional.exits.every(exit => Math.hypot(exit.x - roadGoal.x, exit.y - roadGoal.y) > 30),
+    'The native road click retains actor, venue, and exit hit priority without selecting them.');
+    const regionalRequests = landRequests.length, roadCanvas = land.locator('.omerta-city__canvas canvas'), roadBox = await roadCanvas.boundingBox();
+    await roadCanvas.click({ position: {
+      x: (roadGoal.x - regional.camera.x) * regional.camera.zoom * roadBox.width / regional.camera.width,
+      y: (roadGoal.y - regional.camera.y) * regional.camera.zoom * roadBox.height / regional.camera.height,
+    } });
+    await waitForInput(land, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+    await land.waitForFunction(goal => {
+      const state = window.__cityHandles.at(-1).handle.getState();
+      return state.pathLength === 0 && Math.hypot(state.player.x - goal.x, state.player.y - goal.y) < 10;
+    }, roadGoal);
+    const boundaryStart = await state(land);
+    assert(boundaryStart.player.y >= 528 && boundaryStart.player.y <= 540, 'Real canvas walking reaches the old walkable boundary before the crossing check.');
+    assert(Math.hypot(boundaryStart.player.x - regional.player.x, boundaryStart.player.y - regional.player.y) > 150,
+      'The approach physically walks from the regional spawn without a pose setter.');
+    assert.equal(boundaryStart.region.id, district);
+    assert.equal(boundaryStart.selectedActor, null);
+    assert.equal(boundaryStart.selectedVenue, null);
+    await roadCanvas.focus();
+    assert(await land.evaluate(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas')));
+    await land.evaluate(() => {
+      const game = window.__cityGames.at(-1), scene = game.scene.getScenes(true)[0], canvas = game.canvas;
+      const input = window.__cityRegionalInput = { frames: 0, simulatedMs: 0, recent: [], events: [], keys: [] };
+      const frame = (time, delta) => {
+        input.frames++; input.simulatedMs += Math.min(delta, 50);
+        input.recent.push({ delta, fps: game.loop.actualFps, player: window.__cityHandles.at(-1).handle.getState().player });
+        if (input.recent.length > 8) input.recent.shift();
+      };
+      const event = event => {
+        if (event.type === 'keydown') input.keys = [...new Set([...input.keys, event.key])];
+        if (event.type === 'keyup') input.keys = input.keys.filter(key => key !== event.key);
+        input.events.push({ type: event.type, key: event.key, hidden: document.hidden });
+        if (input.events.length > 8) input.events.shift();
+      };
+      scene.events.on('update', frame);
+      for (const type of ['keydown', 'keyup', 'blur']) canvas.addEventListener(type, event);
+      window.__cityRegionalInputCleanup = () => {
+        scene.events.off('update', frame);
+        for (const type of ['keydown', 'keyup', 'blur']) canvas.removeEventListener(type, event);
+      };
+    });
+    try { await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 560); }
+    finally { await land.evaluate(() => { window.__cityRegionalInputCleanup(); delete window.__cityRegionalInputCleanup; }); }
+    const crossedBoundary = await state(land);
+    assert(crossedBoundary.player.y > 560 && crossedBoundary.player.y - boundaryStart.player.y > 20,
+      'Regional keyboard movement crosses the former waterfront limit from an actual road arrival.');
+    assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, regionalHandle));
+    assert.equal(crossedBoundary.region.id, district);
+    assert.deepEqual(landRequests.slice(regionalRequests).filter(request => !['GET', 'HEAD'].includes(request.method)
+      && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'The regional road approach and boundary crossing submit no gameplay action.');
+    await land.evaluate(() => { delete window.__cityRegionalInput; });
     if (shots) await land.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-region-' + district + '.png'), style: sceneShotStyle });
   }
   const fallbackTravel = await app.inject({ method: 'POST', url: '/v1/travel/docks', headers: { ...explorer.headers, 'idempotency-key': 'connected-fallback-docks' }, payload: {} });

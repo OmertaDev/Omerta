@@ -1,3 +1,6 @@
+import { companySuccessionSourceBaseline, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
+import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
+import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { assertCityHomesServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
@@ -13,10 +16,9 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INVOICE_SOURCE_CURRENT_PINS)) {
   const raw = normalize(fs.readFileSync(file, 'utf8'));
-  // The separately pinned Home envelope reconstructs complete Invoice bytes first.
   const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(raw) : null;
-  if (homes) assert.equal(homes.baselineSha256, INVOICE_SOURCE_CURRENT_PINS[file]);
-  const current = homes ? homes.baselineText : raw, baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
+  if (homes) assert.equal(homes.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]);
+  const current = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, homes ? homes.baselineText : raw)))), baseline = gitText(INVOICE_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(invoiceSourceBaseline(file, current), baseline);
   assert.equal(invoiceSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

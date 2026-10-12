@@ -331,11 +331,11 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
 | [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 227 | 2026-10-10 |
-| [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-11 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
@@ -393,6 +393,7 @@
 | [docs/living-world-director/OPPORTUNITY-FEED.md](../../docs/living-world-director/OPPORTUNITY-FEED.md) | documentation | 71 | 2026-09-18 |
 | [docs/living-world-director/SECURITY-REVIEW.md](../../docs/living-world-director/SECURITY-REVIEW.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
+| [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
@@ -485,6 +486,7 @@
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
 | [docs/storefront-fulfillment-security-review.md](../../docs/storefront-fulfillment-security-review.md) | documentation | 202 | 2026-10-11 |
+| [docs/strategy-licenses-security-review.md](../../docs/strategy-licenses-security-review.md) | documentation | 17 | 2026-10-12 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-23-first-action-onboarding.md](../../docs/superpowers/plans/2026-08-23-first-action-onboarding.md) | documentation | 311 | 2026-08-24 |
 | [docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md](../../docs/superpowers/plans/2026-08-24-robinhood-testnet-bank-rehearsal.md) | documentation | 142 | 2026-08-24 |
@@ -558,7 +560,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 128 | 2026-10-11 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-11 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -636,5 +638,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 742 | 2026-10-12 |
+| [SPEC.md](../../SPEC.md) | documentation | 743 | 2026-10-12 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
