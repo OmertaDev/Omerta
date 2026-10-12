@@ -10,7 +10,8 @@ const fail = reason => { throw new GameError('business_season', reason); };
 const person = ch => { if (!ch?.alive || ch.is_npc || !ch.account_id) fail('character'); };
 const id = value => { if (typeof value !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(value)) fail('identifier'); return value; };
 const exact = (body, fields) => { if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).sort().join(',') !== [...fields].sort().join(',')) fail('terms'); };
-const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
+const hash = value => crypto.createHash('sha256').update(JSON.stringify(value, (_, item) => item && typeof item === 'object' && !Array.isArray(item)
+  ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
 const clock = async client => new Date((await client.query('SELECT clock_timestamp() AS at')).rows[0].at);
 const one = async (client, sql, args) => (await client.query(sql, args)).rows[0] || null;
 const sourcePin = () => ({ accountingVersion: BUSINESS_SEASONS.accountingVersion, canonicalRevision: BUSINESS_SEASONS.canonicalRevision, sourceFingerprint });
