@@ -8,14 +8,26 @@ import * as Delivery from '../src/delivery.js';
 import * as G from '../src/game.js';
 
 assert(!process.env.DATABASE_URL, 'Refuse ambient database endpoints');
+function nativeEndpoint(value) {
+  const url = new URL(value);
+  assert(['postgresql:', 'postgres:'].includes(url.protocol)); assert.equal(url.hostname, '127.0.0.1');
+  const local = ['35439', '35449'].includes(url.port) && url.username === 'pilot_runner' && url.password === '';
+  const ci = url.port === '5432' && url.username === 'postgres' && url.password === 'pgcheck';
+  assert(local || ci, 'Only the owned local pilot cluster or local hosted-CI PostgreSQL service is allowed');
+  assert(/^\/buyer_cooperative_[a-z0-9_]+$/.test(url.pathname)); assert(!url.search && !url.hash);
+  return { url, local };
+}
+for (const allowed of ['postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35449/buyer_cooperative_guard', 'postgres://postgres:pgcheck@127.0.0.1:5432/buyer_cooperative_guard']) assert(nativeEndpoint(allowed).url);
+for (const refused of ['postgresql://pilot_runner@remote.example:35439/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35439/omerta', 'postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard?host=remote.example', 'postgresql://postgres:wrong@127.0.0.1:5432/buyer_cooperative_guard', 'postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_guard#override']) assert.throws(() => nativeEndpoint(refused));
 const native = process.argv.includes('--postgres'); let pool;
 if (native) {
-  const url = new URL(process.env.BUYER_COOPERATIVE_TEST_DATABASE_URL || 'http://missing');
-  assert.equal(url.protocol, 'postgresql:'); assert.equal(url.hostname, '127.0.0.1'); assert.equal(url.port, '35439'); assert.equal(url.username, 'pilot_runner'); assert.equal(url.password, '');
-  assert(/^\/buyer_cooperative_[a-z0-9_]+$/.test(url.pathname)); assert(!url.search && !url.hash);
+  const { url, local } = nativeEndpoint(process.env.BUYER_COOPERATIVE_TEST_DATABASE_URL || 'http://missing');
   const { default: pg } = await import('pg'); pool = new pg.Pool({ connectionString: url.href });
   const client = await pool.connect(); await client.query('BEGIN READ ONLY'); assert.equal((await client.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
-  console.log((await client.query('SELECT version(),current_user,current_database()')).rows[0]); assert.match((await client.query('SELECT version()')).rows[0].version, /PostgreSQL 18\.4/); await client.query('ROLLBACK'); client.release();
+  const identity = (await client.query('SELECT version(),current_user,current_database()')).rows[0]; console.log(identity);
+  assert.equal(identity.current_user, url.username); assert.equal(identity.current_database, url.pathname.slice(1));
+  assert.match(identity.version, local ? /PostgreSQL 18\.4\b/ : /PostgreSQL (16\b|18\.4\b)/);
+  await client.query('ROLLBACK'); client.release();
 } else {
   const { newDb, DataType } = await import('pg-mem'), { registerPgMemCompatibility } = await import('../src/db.js');
   const mem = newDb(); registerPgMemCompatibility(mem, DataType); pool = new (mem.adapters.createPg().Pool)();
