@@ -3536,8 +3536,8 @@ scopedSocialContext = async function(db) {
     'the `pgcheck` job must identify each required PostgreSQL major');
   assert.match(pgcheck, /^    strategy:\r?\n      fail-fast: false\r?\n      matrix:\r?\n        postgres: \['16', '18\.4'\]\s*$/m,
     'retain both the original PostgreSQL 16 lane and observed Render PostgreSQL 18.4 lane');
-  assert.match(pgcheck, /^        image: \$\{\{ matrix\.postgres == '16' && 'docker\.io\/library\/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' \|\| 'public\.ecr\.aws\/docker\/library\/postgres:18\.4' \}\}\s*$/m,
-    'retain the verified immutable official PostgreSQL 16 image and unchanged PostgreSQL 18.4 mirror');
+  assert.match(pgcheck, /^        image: \$\{\{ matrix\.postgres == '16' && 'docker\.io\/library\/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' \|\| 'docker\.io\/library\/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' \}\}\s*$/m,
+    'retain verified immutable official PostgreSQL 16 and 18.4 images');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [75],
