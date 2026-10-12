@@ -1,3 +1,4 @@
+import { companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline, assertCityHomesLeagueServerTransfer, CITY_HOMES_SOURCE_INVERSES, CITY_HOMES_LEAGUE_SERVER_BLOB, CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB } from '../tools/rc1-deed-source-compatibility.js';
 import { marketFeedSourceBaseline, MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { qualifyCompanySuccessionSource, COMPANY_SUCCESSION_SOURCE_BASELINE_BLOBS } from '../tools/rc1-company-succession-source-compatibility.js';
@@ -12,7 +13,7 @@ import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, STRATEGY_LEAGUE_SOURCE_BASELINE_PI
 const normalize = text => text.replaceAll('\r\n', '\n');
 const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-const homeRaw=normalize(fs.readFileSync('src/server.js','utf8'));
+const homeRaw=companyOperatorSourceBaseline('src/server.js', normalize(fs.readFileSync('src/server.js','utf8')));
 const homeProof=assertCityHomesLeagueServerTransfer(homeRaw);
 assert.equal(homeRaw,gitText(CITY_HOMES_LEAGUE_SERVER_BLOB));
 assert.equal(homeProof.baselineText,gitText(CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB));

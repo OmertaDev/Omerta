@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, assertCompanyOperatorSourceTransfer } from './rc1-company-operator-source-compatibility.js';
 
 export const INTEL_SOURCE_REVIEWED_REVISION = 'a752ce8743aab9c0027a06a2ce06a95161dceef3';
 export const INTEL_SOURCE_PREDECESSOR_REVISION = 'e6669079acf97c01b24dc7a6926ecea0b7797b8b';
@@ -56,6 +57,11 @@ export const INTEL_SOURCE_TRANSFER = Object.freeze({ sourceRevision: INTEL_SOURC
   scope: 'Only exact Intel route registration, hourly refund sweep, buyer estate hook and invariant additions are removed to reconstruct complete predecessor sources. Historical qualifications remain scoped to those unchanged bytes. Intel cash, authorization, consent, expiry, death and outcome behavior requires separate current-source native proof; no historical runtime, native, deployment or financial qualification is expanded.' });
 
 export function assertIntelSourceTransfer(file, input) {
+  if (file === 'src/worker.js' && hash(normalize(input)) === COMPANY_OPERATOR_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertCompanyOperatorSourceTransfer(file, input);
+    const predecessor = assertIntelSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, companyOperatorSourceTransfer: transfer };
+  }
   assert(Object.hasOwn(INTEL_SOURCE_CURRENT_PINS, file), 'Unknown Intel source compatibility file');
   const text = normalize(input), actualSha256 = hash(text);
   assert.equal(actualSha256, INTEL_SOURCE_CURRENT_PINS[file], 'Intel source changed: ' + file);

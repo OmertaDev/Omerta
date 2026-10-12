@@ -2200,6 +2200,61 @@
       "table_name": "strategy_leagues",
       "name": "strategy_leagues_state_check",
       "definition": "CHECK (state = ANY (ARRAY['enrolling'::text, 'running'::text, 'resolved'::text]))"
+    },
+    {
+      "table_name": "company_operator_receipts",
+      "name": "company_operator_receipts_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "company_operator_receipts",
+      "name": "company_operator_receipts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_operator_receipts",
+      "name": "company_operator_receipts_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_operator_receipts",
+      "name": "company_operator_receipts_pkey",
+      "definition": "PRIMARY KEY (owner_account, request_key)"
+    },
+    {
+      "table_name": "company_operator_receipts",
+      "name": "company_operator_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_pkey",
+      "definition": "PRIMARY KEY (depot_id)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES business_operating_policies(id)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_policy_revision_check",
+      "definition": "CHECK (policy_revision > 0)"
+    },
+    {
+      "table_name": "company_operators",
+      "name": "company_operators_revision_check",
+      "definition": "CHECK (revision > 0)"
     }
   ],
   "removed": [
@@ -2967,6 +3022,25 @@
       "minimum_stock",
       "request_key",
       "state"
+    ],
+    "company_operators": [
+      "depot_id",
+      "enabled",
+      "next_run_at",
+      "owner_account",
+      "owner_character",
+      "policy_id",
+      "policy_revision",
+      "revision"
+    ],
+    "company_operator_receipts": [
+      "body_hash",
+      "created_at",
+      "depot_id",
+      "owner_account",
+      "owner_character",
+      "request_key",
+      "result"
     ]
   }
 }
