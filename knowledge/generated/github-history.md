@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `148473f8b638`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `38ca94b697c0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2906 |
+| Commits in clone | 2909 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Measure league cold-start fixture review census |
+| Latest commit | 2026-10-12 — Record verified league estate classification repair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1973 |
+| OmertaDev | 1976 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 88 |
@@ -30,18 +30,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 524 | historical |
-| knowledge/generated/graph-summary.md | 524 | historical |
-| knowledge/generated/graph.json | 524 | historical |
-| knowledge/generated/inventory.md | 524 | historical |
+| knowledge/generated/github-history.md | 525 | historical |
+| knowledge/generated/graph-summary.md | 525 | historical |
+| knowledge/generated/graph.json | 525 | historical |
+| knowledge/generated/inventory.md | 525 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 450 | yes |
-| [SPEC.md](../../SPEC.md) | 445 | yes |
+| [SPEC.md](../../SPEC.md) | 446 | yes |
 | [src/server.js](../../src/server.js) | 393 | yes |
 | [schema.sql](../../schema.sql) | 326 | yes |
 | [package.json](../../package.json) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/documents.md | 252 | historical |
+| knowledge/generated/documents.md | 253 | historical |
 | knowledge/generated/modules.md | 189 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 180 | yes |
@@ -67,7 +67,7 @@
 | [README.md](../../README.md) | 60 | yes |
 | [tools/sim.js](../../tools/sim.js) | 59 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
-| [test/migrate.js](../../test/migrate.js) | 56 | yes |
+| [test/migrate.js](../../test/migrate.js) | 57 | yes |
 | [src/growth.js](../../src/growth.js) | 54 | yes |
 | [test/docs.js](../../test/docs.js) | 52 | yes |
 

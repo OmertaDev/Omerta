@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "148473f8b63895f83df5d96c92a23cb83686ee6a",
+  "sourceRevision": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11459,
-    "edges": 46312,
+    "nodes": 11462,
+    "edges": 46323,
     "byNodeType": {
       "Artifact": 4527,
       "Command": 240,
-      "Commit": 2906,
+      "Commit": 2909,
       "Contract": 126,
       "Document": 725,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3690,
-      "CHANGED": 18329,
+      "CHANGED": 18337,
       "CONTAINS": 4548,
       "DECLARES": 240,
       "DEFINED_IN": 1462,
       "DEPENDS_ON": 67,
       "EXECUTES": 813,
       "HANDLED_BY": 823,
-      "HAS_COMMIT": 2906,
+      "HAS_COMMIT": 2909,
       "IMPLEMENTS": 124,
       "IMPORTS": 4583,
       "INHERITS": 42,
@@ -39399,20 +39399,20 @@
       "path": "docs/strategy-leagues-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 6744,
-      "lines": 19,
-      "version": "30e747b656ca97ca",
+      "bytes": 7504,
+      "lines": 21,
+      "version": "998c51c4dc1e2dee",
       "text": true,
       "provenance": [
         {
           "file": "docs/strategy-leagues-security-review.md",
           "line": 1,
-          "version": "30e747b656ca97ca"
+          "version": "998c51c4dc1e2dee"
         }
       ],
-      "lastChangedAt": "2026-10-12T00:48:10.000Z",
+      "lastChangedAt": "2026-10-12T02:11:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "92087fdb7cc40f29eb8e5ffcf23226c79a48921a"
+      "lastChangedCommit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
     },
     {
       "key": "Artifact:docs/strategy-licenses-security-review.md",
@@ -78679,18 +78679,18 @@
       "extension": ".md",
       "bytes": 55481,
       "lines": 743,
-      "version": "0efbca04b29d06f2",
+      "version": "2334b9475291ab92",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0efbca04b29d06f2"
+          "version": "2334b9475291ab92"
         }
       ],
-      "lastChangedAt": "2026-10-12T01:58:13.000Z",
+      "lastChangedAt": "2026-10-12T02:11:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "148473f8b63895f83df5d96c92a23cb83686ee6a"
+      "lastChangedCommit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
     },
     {
       "key": "Artifact:src/access.js",
@@ -92060,20 +92060,20 @@
       "path": "test/migrate.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 74656,
-      "lines": 1183,
-      "version": "10245ab91ed0aa9a",
+      "bytes": 74884,
+      "lines": 1185,
+      "version": "2046d905dce3753e",
       "text": true,
       "provenance": [
         {
           "file": "test/migrate.js",
           "line": 1,
-          "version": "10245ab91ed0aa9a"
+          "version": "2046d905dce3753e"
         }
       ],
-      "lastChangedAt": "2026-10-11T22:05:07.000Z",
+      "lastChangedAt": "2026-10-12T02:11:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cfb528e726bf2a21592ceedc0d6762d0d9609d12"
+      "lastChangedCommit": "63513d7cd9a15c36bfafefbdd18036fd264eb93b"
     },
     {
       "key": "Artifact:test/mysteries.js",
@@ -109397,6 +109397,22 @@
       ]
     },
     {
+      "key": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "type": "Commit",
+      "id": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "label": "Build league scoped feed cold-start review artifacts",
+      "title": "Build league scoped feed cold-start review artifacts",
+      "date": "2026-10-12T02:01:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "provenance": [
+        {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+        }
+      ]
+    },
+    {
       "key": "Commit:0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade",
       "type": "Commit",
       "id": "0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade",
@@ -117557,6 +117573,22 @@
       ]
     },
     {
+      "key": "Commit:38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "type": "Commit",
+      "id": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "label": "Record verified league estate classification repair",
+      "title": "Record verified league estate classification repair",
+      "date": "2026-10-12T02:11:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "provenance": [
+        {
+          "commit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
+        }
+      ]
+    },
+    {
       "key": "Commit:38d5d04450de30163cd3d0b7451b1989adfdd0ae",
       "type": "Commit",
       "id": "38d5d04450de30163cd3d0b7451b1989adfdd0ae",
@@ -125313,6 +125345,22 @@
         {
           "commit": "634b402d835f54fcdb6f78d7df335b4c4c4cb0e8",
           "url": "https://github.com/OmertaDev/Omerta/commit/634b402d835f54fcdb6f78d7df335b4c4c4cb0e8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+      "type": "Commit",
+      "id": "63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+      "label": "Classify preserved strategy league estate metadata",
+      "title": "Classify preserved strategy league estate metadata",
+      "date": "2026-10-12T02:11:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+      "provenance": [
+        {
+          "commit": "63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/63513d7cd9a15c36bfafefbdd18036fd264eb93b"
         }
       ]
     },
@@ -164018,13 +164066,13 @@
       "id": "docs/strategy-leagues-security-review.md",
       "label": "docs/strategy-leagues-security-review.md",
       "documentType": "documentation",
-      "lines": 19,
-      "version": "30e747b656ca97ca",
+      "lines": 21,
+      "version": "998c51c4dc1e2dee",
       "provenance": [
         {
           "file": "docs/strategy-leagues-security-review.md",
           "line": 1,
-          "version": "30e747b656ca97ca"
+          "version": "998c51c4dc1e2dee"
         }
       ]
     },
@@ -167459,12 +167507,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 743,
-      "version": "0efbca04b29d06f2",
+      "version": "2334b9475291ab92",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "0efbca04b29d06f2"
+          "version": "2334b9475291ab92"
         }
       ]
     },
@@ -174318,6 +174366,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+        },
+        {
           "commit": "0f4aea47489fbe99b8663f969e762f08314f312a"
         },
         {
@@ -175126,6 +175177,9 @@
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -176709,6 +176763,9 @@
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
         },
         {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+        },
+        {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
         },
         {
@@ -178288,6 +178345,9 @@
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -180295,6 +180355,9 @@
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
+        },
+        {
+          "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
         },
         {
           "commit": "0dd3d105343052bd5e5347ffd78befefdc1dd7fd"
@@ -192078,7 +192141,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "148473f8b63895f83df5d96c92a23cb83686ee6a",
+      "revision": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
       "currentBranch": "codex/strategy-league-integration",
       "defaultBranch": "main",
       "visibility": "public",
@@ -226718,13 +226781,13 @@
       "type": "TestSuite",
       "id": "test/migrate.js",
       "label": "test/migrate.js",
-      "lines": 1183,
-      "version": "10245ab91ed0aa9a",
+      "lines": 1185,
+      "version": "2046d905dce3753e",
       "provenance": [
         {
           "file": "test/migrate.js",
           "line": 1,
-          "version": "10245ab91ed0aa9a"
+          "version": "2046d905dce3753e"
         }
       ]
     },
@@ -269930,6 +269993,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade",
       "to": "Artifact:src/finalizedobservation.js",
       "provenance": {
@@ -294946,6 +295049,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "to": "Artifact:docs/strategy-leagues-security-review.md",
+      "provenance": {
+        "commit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:38d5d04450de30163cd3d0b7451b1989adfdd0ae",
       "to": "Artifact:AUDIT-value-creation.md",
       "provenance": {
@@ -319854,6 +319973,14 @@
       "to": "Artifact:test/casino.js",
       "provenance": {
         "commit": "634b402d835f54fcdb6f78d7df335b4c4c4cb0e8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+      "to": "Artifact:test/migrate.js",
+      "provenance": {
+        "commit": "63513d7cd9a15c36bfafefbdd18036fd264eb93b"
       }
     },
     {
@@ -484470,6 +484597,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0cabaaff500ca84ca9ff8a4551c7d89414f7f11e",
+      "provenance": {
+        "commit": "0cabaaff500ca84ca9ff8a4551c7d89414f7f11e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade",
       "provenance": {
         "commit": "0d0a38fc4d42f2f982dc80e596cf7eb30f3e1ade"
@@ -488550,6 +488685,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:38ca94b697c093ad68649cd0fb4f2f14eafdebd5",
+      "provenance": {
+        "commit": "38ca94b697c093ad68649cd0fb4f2f14eafdebd5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:38d5d04450de30163cd3d0b7451b1989adfdd0ae",
       "provenance": {
         "commit": "38d5d04450de30163cd3d0b7451b1989adfdd0ae"
@@ -492425,6 +492568,14 @@
       "to": "Commit:634b402d835f54fcdb6f78d7df335b4c4c4cb0e8",
       "provenance": {
         "commit": "634b402d835f54fcdb6f78d7df335b4c4c4cb0e8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:63513d7cd9a15c36bfafefbdd18036fd264eb93b",
+      "provenance": {
+        "commit": "63513d7cd9a15c36bfafefbdd18036fd264eb93b"
       }
     },
     {
