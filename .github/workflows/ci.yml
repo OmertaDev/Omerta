@@ -196,7 +196,9 @@ jobs:
       postgres:
         # Retain the existing compatibility lane and test the Render version observed
         # for RC1 (2026-09-21). A PostgreSQL 16 pass alone does not attest PostgreSQL 18.4.
-        image: public.ecr.aws/docker/library/postgres:${{ matrix.postgres }}
+        # The 16 image is the same verified official digest used by the native pass;
+        # use its canonical registry when the ECR mirror exhausts its data quota.
+        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'public.ecr.aws/docker/library/postgres:18.4' }}
         env:
           POSTGRES_PASSWORD: pgcheck
           POSTGRES_DB: omerta_check
