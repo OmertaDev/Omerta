@@ -45,7 +45,9 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   company_logistics_hub_requests: [3, 5],
   buyer_cooperatives: [13, 17], buyer_cooperative_members: [18, 15],
   buyer_cooperative_orders: [3, 2], buyer_cooperative_receipts: [3, 5], buyer_cooperative_journal: [5, 7],
-  company_opportunity_subscriptions: [3, 5], company_opportunity_notices: [5, 7] });
+  company_opportunity_subscriptions: [3, 5], company_opportunity_notices: [5, 7],
+  commercial_reputation_publications: [3, 3], commercial_reputation_proofs: [5, 6],
+  commercial_reputation_settlements: [4, 3] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -315,6 +317,12 @@ try {
   }
   rejected(verifyFeatureNotNull, 'opportunity acknowledgment remains optional', [...featureNotNull,
     { table_name: 'company_opportunity_notices', column_name: 'acknowledged_at' }]);
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('commercial_reputation_'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} reputation constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} reputation constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
   rejected(verifyFeatureNotNull, 'bank finance request identity remains optional', [...featureNotNull,
     { table_name: 'company_bank_portfolio_loans', column_name: 'finance_request_id' }]);
   rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
