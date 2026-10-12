@@ -386,7 +386,12 @@
 | [docs/delivery-finance-security-review.md](../../docs/delivery-finance-security-review.md) | documentation | 41 | 2026-10-11 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
+| [docs/employment-accounting-graph-fix-review.md](../../docs/employment-accounting-graph-fix-review.md) | documentation | 16 | 2026-10-12 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
+| [docs/game-employment-integration-review.md](../../docs/game-employment-integration-review.md) | documentation | 51 | 2026-10-12 |
+| [docs/game-employment-migration-review.md](../../docs/game-employment-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/game-employment-security-review.md](../../docs/game-employment-security-review.md) | documentation | 58 | 2026-10-12 |
+| [docs/game-employment-source-transfer-review.md](../../docs/game-employment-source-transfer-review.md) | documentation | 136 | 2026-10-12 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
@@ -400,6 +405,7 @@
 | [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
+| [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
 | [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |
