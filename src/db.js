@@ -15,10 +15,14 @@ import { fileURLToPath } from 'node:url';
 // whose semantics pg-mem is known to mis-execute.
 export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
 
-// Register only the PostgreSQL built-ins that H1's literal schema needs and pg-mem omits. Callers
+// Register only the PostgreSQL built-ins that the schema and custody journals need and pg-mem omits. Callers
 // that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the
 // real-Postgres branch never calls this compatibility registrar.
 export function registerPgMemCompatibility(mem, DataType) {
+  mem.public.registerFunction({
+    name: 'clock_timestamp', args: [], returns: DataType.timestamptz, impure: true,
+    implementation: () => new Date(),
+  });
   mem.public.registerFunction({
     name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,
     implementation: (value, divisor) => value % divisor,

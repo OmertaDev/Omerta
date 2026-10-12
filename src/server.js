@@ -76,6 +76,7 @@ import { register as registerWarehouses } from './routes/warehouses.js';
 import { register as registerCrewLogistics } from './routes/crewlogistics.js';
 import { register as registerFranchises } from './routes/franchises.js';
 import { register as registerIntelForecasts } from './routes/intelforecasts.js';
+import { register as registerLogisticsCoverage } from './routes/logisticscoverage.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -2392,6 +2393,7 @@ export async function buildServer() {
   registerCrewLogistics(app, { pool, auth });
   registerFranchises(app, { pool, auth });
   registerIntelForecasts(app, { pool, auth });
+  registerLogisticsCoverage(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 

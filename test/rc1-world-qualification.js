@@ -1,4 +1,6 @@
 import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
+import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
+  coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
@@ -37,7 +39,8 @@ const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
   const actual = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
-  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceSourceBaseline(file, actual)).baselineText : invoiceSourceBaseline(file, actual), proof = assertFranchiseSourceTransfer(file, text);
+  const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, actual));
+  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline, proof = assertFranchiseSourceTransfer(file, text);
   franchiseSources.set(file, proof);
   assert.equal(proof.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
   assert.equal(proof.baselineSha256, FRANCHISE_SOURCE_PREDECESSOR_PINS[file]);
@@ -445,6 +448,30 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+// The recovery consumer closes complete current Coverage -> Invoice -> Intel
+// sources back to its unchanged pins, never by trusting a supplied transfer tag.
+let coverageSourceControls = 0;
+for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
+  const current = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
+  const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+  for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
+    assert.deepEqual(await verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), source);
+  const reject = async bytes => {
+    assert.equal(coverageSourceBaseline(file, bytes), bytes, 'Unknown outer source is never rewritten into historical bytes');
+    await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
+      readFile: candidate => candidate === file ? bytes : fs.readFile(candidate) }), /source changed/); coverageSourceControls++;
+  };
+  for (const chunk of COVERAGE_SOURCE_INVERSES[file]) {
+    for (const changed of [current.replace(chunk.current, ''), current.replace(chunk.current, chunk.current + chunk.current),
+      current.replace(chunk.current, chunk.current + '// unsupported Coverage change\n')]) await reject(changed);
+    const context = chunk.current.split('\n').find(line => line.trim() && chunk.baseline.includes(line + '\n'));
+    assert(context); await reject(current.replace(chunk.current, chunk.current.replace(context, context + ' /* altered context */')));
+  }
+  for (const bytes of [current, prior]) await reject(bytes + '\n// unsupported source suffix\n');
+}
+console.log(`PASS recovery source composition: full current/prior/CRLF parity and ${coverageSourceControls} closed Coverage controls`);
 assert.equal(source.sourceFiles['src/server.js'], FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(source.sourceFiles['src/game.js'], CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/game.js']);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.crewLogisticsSourceReviewTransfer.predecessorPins, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS);

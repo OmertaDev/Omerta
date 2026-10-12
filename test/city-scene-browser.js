@@ -972,7 +972,9 @@ try {
   });
   for (const approach of ['quiet', 'standard', 'loud']) {
     const fundedNerve = coreCrime.nerve * 2;
-    await app.pool.query('UPDATE characters SET nerve=$2,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
+    // Each cost proof starts below a level milestone. Accumulated job respect
+    // can trigger the canonical level-up nerve refill on a boosted city day.
+    await app.pool.query('UPDATE characters SET nerve=$2,respect=0,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
     const fundedRead = page.waitForResponse(async reply => {
       if (new URL(reply.url()).pathname !== '/v1/projections/player' || reply.status() !== 200) return false;
       const body = await reply.json(), character = body.player?.character || body.player;

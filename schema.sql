@@ -7874,3 +7874,46 @@ CREATE TABLE IF NOT EXISTS delivery_loan_requests (
 CREATE UNIQUE INDEX IF NOT EXISTS delivery_loan_one_live ON delivery_loan_requests(commitment_id)
   WHERE state IN ('requested','offered','active');
 CREATE INDEX IF NOT EXISTS delivery_loan_parties ON delivery_loan_requests(supplier_character, requested_lender_character);
+-- Logistics coverage requires post-lock event time; historical transaction-start clocks remain unqualified.
+ALTER TABLE business_depot_journal ADD COLUMN IF NOT EXISTS event_at TIMESTAMPTZ;
+-- Directed coverage offers carry consent only. Cash is held only after current-life acceptance.
+-- Lease/depot/event IDs remain historical references; original account rights survive accepted obligations.
+CREATE TABLE IF NOT EXISTS logistics_coverage_policies (
+  id TEXT PRIMARY KEY,
+  lease_id TEXT NOT NULL,
+  depot_id TEXT NOT NULL,
+  insurer_character TEXT NOT NULL REFERENCES characters(id),
+  tenant_character TEXT NOT NULL REFERENCES characters(id),
+  insurer_account TEXT NOT NULL REFERENCES accounts(id),
+  tenant_account TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  offer JSONB NOT NULL,
+  terms JSONB,
+  max_benefit_cash BIGINT NOT NULL CHECK (max_benefit_cash BETWEEN 1 AND 1000000),
+  premium_cash BIGINT NOT NULL CHECK (premium_cash BETWEEN 0 AND max_benefit_cash),
+  escrow_cash BIGINT NOT NULL DEFAULT 0 CHECK (escrow_cash BETWEEN 0 AND max_benefit_cash),
+  refunded_cash BIGINT NOT NULL DEFAULT 0 CHECK (refunded_cash BETWEEN 0 AND max_benefit_cash),
+  benefit_cash BIGINT NOT NULL DEFAULT 0 CHECK (benefit_cash BETWEEN 0 AND max_benefit_cash),
+  event_id TEXT UNIQUE,
+  event_evidence JSONB,
+  receipt JSONB,
+  created_at TIMESTAMPTZ NOT NULL,
+  offer_expires_at TIMESTAMPTZ NOT NULL,
+  coverage_expires_at TIMESTAMPTZ NOT NULL,
+  accepted_at TIMESTAMPTZ,
+  paid_at TIMESTAMPTZ,
+  state TEXT NOT NULL DEFAULT 'offered' CHECK (state IN ('offered','active','claimable','paid','expired','cancelled')),
+  UNIQUE(insurer_character,request_key),
+  CHECK (insurer_character <> tenant_character AND insurer_account <> tenant_account),
+  CHECK (created_at < offer_expires_at AND offer_expires_at <= coverage_expires_at),
+  CHECK (
+    (state IN ('offered','cancelled') AND terms IS NULL AND accepted_at IS NULL AND escrow_cash=0 AND refunded_cash=0 AND benefit_cash=0 AND event_id IS NULL AND event_evidence IS NULL AND receipt IS NULL AND paid_at IS NULL)
+    OR (state='active' AND terms IS NOT NULL AND accepted_at IS NOT NULL AND escrow_cash=max_benefit_cash AND refunded_cash=0 AND benefit_cash=0 AND event_id IS NULL AND event_evidence IS NULL AND receipt IS NULL AND paid_at IS NULL)
+    OR (state='claimable' AND terms IS NOT NULL AND accepted_at IS NOT NULL AND event_id IS NOT NULL AND event_evidence IS NOT NULL AND benefit_cash>0 AND escrow_cash=max_benefit_cash-refunded_cash AND escrow_cash>=benefit_cash AND receipt IS NULL AND paid_at IS NULL)
+    OR (state='paid' AND terms IS NOT NULL AND accepted_at IS NOT NULL AND event_id IS NOT NULL AND event_evidence IS NOT NULL AND benefit_cash>0 AND escrow_cash=max_benefit_cash-refunded_cash-benefit_cash AND receipt IS NOT NULL AND paid_at IS NOT NULL)
+    OR (state='expired' AND terms IS NOT NULL AND accepted_at IS NOT NULL AND escrow_cash=0 AND refunded_cash=max_benefit_cash AND benefit_cash=0 AND event_id IS NULL AND event_evidence IS NULL AND receipt IS NULL AND paid_at IS NULL)
+  )
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_logistics_coverage_accepted_lease ON logistics_coverage_policies(lease_id) WHERE accepted_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS ix_logistics_coverage_insurer ON logistics_coverage_policies(insurer_account,created_at);
+CREATE INDEX IF NOT EXISTS ix_logistics_coverage_tenant ON logistics_coverage_policies(tenant_account,created_at);
