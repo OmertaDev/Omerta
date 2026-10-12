@@ -7,6 +7,7 @@ import { supplyTenderBoard } from './supplytenders.js';
 import { publicEmploymentOffers } from './gameemployment.js';
 
 export const COMPANY_OPPORTUNITIES = Object.freeze({ kinds: ['depot', 'warehouse', 'delivery', 'tender', 'employment'], sourceLimit: 100, inboxLimit: 100, refreshLimit: 20, pageLimit: 50 });
+const kindNames = Object.freeze({ depot: 'Storefront offers', warehouse: 'Storage offers', delivery: 'Delivery contracts', tender: 'Supply tenders', employment: 'Paid jobs' });
 const fail = reason => { throw new GameError('company_opportunity', reason); };
 const closed = (body, fields) => {
   if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some(key => !fields.includes(key))) fail('terms');
@@ -125,7 +126,7 @@ export async function companyOpportunityInbox(ch, query, client) {
     const expires = row.snapshot.quote.expiresAt || row.snapshot.quote.offersCloseAt;
     const status = expires && +new Date(expires) <= Date.now() ? 'expired'
       : visible ? (visible.sourceHash === row.source_hash ? 'observed' : 'changed') : 'not_observed';
-    return { id: row.id, kind: row.kind, sourceId: row.source_id, sourceHash: row.source_hash,
+    return { id: row.id, kind: row.kind, kindName: kindNames[row.kind], sourceId: row.source_id, sourceHash: row.source_hash,
       status, quote: status === 'observed' ? visible : null, updatedAt: iso(row.updated_at),
       acknowledged: row.acknowledged_at !== null, informational: true };
   });
