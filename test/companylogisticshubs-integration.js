@@ -195,6 +195,23 @@ try {
       assert.deepEqual(await state(waited,waitedHub.hub.id),beforeWait,'Expired source wait performs no withdrawal, settlement or new credit');
     } finally { await blocker.query('ROLLBACK');blocker.release(); }
     await global();
+    const occupancyWait=await fixture(1),occupancyHub=await setup(occupancyWait); await accept(occupancyWait,occupancyHub.hub.id);
+    const occupancyState=await state(occupancyWait,occupancyHub.hub.id),sourceHold=await app.pool.connect();
+    await app.pool.query('UPDATE commercial_premises_leases SET expires_at=$2 WHERE id=$1',[occupancyWait.premises.lease.id,new Date(Date.now()+500)]);
+    await sourceHold.query('BEGIN');await sourceHold.query('SELECT id FROM loans WHERE id=$1 FOR UPDATE',[occupancyWait.financed[0].loanId]);
+    const occupancyPending=call(occupancyWait.supplier,'POST',`${base}/${occupancyHub.hub.id}/run`,{expectedRevision:2},'occupancy-after-source-lock',true);
+    try {
+      let observed=false;
+      for(let attempt=0;attempt<40;attempt++) {
+        if((await app.pool.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM loans%' LIMIT 1")).rows.length){observed=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,5));
+      }
+      assert.equal(observed,true,'Paid occupancy was checked before the observed financial source wait');
+      await new Promise(resolve=>setTimeout(resolve,550));await sourceHold.query('COMMIT');
+      const expired=await occupancyPending;assert.equal(expired.code,400);assert.equal(expired.body.message,'access_expired');
+      assert.deepEqual(await state(occupancyWait,occupancyHub.hub.id),occupancyState,'Occupancy expiry across financial wait cannot withdraw or settle');
+    } finally {await sourceHold.query('ROLLBACK');sourceHold.release();}
+    await global();
   }
   const recorded=(await app.pool.query('SELECT settlement FROM company_logistics_hub_sources WHERE hub_id=$1 AND position=1',[id])).rows[0].settlement;
   await app.pool.query('UPDATE company_logistics_hub_sources SET settlement=$2 WHERE hub_id=$1 AND position=1',[id,{delivery:{delivered:999},repayment:{paid:0}}]);
