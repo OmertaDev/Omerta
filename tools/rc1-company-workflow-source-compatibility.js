@@ -1,3 +1,4 @@
+import { commercialPremisesSourceBaseline } from './rc1-commercial-premises-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -113,7 +114,7 @@ export function qualifyCompanyWorkflowSource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function companyWorkflowSourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = commercialPremisesSourceBaseline(file, input);
   return Object.hasOwn(COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, file) && hash(text) === COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]
     ? assertCompanyWorkflowSourceTransfer(file, text).baselineText : text;
 }

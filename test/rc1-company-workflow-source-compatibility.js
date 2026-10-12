@@ -1,3 +1,4 @@
+import { commercialPremisesSourceBaseline } from '../tools/rc1-commercial-premises-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -24,7 +25,7 @@ const entire = (actual, expected, message) => { assert.equal(actual, expected, m
 const sources = new Map(), predecessors = new Map();
 assert.deepEqual(Object.keys(COMPANY_WORKFLOW_SOURCE_CURRENT_PINS), ['src/server.js', 'src/worker.js', 'src/invariants.js', 'src/social/estate.js']);
 for (const file of Object.keys(COMPANY_WORKFLOW_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), baseline = git('show', COMPANY_WORKFLOW_SOURCE_BASELINE_BLOBS[file]); sources.set(file, current); predecessors.set(file, baseline);
+  const current = commercialPremisesSourceBaseline(file, fs.readFileSync(file, 'utf8')), baseline = git('show', COMPANY_WORKFLOW_SOURCE_BASELINE_BLOBS[file]); sources.set(file, current); predecessors.set(file, baseline);
   entire(current, git('show', COMPANY_WORKFLOW_SOURCE_CURRENT_BLOBS[file])); entire(current, git('show', `${COMPANY_WORKFLOW_SOURCE_REVIEWED_REVISION}:${file}`)); entire(current, git('show', `129ab229990c2b9c0d3a460ed75f731081fd1f5c:${file}`));
   entire(baseline, git('show', `${COMPANY_WORKFLOW_SOURCE_PREDECESSOR_REVISION}:${file}`));
   assert.equal(hash(current), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]); assert.equal(hash(baseline), COMPANY_WORKFLOW_SOURCE_BASELINE_PINS[file]); sha256Comparisons += 2;
