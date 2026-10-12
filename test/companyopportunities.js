@@ -51,6 +51,8 @@ try {
   const next = await O.companyOpportunityInbox(ch, { limit: 2, after: page.nextCursor }, pool);
   assert.equal(new Set([...page.notices, ...next.notices].map(n => n.id)).size, 4);
   await assert.rejects(O.companyOpportunityInbox(ch, { limit: 51 }, pool), /pagination/);
+  await assert.rejects(O.companyOpportunityInbox(ch, { limit: [1] }, pool), /pagination/);
+  await assert.rejects(O.companyOpportunityInbox(ch, { after: false }, pool), /pagination/);
   await assert.rejects(O.companyOpportunityInbox(ch, { sql: 'SELECT secret' }, pool), /terms/);
   assert.equal((await O.companyOpportunityInbox(other, {}, pool)).notices.length, 0);
   const notice = inbox.notices.find(n => n.kind === 'depot'), acknowledgment = { noticeId: notice.id, expectedHash: notice.sourceHash };

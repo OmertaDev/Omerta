@@ -8,4 +8,5 @@ assert.deepEqual(routes.map(([method, path]) => `${method} ${path}`), [
 ]);
 for (const [, , options] of routes) assert.equal(options.preHandler, auth, 'same authenticated game account for human and agent sessions');
 assert.throws(() => routes[2][3]({ body: { url: 'https://arbitrary.invalid' } }), /terms/);
+assert.throws(() => routes[2][3]({ body: [] }), /terms/);
 console.log('company opportunities routes: all authenticated; refresh rejects caller-selected sources');

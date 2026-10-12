@@ -113,9 +113,10 @@ export async function refreshCompanyOpportunities(ch, client) {
 
 export async function companyOpportunityInbox(ch, query, client) {
   person(ch); closed(query, ['limit', 'after']);
-  const limit = query.limit === undefined ? 25 : Number(query.limit), after = query.after || '';
+  if (query.limit !== undefined && typeof query.limit !== 'number' && !(typeof query.limit === 'string' && /^[0-9]+$/.test(query.limit))) fail('pagination');
+  const limit = query.limit === undefined ? 25 : Number(query.limit), after = query.after === undefined ? '' : query.after;
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > COMPANY_OPPORTUNITIES.pageLimit
-      || (after && (typeof after !== 'string' || !/^[0-9a-f-]{36}$/.test(after)))) fail('pagination');
+      || typeof after !== 'string' || (after && !/^[0-9a-f-]{36}$/.test(after))) fail('pagination');
   const subscription = (await client.query('SELECT * FROM company_opportunity_subscriptions WHERE account_id=$1', [ch.account_id])).rows[0];
   const current = subscription?.enabled ? await sources(client, ch, subscription.filters) : [];
   const rows = (await client.query('SELECT * FROM company_opportunity_notices WHERE account_id=$1 AND id>$2 ORDER BY id LIMIT $3', [ch.account_id, after, limit + 1])).rows;
