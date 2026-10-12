@@ -1,3 +1,4 @@
+import { buyerCooperativeSourceBaseline } from './rc1-buyer-cooperative-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -99,7 +100,7 @@ export function qualifyCompanyLogisticsHubSource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function companyLogisticsHubSourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = buyerCooperativeSourceBaseline(file, input);
   return Object.hasOwn(COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS, file) && hash(text) === COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS[file]
     ? assertCompanyLogisticsHubSourceTransfer(file, text).baselineText : text;
 }

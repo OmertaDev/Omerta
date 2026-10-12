@@ -1,3 +1,4 @@
+import { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';
 import { COMPANY_BANK_SOURCE_CURRENT_PINS, assertCompanyBankSourceTransfer } from './rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -59,6 +60,10 @@ export const INTEL_SOURCE_TRANSFER = Object.freeze({ sourceRevision: INTEL_SOURC
   scope: 'Only exact Intel route registration, hourly refund sweep, buyer estate hook and invariant additions are removed to reconstruct complete predecessor sources. Historical qualifications remain scoped to those unchanged bytes. Intel cash, authorization, consent, expiry, death and outcome behavior requires separate current-source native proof; no historical runtime, native, deployment or financial qualification is expanded.' });
 
 export function assertIntelSourceTransfer(file, input) {
+  if (file === 'src/worker.js' && hash(normalize(input)) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
+    const cooperative = assertBuyerCooperativeSourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, cooperative.baselineText);
+    return { ...predecessor, actualSha256: cooperative.actualSha256, buyerCooperativeSourceTransfer: cooperative };
+  }
   if (file === 'src/worker.js' && hash(normalize(input)) === COMPANY_BANK_SOURCE_CURRENT_PINS[file]) {
     const bank = assertCompanyBankSourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, bank.baselineText);
     return { ...predecessor, actualSha256: bank.actualSha256, companyBankSourceTransfer: bank };
