@@ -3525,8 +3525,8 @@ scopedSocialContext = async function(db) {
     'retain the verified immutable official PostgreSQL 16 image and unchanged PostgreSQL 18.4 mirror');
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
-  assert.deepEqual(timeouts(suites), [60],
-    'the `suites` job must have exactly one 60-minute HANG bound');
+  assert.deepEqual(timeouts(suites), [75],
+    'the `suites` job must have exactly one 75-minute HANG bound for the measured full lifecycle');
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [45],
@@ -3644,7 +3644,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3658,6 +3658,15 @@ scopedSocialContext = async function(db) {
     }
   };
   assertResourceNativeEnvironment(pgcheck);
+  const assertCityHomesNativeEnvironment = workflow => {
+    const section = workflow.split(/\n {6}- /).find(part => /^\s*(?:run:\s*)?npm run test:city:postgres\s*$/m.test(part));
+    assert(section && /^\s*CITY_HOMES_TEST_DATABASE_URL:\s*postgres:\/\/postgres:pgcheck@localhost:5432\/omerta_query\s*$/m.test(section),
+      'City home projection requires its explicit named native database environment');
+  };
+  assertCityHomesNativeEnvironment(pgcheck);
+  assert.throws(() => assertCityHomesNativeEnvironment(pgcheck.replace(/^\s*CITY_HOMES_TEST_DATABASE_URL:[^\n]*\n/m, '')),
+    /explicit named native database/, 'removing the home directory native endpoint cannot pass the retained City command ledger');
+
   const pilotSection = pgcheck.split(/\n {6}- /).find(section => /^\s*(?:run:\s*)?npm run pilot:resources:postgres\s*$/m.test(section));
   assert(pilotSection);
   const missingResourceEnvironment = pgcheck.replace(pilotSection,
@@ -3756,7 +3765,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps exactly two jobs: suites at 60m and pgcheck at 45m, with every lane intact');
+  console.log('  ✓ CI keeps suites at 75m, browser at 20m and pgcheck at 45m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════

@@ -1,5 +1,7 @@
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import assert from 'node:assert/strict';
+import { cityHomesFeedSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -12,13 +14,13 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(STRATEGY_SOURCE_CURRENT_PINS)) {
-  const current = normalize(companySuccessionSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, cityHomesFeedSourceBaseline(file, fs.readFileSync(file, 'utf8'))))), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(strategySourceBaseline(file, current), baseline);
   assert.equal(strategySourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';
   assert.equal(strategySourceBaseline(file, unknown), unknown, 'composition must not manufacture historical bytes for unreviewed source');
   assert.throws(() => qualifyStrategySource(file, strategySourceBaseline(file, unknown)), /source changed/);
-  assert.equal(current, gitText(STRATEGY_SOURCE_CURRENT_BLOBS[file]), 'Complete runtime bytes match frozen current Git blob: ' + file);
+  assert.equal(current, gitText(STRATEGY_SOURCE_CURRENT_BLOBS[file]), 'Complete STRATEGY bytes after exact known source inverses match frozen current Git blob: ' + file);
   assert.equal(current, gitText(STRATEGY_SOURCE_REVIEWED_REVISION + ':' + file));
   assert.equal(baseline, gitText(STRATEGY_SOURCE_PREDECESSOR_REVISION + ':' + file));
   assert.equal(hash(current), STRATEGY_SOURCE_CURRENT_PINS[file]);

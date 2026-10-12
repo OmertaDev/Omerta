@@ -79,6 +79,7 @@ import { register as registerIntelForecasts } from './routes/intelforecasts.js';
 import { register as registerLogisticsCoverage } from './routes/logisticscoverage.js';
 import { register as registerStrategyLicenses } from './routes/strategylicenses.js';
 import { register as registerCompanySuccession } from './routes/companysuccession.js';
+import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -163,6 +164,7 @@ import { buildOpenApi, llmsTxt } from './agentgateway.js';
 import { opportunityBoard } from './opportunities.js';
 import { arenaBoard } from './arena.js';
 import { registerCity } from './routes/city.js';
+import { registerCityHomes } from './routes/cityhomes.js';
 import { registerCitySocial } from './city-social.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
@@ -2241,6 +2243,7 @@ export async function buildServer() {
   registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
+  registerCityHomes(app, { pool, auth });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerProjections(app, { pool, auth,
@@ -2398,6 +2401,7 @@ export async function buildServer() {
   registerLogisticsCoverage(app, { pool, auth });
   registerStrategyLicenses(app, { pool, auth });
   registerCompanySuccession(app, { pool, auth });
+  registerMarketFeed(app, { pool });
 
   registerHeists(app, { pool, auth });
 

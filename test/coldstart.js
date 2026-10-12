@@ -90,6 +90,24 @@ assert.throws(() => assertNearbyRefusal(missingViewer), { name: 'AssertionError'
 assert.throws(() => assertNearbyRefusal({ code: 403, body: { error: 'unrelated_refusal' } }),
   { name: 'AssertionError' }, 'a different refusal can never inherit the consent declaration');
 
+// The home directory requires a real district, even when that district has no deeds.
+const homesReadPath = '/v1/city/homes?' + new URLSearchParams({ district: social.body.viewer.district });
+const assertEmptyHomes = response => {
+  assert.equal(response.code, 200, 'the first player can inspect their actual district');
+  assert.deepEqual(response.body.viewer, social.body.viewer);
+  assert.equal(response.body.districtId, social.body.viewer.district);
+  assert.equal(response.body.placement, 'illustrative');
+  assert.deepEqual(response.body.homes, []);
+  assert.equal(response.body.myHome, null);
+  assert.equal(response.body.nextCursor, null);
+  assert.equal(response.body.total, 0);
+};
+const missingDistrict = await j('GET', '/v1/city/homes', token);
+assert.equal(missingDistrict.code, 400, 'omitting the mandatory district is malformed');
+assert.equal(missingDistrict.body?.error, 'city_homes_district');
+assert.throws(() => assertEmptyHomes(missingDistrict), { name: 'AssertionError' },
+  'a malformed home query cannot pass as an empty directory');
+
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
 const parameterlessGets = (app.routes || [])
@@ -113,6 +131,8 @@ const defaultOff = new Map([
 ]);
 for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
 assert(paths.includes('/v1/city/nearby-chat'), 'the nearby route remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/market/feed'), 'the public feed remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/city/homes'), 'the home directory remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -122,7 +142,12 @@ assert(paths.length >= 120,
 const broke = [];
 const declaredHit = new Set();
 for (const p of paths) {
-  const r = await j('GET', p === '/v1/city/nearby-chat' ? nearbyReadPath : p, token);
+  const readPath = p === '/v1/city/nearby-chat' ? nearbyReadPath
+    : p === '/v1/market/feed' ? '/v1/market/feed?districtId=docks&goodId=gin'
+      : p === '/v1/city/homes' ? homesReadPath : p;
+  const r = await j('GET', readPath, token);
+  if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
+  if (p === '/v1/city/homes') assertEmptyHomes(r);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (p === '/v1/genesis-auction') {

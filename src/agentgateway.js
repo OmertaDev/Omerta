@@ -6,6 +6,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
+import { DISTRICTS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -408,6 +409,10 @@ const OPERATION_CONTRACTS = {
     schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Reuse the original purchase identity for recovery; a different identity cannot alias an existing license.' }],
     requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/market/feed': { operationId: 'getPublicGameMarketFeed', requestParameters: [
+    { name: 'districtId', in: 'query', required: true, schema: { type: 'string', enum: DISTRICTS.map(d => d.id) } },
+    { name: 'goodId', in: 'query', required: true, schema: { type: 'string', const: 'gin' } },
+  ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'POST /v1/company-succession': {
     operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
@@ -643,6 +648,38 @@ const OPERATION_CONTRACTS = {
   ),
   'POST /v1/worldgraph/recipes/:recipeId/craft': worldGraphMutation('craftWorldGraphRecipe'),
   'POST /v1/worldgraph/recipes/:recipeId/salvage/:carId': worldGraphMutation('salvageCarWithWorldGraphRecipe'),
+  'GET /v1/city/homes': {
+    operationId: 'getDistrictHomeDirectory',
+    requestParameters: [
+      { name: 'district', in: 'query', required: true, schema: { type: 'string', enum: ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral'] } },
+      { name: 'after', in: 'query', required: false, schema: { type: 'string', minLength: 1, maxLength: 128 } },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 64, default: 32 } },
+    ],
+    responseSchema: { type: 'object', additionalProperties: false,
+      required: ['viewer', 'districtId', 'placement', 'homes', 'myHome', 'nextCursor', 'total'], properties: {
+        viewer: { type: 'object', additionalProperties: false, required: ['characterId', 'generation', 'district'], properties: {
+          characterId: { type: 'string' }, generation: { type: 'integer', minimum: 1 }, district: { type: 'string' },
+        } },
+        districtId: { type: 'string' }, placement: { const: 'illustrative' },
+        homes: { type: 'array', maxItems: 64, items: { type: 'object', additionalProperties: false,
+          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+            key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
+            owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
+              name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },
+            } }] },
+          } } },
+        myHome: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false,
+          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+            key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
+            owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
+              name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },
+            } }] },
+          } }] },
+        nextCursor: { type: ['string', 'null'], maxLength: 128 }, total: { type: 'integer', minimum: 0 },
+      } },
+  },
   'GET /v1/city/presence': {
     operationId: 'getCityPresence',
     requestParameters: [
