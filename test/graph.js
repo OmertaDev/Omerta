@@ -64,6 +64,8 @@ assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
   'company succession bindings',
+  // Workflow provenance checks immutable canonical proof bindings, not a new money book.
+  'company workflow provenance',
   'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
