@@ -55,6 +55,7 @@ import { spawnNpcConvoys, despawnArrivedNpc, sweepConvoyHauls } from './convoy.j
 import { runPopulation, runResidentBehaviour } from './population.js';
 import { runCompanyOperators } from './companyoperatorrunner.js';
 import { runCompanyWorkflows } from './companyworkflowrunner.js';
+import { runCompanyBankPortfolios } from './companybankportfoliorunner.js';
 import { sweepLaw } from './law.js';
 import { sweepLoans } from './loans.js';
 import { sweepAuctions, sweepConsignments } from './auction.js';
@@ -819,6 +820,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     try {
       await safe('company operators', () => runCompanyOperators(pool, 20));
       await safe('company workflows', () => runCompanyWorkflows(pool, 20));
+      await safe('company bank portfolios', () => runCompanyBankPortfolios(pool, 20));
     }
     finally { companyTicking = false; }
   };
