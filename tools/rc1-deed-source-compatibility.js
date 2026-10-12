@@ -8,7 +8,16 @@ import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } 
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, assertCompanyOperatorSourceTransfer, companyOperatorSourceBaseline } from './rc1-company-operator-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
+function operatorEnvelope(file, input, predecessorGuard) {
+ const text = input.replaceAll('\r\n', '\n');
+ if (!Object.hasOwn(COMPANY_OPERATOR_SOURCE_CURRENT_PINS, file) || hash(text) !== COMPANY_OPERATOR_SOURCE_CURRENT_PINS[file]) return null;
+ const transfer = assertCompanyOperatorSourceTransfer(file, text);
+ const home = file === 'src/server.js' ? assertCityHomesLeagueServerTransfer(transfer.baselineText) : null;
+ const predecessor = predecessorGuard(home?.baselineText || transfer.baselineText);
+ return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
+}
 export const CITY_HOMES_SERVER_PIN = 'f66e2f5a40394d3dc1ac92a779486fa0cb7b5a3d005eae2f4a99214e65105dd6';
 export const CITY_HOMES_SOURCE_BASE_REVISION = '9506c37e18bbc1be45ae8150951e42451eb909de';
 export const CITY_HOMES_SERVER_BLOB = 'be8267a5a68ba142f5cd21213c7946880c47381a';
@@ -70,7 +79,7 @@ export function assertCityHomesLeagueServerTransfer(input) {
   predecessorServerBlob: CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
 }
 export function cityHomesLeagueSourceBaseline(file, input) {
- const text = input.replaceAll('\r\n', '\n');
+ const text = companyOperatorSourceBaseline(file, input);
  return file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN ? assertCityHomesLeagueServerTransfer(text).baselineText : text;
 }
 // Franchise additions transfer only unchanged historical assertions by full-file reconstruction.
@@ -960,6 +969,8 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  const operator = operatorEnvelope('src/server.js', text, assertGenesisSnapshotServerCompatibility);
+  if (operator) return operator;
   if (hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {
     const transfer = assertCityHomesLeagueServerTransfer(text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), cityHomesLeagueSourceTransfer: transfer };
@@ -1093,6 +1104,8 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  const operator = operatorEnvelope('src/server.js', text, assertGenesisWrapperServerCompatibility);
+  if (operator) return operator;
   if (hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {
     const transfer = assertCityHomesLeagueServerTransfer(text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), cityHomesLeagueSourceTransfer: transfer };
@@ -1247,6 +1260,8 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  const operator = operatorEnvelope('src/server.js', text, assertHttpReceiptServerCompatibility);
+  if (operator) return operator;
   if (hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {
     const transfer = assertCityHomesLeagueServerTransfer(text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), cityHomesLeagueSourceTransfer: transfer };
@@ -1358,6 +1373,8 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  const operator = operatorEnvelope('src/server.js', text, assertDeedServerCompatibility);
+  if (operator) return operator;
   if (hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {
     const transfer = assertCityHomesLeagueServerTransfer(text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), cityHomesLeagueSourceTransfer: transfer };
@@ -1821,6 +1838,8 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
+  const operator = operatorEnvelope(file, text, prior => assertEconomySourceTransfer(file, prior));
+  if (operator) return operator;
   if (file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN) {
     const transfer = assertCityHomesLeagueServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), cityHomesLeagueSourceTransfer: transfer };
