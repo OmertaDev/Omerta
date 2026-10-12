@@ -392,7 +392,7 @@
 | [docs/living-world-director/OPPORTUNITY-FEED.md](../../docs/living-world-director/OPPORTUNITY-FEED.md) | documentation | 71 | 2026-09-18 |
 | [docs/living-world-director/SECURITY-REVIEW.md](../../docs/living-world-director/SECURITY-REVIEW.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
-| [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 20 | 2026-10-11 |
+| [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
@@ -637,5 +637,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 743 | 2026-10-11 |
+| [SPEC.md](../../SPEC.md) | documentation | 743 | 2026-10-12 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
