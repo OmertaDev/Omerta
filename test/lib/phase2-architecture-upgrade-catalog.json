@@ -1,46 +1,206 @@
 {
   "note": "Exact additive/replaced schema constraints after the original Phase2 slice, reviewed against schema.sql; never inferred from the backend at test time.",
   "added": [
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_buyer_character_fkey","definition":"FOREIGN KEY (buyer_character) REFERENCES characters(id)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_buyer_character_request_key_key","definition":"UNIQUE (buyer_character, request_key)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check","definition":"CHECK (target_at > created_at)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check1","definition":"CHECK (buyer_character <> reporter_character)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check2","definition":"CHECK (status = 'reported'::text AND predicts_available IS NOT NULL AND reported_at IS NOT NULL AND observation IS NOT NULL OR status <> 'reported'::text AND predicts_available IS NULL AND reported_at IS NULL AND observation IS NULL)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check3","definition":"CHECK (reported_at IS NULL OR reported_at >= created_at AND reported_at <= (target_at - '00:01:00'::interval))"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check4","definition":"CHECK (outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL OR status = 'reported'::text AND outcome IS NOT NULL AND resolved_at IS NOT NULL)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_check5","definition":"CHECK (sample_started_at IS NULL AND sample IS NULL OR sample_started_at IS NOT NULL AND sample IS NOT NULL)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_fee_cash_check","definition":"CHECK (fee_cash >= 50 AND fee_cash <= 5000)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_minimum_stock_check","definition":"CHECK (minimum_stock >= 1 AND minimum_stock <= 40)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_outcome_check","definition":"CHECK (outcome IS NULL OR (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text])))"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_pkey","definition":"PRIMARY KEY (id)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_price_block_check","definition":"CHECK (price_block >= 0)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_reporter_character_fkey","definition":"FOREIGN KEY (reporter_character) REFERENCES characters(id)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_request_key_check","definition":"CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"},
-    {"table_name":"intel_forecast_jobs","name":"intel_forecast_jobs_status_check","definition":"CHECK (status = ANY (ARRAY['open'::text, 'reported'::text, 'cancelled'::text, 'expired'::text, 'buyer_dead'::text]))"},
-    {"table_name":"business_depot_journal","name":"business_depot_journal_franchise_license_id_fkey","definition":"FOREIGN KEY (franchise_license_id) REFERENCES depot_brand_licenses(id)"},
-    {"table_name":"business_depot_journal","name":"business_depot_journal_source_journal_id_fkey","definition":"FOREIGN KEY (source_journal_id) REFERENCES business_depot_journal(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_check","definition":"CHECK (paid >= 0::numeric AND paid <= royalty_cap)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_check1","definition":"CHECK (operator_depot_id <> recipient_depot_id AND operator_character <> licensor_character)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_company_account_id_fkey","definition":"FOREIGN KEY (company_account_id) REFERENCES accounts(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_company_revision_check","definition":"CHECK (company_revision > 0)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_earned_net_check","definition":"CHECK (earned_net >= 0::numeric AND earned_net <= '1000000000000'::bigint::numeric)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_licensor_character_fkey","definition":"FOREIGN KEY (licensor_character) REFERENCES characters(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_operator_character_fkey","definition":"FOREIGN KEY (operator_character) REFERENCES characters(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_operator_depot_id_fkey","definition":"FOREIGN KEY (operator_depot_id) REFERENCES business_depots(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_pkey","definition":"PRIMARY KEY (id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_preset_id_check","definition":"CHECK (preset_id = 'gin_storefront'::text)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_recipient_depot_id_fkey","definition":"FOREIGN KEY (recipient_depot_id) REFERENCES business_depots(id)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_royalty_bps_check","definition":"CHECK (royalty_bps >= 1 AND royalty_bps <= 1000)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_royalty_cap_check","definition":"CHECK (royalty_cap >= 1::numeric AND royalty_cap <= 1000000::numeric)"},
-    {"table_name":"depot_brand_licenses","name":"depot_brand_licenses_status_check","definition":"CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'ended'::text]))"},
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_check", "definition": "CHECK (expires_at > created_at)" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_crew_id_fkey", "definition": "FOREIGN KEY (crew_id) REFERENCES crews(id) ON DELETE CASCADE" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_generation_check", "definition": "CHECK (generation > 0)" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_kind_check", "definition": "CHECK (kind = ANY (ARRAY['tender'::text, 'delivery_commitment'::text, 'warehouse_claim'::text]))" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_pkey", "definition": "PRIMARY KEY (id)" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_publisher_account_id_fkey", "definition": "FOREIGN KEY (publisher_account_id) REFERENCES accounts(id)" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_publisher_character_id_fkey", "definition": "FOREIGN KEY (publisher_character_id) REFERENCES characters(id)" },
-    { "table_name": "crew_logistics_links", "name": "crew_logistics_links_target_id_check", "definition": "CHECK (char_length(target_id) >= 1 AND char_length(target_id) <= 128)" },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_buyer_character_request_key_key",
+      "definition": "UNIQUE (buyer_character, request_key)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check",
+      "definition": "CHECK (target_at > created_at)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check1",
+      "definition": "CHECK (buyer_character <> reporter_character)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check2",
+      "definition": "CHECK (status = 'reported'::text AND predicts_available IS NOT NULL AND reported_at IS NOT NULL AND observation IS NOT NULL OR status <> 'reported'::text AND predicts_available IS NULL AND reported_at IS NULL AND observation IS NULL)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check3",
+      "definition": "CHECK (reported_at IS NULL OR reported_at >= created_at AND reported_at <= (target_at - '00:01:00'::interval))"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check4",
+      "definition": "CHECK (outcome IS NULL AND resolved_at IS NULL AND sample_started_at IS NULL AND sample IS NULL OR status = 'reported'::text AND outcome IS NOT NULL AND resolved_at IS NOT NULL)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_check5",
+      "definition": "CHECK (sample_started_at IS NULL AND sample IS NULL OR sample_started_at IS NOT NULL AND sample IS NOT NULL)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 50 AND fee_cash <= 5000)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_minimum_stock_check",
+      "definition": "CHECK (minimum_stock >= 1 AND minimum_stock <= 40)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_outcome_check",
+      "definition": "CHECK (outcome IS NULL OR (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text])))"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_price_block_check",
+      "definition": "CHECK (price_block >= 0)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_reporter_character_fkey",
+      "definition": "FOREIGN KEY (reporter_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "intel_forecast_jobs",
+      "name": "intel_forecast_jobs_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['open'::text, 'reported'::text, 'cancelled'::text, 'expired'::text, 'buyer_dead'::text]))"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_franchise_license_id_fkey",
+      "definition": "FOREIGN KEY (franchise_license_id) REFERENCES depot_brand_licenses(id)"
+    },
+    {
+      "table_name": "business_depot_journal",
+      "name": "business_depot_journal_source_journal_id_fkey",
+      "definition": "FOREIGN KEY (source_journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_check",
+      "definition": "CHECK (paid >= 0::numeric AND paid <= royalty_cap)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_check1",
+      "definition": "CHECK (operator_depot_id <> recipient_depot_id AND operator_character <> licensor_character)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_company_account_id_fkey",
+      "definition": "FOREIGN KEY (company_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_company_revision_check",
+      "definition": "CHECK (company_revision > 0)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_earned_net_check",
+      "definition": "CHECK (earned_net >= 0::numeric AND earned_net <= '1000000000000'::bigint::numeric)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_licensor_character_fkey",
+      "definition": "FOREIGN KEY (licensor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_operator_character_fkey",
+      "definition": "FOREIGN KEY (operator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_operator_depot_id_fkey",
+      "definition": "FOREIGN KEY (operator_depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_preset_id_check",
+      "definition": "CHECK (preset_id = 'gin_storefront'::text)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_recipient_depot_id_fkey",
+      "definition": "FOREIGN KEY (recipient_depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_royalty_bps_check",
+      "definition": "CHECK (royalty_bps >= 1 AND royalty_bps <= 1000)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_royalty_cap_check",
+      "definition": "CHECK (royalty_cap >= 1::numeric AND royalty_cap <= 1000000::numeric)"
+    },
+    {
+      "table_name": "depot_brand_licenses",
+      "name": "depot_brand_licenses_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'ended'::text]))"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_check",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_crew_id_fkey",
+      "definition": "FOREIGN KEY (crew_id) REFERENCES crews(id) ON DELETE CASCADE"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_generation_check",
+      "definition": "CHECK (generation > 0)"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['tender'::text, 'delivery_commitment'::text, 'warehouse_claim'::text]))"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_publisher_account_id_fkey",
+      "definition": "FOREIGN KEY (publisher_account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_publisher_character_id_fkey",
+      "definition": "FOREIGN KEY (publisher_character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "crew_logistics_links",
+      "name": "crew_logistics_links_target_id_check",
+      "definition": "CHECK (char_length(target_id) >= 1 AND char_length(target_id) <= 128)"
+    },
     {
       "table_name": "city_intel_progress",
       "name": "city_intel_progress_character_id_fkey",
@@ -1615,6 +1775,56 @@
       "table_name": "business_warehouse_leases",
       "name": "business_warehouse_leases_units_check",
       "definition": "CHECK (units >= 1 AND units <= 10)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_check",
+      "definition": "CHECK (supplier_character <> requested_lender_character AND supplier_character <> buyer_character AND requested_lender_character <> buyer_character)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_check1",
+      "definition": "CHECK ((state = ANY (ARRAY['requested'::text, 'cancelled'::text])) AND loan_id IS NULL AND funded_at IS NULL AND accepted_at IS NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'offered'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'active'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL AND settled_at IS NULL AND settlement IS NULL OR state = 'settled'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND accepted_at IS NOT NULL AND settled_at IS NOT NULL AND settlement IS NOT NULL OR state = 'closed'::text AND loan_id IS NOT NULL AND funded_at IS NOT NULL AND settled_at IS NULL AND settlement IS NULL)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_requested_lender_character_fkey",
+      "definition": "FOREIGN KEY (requested_lender_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['requested'::text, 'offered'::text, 'active'::text, 'settled'::text, 'cancelled'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "delivery_loan_requests",
+      "name": "delivery_loan_requests_supplier_character_request_key_key",
+      "definition": "UNIQUE (supplier_character, request_key)"
     }
   ],
   "removed": [
@@ -1635,9 +1845,48 @@
     }
   ],
   "notNullColumns": {
-    "intel_forecast_jobs": ["buyer_character","created_at","district_id","fee_cash","id","minimum_stock","price_block","reporter_character","request_key","status","target_at"],
-    "depot_brand_licenses":["brand_name","company_account_id","company_revision","created_at","earned_net","expires_at","id","licensor_character","operator_character","operator_depot_id","paid","preset_id","recipient_depot_id","royalty_bps","royalty_cap","status"],
-    "crew_logistics_links": ["created_at", "crew_id", "expires_at", "generation", "id", "kind", "publisher_account_id", "publisher_character_id", "target_id"],
+    "intel_forecast_jobs": [
+      "buyer_character",
+      "created_at",
+      "district_id",
+      "fee_cash",
+      "id",
+      "minimum_stock",
+      "price_block",
+      "reporter_character",
+      "request_key",
+      "status",
+      "target_at"
+    ],
+    "depot_brand_licenses": [
+      "brand_name",
+      "company_account_id",
+      "company_revision",
+      "created_at",
+      "earned_net",
+      "expires_at",
+      "id",
+      "licensor_character",
+      "operator_character",
+      "operator_depot_id",
+      "paid",
+      "preset_id",
+      "recipient_depot_id",
+      "royalty_bps",
+      "royalty_cap",
+      "status"
+    ],
+    "crew_logistics_links": [
+      "created_at",
+      "crew_id",
+      "expires_at",
+      "generation",
+      "id",
+      "kind",
+      "publisher_account_id",
+      "publisher_character_id",
+      "target_id"
+    ],
     "city_social_preferences": [
       "character_id",
       "chat_enabled",
@@ -2249,6 +2498,19 @@
       "status",
       "tenant_character",
       "units"
+    ],
+    "delivery_loan_requests": [
+      "buyer_character",
+      "commitment_id",
+      "created_at",
+      "id",
+      "order_id",
+      "quote",
+      "request_key",
+      "requested_lender_character",
+      "state",
+      "supplier_character",
+      "terms"
     ]
   }
 }

@@ -69,6 +69,8 @@ import * as Business from './business.js';
 import * as Depot from './depot.js';
 import * as Delivery from './delivery.js';
 import { register as registerDelivery } from './routes/delivery.js';
+import { register as registerDeliveryFinance, takeOwnedAdvance } from './routes/deliveryfinance.js';
+import * as DeliveryFinance from './deliveryfinance.js';
 import { register as registerSupplyTenders } from './routes/supplytenders.js';
 import { register as registerWarehouses } from './routes/warehouses.js';
 import { register as registerCrewLogistics } from './routes/crewlogistics.js';
@@ -2205,7 +2207,7 @@ export async function buildServer() {
   app.post('/v1/loans', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.offerLoan(ch, req.body, client, h)));
   app.post('/v1/loans/:id/take', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.takeLoan(ch, req.params.id, req.body?.carId, client, h)));
+    takeOwnedAdvance(pool, req.user.sub, req.params.id, req.body?.carId));
   app.post('/v1/loans/:id/cancel', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.cancelLoan(ch, req.params.id, client, h)));
   // repay is two-party (borrower pays, lender credited): look up the lender, lock both.
@@ -2384,6 +2386,7 @@ export async function buildServer() {
   registerDepot(app, { pool, auth });
   registerResources(app, { pool, auth, modAuth });
   registerDelivery(app, { pool, auth });
+  registerDeliveryFinance(app, { pool, auth });
   registerSupplyTenders(app, { pool, auth });
   registerWarehouses(app, { pool, auth });
   registerCrewLogistics(app, { pool, auth });
@@ -2664,7 +2667,9 @@ export async function buildServer() {
       case 'depot_restock': return Depot.restockDepot(ch, tail('/v1/depot/').replace(/\/restock$/, ''), client, h,
         { automated: true, policyId: action.body.policyId });
       case 'delivery_accept': return Delivery.acceptDelivery(ch, action.body.orderId, action.body, client);
-      case 'delivery_deliver': return Delivery.deliverCommitment(ch, action.body.commitmentId, action.body.qty, client, h);
+      case 'delivery_deliver': return lender
+        ? DeliveryFinance.deliverFinancedCommitment(ch, lender, action.body.commitmentId, action.body.qty, client, h)
+        : Delivery.deliverCommitment(ch, action.body.commitmentId, action.body.qty, client, h);
       case 'delivery_buy':
       case 'delivery_travel': return Delivery.deliveryStep(ch, action.body.commitmentId, action.kind, action.body, client, h);
       case 'delivery_depot_buy':
@@ -2737,7 +2742,15 @@ export async function buildServer() {
       // Two-party actions preserve the canonical sorted character/account lock order.
       const loanMatch = /^loan:([^:]+):repay$/.exec(actionId);
       const storefrontMatch = /^delivery:([A-Za-z0-9_-]{1,128}):depot:([A-Za-z0-9_-]{1,128}):buy$/.exec(actionId);
-      if (storefrontMatch) {
+      const financedMatch = /^delivery:([A-Za-z0-9_-]{1,128}):deliver$/.exec(actionId);
+      if (financedMatch) {
+        const advance = (await pool.query("SELECT loan_id FROM delivery_loan_requests WHERE commitment_id=$1 AND state='active'", [financedMatch[1]])).rows[0];
+        const creditor = advance?.loan_id && (await pool.query("SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [advance.loan_id])).rows[0]?.lender_character;
+        if (creditor) result = await G.withTwoCharacters(pool, req.user.sub, creditor,
+          (ch, lender, client, h) => executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId), { meet: false });
+        else result = await G.withCharacter(pool, req.user.sub,
+          (ch, client, h) => executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);
+      } else if (storefrontMatch) {
         const ownerId = (await pool.query("SELECT owner_character FROM business_depots WHERE id=$1 AND status='open'", [storefrontMatch[2]])).rows[0]?.owner_character;
         if (ownerId) {
           result = await G.withTwoCharacters(pool, req.user.sub, ownerId, (ch, owner, client, h) =>
