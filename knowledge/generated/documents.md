@@ -336,6 +336,11 @@
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/commercial-premises-integration-review.md](../../docs/commercial-premises-integration-review.md) | documentation | 54 | 2026-10-12 |
+| [docs/commercial-premises-literal-sql-review.md](../../docs/commercial-premises-literal-sql-review.md) | documentation | 14 | 2026-10-12 |
+| [docs/commercial-premises-migration-review.md](../../docs/commercial-premises-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/commercial-premises-security-review.md](../../docs/commercial-premises-security-review.md) | documentation | 37 | 2026-10-12 |
+| [docs/commercial-premises-source-transfer-review.md](../../docs/commercial-premises-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/company-operator-migration-review.md](../../docs/company-operator-migration-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/company-operator-source-transfer-review.md](../../docs/company-operator-source-transfer-review.md) | documentation | 123 | 2026-10-12 |
 | [docs/company-operators-security-review.md](../../docs/company-operators-security-review.md) | documentation | 57 | 2026-10-12 |
