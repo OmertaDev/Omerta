@@ -111,7 +111,26 @@ try {
   await app.pool.query('UPDATE company_operators SET price_policy=$2,next_run_at=$3 WHERE depot_id=$1', [depotId, JSON.stringify(expiredPrice), new Date(Date.now() - 1000)]);
   await assert.rejects(run({ ...request, requestKey: 'expired-price' }), /No authorized/);
   assert.deepEqual(await run(priceRequest), prices[0], 'price replay is independent of consent expiry');
-  await app.pool.query('UPDATE business_operating_policies SET expires_at=$2 WHERE id=$1', [policy.id, new Date(Date.now() - 1000)]);
+  if (process.argv.includes('--postgres')) {
+    const blocker = await app.pool.connect();
+    await app.pool.query('UPDATE business_operating_policies SET expires_at=$2 WHERE id=$1', [policy.id, new Date(Date.now() + 500)]);
+    await blocker.query('BEGIN');
+    await blocker.query('SELECT depot_id FROM company_operators WHERE depot_id=$1 FOR UPDATE', [depotId]);
+    const waiting = run({ ...request, requestKey: 'expiry-after-lock' });
+    const rejected = assert.rejects(waiting, /unexpired/);
+    try {
+      let observed = false;
+      for (let attempt = 0; attempt < 40; attempt++) {
+        const rows = (await blocker.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM company_operators%' LIMIT 1")).rows;
+        if (rows.length) { observed = true; break; }
+        await new Promise((resolve) => setTimeout(resolve, 5));
+      }
+      assert.equal(observed, true, 'native runner is observed waiting for the operator row');
+      await new Promise((resolve) => setTimeout(resolve, 550));
+      await blocker.query('COMMIT');
+      await rejected;
+    } finally { await blocker.query('ROLLBACK'); blocker.release(); }
+  } else await app.pool.query('UPDATE business_operating_policies SET expires_at=$2 WHERE id=$1', [policy.id, new Date(Date.now() - 1000)]);
   await assert.rejects(run({ ...request, requestKey: 'expired' }), /unexpired/);
   assert.deepEqual(await run(), result);
   const inv = await runLedgerInvariants(app.pool, { alert: false });
