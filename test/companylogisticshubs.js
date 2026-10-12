@@ -128,6 +128,26 @@ try {
   assert.equal((await pair(heir,dead.landlord,(ch,owner,client)=>Hub.setupLogisticsHub(ch,owner,dead.body,'setup',client))).replayed,true);
   await assert.rejects(pair(heir,dead.landlord,(ch,owner,client)=>Hub.acceptLogisticsHub(ch,owner,deadHub.hub.id,{ expectedRevision:3,consent:true },'new-authority',client)),/party/);
   if(native) {
+    const rebound=await fixture(1), reboundHub=await setup(rebound); await accept(rebound,reboundHub.hub.id);
+    const foreign=await fixture(1), beforeRebound=await state(rebound,reboundHub.hub.id);
+    const leaseHold=await app.pool.connect();
+    try {
+      await leaseHold.query('BEGIN');
+      await leaseHold.query('SELECT id FROM business_warehouse_leases WHERE id=$1 FOR UPDATE',[rebound.warehouse.lease.id]);
+      const pending=run(rebound,reboundHub.hub.id,2,'warehouse-binding-wait');
+      let observed=false;
+      for(let attempt=0;attempt<60;attempt++) {
+        if((await app.pool.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM business_warehouse_leases%' LIMIT 1")).rows.length){observed=true;break;}
+        await new Promise(resolve=>setTimeout(resolve,5));
+      }
+      assert.equal(observed,true,'Canonical pair waits on the warehouse leaf after the unlocked hint');
+      await leaseHold.query('UPDATE business_warehouse_leases SET depot_id=$2 WHERE id=$1',[rebound.warehouse.lease.id,foreign.warehouseDepot.id]);
+      await leaseHold.query('COMMIT');
+      await assert.rejects(pending,/custody_pairing/,'Authoritative locked lease must still match its hinted and premises depot');
+    } finally { await leaseHold.query('ROLLBACK'); leaseHold.release(); }
+    await app.pool.query('UPDATE business_warehouse_leases SET depot_id=$2 WHERE id=$1',[rebound.warehouse.lease.id,rebound.warehouseDepot.id]);
+    assert.deepEqual(await state(rebound,reboundHub.hub.id),beforeRebound,'Drift refusal withdraws nothing and leaves source settlement/progress unchanged');
+    await run(rebound,reboundHub.hub.id,2,'warehouse-binding-restored');
     const raced=await fixture(2), racedHub=await setup(raced); await accept(raced,racedHub.hub.id);
     const result=await Promise.allSettled([run(raced,racedHub.hub.id,2,'race-a'),run(raced,racedHub.hub.id,2,'race-b')]); assert.equal(result.filter(row=>row.status==='fulfilled').length,1);
     assert.equal((await app.pool.query("SELECT position FROM company_logistics_hub_sources WHERE hub_id=$1 AND state='pending'",[racedHub.hub.id])).rows.length,1);
