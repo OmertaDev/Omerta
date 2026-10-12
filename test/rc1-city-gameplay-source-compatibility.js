@@ -1,3 +1,4 @@
+import { combinedGuiSourceBaseline } from '../tools/rc1-economy-gui-combined-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -28,7 +29,7 @@ assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['425de0010a3ee3500870a0
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
-  const raw = fs.readFileSync(file, 'utf8'), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_PARENT_BLOBS[file]);
+  const raw = combinedGuiSourceBaseline(file, fs.readFileSync(file, 'utf8')), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_PARENT_BLOBS[file]);
   assert.equal(hash(current), CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file], 'Exact current source: ' + file);
   assert.equal(blob(current), CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]);
   assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_PARENT_BLOBS[file]);
@@ -47,7 +48,7 @@ for (const file of files) {
     assert.throws(() => qualifyCityGameplaySource(file, unknown), /source changed/); negatives++;
   }
   // Mutate each actual complete gameplay diff hunk. Full-file admission must reject removed, duplicated and altered hunks alike.
-  const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0], '--', file));
+  const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0], 'c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c', '--', file));
   const hunks = []; let hunk;
   for (const line of diff.split('\n')) {
     if (line.startsWith('@@ ')) { hunk = ''; hunks.push({ current: '' }); continue; }
@@ -64,7 +65,7 @@ for (const file of files) {
   }
 }
 for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), combinedParent = cityGameplaySourceBaseline(file, current);
+  const current = normalize(combinedGuiSourceBaseline(file, fs.readFileSync(file, 'utf8'))), combinedParent = cityGameplaySourceBaseline(file, current);
   assert.equal(hash(combinedParent), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete premises parent: ' + file);
   const workflow = commercialPremisesSourceBaseline(file, combinedParent);
   assert.equal(hash(workflow), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]);
@@ -107,7 +108,7 @@ for (const layer of [
     baseline: (input,file) => commercialPremisesSourceBaseline(file,input), assertTransfer: assertCompanyWorkflowSourceTransfer },
 ]) {
   for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
-    const current = normalize(fs.readFileSync(file,'utf8')), parent = layer.baseline(cityGameplaySourceBaseline(file,current),file);
+    const current = normalize(combinedGuiSourceBaseline(file, fs.readFileSync(file,'utf8'))), parent = layer.baseline(cityGameplaySourceBaseline(file,current),file);
     assert.equal(hash(parent),layer.pins[file]);
     for (const chunk of layer.inverses[file]) {
       assert.equal(parent.split(chunk.current).length,2,'Each premises/workflow predecessor hunk is exact and unique: ' + file);
@@ -131,7 +132,7 @@ for (const layer of [
     }
   }
 }
-const server = normalize(fs.readFileSync('src/server.js', 'utf8')), parentServer = cityGameplaySourceBaseline('src/server.js', server);
+const server = normalize(combinedGuiSourceBaseline('src/server.js', fs.readFileSync('src/server.js', 'utf8')) ), parentServer = cityGameplaySourceBaseline('src/server.js', server);
 assert.equal(hash(parentServer), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the premises envelope.');
 assert.equal(hash(commercialPremisesSourceBaseline('src/server.js',parentServer)), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS['src/server.js'],
   'The unchanged premises adapter retains the complete workflow envelope.');

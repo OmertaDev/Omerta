@@ -1,6 +1,7 @@
 // Observer-only, source-pinned sufficient paths for the frozen world assertions.
 // A missing sufficient path is UNKNOWN, never proof of a dead world. No SQL/actor reads.
 import assert from 'node:assert/strict';
+import { cityGameplaySourceBaseline } from './rc1-city-gameplay-source-compatibility.js';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { canonicalRecoveryWitnesses, joinWorldCheckpointAssertions, verifyWorldRecoverySources } from './rc1-world-qualification.js';
 import { compileCoordinationGraph } from '../src/coordination/graph.js';
@@ -54,7 +55,7 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
   for (const [file, expected] of Object.entries(EXTENSION_PINS)) {
-    const text = String(await input.readFile(file)).replace(/\r\n/g, '\n');
+    const text = cityGameplaySourceBaseline(file, String(await input.readFile(file)).replace(/\r\n/g, '\n'));
     const baseline = file === 'src/crew.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
       ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
     assert.equal(sha256(baseline), expected, 'Checkpoint review source changed: ' + file);

@@ -1,4 +1,5 @@
 import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from './rc1-invoice-source-compatibility.js';
+import { cityGameplaySourceBaseline } from './rc1-city-gameplay-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Read-only review of complete native checkpoints. Original workers own every
 // predicate and disposition below; this helper never expires or repairs state.
@@ -88,7 +89,7 @@ function sourceProof(revision) {
   assert.match(revision, /^[a-f0-9]{40}$/);
   if (revisions.has(revision)) return;
   for (const [file, expected] of Object.entries(BACKLOG_SOURCE_PINS)) {
-    const actual = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
+    const actual = cityGameplaySourceBaseline(file, fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replace(/\r\n/g, '\n'));
     const intelActual = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceSourceBaseline(file, actual)).baselineText : invoiceSourceBaseline(file, actual);
     const qualifiedActual = file === 'src/loans.js' ? qualifyLoanCancelSource(intelActual).baselineText : intelActual;
     assert.equal(sha256(qualifiedActual), expected, `Backlog reviewer source changed: ${file}`);
@@ -96,7 +97,7 @@ function sourceProof(revision) {
     const franchiseTransfer = file === 'src/invariants.js' ? assertFranchiseSourceTransfer(file, actual) : null;
     if (file === 'src/rules.tail.js') assertCarMeltRulesCompatibility(actual);
     if (DEED_BACKLOG_BASELINE_PINS[file]) assertDeedBacklogCompatibility(file, actual);
-    const pinned = execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n');
+    const pinned = cityGameplaySourceBaseline(file, execFileSync('git', ['show', `${revision}:${file}`], { cwd: new URL('..', import.meta.url), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replace(/\r\n/g, '\n'));
     const intelPinned = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceSourceBaseline(file, pinned)).baselineText : invoiceSourceBaseline(file, pinned);
     const qualifiedPinned = file === 'src/loans.js' ? qualifyLoanCancelSource(intelPinned).baselineText : intelPinned;
     assert.equal(sha256(qualifiedPinned), expected, `Checkpoint source is not covered: ${file}`); sources.set(file, compact(franchiseTransfer?.baselineText || crewTransfer?.baselineText || qualifiedActual));

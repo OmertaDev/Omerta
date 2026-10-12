@@ -1,3 +1,4 @@
+import { combinedEconomySourceBaseline } from './rc1-economy-gui-combined-source-compatibility.js';
 // Test/tool-only whole-source transfer. This reconstructs reviewed predecessor bytes; it does not qualify new gameplay authority.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -120,7 +121,8 @@ export function qualifyCityGameplaySource(file, input) {
 }
 export function cityGameplaySourceBaseline(file, input) {
   if (!Object.hasOwn(CITY_GAMEPLAY_SOURCE_CURRENT_PINS, file) || typeof input !== 'string') return input;
-  const actual = hash(normalize(input));
+  const text = combinedEconomySourceBaseline(file, input);
+  const actual = hash(normalize(text));
   return actual === CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file] || actual === CITY_GAMEPLAY_SOURCE_PARENT_PINS[file]
-    ? qualifyCityGameplaySource(file, input).baselineText : input;
+    ? qualifyCityGameplaySource(file, text).baselineText : text;
 }

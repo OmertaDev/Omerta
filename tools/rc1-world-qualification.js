@@ -1,3 +1,4 @@
+import { COMBINED_SOURCE_TRANSFER } from './rc1-economy-gui-combined-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from './rc1-business-season-source-compatibility.js';
 import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from './rc1-commercial-reputation-source-compatibility.js';
 import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from './rc1-company-opportunity-source-compatibility.js';
@@ -66,7 +67,8 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 33, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 34, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  combinedSourceReviewTransfer: COMBINED_SOURCE_TRANSFER,
   businessSeasonSourceReviewTransfer: BUSINESS_SEASON_SOURCE_TRANSFER,
   commercialReputationSourceReviewTransfer: COMMERCIAL_REPUTATION_SOURCE_TRANSFER,
   companyOpportunitySourceReviewTransfer: COMPANY_OPPORTUNITY_SOURCE_TRANSFER,
