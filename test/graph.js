@@ -62,6 +62,7 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 // read that one — which is why the literal lives in its SQL.
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
+  'buyer cooperative settlement provenance', // no money bucket; cash and GIN have separate ledger checks
   'character cash',
   // These inspect consent/proof bindings against canonical component books; they
   // introduce no currency bucket or ledger reason. Cash coverage stays with those books.
@@ -86,6 +87,10 @@ assert.deepEqual(inv.mute.sort(), [
   'world graph unique custody and provenance',
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
+for (const [check, reasons] of [
+  ['buyer cooperative cash custody', ['buyer_cooperative:fund', 'buyer_cooperative:refund', 'market:order', 'market:list', 'market:refund', 'buyer_cooperative:death_cash', 'buyer_cooperative:loot_cash']],
+  ['buyer cooperative GIN custody', ['buyer_cooperative:claim', 'buyer_cooperative:death_gin']],
+]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
