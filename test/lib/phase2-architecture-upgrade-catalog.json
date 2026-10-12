@@ -2645,6 +2645,71 @@
       "table_name": "commercial_premises_requests",
       "name": "commercial_premises_requests_pkey",
       "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_origin_check",
+      "definition": "CHECK (origin = ANY (ARRAY['existing'::text, 'portfolio'::text]))"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_original_lender_fkey",
+      "definition": "FOREIGN KEY (original_lender) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_pkey",
+      "definition": "PRIMARY KEY (account_id, loan_id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_principal_check",
+      "definition": "CHECK (principal >= 1 AND principal <= 1000000)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_lifetime_spent_check",
+      "definition": "CHECK (lifetime_spent >= 0 AND lifetime_spent <= 1000000)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
     }
   ],
   "removed": [
@@ -3532,6 +3597,32 @@
       "receipt",
       "request_key",
       "terms"
+    ],
+    "company_bank_portfolios": [
+      "account_id",
+      "created_at",
+      "enabled",
+      "expires_at",
+      "lifetime_spent",
+      "next_run_at",
+      "owner_character",
+      "revision",
+      "terms"
+    ],
+    "company_bank_portfolio_receipts": [
+      "account_id",
+      "created_at",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "company_bank_portfolio_loans": [
+      "account_id",
+      "created_at",
+      "loan_id",
+      "origin",
+      "original_lender",
+      "principal"
     ]
   }
 }
