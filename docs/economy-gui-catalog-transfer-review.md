@@ -1,0 +1,11 @@
+# Combined gameplay catalog transfer review
+
+Source: b2d69db94c79602e24ac3ba4e16b6552a339a22d. Phase: exact additive catalog reconstruction and historical checkpoint observer fixtures; no deployment, native world run or financial clearance.
+
+The independently compiled complete catalog at 425de0010a3ee3500870a04e796029d671f464ef has 57 nodes and SHA256 146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6. The combined runtime at 1a2c80a5ce2b0482e613b2f4eb48007a4b0b32dd has 178 nodes and SHA256 3414895eac00bdec45efdd88ad7b0fce7274d86f903bee75a29cbc7b86f42268. Both were compiled with the same explicit progression/kernel/coordination/director feature flags, from their own checked-out immutable sources.
+
+All existing nodes, six graphs, operations and objects match completely. Exactly 121 additional nodes belong to sixteen literal package IDs. Their complete ordered SHA256 is 7717c06e66d53b856d12a3d43d1d5d8adc330ccff75a9e39b5c25e40b3124cc6. The new frozen inverse accepts only the full current catalog, verifies every added node and the complete predecessor, and then preserves the existing nine-node City inverse and original historical catalog hash. Unfamiliar or mutated catalogs retain their identity and remain inapplicable.
+
+COMBINED-REVIEW01: the original catalog assertion correctly refused the expanded runtime. Initial additional-subject tests also exposed the observer's generic cancellation classification treating new package subjects as historically reachable. The review observer now explicitly keeps all sixteen additions UNKNOWN, without changing gameplay cancellation. Every package has a mutation refusal and an UNKNOWN objective/resource/Knowledge boundary test; original owner, choice, recipe, route and five-population controls remain intact. The corrected checkpoint suite passed. Original failing results are retained in coordinator output; the separate source-only review retains its original incomplete phase.
+
+This transfers only unchanged historical sufficient paths. Current gameplay authority, reachability and completion need their own current-source evidence; no original private soak, broad native recovery or new financial capability is inferred.
