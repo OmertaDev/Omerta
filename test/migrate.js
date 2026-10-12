@@ -631,6 +631,7 @@ const DISPOSITION = {
   buyer_cooperatives: 'escrow', // canonical estate settles the bound market order and preserves living members custody; organizer pocket is never backing
   buyer_cooperative_members: 'escrow', // original member death burns/loots only unclaimed entitlement; immutable allocation/death history grants heirs no claim
   commercial_reputation_proofs: 'metadata', // immutable original-performer proof bindings; no funds or fresh heir performance claim
+  business_season_entries: 'metadata', // historical original-depot observation; death produces unknown coverage and heirs gain no source ownership or prize
   company_bank_portfolios: 'metadata', // canonical estate disables the original owner grant; no custody or new heir authority
   company_bank_portfolio_loans: 'metadata', // immutable original lender provenance; canonical loans own all debt and inherited active claims
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
