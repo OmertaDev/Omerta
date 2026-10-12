@@ -8233,3 +8233,26 @@ CREATE TABLE IF NOT EXISTS company_opportunity_notices (
   UNIQUE(account_id,kind,source_id)
 );
 CREATE INDEX IF NOT EXISTS company_opportunity_inbox ON company_opportunity_notices(account_id,id);
+
+-- Coarse opt-in commercial reputation; canonical source states retain authority.
+CREATE TABLE IF NOT EXISTS commercial_reputation_publications (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  published BOOLEAN NOT NULL,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647)
+);
+CREATE TABLE IF NOT EXISTS commercial_reputation_proofs (
+  category TEXT NOT NULL CHECK (category IN ('deliveries','paidWork','closedStorage','repaidLoans','workflows')),
+  source_id TEXT NOT NULL,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  evidence_hash TEXT NOT NULL CHECK (char_length(evidence_hash)=64),
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(category,source_id)
+);
+CREATE INDEX IF NOT EXISTS commercial_reputation_account ON commercial_reputation_proofs(account_id,category,source_id);
+-- A loan repayment's actual debit/credit cannot certify another loan record.
+CREATE TABLE IF NOT EXISTS commercial_reputation_settlements (
+  transaction_id TEXT PRIMARY KEY REFERENCES transactions(id),
+  source_id TEXT NOT NULL REFERENCES loans(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id)
+);
