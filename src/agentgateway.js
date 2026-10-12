@@ -648,6 +648,38 @@ const OPERATION_CONTRACTS = {
   ),
   'POST /v1/worldgraph/recipes/:recipeId/craft': worldGraphMutation('craftWorldGraphRecipe'),
   'POST /v1/worldgraph/recipes/:recipeId/salvage/:carId': worldGraphMutation('salvageCarWithWorldGraphRecipe'),
+  'GET /v1/city/homes': {
+    operationId: 'getDistrictHomeDirectory',
+    requestParameters: [
+      { name: 'district', in: 'query', required: true, schema: { type: 'string', enum: ['docks', 'neon', 'foundry', 'brick', 'canal', 'cathedral'] } },
+      { name: 'after', in: 'query', required: false, schema: { type: 'string', minLength: 1, maxLength: 128 } },
+      { name: 'limit', in: 'query', required: false, schema: { type: 'integer', minimum: 1, maximum: 64, default: 32 } },
+    ],
+    responseSchema: { type: 'object', additionalProperties: false,
+      required: ['viewer', 'districtId', 'placement', 'homes', 'myHome', 'nextCursor', 'total'], properties: {
+        viewer: { type: 'object', additionalProperties: false, required: ['characterId', 'generation', 'district'], properties: {
+          characterId: { type: 'string' }, generation: { type: 'integer', minimum: 1 }, district: { type: 'string' },
+        } },
+        districtId: { type: 'string' }, placement: { const: 'illustrative' },
+        homes: { type: 'array', maxItems: 64, items: { type: 'object', additionalProperties: false,
+          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+            key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
+            owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
+              name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },
+            } }] },
+          } } },
+        myHome: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false,
+          required: ['key', 'street', 'districtId', 'owner', 'mine', 'ownership'], properties: {
+            key: { type: 'string', minLength: 1, maxLength: 128 }, street: { type: 'string', minLength: 1, maxLength: 128 },
+            districtId: { type: 'string' }, mine: { type: 'boolean' }, ownership: { enum: ['city', 'external', 'estate'] },
+            owner: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false, required: ['name', 'kind'], properties: {
+              name: { type: 'string' }, kind: { enum: ['player', 'agent', 'npc'] },
+            } }] },
+          } }] },
+        nextCursor: { type: ['string', 'null'], maxLength: 128 }, total: { type: 'integer', minimum: 0 },
+      } },
+  },
   'GET /v1/city/presence': {
     operationId: 'getCityPresence',
     requestParameters: [

@@ -1,4 +1,5 @@
-import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
+import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
+import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
@@ -11,6 +12,7 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   GOODS_SOURCE_PREDECESSOR_REVISION, ECONOMY_SOURCE_CURRENT_PINS, assertGoodsSourceTransfer,
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
+  CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB, assertCityHomesServerTransfer,
   CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
@@ -36,23 +38,34 @@ assert.equal(oldStorefront.baselineSha256, BUSINESS_SERVER_PIN);
 assert.equal(oldStorefront.inverseChunks, 2);
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const rawCurrent = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
-  const currentFranchise = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceSourceBaseline(file, rawCurrent)).baselineText : invoiceSourceBaseline(file, rawCurrent);
-  const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, currentFranchise) : null;
-  if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
-  const actual = franchise ? franchise.baselineText : currentFranchise;
+  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const crew = file === 'src/server.js' ? assertCrewLogisticsSourceTransfer(file, actual) : null;
-  const warehouseInput = crew ? crew.baselineText : actual;
+  const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(actual) : null;
+  const invoiceInput = homes ? homes.baselineText : actual;
+  if (homes) {
+    assert.equal(hash(actual), CITY_HOMES_SERVER_PIN);
+    assert.equal(homes.sourceBlob, CITY_HOMES_SERVER_BLOB);
+    assert.equal(homes.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
+    assert.equal(homes.inverseChunks, 2);
+    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+  }
+  const intelInput = invoiceSourceBaseline(file, invoiceInput);
+  const franchiseInput = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, intelInput).baselineText : intelInput;
+  const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, franchiseInput) : null;
+  if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
+  const crewInput = franchise ? franchise.baselineText : franchiseInput;
+  const crew = file === 'src/server.js' ? assertCrewLogisticsSourceTransfer(file, crewInput) : null;
+  const warehouseInput = crew ? crew.baselineText : crewInput;
   if (crew) {
-    assert.equal(hash(actual), CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
+    assert.equal(hash(crewInput), CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
     assert.equal(crew.baselineSha256, WAREHOUSE_SERVER_PIN);
     assert.equal(crew.inverseChunks, 2);
-    assert.equal(actual, execFileSync('git', ['show', CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file]], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(crewInput, execFileSync('git', ['show', CREW_LOGISTICS_SOURCE_CURRENT_BLOBS[file]], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
     assert.equal(warehouseInput, execFileSync('git', ['show', CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS[file]], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
   const warehouse = file === 'src/server.js' ? assertWarehouseServerTransfer(warehouseInput) : null;
-  const tenderInput = warehouse ? warehouse.baselineText : actual;
+  const tenderInput = warehouse ? warehouse.baselineText : warehouseInput;
   if (warehouse) {
     assert.equal(hash(warehouseInput), WAREHOUSE_SERVER_PIN);
     assert.equal(warehouse.baselineSha256, SUPPLY_TENDER_SERVER_PIN);
