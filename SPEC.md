@@ -12,15 +12,15 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **351** files, **114627** lines (recursive source inventory) |
-| Test suites | **523** files, **154896** lines (recursive source inventory) |
-| HTTP routes | **941** registrations (**941** unique; 890 under `/v1`) |
+| Backend modules | **353** files, **114728** lines (recursive source inventory) |
+| Test suites | **524** files, **156021** lines (recursive source inventory) |
+| HTTP routes | **942** registrations (**942** unique; 891 under `/v1`) |
 | Database tables | **404** (`schema.sql`, 7980 lines) |
 | Client | **14709** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **737** markdown files, **138058** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **738** markdown files, **138196** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **74** checks — **68** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **277,000 lines** of backend code, tests, schema and top-level contracts.
