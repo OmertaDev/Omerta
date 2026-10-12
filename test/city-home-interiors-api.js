@@ -13,6 +13,34 @@ function nativeEndpoint(value) {
   assert(/^\/(?:omerta_query|omerta_check|city_homes_[a-z0-9_]+)$/.test(endpoint.pathname));
   return endpoint;
 }
+async function withPoolQueryFault(pool, afterQuery, work) {
+  const originalConnect = pool.connect;
+  const instrument = client => new Proxy(client, { get(target, property) {
+    if (property === 'query') return (...args) => {
+      const callback = args.at(-1);
+      if (typeof callback === 'function') {
+        const queryArgs = args.slice(0,-1);
+        return target.query(...queryArgs,(error,result) => {
+          if (error) { callback(error,result); return; }
+          let fault;
+          try { afterQuery(queryArgs,result); } catch (error) { fault = error; }
+          callback(fault || null,fault ? undefined : result);
+        });
+      }
+      return target.query(...args).then(result => { afterQuery(args,result); return result; });
+    };
+    const value = Reflect.get(target,property,target);
+    return typeof value === 'function' ? value.bind(target) : value;
+  } });
+  pool.connect = (...args) => {
+    if (typeof args[0] === 'function') {
+      const callback = args[0];
+      return originalConnect.call(pool,(error,client,release) => callback(error,error ? client : instrument(client),release),...args.slice(1));
+    }
+    return originalConnect.apply(pool,args).then(instrument);
+  };
+  try { return await work(); } finally { pool.connect = originalConnect; }
+}
 for (const value of [undefined, 'https://127.0.0.1/omerta_query', 'postgresql://live.invalid/omerta_query', 'postgresql://127.0.0.1/postgres']) assert.throws(() => nativeEndpoint(value));
 for (const name of ['JWT_SECRET', 'MOD_KEY', 'MARKET_SEED']) process.env[name] = crypto.randomBytes(32).toString('hex');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.POPULATION_OFF = 'on';
@@ -185,44 +213,34 @@ try {
 
   // Actual late receipt SQL failure restores state/events/guards and storage attachments.
   const rollbackItem = await award(owner), rollbackKey = crypto.randomUUID(), rollbackBoard = await owned(), beforeRollback = await snapshot();
-  const originalConnect = app.pool.connect.bind(app.pool);
   let injected = false;
-  app.pool.connect = async () => {
-    const client = await originalConnect();
-    return { release: (...args) => client.release(...args), async query(...args) {
-      const result = await client.query(...args);
-      if (!injected && /^UPDATE idempotency SET status=\$3/.test(String(args[0])) && args[1]?.[1] === rollbackKey) {
-        injected = true; throw new Error('home late receipt interruption');
-      }
-      return result;
-    } };
-  };
-  try { assert.equal((await homePost(owner, 'storage/store', { itemId: rollbackItem.id }, rollbackKey, rollbackBoard)).statusCode, 503); }
-  finally { app.pool.connect = originalConnect; }
+  console.log('Home fault boundary: late receipt started');
+  await withPoolQueryFault(app.pool,(args) => {
+    if (!injected && /^UPDATE idempotency SET status=\$3/.test(String(args[0])) && args[1]?.[1] === rollbackKey) {
+      injected = true; throw new Error('home late receipt interruption');
+    }
+  },async () => { assert.equal((await homePost(owner, 'storage/store', { itemId: rollbackItem.id }, rollbackKey, rollbackBoard)).statusCode, 503); });
   assert(injected); assert.deepEqual(await snapshot(), beforeRollback, 'Late SQL failure rolls back the whole home effect and receipt boundary.');
   ok(await homePost(owner, 'storage/store', { itemId: rollbackItem.id }, rollbackKey, rollbackBoard));
   ok(await homePost(owner, 'storage/retrieve', { itemId: rollbackItem.id }));
+  console.log('Home fault boundary: late receipt completed');
 
   // A real COMMIT completes, then its acknowledgement is withheld on that connection.
   const uncertainItem = await award(owner), uncertainKey = crypto.randomUUID(), uncertainBoard = await owned();
   let lostCommitAck = false;
-  app.pool.connect = async () => {
-    const client = await originalConnect();
-    return { release: (...args) => client.release(...args), async query(...args) {
-      const result = await client.query(...args);
-      if (!lostCommitAck && String(args[0]) === 'COMMIT') { lostCommitAck = true; throw new Error('withheld committed acknowledgement'); }
-      return result;
-    } };
-  };
-  try {
+  console.log('Home fault boundary: committed acknowledgement started');
+  await withPoolQueryFault(app.pool,(args) => {
+    if (!lostCommitAck && String(args[0]) === 'COMMIT') { lostCommitAck = true; throw new Error('withheld committed acknowledgement'); }
+  },async () => {
     const uncertain = await homePost(owner, 'storage/store', { itemId: uncertainItem.id }, uncertainKey, uncertainBoard);
     assert.equal(uncertain.statusCode, 503); assert.equal(uncertain.json().error, 'item_commit_unknown');
-  } finally { app.pool.connect = originalConnect; }
+  });
   assert(lostCommitAck);
   const recoveredAck = ok(await homePost(owner, 'storage/store', { itemId: uncertainItem.id }, uncertainKey, uncertainBoard));
   assert.equal(recoveredAck.effect.itemId, uncertainItem.id);
   assert.equal(Number((await app.pool.query("SELECT COUNT(*) n FROM item_events WHERE item_id=$1 AND event_kind='stored'", [uncertainItem.id])).rows[0].n), 1);
   ok(await homePost(owner, 'storage/retrieve', { itemId: uncertainItem.id }));
+  console.log('Home fault boundary: committed acknowledgement completed');
 
   // Working home uses the actual authored recipe and the visitor's own account materials.
   const makerInitial = await read(maker, 'working home'); ok(await homePost(maker, 'activate', {}, undefined, makerInitial));
@@ -257,22 +275,17 @@ try {
   assert.deepEqual(await snapshot(), noConsent, 'Home entry never implies puzzle membership.');
   const puzzleRollbackKey = crypto.randomUUID(), puzzleRollbackBefore = await snapshot();
   let puzzleReceiptInterrupted = false;
-  app.pool.connect = async () => {
-    const client = await originalConnect();
-    return { release: (...args) => client.release(...args),async query(...args) {
-      const result = await client.query(...args);
-      if (!puzzleReceiptInterrupted && /^UPDATE idempotency SET status=\$3/.test(String(args[0])) && args[1]?.[1] === puzzleRollbackKey) {
-        puzzleReceiptInterrupted = true; throw new Error('late puzzle participant receipt interruption');
-      }
-      return result;
-    } };
-  };
-  try { assert.equal((await post(guest, joinAction.path, { ...joinAction.body,consent:true }, puzzleRollbackKey)).statusCode, 503); }
-  finally { app.pool.connect = originalConnect; }
+  console.log('Home fault boundary: puzzle receipt started');
+  await withPoolQueryFault(app.pool,(args) => {
+    if (!puzzleReceiptInterrupted && /^UPDATE idempotency SET status=\$3/.test(String(args[0])) && args[1]?.[1] === puzzleRollbackKey) {
+      puzzleReceiptInterrupted = true; throw new Error('late puzzle participant receipt interruption');
+    }
+  },async () => { assert.equal((await post(guest, joinAction.path, { ...joinAction.body,consent:true }, puzzleRollbackKey)).statusCode, 503); });
   assert(puzzleReceiptInterrupted); assert.deepEqual(await snapshot(), puzzleRollbackBefore, 'Late join receipt failure restores participant consent and room revision.');
   ok(await post(guest, joinAction.path, { ...joinAction.body,consent:true }));
   puzzleBoard = await read(guest); assert.deepEqual(puzzleBoard.activity.active.roster, [{ name: guest.name }]);
   assert.equal(puzzleBoard.activity.active.self.step, 0);
+  console.log('Home fault boundary: puzzle receipt completed');
   const wrongCell = puzzleBoard.activity.active.cells.find(row => row.furnishingId === 'table').action, beforeWrong = await snapshot();
   assert.equal((await post(guest, wrongCell.path, wrongCell.body)).json().error, 'home_puzzle_clue');
   assert.deepEqual(await snapshot(), beforeWrong, 'An out-of-order furnishing has no progress or resource effect.');

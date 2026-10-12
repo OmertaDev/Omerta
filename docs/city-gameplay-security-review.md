@@ -90,3 +90,19 @@ command/ledger definitions and architecture JSON. Their real domain and JWT/esta
 checks pass with the gameplay source. Closed source normalization retains every predecessor
 assertion and negative control; it grants no new gameplay/native/deployment qualification.
 Source declares 64 native steps; actual final-head execution remains unobserved and mandatory.
+
+The next hosted candidate `c3da2906` passed recovery and static SQL preparation on both
+native versions, then the full pretest failed at an inherited current-API assertion expecting
+1.4.0 from the intentionally published 1.5.0 interface. Only that strict expected version
+is updated; prior migration stamps, MCP version and historical source evidence stay exact.
+Complete native archives verify exit0 for custody migration, arcs and Crew in both lanes;
+Home interiors was unfinished when the obsolete run was cancelled. A partial live log view
+incorrectly suggested a Crew stall and is superseded by those complete archives.
+
+Three Home fault-injection wrappers ignored the callback connect form used by installed
+pg-pool.query. The exact old wrapper leaves a controlled transport query waiting before
+any SQL. A scoped Proxy now preserves full clients and both Promise/callback APIs, injecting
+the same faults only after the real SQL/COMMIT and restoring the original method. Original
+rollback, replay, custody and native race assertions remain unchanged. Full Home memory
+and actual installed-library protocol controls pass; controlled transport is not a database
+proof. The final repaired native and full release gates remain required.
