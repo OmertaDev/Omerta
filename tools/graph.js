@@ -79,6 +79,44 @@ export function extractIntelHelperReconciliations(invariants, helper) {
   return terms;
 }
 
+// Employment's escrow and loot checks consume different helper expressions.
+// Attribute only the exact imported cash SQL and field bindings, not nearby terms.
+export function extractEmploymentHelperReconciliations(invariants, helper) {
+  invariants = normalizeText(invariants); helper = normalizeText(helper);
+  if (!/^import \{ employmentCashInvariant \} from ['"]\.\/gameemploymentinvariants\.js['"];$/m.test(invariants)
+      || !/^export async function employmentCashInvariant\(client\) \{$/m.test(helper)
+      || !/^\s*const expected = -transfers \+ death \+ loot;$/m.test(helper)
+      || !/^\s*return \{ name:'game employment escrow',actual,expected,delta:actual-expected,lootedCash:bookLoot,lootDelta:bookLoot\+loot,$/m.test(helper)
+      || !/^\s*const actual = Number\(\(await client\.query\(employmentConservationQuery\)\)\.rows\[0\]\.employment_cash\);$/m.test(helper)
+      || !/^import \{ employmentConservationQuery \} from ['"]\.\/gameemployment\.js['"];$/m.test(helper)
+      || !/^\s*const bookLoot = Number\(\(await client\.query\('SELECT COALESCE\(SUM\(looted_cash\),0\) AS amount FROM game_employment_jobs'\)\)\.rows\[0\]\.amount\);$/m.test(helper)) return [];
+  const call = /^\s*const ([A-Za-z_$][\w$]*) = await employmentCashInvariant\(pool\);$/m.exec(invariants);
+  if (!call) return [];
+  const sqlTerms = [];
+  for (const [variable, suffix] of [['transfers', ' AND character_id IS NOT NULL'], ['death', ''], ['loot', ' AND character_id IS NULL']]) {
+    const statement = `  const ${variable} = Number((await client.query("SELECT COALESCE(SUM(amount),0) AS amount FROM transactions WHERE currency='cash' AND reason LIKE '`;
+    const end = `'${suffix}")).rows[0].amount);`;
+    const lines = helper.split('\n').filter(line => line.startsWith(statement) && line.endsWith(end));
+    if (lines.length !== 1) return [];
+    const line = lines[0];
+    const reason = line.slice(statement.length, -end.length);
+    if (!/^[a-z][a-z0-9:_]*%$/.test(reason)) return [];
+    sqlTerms.push({ variable, reason, line: helper.slice(0, helper.indexOf(line)).split('\n').length });
+  }
+  const terms = [];
+  for (const match of invariants.matchAll(/push\('([^']+)', ([^;\n]+)\);/g)) {
+    if (match.index < call.index) continue;
+    const values = match[2].split(',').map(value => value.trim());
+    const escrow = values.join('|') === `${call[1]}.actual|${call[1]}.expected|0`;
+    const loot = values.join('|') === `${call[1]}.lootedCash|${call[1]}.lootedCash - ${call[1]}.lootDelta|0`;
+    for (const term of sqlTerms.filter(term => escrow || (loot && term.variable === 'loot'))) {
+      terms.push({ check: match[1], reason: term.reason, line: term.line,
+        bindingLine: invariants.slice(0, match.index).split('\n').length });
+    }
+  }
+  return terms;
+}
+
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
 export function isMainModule(moduleUrl, argvEntry) {
@@ -299,6 +337,17 @@ export function build() {
     const helperSource = read(intelHelper);
     for (const term of extractIntelHelperReconciliations(inv, helperSource)) {
       const prov = { file: 'src/intelforecastinvariants.js', line: term.line, hash: sha(helperSource),
+        binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
+      node('Reason', term.reason, { isPrefix: true }, prov);
+      edge('RECONCILES', `Check:${term.check}`, `Reason:${term.reason}`, prov);
+    }
+  }
+
+  const employmentHelper = path.join(ROOT, 'src', 'gameemploymentinvariants.js');
+  if (fs.existsSync(employmentHelper)) {
+    const helperSource = read(employmentHelper);
+    for (const term of extractEmploymentHelperReconciliations(inv, helperSource)) {
+      const prov = { file: 'src/gameemploymentinvariants.js', line: term.line, hash: sha(helperSource),
         binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
       node('Reason', term.reason, { isPrefix: true }, prov);
       edge('RECONCILES', `Check:${term.check}`, `Reason:${term.reason}`, prov);
