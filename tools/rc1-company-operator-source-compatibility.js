@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { gameEmploymentSourceBaseline } from './rc1-game-employment-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -86,7 +87,7 @@ export function qualifyCompanyOperatorSource(file, input) {
 }
 // Unknown bytes pass through unchanged to closed historical guards; never strip by pattern.
 export function companyOperatorSourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = gameEmploymentSourceBaseline(file, input);
   return Object.hasOwn(COMPANY_OPERATOR_SOURCE_CURRENT_PINS, file) && hash(text) === COMPANY_OPERATOR_SOURCE_CURRENT_PINS[file]
     ? assertCompanyOperatorSourceTransfer(file, text).baselineText : text;
 }
