@@ -8062,8 +8062,9 @@ CREATE TABLE IF NOT EXISTS game_employment_jobs (
   paid_cash NUMERIC NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
   refunded_cash NUMERIC NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
   burned_cash NUMERIC NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+  looted_cash NUMERIC NOT NULL DEFAULT 0 CHECK(looted_cash>=0),
   expires_at TIMESTAMPTZ NOT NULL,
-  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash),
+  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash),
   CHECK(state<>'closed' OR escrow_cash=0)
 );
 CREATE TABLE IF NOT EXISTS game_employment_assignments (
@@ -8233,3 +8234,11 @@ CREATE TABLE IF NOT EXISTS company_opportunity_notices (
   UNIQUE(account_id,kind,source_id)
 );
 CREATE INDEX IF NOT EXISTS company_opportunity_inbox ON company_opportunity_notices(account_id,id);
+
+-- EMP-INT01: safely upgrade earlier unactivated payroll schemas as well as new
+-- ones. Replace only this table's original generated accounting constraint.
+ALTER TABLE game_employment_jobs ADD COLUMN IF NOT EXISTS looted_cash NUMERIC NOT NULL DEFAULT 0 CHECK(looted_cash>=0);
+ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_check;
+ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_accounting;
+ALTER TABLE game_employment_jobs ADD CONSTRAINT game_employment_jobs_accounting
+  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash);

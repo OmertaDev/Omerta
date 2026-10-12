@@ -89,7 +89,7 @@ try {
   await single(f.owner, (ch, client, h) => E.closeEmployment(ch, f.job.employmentId, 'close', client, h));
   assert.equal(await balance(f.owner), before+100);
   const book = (await app.pool.query('SELECT * FROM game_employment_jobs WHERE id=$1', [f.job.employmentId])).rows[0];
-  assert.equal(Number(book.total_cash), Number(book.paid_cash)+Number(book.refunded_cash)+Number(book.escrow_cash)+Number(book.burned_cash));
+  assert.equal(Number(book.total_cash), Number(book.paid_cash)+Number(book.refunded_cash)+Number(book.escrow_cash)+Number(book.burned_cash)+Number(book.looted_cash));
   assert.equal(Number(book.escrow_cash), 0);
   // Assignment must precede all canonical delivery, and a commitment cannot back two slots.
   const duplicate = await single(f.owner, (ch, client, h) => E.createEmployment(ch, { ...f.terms, expiresAt: new Date(Date.now()+1200000).toISOString() }, 'second', client, h));
@@ -134,6 +134,64 @@ try {
   const deadWorker = await fixture(1); await deliver(deadWorker);
   await pair(deadWorker.owner,deadWorker.worker,(_ch,target,client,h)=>runEstate(client,h,target,'employment worker death proof'));
   await assert.rejects(claim(deadWorker));
+  // EMP-INT01: open wage reserve shares canonical PLAYER kill loot exposure.
+  const looted=await fixture(1);
+  for (const bad of [-1,0.50001,NaN,Infinity,'0.25']) {
+    await assert.rejects(pair(looted.worker,looted.owner,(ch,target,client,h)=>E.voidEmploymentAtDeath(client,h,target,ch,bad)),/estate_loot/);
+  }
+  await assert.rejects(single(looted.owner,(ch,client,h)=>E.voidEmploymentAtDeath(client,h,ch,ch,0.25)),/estate_party/);
+  await assert.rejects(single(looted.owner,(ch,client,h)=>E.voidEmploymentAtDeath(client,h,ch,null,0.25)),/estate_loot/);
+  await assert.rejects(pair(looted.worker,looted.owner,(ch,target,client,h)=>E.voidEmploymentAtDeath(client,h,target,{ ...ch,alive:false },0.25)),/party/);
+  await assert.rejects(pair(looted.worker,looted.owner,(ch,target,client,h)=>E.voidEmploymentAtDeath(client,h,target,{ ...ch,account_id:target.account_id },0.25)),/estate_party/);
+  await assert.rejects(single(looted.owner,(ch,client,h)=>E.voidEmploymentAtDeath(client,h,ch,{ id:deadWorker.worker.id,account_id:deadWorker.worker.account,alive:true,is_npc:false,cash:0 },0.25)),/estate_party/);
+  const playerEstate=await pair(looted.worker,looted.owner,async (ch,target,client,h)=>{
+    const result=await runEstate(client,h,target,'employment PLAYER kill proof',{ killerCh:ch,loot:true });
+    const before=Number(ch.cash), first=await E.voidEmploymentAtDeath(client,h,target,ch,0.25);
+    assert.equal(first.lootedCash,25); assert.equal(first.burnedCash,75); assert.equal(Number(ch.cash),before+25);
+    const repeated=await E.voidEmploymentAtDeath(client,h,target,ch,0.25);
+    assert.equal(repeated.closedJobs,0); assert.equal(repeated.lootedCash,0); assert.equal(Number(ch.cash),before+25);
+    return { ...result,killerCash:Number(ch.cash) };
+  });
+  assert.equal(await balance(looted.worker),playerEstate.killerCash,'Canonical outer persist retains in-memory loot credit');
+  const payroll=(await app.pool.query('SELECT * FROM game_employment_jobs WHERE id=$1',[looted.job.employmentId])).rows[0];
+  assert.equal(Number(payroll.escrow_cash),0); assert.equal(Number(payroll.looted_cash),25); assert.equal(Number(payroll.burned_cash),75);
+  const lootRows=(await app.pool.query("SELECT character_id,amount FROM transactions WHERE reason=$1",[`employment:estate:loot:${looted.job.employmentId}`])).rows;
+  assert.equal(lootRows.length,1); assert.equal(lootRows[0].character_id,null); assert.equal(Number(lootRows[0].amount),-25);
+  const clamped=await fixture(1);
+  await pair(clamped.worker,clamped.owner,async (ch,target,client,h)=>{
+    await runEstate(client,h,target,'employment maximum loot proof',{ killerCh:ch,loot:true });
+    assert.equal((await E.voidEmploymentAtDeath(client,h,target,ch,0.5)).lootedCash,50);
+  });
+  if (native) {
+    const rollbackDeath=await fixture(1), killerCash=await balance(rollbackDeath.worker), employerCash=await balance(rollbackDeath.owner);
+    await assert.rejects(pair(rollbackDeath.worker,rollbackDeath.owner,async (ch,target,client,h)=>{
+      await runEstate(client,h,target,'employment rollback kill',{ killerCh:ch,loot:true });
+      await E.voidEmploymentAtDeath(client,h,target,ch,0.25); throw new Error('death rollback');
+    }),/death rollback/);
+    assert.equal(await balance(rollbackDeath.worker),killerCash); assert.equal(await balance(rollbackDeath.owner),employerCash);
+    const unchanged=(await app.pool.query('SELECT state,escrow_cash,looted_cash,burned_cash FROM game_employment_jobs WHERE id=$1',[rollbackDeath.job.employmentId])).rows[0];
+    assert.equal(unchanged.state,'open'); assert.equal(Number(unchanged.escrow_cash),100); assert.equal(Number(unchanged.looted_cash),0); assert.equal(Number(unchanged.burned_cash),0);
+    assert.equal((await app.pool.query('SELECT alive FROM characters WHERE id=$1',[rollbackDeath.owner.id])).rows[0].alive,true);
+    assert.equal((await app.pool.query('SELECT id FROM transactions WHERE reason=$1',[`employment:estate:loot:${rollbackDeath.job.employmentId}`])).rows.length,0);
+    // Upgrade the exact legacy generated accounting constraint, retaining prior
+    // reserve rather than silently deploying a column that the old CHECK rejects.
+    const fs=await import('node:fs');
+    await app.pool.query('CREATE SCHEMA employment_upgrade_proof');
+    await app.pool.query(`CREATE TABLE employment_upgrade_proof.game_employment_jobs(id TEXT PRIMARY KEY,total_cash NUMERIC,
+      escrow_cash NUMERIC,paid_cash NUMERIC DEFAULT 0,refunded_cash NUMERIC DEFAULT 0,burned_cash NUMERIC DEFAULT 0,
+      CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash))`);
+    await app.pool.query("INSERT INTO employment_upgrade_proof.game_employment_jobs(id,total_cash,escrow_cash) VALUES('legacy',100,100)");
+    const schema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');
+    const migration=schema.slice(schema.indexOf('-- EMP-INT01:')).replaceAll('ALTER TABLE game_employment_jobs','ALTER TABLE employment_upgrade_proof.game_employment_jobs');
+    await app.pool.query(migration);
+    await app.pool.query("UPDATE employment_upgrade_proof.game_employment_jobs SET escrow_cash=0,burned_cash=75,looted_cash=25 WHERE id='legacy'");
+    await assert.rejects(app.pool.query("UPDATE employment_upgrade_proof.game_employment_jobs SET looted_cash=26 WHERE id='legacy'"),/check constraint/i);
+    assert.equal(Number((await app.pool.query("SELECT looted_cash FROM employment_upgrade_proof.game_employment_jobs WHERE id='legacy'")).rows[0].looted_cash),25);
+  }
+  assert.equal((await employmentCashInvariant(app.pool)).ok,true);
+  await app.pool.query('UPDATE transactions SET amount=-24 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`]);
+  assert.equal((await employmentCashInvariant(app.pool)).ok,false,'Missing escrow-side loot dollar must alert');
+  await app.pool.query('UPDATE transactions SET amount=-25 WHERE reason=$1',[`employment:estate:loot:${looted.job.employmentId}`]);
   assert.equal((await employmentCashInvariant(app.pool)).ok,true);
   console.log(`gameemployment ${native?'PostgreSQL (including concurrent claims and rollback)':'memory'}: canonical work, once-only wages, replay, expiry, canonical death/heir and conservation passed`);
 } finally { await app.close(); }
