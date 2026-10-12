@@ -2,11 +2,21 @@ process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'business-season-isolat
 process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.DEPOT_PILOT = 'on';
 process.env.MARKET_SEED = 'business-season-isolated-seed'; process.env.MOD_KEY = 'business-season-isolated-mod';
 const native = process.argv.includes('--postgres');
+assert(!process.env.DATABASE_URL, 'Season core rejects ambient DATABASE_URL');
 if (native) {
   const url = new URL(process.env.BUSINESS_SEASON_TEST_DATABASE_URL);
-  if (!['127.0.0.1', 'localhost'].includes(url.hostname) || !url.pathname.startsWith('/business_season_test_')) throw new Error('Only a fresh owned local season test database is accepted.');
+  assert(['postgres:', 'postgresql:'].includes(url.protocol)); assert(['127.0.0.1', 'localhost'].includes(url.hostname));
+  const local = ['35439', '35449'].includes(url.port) && url.username === 'pilot_runner' && url.password === '';
+  const ci = url.port === '5432' && url.username === 'postgres' && url.password === 'pgcheck';
+  assert(local || ci); assert(!url.search && !url.hash); assert.match(url.pathname, /^\/business_season_test_[a-z0-9_]+$/);
+  const { default: pg } = await import('pg'), pre = new pg.Client({ connectionString: url.href }); await pre.connect();
+  try {
+    await pre.query('BEGIN READ ONLY'); const version = (await pre.query('SHOW server_version')).rows[0].server_version;
+    assert.match(version, local ? /^18\.4(?:[.\s]|$)/ : /^(?:16(?:[.\s]|$)|18\.4(?:[.\s]|$))/);
+    assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0); await pre.query('ROLLBACK');
+  } finally { await pre.end(); }
   process.env.DATABASE_URL = url.href;
-} else delete process.env.DATABASE_URL;
+}
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import * as G from '../src/game.js';
