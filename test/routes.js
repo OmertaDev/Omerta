@@ -31,6 +31,7 @@ const app = await buildServer();
 // could not tell a considered exemption from a silencing one, because a bare string carries no
 // reason. Now an entry costs a sentence, so the cheapest way past this test is to add `auth`.
 const PUBLIC = {
+  'GET /v1/company/seasons/public/:id': 'bounded prize-free result bands and observed coverage only under entry, company and reputation consent; exact journals and private financial results require authentication',
   'GET /v1/company/reputation/public/:accountId': 'bounded coarse bands only under current company and reputation publication consent; source, performer and counterparty identities remain private',
   'GET /v1/buyer-cooperatives/public': 'bounded published frozen terms only; member funding, allocations, receipts and claims require their original authenticated account',
   'GET /v1/strategy-leagues': 'public bounded prize-free league cohorts and descriptive standings; private strategy rules, rule hashes and original-account entries require authentication',

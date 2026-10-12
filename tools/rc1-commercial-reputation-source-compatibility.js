@@ -1,3 +1,4 @@
+import { businessSeasonSourceBaseline } from './rc1-business-season-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -91,7 +92,7 @@ export function qualifyCommercialReputationSource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function commercialReputationSourceBaseline(file, input) {
-  const text = normalize(input);
+  const text = businessSeasonSourceBaseline(file, input);
   return Object.hasOwn(COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, file) && hash(text) === COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS[file]
     ? assertCommercialReputationSourceTransfer(file, text).baselineText : text;
 }

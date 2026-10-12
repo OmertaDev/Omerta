@@ -1,3 +1,4 @@
+import { businessSeasonSourceBaseline } from '../tools/rc1-business-season-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -15,7 +16,7 @@ const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const files=['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js'];
 assert.deepEqual(Object.keys(O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS),files);
 for(const file of files){
- const current=lf(fs.readFileSync(file,'utf8')),prior=git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=businessSeasonSourceBaseline(file,fs.readFileSync(file,'utf8')),prior=git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${O.COMMERCIAL_REPUTATION_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_BLOBS[file]));entire(prior,git('show',`5aadb5267bba9060716ddd82660e59f6aec89ea3:${file}`));
  for(const [text,pins,bs]of [[current,O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS,O.COMMERCIAL_REPUTATION_SOURCE_CURRENT_BLOBS],[prior,O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_PINS,O.COMMERCIAL_REPUTATION_SOURCE_BASELINE_BLOBS]]){assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
  assert.equal(hash(prior),C.COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file]);hashes++;assert.equal(blob(prior),C.COMPANY_OPPORTUNITY_SOURCE_CURRENT_BLOBS[file]);blobs++;
