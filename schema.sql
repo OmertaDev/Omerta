@@ -8176,3 +8176,48 @@ CREATE TABLE IF NOT EXISTS city_home_activity_members (
   CHECK (status<>'left' OR left_at IS NOT NULL)
 );
 CREATE INDEX IF NOT EXISTS ix_city_home_activity_member_owner ON city_home_activity_members(account_id,character_id,generation);
+-- Prepaid finite game employment; canonical deliveries are assigned globally once.
+CREATE TABLE IF NOT EXISTS game_employment_jobs (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  employer_character TEXT NOT NULL REFERENCES characters(id),
+  employer_account TEXT NOT NULL REFERENCES accounts(id),
+  terms JSONB NOT NULL,
+  state TEXT NOT NULL DEFAULT 'open' CHECK(state IN ('open','closed')),
+  total_cash NUMERIC NOT NULL CHECK(total_cash>0 AND total_cash<=500000),
+  escrow_cash NUMERIC NOT NULL CHECK(escrow_cash>=0),
+  paid_cash NUMERIC NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+  refunded_cash NUMERIC NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+  burned_cash NUMERIC NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+  looted_cash NUMERIC NOT NULL DEFAULT 0 CHECK(looted_cash>=0),
+  expires_at TIMESTAMPTZ NOT NULL,
+  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash),
+  CHECK(state<>'closed' OR escrow_cash=0)
+);
+CREATE TABLE IF NOT EXISTS game_employment_assignments (
+  id TEXT PRIMARY KEY,
+  employment_id TEXT NOT NULL REFERENCES game_employment_jobs(id),
+  commitment_id TEXT NOT NULL UNIQUE REFERENCES delivery_commitments(id),
+  worker_character TEXT NOT NULL REFERENCES characters(id),
+  worker_account TEXT NOT NULL REFERENCES accounts(id),
+  worker_kind TEXT NOT NULL CHECK(worker_kind IN ('human','agent')),
+  state TEXT NOT NULL DEFAULT 'assigned' CHECK(state IN ('assigned','paid')),
+  accepted_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  paid_at TIMESTAMPTZ,
+  CHECK((state='paid')=(paid_at IS NOT NULL))
+);
+CREATE TABLE IF NOT EXISTS game_employment_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  action TEXT NOT NULL CHECK(action IN ('create','accept','claim','close')),
+  request_key TEXT NOT NULL,
+  terms JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  PRIMARY KEY(account_id,action,request_key)
+);
+-- EMP-INT01: safely upgrade earlier unactivated payroll schemas as well as new
+-- ones. Replace only this table's original generated accounting constraint.
+ALTER TABLE game_employment_jobs ADD COLUMN IF NOT EXISTS looted_cash NUMERIC NOT NULL DEFAULT 0 CHECK(looted_cash>=0);
+ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_check;
+ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_accounting;
+ALTER TABLE game_employment_jobs ADD CONSTRAINT game_employment_jobs_accounting
+  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash);

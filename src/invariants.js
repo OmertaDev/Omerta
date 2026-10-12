@@ -7,6 +7,7 @@ import { logisticsCoverageFaults } from './logisticscoverageinvariants.js';
 import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
+import { employmentCashInvariant } from './gameemploymentinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -106,7 +107,7 @@ const KNOWN_REASONS = {
     // `favor:refund` cancel/expiry, `favor:loot`/`favor:death` the dead poster's escrow. Reconciled
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
-    'intel_job:',
+    'intel_job:', 'employment:reserve:', 'employment:wage:', 'employment:refund:', 'employment:estate:loot:',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -664,6 +665,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const coverageEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM logistics_coverage_policies');
   push('logistics coverage escrow', coverageEscrow, -(await sum(pool, "currency='cash' AND reason LIKE 'coverage:%'")), 0);
   push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);
+  const employment = await employmentCashInvariant(pool);
+  push('game employment escrow', employment.actual, employment.expected, 0);
+  push('game employment loot ledger', employment.lootedCash, employment.lootedCash - employment.lootDelta, 0);
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);

@@ -1,0 +1,15 @@
+# Employment accounting graph attribution review
+
+Implementation: `75b6478f9c173c0d4c2b88b6260463b3c7f105e4`, based on `4c7912be8c661490ad82ffe48e3786ef0149434b`, reviewed 2026-10-12 with Node v24.19.0. Scope: `tools/graph.js` and `test/graph.js` developer graph extraction only. No runtime, invariant, estate, package, CI or generated KG changes.
+
+The graph previously treated the two imported employment monetary checks as mute because their SQL lived in `employmentCashInvariant`. The new finite extractor binds the exact import/invocation, helper export, conservation-query import, book-loot query, returned properties and arithmetic, then attributes the helper's actual cash SQL prefixes. Escrow reconciles `employment:%`, `death:employment:%` and `employment:estate:loot:%`; the loot-ledger expression reconciles only `employment:estate:loot:%`. Edges retain helper source/line/hash plus invariant caller binding provenance. No checks were added to the mute list.
+
+Applied adapted single-agent source/trust-boundary and mutation passes from policy pins: pashov `c577eb7799c349de0acb187ba00ca98e14e436fd`, Plamen `795962b96e254f2e423a2635fe7f8cb8ea1e6d69`, and Trail of Bits `d3323cefbcf645678b8dc481de204b02ad3d02dc`. These describe actual JavaScript source inspection, binding trace and property tests, not upstream orchestration or financial audit execution. PostgreSQL locks/transactions and Solidity are inapplicable to the developer-only parser change.
+
+Meaningful controls reject missing import, unrelated helper, wrong caller argument, noncash currency, unsupported reason equality, wrong character filter, changed escrow arithmetic, missing/duplicate SQL, changed book column, unrelated returned loot property and missing loot expression. Cross-binding and changed loot arithmetic affect only the applicable check. CRLF and LF yield identical terms/provenance; current graph edges carry actual helper/caller hashes and loot does not inherit the broad transfers prefix. Every earlier graph control remains intact.
+
+Executed `node test/graph.js`, `node tools/graph.js check`, syntax checks for both changed JS files, and `git diff --check`; all passed. Existing graph invariants retain 19 computed-term mute checks, with employment checks absent. Raw initial failure, successful retest, graph check and complete LF SHA256 source pins are retained under ignored `output/employment-accounting-graph-fix/`.
+
+Resolved G-E01 (test harness, low): the initial CRLF fixture appended CR to already-CRLF source, changing provenance line numbers. Normalizing first fixed the fixture; the successful retest preserves CRLF parity. Static triage verified the parser is read-only, only closed helper expressions generate edges, missing/ambiguous SQL produces no inferred coverage, and historical monetary controls are not waived. No remaining actionable finding in this scope.
+
+Ready for graph CI integration at the implementation revision. This verifies source reason attribution, not economic correctness, ledger conservation, current runtime behavior, deployment or financial activation. A future unsupported helper shape remains observable as missing graph coverage.

@@ -8,6 +8,8 @@ import { CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, CITY_GAMEPLAY_SOURCE_CURRENT_PIN
 import { CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_SOURCE_INVERSES,
   cityHomesLeagueSourceBaseline, assertCityHomesLeagueServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
+import { GAME_EMPLOYMENT_SOURCE_CURRENT_PINS, GAME_EMPLOYMENT_SOURCE_BASELINE_PINS, GAME_EMPLOYMENT_SOURCE_INVERSES,
+  assertGameEmploymentSourceTransfer, gameEmploymentSourceBaseline } from '../tools/rc1-game-employment-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -18,7 +20,7 @@ const files = ['package-lock.json','package.json','schema.sql','src/agentgateway
   'src/server.js','src/social/estate.js','src/worldgraph-ui.js','src/worldgraph-validate.js'];
 assert.deepEqual(Object.keys(CITY_GAMEPLAY_SOURCE_CURRENT_PINS), files);
 for (const pins of [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS]) assert.deepEqual(Object.keys(pins), files);
-assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['101cdaaec2d5f235102e3de839043ba1fef21f81','8dbe85846035dc0fcdba76992834e411632c6f1b']);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['f43ecf610b67e8b3ea90a57939a9c109d3f9bfab']);
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
@@ -57,24 +59,58 @@ for (const file of files) {
     }
   }
 }
+for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
+  const current = normalize(fs.readFileSync(file, 'utf8')), parent = cityGameplaySourceBaseline(file, current);
+  assert.equal(hash(parent), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete payroll parent: ' + file);
+  const operator = gameEmploymentSourceBaseline(file, parent);
+  assert.equal(hash(operator), GAME_EMPLOYMENT_SOURCE_BASELINE_PINS[file]);
+  assert.equal(operator, assertGameEmploymentSourceTransfer(file, parent).baselineText);
+  for (const revision of ['101cdaaec2d5f235102e3de839043ba1fef21f81','8dbe85846035dc0fcdba76992834e411632c6f1b']) {
+    assert.equal(operator, git('show', revision + ':' + file), 'The unchanged payroll adapter retains its complete operator predecessor: ' + file);
+  }
+  for (const chunk of GAME_EMPLOYMENT_SOURCE_INVERSES[file]) {
+    assert.equal(parent.split(chunk.current).length, 2, 'Each payroll predecessor hunk is exact and unique: ' + file);
+    for (const changed of [parent.replace(chunk.current, ''), parent.replace(chunk.current, chunk.current + chunk.current),
+      parent.replace(chunk.current, chunk.current + '// altered payroll predecessor hunk\n')]) {
+      assert.equal(cityGameplaySourceBaseline(file, changed), changed);
+      assert.equal(gameEmploymentSourceBaseline(file, changed), changed);
+      assert.throws(() => qualifyCityGameplaySource(file, changed), /source changed/);
+      assert.throws(() => assertGameEmploymentSourceTransfer(file, changed), /source changed/); negatives++;
+    }
+    const anchor = chunk.current.split('\n').find(line => line.trim() && !chunk.baseline.split('\n').includes(line)
+      && current.split(line + '\n').length === 2);
+    assert(anchor, 'The combined current file retains an exact added payroll line: ' + file);
+    for (const changed of [current.replace(anchor + '\n', ''), current.replace(anchor + '\n', anchor + '\n' + anchor + '\n'),
+      current.replace(anchor + '\n', anchor + ' // altered combined payroll authority\n')]) {
+      assert.equal(cityGameplaySourceBaseline(file, changed), changed);
+      assert.equal(gameEmploymentSourceBaseline(file, changed), changed);
+      assert.equal(companyOperatorSourceBaseline(file, changed), changed);
+      assert.throws(() => qualifyCityGameplaySource(file, changed), /source changed/);
+      assert.throws(() => assertGameEmploymentSourceTransfer(file, changed), /source changed/); negatives++;
+    }
+  }
+}
 const server = normalize(fs.readFileSync('src/server.js', 'utf8')), parentServer = cityGameplaySourceBaseline('src/server.js', server);
-assert.equal(hash(parentServer), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the operator envelope.');
+assert.equal(hash(parentServer), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the payroll envelope.');
+assert.equal(hash(gameEmploymentSourceBaseline('src/server.js', parentServer)), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/server.js'],
+  'The unchanged payroll adapter retains the complete operator envelope.');
 const homeServer = companyOperatorSourceBaseline('src/server.js', parentServer);
 assert.equal(hash(homeServer), CITY_HOMES_LEAGUE_SERVER_PIN);
 assert.equal(cityHomesLeagueSourceBaseline('src/server.js', server), assertCityHomesLeagueServerTransfer(homeServer).baselineText,
-  'Exactly one gameplay layer preserves the exact operator envelope before unchanged Homes and older layers.');
+  'Exactly one gameplay layer preserves the exact payroll and operator envelopes before unchanged Homes and older layers.');
 for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   for (const changed of [server.replace(chunk, ''), server.replace(chunk, chunk + chunk), server.replace(chunk, chunk.replace('registerCityHomes','registerUnreviewedHomes'))]) {
     assert.notEqual(changed, server); assert.equal(cityHomesLeagueSourceBaseline('src/server.js', changed), changed);
     assert.throws(() => assertCityHomesLeagueServerTransfer(cityGameplaySourceBaseline('src/server.js', changed)), /source changed/); negatives++;
   }
 }
-for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/city-world-opportunities.js','src/city-home-migration.js']) {
+for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/city-world-opportunities.js','src/city-home-migration.js',
+  'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js']) {
   const text = fs.readFileSync(file, 'utf8'); assert.equal(cityGameplaySourceBaseline(file, text), text, 'New modules have no predecessor alias.');
   assert.throws(() => qualifyCityGameplaySource(file, text), /Unknown gameplay source/); negatives++;
 }
 for (const file of ['toString','constructor','./src/server.js']) {
   assert.equal(cityGameplaySourceBaseline(file, server), server); assert.throws(() => qualifyCityGameplaySource(file, server), /Unknown gameplay source/); negatives++;
 }
-console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/operator-parent files, identical101/8dbe predecessors, preserved operator envelope, CRLF controls,', negatives,
+console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/f43-payroll-parent files, exact employment-to-operator101/8dbe predecessors, preserved payroll/operator envelopes, CRLF controls,', negatives,
   'tamper/unknown/no-new-module negatives; historical source-only transfer excludes all new authority/native/worker/migration/activation/deployment');

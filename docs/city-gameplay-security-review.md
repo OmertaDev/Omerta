@@ -9,7 +9,13 @@ Integrated source: `549fdfaff1b5de732dcdb84ac25d4e7a5e2dcfb6` preserves the game
 and incoming operator source. Image-only commits `8fb08a5bae1d4a80decf5e742ba6fea20a90a34a`
 and `73aa3509a2d6f48cf207450d1f2ebd39c4fb225e` pin official PostgreSQL image acquisition and
 retain its registry finding/drift controls, corresponding to `e19badf9`/`1fc6049c`; they grant no
-gameplay authority. These pins identify the assembled candidate, not native or production qualification.
+gameplay authority. Native-fixture repair source `9634fca0` addresses the first candidate’s actual
+SQL preparation, catalogue-count and upgrade-fixture failures without relaxing limits.
+The subsequent integration includes reviewed payroll main `f43ecf610b67e8b3ea90a57939a9c109d3f9bfab`.
+The closed gameplay transfer reconstructs that complete parent before unchanged employment,
+operator and older source-transfer layers. Those layers qualify source only, not the added
+gameplay, native migration, worker, activation or deployment authority. These pins identify
+the assembled candidate, not native or production qualification.
 Qualification must name the later final source revision and its own checks. This record is not
 a release or deployment attestation.
 The separately verified PR252 map-affordance release does not qualify these new gameplay authorities.
@@ -39,8 +45,8 @@ preserves its immutable result; fresh keys recheck actors. Explicit old-version 
 stored original authority solely to return custody, without interpreting current/retired effects.
 
 The following local evidence applies to its recorded gameplay source and producer pins; it does
-not automatically qualify the assembled operator/gameplay candidate. Incoming operator workflows retain
-their separate authority and review limits.
+not automatically qualify the assembled payroll/operator/gameplay candidate. Incoming workflows
+retain their separate authority and review limits.
 
 The opportunity API/control entry passed disposable pg-mem playthroughs for all nine
 packages, three learned approaches, quiet/public branches, secret pass consumption, four timed
@@ -59,3 +65,20 @@ test account-header authentication; whole-app JWT and browser evidence have sepa
 Other Home/Crew/PvE evidence and predecessor compatibility retain their own source limits.
 Final native database, independent combined review, release gates, migrations, worker compatibility
 and exact production revision/behavior verification remain pending for the integrated source.
+
+The first hosted candidate `3aa3a3e7` was cancelled after genuine native failures: a temporary
+custody relation was absent from static PREPARE context, literal-query ceilings were exceeded,
+the old four-package catalogue assertion was stale, and Phase2 seeded its upgrade from mutable
+current schema. Recovery alone passed; the browser job executed no steps. These results do not
+qualify the repaired head. Literal query branches retain predicates, parameters and locks; the
+combined payroll source stays within the original 168 interpolated / 40 unreadable ceilings.
+Static PREPARE uses one real session and the migration’s minimal temporary relation context.
+Actual custody-predicate and migration lifecycle behavior remain separate native proof obligations.
+
+Phase2 now seeds its immutable pre-definition predecessor, verifies all 72 typed gameplay
+metadata columns and closed native delta before entering its byte-unchanged complete original
+constraint/tamper oracle. Original PostgreSQL18 NOT NULL entries remain in that oracle; only
+the exact compiled new additions are projected. Parent and child URLs reject unknown hosts,
+databases, fragments and options before writes; the child permits only the exact parent-issued
+owned search-path/timeouts. Independent structural and blocked-socket controls passed locally.
+They are not actual PostgreSQL16/18.4 execution, which remains required on the final head.

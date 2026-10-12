@@ -35,7 +35,8 @@ const economyTables = ['business_depots', 'business_depot_journal', 'business_op
 const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_offers: [9, 10],
   business_warehouse_leases: [14, 13], logistics_coverage_policies: [17, 18], crew_logistics_links: [8, 9], depot_brand_licenses: [14, 16],
   intel_forecast_jobs: [16, 11], delivery_loan_requests: [10, 11], strategy_versions: [13, 14], strategy_licenses: [10, 8], company_succession_receipts: [13, 12], strategy_leagues: [13, 9], strategy_league_entries: [9, 8],
-  company_operators: [6, 8], company_operator_receipts: [5, 7] });
+  company_operators: [6, 8], company_operator_receipts: [5, 7],
+  game_employment_jobs: [13, 13], game_employment_assignments: [9, 8], game_employment_requests: [3, 5] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));

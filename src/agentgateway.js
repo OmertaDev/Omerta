@@ -456,6 +456,29 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/company/employment': { operationId: 'getOwnGameEmployment' },
+  'GET /v1/company/employment/offers': { operationId: 'getPublishedGameEmploymentOffers' },
+  'POST /v1/company/employment': { operationId: 'createPrepaidGameEmployment', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['depotId', 'expiresAt', 'slots', 'wageCash', 'acceptAgents', 'acceptHumans'], properties: {
+      depotId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' }, expiresAt: { type: 'string', format: 'date-time' },
+      slots: { type: 'integer', minimum: 1, maximum: 5 }, wageCash: { type: 'integer', minimum: 1, maximum: 100000 },
+      acceptAgents: { type: 'boolean' }, acceptHumans: { type: 'boolean' },
+    } } },
+  'POST /v1/company/employment/:id/accept': { operationId: 'acceptCanonicalGameEmployment', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['commitmentId', 'consent'], properties: {
+      commitmentId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' }, consent: { type: 'boolean', const: true },
+    } } },
+  'POST /v1/company/employment/:id/claim': { operationId: 'claimDeliveredGameEmploymentWage', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['commitmentId'], properties: {
+      commitmentId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+    } } },
+  'POST /v1/company/employment/:id/close': { operationId: 'CloseOwnGameEmploymentReserve', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, properties: {},
+  } },
   'POST /v1/company/operator': { operationId: 'enrollOwnCompanyOperator', requestSchema: {
     type: 'object', additionalProperties: false, required: ['depotId', 'policyId', 'expectedRevision', 'enabled'], properties: {
       depotId: { type: 'string', minLength: 1, maxLength: 128 }, policyId: { type: 'string', minLength: 1, maxLength: 128 },

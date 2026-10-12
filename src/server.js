@@ -82,6 +82,7 @@ import { register as registerCompanySuccession } from './routes/companysuccessio
 import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
+import { register as registerGameEmployment } from './routes/gameemployment.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -2413,6 +2414,7 @@ export async function buildServer() {
   registerMarketFeed(app, { pool });
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
+  registerGameEmployment(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 
