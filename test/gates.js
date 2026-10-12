@@ -4322,7 +4322,17 @@ scopedSocialContext = async function(db) {
   // the corpus is every bucket the TREE has, never the two lists — a ledger that enumerates itself
   // cannot notice a twelfth bucket landing tomorrow.
   const found = new Set();
-  for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/\b(\w+)_used\b/g)) found.add(`${m[1]}_used`);
+  // These two workflow refusal reasons describe immutable source uniqueness,
+  // not wall-clock counters. Mask only their exact local error calls; a real
+  // SQL column or variable with the same name must still fail closed.
+  const bucketSource = (file, source) => file === 'src/companyworkflows.js'
+    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '') : source;
+  const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
+  assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
+  assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
+    'Actual counter columns cannot hide behind same-named workflow refusal reasons');
+  assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
+  for (const f of files) for (const name of bucketNames(`src/${relPath(SRC, f)}`, fs.readFileSync(f, 'utf8'))) found.add(name);
   assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
     + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
 
