@@ -1400,7 +1400,8 @@ export async function persistAccountFields(client, accountId, a, fields) {
 // exposure) opt OUT of the black-book meeting grant — the actor never openly met the victim, and
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
-export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = true } = {}) {
+// Player-targeting verbs opt into requireKnown; this sorted settlement helper also serves already-authorized commerce.
+export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false } = {}) {
   // phase one for BOTH parties (the actor by account, the target by their street's account) — each
   // its own transaction, each holding one character, so no sorted-pair lock is needed here
   await settleIfDue(pool, accountId);

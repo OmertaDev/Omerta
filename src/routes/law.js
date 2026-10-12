@@ -26,5 +26,5 @@ export function register(app, { pool, auth }) {
       G.withCharacter(pool, req.user.sub, (ch, client, h) => Law.enterWitpro(ch, client, h)));
     // the flip is two-party — you name a rival, seeding THEIR case. Look up the target, lock both.
     app.post('/v1/law/flip/:targetId', { preHandler: auth }, async (req) =>
-      G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Law.flip(ch, victim, client, h)));
+      G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Law.flip(ch, victim, client, h), { requireKnown: true }));
 }
