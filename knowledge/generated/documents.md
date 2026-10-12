@@ -393,7 +393,7 @@
 | [docs/living-world-director/OPPORTUNITY-FEED.md](../../docs/living-world-director/OPPORTUNITY-FEED.md) | documentation | 71 | 2026-09-18 |
 | [docs/living-world-director/SECURITY-REVIEW.md](../../docs/living-world-director/SECURITY-REVIEW.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
-| [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 13 | 2026-10-12 |
