@@ -63,7 +63,11 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
+  // These inspect consent/proof bindings against canonical component books; they
+  // introduce no currency bucket or ledger reason. Cash coverage stays with those books.
+  'company bank portfolio authority and lifetime budget',
   'company succession bindings',
+  'company workflow provenance',
   'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
