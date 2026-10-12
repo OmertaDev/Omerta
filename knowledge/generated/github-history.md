@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2d788fbb246b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fe4c9cb5c52a`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2995 |
+| Commits in clone | 2997 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — merge: preserve verified economy in atlas affordance |
+| Latest commit | 2026-10-12 — Merge pull request #252 from OmertaDev/codex/city-atlas-affordance |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2051 |
+| OmertaDev | 2053 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 99 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 556 | historical |
-| knowledge/generated/graph-summary.md | 556 | historical |
-| knowledge/generated/graph.json | 556 | historical |
-| knowledge/generated/inventory.md | 556 | historical |
+| knowledge/generated/github-history.md | 557 | historical |
+| knowledge/generated/graph-summary.md | 557 | historical |
+| knowledge/generated/graph.json | 557 | historical |
+| knowledge/generated/inventory.md | 557 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 461 | yes |
 | [public/index.html](../../public/index.html) | 456 | yes |

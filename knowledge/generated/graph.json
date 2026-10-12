@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2d788fbb246bd75097ff52bca75699f4b465434d",
+  "sourceRevision": "fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11559,
-    "edges": 46864,
+    "nodes": 11561,
+    "edges": 46870,
     "byNodeType": {
       "Artifact": 4531,
       "Command": 242,
-      "Commit": 2995,
+      "Commit": 2997,
       "Contract": 126,
       "Document": 726,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3694,
-      "CHANGED": 18720,
+      "CHANGED": 18724,
       "CONTAINS": 4552,
       "DECLARES": 242,
       "DEFINED_IN": 1463,
       "DEPENDS_ON": 67,
       "EXECUTES": 818,
       "HANDLED_BY": 824,
-      "HAS_COMMIT": 2995,
+      "HAS_COMMIT": 2997,
       "IMPLEMENTS": 124,
       "IMPORTS": 4620,
       "INHERITS": 42,
@@ -153419,6 +153419,22 @@
       ]
     },
     {
+      "key": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "type": "Commit",
+      "id": "f5cd6cbe188901b5f421843e966549af319d6abd",
+      "label": "chore(knowledge): rebuild atlas integration artifacts",
+      "title": "chore(knowledge): rebuild atlas integration artifacts",
+      "date": "2026-10-12T07:26:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f5cd6cbe188901b5f421843e966549af319d6abd",
+      "provenance": [
+        {
+          "commit": "f5cd6cbe188901b5f421843e966549af319d6abd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f5cd6cbe188901b5f421843e966549af319d6abd"
+        }
+      ]
+    },
+    {
       "key": "Commit:f5da40cfc2242cd749cbce97aa754a0ffac26a5c",
       "type": "Commit",
       "id": "f5da40cfc2242cd749cbce97aa754a0ffac26a5c",
@@ -154999,6 +155015,22 @@
         {
           "commit": "fe3851de9e4b88dbb175702b6f917716816e2ee3",
           "url": "https://github.com/OmertaDev/Omerta/commit/fe3851de9e4b88dbb175702b6f917716816e2ee3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+      "type": "Commit",
+      "id": "fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+      "label": "Merge pull request #252 from OmertaDev/codex/city-atlas-affordance",
+      "title": "Merge pull request #252 from OmertaDev/codex/city-atlas-affordance",
+      "date": "2026-10-12T16:30:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+      "provenance": [
+        {
+          "commit": "fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fe4c9cb5c52aed6e1405607bb90f086e9d25f768"
         }
       ]
     },
@@ -178281,6 +178313,9 @@
           "commit": "f563adb9b39e1faf92323cb4f979547c49b97f11"
         },
         {
+          "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+        },
+        {
           "commit": "f635aa553c9b0267368fef08a4acab1911451101"
         },
         {
@@ -179958,6 +179993,9 @@
           "commit": "f563adb9b39e1faf92323cb4f979547c49b97f11"
         },
         {
+          "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+        },
+        {
           "commit": "f635aa553c9b0267368fef08a4acab1911451101"
         },
         {
@@ -181633,6 +181671,9 @@
         },
         {
           "commit": "f563adb9b39e1faf92323cb4f979547c49b97f11"
+        },
+        {
+          "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
         },
         {
           "commit": "f635aa553c9b0267368fef08a4acab1911451101"
@@ -183766,6 +183807,9 @@
         },
         {
           "commit": "f563adb9b39e1faf92323cb4f979547c49b97f11"
+        },
+        {
+          "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
         },
         {
           "commit": "f635aa553c9b0267368fef08a4acab1911451101"
@@ -194226,8 +194270,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2d788fbb246bd75097ff52bca75699f4b465434d",
-      "currentBranch": "codex/city-atlas-affordance",
+      "revision": "fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -411521,6 +411565,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f5da40cfc2242cd749cbce97aa754a0ffac26a5c",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -511891,6 +511967,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f5cd6cbe188901b5f421843e966549af319d6abd",
+      "provenance": {
+        "commit": "f5cd6cbe188901b5f421843e966549af319d6abd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f5da40cfc2242cd749cbce97aa754a0ffac26a5c",
       "provenance": {
         "commit": "f5da40cfc2242cd749cbce97aa754a0ffac26a5c"
@@ -512678,6 +512762,14 @@
       "to": "Commit:fe3851de9e4b88dbb175702b6f917716816e2ee3",
       "provenance": {
         "commit": "fe3851de9e4b88dbb175702b6f917716816e2ee3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fe4c9cb5c52aed6e1405607bb90f086e9d25f768",
+      "provenance": {
+        "commit": "fe4c9cb5c52aed6e1405607bb90f086e9d25f768"
       }
     },
     {
