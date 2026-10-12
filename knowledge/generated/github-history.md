@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `44f825a7603b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6dd13ce34cda`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3120 |
+| Commits in clone | 3135 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Refresh bank census with measured native timeout evidence |
+| Latest commit | 2026-10-12 — Merge reviewed release PR 257 preserving exact checked source tree |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2175 |
+| OmertaDev | 2186 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 100 |
+| github-actions[bot] | 104 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,17 +30,17 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 570 | historical |
-| knowledge/generated/graph-summary.md | 570 | historical |
-| knowledge/generated/graph.json | 570 | historical |
-| knowledge/generated/inventory.md | 570 | historical |
+| knowledge/generated/github-history.md | 575 | historical |
+| knowledge/generated/graph-summary.md | 575 | historical |
+| knowledge/generated/graph.json | 575 | historical |
+| knowledge/generated/inventory.md | 575 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 475 | yes |
 | [public/index.html](../../public/index.html) | 456 | yes |
 | [src/server.js](../../src/server.js) | 403 | yes |
 | [schema.sql](../../schema.sql) | 334 | yes |
 | [package.json](../../package.json) | 288 | yes |
-| knowledge/generated/documents.md | 279 | historical |
+| knowledge/generated/documents.md | 280 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 204 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
