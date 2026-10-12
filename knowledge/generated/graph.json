@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "985c4aa6f4235a2b102a5d6dde42c93ff21a9b2e",
+  "sourceRevision": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11878,
-    "edges": 48221,
+    "nodes": 11880,
+    "edges": 48236,
     "byNodeType": {
       "Artifact": 4612,
       "Command": 250,
-      "Commit": 3120,
+      "Commit": 3122,
       "Contract": 126,
       "Document": 745,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3768,
-      "CHANGED": 19087,
+      "CHANGED": 19100,
       "CONTAINS": 4633,
       "DECLARES": 250,
       "DEFINED_IN": 1493,
       "DEPENDS_ON": 67,
       "EXECUTES": 850,
       "HANDLED_BY": 836,
-      "HAS_COMMIT": 3120,
+      "HAS_COMMIT": 3122,
       "IMPLEMENTS": 124,
       "IMPORTS": 4893,
       "INHERITS": 42,
@@ -24242,20 +24242,20 @@
       "path": "docs/city-gameplay-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 7395,
-      "lines": 93,
-      "version": "4acff277de594d0c",
+      "bytes": 8635,
+      "lines": 109,
+      "version": "8b749810331feb90",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-gameplay-security-review.md",
           "line": 1,
-          "version": "4acff277de594d0c"
+          "version": "8b749810331feb90"
         }
       ],
-      "lastChangedAt": "2026-10-12T20:30:17.000Z",
+      "lastChangedAt": "2026-10-12T22:35:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a315d20e3d3939d1d1d80223debdc8a18307666b"
+      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
     },
     {
       "key": "Artifact:docs/city-homes-security-review.md",
@@ -79185,18 +79185,18 @@
       "extension": ".md",
       "bytes": 57045,
       "lines": 760,
-      "version": "b9a152d5d44a97df",
+      "version": "a52a4563793dd3a2",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b9a152d5d44a97df"
+          "version": "a52a4563793dd3a2"
         }
       ],
-      "lastChangedAt": "2026-10-12T20:30:17.000Z",
+      "lastChangedAt": "2026-10-12T22:35:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a315d20e3d3939d1d1d80223debdc8a18307666b"
+      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
     },
     {
       "key": "Artifact:src/access.js",
@@ -88817,20 +88817,20 @@
       "path": "test/city-home-interiors-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 53885,
-      "lines": 539,
-      "version": "4f598c3285c0196d",
+      "bytes": 54787,
+      "lines": 552,
+      "version": "1b55b4b6e4a1cefc",
       "text": true,
       "provenance": [
         {
           "file": "test/city-home-interiors-api.js",
           "line": 1,
-          "version": "4f598c3285c0196d"
+          "version": "1b55b4b6e4a1cefc"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-12T22:35:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
     },
     {
       "key": "Artifact:test/city-home-migration.js",
@@ -100963,18 +100963,18 @@
       "extension": ".js",
       "bytes": 56094,
       "lines": 1102,
-      "version": "866ee038d69a60f3",
+      "version": "7c7d78cb251c6b32",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "866ee038d69a60f3"
+          "version": "7c7d78cb251c6b32"
         }
       ],
-      "lastChangedAt": "2026-10-12T05:44:35.000Z",
+      "lastChangedAt": "2026-10-12T22:35:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
     },
     {
       "key": "Artifact:test/worldgraph-validation.js",
@@ -148298,6 +148298,22 @@
       ]
     },
     {
+      "key": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "type": "Commit",
+      "id": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "label": "Generate complete gameplay qualification snapshot on reviewed premises main",
+      "title": "Generate complete gameplay qualification snapshot on reviewed premises main",
+      "date": "2026-10-12T21:47:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "provenance": [
+        {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        }
+      ]
+    },
+    {
       "key": "Commit:c3feb3377ea2e2e82e779bc697e9d44d4f4f6430",
       "type": "Commit",
       "id": "c3feb3377ea2e2e82e779bc697e9d44d4f4f6430",
@@ -153302,6 +153318,22 @@
         {
           "commit": "e04756b02764f545ec5ccfbeae9cfab0f8fa52b8",
           "url": "https://github.com/OmertaDev/Omerta/commit/e04756b02764f545ec5ccfbeae9cfab0f8fa52b8"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "type": "Commit",
+      "id": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "label": "Preserve native pool callback protocols and current API version assertions",
+      "title": "Preserve native pool callback protocols and current API version assertions",
+      "date": "2026-10-12T22:35:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "provenance": [
+        {
+          "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
         }
       ]
     },
@@ -167031,13 +167063,13 @@
       "id": "docs/city-gameplay-security-review.md",
       "label": "docs/city-gameplay-security-review.md",
       "documentType": "documentation",
-      "lines": 93,
-      "version": "4acff277de594d0c",
+      "lines": 109,
+      "version": "8b749810331feb90",
       "provenance": [
         {
           "file": "docs/city-gameplay-security-review.md",
           "line": 1,
-          "version": "4acff277de594d0c"
+          "version": "8b749810331feb90"
         }
       ]
     },
@@ -173288,12 +173320,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "b9a152d5d44a97df",
+      "version": "a52a4563793dd3a2",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "b9a152d5d44a97df"
+          "version": "a52a4563793dd3a2"
         }
       ]
     },
@@ -173826,7 +173858,7 @@
         },
         {
           "file": "test/city-home-interiors-api.js",
-          "line": 36
+          "line": 64
         },
         {
           "file": "test/city-homes-api.js",
@@ -174078,7 +174110,7 @@
         },
         {
           "file": "test/city-home-interiors-api.js",
-          "line": 22
+          "line": 50
         },
         {
           "file": "test/city-home-migration.js",
@@ -175114,7 +175146,7 @@
         },
         {
           "file": "test/city-home-interiors-api.js",
-          "line": 484
+          "line": 497
         },
         {
           "file": "test/deeds.js",
@@ -175406,7 +175438,7 @@
         },
         {
           "file": "test/city-home-interiors-api.js",
-          "line": 484
+          "line": 497
         },
         {
           "file": "test/client.js",
@@ -180929,6 +180961,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5"
         },
         {
@@ -182472,6 +182507,9 @@
         },
         {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
+        },
+        {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
           "commit": "c429051d26953af4a47f9c4dc2213d6b0dc24078"
@@ -184205,6 +184243,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c429051d26953af4a47f9c4dc2213d6b0dc24078"
         },
         {
@@ -185936,6 +185977,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c429051d26953af4a47f9c4dc2213d6b0dc24078"
         },
         {
@@ -186672,6 +186716,9 @@
         },
         {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
           "commit": "c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5"
@@ -188141,6 +188188,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c429051d26953af4a47f9c4dc2213d6b0dc24078"
         },
         {
@@ -188990,6 +189040,9 @@
           "commit": "c19159d18946677bb6d9bd9be3e69272114c1ac8"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5"
         },
         {
@@ -189377,6 +189430,9 @@
           "commit": "c05e8a32359c006bcf602c90760e8481364f23d0"
         },
         {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+        },
+        {
           "commit": "c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5"
         },
         {
@@ -189687,6 +189743,9 @@
         },
         {
           "commit": "c15dae199eaecd15fe2f1d96a05ff34eeb8c388d"
+        },
+        {
+          "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
           "commit": "c51fc5fc61d9c8ec4b4f600e9a21f0970e8468a5"
@@ -199376,7 +199435,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "985c4aa6f4235a2b102a5d6dde42c93ff21a9b2e",
+      "revision": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
       "currentBranch": "codex/city-gameplay-expansion",
       "defaultBranch": "main",
       "visibility": "public",
@@ -231922,13 +231981,13 @@
       "type": "TestSuite",
       "id": "test/city-home-interiors-api.js",
       "label": "test/city-home-interiors-api.js",
-      "lines": 539,
-      "version": "4f598c3285c0196d",
+      "lines": 552,
+      "version": "1b55b4b6e4a1cefc",
       "provenance": [
         {
           "file": "test/city-home-interiors-api.js",
           "line": 1,
-          "version": "4f598c3285c0196d"
+          "version": "1b55b4b6e4a1cefc"
         }
       ]
     },
@@ -239678,12 +239737,12 @@
       "id": "test/worldgraph-api.js",
       "label": "test/worldgraph-api.js",
       "lines": 1102,
-      "version": "866ee038d69a60f3",
+      "version": "7c7d78cb251c6b32",
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "866ee038d69a60f3"
+          "version": "7c7d78cb251c6b32"
         }
       ]
     },
@@ -388971,6 +389030,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c3feb3377ea2e2e82e779bc697e9d44d4f4f6430",
       "to": "Artifact:test/rc1-realtime-soak.js",
       "provenance": {
@@ -405967,6 +406098,38 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "commit": "e04756b02764f545ec5ccfbeae9cfab0f8fa52b8"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "to": "Artifact:docs/city-gameplay-security-review.md",
+      "provenance": {
+        "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "to": "Artifact:test/city-home-interiors-api.js",
+      "provenance": {
+        "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
       }
     },
     {
@@ -519580,6 +519743,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c",
+      "provenance": {
+        "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c3feb3377ea2e2e82e779bc697e9d44d4f4f6430",
       "provenance": {
         "commit": "c3feb3377ea2e2e82e779bc697e9d44d4f4f6430"
@@ -522079,6 +522250,14 @@
       "to": "Commit:e04756b02764f545ec5ccfbeae9cfab0f8fa52b8",
       "provenance": {
         "commit": "e04756b02764f545ec5ccfbeae9cfab0f8fa52b8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e063aceb08db7f52e21cf7b9ea4135a4124efb7b",
+      "provenance": {
+        "commit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
       }
     },
     {
@@ -541522,7 +541701,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 483
+        "line": 496
       }
     },
     {
@@ -541531,7 +541710,7 @@
       "to": "Artifact:src/city-home-contract.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 36
+        "line": 64
       }
     },
     {
@@ -541540,7 +541719,7 @@
       "to": "Artifact:src/content/artifacts.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 169
+        "line": 197
       }
     },
     {
@@ -541549,7 +541728,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 34
+        "line": 62
       }
     },
     {
@@ -541558,7 +541737,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 29
+        "line": 57
       }
     },
     {
@@ -541567,7 +541746,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 33
+        "line": 61
       }
     },
     {
@@ -541576,7 +541755,7 @@
       "to": "Artifact:src/itemdefinitions.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 170
+        "line": 198
       }
     },
     {
@@ -541585,7 +541764,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 171
+        "line": 199
       }
     },
     {
@@ -541594,7 +541773,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 32
+        "line": 60
       }
     },
     {
@@ -541603,7 +541782,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 31
+        "line": 59
       }
     },
     {
@@ -541612,7 +541791,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 28
+        "line": 56
       }
     },
     {
@@ -541621,7 +541800,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 30
+        "line": 58
       }
     },
     {
@@ -541630,7 +541809,7 @@
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 167
+        "line": 195
       }
     },
     {
@@ -541639,7 +541818,7 @@
       "to": "Artifact:test/lib/phase2-item-fixtures.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 168
+        "line": 196
       }
     },
     {
@@ -541648,7 +541827,7 @@
       "to": "ExternalDependency:ajv",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 36
+        "line": 64
       }
     },
     {
@@ -541657,7 +541836,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 22
+        "line": 50
       }
     },
     {
@@ -541666,7 +541845,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 484
+        "line": 497
       }
     },
     {
@@ -541675,7 +541854,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 484
+        "line": 497
       }
     },
     {
@@ -617140,7 +617319,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 483
+        "line": 496
       }
     },
     {
@@ -617149,7 +617328,7 @@
       "to": "Artifact:src/city-home-contract.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 36
+        "line": 64
       }
     },
     {
@@ -617158,7 +617337,7 @@
       "to": "Artifact:src/content/artifacts.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 169
+        "line": 197
       }
     },
     {
@@ -617167,7 +617346,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 34
+        "line": 62
       }
     },
     {
@@ -617176,7 +617355,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 29
+        "line": 57
       }
     },
     {
@@ -617185,7 +617364,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 33
+        "line": 61
       }
     },
     {
@@ -617194,7 +617373,7 @@
       "to": "Artifact:src/itemdefinitions.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 170
+        "line": 198
       }
     },
     {
@@ -617203,7 +617382,7 @@
       "to": "Artifact:src/itemlots.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 171
+        "line": 199
       }
     },
     {
@@ -617212,7 +617391,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 32
+        "line": 60
       }
     },
     {
@@ -617221,7 +617400,7 @@
       "to": "Artifact:src/population.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 31
+        "line": 59
       }
     },
     {
@@ -617230,7 +617409,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 28
+        "line": 56
       }
     },
     {
@@ -617239,7 +617418,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "test/city-home-interiors-api.js",
-        "line": 30
+        "line": 58
       }
     },
     {
