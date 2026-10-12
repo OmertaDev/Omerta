@@ -47,7 +47,8 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   buyer_cooperative_orders: [3, 2], buyer_cooperative_receipts: [3, 5], buyer_cooperative_journal: [5, 7],
   company_opportunity_subscriptions: [3, 5], company_opportunity_notices: [5, 7],
   commercial_reputation_publications: [3, 3], commercial_reputation_proofs: [5, 6],
-  commercial_reputation_settlements: [4, 3] });
+  commercial_reputation_settlements: [4, 3],
+  business_seasons: [6, 9], business_season_entries: [8, 9] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -323,6 +324,17 @@ try {
     rejected(verifyFeatureConstraints, `${constraint.name} reputation constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+  for (const constraint of featureConstraints.filter(row => ['business_seasons', 'business_season_entries'].includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} season constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} season constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  rejected(verifyFeatureNotNull, 'season observation clock must remain required',
+    featureNotNull.filter(row => row.table_name !== 'business_season_entries' || row.column_name !== 'next_observation_at'));
+  for (const column of ['baseline', 'end_snapshot', 'final_result'])
+    rejected(verifyFeatureNotNull, `season prospective ${column} remains optional`, [...featureNotNull,
+      { table_name: 'business_season_entries', column_name: column }]);
   rejected(verifyFeatureNotNull, 'bank finance request identity remains optional', [...featureNotNull,
     { table_name: 'company_bank_portfolio_loans', column_name: 'finance_request_id' }]);
   rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
