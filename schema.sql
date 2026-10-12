@@ -8242,3 +8242,44 @@ ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_
 ALTER TABLE game_employment_jobs DROP CONSTRAINT IF EXISTS game_employment_jobs_accounting;
 ALTER TABLE game_employment_jobs ADD CONSTRAINT game_employment_jobs_accounting
   CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash+looted_cash);
+
+-- Finite landlord-funded logistics batches hold no extra cash or cargo bucket.
+CREATE TABLE IF NOT EXISTS company_logistics_hubs (
+  id TEXT PRIMARY KEY,
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  supplier_account TEXT NOT NULL REFERENCES accounts(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  landlord_account TEXT NOT NULL REFERENCES accounts(id),
+  premises_lease_id TEXT NOT NULL REFERENCES commercial_premises_leases(id),
+  warehouse_lease_id TEXT NOT NULL REFERENCES business_warehouse_leases(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  district TEXT NOT NULL,
+  total_units INT NOT NULL CHECK(total_units BETWEEN 1 AND 10),
+  revision INT NOT NULL DEFAULT 1 CHECK(revision BETWEEN 1 AND 2147483647),
+  state TEXT NOT NULL DEFAULT 'draft' CHECK(state IN ('draft','active','completed','closed')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  CHECK(supplier_character<>landlord_character AND supplier_account<>landlord_account)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS company_logistics_hub_warehouse_live ON company_logistics_hubs(warehouse_lease_id) WHERE state IN ('draft','active');
+CREATE UNIQUE INDEX IF NOT EXISTS company_logistics_hub_premises_live ON company_logistics_hubs(premises_lease_id) WHERE state IN ('draft','active');
+CREATE TABLE IF NOT EXISTS company_logistics_hub_sources (
+  hub_id TEXT NOT NULL REFERENCES company_logistics_hubs(id),
+  position INT NOT NULL CHECK(position BETWEEN 1 AND 3),
+  finance_request_id TEXT NOT NULL UNIQUE REFERENCES delivery_loan_requests(id),
+  quantity INT NOT NULL CHECK(quantity BETWEEN 1 AND 10),
+  snapshot JSONB NOT NULL,
+  state TEXT NOT NULL DEFAULT 'pending' CHECK(state IN ('pending','completed')),
+  withdrawal_journal_id TEXT UNIQUE REFERENCES business_depot_journal(id),
+  settlement JSONB,
+  completed_at TIMESTAMPTZ,
+  PRIMARY KEY(hub_id,position),
+  CHECK((state='completed')=(settlement IS NOT NULL AND completed_at IS NOT NULL))
+);
+CREATE TABLE IF NOT EXISTS company_logistics_hub_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  action TEXT NOT NULL CHECK(action IN ('setup','accept','run','cancel')),
+  request_key TEXT NOT NULL,
+  terms JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  PRIMARY KEY(account_id,action,request_key)
+);
