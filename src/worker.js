@@ -53,6 +53,7 @@ import { sweepPush } from './push.js';
 import { sweepDispatch } from './dispatch.js';
 import { spawnNpcConvoys, despawnArrivedNpc, sweepConvoyHauls } from './convoy.js';
 import { runPopulation, runResidentBehaviour } from './population.js';
+import { runCompanyOperators } from './companyoperatorrunner.js';
 import { sweepLaw } from './law.js';
 import { sweepLoans } from './loans.js';
 import { sweepAuctions, sweepConsignments } from './auction.js';
@@ -807,6 +808,18 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
   // heartbeat frozen at boot+8s. Registered FIRST, the same hang instead announces itself hourly
   // through the in-flight guard's own warning above. The health clock hoists for the same reason.
   setInterval(guardedTick, 3600 * 1000);
+
+  // Owner-consented game operations have their own bounded clock, independent
+  // of network/RPC work on the hourly tick. Register before its first invocation.
+  let companyTicking = false;
+  const guardedCompanyTick = async () => {
+    if (companyTicking) return;
+    companyTicking = true;
+    try { await safe('company operators', () => runCompanyOperators(pool, 20)); }
+    finally { companyTicking = false; }
+  };
+  setInterval(guardedCompanyTick, 30000);
+  void guardedCompanyTick();
 
   // H1 operational health is its own fixed five-minute clock. JavaScript time chooses only when to
   // wake; sweepRwaHealth derives every authoritative slot/timestamp from PostgreSQL. Recomputing the

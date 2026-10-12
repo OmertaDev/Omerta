@@ -82,7 +82,7 @@ export async function runCompanyOperator(ch, request, client, h) {
   if (typeof request.requestKey !== 'string' || !/^[A-Za-z0-9:_-]{1,128}$/.test(request.requestKey)
       || typeof request.depotId !== 'string' || request.depotId.length > 128)
     fail('operator_terms', 'Provide a bounded requestKey and depotId.');
-  const digest = crypto.createHash('sha256').update(JSON.stringify([ch.account_id, ch.id, request.depotId])).digest('hex');
+  const digest = crypto.createHash('sha256').update(JSON.stringify([ch.account_id, request.depotId])).digest('hex');
   const replay = async () => {
     const receipt = (await client.query('SELECT * FROM company_operator_receipts WHERE owner_account=$1 AND request_key=$2', [ch.account_id, request.requestKey])).rows[0];
     if (!receipt) return null;

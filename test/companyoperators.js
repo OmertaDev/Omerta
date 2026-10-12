@@ -44,6 +44,7 @@ try {
   for (const other of results) assert.deepEqual(other, result);
   assert.equal(result.action, 'restock');
   assert.equal(result.result.escrow + result.result.fee, 2020);
+  const historicalReceipt = structuredClone((await app.pool.query('SELECT result FROM company_operator_receipts WHERE owner_account=$1 AND request_key=$2', [account, request.requestKey])).rows[0].result);
   assert.equal((await app.pool.query('SELECT count(*) AS n FROM company_operator_receipts')).rows[0].n, process.argv.includes('--postgres') ? '1' : 1);
   await assert.rejects(run({ ...request, depotId: 'different' }), /another operator/);
   await app.pool.query('UPDATE business_operating_policies SET enabled=false WHERE id=$1', [policy.id]);
@@ -90,7 +91,9 @@ try {
   await assert.rejects(O.dueCompanyOperators(app.pool, 101), /Bound/);
   const original = { ...(await app.pool.query('SELECT * FROM characters WHERE id=$1', [ch.id])).rows[0] };
   await assert.rejects(O.runCompanyOperator({ ...original, alive: false }, { ...request, requestKey: 'dead' }, app.pool, {}), /living/);
-  await assert.rejects(O.runCompanyOperator({ ...original, id: 'heir' }, request, app.pool, {}), /another operator/);
+  assert.deepEqual(await O.runCompanyOperator({ ...original, id: 'heir' }, request, app.pool, {}), historicalReceipt,
+    'the original account may recover an old receipt without invoking new authority');
+  await assert.rejects(O.runCompanyOperator({ ...original, id: 'heir' }, { ...request, requestKey: 'heir-fresh' }, app.pool, {}), /owner/);
   const beforePrice = (await app.pool.query('SELECT * FROM business_depots WHERE id=$1', [depotId])).rows[0];
   const beforePolicy = (await app.pool.query('SELECT * FROM business_operating_policies WHERE id=$1', [policy.id])).rows[0];
   const pricePolicy = { minSalePrice: 800, maxSalePrice: 1200, targetMarginBps: 5000, expiresInSeconds: 600 };
