@@ -131,6 +131,7 @@ const defaultOff = new Map([
 ]);
 for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route disappeared: ${p}`);
 assert(paths.includes('/v1/city/nearby-chat'), 'the nearby route remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/market/feed'), 'the public feed remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/city/homes'), 'the home directory remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
@@ -141,8 +142,11 @@ assert(paths.length >= 120,
 const broke = [];
 const declaredHit = new Set();
 for (const p of paths) {
-  const readPath = p === '/v1/city/nearby-chat' ? nearbyReadPath : p === '/v1/city/homes' ? homesReadPath : p;
+  const readPath = p === '/v1/city/nearby-chat' ? nearbyReadPath
+    : p === '/v1/market/feed' ? '/v1/market/feed?districtId=docks&goodId=gin'
+      : p === '/v1/city/homes' ? homesReadPath : p;
   const r = await j('GET', readPath, token);
+  if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
   if (p === '/v1/city/homes') assertEmptyHomes(r);
   if (r.code < 400) continue;
   if (DECLARED[p]) {

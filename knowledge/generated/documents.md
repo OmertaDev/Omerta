@@ -331,7 +331,7 @@
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
 | [docs/business-operating-policies.md](../../docs/business-operating-policies.md) | documentation | 97 | 2026-10-08 |
 | [docs/business-shadow-security-review.md](../../docs/business-shadow-security-review.md) | documentation | 227 | 2026-10-10 |
-| [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-11 |
+| [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
@@ -397,6 +397,7 @@
 | [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
+| [docs/public-market-feed-security-review.md](../../docs/public-market-feed-security-review.md) | documentation | 22 | 2026-10-12 |
 | [docs/rc1-alliance-continuation.md](../../docs/rc1-alliance-continuation.md) | documentation | 56 | 2026-09-21 |
 | [docs/rc1-alliance-world.md](../../docs/rc1-alliance-world.md) | documentation | 60 | 2026-09-21 |
 | [docs/rc1-car-melt-commit.md](../../docs/rc1-car-melt-commit.md) | documentation | 35 | 2026-09-21 |
@@ -561,7 +562,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-11 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-12 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |

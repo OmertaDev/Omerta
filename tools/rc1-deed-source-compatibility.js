@@ -1,3 +1,4 @@
+import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, qualifyCompanySuccessionSource } from './rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_CURRENT_PINS, qualifyStrategySource } from './rc1-strategy-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, qualifyCoverageSource } from './rc1-logistics-coverage-source-compatibility.js';
@@ -28,6 +29,27 @@ export function assertCityHomesServerTransfer(text) {
  return { actualSha256, baselineText, baselineSha256: COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js'],
   sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB,
   predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
+export const CITY_HOMES_FEED_SERVER_PIN = '4c7ce5c43ce53921fc334955b196fe3a3b0990d36a6698215b01225a0a63ba3f';
+export const CITY_HOMES_FEED_SOURCE_BASE_REVISION = '2395509e2b0c980bd9e80e6cc4aef78209f2b38e';
+export const CITY_HOMES_FEED_SERVER_BLOB = 'b1ee0ec744762c83f2dd7cc3c82dc0eb2db0a116';
+export const CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB = '5b1d2b43ffac10930625c914ecc638de64506453';
+export function assertCityHomesFeedServerTransfer(input) {
+ const text = input.replaceAll('\r\n', '\n'), actualSha256 = hash(text);
+ assert.equal(actualSha256, CITY_HOMES_FEED_SERVER_PIN, 'City homes Feed transfer source changed: src/server.js');
+ let baselineText = text;
+ for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
+  assert.equal(baselineText.split(chunk).length, 2, 'City homes Feed inverse is not exact and unique');
+  baselineText = baselineText.replace(chunk, '');
+ }
+ assert.equal(hash(baselineText), MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js'], 'Server differs beyond exact City homes Feed registration');
+ return { actualSha256, baselineText, baselineSha256: MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js'],
+  sourceBaseRevision: CITY_HOMES_FEED_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_FEED_SERVER_BLOB,
+  predecessorServerBlob: CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
+}
+export function cityHomesFeedSourceBaseline(file, input) {
+ const text = input.replaceAll('\r\n', '\n');
+ return file === 'src/server.js' && hash(text) === CITY_HOMES_FEED_SERVER_PIN ? assertCityHomesFeedServerTransfer(text).baselineText : text;
 }
 // Franchise additions transfer only unchanged historical assertions by full-file reconstruction.
 export const FRANCHISE_SOURCE_REVIEWED_REVISION = 'f6dddbfa6b3a475b94b21bb308b91ea8a77d2329';
@@ -111,6 +133,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -201,6 +227,10 @@ export const CREW_LOGISTICS_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertCrewLogisticsSourceTransfer(file, text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertCrewLogisticsSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -247,6 +277,10 @@ export const WAREHOUSE_SERVER_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertWarehouseServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -296,6 +330,10 @@ export const WAREHOUSE_INVARIANT_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseInvariantTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/invariants.js']) {
+    const transfer = qualifyMarketFeedSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/invariants.js']) {
     const transfer = qualifyCompanySuccessionSource('src/invariants.js', text), predecessor = assertWarehouseInvariantTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -362,6 +400,10 @@ export const SUPPLY_TENDER_SOURCE_INVERSES = Object.freeze([
 ]);
 // Registration transfers unchanged recovery guards, never new tender execution.
 export function assertSupplyTenderServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertSupplyTenderServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -444,6 +486,10 @@ export const DECISION_CALL_SOURCE_INVERSES = Object.freeze([
 ]);
 // Only unchanged historical guards transfer; receipt execution retains separate native proof.
 export function assertDecisionCallServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertDecisionCallServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -498,6 +544,10 @@ export const STOREFRONT_CITY_SOURCE_PARENTS = Object.freeze([
 ]);
 // Composition preserves both independently pinned parent qualification scopes.
 export function assertStorefrontCityServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertStorefrontCityServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -526,6 +576,10 @@ export function assertStorefrontCityServerTransfer(text) {
 }
 // New storefront execution retains separate current-source accounting and native proofs.
 export function assertStorefrontServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertStorefrontServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -568,6 +622,10 @@ const businessServerChanges = [
 ];
 // Exact inverse only: new business execution retains its separate current-source proofs.
 export function assertBusinessServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertBusinessServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -602,6 +660,10 @@ const cityPresenceServerChunks = [
 // This exact registration inverse preserves only the previously reviewed paths.
 // City encounter, private progress and lifecycle authority have separate current-source proofs.
 export function assertCityPresenceServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertCityPresenceServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -639,6 +701,10 @@ export const CITY_SOCIAL_BUSINESS_SOURCE_PARENTS = Object.freeze([
 // A separate closed composition: both parent transfers retain their original complete pins.
 // This inverse qualifies only unchanged historical guards, never either new execution authority.
 export function assertCitySocialBusinessServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertCitySocialBusinessServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -678,6 +744,10 @@ const citySocialServerChunks = [
 ];
 // Only unchanged historical guards transfer; new social authority and execution do not.
 export function assertCitySocialServerTransfer(text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertCitySocialServerTransfer(transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -745,6 +815,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -812,9 +886,17 @@ export const GENESIS_SNAPSHOT_MODULE_PINS = Object.freeze({
 });
 const genesisSnapshotRoute = "  app.get('/genesis-snapshot-rpc.js', reviewedModule('genesis-snapshot-rpc.js'));\n";
 export function assertGenesisSnapshotServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_FEED_SERVER_PIN) {
+    const transfer = assertCityHomesFeedServerTransfer(text);
+    return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesFeedSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
   }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
@@ -929,9 +1011,17 @@ const genesisWrapperChanges = [
     + "  app.get('/genesis-deploy-vendor/crypto.js', reviewedModule('genesis-deploy-vendor/crypto.js'));\n",
 ];
 export function assertGenesisWrapperServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_FEED_SERVER_PIN) {
+    const transfer = assertCityHomesFeedServerTransfer(text);
+    return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesFeedSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
   }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
@@ -1067,9 +1157,17 @@ const receiptChanges = [
   ]
 ];
 export function assertHttpReceiptServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_FEED_SERVER_PIN) {
+    const transfer = assertCityHomesFeedServerTransfer(text);
+    return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesFeedSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
   }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
@@ -1162,9 +1260,17 @@ const deedImport = "import * as DeedUpgrades from './deed-upgrades.js';\n";
 const deedRoute = "  app.post('/v1/deeds/upgrade', { preHandler: auth }, async (req) =>\n"
   + '    G.withCharacter(pool, req.user.sub, (ch, client, h) => DeedUpgrades.upgradeDeed(ch, req.body, client, h)));\n';
 export function assertDeedServerCompatibility(text) {
+  if (hash(text) === CITY_HOMES_FEED_SERVER_PIN) {
+    const transfer = assertCityHomesFeedServerTransfer(text);
+    return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesFeedSourceTransfer: transfer };
+  }
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyMarketFeedSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
   }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = qualifyCompanySuccessionSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
@@ -1412,6 +1518,10 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -1514,6 +1624,10 @@ const goodsSourceInverse = {
   ]
 };
 export function assertGoodsSourceTransfer(file, text) {
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertGoodsSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };
@@ -1593,10 +1707,18 @@ const economySourceInverse = {
   }
 };
 export function assertEconomySourceTransfer(file, text) {
- if (file === 'src/server.js' && hash(text) === CITY_HOMES_SERVER_PIN) {
-  const transfer = assertCityHomesServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
-  return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, cityHomesSourceTransfer: transfer };
- }
+  if (file === 'src/server.js' && hash(text) === CITY_HOMES_FEED_SERVER_PIN) {
+    const transfer = assertCityHomesFeedServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), cityHomesFeedSourceTransfer: transfer };
+  }
+  if (file === 'src/server.js' && hash(text) === CITY_HOMES_SERVER_PIN) {
+    const transfer = assertCityHomesServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === MARKET_FEED_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyMarketFeedSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), marketFeedSourceTransfer: transfer };
+  }
   if (hash(text) === COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyCompanySuccessionSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), companySuccessionSourceTransfer: transfer };

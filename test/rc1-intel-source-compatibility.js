@@ -1,9 +1,10 @@
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS } from '../tools/rc1-invoice-source-compatibility.js';
 import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
-import { companySuccessionSourceBaseline, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
+import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
 import assert from 'node:assert/strict';
-import { assertCityHomesServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
+import { cityHomesFeedSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -16,13 +17,9 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INTEL_SOURCE_CURRENT_PINS)) {
   const raw = normalize(fs.readFileSync(file, 'utf8'));
-  // The mandatory separately pinned Home envelope reconstructs Succession bytes first.
-  const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(raw) : null;
-  if (homes) assert.equal(homes.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]);
-  const stacked = homes ? homes.baselineText : raw;
-  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, text))));
-  const current = compose(stacked), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
-  const unknown = stacked + '\n// unreviewed composed source\n';
+  const compose = text => invoiceSourceBaseline(file, coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, cityHomesFeedSourceBaseline(file, text))))));
+  const current = compose(raw), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
+  const unknown = raw + '\n// unreviewed composed source\n';
   assert.equal(compose(unknown), unknown, 'Exact wrappers never manufacture historical bytes for unknown stacked source');
   assert.throws(() => qualifyIntelSource(file, compose(unknown)), /source changed/);
   negatives++;

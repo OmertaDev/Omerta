@@ -1,6 +1,7 @@
-import { companySuccessionSourceBaseline, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
+import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import assert from 'node:assert/strict';
-import { assertCityHomesServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
+import { cityHomesFeedSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -13,10 +14,7 @@ const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(STRATEGY_SOURCE_CURRENT_PINS)) {
-  const raw = normalize(fs.readFileSync(file, 'utf8'));
-  const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(raw) : null;
-  if (homes) assert.equal(homes.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS[file]);
-  const current = normalize(companySuccessionSourceBaseline(file, homes ? homes.baselineText : raw)), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, cityHomesFeedSourceBaseline(file, fs.readFileSync(file, 'utf8'))))), baseline = gitText(STRATEGY_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(strategySourceBaseline(file, current), baseline);
   assert.equal(strategySourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

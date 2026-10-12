@@ -6,6 +6,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
+import { DISTRICTS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -408,6 +409,10 @@ const OPERATION_CONTRACTS = {
     schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Reuse the original purchase identity for recovery; a different identity cannot alias an existing license.' }],
     requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/market/feed': { operationId: 'getPublicGameMarketFeed', requestParameters: [
+    { name: 'districtId', in: 'query', required: true, schema: { type: 'string', enum: DISTRICTS.map(d => d.id) } },
+    { name: 'goodId', in: 'query', required: true, schema: { type: 'string', const: 'gin' } },
+  ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'POST /v1/company-succession': {
     operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
