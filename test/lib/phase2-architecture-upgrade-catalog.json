@@ -3045,6 +3045,46 @@
       "table_name": "buyer_cooperatives",
       "name": "buyer_cooperatives_units_check",
       "definition": "CHECK (units >= 1 AND units <= 8)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES company_opportunity_subscriptions(account_id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_account_id_kind_source_id_key",
+      "definition": "UNIQUE (account_id, kind, source_id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['depot'::text, 'warehouse'::text, 'delivery'::text, 'tender'::text, 'employment'::text]))"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
     }
   ],
   "removed": [
@@ -4044,6 +4084,22 @@
       "id",
       "kind",
       "ledger_ids"
+    ],
+    "company_opportunity_subscriptions": [
+      "account_id",
+      "enabled",
+      "filters",
+      "next_refresh_at",
+      "revision"
+    ],
+    "company_opportunity_notices": [
+      "account_id",
+      "id",
+      "kind",
+      "snapshot",
+      "source_hash",
+      "source_id",
+      "updated_at"
     ]
   }
 }
