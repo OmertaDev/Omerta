@@ -9,15 +9,18 @@ import { runCompanyWorkflowInvariants } from '../src/companyworkflowinvariants.j
 
 const native = process.argv.includes('--postgres');
 assert(!process.env.DATABASE_URL, 'Refuse ambient database endpoints');
-let pool;
+let pool, nativeVersion;
 if (native) {
   const url = new URL(process.env.COMPANY_WORKFLOW_TEST_DATABASE_URL || 'http://missing');
-  assert.equal(url.protocol, 'postgresql:'); assert.equal(url.hostname, '127.0.0.1'); assert.equal(url.port, '35439');
-  assert.equal(url.username, 'pilot_runner'); assert.equal(url.password, ''); assert(/^\/company_workflow_[a-z0-9_]+$/.test(url.pathname)); assert(!url.search && !url.hash);
+  assert(['postgres:','postgresql:'].includes(url.protocol)); assert.equal(url.hostname, '127.0.0.1');
+  const pilot=url.username==='pilot_runner'&&['35439','35449'].includes(url.port), ci=url.username==='postgres'&&url.port==='5432';
+  assert(pilot||ci,'Only explicit named local pilot or hosted-CI loopback roles/ports'); if(pilot) assert.equal(url.password,'');
+  assert(/^\/company_workflow_[a-z0-9_]+$/.test(url.pathname)); assert(!url.search && !url.hash);
   const { default: pg } = await import('pg'); pool = new pg.Pool({ connectionString: url.href });
   const c = await pool.connect(); await c.query('BEGIN READ ONLY');
   assert.equal((await c.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0, 'Owned empty database required');
-  assert.match((await c.query('SELECT version()')).rows[0].version, /PostgreSQL 18\.4/);
+  const observedVersion=(await c.query('SHOW server_version')).rows[0].server_version; nativeVersion=observedVersion.split(' ')[0];
+  assert.match(observedVersion,pilot?/^18\.4(?:\D|$)/:/^(?:16(?:\D|$)|18\.4(?:\D|$))/);
   await c.query('ROLLBACK'); c.release();
 } else {
   const { newDb, DataType } = await import('pg-mem'); const { registerPgMemCompatibility } = await import('../src/db.js');
@@ -92,9 +95,9 @@ try {
   assert.equal(completed.workflow.status, 'completed'); assert.equal(completed.proof.canonicalCash, 980); assert.equal(completed.proof.repaymentCash, 105);
   assert.equal(await count('company_workflow_proofs', 'WHERE workflow_id=$1', [wf]), 5);
   assert.equal((await runCompanyWorkflowInvariants(pool)).ok, true);
-  const heir = { ...f.owner, id: `${f.prefix}_heir`, generation: 2 };
-  await pool.query('UPDATE characters SET alive=false WHERE id=$1', [f.owner.id]);
-  await pool.query('INSERT INTO characters(id,account_id,name,generation,season) VALUES($1,$2,$1,2,1)', [heir.id, heir.account_id]);
+  const { runEstate }=await import('../src/social/estate.js');
+  const death=await G.withTwoCharacters(pool,f.merchant.account_id,f.owner.id,(_ch,target,client,h)=>runEstate(client,h,target,'workflow canonical estate proof'),{ meet:false });
+  const heir=(await pool.query('SELECT * FROM characters WHERE id=$1',[death.heirId])).rows[0];
   assert.equal((await transaction(heir, c => Workflow.createCompanyWorkflow(heir, f.terms, 'create', c))).replayed, true);
   assert.equal((await Workflow.companyWorkflowBoard(pool, heir.account_id))[0].status, 'completed');
   const f2 = await fixture(), second = await create(f2);
@@ -133,5 +136,5 @@ try {
   for (let n = 0; n < 300; n++) { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; const qty = seed % 10 + 1; assert.equal(Workflow.companyWorkflowTerms({ ...f.terms, qty }).qty, qty); assert.throws(() => Workflow.companyWorkflowTerms({ ...f.terms, qty: qty + 10 })); }
   for (const change of [{ extra: 'https://example.com' }, { qty: '2' }, { deadlineSeconds: 21601 }, { financeRequestId: '${code}' }]) assert.throws(() => Workflow.companyWorkflowTerms({ ...f.terms, ...change }));
   assert.equal((await runCompanyWorkflowInvariants(pool)).ok, true);
-  console.log(`companyworkflows: PASS ${native ? 'PostgreSQL18.4 locks/concurrency/rollback/post-lock expiry' : 'memory canonical domain lifecycle'}; procurement→custody→financed delivery; no additional payment; proof order/old/foreign; heir replay; seed1947 300 bounds`);
+  console.log(`companyworkflows: PASS ${native ? `PostgreSQL${nativeVersion} locks/concurrency/rollback/post-lock expiry` : 'memory canonical domain lifecycle'}; procurement→custody→financed delivery; no additional payment; proof order/old/foreign; heir replay; seed1947 300 bounds`);
 } finally { await pool.end(); }
