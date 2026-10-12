@@ -411,6 +411,7 @@
 | [docs/game-employment-security-review.md](../../docs/game-employment-security-review.md) | documentation | 58 | 2026-10-12 |
 | [docs/game-employment-source-transfer-review.md](../../docs/game-employment-source-transfer-review.md) | documentation | 136 | 2026-10-12 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
+| [docs/hosted-phase2-position-catalog-repair-review.md](../../docs/hosted-phase2-position-catalog-repair-review.md) | documentation | 18 | 2026-10-12 |
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
