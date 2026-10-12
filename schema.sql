@@ -8324,3 +8324,26 @@ CREATE TABLE IF NOT EXISTS buyer_cooperative_journal (
  order_id TEXT, member_account TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
 CREATE INDEX IF NOT EXISTS buyer_cooperative_journal_coop ON buyer_cooperative_journal(cooperative_id,created_at);
+
+
+-- Account-scoped informational opportunities; no money or execution authority.
+CREATE TABLE IF NOT EXISTS company_opportunity_subscriptions (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  enabled BOOLEAN NOT NULL,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+  filters JSONB NOT NULL,
+  next_refresh_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS company_opportunity_due ON company_opportunity_subscriptions(next_refresh_at,account_id) WHERE enabled;
+CREATE TABLE IF NOT EXISTS company_opportunity_notices (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES company_opportunity_subscriptions(account_id),
+  kind TEXT NOT NULL CHECK (kind IN ('depot','warehouse','delivery','tender','employment')),
+  source_id TEXT NOT NULL,
+  source_hash TEXT NOT NULL CHECK (char_length(source_hash)=64),
+  snapshot JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  acknowledged_at TIMESTAMPTZ,
+  UNIQUE(account_id,kind,source_id)
+);
+CREATE INDEX IF NOT EXISTS company_opportunity_inbox ON company_opportunity_notices(account_id,id);
