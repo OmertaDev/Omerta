@@ -6,7 +6,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
-import { DISTRICTS } from './rules.js';
+import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -440,6 +440,10 @@ const OPERATION_CONTRACTS = {
   'POST /v1/buyer-cooperatives/:id/launch': {"operationId":"LaunchFullyFundedCooperativeMarketOrder","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["termsHash"],"properties":{"termsHash":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
   'POST /v1/buyer-cooperatives/:id/settle': {"operationId":"SettleCooperativeMarketCustody","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["cancel"],"properties":{"cancel":{"type":"boolean"}}}},
   'POST /v1/buyer-cooperatives/:id/claim': {"operationId":"ClaimOwnCooperativeAllocation","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["cash","ginQty"],"properties":{"cash":{"type":"boolean"},"ginQty":{"type":"integer","minimum":0,"maximum":8}}}},
+  'GET /v1/company/opportunities': { operationId: 'getOwnPublicOpportunityInbox', requestParameters: [{ name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50 } }, { name: 'after', in: 'query', schema: { type: 'string', maxLength: 36 } }] },
+  'POST /v1/company/opportunities/subscription': { operationId: 'SetOwnOpportunitySubscription', requestSchema: { type: 'object', additionalProperties: false, required: ['enabled','expectedRevision','kinds','district','good'], properties: { enabled: { type: 'boolean' }, expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, kinds: { type: 'array', minItems: 1, maxItems: 5, uniqueItems: true, items: { type: 'string', enum: ['depot','warehouse','delivery','tender','employment'] } }, district: { type: ['string','null'], enum: [null,...DISTRICTS.map(d=>d.id)] }, good: { type: ['string','null'], enum: [null,...GOODS.map(g=>g.id)] } } } },
+  'POST /v1/company/opportunities/refresh': { operationId: 'RefreshOwnPublicOpportunityInbox', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/company/opportunities/acknowledge': { operationId: 'AcknowledgeOwnExactOpportunityQuote', requestSchema: { type: 'object', additionalProperties: false, required: ['noticeId','expectedHash'], properties: { noticeId: { type: 'string', minLength: 36, maxLength: 36 }, expectedHash: { type: 'string', pattern: '^[0-9a-f]{64}$' } } } },
   'GET /v1/company/bank': { operationId: 'getOwnGameCashBankPortfolio' },
   'POST /v1/company/bank/policy': { operationId: 'SetOwnerConsentedGameCashBankPolicy', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
     schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { oneOf: [
