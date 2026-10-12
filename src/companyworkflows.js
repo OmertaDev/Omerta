@@ -193,7 +193,7 @@ export async function companyWorkflowBoard(client, account) {
 }
 export async function companyWorkflowDueCandidates(client, limit = 20) {
   integer(limit, 1, 100);
-  return (await client.query("SELECT id,account_id,original_character FROM company_workflows WHERE status='active' ORDER BY deadline,id LIMIT $1", [limit])).rows;
+  return (await client.query("SELECT id,account_id,original_character,next_run_at FROM company_workflows WHERE status='active' AND next_run_at<=clock_timestamp() ORDER BY next_run_at,id LIMIT $1", [limit])).rows;
 }
 export async function advanceCompanyWorkflowDue(ch, workflowId, client, h) {
   const account = actor(ch);

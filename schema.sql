@@ -8113,6 +8113,8 @@ CREATE TABLE IF NOT EXISTS company_workflows (
   CHECK ((status='completed' AND completed_stages=3) OR (status<>'completed' AND completed_stages<3))
 );
 CREATE INDEX IF NOT EXISTS company_workflow_due ON company_workflows(status,deadline,id);
+ALTER TABLE company_workflows ADD COLUMN IF NOT EXISTS next_run_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
+CREATE INDEX IF NOT EXISTS company_workflow_dispatch ON company_workflows(status,next_run_at,id);
 CREATE INDEX IF NOT EXISTS company_workflow_account ON company_workflows(account_id,created_at);
 CREATE TABLE IF NOT EXISTS company_workflow_receipts (
   account_id TEXT NOT NULL REFERENCES accounts(id),
