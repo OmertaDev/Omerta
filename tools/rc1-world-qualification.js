@@ -1,4 +1,5 @@
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from './rc1-strategy-league-source-compatibility.js';
+import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from './rc1-company-operator-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from './rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from './rc1-strategy-source-compatibility.js';
@@ -55,7 +56,8 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 23, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 24, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  companyOperatorSourceReviewTransfer: COMPANY_OPERATOR_SOURCE_TRANSFER,
   companySuccessionSourceReviewTransfer: COMPANY_SUCCESSION_SOURCE_TRANSFER,
   strategySourceReviewTransfer: STRATEGY_SOURCE_TRANSFER,
   coverageSourceReviewTransfer: COVERAGE_SOURCE_TRANSFER,
@@ -169,7 +171,7 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 23, reviewedRevisi
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
-    const raw = String(await readFile(file)).replace(/\r\n/g, '\n');
+    const raw = companyOperatorSourceBaseline(file, String(await readFile(file)));
     const homeBaseline = file === 'src/server.js' && sha256(raw) === CITY_HOMES_LEAGUE_SERVER_PIN
       ? assertCityHomesLeagueServerTransfer(raw).baselineText : raw;
     const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, homeBaseline));

@@ -1,3 +1,4 @@
+import { companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
@@ -57,7 +58,7 @@ const oldFeedHomesText=gitServer(CITY_HOMES_FEED_SERVER_BLOB),oldFeedHomes=asser
 assert.equal(oldFeedHomes.baselineText,gitServer(CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB));
 assert.equal(oldFeedHomes.baselineText,gitServer(CITY_HOMES_FEED_SOURCE_BASE_REVISION+':src/server.js'));
 assert.deepEqual(normalizeCityHomesSource(oldFeedHomesText.replaceAll('\n','\r\n')),oldFeedHomes);
-const currentHomeText=fs.readFileSync('src/server.js','utf8').replaceAll('\r\n','\n');
+const currentHomeText=companyOperatorSourceBaseline('src/server.js', fs.readFileSync('src/server.js','utf8'));
 assert.deepEqual(normalizeCityHomesSource(currentHomeText.replaceAll('\n','\r\n')),normalizeCityHomesSource(currentHomeText));
 assert.deepEqual(normalizeCityHomesSource(oldHomesText.replaceAll('\n','\r\n')),oldHomes);
 for(const chunk of CITY_HOMES_SOURCE_INVERSES) {
@@ -70,7 +71,7 @@ for(const changed of [currentHomeText+'\n// unknown GUI suffix\n',currentHomeTex
 }
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
-  const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const actual = companyOperatorSourceBaseline(file, fs.readFileSync(file, 'utf8'));
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
   const homes = file === 'src/server.js' ? normalizeCityHomesSource(actual) : null;
   const invoiceInput = homes ? homes.baselineText : actual;

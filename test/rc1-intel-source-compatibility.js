@@ -1,4 +1,5 @@
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
+import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS } from '../tools/rc1-company-operator-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS } from '../tools/rc1-invoice-source-compatibility.js';
 import { coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
@@ -63,5 +64,15 @@ assert.throws(() => qualifyIntelSource('src/game.js', ''), /Unknown Intel source
 assert.throws(() => qualifyIntelSource('toString', ''), /Unknown Intel source/);
 assert.match(INTEL_SOURCE_TRANSFER.scope, /separate current-source native proof/);
 assert.match(INTEL_SOURCE_TRANSFER.scope, /no historical runtime, native, deployment or financial qualification/);
+const operatorWorker = normalize(fs.readFileSync('src/worker.js', 'utf8'));
+const operatorTransfer = qualifyIntelSource('src/worker.js', operatorWorker);
+assert.equal(operatorTransfer.actualSha256, COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']);
+assert.equal(operatorTransfer.companyOperatorSourceTransfer.baselineText, gitText(COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS['src/worker.js']));
+assert.equal(operatorTransfer.companyOperatorSourceTransfer.baselineText, gitText(INTEL_SOURCE_CURRENT_BLOBS['src/worker.js']));
+assert.equal(operatorTransfer.baselineText, gitText(INTEL_SOURCE_BASELINE_BLOBS['src/worker.js']));
+assert.deepEqual(qualifyIntelSource('src/worker.js', operatorWorker.replaceAll('\n', '\r\n')), operatorTransfer);
+for (const changed of [operatorWorker + '\n// unreviewed operator suffix\n', operatorWorker.replace('runCompanyOperators(pool, 20)', 'runCompanyOperators(pool, 21)'), operatorWorker.replace('  void guardedCompanyTick();\n', ''), operatorWorker.replace('setInterval(guardedCompanyTick, 30000);', 'setInterval(guardedCompanyTick, 30000);\n  setInterval(guardedCompanyTick, 30000);')]) {
+  assert.notEqual(changed, operatorWorker); assert.throws(() => qualifyIntelSource('src/worker.js', changed), /source changed/); negatives++;
+}
 console.log(JSON.stringify({ status: 'PASS', files: 4, chunks, negatives,
   scope: 'Complete frozen current/prior blobs, exact addition inverses and regression controls only; no new native or financial qualification' }));
