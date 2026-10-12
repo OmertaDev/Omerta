@@ -428,6 +428,25 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/company/bank': { operationId: 'getOwnGameCashBankPortfolio' },
+  'POST /v1/company/bank/policy': { operationId: 'SetOwnerConsentedGameCashBankPolicy', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { oneOf: [
+      { type: 'object', additionalProperties: false, required: ['enabled', 'expectedRevision'], properties: {
+        enabled: { type: 'boolean', const: false }, expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+      } },
+      { type: 'object', additionalProperties: false, required: ['expectedRevision', 'enabled', 'consent', 'borrowerIds', 'principal', 'rateBps', 'termHours', 'cashReserve', 'maxExposure', 'lifetimeBudget', 'expiresInSeconds'], properties: {
+        expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, enabled: { type: 'boolean', const: true }, consent: { type: 'boolean', const: true },
+        borrowerIds: { type: 'array', minItems: 1, maxItems: 3, uniqueItems: true, items: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' } },
+        principal: { type: 'integer', minimum: 5000, maximum: 100000 }, rateBps: { type: 'integer', minimum: 1, maximum: 5000 },
+        termHours: { type: 'integer', minimum: 1, maximum: 72 }, cashReserve: { type: 'integer', minimum: 1000, maximum: 10000000 },
+        maxExposure: { type: 'integer', minimum: 5000, maximum: 300000 }, lifetimeBudget: { type: 'integer', minimum: 5000, maximum: 1000000 },
+        expiresInSeconds: { type: 'integer', minimum: 60, maximum: 604800 },
+      } },
+    ] } },
+  'POST /v1/company/bank/run': { operationId: 'RunOwnAuthorizedGameCashBankPortfolio', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: {
+    expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+  } } },
   'GET /v1/company/premises': { operationId: 'getOwnCommercialPremises' },
   'GET /v1/company/premises/offers': { operationId: 'getPublishedVerifiedPremisesOffers' },
   'GET /v1/company/premises/leases/:id': { operationId: 'getOwnPaidCommercialOccupancy' },
