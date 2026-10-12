@@ -8177,3 +8177,36 @@ CREATE TABLE IF NOT EXISTS commercial_premises_requests (
   receipt JSONB NOT NULL,
   PRIMARY KEY(account_id,action,request_key)
 );
+
+
+-- Company game-cash portfolios: consent/history only, canonical loans hold all money.
+CREATE TABLE IF NOT EXISTS company_bank_portfolios (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  owner_character TEXT NOT NULL REFERENCES characters(id),
+  enabled BOOLEAN NOT NULL DEFAULT true,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+  terms JSONB NOT NULL,
+  lifetime_spent INT NOT NULL DEFAULT 0 CHECK (lifetime_spent BETWEEN 0 AND 1000000),
+  expires_at TIMESTAMPTZ NOT NULL,
+  next_run_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS company_bank_portfolio_due ON company_bank_portfolios(enabled,next_run_at,account_id);
+CREATE TABLE IF NOT EXISTS company_bank_portfolio_receipts (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  identity JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS company_bank_portfolio_loans (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  loan_id TEXT NOT NULL,
+  original_lender TEXT NOT NULL REFERENCES characters(id),
+  principal INT NOT NULL CHECK (principal BETWEEN 1 AND 1000000),
+  origin TEXT NOT NULL CHECK (origin IN ('existing','portfolio')),
+  finance_request_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,loan_id)
+);
