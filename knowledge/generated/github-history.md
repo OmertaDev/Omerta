@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `92087fdb7cc4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2d45b4539460`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2887 |
+| Commits in clone | 2901 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Declare reviewed public league standings in mounted-surface guard |
+| Latest commit | 2026-10-12 — Measure league native transport review census |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1954 |
+| OmertaDev | 1968 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 88 |
@@ -30,18 +30,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 517 | historical |
-| knowledge/generated/graph-summary.md | 517 | historical |
-| knowledge/generated/graph.json | 517 | historical |
-| knowledge/generated/inventory.md | 517 | historical |
+| knowledge/generated/github-history.md | 522 | historical |
+| knowledge/generated/graph-summary.md | 522 | historical |
+| knowledge/generated/graph.json | 522 | historical |
+| knowledge/generated/inventory.md | 522 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 450 | yes |
-| [SPEC.md](../../SPEC.md) | 438 | yes |
+| [SPEC.md](../../SPEC.md) | 443 | yes |
 | [src/server.js](../../src/server.js) | 393 | yes |
 | [schema.sql](../../schema.sql) | 326 | yes |
 | [package.json](../../package.json) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/documents.md | 245 | historical |
+| knowledge/generated/documents.md | 250 | historical |
 | knowledge/generated/modules.md | 189 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 180 | yes |
@@ -51,7 +51,7 @@
 | [test/client.js](../../test/client.js) | 125 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
-| [test/gates.js](../../test/gates.js) | 112 | yes |
+| [test/gates.js](../../test/gates.js) | 113 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | knowledge/generated/schema.md | 93 | historical |
 | [public/wiki.html](../../public/wiki.html) | 90 | yes |
@@ -59,7 +59,7 @@
 | knowledge/generated/routes.md | 83 | historical |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 78 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 73 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 74 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 65 | yes |
 | [src/preflight.js](../../src/preflight.js) | 65 | yes |
