@@ -159,7 +159,7 @@
 | [src/identity-checkout.js](../../src/identity-checkout.js) | 135 | platform-core | 4 / 2 | 3 | 6 | 1 |
 | [src/intelforecastinvariants.js](../../src/intelforecastinvariants.js) | 65 | platform-core | 1 / 1 | 0 | 2 | 0 |
 | [src/intelforecastjobs.js](../../src/intelforecastjobs.js) | 171 | platform-core | 4 / 5 | 5 | 2 | 2 |
-| [src/intelforecasts.js](../../src/intelforecasts.js) | 86 | platform-core | 1 / 2 | 0 | 1 | 0 |
+| [src/intelforecasts.js](../../src/intelforecasts.js) | 86 | platform-core | 1 / 3 | 0 | 1 | 1 |
 | [src/invariants.js](../../src/invariants.js) | 1565 | economy-ledger | 11 / 149 | 1 | 59 | 136 |
 | [src/invites.js](../../src/invites.js) | 45 | platform-core | 1 / 8 | 2 | 3 | 2 |
 | [src/item-lock-trace.js](../../src/item-lock-trace.js) | 59 | platform-core | 1 / 6 | 0 | 0 | 4 |

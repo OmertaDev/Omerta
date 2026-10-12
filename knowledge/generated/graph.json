@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c080248508ed2e28ef94563e538f02b854734f2c",
+  "sourceRevision": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11207,
-    "edges": 45426,
+    "nodes": 11209,
+    "edges": 45441,
     "byNodeType": {
       "Artifact": 4489,
       "Command": 232,
-      "Commit": 2753,
+      "Commit": 2755,
       "Contract": 126,
       "Document": 721,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3642,
-      "CHANGED": 18010,
+      "CHANGED": 18021,
       "CONTAINS": 4510,
       "DECLARES": 232,
       "DEFINED_IN": 1442,
       "DEPENDS_ON": 67,
       "EXECUTES": 791,
       "HANDLED_BY": 809,
-      "HAS_COMMIT": 2753,
+      "HAS_COMMIT": 2755,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4447,
+      "IMPORTS": 4448,
       "INHERITS": 42,
       "REFERENCES": 3170,
       "REPRESENTS": 1689,
-      "TESTS": 1539,
+      "TESTS": 1540,
       "TRACKS": 126,
       "USES_TABLE": 2033
     }
@@ -78587,18 +78587,18 @@
       "extension": ".md",
       "bytes": 55480,
       "lines": 742,
-      "version": "67aea78334c0f418",
+      "version": "d4472fe9efa06bf0",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "67aea78334c0f418"
+          "version": "d4472fe9efa06bf0"
         }
       ],
-      "lastChangedAt": "2026-10-11T22:53:22.000Z",
+      "lastChangedAt": "2026-10-12T01:13:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b021a7a400b028c310905fd98b283566688f9abd"
+      "lastChangedCommit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
     },
     {
       "key": "Artifact:src/access.js",
@@ -90473,20 +90473,20 @@
       "path": "test/intelforecastjobs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11521,
-      "lines": 142,
-      "version": "4d5f6db148fb3b94",
+      "bytes": 13934,
+      "lines": 167,
+      "version": "e496f888c0061998",
       "text": true,
       "provenance": [
         {
           "file": "test/intelforecastjobs.js",
           "line": 1,
-          "version": "4d5f6db148fb3b94"
+          "version": "e496f888c0061998"
         }
       ],
-      "lastChangedAt": "2026-10-11T19:33:13.000Z",
+      "lastChangedAt": "2026-10-12T01:13:16.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1ead3465e14f355fa6ccfb837f9d7fd6fd873392"
+      "lastChangedCommit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
     },
     {
       "key": "Artifact:test/intelforecasts.js",
@@ -110851,6 +110851,22 @@
       ]
     },
     {
+      "key": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "type": "Commit",
+      "id": "1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "label": "Refresh connected world knowledge for reviewed combined source",
+      "title": "Refresh connected world knowledge for reviewed combined source",
+      "date": "2026-10-12T00:34:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "provenance": [
+        {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        }
+      ]
+    },
+    {
       "key": "Commit:1bde89ee094582e128ad8503c1efc7329109a454",
       "type": "Commit",
       "id": "1bde89ee094582e128ad8503c1efc7329109a454",
@@ -124863,6 +124879,22 @@
         {
           "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5",
           "url": "https://github.com/OmertaDev/Omerta/commit/6c84da2d97573f5336a690533d017aa1603b0fa5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "type": "Commit",
+      "id": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "label": "Establish both SQL and fixture expiry windows before refund proof",
+      "title": "Establish both SQL and fixture expiry windows before refund proof",
+      "date": "2026-10-12T01:13:16.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "provenance": [
+        {
+          "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
         }
       ]
     },
@@ -163969,12 +164001,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 742,
-      "version": "67aea78334c0f418",
+      "version": "d4472fe9efa06bf0",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "67aea78334c0f418"
+          "version": "d4472fe9efa06bf0"
         }
       ]
     },
@@ -170836,6 +170868,9 @@
           "commit": "1b33e8457e8398bea1b267574bd4bcc44d02debf"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1befce49b4b22b6d2a4115a4bbfeeb1f069c0e26"
         },
         {
@@ -171626,6 +171661,9 @@
         },
         {
           "commit": "1b63dfd8625a102fe57f36eafcb39f330a140d8c"
+        },
+        {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
@@ -173146,6 +173184,9 @@
           "commit": "1b63dfd8625a102fe57f36eafcb39f330a140d8c"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
         },
         {
@@ -174664,6 +174705,9 @@
           "commit": "1b63dfd8625a102fe57f36eafcb39f330a140d8c"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
         },
         {
@@ -176062,6 +176106,9 @@
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -176594,6 +176641,9 @@
         },
         {
           "commit": "1b63dfd8625a102fe57f36eafcb39f330a140d8c"
+        },
+        {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
           "commit": "1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae"
@@ -178006,6 +178056,9 @@
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
@@ -178549,6 +178602,9 @@
           "commit": "1b5d2c285816e9070f995c496647577a28cfcf1a"
         },
         {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -178787,6 +178843,9 @@
         },
         {
           "commit": "18738f0238abac2204c0d201ea4ce93acefcd781"
+        },
+        {
+          "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
@@ -187990,7 +188049,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c080248508ed2e28ef94563e538f02b854734f2c",
+      "revision": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
       "currentBranch": "codex/city-connected-world",
       "defaultBranch": "main",
       "visibility": "public",
@@ -221421,13 +221480,13 @@
       "type": "TestSuite",
       "id": "test/intelforecastjobs.js",
       "label": "test/intelforecastjobs.js",
-      "lines": 142,
-      "version": "4d5f6db148fb3b94",
+      "lines": 167,
+      "version": "e496f888c0061998",
       "provenance": [
         {
           "file": "test/intelforecastjobs.js",
           "line": 1,
-          "version": "4d5f6db148fb3b94"
+          "version": "e496f888c0061998"
         }
       ]
     },
@@ -274454,6 +274513,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1be7d6f1267dc2ae0b2dc59b80a67f83cc4764ae",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -319010,6 +319141,22 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "to": "Artifact:test/intelforecastjobs.js",
+      "provenance": {
+        "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
       }
     },
     {
@@ -459204,7 +459351,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1241
+      "weight": 1242
     },
     {
       "type": "DEPENDS_ON",
@@ -476998,6 +477145,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1bbcf862cc4ba051c561acd71a00bc8d34220f64",
+      "provenance": {
+        "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1bde89ee094582e128ad8503c1efc7329109a454",
       "provenance": {
         "commit": "1bde89ee094582e128ad8503c1efc7329109a454"
@@ -484001,6 +484156,14 @@
       "to": "Commit:6c84da2d97573f5336a690533d017aa1603b0fa5",
       "provenance": {
         "commit": "6c84da2d97573f5336a690533d017aa1603b0fa5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
+      "provenance": {
+        "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
       }
     },
     {
@@ -517405,10 +517568,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/intelforecastjobs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/intelforecasts.js",
       "provenance": {
         "file": "test/intelforecastjobs.js",
         "line": 26
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/intelforecastjobs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/intelforecastjobs.js",
+        "line": 27
       }
     },
     {
@@ -587434,10 +587606,19 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/intelforecastjobs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/intelforecasts.js",
       "provenance": {
         "file": "test/intelforecastjobs.js",
         "line": 26
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/intelforecastjobs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/intelforecastjobs.js",
+        "line": 27
       }
     },
     {
