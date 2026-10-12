@@ -1,7 +1,7 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "8240950102470347a5f87566922b006403aef7c1",
-  "worktreeDirty": true,
+  "sourceRevision": "fe2558220379665cda7c13685b6123d64bc469bb",
+  "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
     "nodeTypes": [
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 11808,
-    "edges": 47923,
+    "nodes": 11814,
+    "edges": 47979,
     "byNodeType": {
-      "Artifact": 4584,
+      "Artifact": 4586,
       "Command": 249,
-      "Commit": 3112,
+      "Commit": 3115,
       "Contract": 126,
       "Document": 744,
       "Domain": 13,
@@ -60,25 +60,25 @@
       "Route": 940,
       "Subsystem": 8,
       "Table": 418,
-      "TestSuite": 655,
+      "TestSuite": 656,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3738,
-      "CHANGED": 19036,
-      "CONTAINS": 4605,
+      "BELONGS_TO": 3740,
+      "CHANGED": 19069,
+      "CONTAINS": 4607,
       "DECLARES": 249,
       "DEFINED_IN": 1484,
       "DEPENDS_ON": 67,
-      "EXECUTES": 847,
+      "EXECUTES": 848,
       "HANDLED_BY": 834,
-      "HAS_COMMIT": 3112,
+      "HAS_COMMIT": 3115,
       "IMPLEMENTS": 124,
-      "IMPORTS": 4818,
+      "IMPORTS": 4831,
       "INHERITS": 42,
       "REFERENCES": 3240,
-      "REPRESENTS": 1775,
-      "TESTS": 1684,
+      "REPRESENTS": 1776,
+      "TESTS": 1685,
       "TRACKS": 126,
       "USES_TABLE": 2142
     }
@@ -41609,18 +41609,18 @@
       "extension": ".md",
       "bytes": 7059,
       "lines": 129,
-      "version": "b27495a1857d62f9",
+      "version": "da23f588897cb701",
       "text": true,
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "b27495a1857d62f9"
+          "version": "da23f588897cb701"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:12:18.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d707eb9c208116501dc9a5a6cceea34b8e471e9b"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:MARKETING.md",
@@ -63497,20 +63497,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 42875,
+      "bytes": 42925,
       "lines": 278,
-      "version": "acd04521abad778d",
+      "version": "2e409187d8b9c990",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "acd04521abad778d"
+          "version": "2e409187d8b9c990"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:Procfile",
@@ -79116,18 +79116,18 @@
       "extension": ".md",
       "bytes": 55481,
       "lines": 743,
-      "version": "d904e5e4bd7e19f5",
+      "version": "555aacbc4e7160ea",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d904e5e4bd7e19f5"
+          "version": "555aacbc4e7160ea"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:12:18.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d707eb9c208116501dc9a5a6cceea34b8e471e9b"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:src/access.js",
@@ -82495,20 +82495,20 @@
       "path": "src/game.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 217327,
-      "lines": 2771,
-      "version": "8315772e4988ae0a",
+      "bytes": 217448,
+      "lines": 2772,
+      "version": "5ac19682d0515ca7",
       "text": true,
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "8315772e4988ae0a"
+          "version": "5ac19682d0515ca7"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-12T22:30:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
     },
     {
       "key": "Artifact:src/gameemployment.js",
@@ -85485,20 +85485,20 @@
       "path": "src/routes/law.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 2266,
+      "bytes": 2290,
       "lines": 31,
-      "version": "3a29434b36d6f8e6",
+      "version": "e2159ec121dad8ab",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/law.js",
           "line": 1,
-          "version": "3a29434b36d6f8e6"
+          "version": "e2159ec121dad8ab"
         }
       ],
-      "lastChangedAt": "2026-07-26T03:51:23.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "4075407258e8ccfb234bb63d08c7fd90d7aa1fd5"
+      "lastChangedAt": "2026-10-12T22:30:54.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
     },
     {
       "key": "Artifact:src/routes/leaderboards.js",
@@ -85600,20 +85600,20 @@
       "path": "src/routes/pen.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 4727,
+      "bytes": 4747,
       "lines": 60,
-      "version": "d18a5759aa40a188",
+      "version": "062bd29acd298d51",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/pen.js",
           "line": 1,
-          "version": "d18a5759aa40a188"
+          "version": "062bd29acd298d51"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-12T22:30:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
     },
     {
       "key": "Artifact:src/routes/port.js",
@@ -86336,20 +86336,20 @@
       "path": "src/server.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 286763,
+      "bytes": 287115,
       "lines": 3772,
-      "version": "9730490ad835b510",
+      "version": "10f79af1d18b14b2",
       "text": true,
       "provenance": [
         {
           "file": "src/server.js",
           "line": 1,
-          "version": "9730490ad835b510"
+          "version": "10f79af1d18b14b2"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-12T22:30:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
     },
     {
       "key": "Artifact:src/shipment.js",
@@ -92106,20 +92106,20 @@
       "path": "test/law.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 27355,
-      "lines": 354,
-      "version": "06aab66a654e75c8",
+      "bytes": 27569,
+      "lines": 357,
+      "version": "dfd0ae283a3401fe",
       "text": true,
       "provenance": [
         {
           "file": "test/law.js",
           "line": 1,
-          "version": "06aab66a654e75c8"
+          "version": "dfd0ae283a3401fe"
         }
       ],
-      "lastChangedAt": "2026-09-06T12:11:06.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "baa2d0c1ae0b2fc76cc426b598ec4ce4fedb64c2"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/levers.js",
@@ -93831,20 +93831,20 @@
       "path": "test/player-intel-gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10074,
-      "lines": 146,
-      "version": "7b82c9b4684a943b",
+      "bytes": 10966,
+      "lines": 156,
+      "version": "fb346f555deda522",
       "text": true,
       "provenance": [
         {
           "file": "test/player-intel-gates.js",
           "line": 1,
-          "version": "7b82c9b4684a943b"
+          "version": "fb346f555deda522"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:22:14.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8240950102470347a5f87566922b006403aef7c1"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/player-intel-projections.js",
@@ -93870,6 +93870,29 @@
       "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
     },
     {
+      "key": "Artifact:test/player-intel-source-compatibility.js",
+      "type": "Artifact",
+      "id": "test/player-intel-source-compatibility.js",
+      "label": "player-intel-source-compatibility.js",
+      "path": "test/player-intel-source-compatibility.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 3256,
+      "lines": 52,
+      "version": "0fcc873f1a4728c3",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/player-intel-source-compatibility.js",
+          "line": 1,
+          "version": "0fcc873f1a4728c3"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
+    },
+    {
       "key": "Artifact:test/player-intel.js",
       "type": "Artifact",
       "id": "test/player-intel.js",
@@ -93877,20 +93900,20 @@
       "path": "test/player-intel.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10299,
-      "lines": 165,
-      "version": "bfded72ca42cb3d4",
+      "bytes": 10482,
+      "lines": 167,
+      "version": "8922e987f7b6a2ea",
       "text": true,
       "provenance": [
         {
           "file": "test/player-intel.js",
           "line": 1,
-          "version": "bfded72ca42cb3d4"
+          "version": "8922e987f7b6a2ea"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/player-opportunities.js",
@@ -94728,20 +94751,20 @@
       "path": "test/rc1-checkpoint-recovery-review.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 20143,
-      "lines": 227,
-      "version": "115814a671147f9b",
+      "bytes": 20276,
+      "lines": 228,
+      "version": "7f739960d7208330",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-checkpoint-recovery-review.js",
           "line": 1,
-          "version": "115814a671147f9b"
+          "version": "7f739960d7208330"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:56:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a57074f6e629ffc7c8694abf16cc3073a2cb844"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/rc1-churn-policy.js",
@@ -94889,20 +94912,20 @@
       "path": "test/rc1-commercial-premises-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8699,
-      "lines": 46,
-      "version": "4764d1d080b0d9e0",
+      "bytes": 8818,
+      "lines": 47,
+      "version": "9922af27fb2b9e66",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-commercial-premises-source-compatibility.js",
           "line": 1,
-          "version": "4764d1d080b0d9e0"
+          "version": "9922af27fb2b9e66"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:02:00.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c7c0328cc4168ec44ad7a12468324715e4d4ef9"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/rc1-company-operator-source-compatibility.js",
@@ -97534,20 +97557,20 @@
       "path": "test/rc1-world-backlog-review.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19657,
-      "lines": 237,
-      "version": "6215548e4eb9d717",
+      "bytes": 19785,
+      "lines": 239,
+      "version": "8f573fb2f16b1ca8",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-backlog-review.js",
           "line": 1,
-          "version": "6215548e4eb9d717"
+          "version": "8f573fb2f16b1ca8"
         }
       ],
-      "lastChangedAt": "2026-10-11T20:51:05.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a7bfd33bbfe5cb39a592334f13aa04a036209138"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/rc1-world-car-melt-witness.js",
@@ -97948,20 +97971,20 @@
       "path": "test/rc1-world-qualification.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 70236,
-      "lines": 789,
-      "version": "0994d1b35158b648",
+      "bytes": 70397,
+      "lines": 791,
+      "version": "884d6d283059ec1f",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "0994d1b35158b648"
+          "version": "884d6d283059ec1f"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:02:00.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c7c0328cc4168ec44ad7a12468324715e4d4ef9"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:test/rc1-world-resource-observer.js",
@@ -102196,6 +102219,29 @@
       "lastChangedCommit": "641af48e212b91a8b989f931bb8e8038623ff229"
     },
     {
+      "key": "Artifact:tools/player-intel-source-compatibility.js",
+      "type": "Artifact",
+      "id": "tools/player-intel-source-compatibility.js",
+      "label": "player-intel-source-compatibility.js",
+      "path": "tools/player-intel-source-compatibility.js",
+      "kind": "engineering-harness",
+      "extension": ".js",
+      "bytes": 51048,
+      "lines": 207,
+      "version": "fe9c243d7cfc7ccb",
+      "text": true,
+      "provenance": [
+        {
+          "file": "tools/player-intel-source-compatibility.js",
+          "line": 1,
+          "version": "fe9c243d7cfc7ccb"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
+    },
+    {
       "key": "Artifact:tools/playthrough-truth.js",
       "type": "Artifact",
       "id": "tools/playthrough-truth.js",
@@ -102502,20 +102548,20 @@
       "path": "tools/rc1-car-melt-provenance.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 19436,
-      "lines": 241,
-      "version": "637b147fbdb5d785",
+      "bytes": 19559,
+      "lines": 243,
+      "version": "46382ec2d5c751ad",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-car-melt-provenance.js",
           "line": 1,
-          "version": "637b147fbdb5d785"
+          "version": "46382ec2d5c751ad"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:56:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a57074f6e629ffc7c8694abf16cc3073a2cb844"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-checkpoint-recovery-review.js",
@@ -102525,20 +102571,20 @@
       "path": "tools/rc1-checkpoint-recovery-review.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 45315,
-      "lines": 452,
-      "version": "b335c48bba99623c",
+      "bytes": 45432,
+      "lines": 453,
+      "version": "035552296c3020e4",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-checkpoint-recovery-review.js",
           "line": 1,
-          "version": "b335c48bba99623c"
+          "version": "035552296c3020e4"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:56:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a57074f6e629ffc7c8694abf16cc3073a2cb844"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-churn-policy.js",
@@ -102640,20 +102686,20 @@
       "path": "tools/rc1-commercial-premises-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 12801,
-      "lines": 110,
-      "version": "38d23fbc1b2d22c2",
+      "bytes": 12907,
+      "lines": 111,
+      "version": "e48d0b8132c7e412",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-commercial-premises-source-compatibility.js",
           "line": 1,
-          "version": "38d23fbc1b2d22c2"
+          "version": "e48d0b8132c7e412"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:02:00.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c7c0328cc4168ec44ad7a12468324715e4d4ef9"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-company-operator-source-compatibility.js",
@@ -103744,20 +103790,20 @@
       "path": "tools/rc1-npc-family-provenance.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 9894,
-      "lines": 137,
-      "version": "4fa4880fd32f5d91",
+      "bytes": 10017,
+      "lines": 139,
+      "version": "fc7b4401e327973b",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-npc-family-provenance.js",
           "line": 1,
-          "version": "4fa4880fd32f5d91"
+          "version": "fc7b4401e327973b"
         }
       ],
-      "lastChangedAt": "2026-10-11T15:56:39.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6a57074f6e629ffc7c8694abf16cc3073a2cb844"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-npc-family-recruitment.js",
@@ -104618,20 +104664,20 @@
       "path": "tools/rc1-world-backlog-review.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 47490,
-      "lines": 436,
-      "version": "9f112dc550989cb4",
+      "bytes": 47652,
+      "lines": 439,
+      "version": "f5b5d5d2bf05d4f2",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-backlog-review.js",
           "line": 1,
-          "version": "9f112dc550989cb4"
+          "version": "f5b5d5d2bf05d4f2"
         }
       ],
-      "lastChangedAt": "2026-10-11T20:51:05.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a7bfd33bbfe5cb39a592334f13aa04a036209138"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-world-cell-admission.js",
@@ -104733,20 +104779,20 @@
       "path": "tools/rc1-world-economy-metrics.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 53667,
-      "lines": 629,
-      "version": "b5e5921b054092f0",
+      "bytes": 53792,
+      "lines": 631,
+      "version": "f47e56044b91080c",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-economy-metrics.js",
           "line": 1,
-          "version": "b5e5921b054092f0"
+          "version": "f47e56044b91080c"
         }
       ],
-      "lastChangedAt": "2026-10-11T20:51:05.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a7bfd33bbfe5cb39a592334f13aa04a036209138"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-world-history-storage.js",
@@ -104779,20 +104825,20 @@
       "path": "tools/rc1-world-lifecycle-resources.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 31319,
-      "lines": 352,
-      "version": "106829753a5a7388",
+      "bytes": 31444,
+      "lines": 354,
+      "version": "a7d8f69afd7ed880",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-lifecycle-resources.js",
           "line": 1,
-          "version": "106829753a5a7388"
+          "version": "a7d8f69afd7ed880"
         }
       ],
-      "lastChangedAt": "2026-10-11T20:51:05.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a7bfd33bbfe5cb39a592334f13aa04a036209138"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-world-market-resources.js",
@@ -104871,20 +104917,20 @@
       "path": "tools/rc1-world-qualification.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 49726,
-      "lines": 463,
-      "version": "a37f1b49f20166f4",
+      "bytes": 49843,
+      "lines": 464,
+      "version": "7142ac5b49efdcd3",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-world-qualification.js",
           "line": 1,
-          "version": "a37f1b49f20166f4"
+          "version": "7142ac5b49efdcd3"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:02:00.000Z",
+      "lastChangedAt": "2026-10-12T23:19:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9c7c0328cc4168ec44ad7a12468324715e4d4ef9"
+      "lastChangedCommit": "fe2558220379665cda7c13685b6123d64bc469bb"
     },
     {
       "key": "Artifact:tools/rc1-world-resource-observer.js",
@@ -106357,7 +106403,7 @@
       "type": "Command",
       "id": "npm:pretest",
       "label": "npm run pretest",
-      "command": "node test/commercialpremises.js && node test/commercialpremises-integration.js && node test/rc1-commercial-premises-source-compatibility.js && node test/rc1-company-workflow-source-compatibility.js && node test/companyworkflows.js && node test/companyworkflow-integration.js && node test/rc1-game-employment-source-compatibility.js && node test/gameemployment.js && node test/gameemployment-integration.js && node test/companyoperatorrunner.js && node test/rc1-company-operator-source-compatibility.js && node test/companyoperators.js && node test/companyoperators-api.js && node test/storefrontfulfillment.js && node test/storefront-fulfillment-api.js && node test/courierjobs.js && node test/supplycontracts.js && node test/supplycontracts-api.js && node test/earningreceipts.js && node test/resource-deliver.js && node test/identity-checkout.js && node test/identity-checkout-client.js && node test/identity-checkout-api.js && node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node test/city-rpg.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
+      "command": "node test/commercialpremises.js && node test/commercialpremises-integration.js && node test/player-intel-source-compatibility.js && node test/rc1-commercial-premises-source-compatibility.js && node test/rc1-company-workflow-source-compatibility.js && node test/companyworkflows.js && node test/companyworkflow-integration.js && node test/rc1-game-employment-source-compatibility.js && node test/gameemployment.js && node test/gameemployment-integration.js && node test/companyoperatorrunner.js && node test/rc1-company-operator-source-compatibility.js && node test/companyoperators.js && node test/companyoperators-api.js && node test/storefrontfulfillment.js && node test/storefront-fulfillment-api.js && node test/courierjobs.js && node test/supplycontracts.js && node test/supplycontracts-api.js && node test/earningreceipts.js && node test/resource-deliver.js && node test/identity-checkout.js && node test/identity-checkout-client.js && node test/identity-checkout-api.js && node test/current-copy.js && node test/operation-read-paths.js && node test/world-projection-mysteries.js && node test/world-projection-mysteries-api.js && node test/world-projection-read.js && node test/world-projection.js && node test/world-projection-api.js && node test/projection-events.js && node test/projection-events-ws.js && node test/world-projection-client.js && node test/coordination-operation-definitions.js && node test/coordination-mode-boundary.js && node test/coordination-capital.js && node test/coordination-materials.js && node test/coordination-knowledge-proof.js && node test/world-kernel-transaction.js && node test/family-operations.js && node test/family-operations-api.js && node test/world-knowledge-crafting.js && node test/world-kernel-query.js && node test/world-kernel-input.js && node test/world-kernel.js && node test/world-kernel-api.js && node test/coordination-graph.js && node test/coordination.js && node test/coordination-api.js && node test/coordination-http-receipts.js && node test/coordination-knowledge.js && node test/coordination-knowledge-runtime.js && node test/coordination-knowledge-api.js && node test/finalizedobservation.js && node test/stockballotv2.js && node test/rwanominations.js && node test/rwaroutes.js && node test/rwahealth.js && node test/rwahealth.integration.js && node test/rwahealthclearance.js && node test/rwahealthclearancecontext.js && node test/rwahealthoverlay.readiness.js && node test/rwahealthoverlay.schema.js && node test/rwahealthoverlay.vector.js && node test/rwaregistrylifecycle.js && node test/rwaregistrylifecycle.sync.js && node test/agent-referral-cash.js && node test/phase2-discovery.js && node test/phase2-compiler.js && node test/phase2-review-regressions.js && node test/phase2-scale.js && node test/content-graph.js && node test/content-runtime.js && node test/content-social.js && node test/content-seasonal.js && node test/content-seasonal-case.js && node test/content-crafting.js && node test/content-crafting-jobs.js && node test/content-crafting-tools.js && node test/content-exchange.js && node test/content-api.js && node test/v4oraclekeeper.js && node test/genesiscca.js && node test/genesislaunch.js && node test/genesisrelease.js && node test/worldgraph.js && node test/worldgraph-validation.js && node test/items.js && node test/crafting.js && node test/mysteries.js && node test/operations.js && node test/belladonna.js && node test/worldgraph-api.js && node test/city-rpg.js && node tools/pgcheck-belladonna.js --pg-mem && node test/phase2-definition-schema.js && node test/phase2-definitions.js && node test/phase2-activation.js && node test/phase2-definition-invariants.js && node test/phase2-lot-boundary.js && node test/keepertransactions.js && node test/liquiditykeeper.js && node test/genesiskeeper.js && node test/liquidityaccounting.js --memory && node test/liquidityaccounting-review.js && node test/liquiditypolicy.js --memory && node test/bond-unlimited.js --memory && node test/bondquoteexpiry.js && node test/liquidityrpc.js && node tools/liquidity-manifest-example.js --self-test && node test/liquiditypolicy-review.js && node test/liquidityqueue.js --memory && node test/liquidityqueue-review.js && node test/character-mint-policy.js && node test/phase2-lots.js && node test/phase2-lots-property.js && node test/audit/mint-dev-allocation.js --memory && node test/audit/deed-reimport-order.js --memory && node test/progression-admission.js && node test/world-prerequisites.js && node test/recipe-policy.js && node test/furnace-ledger.js && node test/core-progression-api.js && node test/player-commands.js && node test/player-command-journey.js && node test/player-command-api.js && node test/player-command-client.js && node test/director-definitions.js && node test/director-config.js && node test/director-runtime.js && node test/director-recovery.js && node test/director-dock-world.js && node test/director-commands.js && node test/director-api.js && node test/director-journey.js && node test/director-security.js && node test/director-simulation.js && node test/director-network.js && node test/campaign-network-journey.js && node test/director-network-recovery.js && node test/player-opportunities.js && node test/world-consequences.js",
       "provenance": [
         {
           "file": "package.json",
@@ -114309,6 +114355,22 @@
         {
           "commit": "1c52ae3440c2a41ed1f78b99689204785c818c43",
           "url": "https://github.com/OmertaDev/Omerta/commit/1c52ae3440c2a41ed1f78b99689204785c818c43"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "type": "Commit",
+      "id": "1c57e263dcf5767159776e0056a1d9624cc45414",
+      "label": "chore(knowledge): refresh artifacts for intel discovery release",
+      "title": "chore(knowledge): refresh artifacts for intel discovery release",
+      "date": "2026-10-12T22:24:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1c57e263dcf5767159776e0056a1d9624cc45414",
+      "provenance": [
+        {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1c57e263dcf5767159776e0056a1d9624cc45414"
         }
       ]
     },
@@ -136793,6 +136855,22 @@
       ]
     },
     {
+      "key": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "type": "Commit",
+      "id": "8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "label": "fix: limit discovery requirements to player-targeted actions",
+      "title": "fix: limit discovery requirements to player-targeted actions",
+      "date": "2026-10-12T22:30:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "provenance": [
+        {
+          "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8df37be1cdafaf54b25a6eb484342457d3d34983"
+        }
+      ]
+    },
+    {
       "key": "Commit:8df39320aa525e396e28ecd11d6846a14f803ccd",
       "type": "Commit",
       "id": "8df39320aa525e396e28ecd11d6846a14f803ccd",
@@ -158105,6 +158183,22 @@
       ]
     },
     {
+      "key": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "type": "Commit",
+      "id": "fe2558220379665cda7c13685b6123d64bc469bb",
+      "label": "test: preserve exact financial source checks for intel discovery",
+      "title": "test: preserve exact financial source checks for intel discovery",
+      "date": "2026-10-12T23:19:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fe2558220379665cda7c13685b6123d64bc469bb",
+      "provenance": [
+        {
+          "commit": "fe2558220379665cda7c13685b6123d64bc469bb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fe2558220379665cda7c13685b6123d64bc469bb"
+        }
+      ]
+    },
+    {
       "key": "Commit:fe3851de9e4b88dbb175702b6f917716816e2ee3",
       "type": "Commit",
       "id": "fe3851de9e4b88dbb175702b6f917716816e2ee3",
@@ -170247,12 +170341,12 @@
       "label": "MARKETING-POSTS.md",
       "documentType": "documentation",
       "lines": 129,
-      "version": "b27495a1857d62f9",
+      "version": "da23f588897cb701",
       "provenance": [
         {
           "file": "MARKETING-POSTS.md",
           "line": 1,
-          "version": "b27495a1857d62f9"
+          "version": "da23f588897cb701"
         }
       ]
     },
@@ -172487,12 +172581,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 743,
-      "version": "d904e5e4bd7e19f5",
+      "version": "555aacbc4e7160ea",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d904e5e4bd7e19f5"
+          "version": "555aacbc4e7160ea"
         }
       ]
     },
@@ -179479,6 +179573,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
@@ -180425,6 +180522,9 @@
         },
         {
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
+        },
+        {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
         },
         {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
@@ -182152,6 +182252,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
@@ -183877,6 +183980,9 @@
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
@@ -185455,6 +185561,9 @@
           "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -186068,6 +186177,9 @@
         },
         {
           "commit": "1c398c3f4cef366ff39a4693f42f41f4b0c3855c"
+        },
+        {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
         },
         {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
@@ -187660,6 +187772,9 @@
           "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1d28dda9c934b80b5dfd248dff90dc318504895b"
         },
         {
@@ -188260,6 +188375,9 @@
           "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
         },
         {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -188549,6 +188667,9 @@
         },
         {
           "commit": "1bbcf862cc4ba051c561acd71a00bc8d34220f64"
+        },
+        {
+          "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
         },
         {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
@@ -191710,13 +191831,13 @@
       "type": "Module",
       "id": "src/game.js",
       "label": "src/game.js",
-      "lines": 2771,
-      "version": "8315772e4988ae0a",
+      "lines": 2772,
+      "version": "5ac19682d0515ca7",
       "provenance": [
         {
           "file": "src/game.js",
           "line": 1,
-          "version": "8315772e4988ae0a"
+          "version": "5ac19682d0515ca7"
         }
       ]
     },
@@ -193661,12 +193782,12 @@
       "id": "src/routes/law.js",
       "label": "src/routes/law.js",
       "lines": 31,
-      "version": "3a29434b36d6f8e6",
+      "version": "e2159ec121dad8ab",
       "provenance": [
         {
           "file": "src/routes/law.js",
           "line": 1,
-          "version": "3a29434b36d6f8e6"
+          "version": "e2159ec121dad8ab"
         }
       ]
     },
@@ -193736,12 +193857,12 @@
       "id": "src/routes/pen.js",
       "label": "src/routes/pen.js",
       "lines": 60,
-      "version": "d18a5759aa40a188",
+      "version": "062bd29acd298d51",
       "provenance": [
         {
           "file": "src/routes/pen.js",
           "line": 1,
-          "version": "d18a5759aa40a188"
+          "version": "062bd29acd298d51"
         }
       ]
     },
@@ -194216,12 +194337,12 @@
       "id": "src/server.js",
       "label": "src/server.js",
       "lines": 3772,
-      "version": "9730490ad835b510",
+      "version": "10f79af1d18b14b2",
       "provenance": [
         {
           "file": "src/server.js",
           "line": 1,
-          "version": "9730490ad835b510"
+          "version": "10f79af1d18b14b2"
         }
       ]
     },
@@ -198235,12 +198356,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "8240950102470347a5f87566922b006403aef7c1",
+      "revision": "fe2558220379665cda7c13685b6123d64bc469bb",
       "currentBranch": "codex/intel-discovery-release",
       "defaultBranch": "main",
       "visibility": "public",
-      "worktreeDirty": true,
-      "currentArtifactCount": 4584,
+      "worktreeDirty": false,
+      "currentArtifactCount": 4586,
       "provenance": [
         {
           "file": "README.md",
@@ -232851,13 +232972,13 @@
       "type": "TestSuite",
       "id": "test/law.js",
       "label": "test/law.js",
-      "lines": 354,
-      "version": "06aab66a654e75c8",
+      "lines": 357,
+      "version": "dfd0ae283a3401fe",
       "provenance": [
         {
           "file": "test/law.js",
           "line": 1,
-          "version": "06aab66a654e75c8"
+          "version": "dfd0ae283a3401fe"
         }
       ]
     },
@@ -233961,13 +234082,13 @@
       "type": "TestSuite",
       "id": "test/player-intel-gates.js",
       "label": "test/player-intel-gates.js",
-      "lines": 146,
-      "version": "7b82c9b4684a943b",
+      "lines": 156,
+      "version": "fb346f555deda522",
       "provenance": [
         {
           "file": "test/player-intel-gates.js",
           "line": 1,
-          "version": "7b82c9b4684a943b"
+          "version": "fb346f555deda522"
         }
       ]
     },
@@ -233987,17 +234108,32 @@
       ]
     },
     {
+      "key": "TestSuite:test/player-intel-source-compatibility.js",
+      "type": "TestSuite",
+      "id": "test/player-intel-source-compatibility.js",
+      "label": "test/player-intel-source-compatibility.js",
+      "lines": 52,
+      "version": "0fcc873f1a4728c3",
+      "provenance": [
+        {
+          "file": "test/player-intel-source-compatibility.js",
+          "line": 1,
+          "version": "0fcc873f1a4728c3"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/player-intel.js",
       "type": "TestSuite",
       "id": "test/player-intel.js",
       "label": "test/player-intel.js",
-      "lines": 165,
-      "version": "bfded72ca42cb3d4",
+      "lines": 167,
+      "version": "8922e987f7b6a2ea",
       "provenance": [
         {
           "file": "test/player-intel.js",
           "line": 1,
-          "version": "bfded72ca42cb3d4"
+          "version": "8922e987f7b6a2ea"
         }
       ]
     },
@@ -234546,13 +234682,13 @@
       "type": "TestSuite",
       "id": "test/rc1-checkpoint-recovery-review.js",
       "label": "test/rc1-checkpoint-recovery-review.js",
-      "lines": 227,
-      "version": "115814a671147f9b",
+      "lines": 228,
+      "version": "7f739960d7208330",
       "provenance": [
         {
           "file": "test/rc1-checkpoint-recovery-review.js",
           "line": 1,
-          "version": "115814a671147f9b"
+          "version": "7f739960d7208330"
         }
       ]
     },
@@ -234651,13 +234787,13 @@
       "type": "TestSuite",
       "id": "test/rc1-commercial-premises-source-compatibility.js",
       "label": "test/rc1-commercial-premises-source-compatibility.js",
-      "lines": 46,
-      "version": "4764d1d080b0d9e0",
+      "lines": 47,
+      "version": "9922af27fb2b9e66",
       "provenance": [
         {
           "file": "test/rc1-commercial-premises-source-compatibility.js",
           "line": 1,
-          "version": "4764d1d080b0d9e0"
+          "version": "9922af27fb2b9e66"
         }
       ]
     },
@@ -236376,13 +236512,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-backlog-review.js",
       "label": "test/rc1-world-backlog-review.js",
-      "lines": 237,
-      "version": "6215548e4eb9d717",
+      "lines": 239,
+      "version": "8f573fb2f16b1ca8",
       "provenance": [
         {
           "file": "test/rc1-world-backlog-review.js",
           "line": 1,
-          "version": "6215548e4eb9d717"
+          "version": "8f573fb2f16b1ca8"
         }
       ]
     },
@@ -236646,13 +236782,13 @@
       "type": "TestSuite",
       "id": "test/rc1-world-qualification.js",
       "label": "test/rc1-world-qualification.js",
-      "lines": 789,
-      "version": "0994d1b35158b648",
+      "lines": 791,
+      "version": "884d6d283059ec1f",
       "provenance": [
         {
           "file": "test/rc1-world-qualification.js",
           "line": 1,
-          "version": "0994d1b35158b648"
+          "version": "884d6d283059ec1f"
         }
       ]
     },
@@ -258992,6 +259128,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/player-intel-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/player-intel-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/player-intel.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -262245,6 +262390,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "tools/pgquery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:tools/player-intel-source-compatibility.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "tools/player-intel-source-compatibility.js",
         "line": 1
       }
     },
@@ -288073,6 +288227,78 @@
       "to": "Artifact:test/deliveryfinance-guards.js",
       "provenance": {
         "commit": "1c52ae3440c2a41ed1f78b99689204785c818c43"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
       }
     },
     {
@@ -355665,6 +355891,38 @@
       "to": "Artifact:test/growth.js",
       "provenance": {
         "commit": "8dec3be36d234ca9e1ed9bd98d73af722392c6e0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "to": "Artifact:src/routes/law.js",
+      "provenance": {
+        "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "to": "Artifact:src/routes/pen.js",
+      "provenance": {
+        "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
       }
     },
     {
@@ -423341,6 +423599,166 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:MARKETING-POSTS.md",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/law.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/player-intel-gates.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/player-intel-source-compatibility.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/player-intel.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/rc1-checkpoint-recovery-review.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/rc1-commercial-premises-source-compatibility.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/rc1-world-backlog-review.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:test/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-car-melt-provenance.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-checkpoint-recovery-review.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-npc-family-provenance.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-world-backlog-review.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-world-economy-metrics.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-world-lifecycle-resources.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "to": "Artifact:tools/rc1-world-qualification.js",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:fe3851de9e4b88dbb175702b6f917716816e2ee3",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -449959,6 +450377,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/player-intel-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/player-intel.js",
       "provenance": {
         "file": "test/player-intel.js",
@@ -453211,6 +453638,15 @@
       "to": "Artifact:tools/pgquery.js",
       "provenance": {
         "file": "tools/pgquery.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/player-intel-source-compatibility.js",
         "line": 1
       }
     },
@@ -481317,7 +481753,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1359
+      "weight": 1360
     },
     {
       "type": "DEPENDS_ON",
@@ -483132,6 +483568,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:pretest",
       "to": "Artifact:test/player-commands.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:pretest",
+      "to": "Artifact:test/player-intel-source-compatibility.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -500393,6 +500838,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1c57e263dcf5767159776e0056a1d9624cc45414",
+      "provenance": {
+        "commit": "1c57e263dcf5767159776e0056a1d9624cc45414"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1ca0d2297fda090f16a82a5ac59c77535ec9e1fd",
       "provenance": {
         "commit": "1ca0d2297fda090f16a82a5ac59c77535ec9e1fd"
@@ -511633,6 +512086,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8df37be1cdafaf54b25a6eb484342457d3d34983",
+      "provenance": {
+        "commit": "8df37be1cdafaf54b25a6eb484342457d3d34983"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8df39320aa525e396e28ecd11d6846a14f803ccd",
       "provenance": {
         "commit": "8df39320aa525e396e28ecd11d6846a14f803ccd"
@@ -522284,6 +522745,14 @@
       "to": "Commit:fe04442f5efac563514f64af7d13ede2402b134b",
       "provenance": {
         "commit": "fe04442f5efac563514f64af7d13ede2402b134b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fe2558220379665cda7c13685b6123d64bc469bb",
+      "provenance": {
+        "commit": "fe2558220379665cda7c13685b6123d64bc469bb"
       }
     },
     {
@@ -545001,7 +545470,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 294
+        "line": 297
       }
     },
     {
@@ -545010,7 +545479,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 308
+        "line": 311
       }
     },
     {
@@ -545019,7 +545488,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 76
+        "line": 77
       }
     },
     {
@@ -545043,6 +545512,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/law.js",
+      "to": "Artifact:src/playerintel.js",
+      "provenance": {
+        "file": "test/law.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/law.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/law.js",
@@ -545055,7 +545533,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 77
+        "line": 78
       }
     },
     {
@@ -549690,7 +550168,16 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 9
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-checkpoint-recovery-review.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-checkpoint-recovery-review.js",
+        "line": 2
       }
     },
     {
@@ -549708,7 +550195,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -549717,7 +550204,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -549726,7 +550213,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -550020,6 +550507,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-commercial-premises-source-compatibility.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-commercial-premises-source-compatibility.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-commercial-premises-source-compatibility.js",
       "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
@@ -550068,7 +550564,7 @@
       "to": "Artifact:tools/rc1-world-qualification.js",
       "provenance": {
         "file": "test/rc1-commercial-premises-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -555684,7 +556180,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 60
+        "line": 62
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-backlog-review.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-world-backlog-review.js",
+        "line": 2
       }
     },
     {
@@ -555693,7 +556198,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -555702,7 +556207,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -555720,7 +556225,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 59
+        "line": 61
       }
     },
     {
@@ -555729,7 +556234,7 @@
       "to": "Artifact:tools/rc1-world-backlog-review.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -556401,10 +556906,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/rc1-world-qualification.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/rc1-world-qualification.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/rc1-world-qualification.js",
       "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -556422,7 +556936,7 @@
       "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -556431,7 +556945,7 @@
       "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -556449,7 +556963,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -556467,7 +556981,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -556476,7 +556990,7 @@
       "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -556485,7 +556999,7 @@
       "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -556494,7 +557008,7 @@
       "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -556503,7 +557017,7 @@
       "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -556512,7 +557026,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 49
+        "line": 50
       }
     },
     {
@@ -556521,7 +557035,7 @@
       "to": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 14
+        "line": 15
       }
     },
     {
@@ -556539,7 +557053,7 @@
       "to": "Artifact:tools/rc1-strategy-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -556548,7 +557062,7 @@
       "to": "Artifact:tools/rc1-strategy-source-compatibility.js",
       "provenance": {
         "file": "test/rc1-world-qualification.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -563253,16 +563767,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-car-melt-provenance.js",
-        "line": 8
+        "line": 9
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-car-melt-provenance.js",
-      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-car-melt-provenance.js",
-        "line": 17
+        "line": 6
       }
     },
     {
@@ -563277,10 +563791,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-car-melt-provenance.js",
+      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-car-melt-provenance.js",
+        "line": 19
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-car-melt-provenance.js",
       "to": "Artifact:tools/rc1-native-commit-observer.js",
       "provenance": {
         "file": "tools/rc1-car-melt-provenance.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -563289,7 +563812,7 @@
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "tools/rc1-car-melt-provenance.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -563308,6 +563831,15 @@
       "provenance": {
         "file": "tools/rc1-checkpoint-recovery-review.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-checkpoint-recovery-review.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-checkpoint-recovery-review.js",
+        "line": 12
       }
     },
     {
@@ -563362,6 +563894,15 @@
       "provenance": {
         "file": "tools/rc1-cohort-policy.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-commercial-premises-source-compatibility.js",
+        "line": 3
       }
     },
     {
@@ -564141,10 +564682,10 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-npc-family-provenance.js",
-      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-npc-family-provenance.js",
-        "line": 6
+        "line": 5
       }
     },
     {
@@ -564159,10 +564700,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-npc-family-provenance.js",
+      "to": "Artifact:tools/rc1-deed-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-npc-family-provenance.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-npc-family-provenance.js",
       "to": "Artifact:tools/rc1-native-commit-observer.js",
       "provenance": {
         "file": "tools/rc1-npc-family-provenance.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -565350,7 +565900,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-world-backlog-review.js",
-        "line": 16
+        "line": 17
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-backlog-review.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-backlog-review.js",
+        "line": 2
       }
     },
     {
@@ -565359,7 +565918,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-backlog-review.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -565377,7 +565936,7 @@
       "to": "Artifact:tools/rc1-loan-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-backlog-review.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -565386,7 +565945,7 @@
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "tools/rc1-world-backlog-review.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -565611,7 +566170,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
-        "line": 7
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-economy-metrics.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-economy-metrics.js",
+        "line": 2
       }
     },
     {
@@ -565620,7 +566188,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
-        "line": 37
+        "line": 38
       }
     },
     {
@@ -565629,7 +566197,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -565647,7 +566215,7 @@
       "to": "Artifact:tools/rc1-loan-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -565656,7 +566224,7 @@
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "tools/rc1-world-economy-metrics.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -565674,7 +566242,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 8
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-lifecycle-resources.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-lifecycle-resources.js",
+        "line": 2
       }
     },
     {
@@ -565683,7 +566260,7 @@
       "to": "Artifact:tools/rc1-deed-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 152
+        "line": 153
       }
     },
     {
@@ -565692,7 +566269,7 @@
       "to": "Artifact:tools/rc1-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -565710,7 +566287,7 @@
       "to": "Artifact:tools/rc1-native-actor-replay.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -565719,7 +566296,7 @@
       "to": "Artifact:tools/rc1-native-query-order.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -565728,7 +566305,7 @@
       "to": "Artifact:tools/rc1-resource-journal.js",
       "provenance": {
         "file": "tools/rc1-world-lifecycle-resources.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -565800,22 +566377,13 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
-        "line": 18
+        "line": 19
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
-      "provenance": {
-        "file": "tools/rc1-world-qualification.js",
-        "line": 4
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-company-operator-source-compatibility.js",
+      "to": "Artifact:tools/player-intel-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
         "line": 2
@@ -565824,16 +566392,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
-      "provenance": {
-        "file": "tools/rc1-world-qualification.js",
-        "line": 7
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
+      "to": "Artifact:tools/rc1-commercial-premises-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
         "line": 5
@@ -565842,7 +566401,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-game-employment-source-compatibility.js",
+      "to": "Artifact:tools/rc1-company-operator-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
         "line": 3
@@ -565851,34 +566410,16 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-intel-source-compatibility.js",
+      "to": "Artifact:tools/rc1-company-succession-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
-        "line": 11
+        "line": 8
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
-      "provenance": {
-        "file": "tools/rc1-world-qualification.js",
-        "line": 9
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
-      "provenance": {
-        "file": "tools/rc1-world-qualification.js",
-        "line": 10
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/rc1-world-qualification.js",
-      "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
+      "to": "Artifact:tools/rc1-company-workflow-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
         "line": 6
@@ -565887,10 +566428,55 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-game-employment-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-qualification.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-intel-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-qualification.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-invoice-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-qualification.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-logistics-coverage-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-qualification.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-qualification.js",
+      "to": "Artifact:tools/rc1-market-feed-source-compatibility.js",
+      "provenance": {
+        "file": "tools/rc1-world-qualification.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/rc1-world-qualification.js",
       "to": "Artifact:tools/rc1-native-proof.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -565908,7 +566494,7 @@
       "to": "Artifact:tools/rc1-strategy-source-compatibility.js",
       "provenance": {
         "file": "tools/rc1-world-qualification.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -609752,6 +610338,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/player-intel-source-compatibility.js",
+      "to": "Artifact:test/player-intel-source-compatibility.js",
+      "provenance": {
+        "file": "test/player-intel-source-compatibility.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/player-intel.js",
       "to": "Artifact:test/player-intel.js",
       "provenance": {
@@ -618783,7 +619378,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 294
+        "line": 297
       }
     },
     {
@@ -618792,7 +619387,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 308
+        "line": 311
       }
     },
     {
@@ -618801,7 +619396,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 76
+        "line": 77
       }
     },
     {
@@ -618825,6 +619420,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/law.js",
+      "to": "Artifact:src/playerintel.js",
+      "provenance": {
+        "file": "test/law.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/law.js",
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/law.js",
@@ -618837,7 +619441,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/law.js",
-        "line": 77
+        "line": 78
       }
     },
     {
@@ -622077,7 +622681,7 @@
       "to": "Artifact:src/content/core-progression.js",
       "provenance": {
         "file": "test/rc1-checkpoint-recovery-review.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -623616,7 +624220,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/rc1-world-backlog-review.js",
-        "line": 60
+        "line": 62
       }
     },
     {
@@ -635586,7 +636190,7 @@
       "to": "Table:convoys",
       "provenance": {
         "file": "src/game.js",
-        "line": 1629
+        "line": 1630
       }
     },
     {
@@ -635739,7 +636343,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/game.js",
-        "line": 1521
+        "line": 1522
       }
     },
     {
@@ -635838,7 +636442,7 @@
       "to": "Table:referral_push",
       "provenance": {
         "file": "src/game.js",
-        "line": 2687
+        "line": 2688
       }
     },
     {

@@ -149,7 +149,7 @@
 | [src/firstblood.js](../../src/firstblood.js) | 85 | social-combat | 1 / 2 | 0 | 3 | 0 |
 | [src/firsts.js](../../src/firsts.js) | 144 | world-progression | 1 / 6 | 1 | 7 | 1 |
 | [src/franchiselicenses.js](../../src/franchiselicenses.js) | 177 | platform-core | 2 / 5 | 3 | 5 | 2 |
-| [src/game.js](../../src/game.js) | 2771 | platform-core | 11 / 291 | 35 | 62 | 84 |
+| [src/game.js](../../src/game.js) | 2772 | platform-core | 11 / 291 | 35 | 62 | 84 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 4 | 0 | 8 | 1 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/genesisauction.js](../../src/genesisauction.js) | 377 | platform-core | 0 / 3 | 0 | 0 | 1 |
@@ -219,7 +219,7 @@
 | [src/phone.js](../../src/phone.js) | 217 | platform-core | 3 / 2 | 5 | 7 | 1 |
 | [src/player-commands.js](../../src/player-commands.js) | 348 | platform-core | 14 / 14 | 0 | 6 | 11 |
 | [src/player-opportunities.js](../../src/player-opportunities.js) | 104 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/playerintel.js](../../src/playerintel.js) | 167 | platform-core | 3 / 37 | 2 | 13 | 22 |
+| [src/playerintel.js](../../src/playerintel.js) | 167 | platform-core | 3 / 38 | 2 | 13 | 23 |
 | [src/population.js](../../src/population.js) | 870 | world-progression | 7 / 16 | 0 | 33 | 10 |
 | [src/port.js](../../src/port.js) | 501 | enterprise-logistics | 5 / 4 | 12 | 9 | 0 |
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
