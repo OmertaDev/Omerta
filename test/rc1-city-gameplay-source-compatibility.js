@@ -7,6 +7,7 @@ import { CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, CITY_GAMEPLAY_SOURCE_CURRENT_PIN
   CITY_GAMEPLAY_SOURCE_TRANSFER, qualifyCityGameplaySource, cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_SOURCE_INVERSES,
   cityHomesLeagueSourceBaseline, assertCityHomesLeagueServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
+import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -17,7 +18,7 @@ const files = ['package-lock.json','package.json','schema.sql','src/agentgateway
   'src/server.js','src/social/estate.js','src/worldgraph-ui.js','src/worldgraph-validate.js'];
 assert.deepEqual(Object.keys(CITY_GAMEPLAY_SOURCE_CURRENT_PINS), files);
 for (const pins of [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS]) assert.deepEqual(Object.keys(pins), files);
-assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['e0c416652c140f0e9fdaa3e4b5f20985a2a873a2','727df2f02b2d0e5031b4c5a4516144de67aba0a8']);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['101cdaaec2d5f235102e3de839043ba1fef21f81','8dbe85846035dc0fcdba76992834e411632c6f1b']);
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
@@ -57,9 +58,11 @@ for (const file of files) {
   }
 }
 const server = normalize(fs.readFileSync('src/server.js', 'utf8')), parentServer = cityGameplaySourceBaseline('src/server.js', server);
-assert.equal(hash(parentServer), CITY_HOMES_LEAGUE_SERVER_PIN);
-assert.equal(cityHomesLeagueSourceBaseline('src/server.js', server), assertCityHomesLeagueServerTransfer(parentServer).baselineText,
-  'Exactly one gameplay layer composes before the unchanged Homes and older layers.');
+assert.equal(hash(parentServer), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the operator envelope.');
+const homeServer = companyOperatorSourceBaseline('src/server.js', parentServer);
+assert.equal(hash(homeServer), CITY_HOMES_LEAGUE_SERVER_PIN);
+assert.equal(cityHomesLeagueSourceBaseline('src/server.js', server), assertCityHomesLeagueServerTransfer(homeServer).baselineText,
+  'Exactly one gameplay layer preserves the exact operator envelope before unchanged Homes and older layers.');
 for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   for (const changed of [server.replace(chunk, ''), server.replace(chunk, chunk + chunk), server.replace(chunk, chunk.replace('registerCityHomes','registerUnreviewedHomes'))]) {
     assert.notEqual(changed, server); assert.equal(cityHomesLeagueSourceBaseline('src/server.js', changed), changed);
@@ -73,5 +76,5 @@ for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/c
 for (const file of ['toString','constructor','./src/server.js']) {
   assert.equal(cityGameplaySourceBaseline(file, server), server); assert.throws(() => qualifyCityGameplaySource(file, server), /Unknown gameplay source/); negatives++;
 }
-console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/parent files, identical e0/727 predecessors, CRLF controls,', negatives,
+console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/operator-parent files, identical101/8dbe predecessors, preserved operator envelope, CRLF controls,', negatives,
   'tamper/unknown/no-new-module negatives; historical source-only transfer excludes all new authority/native/worker/migration/activation/deployment');

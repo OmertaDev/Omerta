@@ -1,3 +1,4 @@
+import { companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
@@ -82,7 +83,7 @@ for (const [file, before, after] of [
   assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;
 }
 assert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);
-const worker = normalize(fs.readFileSync('src/worker.js', 'utf8'));
+const worker = companyOperatorSourceBaseline('src/worker.js', normalize(fs.readFileSync('src/worker.js', 'utf8')));
 assert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));
 assert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));
 assert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);

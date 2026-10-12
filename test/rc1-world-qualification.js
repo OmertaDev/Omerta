@@ -1,3 +1,4 @@
+import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
@@ -48,7 +49,7 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const homesServerText = cityGameplaySourceBaseline('src/server.js',await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
+const homesServerText = companyOperatorSourceBaseline('src/server.js',cityGameplaySourceBaseline('src/server.js',await fs.readFile('src/server.js','utf8')));
 const homesProof = assertCityHomesLeagueServerTransfer(homesServerText);
 assert.equal(homesProof.actualSha256, CITY_HOMES_LEAGUE_SERVER_PIN);
 assert.equal(homesProof.baselineSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
@@ -558,7 +559,10 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 23);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 24);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer, COMPANY_OPERATOR_SOURCE_TRANSFER);
+assert.match(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer.scope, /require separate current-source operator proofs/);
+assert.match(WORLD_RECOVERY_REVIEW.companyOperatorSourceReviewTransfer.scope, /no world-soak, native, financial, deployment or onchain qualification/);
 for (const [name, transfer] of [['companySuccessionSourceReviewTransfer', COMPANY_SUCCESSION_SOURCE_TRANSFER],
   ['strategySourceReviewTransfer', STRATEGY_SOURCE_TRANSFER], ['coverageSourceReviewTransfer', COVERAGE_SOURCE_TRANSFER]]) {
   assert.deepEqual(WORLD_RECOVERY_REVIEW[name], transfer);

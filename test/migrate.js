@@ -625,6 +625,8 @@ const DISPOSITION = {
   strategy_leagues: 'metadata', // original-account cohorts and finite shared outcome history survive estate
   strategy_league_entries: 'metadata', // original-account consent and private rule/license bindings remain historical
   company_succession_receipts: 'metadata', // original-account canonical opening receipts survive later heirs
+  company_operators: 'metadata', // original-account owner consent is historical; death removes live depot authority
+  company_operator_receipts: 'metadata', // immutable original-account canonical execution receipts survive heirs
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
   depot_brand_licenses: 'ledger', // immutable signed brand terms and earned receipt counters retain original parties; closed/dead businesses receive no further royalty and heirs inherit no licence authority

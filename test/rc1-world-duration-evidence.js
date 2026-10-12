@@ -4,6 +4,8 @@ import { execFileSync } from 'node:child_process';
 import { createWorkerSchedule, WORKER_SOURCE_PINS } from '../tools/rc1-native-worker.js';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
+import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
+import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
   COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
@@ -18,7 +20,8 @@ for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
     transformedSource: originalSource, transformedSourceSha256: sha256(originalSource) });
 }
 const rawDbSource = controller.transformations.find(row => row.file === 'src/db.js').originalSource;
-const dbSource = coverageSourceBaseline('src/db.js', rawDbSource);
+const gameplayDbSource = cityGameplaySourceBaseline('src/db.js',rawDbSource);
+const dbSource = coverageSourceBaseline('src/db.js',gameplayDbSource);
 const compatibilityAddition = "  mem.public.registerFunction({\n    name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,\n    implementation: (value, divisor) => value % divisor,\n  });\n";
 assert.equal(dbSource.split(compatibilityAddition).length, 2);
 assert.equal(sha256(dbSource.replace(compatibilityAddition, '')), '9e6360ea61c840bd92cde9a90330e29156fc137dc27ba5fa1e0d99cb432feb97', 'Only the isolated pg-mem function may differ from the prior native boot pin');
@@ -44,8 +47,15 @@ assert.equal(measured.matrixQualifying, false);
 // duration scope; accepting additions never loosens the historical source pin.
 const workerFile = 'src/worker.js';
 assert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);
-const currentWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
+const operatorWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
+assert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);
+const currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);
 assert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);
+for (const changed of [operatorWorker + '\n// unreviewed operator clock suffix\n', operatorWorker.replace('runCompanyOperators(pool, 20)', 'runCompanyOperators(pool, 21)'), operatorWorker.replace('setInterval(guardedCompanyTick, 30000);', 'setInterval(guardedCompanyTick, 60000);')]) {
+  assert.notEqual(changed, operatorWorker);
+  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = changed;
+  assert.throws(() => measureWorldWorkerDuration(value), /source changed/);
+}
 const baselineWorker = execFileSync('git', ['show', INTEL_SOURCE_BASELINE_BLOBS[workerFile]], { encoding: 'utf8' }).replaceAll('\r\n', '\n');
 for (const originalSource of [currentWorker.replaceAll('\n', '\r\n'), baselineWorker, baselineWorker.replaceAll('\n', '\r\n')]) {
   const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = originalSource;
@@ -65,7 +75,7 @@ for (const originalSource of [currentWorker, baselineWorker]) {
   assert.throws(() => measureWorldWorkerDuration(value), /Intel source changed/); sourceCorruptions++;
 }
 const dbFile = 'src/db.js';
-assert.equal(sha256(rawDbSource), COVERAGE_SOURCE_CURRENT_PINS[dbFile]);
+assert.equal(sha256(gameplayDbSource), COVERAGE_SOURCE_CURRENT_PINS[dbFile]);
 assert.equal(WORKER_SOURCE_PINS[dbFile], COVERAGE_SOURCE_BASELINE_PINS[dbFile]);
 const baselineDb = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[dbFile]], { encoding: 'utf8' }).replaceAll('\r\n', '\n');
 assert.equal(dbSource, baselineDb, 'Coverage composes complete prior DB bytes before the unchanged mod assertion');

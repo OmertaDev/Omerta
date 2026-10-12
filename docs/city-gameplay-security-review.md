@@ -1,8 +1,13 @@
 # City gameplay source scope and qualification
 
-Date: 2026-10-12. Phase: local candidate implementation and bounded local proofs.
-Base: `727df2f02b2d0e5031b4c5a4516144de67aba0a8`, branch `codex/city-gameplay-expansion`.
-This records scope and evidence limits; it is not a release or deployment attestation.
+Date: 2026-10-12. Phase: active source integration; final combined qualification pending.
+Gameplay source: `c75eb6de12ad9816d4a48f1e614a099098144eec`, originally based on
+`727df2f02b2d0e5031b4c5a4516144de67aba0a8`, branch `codex/city-gameplay-expansion`.
+Incoming operator source base: `101cdaaec2d5f235102e3de839043ba1fef21f81`;
+its knowledge-refresh head is `8dbe85846035dc0fcdba76992834e411632c6f1b`.
+The integration preserves the gameplay producers and incoming operator source. These parent pins
+identify inputs, not a qualified combined head. Qualification must name the later final source
+revision and its own checks. This record is not a release or deployment attestation.
 The separately verified PR252 map-affordance release does not qualify these new gameplay authorities.
 
 The ten mechanics are district story arcs; functional deed interiors/storage/workbench; learned
@@ -29,7 +34,11 @@ Fixed recurring windows use server context time and stable definitions. Exact-ke
 preserves its immutable result; fresh keys recheck actors. Explicit old-version cancellation uses
 stored original authority solely to return custody, without interpreting current/retired effects.
 
-The current opportunity API/control entry passed disposable pg-mem playthroughs for all nine
+The following local evidence applies to its recorded gameplay source and producer pins; it does
+not automatically qualify the active operator/gameplay merge. Incoming operator workflows retain
+their separate authority and review limits.
+
+The opportunity API/control entry passed disposable pg-mem playthroughs for all nine
 packages, three learned approaches, quiet/public branches, secret pass consumption, four timed
 cases, guarded unavailable starts, freshness and replay. Its custom NPC custody fixture passed
 post-effect/post-release compensation and dead/changed-generation v1 recovery against a v2 registry.
@@ -45,4 +54,4 @@ Memory compensation is not PostgreSQL concurrency qualification. The isolated AP
 test account-header authentication; whole-app JWT and browser evidence have separate scope.
 Other Home/Crew/PvE evidence and predecessor compatibility retain their own source limits.
 Final native database, independent combined review, release gates, migrations, worker compatibility
-and exact production revision/behavior verification remain pending for this source expansion.
+and exact production revision/behavior verification remain pending for the integrated source.

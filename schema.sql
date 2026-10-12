@@ -8033,6 +8033,30 @@ CREATE TABLE IF NOT EXISTS strategy_league_entries (
 );
 CREATE INDEX IF NOT EXISTS ix_strategy_league_entries_account ON strategy_league_entries(account_id,joined_at);
 
+-- Executable operator scheduling and receipts; canonical depot journals own money.
+CREATE TABLE IF NOT EXISTS company_operators (
+  depot_id TEXT PRIMARY KEY REFERENCES business_depots(id),
+  owner_character TEXT NOT NULL REFERENCES characters(id),
+  owner_account TEXT NOT NULL,
+  policy_id TEXT NOT NULL REFERENCES business_operating_policies(id),
+  policy_revision INT NOT NULL CHECK (policy_revision > 0),
+  enabled BOOLEAN NOT NULL,
+  revision INT NOT NULL CHECK (revision > 0),
+  next_run_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS company_operator_due ON company_operators(next_run_at,depot_id) WHERE enabled;
+CREATE TABLE IF NOT EXISTS company_operator_receipts (
+  owner_account TEXT NOT NULL,
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 128),
+  owner_character TEXT NOT NULL REFERENCES characters(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  body_hash TEXT NOT NULL CHECK (char_length(body_hash)=64),
+  result JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (owner_account,request_key)
+);
+ALTER TABLE company_operators ADD COLUMN IF NOT EXISTS price_policy JSONB;
+
 -- Functional rooms use a canonical deed epoch. Archived rooms retain only their original
 -- account's private contents; resale never transfers an item or revives a visitor grant.
 CREATE TABLE IF NOT EXISTS city_home_rooms (

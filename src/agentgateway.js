@@ -455,6 +455,21 @@ const OPERATION_CONTRACTS = {
     { name: 'goodId', in: 'query', required: true, schema: { type: 'string', const: 'gin' } },
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
+  'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'POST /v1/company/operator': { operationId: 'enrollOwnCompanyOperator', requestSchema: {
+    type: 'object', additionalProperties: false, required: ['depotId', 'policyId', 'expectedRevision', 'enabled'], properties: {
+      depotId: { type: 'string', minLength: 1, maxLength: 128 }, policyId: { type: 'string', minLength: 1, maxLength: 128 },
+      expectedRevision: { type: 'integer', minimum: 0, maximum: 9007199254740990 }, enabled: { type: 'boolean' },
+      pricePolicy: { oneOf: [{ type: 'null' }, { type: 'object', additionalProperties: false,
+        required: ['minSalePrice', 'maxSalePrice', 'targetMarginBps', 'expiresInSeconds'], properties: {
+          minSalePrice: { type: 'integer', minimum: 50, maximum: 1000000 }, maxSalePrice: { type: 'integer', minimum: 50, maximum: 1000000 },
+          targetMarginBps: { type: 'integer', minimum: 1, maximum: 100000 }, expiresInSeconds: { type: 'integer', minimum: 60, maximum: 604800 },
+        } }] },
+    } } },
+  'POST /v1/company/operator/run': { operationId: 'runOwnAuthorizedCompanyOperator', requestSchema: {
+    type: 'object', additionalProperties: false, required: ['depotId', 'requestKey'], properties: {
+      depotId: { type: 'string', minLength: 1, maxLength: 128 }, requestKey: { type: 'string', pattern: '^[A-Za-z0-9:_-]{1,128}$' },
+    } } },
   'POST /v1/company-succession': {
     operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
       schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Persist this consent identity before posting; exact retries recover the original opening receipt.' }],
