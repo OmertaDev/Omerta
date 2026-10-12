@@ -1,15 +1,29 @@
-process.env.DEPOT_PILOT = 'on';
-if (process.argv.includes('--postgres')) {
-  if (!process.env.COMPANY_OPPORTUNITY_TEST_DATABASE_URL) throw new Error('Use a fresh owned COMPANY_OPPORTUNITY_TEST_DATABASE_URL.');
-  const url = new URL(process.env.COMPANY_OPPORTUNITY_TEST_DATABASE_URL);
-  if (!['127.0.0.1', 'localhost'].includes(url.hostname) || !url.pathname.startsWith('/company_opportunity_test_')) throw new Error('Only a local owned opportunity test database is accepted.');
-  process.env.DATABASE_URL = url.href;
-} else delete process.env.DATABASE_URL;
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { makeDb } from '../src/db.js';
 import * as O from '../src/companyopportunities.js';
-const pool = await makeDb(), native = process.argv.includes('--postgres');
+const native = process.argv.includes('--postgres'); let nativeVersion;
+assert(!process.env.DATABASE_URL, 'Refuse ambient database endpoints');
+function nativeEndpoint(value) {
+  const url = new URL(value);
+  assert(['postgres:', 'postgresql:'].includes(url.protocol)); assert.equal(url.hostname, '127.0.0.1'); assert(!url.search && !url.hash);
+  const local = ['35439', '35449'].includes(url.port) && url.username === 'pilot_runner' && !url.password;
+  const ci = url.port === '5432' && url.username === 'postgres' && url.password === 'pgcheck';
+  assert(local || ci); assert(/^\/company_opportunity_[a-z0-9_]+$/.test(url.pathname)); return { url, local };
+}
+for (const refused of ['postgresql://pilot_runner@remote:35449/company_opportunity_test_guard', 'postgresql://pilot_runner@127.0.0.1:35449/omerta', 'postgresql://postgres:wrong@127.0.0.1:5432/company_opportunity_test_guard', 'postgresql://pilot_runner@127.0.0.1:35449/company_opportunity_test_guard?host=remote']) assert.throws(() => nativeEndpoint(refused));
+if (native) {
+  const { url, local } = nativeEndpoint(process.env.COMPANY_OPPORTUNITY_TEST_DATABASE_URL);
+  const { default: pg } = await import('pg'), pre = new pg.Pool({ connectionString: url.href });
+  try {
+    nativeVersion = (await pre.query('SHOW server_version')).rows[0].server_version;
+    assert.match(nativeVersion, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
+    assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0, 'Fresh owned public namespace required');
+  } finally { await pre.end(); }
+  process.env.DATABASE_URL = url.href;
+}
+process.env.DEPOT_PILOT = 'on';
+const pool = await makeDb();
 const account = crypto.randomUUID(), character = crypto.randomUUID(), otherAccount = crypto.randomUUID(), otherCharacter = crypto.randomUUID();
 const ch = { id: character, account_id: account, alive: true, is_npc: false }, other = { ...ch, id: otherCharacter, account_id: otherAccount };
 const tx = async fn => {
