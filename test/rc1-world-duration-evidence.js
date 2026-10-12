@@ -5,6 +5,7 @@ import { createWorkerSchedule, WORKER_SOURCE_PINS } from '../tools/rc1-native-wo
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
+import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
 import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
@@ -20,7 +21,8 @@ for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
     transformedSource: originalSource, transformedSourceSha256: sha256(originalSource) });
 }
 const rawDbSource = controller.transformations.find(row => row.file === 'src/db.js').originalSource;
-const dbSource = coverageSourceBaseline('src/db.js', rawDbSource);
+const gameplayDbSource = cityGameplaySourceBaseline('src/db.js',rawDbSource);
+const dbSource = coverageSourceBaseline('src/db.js',gameplayDbSource);
 const compatibilityAddition = "  mem.public.registerFunction({\n    name: 'mod', args: [DataType.bigint, DataType.integer], returns: DataType.bigint,\n    implementation: (value, divisor) => value % divisor,\n  });\n";
 assert.equal(dbSource.split(compatibilityAddition).length, 2);
 assert.equal(sha256(dbSource.replace(compatibilityAddition, '')), '9e6360ea61c840bd92cde9a90330e29156fc137dc27ba5fa1e0d99cb432feb97', 'Only the isolated pg-mem function may differ from the prior native boot pin');
@@ -74,7 +76,7 @@ for (const originalSource of [currentWorker, baselineWorker]) {
   assert.throws(() => measureWorldWorkerDuration(value), /Intel source changed/); sourceCorruptions++;
 }
 const dbFile = 'src/db.js';
-assert.equal(sha256(rawDbSource), COVERAGE_SOURCE_CURRENT_PINS[dbFile]);
+assert.equal(sha256(gameplayDbSource), COVERAGE_SOURCE_CURRENT_PINS[dbFile]);
 assert.equal(WORKER_SOURCE_PINS[dbFile], COVERAGE_SOURCE_BASELINE_PINS[dbFile]);
 const baselineDb = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[dbFile]], { encoding: 'utf8' }).replaceAll('\r\n', '\n');
 assert.equal(dbSource, baselineDb, 'Coverage composes complete prior DB bytes before the unchanged mod assertion');

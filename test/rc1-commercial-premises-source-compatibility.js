@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import * as P from '../tools/rc1-commercial-premises-source-compatibility.js';
 import * as W from '../tools/rc1-company-workflow-source-compatibility.js';
 import { gameEmploymentSourceBaseline } from '../tools/rc1-game-employment-source-compatibility.js';

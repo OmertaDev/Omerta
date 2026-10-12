@@ -5,6 +5,7 @@ import { STRATEGY_SOURCE_CURRENT_PINS, qualifyStrategySource } from './rc1-strat
 import { COVERAGE_SOURCE_CURRENT_PINS, qualifyCoverageSource } from './rc1-logistics-coverage-source-compatibility.js';
 import { INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER, qualifyInvoiceSource } from './rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
+import { cityGameplaySourceBaseline } from './rc1-city-gameplay-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -106,7 +107,7 @@ export function assertCityHomesLeagueServerTransfer(input) {
   predecessorServerBlob: CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
 }
 export function cityHomesLeagueSourceBaseline(file, input) {
- const text = companyOperatorSourceBaseline(file, input);
+ const text = companyOperatorSourceBaseline(file, cityGameplaySourceBaseline(file, input));
  return file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN ? assertCityHomesLeagueServerTransfer(text).baselineText : text;
 }
 // Franchise additions transfer only unchanged historical assertions by full-file reconstruction.

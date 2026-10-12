@@ -44,7 +44,7 @@
 
   function mount(host, initialOptions) {
     let options = { ...initialOptions }, destroyed = false, busy = false, loading = false, revision = 0, sessionUnavailable = false, recoveryRequired = false;
-    let view = 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
+    let view = VIEWS.some(([id]) => id === options.initialView) ? options.initialView : 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
     let notice = '', noticeBad = false, retry = null, cancelConfirmation = null;
     let characterId = options.character && options.character.id;
     const boards = {}, actions = new Map();

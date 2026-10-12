@@ -32,9 +32,13 @@ import { createCoordinationKnowledge, assertKnowledgeSnapshot, snapshotRequireme
 import { normalizeKnowledgeRequirement, knowledgeRequirementKey, normalizeWorldPrerequisite, worldPrerequisiteKey } from './world-knowledge.js';
 import { createWorldPrerequisites, prerequisiteMatches } from './world-prerequisites.js';
 import { canonicalBytes } from './content/canonical.js';
+import { assertCityNpcAuthority, cityRaisedHeat, cityRecurringWindow, CITY_WORLD_MAX_HEAT_RAISE,
+  normalizeCityOpportunityCondition, normalizeCityOpportunityEffect } from './city-world-opportunities-contract.js';
 
 const CONTEXTS = new WeakSet();
 const MYSTERY_KNOWLEDGE = new WeakMap();
+const MYSTERY_NPC_AUTHORITY = new WeakMap();
+const NPC_GRAPH_REGISTRIES = new WeakMap();
 const ROOT_SCOPES = new Set(['account', 'character']);
 const ACTION_NODE_TYPES = new Set(['mystery_step', 'world_gate']);
 const BOARD_NODE_TYPES = new Set(['mystery_step', 'world_gate', 'choice', 'evidence', 'reward']);
@@ -54,6 +58,10 @@ const CONDITION_ADAPTERS = new Set([
   'mystery_state',
   'social',
   'world_state',
+  'heat',
+  'recurring_window',
+  'npc_present',
+  'npc_favor',
 ]);
 const CONDITION_ALIASES = Object.freeze({
   graph_dependency: Object.freeze({ target: ['nodeId', 'id', 'value'] }),
@@ -84,6 +92,8 @@ const EFFECT_FIELDS = Object.freeze({
   item_consume: new Set(['adapter', 'templateId']),
   unique_item_award: new Set(['adapter', 'templateId']),
   status_award: new Set(['adapter', 'nodeId']),
+  heat_raise: new Set(['adapter', 'amount']),
+  npc_favor_award: new Set(['adapter', 'amount']),
 });
 const MYSTERY_EFFECT_ADAPTERS = new Set(Object.keys(EFFECT_FIELDS));
 const MYSTERY_NODE_FIELDS = Object.freeze({
@@ -260,6 +270,9 @@ function normalizeMysteryCondition(registry, node, condition, { timeWindows = nu
     fail('bad_mystery_condition', `Mystery node ${node.id} contains a malformed condition.`);
   }
   const adapter = oneAlias(condition, ['adapter', 'type', 'kind'], 'Mystery condition adapter');
+  if (['heat', 'recurring_window', 'npc_present', 'npc_favor'].includes(adapter)) {
+    return normalizeCityOpportunityCondition(condition);
+  }
   if (adapter === 'knowledge') {
     if (condition.adapter !== 'knowledge' || Reflect.ownKeys(condition).length !== 2
       || !Object.hasOwn(condition, 'requirement')) {
@@ -484,6 +497,10 @@ function assertEffect(registry, source, effect) {
   if (Object.keys(effect).some((key) => !fields.has(key))) {
     fail('bad_mystery_effect', `Mystery effect ${adapter} contains unsupported authority fields.`);
   }
+  if (['heat_raise', 'npc_favor_award'].includes(adapter)) {
+    normalizeCityOpportunityEffect(effect);
+    return;
+  }
   canonical(effect.nodeId || effect.templateId, 'Mystery effect target', 'bad_mystery_effect');
   assertEffectTarget(registry, source, effect, adapter);
 }
@@ -494,6 +511,10 @@ function assertEffects(registry, node, effects) {
     fail('bad_mystery_effect', `Mystery node ${node.id} effects must be an array.`);
   }
   for (const effect of effects) assertEffect(registry, node, effect);
+  if (effects.filter(effect => effect.adapter === 'heat_raise').reduce((total, effect) => total + effect.amount, 0) > CITY_WORLD_MAX_HEAT_RAISE
+    || effects.filter(effect => effect.adapter === 'npc_favor_award').reduce((total, effect) => total + effect.amount, 0) > 1) {
+    fail('bad_mystery_effect', 'One mystery transition exceeds its bounded neighborhood effect.');
+  }
 }
 
 function validateMysteryDependencyCycles(registry, timeWindows) {
@@ -625,7 +646,7 @@ export function validateMysteryDefinitions(registry, { timeWindows = null } = {}
           fail('bad_mystery_choice', 'Choice exclusions must stay inside their mystery package.');
         }
       }
-      assertEffects(registry, node, option.effects);
+      assertEffects(registry, node, [...(node.effects || []), ...(option.effects || [])]);
       const optionCompletedTargets = new Set([...(node.effects || []), ...(option.effects || [])]
         .filter((effect) => ['complete', 'evidence_grant', 'status_award'].includes(effect.adapter))
         .map((effect) => effect.nodeId));
@@ -655,6 +676,7 @@ export function createMysteryContext({
   prerequisitesEnabled = false,
   worldDefinitions = [],
   accountIds = [],
+  npcAuthority = null,
 } = {}) {
   if (typeof knowledgeEnabled !== 'boolean' || typeof sharingEnabled !== 'boolean' || typeof operationOutcomesEnabled !== 'boolean' || typeof prerequisitesEnabled !== 'boolean'
     || !Array.isArray(accountIds) || accountIds.some((id) => typeof id !== 'string' || !id)) {
@@ -679,6 +701,7 @@ export function createMysteryContext({
     timeWindows: immutableTimeWindows,
   });
   CONTEXTS.add(context);
+  if (npcAuthority !== null) MYSTERY_NPC_AUTHORITY.set(context, assertCityNpcAuthority(npcAuthority, accountId));
   const pins = mysteryPins(registry, immutableTimeWindows);
   const prerequisites = createWorldPrerequisites({ enabled: prerequisitesEnabled || operationOutcomesEnabled,
     accountIds, worldDefinitions, knowledgeEnabled, sharingEnabled });
@@ -738,6 +761,20 @@ function contextOf(value) {
   return value;
 }
 
+export function mysteryRequiresNpcContext(registry, graphId) {
+  if (!isWorldGraphRegistry(registry)) fail('bad_mystery_context', 'Use an immutable mystery registry.');
+  if (!NPC_GRAPH_REGISTRIES.has(registry)) {
+    const graphs = new Set();
+    for (const node of registry.nodes.values()) {
+      if ((node.conditions || []).some(condition => ['npc_present', 'npc_favor'].includes(condition.adapter))
+        || [...(node.effects || []), ...(node.options || []).flatMap(option => option.effects || [])]
+          .some(effect => effect.adapter === 'npc_favor_award')) graphs.add(node.packageId);
+    }
+    NPC_GRAPH_REGISTRIES.set(registry, graphs);
+  }
+  return NPC_GRAPH_REGISTRIES.get(registry).has(graphId);
+}
+
 function packageOf(context, graphIdValue, version = null) {
   const graphId = canonical(graphIdValue, 'Mystery graph id');
   const pkg = context.registry.byPackage.get(graphId);
@@ -746,6 +783,9 @@ function packageOf(context, graphIdValue, version = null) {
     node.packageId === graphId && ['mystery_step', 'world_gate', 'choice'].includes(node.type)
   ));
   if (!hasMystery) fail('mystery_graph', 'That package does not define a mystery graph.');
+  if (mysteryRequiresNpcContext(context.registry, graphId) && !MYSTERY_NPC_AUTHORITY.has(context)) {
+    fail('city_npc_context_required', 'Use a current private neighborhood opportunity.');
+  }
   if (version !== null && Number(version) !== Number(pkg.version)) {
     fail('graph_version', 'That graph package version is not loaded.', {
       graphId, requestedVersion: Number(version), loadedVersion: Number(pkg.version),
@@ -771,15 +811,39 @@ async function authorizeOwner(client, context, owner) {
 }
 
 async function actorOf(client, context, owner, { lock = true } = {}) {
-  const accountSql = lock ? `SELECT id,account_id,loc,respect,alive
+  const accountSql = lock ? `SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
          FROM characters WHERE account_id=$1 AND alive
          ORDER BY created_at DESC,id LIMIT 1 FOR UPDATE`
-    : `SELECT id,account_id,loc,respect,alive FROM characters WHERE account_id=$1 AND alive
+    : `SELECT id,account_id,loc,respect,alive,heat,generation,is_npc FROM characters WHERE account_id=$1 AND alive
          ORDER BY created_at DESC,id LIMIT 1`;
-  const characterSql = lock ? `SELECT id,account_id,loc,respect,alive
+  const characterSql = lock ? `SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
          FROM characters WHERE id=$1 AND alive FOR UPDATE`
-    : `SELECT id,account_id,loc,respect,alive FROM characters WHERE id=$1 AND alive`;
-  const row = (await client.query(owner.scope === 'account' ? accountSql : characterSql, [owner.id])).rows[0];
+    : `SELECT id,account_id,loc,respect,alive,heat,generation,is_npc FROM characters WHERE id=$1 AND alive`;
+  const npcAuthority = MYSTERY_NPC_AUTHORITY.get(context);
+  let row, target;
+  if (npcAuthority) {
+    if (owner.scope !== 'character' || owner.id !== npcAuthority.characterId) {
+      fail('mystery_owner_forbidden', 'That character cannot control this neighborhood opportunity.');
+    }
+    // This is the first character lock in every NPC-bound native callback. Never lock the
+    // owner first and then acquire a second resident in the opposite order.
+    const rows = (lock ? await client.query(`SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
+      FROM characters WHERE id IN ($1,$2) ORDER BY id FOR UPDATE`, [owner.id, npcAuthority.npcCharacterId])
+      : await client.query(`SELECT id,account_id,loc,respect,alive,heat,generation,is_npc
+      FROM characters WHERE id IN ($1,$2) ORDER BY id`, [owner.id, npcAuthority.npcCharacterId])).rows;
+    row = rows.find(actor => actor.id === owner.id);
+    target = rows.find(actor => actor.id === npcAuthority.npcCharacterId);
+    const current = (await client.query(`SELECT id FROM characters WHERE account_id=$1 AND alive
+      ORDER BY created_at DESC,id LIMIT 1`, [context.accountId])).rows[0];
+    if (!row?.alive || row.is_npc || current?.id !== row.id || row.account_id !== context.accountId
+      || Number(row.generation) !== npcAuthority.generation || row.loc !== npcAuthority.district) {
+      fail('city_opportunity_identity_changed', 'Your neighborhood changed. Refresh the opportunity.');
+    }
+    if (!target?.alive || !target.is_npc || target.account_id === context.accountId || target.loc !== row.loc
+      || Number(target.generation) !== npcAuthority.npcGeneration) {
+      fail('city_npc_unavailable', 'That neighborhood contact is no longer available.');
+    }
+  } else row = (await client.query(owner.scope === 'account' ? accountSql : characterSql, [owner.id])).rows[0];
   if (!row || row.account_id !== context.accountId) {
     fail('no_character', 'A living character owned by this account is required.');
   }
@@ -791,6 +855,9 @@ async function actorOf(client, context, owner, { lock = true } = {}) {
     accountId: row.account_id,
     location: row.loc,
     level: levelOf(Number(row.respect || 0)),
+    heat: Number(row.heat || 0),
+    generation: Number(row.generation),
+    ...(target ? { npcTarget: Object.freeze({ id: target.id, generation: Number(target.generation) }) } : {}),
     skills: new Set(skills.rows.map(({ skill_id: id }) => id)),
     knowledgeCharacter: row,
     knowledge: new Set(),
@@ -872,18 +939,31 @@ function startKey(owner, graphId, version) {
   return `mystery:start:${hash}`;
 }
 
+function npcActionIdentity(context) {
+  const authority = MYSTERY_NPC_AUTHORITY.get(context);
+  if (!authority) return {};
+  const { characterId, generation, district, npcCharacterId, npcGeneration } = authority;
+  return { npcBinding: { characterId, generation, district, npcCharacterId, npcGeneration } };
+}
+
+function npcRecoveryIdentity(instance) {
+  if (!instance.npc_character_id) return {};
+  return { npcBinding: { characterId: instance.owner_id, generation: Number(instance.owner_generation),
+    npcCharacterId: instance.npc_character_id, npcGeneration: Number(instance.npc_generation) } };
+}
+
 async function instanceFor(client, owner, graphId, graphVersion, { lock = false } = {}) {
   const params = [owner.scope, owner.id, graphId, Number(graphVersion)];
   if (lock) return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash,status,
-            created_at,updated_at,completed_at,failed_at,canceled_at
+            created_at,updated_at,completed_at,failed_at,canceled_at,owner_generation,npc_character_id,npc_generation
        FROM mystery_instances
       WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 AND graph_version=$4 FOR UPDATE`,
     params,
   )).rows[0] || null;
   return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash,status,
-            created_at,updated_at,completed_at,failed_at,canceled_at
+            created_at,updated_at,completed_at,failed_at,canceled_at,owner_generation,npc_character_id,npc_generation
        FROM mystery_instances
       WHERE owner_scope=$1 AND owner_id=$2 AND graph_id=$3 AND graph_version=$4`,
     params,
@@ -895,17 +975,28 @@ async function instanceById(client, instanceIdValue, { lock = false } = {}) {
   if (lock) {
     return (await client.query(
       `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash,status,
-              created_at,updated_at,completed_at,failed_at,canceled_at
+              created_at,updated_at,completed_at,failed_at,canceled_at,owner_generation,npc_character_id,npc_generation
          FROM mystery_instances WHERE id=$1 FOR UPDATE`,
       [instanceId],
     )).rows[0] || null;
   }
   return (await client.query(
     `SELECT id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash,status,
-            created_at,updated_at,completed_at,failed_at,canceled_at
+            created_at,updated_at,completed_at,failed_at,canceled_at,owner_generation,npc_character_id,npc_generation
        FROM mystery_instances WHERE id=$1`,
     [instanceId],
   )).rows[0] || null;
+}
+
+function assertNpcInstanceBinding(instance, context) {
+  if (!instance.npc_character_id && !mysteryRequiresNpcContext(context.registry, instance.graph_id)) return;
+  const authority = MYSTERY_NPC_AUTHORITY.get(context);
+  if (!authority || instance.owner_scope !== 'character' || instance.owner_id !== authority.characterId
+    || Number(instance.owner_generation) !== authority.generation
+    || instance.npc_character_id !== authority.npcCharacterId
+    || Number(instance.npc_generation) !== authority.npcGeneration) {
+    fail('city_npc_binding_changed', 'This opportunity belongs to a different neighborhood contact or character life.');
+  }
 }
 
 function assertPinned(instance, pkg, context) {
@@ -923,6 +1014,7 @@ function assertPinned(instance, pkg, context) {
   if (!instance.definition_hash && pin.requiresKnowledge) {
     fail('mystery_definition_unpinned', 'External mystery prerequisites require a new pinned instance version.');
   }
+  assertNpcInstanceBinding(instance, context);
 }
 
 /** Start one owner/package instance. The server-derived deterministic key makes retries exact. */
@@ -947,7 +1039,9 @@ export async function startMystery(
       });
     }
     assertPinned(existing, pkg, context);
-    return { ok: true, ...instanceProjection(existing) };
+    // Legacy starts retain their historical fast path. NPC starts must enter the receipt
+    // guard: exact-key recovery can ACK, while a new key must recheck the living pair.
+    if (!MYSTERY_NPC_AUTHORITY.has(context)) return { ok: true, ...instanceProjection(existing) };
   }
   return withItemMutation(
     client,
@@ -956,17 +1050,29 @@ export async function startMystery(
     idempotencyKeyValue === null
       ? startKey(owner, pkg.id, Number(pkg.version))
       : canonical(idempotencyKeyValue, 'Idempotency key', 'bad_idempotency_key'),
-    { action: 'start', graph },
+    { action: 'start', graph, ...npcActionIdentity(context) },
     async () => {
-      await actorOf(client, context, owner);
+      const actor = await actorOf(client, context, owner);
+      if (MYSTERY_NPC_AUTHORITY.has(context)) {
+        const repeated = await instanceFor(client, owner, pkg.id, pkg.version, { lock: true });
+        if (repeated) {
+          if (repeated.authority_account_id !== context.accountId) fail('mystery_owner_forbidden', 'That account cannot control this mystery instance.');
+          assertPinned(repeated, pkg, context);
+          return { ok: true, ...instanceProjection(repeated) };
+        }
+        const admission = await npcStartAdmission(client, context, owner, actor, pkg, { lock: true });
+        if (!admission.available) throwBlocker(admission.blockedBy[0]);
+      }
       const id = crypto.randomUUID();
       const inserted = await client.query(
         `INSERT INTO mystery_instances
-           (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash)
-         VALUES ($1,$2,$3,$4,$5,$6,$7)
+           (id,owner_scope,owner_id,authority_account_id,graph_id,graph_version,definition_hash,
+            owner_generation,npc_character_id,npc_generation)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
          ON CONFLICT (owner_scope,owner_id,graph_id,graph_version) DO NOTHING
          RETURNING id`,
-        [id, owner.scope, owner.id, context.accountId, pkg.id, Number(pkg.version), MYSTERY_KNOWLEDGE.get(context).pins.get(pkg.id).hash],
+        [id, owner.scope, owner.id, context.accountId, pkg.id, Number(pkg.version), MYSTERY_KNOWLEDGE.get(context).pins.get(pkg.id).hash,
+          actor.npcTarget ? actor.generation : null, actor.npcTarget?.id || null, actor.npcTarget?.generation || null],
       );
       if (inserted.rowCount === 1) {
         registerItemTransactionUndo(client, async () => {
@@ -1071,6 +1177,24 @@ async function conditionBlocker({
     return actor?.knowledge.has(knowledgeRequirementKey(normalized.requirement)) ? null : { adapter };
   }
   if (normalized.requirement) return actor?.prerequisites.has(worldPrerequisiteKey(normalized)) ? null : { adapter };
+  if (adapter === 'heat') return Number.isFinite(actor?.heat) && actor.heat >= 0 && actor.heat <= normalized.maximum
+    ? null : { adapter, maximum: normalized.maximum, current: actor?.heat };
+  if (adapter === 'recurring_window') {
+    const window = cityRecurringWindow(context.nowMs, normalized);
+    return window.open ? null : { adapter, nextStartsAtMs: window.nextStartsAtMs };
+  }
+  if (adapter === 'npc_present') return actor?.npcTarget ? null : { adapter };
+  if (adapter === 'npc_favor') {
+    if (!actor?.npcTarget) return { adapter };
+    const row = (lock ? await client.query(`SELECT favor FROM city_npc_favors
+      WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4 FOR UPDATE`,
+      [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation])
+      : await client.query(`SELECT favor FROM city_npc_favors
+      WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4`,
+      [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation])).rows[0];
+    const current = Number(row?.favor || 0);
+    return current >= normalized.minimum ? null : { adapter, minimum: normalized.minimum, current };
+  }
   if (adapter === 'graph_dependency') {
     const nodeId = normalized.target;
     return states.get(nodeId)?.state === 'completed' ? null : { adapter, nodeId };
@@ -1281,7 +1405,10 @@ async function lockedCancellationInstance(client, authority, context) {
     || instance.owner_id !== authority.instance.owner_id
     || instance.graph_id !== authority.instance.graph_id
     || instance.authority_account_id !== context.accountId
-    || Number(instance.graph_version) !== Number(authority.instance.graph_version)) {
+    || Number(instance.graph_version) !== Number(authority.instance.graph_version)
+    || instance.owner_generation !== authority.instance.owner_generation
+    || instance.npc_character_id !== authority.instance.npc_character_id
+    || instance.npc_generation !== authority.instance.npc_generation) {
     fail('mystery_owner_forbidden', 'Mystery instance authority changed.');
   }
   return instance;
@@ -1384,10 +1511,37 @@ async function closeExcludedBranches(client, context, instance, initialIds) {
   }
 }
 
-async function applyEffects({ client, context, owner, instance, effects, mutation }) {
+async function applyEffects({ client, context, owner, actor, instance, effects, mutation }) {
   const results = [];
   for (const effect of effects || []) {
-    if (effect.adapter === 'discover') {
+    if (effect.adapter === 'heat_raise') {
+      const previous = (await client.query('SELECT heat FROM characters WHERE id=$1', [actor.id])).rows[0];
+      const heat = cityRaisedHeat(previous?.heat, effect);
+      registerItemTransactionUndo(client, () => client.query('UPDATE characters SET heat=$2 WHERE id=$1', [actor.id, heat.before]));
+      await client.query('UPDATE characters SET heat=$2 WHERE id=$1', [actor.id, heat.after]);
+      results.push({ kind: 'heat_raise', ...heat });
+    } else if (effect.adapter === 'npc_favor_award') {
+      normalizeCityOpportunityEffect(effect);
+      if (!actor.npcTarget) fail('city_npc_context_required', 'A current neighborhood contact is required.');
+      assertNpcInstanceBinding(instance, context);
+      const params = [actor.id, actor.generation, actor.npcTarget.id, actor.npcTarget.generation];
+      const previous = (await client.query(`SELECT favor,updated_at FROM city_npc_favors
+        WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4 FOR UPDATE`, params)).rows[0];
+      const before = Number(previous?.favor || 0), after = Math.min(3, before + effect.amount);
+      registerItemTransactionUndo(client, async () => {
+        if (previous) await client.query(`UPDATE city_npc_favors SET favor=$5,updated_at=$6
+          WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4`,
+        [...params, before, previous.updated_at]);
+        else await client.query(`DELETE FROM city_npc_favors
+          WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4`, params);
+      });
+      if (previous) await client.query(`UPDATE city_npc_favors SET favor=$5,updated_at=$6
+        WHERE owner_character_id=$1 AND owner_generation=$2 AND npc_character_id=$3 AND npc_generation=$4`, [...params, after, context.now]);
+      else await client.query(`INSERT INTO city_npc_favors
+        (owner_character_id,owner_generation,npc_character_id,npc_generation,favor,updated_at) VALUES($1,$2,$3,$4,$5,$6)`,
+      [...params, after, context.now]);
+      results.push({ kind: 'npc_favor_award', before, after });
+    } else if (effect.adapter === 'discover') {
       const row = await setNodeState(client, instance.id, effect.nodeId, 'discovered');
       results.push({ kind: 'discover', nodeId: effect.nodeId, at: dateString(row.discovered_at) });
     } else if (effect.adapter === 'complete' || effect.adapter === 'evidence_grant'
@@ -1455,8 +1609,8 @@ async function completeGraphNode({
     client, context, owner, actor, instance, states, node, interactionId, lock: true,
   });
   if (blockers.length) throwBlocker(blockers[0]);
-  await applyEffects({
-    client, context, owner, instance, effects: [...(node.effects || []), ...extraEffects], mutation,
+  const effects = await applyEffects({
+    client, context, owner, actor, instance, effects: [...(node.effects || []), ...extraEffects], mutation,
   });
   const row = await setNodeState(client, instance.id, node.id, 'completed');
   await closeExcludedBranches(client, context, instance, node.excludes || []);
@@ -1465,6 +1619,8 @@ async function completeGraphNode({
     instanceId: instance.id,
     node: { id: node.id, status: 'completed', completedAt: dateString(row.completed_at) },
   };
+  const worldEffects = effects.filter(effect => ['heat_raise', 'npc_favor_award'].includes(effect.kind));
+  if (worldEffects.length) result.worldEffects = worldEffects;
   if (node.metadata?.terminal === true) {
     result.releasedEscrowCount = await releaseMysteryEscrow(
       client, owner, instance, mutation,
@@ -1494,6 +1650,7 @@ export async function discoverNode(
     options.idempotencyKey,
     {
       action: 'discover', graph: graphIdentity(authority.pkg), nodeId: node.id,
+      ...npcActionIdentity(context),
       interactionId: options.interactionId,
       itemAuthority: { operations: [authority.instance.id] },
     },
@@ -1545,6 +1702,7 @@ export async function completeNode(
     options.idempotencyKey,
     {
       action: 'complete', graph: graphIdentity(authority.pkg), nodeId: node.id,
+      ...npcActionIdentity(context),
       interactionId: options.interactionId,
       itemAuthority: {
         operations: [authority.instance.id],
@@ -1604,6 +1762,7 @@ export async function commitChoice(
     options.idempotencyKey,
     {
       action: 'choice', graph: graphIdentity(authority.pkg), nodeId: node.id, choiceId,
+      ...npcActionIdentity(context),
       interactionId: options.interactionId,
       itemAuthority: { operations: [authority.instance.id] },
     },
@@ -1641,8 +1800,8 @@ export async function commitChoice(
       });
       if (blockers.length) throwBlocker(blockers[0]);
       const committed = await insertChoice(client, instance.id, node.id, choiceId);
-      await applyEffects({
-        client, context, owner, instance,
+      const effects = await applyEffects({
+        client, context, owner, actor, instance,
         effects: [...(node.effects || []), ...(option.effects || [])], mutation,
       });
       const completed = await setNodeState(client, instance.id, node.id, 'completed');
@@ -1653,6 +1812,8 @@ export async function commitChoice(
         node: { id: node.id, status: 'completed', completedAt: dateString(completed.completed_at) },
         choice: { id: choiceId, committedAt: dateString(committed.committed_at) },
       };
+      const worldEffects = effects.filter(effect => ['heat_raise', 'npc_favor_award'].includes(effect.kind));
+      if (worldEffects.length) result.worldEffects = worldEffects;
       await client.query(
         `UPDATE mystery_choices SET result_json=$3
           WHERE instance_id=$1 AND node_id=$2`,
@@ -1686,6 +1847,7 @@ export async function cancelMystery(
     options.idempotencyKey,
     {
       action: 'cancel',
+      ...npcRecoveryIdentity(authority.instance),
       graph: {
         id: authority.instance.graph_id,
         version: Number(authority.instance.graph_version),
@@ -1696,6 +1858,12 @@ export async function cancelMystery(
       },
     },
     async (mutation) => {
+      if (authority.instance.npc_character_id) {
+        // Release-only recovery uses the original immutable authority, even after either
+        // actor's life/location changes. It never acquires or executes the target NPC.
+        const original = (await client.query('SELECT account_id FROM characters WHERE id=$1 FOR UPDATE', [owner.id])).rows[0];
+        if (original && original.account_id !== context.accountId) fail('mystery_owner_forbidden', 'Mystery custody authority changed.');
+      }
       const instance = await lockedCancellationInstance(client, authority, context);
       if (instance.status === 'canceled') {
         return { ok: true, ...instanceProjection(instance), releasedEscrowCount: 0 };
@@ -1752,6 +1920,38 @@ function publicBlocker(context, states, blocker) {
   return projection;
 }
 
+async function npcStartAdmission(client, context, owner, actor, pkg, { lock = false } = {}) {
+  const states = new Map();
+  const frontier = [...context.registry.nodes.values()].filter(node => node.packageId === pkg.id
+    && (ACTION_NODE_TYPES.has(node.type) || node.type === 'choice') && node.visibility !== 'role_private'
+    && !(node.requires || []).length && !(node.requiresAny || []).length);
+  await resolveMysteryKnowledge(client, context, actor, frontier, { readOnly: !lock });
+  let blockedBy = [{ adapter: 'mystery_prerequisite' }];
+  for (const node of frontier) {
+    // Accepting a case does not perform its first interaction, but all server predicates
+    // must already admit at least one entry point before a new instance is created.
+    const explicit = (node.conditions || []).find(condition => condition.adapter === 'explicit_interaction');
+    const interactionId = explicit ? normalizeMysteryCondition(context.registry, node, explicit).target : null;
+    const blockers = await nodeBlockers({ client, context, owner, actor, instance: null, states, node,
+      interactionId, lock, knowledgeResolved: true });
+    if (!blockers.length) return { available: true, blockedBy: [] };
+    if (blockedBy[0].adapter === 'mystery_prerequisite' || blockers.length < blockedBy.length) {
+      blockedBy = blockers.map(blocker => publicBlocker(context, states, blocker));
+    }
+  }
+  return { available: false, blockedBy };
+}
+
+/** Private NPC start projection; no hidden node, item, evidence or resident fields escape. */
+export async function mysteryNpcStartAdmission(client, contextValue, ownerValue, graphIdValue) {
+  assertItemRead(client);
+  const context = contextOf(contextValue), owner = ownerOf(ownerValue), pkg = packageOf(context, graphIdValue);
+  if (!MYSTERY_NPC_AUTHORITY.has(context)) fail('city_npc_context_required', 'Use a current private neighborhood opportunity.');
+  await authorizeOwner(client, context, owner);
+  const actor = await actorOf(client, context, owner, { lock: false });
+  return npcStartAdmission(client, context, owner, actor, pkg);
+}
+
 // Eligible undiscovered leads are selected server-side; a GET never publishes their identifiers.
 async function readyDiscoveries({ client, context, owner, actor, instance, states, lock = false, knowledgeResolved = false }) {
   if (!actor || instance.status !== 'active') return [];
@@ -1783,6 +1983,7 @@ export async function exploreMystery(client, contextValue, ownerValue, graphIdVa
   const authority = await actionAuthority(client, context, owner, graphId);
   return withItemMutation(client, owner, 'mystery_action', options.idempotencyKey, {
     action: 'explore', graph: graphIdentity(authority.pkg),
+    ...npcActionIdentity(context),
     itemAuthority: { operations: [authority.instance.id] },
   }, async () => {
     const actor = await actorOf(client, context, owner);

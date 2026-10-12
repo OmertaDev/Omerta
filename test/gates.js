@@ -3400,10 +3400,25 @@ scopedSocialContext = async function(db) {
   const invoked = new Set(['test', 'pretest']);
   for (const m of workflows.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) invoked.add(m[1]);
   const covered = new Set();
-  for (const name of invoked) {
+  const visited=new Set(), queue=[...invoked];
+  for (let index=0;index<queue.length;index++) {
+    const name=queue[index]; if(visited.has(name))continue;visited.add(name);
     const body = scripts[name];
     if (!body) continue;
+    for(const nested of body.matchAll(/npm run ([a-zA-Z0-9:_-]+)/g)) {
+      assert(scripts[nested[1]], `invoked npm alias ${name} names missing script ${nested[1]}`);
+      invoked.add(nested[1]);queue.push(nested[1]);
+    }
     for (const f of body.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
+  }
+  if([...visited].some(name=>/node tools\/city-gameplay-native\.js(?:\s|$)/.test(scripts[name]||''))) {
+    const {CITY_GAMEPLAY_NATIVE_PROOFS}=await import('../tools/city-gameplay-native.js');
+    assert.equal(CITY_GAMEPLAY_NATIVE_PROOFS.length,7,'The full City native runner has seven owned current-source proofs');
+    for(const[file,,args]of CITY_GAMEPLAY_NATIVE_PROOFS) {
+      assert(fs.existsSync(path.join(ROOT,file)), 'Native proof must exist: '+file);
+      assert(file==='test/city-home-migration.js'||args.includes('--postgres'),'Native runner must explicitly select real PostgreSQL: '+file);
+      covered.add(file);
+    }
   }
   for (const f of workflows.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
 
@@ -3850,6 +3865,9 @@ scopedSocialContext = async function(db) {
     'projection-events.js:requestContext': 'cache: request-local authenticated actor and pre-mutation audience; durable committed rows and fresh membership determine post-response recipients, while hints confer no authority',
     'mysteries.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'mysteries.js:MYSTERY_KNOWLEDGE': 'cache: immutable server rollout policy and executable package hashes keyed by authenticated mystery context; actor, knowledge and ACL authority are re-read inside the active database boundary',
+    'mysteries.js:MYSTERY_NPC_AUTHORITY': 'cache: immutable locally branded NPC binding keyed by one mystery context; every mutation rechecks the authenticated living actor pair under sorted database locks',
+    'mysteries.js:NPC_GRAPH_REGISTRIES': 'cache: deterministic set of NPC-bound graph identifiers keyed by an immutable validated registry; no actor state or durable authorization is stored here',
+    'city-world-opportunities-contract.js:NPC_AUTHORITIES': 'cache: request-local authenticity marker for a frozen server-derived NPC binding; each process derives its own read snapshot and mutations recheck durable actor authority under database locks',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',

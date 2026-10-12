@@ -537,6 +537,10 @@ assert.equal((await migrateColumns(pool, SCHEMA)).failed, 0, 're-running the mig
 // resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log
 // (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).
 const DISPOSITION = {
+  // Original character/generation-bound consent and private puzzle outcomes are
+  // historical. Room/host lifecycle closes active rounds; heirs never inherit a
+  // member's participation or its private history.
+  city_home_activity_members: 'ledger',
   // Durable command/receipt linkage is historical, never inherited authority.
   // Execution binds the original living character; the command race/API suites
   // prove that succession cannot execute or recover the old character's view.

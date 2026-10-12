@@ -5,6 +5,10 @@
 import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
+import { CITY_HOME_BODIES, CITY_HOME_SCHEMAS } from './city-home-contract.js';
+import { CITY_ENCOUNTER_CONTRACTS, CITY_ENCOUNTER_SCHEMAS } from './city-encounters-contract.js';
+import { CITY_WORLD_OPPORTUNITY_REQUEST_SCHEMAS, CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,
+  CITY_WORLD_OPPORTUNITY_DETAIL_SCHEMA, CITY_WORLD_OPPORTUNITY_RESULT_SCHEMA } from './city-world-opportunities-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
 
@@ -285,6 +289,30 @@ export const COORDINATION_SCHEMAS = {
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
   ...CITY_SOCIAL_CONTRACTS,
+  ...CITY_ENCOUNTER_CONTRACTS,
+  'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
+  'GET /v1/city/opportunities/:npcId/:graphRef': { operationId:'readCityWorldOpportunity', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityDetail' } },
+  ...Object.fromEntries([['start','start'],['explore','explore'],['cancel','cancel'],['nodes/:nodeId/complete','complete'],['choices/:nodeId','choice']].map(([path,kind]) =>
+    ['POST /v1/city/opportunities/:npcId/:graphRef/' + path, { operationId:'cityWorldOpportunity' + kind[0].toUpperCase() + kind.slice(1),
+      requestSchema:CITY_WORLD_OPPORTUNITY_REQUEST_SCHEMAS[kind], responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityResult' },
+      requestParameters:[{ name:'Idempotency-Key', in:'header', required:true, schema:{ type:'string', minLength:1, maxLength:128 } }],
+      description:'Use the private issued opportunity. Owner/NPC generations and district are freshness only; canonical server state and consent determine authority. Cancellation is release-only.',
+    }])),
+  ...Object.fromEntries([['interior','CityHomeInterior'],['invitations','CityHomeInvitations'],['recovery','CityHomeRecovery'],['activity-history','CityHomeActivityHistory']].map(([path, schema]) =>
+    ['GET /v1/city/home/' + path, { operationId: 'readCityHome' + path[0].toUpperCase() + path.slice(1),
+      ...(path === 'interior' ? { requestParameters: [{ name: 'homeKey', in: 'query', required: true,
+        schema: { type: 'string', minLength: 1, maxLength: 128 } }] } : {}),
+      responseSchema: { $ref: '#/components/schemas/' + schema } }])),
+  ...Object.fromEntries([['activate','activate'],['layout','layout'],['visitors/invite','invite'],['visitors/accept','accept'],
+    ['visitors/revoke','revoke'],['visitors/leave','leave'],['storage/store','store'],['storage/retrieve','retrieve'],
+    ['storage/recover','recover'],['workbench/craft','craft'],['activity/open','activity_open'],['activity/join','activity_join'],
+    ['activity/answer','activity_answer'],['activity/close','activity_close'],['activity/leave','activity_leave']].map(([path, kind]) => ['POST /v1/city/home/' + path, {
+      operationId: 'cityHome' + kind[0].toUpperCase() + kind.slice(1), requestSchema: CITY_HOME_BODIES[kind],
+      requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+        schema: { type: 'string', minLength: 1, maxLength: 128, pattern: '^[!-~]+$' } }],
+      responseSchema: { $ref: '#/components/schemas/CityHomeAck' },
+      description: 'Living authenticated owner and canonical deed permissions determine authority. Body identity is freshness only. Retry an uncertain result with the same key and body.',
+    }])),
   ...DEPOT_CONTRACTS,
   ...RESOURCE_CONTRACTS,
   ...knowledgeContracts(coordinationContract),
@@ -891,6 +919,11 @@ const OPERATION_CONTRACTS = {
 
 const AGENT_SCHEMAS = {
   ...CITY_SOCIAL_SCHEMAS,
+  ...CITY_ENCOUNTER_SCHEMAS,
+  CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,
+  CityWorldOpportunityDetail:CITY_WORLD_OPPORTUNITY_DETAIL_SCHEMA,
+  CityWorldOpportunityResult:CITY_WORLD_OPPORTUNITY_RESULT_SCHEMA,
+  ...CITY_HOME_SCHEMAS,
   ...COORDINATION_SCHEMAS,
   ContentGateState: {
     type: 'object', additionalProperties: false,
@@ -1688,6 +1721,7 @@ const AGENT_SCHEMAS = {
       season: { type: ['string', 'null'] }, title: { type: 'string' },
       started: { type: 'boolean' }, status: { type: 'string' }, instanceId: { type: 'string' },
       description: { type: 'string' }, startVenueId: { type: 'string' }, exploreVenueId: { type: 'string' },
+      cityQuest: { type: 'boolean' }, districtId: { type: 'string' },
       ownerScope: { type: 'string', enum: ['character'] }, deathPolicy: { type: 'string' },
       rewardTitle: { type: 'string' },
       actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
@@ -1715,6 +1749,7 @@ const AGENT_SCHEMAS = {
     properties: {
       id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
       description: { type: 'string' }, dialogue: { type: 'string' }, venueId: { type: 'string' },
+      districtId: { type: 'string' },
       status: { type: 'string' }, available: { type: 'boolean' },
       blockedBy: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphActionBlocker' } },
       actions: { type: 'array', items: { oneOf: [

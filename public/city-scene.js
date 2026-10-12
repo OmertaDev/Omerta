@@ -131,7 +131,7 @@
     let worldUI = null, worldOpening = false, look = 'classic';
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
     let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, path = [];
-    let gameKind = '', gameOpening = 0, gameReturn = null;
+    let gameKind = '', gameOpening = 0, gameReturn = null, venueOpening = 0;
     let pathInk = null, destinationInk = null;
     let clearPlayerNameClamp = null;
     const actorSprites = new Map();
@@ -410,6 +410,7 @@
           onHome: key => { if (!walkHome(key)) showHome(key); }, onHomes: acceptHomes,
           onTravel: options.onWorldTravel,
           onRead: options.onWorldRead, onAction: options.onWorldAction, onRetry: options.onWorldRetry,
+          onCrew: () => showGameDock('crew'),
           onLook: preset => { look = Object.hasOwn(lookTints, preset) ? preset : 'classic'; player?.setTint(lookTints[look]); } });
         document.getElementById('player-view-switch')?.classList.add('has-world-tools');
       } catch (_) { /* A tools failure must preserve the playable neighborhood and original doors. */ }
@@ -975,12 +976,20 @@
       if (changed) fitWorldFrame();
     }
     function nextQuest() {
+      let next = null;
       for (const venue of VENUES) {
         const quest = options.npcQuests?.[venue.id];
-        if (Array.isArray(quest?.actions) && quest.actions.some(action => action && typeof action.id === 'string'
-          && action.id && action.id !== 'cancel' && action.available === true)) return { ...quest, venue };
+        for (const action of Array.isArray(quest?.actions) ? quest.actions : []) {
+          if (!action || typeof action.id !== 'string' || !action.id || action.id === 'cancel'
+            || action.isCancel === true || action.available !== true) continue;
+          const phase = action.started === false ? 1 : 0;
+          const order = Number.isSafeInteger(action.questOrder) && action.questOrder >= 0 ? action.questOrder : 0;
+          if (!next || phase < next.phase || (phase === next.phase && order < next.order)) {
+            next = { phase, order, quest: { ...quest, title: action.questTitle || quest.title, venue } };
+          }
+        }
       }
-      return null;
+      return next?.quest || null;
     }
     function actionsFor(venue) {
       const supplied = options.venueActions || {};
@@ -1019,7 +1028,7 @@
     }
     function renderQuest(venue) {
       const quest = options.npcQuests?.[venue.id];
-      const signature = venue.id + ':' + JSON.stringify(quest || null);
+      const signature = venue.id + ':' + String(options.worldRecovery === true) + ':' + JSON.stringify(quest || null);
       if (signature === renderedQuestSignature) return;
       renderedQuestSignature = signature;
       const focused = questButtons.contains(document.activeElement) ? document.activeElement.dataset.cityQuestAction : null;
@@ -1033,7 +1042,7 @@
           const button = element('button', '', String(action.label || action.id));
           button.type = 'button';
           button.dataset.cityQuestAction = action.id;
-          button.disabled = action.available === false;
+          button.disabled = action.available === false || options.worldRecovery === true;
           const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
           const blockerText = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
           if (button.disabled && blockerText) { button.title = blockerText; button.append(element('small', '', blockerText)); }
@@ -1071,7 +1080,10 @@
     listen(questButtons, 'click', event => {
       const button = event.target.closest('[data-city-quest-action]');
       if (button && !button.disabled && selected && questButtons.contains(button) && typeof options.onQuestAction === 'function') {
-        options.onQuestAction(selected.id, button.dataset.cityQuestAction);
+        const venue = selected, opening = venueOpening;
+        options.onQuestAction(venue.id, button.dataset.cityQuestAction, {
+          beforeDispatch: () => !destroyed && !card.hidden && !gameKind && selected === venue && venueOpening === opening,
+        });
       }
     });
     listen(actionList, 'click', event => {
@@ -1083,19 +1095,20 @@
     });
     function renderGameDock() {
       if (!gameKind || gameDock.hidden) return;
-      const render = gameKind === 'training' ? options.renderTraining : options.renderFixer;
+      const render = gameKind === 'training' ? options.renderTraining : gameKind === 'crew' ? options.renderCrew : options.renderFixer;
       if (typeof render === 'function') render(gameBody);
     }
     function showGameDock(kind) {
-      const render = kind === 'training' ? options.renderTraining : kind === 'fixer' ? options.renderFixer : null;
+      if (kind === 'clubhouse') kind = 'crew';
+      const render = kind === 'training' ? options.renderTraining : kind === 'fixer' ? options.renderFixer : kind === 'crew' ? options.renderCrew : null;
       if (destroyed || !ready || typeof render !== 'function') return false;
       worldUI?.close(false);
       stopMovement(); hideActor(false); hideGameDock(false);
       gameReturn = selected?.id || kind; hideVenue(false);
       gameKind = kind; gameOpening++;
-      gameBody.dataset.trainingOpening = gameBody.dataset.fixerOpening = String(gameOpening);
-      gameDock.setAttribute('aria-label', kind === 'training' ? 'The Training Room · core training' : 'The Fixer · street jobs');
-      gameClose.setAttribute('aria-label', kind === 'training' ? 'Close core training' : 'Close street jobs');
+      gameBody.dataset.trainingOpening = gameBody.dataset.fixerOpening = gameBody.dataset.crewOpening = String(gameOpening);
+      gameDock.setAttribute('aria-label', kind === 'training' ? 'The Training Room · core training' : kind === 'crew' ? 'The Clubhouse · crew missions' : 'The Fixer · street jobs');
+      gameClose.setAttribute('aria-label', kind === 'training' ? 'Close core training' : kind === 'crew' ? 'Close crew missions' : 'Close street jobs');
       gameDock.dataset.cityGameplay = kind; gameDock.hidden = false; gameDock.scrollTop = 0;
       root.classList.add('is-gameplay'); root.classList.toggle('is-training', kind === 'training');
       renderGameDock(); fitWorldFrame(); revealVenue(viewport);
@@ -1106,8 +1119,9 @@
     }
     function hideGameDock(focusCanvas) {
       if (!gameKind) return;
+      if (gameKind === 'crew') options.retireCrew?.();
       gameKind = ''; gameOpening++;
-      gameBody.dataset.trainingOpening = gameBody.dataset.fixerOpening = String(gameOpening);
+      gameBody.dataset.trainingOpening = gameBody.dataset.fixerOpening = gameBody.dataset.crewOpening = String(gameOpening);
       gameDock.hidden = true; root.classList.remove('is-gameplay', 'is-training');
       gameBody.replaceChildren(); delete gameBody.dataset.trainingContent; delete gameBody.dataset.fixerContent;
       fitWorldFrame();
@@ -1121,6 +1135,7 @@
     listen(gameDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideGameDock(true); } });
     function showVenue(venue) {
       if (destroyed) return;
+      venueOpening++;
       worldUI?.close(false);
       hideGameDock(false);
       hideActor(false);
@@ -1170,6 +1185,7 @@
     }
     function hideVenue(focusCanvas) {
       const previousVenue = selected;
+      venueOpening++;
       card.hidden = true;
       selected = null;
       for (const button of buttons.values()) button.setAttribute('aria-expanded', 'false');
@@ -1816,6 +1832,7 @@
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
+          hideGameDock(false); hideVenue(false);
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
           options.worldAtlas = null; options.worldCollection = null; options.worldHomes = null;
           homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); hideActor(false); stopMovement();
@@ -1841,6 +1858,7 @@
       },
       destroy: function () {
         if (destroyed) return;
+        if (gameKind === 'crew') options.retireCrew?.();
         reportPosition(true);
         destroyed = true; ready = false;
         if (bootTimer) { clearTimeout(bootTimer); bootTimer = null; }

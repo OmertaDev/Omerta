@@ -255,7 +255,11 @@ try {
   const precision = recipes.recipes.find(recipe => recipe.id === 'recipe:precision_lock_tool').outputs[0].templateId;
   for (const index of [2, 3]) await withItemTransaction(app.pool, client => createItem(client, { scope: 'account', id: players[index].accountId }, precision, 'crafted', 'fieldwork-browser-tool-' + index));
   await page.locator('[data-fieldwork-view="operations"]').click();
-  await page.getByRole('button', { name: 'Open this crew operation', exact: true }).click(); await confirm();
+  const belladonnaEntry = (await call('GET', '/v1/worldgraph/operations', players[0])).operations
+    .find(entry => entry.operationNodeId === 'operation:belladonna-lockbox');
+  assert(belladonnaEntry?.actions.some(action => action.available), 'The original Lockbox operation remains playable beside new missions.');
+  await page.locator('.fieldwork-card').filter({ has: page.getByRole('heading', { name: belladonnaEntry.title, exact: true }) })
+    .getByRole('button', { name: 'Open this crew operation', exact: true }).click(); await confirm();
   await page.locator('[data-fieldwork-role="investigator"] [data-fieldwork-action]').click(); await idle();
   const operationCatalog = await call('GET', '/v1/worldgraph/operations', players[0]);
   const operationId = operationCatalog.operations.find(entry => entry.operationNodeId === 'operation:belladonna-lockbox').operationId;
