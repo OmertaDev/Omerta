@@ -2090,6 +2090,116 @@
       "table_name": "company_succession_receipts",
       "name": "company_succession_receipts_successor_generation_check",
       "definition": "CHECK (successor_generation >= 2 AND successor_generation <= 2147483647)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_league_id_account_id_key",
+      "definition": "UNIQUE (league_id, account_id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_league_id_fkey",
+      "definition": "FOREIGN KEY (league_id) REFERENCES strategy_leagues(id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_license_id_fkey",
+      "definition": "FOREIGN KEY (license_id) REFERENCES strategy_licenses(id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_outcome_check",
+      "definition": "CHECK (outcome IS NULL OR (outcome = ANY (ARRAY['correct'::text, 'incorrect'::text, 'unknown'::text])))"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_rule_hash_check",
+      "definition": "CHECK (char_length(rule_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_league_entries",
+      "name": "strategy_league_entries_version_id_fkey",
+      "definition": "FOREIGN KEY (version_id) REFERENCES strategy_versions(id)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_check",
+      "definition": "CHECK (enrollment_expires_at > created_at)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_check1",
+      "definition": "CHECK (\nCASE\n    WHEN observation IS NULL THEN observed_at IS NULL AND target_at IS NULL AND price_block IS NULL\n    ELSE observed_at IS NOT NULL AND target_at IS NOT NULL AND target_at > observed_at AND price_block IS NOT NULL\nEND)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_check2",
+      "definition": "CHECK (\nCASE\n    WHEN state = 'enrolling'::text THEN observation IS NULL AND sample IS NULL AND sample_started_at IS NULL AND resolved_at IS NULL AND result_kind IS NULL\n    WHEN state = 'running'::text THEN observation IS NOT NULL AND sample IS NULL AND sample_started_at IS NULL AND resolved_at IS NULL AND result_kind IS NULL\n    ELSE resolved_at IS NOT NULL AND result_kind IS NOT NULL\nEND)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_check3",
+      "definition": "CHECK (\nCASE\n    WHEN result_kind = 'graded'::text THEN sample IS NOT NULL AND sample_started_at IS NOT NULL AND observation IS NOT NULL\n    ELSE sample IS NULL AND sample_started_at IS NULL\nEND)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_creator_account_fkey",
+      "definition": "FOREIGN KEY (creator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_creator_account_request_key_key",
+      "definition": "UNIQUE (creator_account, request_key)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_creator_character_fkey",
+      "definition": "FOREIGN KEY (creator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_minimum_stock_check",
+      "definition": "CHECK (minimum_stock >= 1 AND minimum_stock <= 40)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_price_block_check",
+      "definition": "CHECK (price_block IS NULL OR price_block >= 0)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_result_kind_check",
+      "definition": "CHECK (result_kind IS NULL OR (result_kind = ANY (ARRAY['graded'::text, 'unknown'::text])))"
+    },
+    {
+      "table_name": "strategy_leagues",
+      "name": "strategy_leagues_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['enrolling'::text, 'running'::text, 'resolved'::text]))"
     }
   ],
   "removed": [
@@ -2836,6 +2946,27 @@
       "request_terms",
       "successor_character",
       "successor_generation"
+    ],
+    "strategy_league_entries": [
+      "account_id",
+      "character_id",
+      "id",
+      "joined_at",
+      "league_id",
+      "rule",
+      "rule_hash",
+      "version_id"
+    ],
+    "strategy_leagues": [
+      "created_at",
+      "creator_account",
+      "creator_character",
+      "district_id",
+      "enrollment_expires_at",
+      "id",
+      "minimum_stock",
+      "request_key",
+      "state"
     ]
   }
 }

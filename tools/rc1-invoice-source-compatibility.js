@@ -1,3 +1,4 @@
+import { strategyLeagueSourceBaseline } from './rc1-strategy-league-source-compatibility.js';
 import { marketFeedSourceBaseline } from './rc1-market-feed-source-compatibility.js';
 import { companySuccessionSourceBaseline } from './rc1-company-succession-source-compatibility.js';
 import { strategySourceBaseline } from './rc1-strategy-source-compatibility.js';
@@ -169,7 +170,7 @@ export function qualifyInvoiceSource(file, input) {
 // Compose only the exact current invoice blob. Earlier revisions and unknown
 // bytes still reach the existing closed historical guard unchanged.
 export function invoiceSourceBaseline(file, input) {
-  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, input)))));
+  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, input))))));
   return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]
     ? qualifyInvoiceSource(file, text).baselineText : text;
 }

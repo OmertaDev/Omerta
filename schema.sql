@@ -7978,3 +7978,49 @@ CREATE TABLE IF NOT EXISTS company_succession_receipts (
   UNIQUE(successor_character),
   CHECK (predecessor_character <> successor_character)
 );
+
+-- A prize-free prospective benchmark uses one shared observation and holdout.
+-- It carries no escrow, external funding, prize, or execution authority.
+CREATE TABLE IF NOT EXISTS strategy_leagues (
+  id TEXT PRIMARY KEY,
+  creator_account TEXT NOT NULL REFERENCES accounts(id),
+  creator_character TEXT NOT NULL REFERENCES characters(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  created_at TIMESTAMPTZ NOT NULL,
+  enrollment_expires_at TIMESTAMPTZ NOT NULL CHECK (enrollment_expires_at > created_at),
+  state TEXT NOT NULL CHECK (state IN ('enrolling','running','resolved')),
+  district_id TEXT NOT NULL,
+  minimum_stock INT NOT NULL CHECK (minimum_stock BETWEEN 1 AND 40),
+  observation JSONB,
+  observed_at TIMESTAMPTZ,
+  target_at TIMESTAMPTZ,
+  price_block BIGINT CHECK (price_block IS NULL OR price_block>=0),
+  sample_started_at TIMESTAMPTZ,
+  sample JSONB,
+  resolved_at TIMESTAMPTZ,
+  result_kind TEXT CHECK (result_kind IS NULL OR result_kind IN ('graded','unknown')),
+  UNIQUE(creator_account,request_key),
+  CHECK (CASE WHEN observation IS NULL THEN observed_at IS NULL AND target_at IS NULL AND price_block IS NULL
+    ELSE observed_at IS NOT NULL AND target_at IS NOT NULL AND target_at>observed_at AND price_block IS NOT NULL END),
+  CHECK (CASE WHEN state='enrolling' THEN observation IS NULL AND sample IS NULL AND sample_started_at IS NULL AND resolved_at IS NULL AND result_kind IS NULL
+    WHEN state='running' THEN observation IS NOT NULL AND sample IS NULL AND sample_started_at IS NULL AND resolved_at IS NULL AND result_kind IS NULL
+    ELSE resolved_at IS NOT NULL AND result_kind IS NOT NULL END),
+  CHECK (CASE WHEN result_kind='graded' THEN sample IS NOT NULL AND sample_started_at IS NOT NULL AND observation IS NOT NULL
+    ELSE sample IS NULL AND sample_started_at IS NULL END)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS ix_strategy_league_creator_active ON strategy_leagues(creator_account) WHERE state IN ('enrolling','running');
+CREATE TABLE IF NOT EXISTS strategy_league_entries (
+  id TEXT PRIMARY KEY,
+  league_id TEXT NOT NULL REFERENCES strategy_leagues(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  character_id TEXT NOT NULL REFERENCES characters(id),
+  version_id TEXT NOT NULL REFERENCES strategy_versions(id),
+  license_id TEXT REFERENCES strategy_licenses(id),
+  rule JSONB NOT NULL,
+  rule_hash TEXT NOT NULL CHECK (char_length(rule_hash)=64),
+  joined_at TIMESTAMPTZ NOT NULL,
+  predicts_available BOOLEAN,
+  outcome TEXT CHECK (outcome IS NULL OR outcome IN ('correct','incorrect','unknown')),
+  UNIQUE(league_id,account_id)
+);
+CREATE INDEX IF NOT EXISTS ix_strategy_league_entries_account ON strategy_league_entries(account_id,joined_at);
