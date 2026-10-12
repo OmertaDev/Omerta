@@ -1248,7 +1248,7 @@
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <link rel="stylesheet" href="/city-scene.css?v=20261011-world-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261011-world-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261012-atlas-1">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
@@ -9365,7 +9365,7 @@
       _citySceneAssets = Promise.allSettled([
         loadCityScript('/city-scene.js?v=20261011-world-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261011-world-1', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261012-atlas-1', () => !!window.OmertaCityWorldUI),
       ]).then(([scene, engine, world]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if (engine.status === 'rejected' || world.status === 'rejected') _citySceneAssets = null;

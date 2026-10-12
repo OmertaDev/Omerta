@@ -67,7 +67,8 @@
 .city-world__atlas-diagram circle:hover { fill: #40584a; }
 .city-world__atlas-diagram circle.is-here { fill: #466b50; stroke: #c5d8a6; }
 .city-world__atlas-diagram circle.is-selected { stroke: #ffcf77; stroke-width: 4; }
-.city-world__atlas-diagram text { fill: #f0e2be; text-anchor: middle; font: 11px ui-monospace, monospace; }
+.city-world__atlas-diagram text { fill: #f0e2be; text-anchor: middle; font: 11px ui-monospace, monospace; cursor: pointer; }
+.city-world__atlas-diagram text:hover { fill: #ffcf77; }
 .city-world__districts, .city-world__home-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .omerta-city .city-world__district, .omerta-city .city-world__home { text-align: left; display: flex; flex-direction: column; justify-content: center; gap: 4px; min-height: 44px; min-width: 0; overflow-wrap: anywhere; }
 .city-world__district span, .city-world__home span { font-size: 10px; line-height: 1.35; font-weight: normal; }
