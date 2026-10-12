@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "378265ba4520b82403c282adb07ca308c669d1a1",
+  "sourceRevision": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,14 +43,14 @@
     ]
   },
   "census": {
-    "nodes": 11827,
-    "edges": 47912,
+    "nodes": 11835,
+    "edges": 47930,
     "byNodeType": {
-      "Artifact": 4591,
+      "Artifact": 4593,
       "Command": 248,
-      "Commit": 3116,
+      "Commit": 3120,
       "Contract": 126,
-      "Document": 748,
+      "Document": 750,
       "Domain": 13,
       "ExternalDependency": 32,
       "HistoricalArtifact": 424,
@@ -65,19 +65,19 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3742,
-      "CHANGED": 19014,
-      "CONTAINS": 4612,
+      "CHANGED": 19024,
+      "CONTAINS": 4614,
       "DECLARES": 248,
       "DEFINED_IN": 1487,
       "DEPENDS_ON": 67,
       "EXECUTES": 845,
       "HANDLED_BY": 834,
-      "HAS_COMMIT": 3116,
+      "HAS_COMMIT": 3120,
       "IMPLEMENTS": 124,
       "IMPORTS": 4805,
       "INHERITS": 42,
       "REFERENCES": 3254,
-      "REPRESENTS": 1781,
+      "REPRESENTS": 1783,
       "TESTS": 1659,
       "TRACKS": 126,
       "USES_TABLE": 2156
@@ -7523,18 +7523,18 @@
       "extension": ".yml",
       "bytes": 47480,
       "lines": 952,
-      "version": "589b771c21fd20de",
+      "version": "fca772441f296565",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "589b771c21fd20de"
+          "version": "fca772441f296565"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:51:24.000Z",
+      "lastChangedAt": "2026-10-12T21:13:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6880208a95cdb7ef5772f1fdeb9ca5e94f49d920"
+      "lastChangedCommit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -24465,6 +24465,29 @@
       "lastChangedCommit": "f7941bc525f60aa18a1b9aced2007cf4c3e76def"
     },
     {
+      "key": "Artifact:docs/company-bank-hosted-native-triage.md",
+      "type": "Artifact",
+      "id": "docs/company-bank-hosted-native-triage.md",
+      "label": "company-bank-hosted-native-triage.md",
+      "path": "docs/company-bank-hosted-native-triage.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 3618,
+      "lines": 16,
+      "version": "e54237d3f317f6ba",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/company-bank-hosted-native-triage.md",
+          "line": 1,
+          "version": "e54237d3f317f6ba"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T21:08:28.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4bddaa34b47bb9a28de0f376751064f32beef206"
+    },
+    {
       "key": "Artifact:docs/company-bank-migration-review.md",
       "type": "Artifact",
       "id": "docs/company-bank-migration-review.md",
@@ -27430,6 +27453,29 @@
       "lastChangedAt": "2026-10-11T08:25:43.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "411749979d6fd86d8bca8428ee597ca66f21f724"
+    },
+    {
+      "key": "Artifact:docs/economy-native-time-budget-review.md",
+      "type": "Artifact",
+      "id": "docs/economy-native-time-budget-review.md",
+      "label": "economy-native-time-budget-review.md",
+      "path": "docs/economy-native-time-budget-review.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 1199,
+      "lines": 9,
+      "version": "7da1646900df5af1",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/economy-native-time-budget-review.md",
+          "line": 1,
+          "version": "7da1646900df5af1"
+        }
+      ],
+      "lastChangedAt": "2026-10-12T21:13:53.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
     },
     {
       "key": "Artifact:docs/economy-pilot-review.json",
@@ -79208,18 +79254,18 @@
       "extension": ".md",
       "bytes": 55481,
       "lines": 743,
-      "version": "9d964924256eb4c4",
+      "version": "0e521b15b385c637",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9d964924256eb4c4"
+          "version": "0e521b15b385c637"
         }
       ],
-      "lastChangedAt": "2026-10-12T20:12:03.000Z",
+      "lastChangedAt": "2026-10-12T21:15:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "378265ba4520b82403c282adb07ca308c669d1a1"
+      "lastChangedCommit": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7"
     },
     {
       "key": "Artifact:src/access.js",
@@ -91554,20 +91600,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 298805,
-      "lines": 4400,
-      "version": "c4a0ced16220e07a",
+      "bytes": 299063,
+      "lines": 4402,
+      "version": "8f68f1a13a5ee7c3",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "c4a0ced16220e07a"
+          "version": "8f68f1a13a5ee7c3"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:52:07.000Z",
+      "lastChangedAt": "2026-10-12T21:13:53.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bc260cf5e798c4e1ed685cd50fad2500cb016cba"
+      "lastChangedCommit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
     },
     {
       "key": "Artifact:test/genesis-auction-deployment-plan.js",
@@ -111485,6 +111531,22 @@
       ]
     },
     {
+      "key": "Commit:0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "type": "Commit",
+      "id": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "label": "Bound measured complete native release chain at sixty minutes",
+      "title": "Bound measured complete native release chain at sixty minutes",
+      "date": "2026-10-12T21:13:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "provenance": [
+        {
+          "commit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
+        }
+      ]
+    },
+    {
       "key": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "type": "Commit",
       "id": "0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
@@ -122861,6 +122923,22 @@
       ]
     },
     {
+      "key": "Commit:44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+      "type": "Commit",
+      "id": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+      "label": "Refresh bank census with measured native timeout evidence",
+      "title": "Refresh bank census with measured native timeout evidence",
+      "date": "2026-10-12T21:15:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+      "provenance": [
+        {
+          "commit": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7"
+        }
+      ]
+    },
+    {
       "key": "Commit:44fa73ca93acefe1f78a7b7702fb2d51ff103f7c",
       "type": "Commit",
       "id": "44fa73ca93acefe1f78a7b7702fb2d51ff103f7c",
@@ -124169,6 +124247,22 @@
         {
           "commit": "4bd478a866d36b4fa645c82a9855c551f7816d85",
           "url": "https://github.com/OmertaDev/Omerta/commit/4bd478a866d36b4fa645c82a9855c551f7816d85"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4bddaa34b47bb9a28de0f376751064f32beef206",
+      "type": "Commit",
+      "id": "4bddaa34b47bb9a28de0f376751064f32beef206",
+      "label": "docs: distinguish hosted bank native timeout from test failure",
+      "title": "docs: distinguish hosted bank native timeout from test failure",
+      "date": "2026-10-12T21:08:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4bddaa34b47bb9a28de0f376751064f32beef206",
+      "provenance": [
+        {
+          "commit": "4bddaa34b47bb9a28de0f376751064f32beef206",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4bddaa34b47bb9a28de0f376751064f32beef206"
         }
       ]
     },
@@ -147565,6 +147659,22 @@
       ]
     },
     {
+      "key": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "type": "Commit",
+      "id": "c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "label": "Generate final reviewed company bank qualification snapshot",
+      "title": "Generate final reviewed company bank qualification snapshot",
+      "date": "2026-10-12T20:13:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "provenance": [
+        {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+        }
+      ]
+    },
+    {
       "key": "Commit:c2e9306bebe537f396c71fa76f1902174eb3dfbf",
       "type": "Commit",
       "id": "c2e9306bebe537f396c71fa76f1902174eb3dfbf",
@@ -166613,6 +166723,22 @@
       ]
     },
     {
+      "key": "Document:docs/company-bank-hosted-native-triage.md",
+      "type": "Document",
+      "id": "docs/company-bank-hosted-native-triage.md",
+      "label": "docs/company-bank-hosted-native-triage.md",
+      "documentType": "documentation",
+      "lines": 16,
+      "version": "e54237d3f317f6ba",
+      "provenance": [
+        {
+          "file": "docs/company-bank-hosted-native-triage.md",
+          "line": 1,
+          "version": "e54237d3f317f6ba"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/company-bank-migration-review.md",
       "type": "Document",
       "id": "docs/company-bank-migration-review.md",
@@ -167521,6 +167647,22 @@
           "file": "docs/earning-receipts-security-review.md",
           "line": 1,
           "version": "18852b18f8362e6c"
+        }
+      ]
+    },
+    {
+      "key": "Document:docs/economy-native-time-budget-review.md",
+      "type": "Document",
+      "id": "docs/economy-native-time-budget-review.md",
+      "label": "docs/economy-native-time-budget-review.md",
+      "documentType": "documentation",
+      "lines": 9,
+      "version": "7da1646900df5af1",
+      "provenance": [
+        {
+          "file": "docs/economy-native-time-budget-review.md",
+          "line": 1,
+          "version": "7da1646900df5af1"
         }
       ]
     },
@@ -172763,12 +172905,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 743,
-      "version": "9d964924256eb4c4",
+      "version": "0e521b15b385c637",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9d964924256eb4c4"
+          "version": "0e521b15b385c637"
         }
       ]
     },
@@ -180334,6 +180476,9 @@
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
         },
         {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+        },
+        {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
@@ -181865,6 +182010,9 @@
         },
         {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
+        },
+        {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
         },
         {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
@@ -183583,6 +183731,9 @@
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
         },
         {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+        },
+        {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
@@ -185297,6 +185448,9 @@
         },
         {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
+        },
+        {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
         },
         {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
@@ -187484,6 +187638,9 @@
         },
         {
           "commit": "c290b64f774d4c1ed57080a198f40ea7f23d9225"
+        },
+        {
+          "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
         },
         {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
@@ -198547,12 +198704,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "378265ba4520b82403c282adb07ca308c669d1a1",
+      "revision": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
       "currentBranch": "codex/company-bank-portfolio-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4591,
+      "currentArtifactCount": 4593,
       "provenance": [
         {
           "file": "README.md",
@@ -232758,13 +232915,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4400,
-      "version": "c4a0ced16220e07a",
+      "lines": 4402,
+      "version": "8f68f1a13a5ee7c3",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "c4a0ced16220e07a"
+          "version": "8f68f1a13a5ee7c3"
         }
       ]
     },
@@ -238624,12 +238781,12 @@
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
       "lines": 952,
-      "version": "589b771c21fd20de",
+      "version": "fca772441f296565",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "589b771c21fd20de"
+          "version": "fca772441f296565"
         }
       ]
     },
@@ -278318,6 +278475,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "to": "Artifact:docs/economy-native-time-budget-review.md",
+      "provenance": {
+        "commit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -313334,6 +313515,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:44fa73ca93acefe1f78a7b7702fb2d51ff103f7c",
       "to": "Artifact:HYPE.md",
       "provenance": {
@@ -316306,6 +316495,14 @@
       "to": "Artifact:test/companyoperatorrunner.js",
       "provenance": {
         "commit": "4bd478a866d36b4fa645c82a9855c551f7816d85"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4bddaa34b47bb9a28de0f376751064f32beef206",
+      "to": "Artifact:docs/company-bank-hosted-native-triage.md",
+      "provenance": {
+        "commit": "4bddaa34b47bb9a28de0f376751064f32beef206"
       }
     },
     {
@@ -387382,6 +387579,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c2e9306bebe537f396c71fa76f1902174eb3dfbf",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -439196,6 +439433,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/company-bank-hosted-native-triage.md",
+      "provenance": {
+        "file": "docs/company-bank-hosted-native-triage.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/company-bank-migration-review.md",
       "provenance": {
         "file": "docs/company-bank-migration-review.md",
@@ -440351,6 +440597,15 @@
       "to": "Artifact:docs/earning-receipts-security-review.md",
       "provenance": {
         "file": "docs/earning-receipts-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:docs/economy-native-time-budget-review.md",
+      "provenance": {
+        "file": "docs/economy-native-time-budget-review.md",
         "line": 1
       }
     },
@@ -499185,6 +499440,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0ed01f6dbee7c021e4a0255c4a1777fe281ba32e",
+      "provenance": {
+        "commit": "0ed01f6dbee7c021e4a0255c4a1777fe281ba32e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a",
       "provenance": {
         "commit": "0ed5758f09a9528bfecbf9b58c1d10de1c67fd9a"
@@ -504873,6 +505136,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7",
+      "provenance": {
+        "commit": "44f825a7603b8b8fea9d0d7b1bc4895a2dce07e7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:44fa73ca93acefe1f78a7b7702fb2d51ff103f7c",
       "provenance": {
         "commit": "44fa73ca93acefe1f78a7b7702fb2d51ff103f7c"
@@ -505524,6 +505795,14 @@
       "to": "Commit:4bd478a866d36b4fa645c82a9855c551f7816d85",
       "provenance": {
         "commit": "4bd478a866d36b4fa645c82a9855c551f7816d85"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4bddaa34b47bb9a28de0f376751064f32beef206",
+      "provenance": {
+        "commit": "4bddaa34b47bb9a28de0f376751064f32beef206"
       }
     },
     {
@@ -517220,6 +517499,14 @@
       "to": "Commit:c29a1d60e207f0fd518b6d5c754beda1ceeb19ad",
       "provenance": {
         "commit": "c29a1d60e207f0fd518b6d5c754beda1ceeb19ad"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c2b22dd305c3db853a7adea37d9f55ce18b356fb",
+      "provenance": {
+        "commit": "c2b22dd305c3db853a7adea37d9f55ce18b356fb"
       }
     },
     {
@@ -599966,6 +600253,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/company-bank-hosted-native-triage.md",
+      "to": "Artifact:docs/company-bank-hosted-native-triage.md",
+      "provenance": {
+        "file": "docs/company-bank-hosted-native-triage.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/company-bank-migration-review.md",
       "to": "Artifact:docs/company-bank-migration-review.md",
       "provenance": {
@@ -600474,6 +600770,15 @@
       "to": "Artifact:docs/earning-receipts-security-review.md",
       "provenance": {
         "file": "docs/earning-receipts-security-review.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Document:docs/economy-native-time-budget-review.md",
+      "to": "Artifact:docs/economy-native-time-budget-review.md",
+      "provenance": {
+        "file": "docs/economy-native-time-budget-review.md",
         "line": 1
       }
     },
