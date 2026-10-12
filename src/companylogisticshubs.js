@@ -40,13 +40,17 @@ async function custody(ch,landlord,premisesId,warehouseId,client) {
   person(ch); person(landlord);
   const occupied=await assertPremisesOccupancy(ch,landlord,premisesId,client);
   if(occupied.premisesKind==='street'&&occupied.district!==occupied.businessDistrict) fail('custody_pairing');
-  const warehouse=(await client.query('SELECT * FROM business_warehouse_leases WHERE id=$1 FOR UPDATE',[id(warehouseId)])).rows[0];
+  const hint=(await client.query('SELECT * FROM business_warehouse_leases WHERE id=$1',[id(warehouseId)])).rows[0];
   const premises=(await client.query('SELECT depot_id,expires_at FROM commercial_premises_leases WHERE id=$1',[premisesId])).rows[0];
   // The premises helper already locks THIS depot before its own offer/lease.
-  // Matching the depot avoids acquiring a different depot after those leaves.
-  if(!warehouse||!premises?.depot_id||warehouse.depot_id!==premises.depot_id||warehouse.tenant_character!==ch.id
-    ||warehouse.landlord_character!==landlord.id||warehouse.good_id!=='gin'||warehouse.status!=='active') fail('custody_pairing');
-  const depot=(await client.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[warehouse.depot_id])).rows[0];
+  // Reject a foreign hint before locking; re-lock the same depot before the
+  // warehouse leaf, then revalidate the authoritative warehouse binding.
+  if(!hint||!premises?.depot_id||hint.depot_id!==premises.depot_id) fail('custody_pairing');
+  const depot=(await client.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[premises.depot_id])).rows[0];
+  const warehouse=(await client.query('SELECT * FROM business_warehouse_leases WHERE id=$1 FOR UPDATE',[id(warehouseId)])).rows[0];
+  if(!warehouse||warehouse.id!==hint.id||warehouse.depot_id!==hint.depot_id||warehouse.depot_id!==premises.depot_id
+    ||warehouse.tenant_character!==ch.id||warehouse.landlord_character!==landlord.id||warehouse.good_id!=='gin'
+    ||warehouse.status!=='active') fail('custody_pairing');
   if(!depot||depot.status!=='open'||depot.owner_character!==landlord.id||depot.district!==occupied.businessDistrict) fail('custody_pairing');
   return { warehouse,occupied,depot,premises };
 }
