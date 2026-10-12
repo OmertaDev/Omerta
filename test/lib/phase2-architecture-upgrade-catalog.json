@@ -2710,6 +2710,131 @@
       "table_name": "company_bank_portfolios",
       "name": "company_bank_portfolios_revision_check",
       "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['setup'::text, 'accept'::text, 'run'::text, 'cancel'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_check",
+      "definition": "CHECK ((state = 'completed'::text) = (settlement IS NOT NULL AND completed_at IS NOT NULL))"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_finance_request_id_fkey",
+      "definition": "FOREIGN KEY (finance_request_id) REFERENCES delivery_loan_requests(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_finance_request_id_key",
+      "definition": "UNIQUE (finance_request_id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_hub_id_fkey",
+      "definition": "FOREIGN KEY (hub_id) REFERENCES company_logistics_hubs(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_pkey",
+      "definition": "PRIMARY KEY (hub_id, \"position\")"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_position_check",
+      "definition": "CHECK (\"position\" >= 1 AND \"position\" <= 3)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 10)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['pending'::text, 'completed'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_withdrawal_journal_id_fkey",
+      "definition": "FOREIGN KEY (withdrawal_journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_withdrawal_journal_id_key",
+      "definition": "UNIQUE (withdrawal_journal_id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_check",
+      "definition": "CHECK (supplier_character <> landlord_character AND supplier_account <> landlord_account)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_premises_lease_id_fkey",
+      "definition": "FOREIGN KEY (premises_lease_id) REFERENCES commercial_premises_leases(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['draft'::text, 'active'::text, 'completed'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_supplier_account_fkey",
+      "definition": "FOREIGN KEY (supplier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_total_units_check",
+      "definition": "CHECK (total_units >= 1 AND total_units <= 10)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_warehouse_lease_id_fkey",
+      "definition": "FOREIGN KEY (warehouse_lease_id) REFERENCES business_warehouse_leases(id)"
     }
   ],
   "removed": [
@@ -3623,6 +3748,36 @@
       "origin",
       "original_lender",
       "principal"
+    ],
+    "company_logistics_hubs": [
+      "depot_id",
+      "district",
+      "expires_at",
+      "id",
+      "landlord_account",
+      "landlord_character",
+      "premises_lease_id",
+      "revision",
+      "state",
+      "supplier_account",
+      "supplier_character",
+      "total_units",
+      "warehouse_lease_id"
+    ],
+    "company_logistics_hub_sources": [
+      "finance_request_id",
+      "hub_id",
+      "position",
+      "quantity",
+      "snapshot",
+      "state"
+    ],
+    "company_logistics_hub_requests": [
+      "account_id",
+      "action",
+      "receipt",
+      "request_key",
+      "terms"
     ]
   }
 }

@@ -346,6 +346,9 @@
 | [docs/company-bank-portfolio-integration-review.md](../../docs/company-bank-portfolio-integration-review.md) | documentation | 47 | 2026-10-12 |
 | [docs/company-bank-portfolios-security-review.md](../../docs/company-bank-portfolios-security-review.md) | documentation | 141 | 2026-10-12 |
 | [docs/company-bank-source-transfer-review.md](../../docs/company-bank-source-transfer-review.md) | documentation | 25 | 2026-10-12 |
+| [docs/company-logistics-hub-source-transfer-review.md](../../docs/company-logistics-hub-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/company-logistics-hubs-integration-review.md](../../docs/company-logistics-hubs-integration-review.md) | documentation | 58 | 2026-10-12 |
+| [docs/company-logistics-hubs-security-review.md](../../docs/company-logistics-hubs-security-review.md) | documentation | 39 | 2026-10-12 |
 | [docs/company-operator-migration-review.md](../../docs/company-operator-migration-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/company-operator-source-transfer-review.md](../../docs/company-operator-source-transfer-review.md) | documentation | 123 | 2026-10-12 |
 | [docs/company-operators-security-review.md](../../docs/company-operators-security-review.md) | documentation | 57 | 2026-10-12 |
@@ -408,6 +411,7 @@
 | [docs/game-employment-security-review.md](../../docs/game-employment-security-review.md) | documentation | 58 | 2026-10-12 |
 | [docs/game-employment-source-transfer-review.md](../../docs/game-employment-source-transfer-review.md) | documentation | 136 | 2026-10-12 |
 | [docs/GAMEPLAY-MARKETING-PACK.md](../../docs/GAMEPLAY-MARKETING-PACK.md) | documentation | 77 | 2026-10-06 |
+| [docs/hosted-phase2-position-catalog-repair-review.md](../../docs/hosted-phase2-position-catalog-repair-review.md) | documentation | 18 | 2026-10-12 |
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
@@ -418,6 +422,8 @@
 | [docs/living-world-director/SECURITY-REVIEW.md](../../docs/living-world-director/SECURITY-REVIEW.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md](../../docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md) | documentation | 67 | 2026-09-18 |
 | [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
+| [docs/logistics-hub-lock-order-review.md](../../docs/logistics-hub-lock-order-review.md) | documentation | 18 | 2026-10-12 |
+| [docs/logistics-hub-migration-review.md](../../docs/logistics-hub-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/postgres-ci-registry-recovery-review.md](../../docs/postgres-ci-registry-recovery-review.md) | documentation | 11 | 2026-10-12 |
