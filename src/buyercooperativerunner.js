@@ -1,10 +1,10 @@
 import { withCharacter, GameError } from './game.js';
-import { dueBuyerCooperativeFunding, settleBuyerCooperative } from './buyercooperatives.js';
+import { buyerCooperativeDueCandidates, settleBuyerCooperative } from './buyercooperatives.js';
 
 // Expiry only closes the frozen funding window and allocates original members'
 // recovery rights. Each claimant still uses the canonical claim transaction.
 export async function expireBuyerCooperativeFunding(pool, limit = 20) {
-  const rows = await dueBuyerCooperativeFunding(pool, limit), results = [];
+  const rows = await buyerCooperativeDueCandidates(pool, limit), results = [];
   for (const row of rows) {
     try {
       const result = await withCharacter(pool, row.organizer_account, (ch, client, h) =>
