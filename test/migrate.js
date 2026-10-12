@@ -625,6 +625,7 @@ const DISPOSITION = {
   company_operator_receipts: 'metadata', // immutable original-account canonical execution receipts survive heirs
   game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
   game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
+  company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
   depot_brand_licenses: 'ledger', // immutable signed brand terms and earned receipt counters retain original parties; closed/dead businesses receive no further royalty and heirs inherit no licence authority

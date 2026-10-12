@@ -428,6 +428,27 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/company/workflows': { operationId: 'getOwnExecutableCompanyContracts' },
+  'POST /v1/company/workflows': { operationId: 'createExecutableCompanyContract', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: {
+    type: 'object', additionalProperties: false, required: ['depotId', 'procurementDepotId', 'leaseId', 'commitmentId', 'financeRequestId', 'qty', 'deadlineSeconds'], properties: {
+      depotId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' }, procurementDepotId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+      leaseId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' }, commitmentId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+      financeRequestId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' }, qty: { type: 'integer', minimum: 1, maximum: 10 },
+      deadlineSeconds: { type: 'integer', minimum: 60, maximum: 21600 },
+    } } },
+  'POST /v1/company/workflows/:id/advance': { operationId: 'AdvanceCanonicalCompanyContractProof', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { oneOf: [
+      { type: 'object', additionalProperties: false, required: ['stage', 'proofId'], properties: {
+        stage: { type: 'string', enum: ['procurement', 'delivery'] }, proofId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+      } },
+      { type: 'object', additionalProperties: false, required: ['stage', 'proofId', 'withdrawalProofId'], properties: {
+        stage: { type: 'string', const: 'custody' }, proofId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+        withdrawalProofId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+      } },
+    ] } },
+  'POST /v1/company/workflows/:id/cancel': { operationId: 'CancelOwnExecutableCompanyContract', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'GET /v1/company/employment': { operationId: 'getOwnGameEmployment' },
   'GET /v1/company/employment/offers': { operationId: 'getPublishedGameEmploymentOffers' },
   'POST /v1/company/employment': { operationId: 'createPrepaidGameEmployment', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
