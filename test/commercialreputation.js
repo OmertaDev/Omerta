@@ -1,12 +1,18 @@
 process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'commercial-reputation-isolated-proof-secret';
 process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.DEPOT_PILOT = 'on'; process.env.DELIVERY_CONTRACTS = 'on';
 process.env.MARKET_SEED = 'commercial-reputation-isolated-seed'; process.env.MOD_KEY = 'commercial-reputation-isolated-mod';
-const native = process.argv.includes('--postgres');
-if (native) {
-  const url = new URL(process.env.COMMERCIAL_REPUTATION_TEST_DATABASE_URL);
-  if (!['127.0.0.1', 'localhost'].includes(url.hostname) || !url.pathname.startsWith('/commercial_reputation_test_')) throw new Error('Only a fresh owned local reputation test database is accepted.');
-  process.env.DATABASE_URL = url.href;
-} else delete process.env.DATABASE_URL;
+const native = process.argv.includes('--postgres'); assert(!process.env.DATABASE_URL, 'Refuse ambient database endpoints');
+function nativeEndpoint(value) {
+  const url=new URL(value); assert(['postgres:','postgresql:'].includes(url.protocol)); assert.equal(url.hostname,'127.0.0.1'); assert(!url.search&&!url.hash);
+  const local=['35439','35449'].includes(url.port)&&url.username==='pilot_runner'&&!url.password;
+  const ci=url.port==='5432'&&url.username==='postgres'&&url.password==='pgcheck'; assert(local||ci); assert(/^\/commercial_reputation_[a-z0-9_]+$/.test(url.pathname)); return {url,local};
+}
+for(const bad of ['postgresql://pilot_runner@remote:35449/commercial_reputation_test_guard','postgresql://pilot_runner@127.0.0.1:35449/omerta','postgresql://postgres:wrong@127.0.0.1:5432/commercial_reputation_test_guard','postgresql://pilot_runner@127.0.0.1:35449/commercial_reputation_test_guard?host=remote']) assert.throws(()=>nativeEndpoint(bad));
+if(native) {
+  const {url,local}=nativeEndpoint(process.env.COMMERCIAL_REPUTATION_TEST_DATABASE_URL),{default:pg}=await import('pg'),pre=new pg.Pool({connectionString:url.href});
+  try { const version=(await pre.query('SHOW server_version')).rows[0].server_version; assert.match(version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/); assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0,'Fresh owned namespace required'); } finally { await pre.end(); }
+  process.env.DATABASE_URL=url.href;
+}
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import * as G from '../src/game.js';
