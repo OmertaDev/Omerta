@@ -121,7 +121,7 @@ try {
     try {
       let observed = false;
       for (let attempt = 0; attempt < 40; attempt++) {
-        const rows = (await blocker.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM company_operators%' LIMIT 1")).rows;
+        const rows = (await app.pool.query("SELECT pid FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM company_operators%' LIMIT 1")).rows;
         if (rows.length) { observed = true; break; }
         await new Promise((resolve) => setTimeout(resolve, 5));
       }
