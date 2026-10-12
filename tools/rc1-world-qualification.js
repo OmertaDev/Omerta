@@ -1,3 +1,4 @@
+import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from './rc1-company-opportunity-source-compatibility.js';
 import { BUYER_COOPERATIVE_SOURCE_TRANSFER } from './rc1-buyer-cooperative-source-compatibility.js';
 import { COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER } from './rc1-company-logistics-hub-source-compatibility.js';
 import { COMPANY_BANK_SOURCE_TRANSFER } from './rc1-company-bank-source-compatibility.js';
@@ -62,7 +63,8 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 30, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 31, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  companyOpportunitySourceReviewTransfer: COMPANY_OPPORTUNITY_SOURCE_TRANSFER,
   buyerCooperativeSourceReviewTransfer: BUYER_COOPERATIVE_SOURCE_TRANSFER,
   companyLogisticsHubSourceReviewTransfer: COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER,
   companyBankSourceReviewTransfer: COMPANY_BANK_SOURCE_TRANSFER,

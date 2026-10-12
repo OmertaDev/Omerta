@@ -15,11 +15,14 @@ import { COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, assertCommercialPremisesSource
 import { COMPANY_BANK_SOURCE_CURRENT_PINS, assertCompanyBankSourceTransfer } from './rc1-company-bank-source-compatibility.js';
 import { COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS, assertCompanyLogisticsHubSourceTransfer } from './rc1-company-logistics-hub-source-compatibility.js';
 import { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';
+import { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 function operatorEnvelope(file, input, predecessorGuard) {
  const text = input.replaceAll('\r\n', '\n');
- const cooperative = Object.hasOwn(BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, file) && hash(text) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file] ? assertBuyerCooperativeSourceTransfer(file, text) : null;
- const hubText = cooperative?.baselineText || text;
+ const opportunity = Object.hasOwn(COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, file) && hash(text) === COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file] ? assertCompanyOpportunitySourceTransfer(file, text) : null;
+ const cooperativeText = opportunity?.baselineText || text;
+ const cooperative = Object.hasOwn(BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, file) && hash(cooperativeText) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file] ? assertBuyerCooperativeSourceTransfer(file, cooperativeText) : null;
+ const hubText = cooperative?.baselineText || cooperativeText;
  const hub = Object.hasOwn(COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS, file) && hash(hubText) === COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS[file] ? assertCompanyLogisticsHubSourceTransfer(file, hubText) : null;
  const bankText = hub?.baselineText || hubText;
  const bank = Object.hasOwn(COMPANY_BANK_SOURCE_CURRENT_PINS, file) && hash(bankText) === COMPANY_BANK_SOURCE_CURRENT_PINS[file] ? assertCompanyBankSourceTransfer(file, bankText) : null;
@@ -34,7 +37,7 @@ function operatorEnvelope(file, input, predecessorGuard) {
  const transfer = assertCompanyOperatorSourceTransfer(file, operatorText);
  const home = file === 'src/server.js' ? assertCityHomesLeagueServerTransfer(transfer.baselineText) : null;
  const predecessor = predecessorGuard(home?.baselineText || transfer.baselineText);
- return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
+ return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
 }
 export const CITY_HOMES_SERVER_PIN = 'f66e2f5a40394d3dc1ac92a779486fa0cb7b5a3d005eae2f4a99214e65105dd6';
 export const CITY_HOMES_SOURCE_BASE_REVISION = '9506c37e18bbc1be45ae8150951e42451eb909de';

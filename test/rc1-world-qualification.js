@@ -1,3 +1,4 @@
+import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from '../tools/rc1-company-opportunity-source-compatibility.js';
 import { BUYER_COOPERATIVE_SOURCE_TRANSFER } from '../tools/rc1-buyer-cooperative-source-compatibility.js';
 import { COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER } from '../tools/rc1-company-logistics-hub-source-compatibility.js';
 import { COMPANY_BANK_SOURCE_TRANSFER } from '../tools/rc1-company-bank-source-compatibility.js';
@@ -564,7 +565,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 30);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 31);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER);
 assert.match(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer.scope, /require separate current-source workflow proofs/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
@@ -795,3 +796,5 @@ assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer, COMPANY_
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer, COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);
 
 assert.deepEqual(WORLD_RECOVERY_REVIEW.buyerCooperativeSourceReviewTransfer, BUYER_COOPERATIVE_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOpportunitySourceReviewTransfer, COMPANY_OPPORTUNITY_SOURCE_TRANSFER);
