@@ -2,6 +2,8 @@ process.env.RATE_LIMIT = 'off';
 process.env.JWT_SECRET = 'company-operator-isolated-regression-secret-2026';
 process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.DEPOT_PILOT = 'on';
+process.env.MARKET_SEED = 'company-operator-isolated-market-seed';
+process.env.MOD_KEY = 'company-operator-isolated-mod-key';
 if (process.argv.includes('--postgres')) {
   if (!process.env.COMPANY_OPERATOR_TEST_DATABASE_URL) throw new Error('Use a fresh owned COMPANY_OPERATOR_TEST_DATABASE_URL.');
   const url = new URL(process.env.COMPANY_OPERATOR_TEST_DATABASE_URL);
