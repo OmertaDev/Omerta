@@ -2380,6 +2380,111 @@
       "table_name": "game_employment_requests",
       "name": "game_employment_requests_pkey",
       "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_check",
+      "definition": "CHECK (deadline > created_at)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_check1",
+      "definition": "CHECK (status = 'completed'::text AND completed_stages = 3 OR status <> 'completed'::text AND completed_stages < 3)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_commitment_id_fkey",
+      "definition": "FOREIGN KEY (commitment_id) REFERENCES delivery_commitments(id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_commitment_id_key",
+      "definition": "UNIQUE (commitment_id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_completed_stages_check",
+      "definition": "CHECK (completed_stages >= 0 AND completed_stages <= 3)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_lease_id_fkey",
+      "definition": "FOREIGN KEY (lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_lease_id_key",
+      "definition": "UNIQUE (lease_id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 10)"
+    },
+    {
+      "table_name": "company_workflows",
+      "name": "company_workflows_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'failed'::text]))"
+    },
+    {
+      "table_name": "company_workflow_receipts",
+      "name": "company_workflow_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_workflow_receipts",
+      "name": "company_workflow_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_workflow_receipts",
+      "name": "company_workflow_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "company_workflow_proofs",
+      "name": "company_workflow_proofs_check",
+      "definition": "CHECK (stage = 'delivery'::text AND source_type = 'finance'::text OR stage <> 'delivery'::text AND source_type = 'depot_journal'::text)"
+    },
+    {
+      "table_name": "company_workflow_proofs",
+      "name": "company_workflow_proofs_pkey",
+      "definition": "PRIMARY KEY (source_type, source_id)"
+    },
+    {
+      "table_name": "company_workflow_proofs",
+      "name": "company_workflow_proofs_source_type_check",
+      "definition": "CHECK (source_type = ANY (ARRAY['depot_journal'::text, 'finance'::text]))"
+    },
+    {
+      "table_name": "company_workflow_proofs",
+      "name": "company_workflow_proofs_stage_check",
+      "definition": "CHECK (stage = ANY (ARRAY['procurement'::text, 'custody'::text, 'delivery'::text]))"
+    },
+    {
+      "table_name": "company_workflow_proofs",
+      "name": "company_workflow_proofs_workflow_id_fkey",
+      "definition": "FOREIGN KEY (workflow_id) REFERENCES company_workflows(id)"
     }
   ],
   "removed": [
@@ -3198,6 +3303,36 @@
       "receipt",
       "request_key",
       "terms"
+    ],
+    "company_workflows": [
+      "account_id",
+      "commitment_id",
+      "completed_stages",
+      "created_at",
+      "deadline",
+      "depot_id",
+      "id",
+      "lease_id",
+      "next_run_at",
+      "original_character",
+      "quantity",
+      "status",
+      "terms"
+    ],
+    "company_workflow_receipts": [
+      "account_id",
+      "created_at",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "company_workflow_proofs": [
+      "created_at",
+      "receipt",
+      "source_id",
+      "source_type",
+      "stage",
+      "workflow_id"
     ]
   }
 }
