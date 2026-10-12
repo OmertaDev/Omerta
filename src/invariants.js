@@ -12,6 +12,7 @@ import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
 import { logisticsHubInvariant } from './companylogisticshubsinvariants.js';
+import { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -113,6 +114,7 @@ const KNOWN_REASONS = {
     'favor:',
     'intel_job:', 'employment:reserve:', 'employment:wage:', 'employment:refund:', 'employment:estate:loot:',
     'commercial_premises:rent:pay', 'commercial_premises:rent:receive',
+    'buyer_cooperative:fund', 'buyer_cooperative:refund', 'buyer_cooperative:death_cash', 'buyer_cooperative:loot_cash',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -140,6 +142,7 @@ const KNOWN_REASONS = {
     // the Safe's genesis reserve, reconciled by the 'drop claims ledgered' check below).
     'drop:'],
   cb: ['crime:', 'craft:', 'gun:buy:', 'jump:', 'death:', 'exchange:', 'onboard:', 'cook:'],
+  gin: ['buyer_cooperative:claim', 'buyer_cooperative:death_gin'],
   ammo: ['melt', 'melt:tithe', 'craft:ammo', 'ammo:buy', 'jump', 'fire', 'death:', 'exchange:', 'gang:dissolved', 'convoy:', 'world:', 'port:', 'contract:', 'family:'],
 };
 
@@ -621,9 +624,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
     push(`franchise rounding:${license.id}`, paid, Math.min(Number(license.royalty_cap), expected), 0);
   }
   push('franchise royalty provenance', royaltyFaults, 0, 0);
-  push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL")), 0);
-  push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL"), 0);
-  push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL")), 0);
+  push('depot procurement', -depotCash('restock_escrow'), -(await sum(pool, "currency='cash' AND reason='market:order' AND character_id IS NULL AND (counterparty IS NULL OR counterparty NOT IN (SELECT id FROM buyer_cooperatives))")), 0);
+  push('depot refunds', depotCash('restock_refund'), await sum(pool, "currency='cash' AND reason='market:refund' AND character_id IS NULL AND (counterparty IS NULL OR counterparty NOT IN (SELECT id FROM buyer_cooperatives))"), 0);
+  push('depot listing fees', -depotCash('restock_fee'), -(await sum(pool, "currency='cash' AND reason='market:list' AND character_id IS NULL AND (counterparty IS NULL OR counterparty NOT IN (SELECT id FROM buyer_cooperatives))")), 0);
   push('depot death burn', -depotCash('death'), -(await sum(pool, "currency='cash' AND reason='depot:death'")), 0);
   push('warehouse rent ledger', depotCash('warehouse_rent'), -(await sum(pool, "currency='cash' AND reason='warehouse:rent'")), 0);
   push('warehouse journal ownership', depotJournal.filter(j => j.lease_id ? !warehouseLeases.some(l =>
@@ -681,6 +684,16 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('company bank portfolio authority and lifetime budget', bankPortfolios.issues.length, 0, 0, { issues: bankPortfolios.issues });
   const hubs = await logisticsHubInvariant(pool);
   push(hubs.name, hubs.defects.length, 0, 0, { defects: hubs.defects });
+  const cooperatives = await runBuyerCooperativeInvariants(pool);
+  const cooperativeFunding = -(await sum(pool, "currency='cash' AND character_id IS NOT NULL AND reason IN ('buyer_cooperative:fund','buyer_cooperative:refund')"));
+  const cooperativeMarket = await sum(pool, "currency='cash' AND character_id IS NULL AND reason IN ('market:order','market:list','market:refund') AND counterparty IN (SELECT id FROM buyer_cooperatives)");
+  const cooperativeDeath = await sum(pool, "currency='cash' AND character_id IS NULL AND reason IN ('buyer_cooperative:death_cash','buyer_cooperative:loot_cash')");
+  push('buyer cooperative cash custody', cooperatives.cashEscrow, cooperativeFunding + cooperativeMarket + cooperativeDeath, 0);
+  const cooperativeCapturedGin = await one(pool, "SELECT COALESCE(SUM(gin_delta),0) s FROM buyer_cooperative_journal WHERE kind='settle'");
+  const cooperativeClaimedGin = await sum(pool, "currency='gin' AND reason='buyer_cooperative:claim'");
+  const cooperativeDeathGin = await sum(pool, "currency='gin' AND reason='buyer_cooperative:death_gin'");
+  push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);
+  push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);

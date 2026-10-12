@@ -2835,6 +2835,216 @@
       "table_name": "company_logistics_hubs",
       "name": "company_logistics_hubs_warehouse_lease_id_fkey",
       "definition": "FOREIGN KEY (warehouse_lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_cash_delta_check",
+      "definition": "CHECK (cash_delta >= '-810000'::integer AND cash_delta <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_gin_delta_check",
+      "definition": "CHECK (gin_delta >= '-8'::integer AND gin_delta <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['fund'::text, 'post_order'::text, 'settle'::text, 'claim'::text, 'death'::text]))"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check",
+      "definition": "CHECK (funded_cash = 0 OR funded_cash = funding_required)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check1",
+      "definition": "CHECK (cash_entitlement >= 0 AND cash_entitlement <= funding_required)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check2",
+      "definition": "CHECK (gin_entitlement >= 0 AND gin_entitlement <= unit_share)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check3",
+      "definition": "CHECK (cash_claimed >= 0 AND cash_claimed <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check4",
+      "definition": "CHECK (gin_claimed >= 0 AND gin_claimed <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check5",
+      "definition": "CHECK (death_cash >= 0 AND death_cash <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check6",
+      "definition": "CHECK (death_gin >= 0 AND death_gin <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check7",
+      "definition": "CHECK (death_loot >= 0 AND death_loot <= death_cash)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check8",
+      "definition": "CHECK ((cash_claimed + death_cash) <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check9",
+      "definition": "CHECK ((gin_claimed + death_gin) <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_cooperative_id_position_key",
+      "definition": "UNIQUE (cooperative_id, \"position\")"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_funding_required_check",
+      "definition": "CHECK (funding_required >= 50 AND funding_required <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_pkey",
+      "definition": "PRIMARY KEY (cooperative_id, account_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_position_check",
+      "definition": "CHECK (\"position\" >= 0 AND \"position\" <= 2)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_unit_share_check",
+      "definition": "CHECK (unit_share >= 1 AND unit_share <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_cooperative_id_key",
+      "definition": "UNIQUE (cooperative_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_pkey",
+      "definition": "PRIMARY KEY (order_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_cash_balance_check",
+      "definition": "CHECK (cash_balance >= 0 AND cash_balance <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_check",
+      "definition": "CHECK (fee_paid >= 0 AND fee_paid <= fee_cap)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_check1",
+      "definition": "CHECK (purchased_units >= 0 AND purchased_units <= units)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_fee_cap_check",
+      "definition": "CHECK (fee_cap >= 1 AND fee_cap <= 10000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_gin_balance_check",
+      "definition": "CHECK (gin_balance >= 0 AND gin_balance <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_order_id_key",
+      "definition": "UNIQUE (order_id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_organizer_account_fkey",
+      "definition": "FOREIGN KEY (organizer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_organizer_character_fkey",
+      "definition": "FOREIGN KEY (organizer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['funding'::text, 'live'::text, 'settled'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_terms_hash_check",
+      "definition": "CHECK (char_length(terms_hash) = 64)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_unit_price_check",
+      "definition": "CHECK (unit_price >= 50 AND unit_price <= 100000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_units_check",
+      "definition": "CHECK (units >= 1 AND units <= 8)"
     }
   ],
   "removed": [
@@ -3778,6 +3988,62 @@
       "receipt",
       "request_key",
       "terms"
+    ],
+    "buyer_cooperatives": [
+      "cash_balance",
+      "created_at",
+      "district",
+      "fee_cap",
+      "fee_paid",
+      "funding_deadline",
+      "gin_balance",
+      "id",
+      "organizer_account",
+      "organizer_character",
+      "published",
+      "purchased_units",
+      "status",
+      "terms",
+      "terms_hash",
+      "unit_price",
+      "units"
+    ],
+    "buyer_cooperative_members": [
+      "account_id",
+      "cash_claimed",
+      "cash_entitlement",
+      "cooperative_id",
+      "death_cash",
+      "death_gin",
+      "death_loot",
+      "funded_cash",
+      "funding_required",
+      "gin_claimed",
+      "gin_entitlement",
+      "is_dead",
+      "original_character",
+      "position",
+      "unit_share"
+    ],
+    "buyer_cooperative_orders": [
+      "cooperative_id",
+      "order_id"
+    ],
+    "buyer_cooperative_receipts": [
+      "account_id",
+      "created_at",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "buyer_cooperative_journal": [
+      "cash_delta",
+      "cooperative_id",
+      "created_at",
+      "gin_delta",
+      "id",
+      "kind",
+      "ledger_ids"
     ]
   }
 }

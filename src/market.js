@@ -22,6 +22,7 @@ import { reservedQuantity, closeDeliveriesAtDeath } from './deliverybook.js';
 import { GameError, bus, ledger, notify, skillMult, trunkCap, npcTier, bumpStanding, bumpMastery, masteryFx } from './game.js';
 import { BLACK_MARKET as MARKET, GOODS, SKILLS, UNDERWORLD , jailed, safeHoused, usd, carOf , districtName } from './rules.js';
 import { logCarCollect } from './collection.js';
+import { buyerCooperativeOrderBinding, settleBuyerCooperativeOrder } from './buyercooperativecustody.js';
 
 const uid = () => crypto.randomUUID();
 const expired = (l) => new Date(l.expires_at) <= new Date();
@@ -269,6 +270,7 @@ export async function claimOrder(ch, listingId, client, h) {
   const l = (await client.query(
     "SELECT * FROM market_listings WHERE id=$1 AND kind='order' AND seller_character=$2 FOR UPDATE", [listingId, ch.id])).rows[0];
   if (!l) throw new GameError('no_order', 'Not your order.');
+  if (await buyerCooperativeOrderBinding(client, l.id)) throw new GameError('cooperative_order', 'Collect shared inventory through its buyer cooperative.');
   if (l.depot_id) throw new GameError('business_order', 'Receive this inventory through its depot.');
   if (ch.loc !== l.district) throw new GameError('district', `The warehouse is at ${districtName(l.district)} — be there.`, { district: l.district });
   const avail = Number(l.filled_qty);
@@ -365,6 +367,7 @@ export async function cancelListing(ch, listingId, client, h) {
   const l = (await client.query(
     "SELECT * FROM market_listings WHERE id=$1 AND status IN ('live','expired') FOR UPDATE", [listingId])).rows[0];
   if (l?.depot_id) throw new GameError('business_order', 'Cancel this procurement through its depot.');
+  if (l && await buyerCooperativeOrderBinding(client, l.id)) throw new GameError('cooperative_order', 'Settle shared procurement through its buyer cooperative.');
   if (l && await reservedQuantity(client, l.id)) throw new GameError('committed_order', 'Accepted supplier quantities cannot be cancelled.');
   if (!l || l.seller_character !== ch.id) throw new GameError('no_listing', 'Not your listing.');
   // audit #5 (reserve-lock grief): a standing bid holds the hammer — EXCEPT a bid that can never
@@ -567,6 +570,12 @@ export async function sweepMarket(pool) {
         if (!l) { await client.query('COMMIT'); continue; } // raced a buy/cancel — nothing to do
         const h = { ledger, notify };
         if (l.kind === 'order') {
+          if (await buyerCooperativeOrderBinding(client, l.id)) {
+            await settleBuyerCooperativeOrder(client, l.id, ledger, { cancel: true });
+            await client.query('COMMIT');
+            lapsed++;
+            continue;
+          }
           // an expired order refunds its un-filled escrow to a LIVING poster (a dead poster's
           // escrow already burned in the estate — this is only a race guard); deliveries stay
           // claimable, so the row flips to 'expired' rather than vanishing.
@@ -643,7 +652,7 @@ export async function voidListingsAtDeath(client, victimId, killerCh, lootRate =
   await closeDeliveriesAtDeath(client, victimId);
   let selfRefund = 0, looted = 0;
   const rows = (await client.query(
-    "SELECT * FROM market_listings WHERE seller_character=$1 AND status IN ('live','expired') FOR UPDATE", [victimId])).rows;
+    "SELECT * FROM market_listings WHERE seller_character=$1 AND status IN ('live','expired') AND id NOT IN (SELECT order_id FROM buyer_cooperative_orders) FOR UPDATE", [victimId])).rows;
   for (const l of rows) {
     if (l.kind === 'order') {
       // the dead poster's un-filled escrow leaves the market. On a PLAYER fire-kill (lootRate > 0)
@@ -669,7 +678,7 @@ export async function voidListingsAtDeath(client, victimId, killerCh, lootRate =
       await notify(client, l.bidder, 'market_outbid', { listing: l.id, voided: true });
     }
   }
-  await client.query("DELETE FROM market_listings WHERE seller_character=$1", [victimId]);
+  await client.query("DELETE FROM market_listings WHERE seller_character=$1 AND id NOT IN (SELECT order_id FROM buyer_cooperative_orders)", [victimId]);
   return { selfRefund, looted };
 }
 // the dead man's standing BIDS burn (the dead-funder precedent) — the auctions reopen.
