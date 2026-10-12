@@ -108,8 +108,8 @@ try {
     const posted=new Promise(resolve=>{ postedSignal=resolve; }), release=new Promise(resolve=>{ releaseLaunch=resolve; }), deathReached=new Promise(resolve=>{ deathSignal=resolve; });
     const launching=single(raced.members[0],async(ch,c,h)=>{ const result=await Cooperative.launchBuyerCooperative(ch,raced.id,{ termsHash:raced.termsHash },'race-launch',c,h); postedSignal(); await release; return result; }); await posted;
     const dying=pair(killer,raced.members[1],(ch,target,c,h)=>{ const query=c.query.bind(c); c.query=(sql,...args)=>{ if(sql==='SELECT * FROM buyer_cooperatives WHERE id=$1 FOR UPDATE') { deathPid=c.processID; deathSignal(); } return query(sql,...args); }; return runEstate(c,h,target,ch.name,{ killerCh:ch,loot:true }); });
-    await deathReached; await waiting(deathPid); releaseLaunch(); const launched=await launching; raced.orderId=launched.orderId;
-    await assert.rejects(dying,e=>e.reason==='source_changed'); assert.equal((await app.pool.query('SELECT alive FROM characters WHERE id=$1',[raced.members[1].id])).rows[0].alive,true);
+    await deathReached; await waiting(deathPid); const rejectedDeath=assert.rejects(dying,e=>e.reason==='source_changed');
+    releaseLaunch(); const [launched]=await Promise.all([launching,rejectedDeath]); raced.orderId=launched.orderId; assert.equal((await app.pool.query('SELECT alive FROM characters WHERE id=$1',[raced.members[1].id])).rows[0].alive,true);
     const retried=await pair(killer,raced.members[1],(ch,target,c,h)=>runEstate(c,h,target,ch.name,{ killerCh:ch,loot:true })); await heir(raced.members[1],retried.heirId); for(const p of [raced.members[0],raced.members[2]]) await claim(raced,p);
     const settleRace=await fixture(); await ready(settleRace); await fill(settleRace,3); await app.pool.query("UPDATE market_listings SET expires_at=clock_timestamp()-interval '1 second' WHERE id=$1",[settleRace.orderId]);
     const results=await Promise.allSettled([Market.sweepMarket(app.pool),call(settleRace.members[1],'POST',`/v1/buyer-cooperatives/${settleRace.id}/settle`,{ cancel:false },'race-settle')]); assert(results.every(result=>result.status==='fulfilled'));
