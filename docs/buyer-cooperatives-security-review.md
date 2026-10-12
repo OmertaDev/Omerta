@@ -1,6 +1,9 @@
 # Buyer cooperative core review — 2026-10-12
 
 Implementation: `14c8c548891059dd60bf14fb58162b5e904d4f84`.
+Final proof harness/source tree: `4070cce91657ffcc9a6028993d9e222af7891d7a`.
+Its later changes are test isolation/version labeling only; runtime core/schema bytes
+remain unchanged from implementation `14c8c548...`.
 Base: `22a2c9995939d9b7dd7b21be346ec56b393177d7`.
 Phase: isolated core and pure custody hooks, **before shared integration**.
 Financial activation remains OFF. This core is not a standalone release clearance.
@@ -143,13 +146,21 @@ failure, not passed concurrency evidence; the corrected source-pinned native run
 Node `v24.19.0`; native Windows PostgreSQL `18.4`, role `pilot_runner`. Known local
 cluster identity was verified read-only first. The runner requires its own empty
 database and accepts only `BUYER_COOPERATIVE_TEST_DATABASE_URL`; ambient `DATABASE_URL`
-is refused. Final source-pinned native database: `buyer_cooperative_14c8c548`.
+is refused. The harness allows the exact owned local pilot role/no-password ports
+35439/35449 with PostgreSQL 18.4, or the local hosted-CI postgres/pgcheck service on
+5432 with PostgreSQL 16 or 18.4. It rejects remote endpoints, wrong credentials,
+non-cooperative database names, query/fragment overrides, nonempty databases, and
+role/database/version mismatch. Guard allow/refusal cases are executed in both modes.
+Final source-pinned **actually executed PostgreSQL 18.4** database:
+`buyer_cooperative_ci_guard_retest`. Hosted-CI PostgreSQL 16/5432 and optional local
+35449 execution were not performed here and remain mandatory coordinator/CI checks;
+no local PostgreSQL 16 result is claimed. Native summaries use the actual server version.
 
 Passing commands, exit 0:
 
 ```
 node test/buyercooperatives.js
-BUYER_COOPERATIVE_TEST_DATABASE_URL=postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_14c8c548 node test/buyercooperatives.js --postgres
+BUYER_COOPERATIVE_TEST_DATABASE_URL=postgresql://pilot_runner@127.0.0.1:35439/buyer_cooperative_ci_guard_retest node test/buyercooperatives.js --postgres
 node --check src/buyercooperatives.js
 node --check src/buyercooperativecustody.js
 node --check src/buyercooperativeinvariants.js
