@@ -28,7 +28,7 @@ const manifest = {
   },
   city_home_storage_items: {
     constraints: ['pkey', 'owner_scope_check', 'item_state_check', 'owner_id_fkey',
-      'home_key_authority_token_fkey', 'item_id_owner_scope_owner_id_item_s_fkey'],
+      'home_key_authority_token_fkey', 'item_id_owner_scope_owner_id_item__fkey'],
     columns: ['item_id', 'owner_scope', 'owner_id', 'item_state', 'home_key', 'authority_token', 'created_at'],
   },
   city_npc_favors: {
@@ -74,7 +74,10 @@ const tables = new Set(CITY_GAMEPLAY_MIGRATION_TABLES);
 const added = new Set(CITY_GAMEPLAY_MIGRATION_ADDED_KEYS), replaced = new Set(CITY_GAMEPLAY_MIGRATION_REPLACED_KEYS);
 const constraintKey = row => `${row.table_name}.${row.name}`;
 const columnKey = row => `${row.table_name}.${row.column_name}`;
-const sortBy = (rows, key) => [...rows].sort((a, b) => key(a).localeCompare(key(b)));
+// Match the original native oracle's separate PostgreSQL name ordering, including
+// tables that prefix another table name. Locale-sorting a joined key moves them.
+const compare = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+const sortBy = (rows, key) => [...rows].sort((a, b) => compare(a.table_name, b.table_name) || compare(key(a), key(b)));
 const constraintScope = row => tables.has(row.table_name) || added.has(constraintKey(row)) || replaced.has(constraintKey(row));
 const columnScope = row => tables.has(row.table_name) || addedColumns.includes(columnKey(row));
 const expectedKeys = [...Object.entries(manifest).flatMap(([table, entry]) => entry.constraints.map(name => `${table}.${table}_${name}`)),
