@@ -623,6 +623,8 @@ const DISPOSITION = {
   company_succession_receipts: 'metadata', // original-account canonical opening receipts survive later heirs
   company_operators: 'metadata', // original-account owner consent is historical; death removes live depot authority
   company_operator_receipts: 'metadata', // immutable original-account canonical execution receipts survive heirs
+  game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
+  game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
   depot_brand_licenses: 'ledger', // immutable signed brand terms and earned receipt counters retain original parties; closed/dead businesses receive no further royalty and heirs inherit no licence authority
@@ -686,7 +688,7 @@ for (const [t, kind] of Object.entries(DISPOSITION)) {
   // `favors` is handled by an UPDATE and tripped this; the four tables already relying on a status
   // UPDATE passed only because their names happened to appear quoted somewhere else in src/.
   if (kind === 'wiped' || kind === 'special') assert(
-    new RegExp(`DELETE FROM ${t}\\b|UPDATE ${t} SET status=|['"]${t}['"]`).test(allSrc),
+    new RegExp(`DELETE FROM ${t}\\b|UPDATE ${t} SET (?:status|state)=|['"]${t}['"]`).test(allSrc),
     `${t} is classified '${kind}' but no death-cleanup DELETE / resolving status UPDATE for it exists in src/ — the estate wipe is missing`);
   // A FOURTH shape, found the same way the third was: `boxing_title` holds ONE row forever and a
   // death does not remove a row from it — it clears the dead player's claim ON it (the belt is
