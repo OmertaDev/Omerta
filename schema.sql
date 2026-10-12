@@ -8024,3 +8024,40 @@ CREATE TABLE IF NOT EXISTS strategy_league_entries (
   UNIQUE(league_id,account_id)
 );
 CREATE INDEX IF NOT EXISTS ix_strategy_league_entries_account ON strategy_league_entries(account_id,joined_at);
+-- Prepaid finite game employment; canonical deliveries are assigned globally once.
+CREATE TABLE IF NOT EXISTS game_employment_jobs (
+  id TEXT PRIMARY KEY,
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  employer_character TEXT NOT NULL REFERENCES characters(id),
+  employer_account TEXT NOT NULL REFERENCES accounts(id),
+  terms JSONB NOT NULL,
+  state TEXT NOT NULL DEFAULT 'open' CHECK(state IN ('open','closed')),
+  total_cash NUMERIC NOT NULL CHECK(total_cash>0 AND total_cash<=500000),
+  escrow_cash NUMERIC NOT NULL CHECK(escrow_cash>=0),
+  paid_cash NUMERIC NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+  refunded_cash NUMERIC NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+  burned_cash NUMERIC NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+  expires_at TIMESTAMPTZ NOT NULL,
+  CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash),
+  CHECK(state<>'closed' OR escrow_cash=0)
+);
+CREATE TABLE IF NOT EXISTS game_employment_assignments (
+  id TEXT PRIMARY KEY,
+  employment_id TEXT NOT NULL REFERENCES game_employment_jobs(id),
+  commitment_id TEXT NOT NULL UNIQUE REFERENCES delivery_commitments(id),
+  worker_character TEXT NOT NULL REFERENCES characters(id),
+  worker_account TEXT NOT NULL REFERENCES accounts(id),
+  worker_kind TEXT NOT NULL CHECK(worker_kind IN ('human','agent')),
+  state TEXT NOT NULL DEFAULT 'assigned' CHECK(state IN ('assigned','paid')),
+  accepted_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  paid_at TIMESTAMPTZ,
+  CHECK((state='paid')=(paid_at IS NOT NULL))
+);
+CREATE TABLE IF NOT EXISTS game_employment_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  action TEXT NOT NULL CHECK(action IN ('create','accept','claim','close')),
+  request_key TEXT NOT NULL,
+  terms JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  PRIMARY KEY(account_id,action,request_key)
+);
