@@ -158,8 +158,8 @@ try {
     assert.equal(a+b-await cash(contention.tenant)-await cash(contention.rival),300); assert.equal(await cash(contention.owner),landlord+300);
     const rollback=await fixture(),left=await cash(rollback.tenant),right=await cash(rollback.owner);
     const originalConnect=app.pool.connect; const witnessed={ rent:0,lease:0 };
-    app.pool.connect=async function(...args) {
-      const client=await originalConnect.apply(this,args),originalQuery=client.query,originalRelease=client.release;
+    const wrapClient=client=>{
+      const originalQuery=client.query,originalRelease=client.release;
       client.query=async function(sql,values,...rest) {
         if (sql.startsWith('INSERT INTO commercial_premises_requests') && values?.[1]==='lease' && values?.[2]==='api-rollback') throw new Error('injected API final receipt failure');
         const response=await originalQuery.call(this,sql,values,...rest);
@@ -169,6 +169,16 @@ try {
       };
       client.release=function(...releaseArgs) { client.query=originalQuery; client.release=originalRelease; return originalRelease.apply(this,releaseArgs); };
       return client;
+    };
+    app.pool.connect=function(...args) {
+      if (typeof args.at(-1)==='function') {
+        const callback=args.pop();
+        return originalConnect.call(this,...args,(error,client)=>{
+          if (error) return callback(error);
+          const wrapped=wrapClient(client); callback(null,wrapped,wrapped.release);
+        });
+      }
+      return originalConnect.apply(this,args).then(wrapClient);
     };
     try { assert.equal((await call(rollback.tenant,'POST',`${base}/offers/${rollback.offer.id}/lease`,leaseTerms(),'api-rollback',true)).code,500); }
     finally { app.pool.connect=originalConnect; }
