@@ -1,6 +1,6 @@
 # Generated HTTP route catalog
 
-> 906 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
+> 910 literal registrations extracted from `src/server.js` and `src/routes/`. Runtime authority remains `GET /openapi.json`.
 
 ## Route groups
 
@@ -45,13 +45,14 @@
 | commission | 7 |
 | sov | 6 |
 | mentor | 6 |
-| city | 5 |
+| intel-forecasts | 5 |
 | supply-tenders | 5 |
 | armory | 5 |
 | skills | 5 |
 | auction | 5 |
 | phone | 5 |
 | soldiers | 5 |
+| city | 4 |
 | deliveries | 4 |
 | character | 4 |
 | garage | 4 |
@@ -239,11 +240,11 @@
 | GET | `/v1/art/motion` | public | platform-core | [src/server.js:662](../../src/server.js#L662) | — |
 | POST | `/v1/assets/:id/buy` | authenticated | economy-ledger | [src/server.js:1704](../../src/server.js#L1704) | `E.buyAsset` |
 | POST | `/v1/assets/:id/sell` | authenticated | economy-ledger | [src/server.js:1706](../../src/server.js#L1706) | `E.sellAsset` |
-| GET | `/v1/auction` | authenticated | platform-core | [src/server.js:2307](../../src/server.js#L2307) | `Auction.auctionBoard` |
-| POST | `/v1/auction/:lotId/bid` | authenticated | platform-core | [src/server.js:2309](../../src/server.js#L2309) | `Auction.bidAuction` |
-| POST | `/v1/auction/consign` | authenticated | platform-core | [src/server.js:2312](../../src/server.js#L2312) | `Auction.consignTrophy` |
-| POST | `/v1/auction/consign/:id/bid` | authenticated | platform-core | [src/server.js:2314](../../src/server.js#L2314) | `Auction.bidConsignment` |
-| POST | `/v1/auction/consign/:id/cancel` | authenticated | platform-core | [src/server.js:2316](../../src/server.js#L2316) | `Auction.reclaimConsignment` |
+| GET | `/v1/auction` | authenticated | platform-core | [src/server.js:2306](../../src/server.js#L2306) | `Auction.auctionBoard` |
+| POST | `/v1/auction/:lotId/bid` | authenticated | platform-core | [src/server.js:2308](../../src/server.js#L2308) | `Auction.bidAuction` |
+| POST | `/v1/auction/consign` | authenticated | platform-core | [src/server.js:2311](../../src/server.js#L2311) | `Auction.consignTrophy` |
+| POST | `/v1/auction/consign/:id/bid` | authenticated | platform-core | [src/server.js:2313](../../src/server.js#L2313) | `Auction.bidConsignment` |
+| POST | `/v1/auction/consign/:id/cancel` | authenticated | platform-core | [src/server.js:2315](../../src/server.js#L2315) | `Auction.reclaimConsignment` |
 | POST | `/v1/auth/agent-key` | authenticated | platform-core | [src/server.js:1496](../../src/server.js#L1496) | `A.acknowledgeGuestBootstrap` |
 | POST | `/v1/auth/guest` | public | platform-core | [src/server.js:1388](../../src/server.js#L1388) | — |
 | POST | `/v1/auth/guest/bootstrap/ack` | authenticated | platform-core | [src/server.js:1409](../../src/server.js#L1409) | `A.acknowledgeGuestBootstrap` |
@@ -254,7 +255,7 @@
 | GET | `/v1/auth/x/callback` | public | platform-core | [src/server.js:1461](../../src/server.js#L1461) | `A.xOAuthCallback` |
 | POST | `/v1/auth/x/start` | public | platform-core | [src/server.js:1429](../../src/server.js#L1429) | `A.upgradeAccount` |
 | GET | `/v1/avatar/:seed` | public | platform-core | [src/server.js:688](../../src/server.js#L688) | — |
-| GET | `/v1/bank` | authenticated | platform-core | [src/server.js:2287](../../src/server.js#L2287) | `Bank.bankBoard` |
+| GET | `/v1/bank` | authenticated | platform-core | [src/server.js:2286](../../src/server.js#L2286) | `Bank.bankBoard` |
 | POST | `/v1/bank/:dir` | authenticated | platform-core | [src/server.js:1672](../../src/server.js#L1672) | `G.withCharacter` |
 | GET | `/v1/block` | authenticated | social-combat | [src/server.js:2521](../../src/server.js#L2521) | `Block.streetsBoard` |
 | GET | `/v1/bloodline` | authenticated | platform-core | [src/server.js:3383](../../src/server.js#L3383) | `Bloodline.bloodlineBoard` |
@@ -277,8 +278,8 @@
 | POST | `/v1/boxing/recruit` | authenticated | vice-competition | [src/routes/boxing.js:14](../../src/routes/boxing.js#L14) | `Boxing.recruitFighter` |
 | POST | `/v1/boxing/train` | authenticated | vice-competition | [src/routes/boxing.js:16](../../src/routes/boxing.js#L16) | `Boxing.trainFighter` |
 | POST | `/v1/broadcast/shared` | authenticated | platform-core | [src/server.js:1641](../../src/server.js#L1641) | `G.track` |
-| GET | `/v1/brokers` | authenticated | platform-core | [src/server.js:2328](../../src/server.js#L2328) | `Brokers.brokerBoard` |
-| POST | `/v1/brokers/activate` | authenticated | platform-core | [src/server.js:2330](../../src/server.js#L2330) | `Brokers.activate` |
+| GET | `/v1/brokers` | authenticated | platform-core | [src/server.js:2327](../../src/server.js#L2327) | `Brokers.brokerBoard` |
+| POST | `/v1/brokers/activate` | authenticated | platform-core | [src/server.js:2329](../../src/server.js#L2329) | `Brokers.activate` |
 | GET | `/v1/bulletin` | authenticated | engagement-growth | [src/server.js:3642](../../src/server.js#L3642) | `bulletinBoard` |
 | POST | `/v1/bulletin/claim` | authenticated | platform-core | [src/server.js:3647](../../src/server.js#L3647) | `G.withCharacter` |
 | GET | `/v1/business` | authenticated | enterprise-logistics | [src/server.js:2144](../../src/server.js#L2144) | `Business.businessesOf` |
@@ -339,7 +340,6 @@
 | GET | `/v1/circle` | authenticated | engagement-growth | [src/server.js:3267](../../src/server.js#L3267) | `Circle.circleBoard` |
 | GET | `/v1/city` | public | platform-core | [src/server.js:3597](../../src/server.js#L3597) | — |
 | POST | `/v1/city/encounters/:actorId` | authenticated | platform-core | [src/routes/city.js:14](../../src/routes/city.js#L14) | `recordCityEncounter` |
-| GET | `/v1/city/homes` | authenticated | platform-core | [src/routes/cityhomes.js:8](../../src/routes/cityhomes.js#L8) | `cityHomes` |
 | GET | `/v1/city/intel` | authenticated | platform-core | [src/routes/city.js:10](../../src/routes/city.js#L10) | `cityIntel` |
 | GET | `/v1/city/presence` | authenticated | platform-core | [src/routes/city.js:6](../../src/routes/city.js#L6) | `cityPresence` |
 | GET | `/v1/citywide` | authenticated | world-progression | [src/server.js:2525](../../src/server.js#L2525) | `Citywide.citywideBoard` |
@@ -385,7 +385,7 @@
 | POST | `/v1/convoy/load` | authenticated | enterprise-logistics | [src/routes/convoy.js:11](../../src/routes/convoy.js#L11) | `Convoy.loadConvoy` |
 | POST | `/v1/convoy/rig/:kind` | authenticated | enterprise-logistics | [src/routes/convoy.js:22](../../src/routes/convoy.js#L22) | `Convoy.buyRig` |
 | POST | `/v1/convoy/rig/upgrade` | authenticated | enterprise-logistics | [src/routes/convoy.js:24](../../src/routes/convoy.js#L24) | `Convoy.upgradeRig` |
-| GET | `/v1/convoys` | authenticated | enterprise-logistics | [src/server.js:2379](../../src/server.js#L2379) | `Convoy.convoyBoard` |
+| GET | `/v1/convoys` | authenticated | enterprise-logistics | [src/server.js:2378](../../src/server.js#L2378) | `Convoy.convoyBoard` |
 | GET | `/v1/coordination` | public | platform-core | [src/routes/coordination.js:114](../../src/routes/coordination.js#L114) | — |
 | POST | `/v1/coordination/:graphId/instances` | public | platform-core | [src/routes/coordination.js:115](../../src/routes/coordination.js#L115) | — |
 | GET | `/v1/coordination/instances/:instanceId` | public | platform-core | [src/routes/coordination.js:117](../../src/routes/coordination.js#L117) | — |
@@ -497,7 +497,7 @@
 | POST | `/v1/dynasty/consigliere/:characterId` | authenticated | chain-economy | [src/server.js:3393](../../src/server.js#L3393) | `Dynasty.nameConsigliere` |
 | POST | `/v1/dynasty/consigliere/accept/:accountId` | authenticated | chain-economy | [src/server.js:3395](../../src/server.js#L3395) | `Dynasty.acceptConsigliere` |
 | POST | `/v1/dynasty/divorce` | authenticated | chain-economy | [src/server.js:3391](../../src/server.js#L3391) | `Dynasty.divorceMarriage` |
-| POST | `/v1/dynasty/name` | authenticated | economy-ledger | [src/server.js:2297](../../src/server.js#L2297) | `Portfolio.nameDynasty` |
+| POST | `/v1/dynasty/name` | authenticated | economy-ledger | [src/server.js:2296](../../src/server.js#L2296) | `Portfolio.nameDynasty` |
 | POST | `/v1/dynasty/propose/:characterId` | authenticated | chain-economy | [src/server.js:3387](../../src/server.js#L3387) | `Dynasty.proposeMarriage` |
 | GET | `/v1/estate` | authenticated | enterprise-logistics | [src/routes/estate.js:18](../../src/routes/estate.js#L18) | `Estate.estateBoard` |
 | POST | `/v1/estate/feature/:id` | authenticated | enterprise-logistics | [src/routes/estate.js:22](../../src/routes/estate.js#L22) | `Estate.unlockFeature` |
@@ -540,9 +540,9 @@
 | POST | `/v1/gangs/foundation` | authenticated | engagement-growth | [src/server.js:2852](../../src/server.js#L2852) | `V.buyFoundation` |
 | POST | `/v1/gangs/kick` | authenticated | social-combat | [src/server.js:1776](../../src/server.js#L1776) | `S.kickMember` |
 | POST | `/v1/gangs/leave` | authenticated | social-combat | [src/server.js:1767](../../src/server.js#L1767) | `S.leaveGang` |
-| POST | `/v1/gangs/portfolio/dividend` | authenticated | economy-ledger | [src/server.js:2269](../../src/server.js#L2269) | `Portfolio.claimFamilyDividend` |
-| POST | `/v1/gangs/portfolio/invest` | authenticated | economy-ledger | [src/server.js:2263](../../src/server.js#L2263) | `Portfolio.familyInvest` |
-| POST | `/v1/gangs/portfolio/name` | authenticated | economy-ledger | [src/server.js:2295](../../src/server.js#L2295) | `Portfolio.nameFamilyDynasty` |
+| POST | `/v1/gangs/portfolio/dividend` | authenticated | economy-ledger | [src/server.js:2268](../../src/server.js#L2268) | `Portfolio.claimFamilyDividend` |
+| POST | `/v1/gangs/portfolio/invest` | authenticated | economy-ledger | [src/server.js:2262](../../src/server.js#L2262) | `Portfolio.familyInvest` |
+| POST | `/v1/gangs/portfolio/name` | authenticated | economy-ledger | [src/server.js:2294](../../src/server.js#L2294) | `Portfolio.nameFamilyDynasty` |
 | POST | `/v1/gangs/promote` | authenticated | social-combat | [src/server.js:1794](../../src/server.js#L1794) | `S.promoteMember` |
 | POST | `/v1/gangs/tribute` | authenticated | social-combat | [src/server.js:1796](../../src/server.js#L1796) | `S.tribute` |
 | POST | `/v1/gangs/tribute/omr` | authenticated | social-combat | [src/server.js:1799](../../src/server.js#L1799) | `S.tributeOmr` |
@@ -581,6 +581,11 @@
 | POST | `/v1/identity/claim/calldata` | authenticated | platform-core | [src/server.js:3518](../../src/server.js#L3518) | `characterClaim` |
 | POST | `/v1/identity/mint` | authenticated | chain-economy | [src/server.js:3514](../../src/server.js#L3514) | `Chain.requestDynastyMint` |
 | GET | `/v1/identity/readiness` | authenticated | platform-core | [src/server.js:3517](../../src/server.js#L3517) | `characterReadiness` |
+| GET | `/v1/intel-forecasts` | authenticated | platform-core | [src/routes/intelforecasts.js:5](../../src/routes/intelforecasts.js#L5) | `Intel.intelForecastJobBoard` |
+| POST | `/v1/intel-forecasts/:id/cancel` | authenticated | platform-core | [src/routes/intelforecasts.js:27](../../src/routes/intelforecasts.js#L27) | `Intel.cancelIntelForecastJob` |
+| POST | `/v1/intel-forecasts/:id/report` | authenticated | platform-core | [src/routes/intelforecasts.js:14](../../src/routes/intelforecasts.js#L14) | `Intel.replayIntelForecastReport` |
+| POST | `/v1/intel-forecasts/:id/resolve` | authenticated | platform-core | [src/routes/intelforecasts.js:30](../../src/routes/intelforecasts.js#L30) | `Intel.resolveIntelForecastOutcome` |
+| POST | `/v1/intel-forecasts/reporters/:id/jobs` | authenticated | platform-core | [src/routes/intelforecasts.js:11](../../src/routes/intelforecasts.js#L11) | `Intel.createIntelForecastJob` |
 | GET | `/v1/invites` | authenticated | platform-core | [src/server.js:3176](../../src/server.js#L3176) | `Invites.inviteBoard` |
 | POST | `/v1/invites` | authenticated | platform-core | [src/server.js:3180](../../src/server.js#L3180) | `Invites.issueCrewInvite` |
 | POST | `/v1/items/:id/use` | authenticated | economy-ledger | [src/server.js:1692](../../src/server.js#L1692) | `E.useItem` |
@@ -596,8 +601,8 @@
 | POST | `/v1/kitchen/laylow` | authenticated | platform-core | [src/routes/kitchen.js:28](../../src/routes/kitchen.js#L28) | `K.layLow` |
 | POST | `/v1/kitchen/makings/:drugId` | authenticated | platform-core | [src/routes/kitchen.js:10](../../src/routes/kitchen.js#L10) | `K.buyMakings` |
 | POST | `/v1/kitchen/module/:mod` | authenticated | platform-core | [src/routes/kitchen.js:33](../../src/routes/kitchen.js#L33) | `K.upgradeModule` |
-| GET | `/v1/landmarks` | public | world-progression | [src/server.js:2320](../../src/server.js#L2320) | `Landmarks.landmarkBoard` |
-| POST | `/v1/landmarks/:districtId` | authenticated | world-progression | [src/server.js:2321](../../src/server.js#L2321) | `Landmarks.dedicateLandmark` |
+| GET | `/v1/landmarks` | public | world-progression | [src/server.js:2319](../../src/server.js#L2319) | `Landmarks.landmarkBoard` |
+| POST | `/v1/landmarks/:districtId` | authenticated | world-progression | [src/server.js:2320](../../src/server.js#L2320) | `Landmarks.dedicateLandmark` |
 | GET | `/v1/law` | authenticated | law-intelligence | [src/routes/law.js:11](../../src/routes/law.js#L11) | `Law.lawBoard` |
 | POST | `/v1/law/bribe` | authenticated | law-intelligence | [src/routes/law.js:13](../../src/routes/law.js#L13) | `Law.bribe` |
 | POST | `/v1/law/envelope` | authenticated | law-intelligence | [src/routes/law.js:17](../../src/routes/law.js#L17) | `Law.payEnvelope` |
@@ -656,7 +661,7 @@
 | GET | `/v1/live` | authenticated | engagement-growth | [src/server.js:3272](../../src/server.js#L3272) | `Collision.collisionBoard` |
 | GET | `/v1/loans` | authenticated | enterprise-logistics | [src/server.js:2201](../../src/server.js#L2201) | `Loans.loanBoard` |
 | POST | `/v1/loans` | authenticated | enterprise-logistics | [src/server.js:2205](../../src/server.js#L2205) | `Loans.offerLoan` |
-| POST | `/v1/loans/:id/buy` | authenticated | enterprise-logistics | [src/server.js:2248](../../src/server.js#L2248) | `Loans.buyPaper` |
+| POST | `/v1/loans/:id/buy` | authenticated | enterprise-logistics | [src/server.js:2247](../../src/server.js#L2247) | `Loans.buyPaper` |
 | POST | `/v1/loans/:id/cancel` | authenticated | enterprise-logistics | [src/server.js:2209](../../src/server.js#L2209) | `Loans.cancelLoan` |
 | POST | `/v1/loans/:id/collect` | authenticated | enterprise-logistics | [src/server.js:2218](../../src/server.js#L2218) | `Loans.collectLoan` |
 | POST | `/v1/loans/:id/repay` | authenticated | enterprise-logistics | [src/server.js:2212](../../src/server.js#L2212) | `Loans.repayLoan` |
@@ -665,19 +670,19 @@
 | POST | `/v1/loans/:id/unsell` | authenticated | enterprise-logistics | [src/server.js:2226](../../src/server.js#L2226) | `Loans.unsellPaper` |
 | POST | `/v1/loans/house` | authenticated | enterprise-logistics | [src/server.js:2230](../../src/server.js#L2230) | `Loans.takeHouseLoan` |
 | POST | `/v1/loans/house/repay` | authenticated | enterprise-logistics | [src/server.js:2232](../../src/server.js#L2232) | `Loans.repayHouseLoan` |
-| POST | `/v1/loans/square` | authenticated | enterprise-logistics | [src/server.js:2245](../../src/server.js#L2245) | `Loans.squareWanted` |
+| POST | `/v1/loans/square` | authenticated | enterprise-logistics | [src/server.js:2244](../../src/server.js#L2244) | `Loans.squareWanted` |
 | GET | `/v1/made` | authenticated | social-combat | [src/routes/estate.js:13](../../src/routes/estate.js#L13) | `Made.madeBoard` |
 | POST | `/v1/made` | authenticated | social-combat | [src/routes/estate.js:15](../../src/routes/estate.js#L15) | `Made.payDues` |
 | GET | `/v1/map` | authenticated | world-progression | [src/server.js:2495](../../src/server.js#L2495) | `CityMap.cityMap` |
-| GET | `/v1/market` | public | economy-ledger | [src/server.js:2360](../../src/server.js#L2360) | `Market.marketBoard` |
-| POST | `/v1/market` | authenticated | economy-ledger | [src/server.js:2361](../../src/server.js#L2361) | `Market.listItem` |
+| GET | `/v1/market` | public | economy-ledger | [src/server.js:2359](../../src/server.js#L2359) | `Market.marketBoard` |
+| POST | `/v1/market` | authenticated | economy-ledger | [src/server.js:2360](../../src/server.js#L2360) | `Market.listItem` |
 | POST | `/v1/market/:id/accept-delivery` | authenticated | platform-core | [src/routes/delivery.js:10](../../src/routes/delivery.js#L10) | `Delivery.acceptDelivery` |
-| POST | `/v1/market/:id/bid` | authenticated | economy-ledger | [src/server.js:2363](../../src/server.js#L2363) | `Market.bidListing` |
-| POST | `/v1/market/:id/buy` | authenticated | economy-ledger | [src/server.js:2365](../../src/server.js#L2365) | `Market.buyListing` |
-| POST | `/v1/market/:id/cancel` | authenticated | economy-ledger | [src/server.js:2367](../../src/server.js#L2367) | `Market.cancelListing` |
-| POST | `/v1/market/:id/claim` | authenticated | economy-ledger | [src/server.js:2375](../../src/server.js#L2375) | `Market.claimOrder` |
-| POST | `/v1/market/:id/fill` | authenticated | economy-ledger | [src/server.js:2373](../../src/server.js#L2373) | `Market.fillOrder` |
-| POST | `/v1/market/order` | authenticated | economy-ledger | [src/server.js:2371](../../src/server.js#L2371) | `Market.postOrder` |
+| POST | `/v1/market/:id/bid` | authenticated | economy-ledger | [src/server.js:2362](../../src/server.js#L2362) | `Market.bidListing` |
+| POST | `/v1/market/:id/buy` | authenticated | economy-ledger | [src/server.js:2364](../../src/server.js#L2364) | `Market.buyListing` |
+| POST | `/v1/market/:id/cancel` | authenticated | economy-ledger | [src/server.js:2366](../../src/server.js#L2366) | `Market.cancelListing` |
+| POST | `/v1/market/:id/claim` | authenticated | economy-ledger | [src/server.js:2374](../../src/server.js#L2374) | `Market.claimOrder` |
+| POST | `/v1/market/:id/fill` | authenticated | economy-ledger | [src/server.js:2372](../../src/server.js#L2372) | `Market.fillOrder` |
+| POST | `/v1/market/order` | authenticated | economy-ledger | [src/server.js:2370](../../src/server.js#L2370) | `Market.postOrder` |
 | GET | `/v1/market/prices` | public | social-combat | [src/server.js:3586](../../src/server.js#L3586) | `Block.marketPrices` |
 | GET | `/v1/mastery` | authenticated | world-progression | [src/server.js:2182](../../src/server.js#L2182) | `Mastery.masteryBoard` |
 | POST | `/v1/mastery/trait/:trackId` | authenticated | world-progression | [src/server.js:2184](../../src/server.js#L2184) | `Mastery.chooseTrait` |
@@ -706,8 +711,8 @@
 | POST | `/v1/mod/bond/offer` | moderator | platform-core | [src/routes/modtools.js:297](../../src/routes/modtools.js#L297) | `Bonds.setBondOffering` |
 | POST | `/v1/mod/bond/simulate` | moderator | platform-core | [src/routes/modtools.js:298](../../src/routes/modtools.js#L298) | `Bonds.recordBond` |
 | GET | `/v1/mod/bonds` | moderator | platform-core | [src/routes/modtools.js:175](../../src/routes/modtools.js#L175) | `Bonds.bondStatus` |
-| GET | `/v1/mod/brokers` | moderator | platform-core | [src/server.js:2332](../../src/server.js#L2332) | `Brokers.epochBoard` |
-| POST | `/v1/mod/brokers/allocate` | moderator | platform-core | [src/server.js:2333](../../src/server.js#L2333) | `Brokers.allocateEpoch` |
+| GET | `/v1/mod/brokers` | moderator | platform-core | [src/server.js:2331](../../src/server.js#L2331) | `Brokers.epochBoard` |
+| POST | `/v1/mod/brokers/allocate` | moderator | platform-core | [src/server.js:2332](../../src/server.js#L2332) | `Brokers.allocateEpoch` |
 | GET | `/v1/mod/chain/params` | moderator | platform-core | [src/routes/modtools.js:157](../../src/routes/modtools.js#L157) | `ChainParams.readChainParams` |
 | POST | `/v1/mod/chain/tx` | moderator | platform-core | [src/routes/modtools.js:158](../../src/routes/modtools.js#L158) | `ChainParams.buildParamTx` |
 | GET | `/v1/mod/coach` | moderator | platform-core | [src/routes/modtools.js:151](../../src/routes/modtools.js#L151) | `Ops.opsCoach` |
@@ -831,9 +836,9 @@
 | POST | `/v1/port/rendezvous/:boatId` | authenticated | enterprise-logistics | [src/routes/port.js:30](../../src/routes/port.js#L30) | `Port.rendezvous` |
 | POST | `/v1/port/run/:boatId` | authenticated | enterprise-logistics | [src/routes/port.js:16](../../src/routes/port.js#L16) | `Port.launchRun` |
 | POST | `/v1/port/upgrade/:boatId` | authenticated | enterprise-logistics | [src/routes/port.js:24](../../src/routes/port.js#L24) | `Port.upgradeBoat` |
-| GET | `/v1/portfolio` | authenticated | economy-ledger | [src/server.js:2259](../../src/server.js#L2259) | `Portfolio.portfolioBoard` |
-| POST | `/v1/portfolio/dividend` | authenticated | economy-ledger | [src/server.js:2266](../../src/server.js#L2266) | `Portfolio.claimDividend` |
-| POST | `/v1/portfolio/invest` | authenticated | economy-ledger | [src/server.js:2261](../../src/server.js#L2261) | `Portfolio.invest` |
+| GET | `/v1/portfolio` | authenticated | economy-ledger | [src/server.js:2258](../../src/server.js#L2258) | `Portfolio.portfolioBoard` |
+| POST | `/v1/portfolio/dividend` | authenticated | economy-ledger | [src/server.js:2265](../../src/server.js#L2265) | `Portfolio.claimDividend` |
+| POST | `/v1/portfolio/invest` | authenticated | economy-ledger | [src/server.js:2260](../../src/server.js#L2260) | `Portfolio.invest` |
 | GET | `/v1/primetime` | authenticated | engagement-growth | [src/server.js:3282](../../src/server.js#L3282) | `Prime.primeTimeBoard` |
 | POST | `/v1/primetime/answer` | authenticated | engagement-growth | [src/server.js:3284](../../src/server.js#L3284) | `Prime.answerCall` |
 | POST | `/v1/primetime/round` | authenticated | engagement-growth | [src/server.js:3286](../../src/server.js#L3286) | `Prime.buyRound` |
@@ -1018,8 +1023,8 @@
 | POST | `/v1/vanity/name` | authenticated | engagement-growth | [src/server.js:2840](../../src/server.js#L2840) | `V.changeName` |
 | POST | `/v1/vanity/plate/:carId` | authenticated | engagement-growth | [src/server.js:2844](../../src/server.js#L2844) | `V.setPlate` |
 | POST | `/v1/vanity/title` | authenticated | engagement-growth | [src/server.js:2842](../../src/server.js#L2842) | `V.setTitle` |
-| GET | `/v1/vault` | authenticated | economy-ledger | [src/server.js:2278](../../src/server.js#L2278) | `Treasury.vaultBoard` |
-| POST | `/v1/vault/claim` | authenticated | economy-ledger | [src/server.js:2292](../../src/server.js#L2292) | `Treasury.claimVaulted` |
+| GET | `/v1/vault` | authenticated | economy-ledger | [src/server.js:2277](../../src/server.js#L2277) | `Treasury.vaultBoard` |
+| POST | `/v1/vault/claim` | authenticated | economy-ledger | [src/server.js:2291](../../src/server.js#L2291) | `Treasury.claimVaulted` |
 | DELETE | `/v1/vouch/:characterId` | authenticated | social-combat | [src/server.js:3296](../../src/server.js#L3296) | `Vouch.revokeVouch` |
 | POST | `/v1/vouch/:characterId` | authenticated | social-combat | [src/server.js:3294](../../src/server.js#L3294) | `Vouch.giveVouch` |
 | GET | `/v1/vouches` | authenticated | social-combat | [src/server.js:3292](../../src/server.js#L3292) | `Vouch.vouchBoard` |
@@ -1034,17 +1039,17 @@
 | POST | `/v1/warehouses/:id/lease` | authenticated | platform-core | [src/routes/warehouses.js:16](../../src/routes/warehouses.js#L16) | `Warehouse.leaseWarehouse` |
 | GET | `/v1/window` | authenticated | economy-ledger | [src/server.js:1723](../../src/server.js#L1723) | `Exchange.exchangeBoard` |
 | POST | `/v1/window/redeem` | authenticated | economy-ledger | [src/server.js:1725](../../src/server.js#L1725) | `Exchange.redeem` |
-| GET | `/v1/wire` | authenticated | law-intelligence | [src/server.js:2336](../../src/server.js#L2336) | `Wire.wireBoard` |
+| GET | `/v1/wire` | authenticated | law-intelligence | [src/server.js:2335](../../src/server.js#L2335) | `Wire.wireBoard` |
 | POST | `/v1/wire/dig/:targetId` | authenticated | law-intelligence | [src/server.js:3413](../../src/server.js#L3413) | `Secrets.digSecret` |
-| POST | `/v1/wire/disinfo` | authenticated | law-intelligence | [src/server.js:2354](../../src/server.js#L2354) | `Wire.plantDisinfo` |
-| POST | `/v1/wire/dossier/:targetId` | authenticated | law-intelligence | [src/server.js:2352](../../src/server.js#L2352) | `Wire.pullDossier` |
-| POST | `/v1/wire/informant/:targetId` | authenticated | law-intelligence | [src/server.js:2356](../../src/server.js#L2356) | `Wire.recruitInformant` |
-| POST | `/v1/wire/subscribe` | authenticated | law-intelligence | [src/server.js:2342](../../src/server.js#L2342) | `Wire.subscribeWire` |
-| POST | `/v1/wire/sweep` | authenticated | law-intelligence | [src/server.js:2340](../../src/server.js#L2340) | `Wire.sweepBugs` |
-| POST | `/v1/wire/tap/:targetId` | authenticated | law-intelligence | [src/server.js:2338](../../src/server.js#L2338) | `Wire.placeTap` |
-| POST | `/v1/wire/trace` | authenticated | law-intelligence | [src/server.js:2350](../../src/server.js#L2350) | `Wire.traceBugs` |
-| DELETE | `/v1/wire/watch/:targetId` | authenticated | law-intelligence | [src/server.js:2347](../../src/server.js#L2347) | `Wire.cancelWatch` |
-| POST | `/v1/wire/watch/:targetId` | authenticated | law-intelligence | [src/server.js:2345](../../src/server.js#L2345) | `Wire.enrollWatch` |
+| POST | `/v1/wire/disinfo` | authenticated | law-intelligence | [src/server.js:2353](../../src/server.js#L2353) | `Wire.plantDisinfo` |
+| POST | `/v1/wire/dossier/:targetId` | authenticated | law-intelligence | [src/server.js:2351](../../src/server.js#L2351) | `Wire.pullDossier` |
+| POST | `/v1/wire/informant/:targetId` | authenticated | law-intelligence | [src/server.js:2355](../../src/server.js#L2355) | `Wire.recruitInformant` |
+| POST | `/v1/wire/subscribe` | authenticated | law-intelligence | [src/server.js:2341](../../src/server.js#L2341) | `Wire.subscribeWire` |
+| POST | `/v1/wire/sweep` | authenticated | law-intelligence | [src/server.js:2339](../../src/server.js#L2339) | `Wire.sweepBugs` |
+| POST | `/v1/wire/tap/:targetId` | authenticated | law-intelligence | [src/server.js:2337](../../src/server.js#L2337) | `Wire.placeTap` |
+| POST | `/v1/wire/trace` | authenticated | law-intelligence | [src/server.js:2349](../../src/server.js#L2349) | `Wire.traceBugs` |
+| DELETE | `/v1/wire/watch/:targetId` | authenticated | law-intelligence | [src/server.js:2346](../../src/server.js#L2346) | `Wire.cancelWatch` |
+| POST | `/v1/wire/watch/:targetId` | authenticated | law-intelligence | [src/server.js:2344](../../src/server.js#L2344) | `Wire.enrollWatch` |
 | POST | `/v1/withdraw` | authenticated | chain-economy | [src/server.js:3490](../../src/server.js#L3490) | `Chain.requestWithdraw` |
 | POST | `/v1/withdraw/:id/cancel` | authenticated | chain-economy | [src/server.js:3494](../../src/server.js#L3494) | `Chain.cancelQueuedWithdraw` |
 | GET | `/v1/withdraw/status` | authenticated | chain-economy | [src/server.js:3519](../../src/server.js#L3519) | `Chain.reserveStatus` |

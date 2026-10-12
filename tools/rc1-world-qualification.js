@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
@@ -47,11 +48,12 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 18, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 19, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
+  intelSourceReviewTransfer: INTEL_SOURCE_TRANSFER,
   cityHomesSourceReviewTransfer: { sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB, predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB,
-    actualServerSha256: CITY_HOMES_SERVER_PIN, predecessorServerSha256: FRANCHISE_SOURCE_CURRENT_PINS['src/server.js'], inverseChunks: 2,
+    actualServerSha256: CITY_HOMES_SERVER_PIN, predecessorServerSha256: INTEL_SOURCE_CURRENT_PINS['src/server.js'], inverseChunks: 2,
     evidence: 'docs/city-homes-security-review.md', phase: 'source compatibility; financial activation disabled',
-    scope: 'Exact City homes import and registration inverses reconstruct the entire Franchise predecessor from the immutable source base. Only unchanged historical recovery guards transfer. New directory authentication, living-steward selection, private projection, pagination, external/estate labels and native read snapshot require separate current-source proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited.' },
+    scope: 'Exact City homes import and registration inverses reconstruct the entire Intel predecessor from the immutable source base. Only unchanged historical recovery guards transfer. New directory authentication, living-steward selection, private projection, pagination, external/estate labels and native read snapshot require separate current-source proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited.' },
   franchiseSourceReviewTransfer: { sourceRevision: FRANCHISE_SOURCE_REVIEWED_REVISION, predecessorRevision: FRANCHISE_SOURCE_PREDECESSOR_REVISION,
     currentPins: FRANCHISE_SOURCE_CURRENT_PINS, predecessorPins: FRANCHISE_SOURCE_PREDECESSOR_PINS,
     currentBlobs: FRANCHISE_SOURCE_CURRENT_BLOBS, predecessorBlobs: FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
@@ -156,7 +158,8 @@ export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 18, reviewedRevisi
 export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
-    const text = String(await readFile(file)).replace(/\r\n/g, '\n');
+    const raw = String(await readFile(file)).replace(/\r\n/g, '\n');
+    const text = sha256(raw) === INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
     if (file === 'src/game.js') assertCrewLogisticsSourceTransfer(file, text);
     if (file === 'src/economy.js') assertEconomySourceTransfer(file, text);
@@ -164,7 +167,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
     if (file === 'src/server.js') assertDeedServerCompatibility(text);
     if (file === 'src/operations.js') assertCitySourceTransfer(file, text);
   }
-  return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles } };
+  return { sourceRevision, reviewSha256: hash(WORLD_RECOVERY_REVIEW), sourceFiles: { ...sourceFiles }, intelSourceTransfer: INTEL_SOURCE_TRANSFER };
 }
 function binding(source, checkpoint) {
   assert.equal(source.reviewSha256, hash(WORLD_RECOVERY_REVIEW)); assert.deepEqual(source.sourceFiles, sourceFiles);

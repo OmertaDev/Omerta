@@ -356,6 +356,22 @@ const OPERATION_CONTRACTS = {
   },
   'POST /v1/franchise-licenses/:id/accept': { operationId: 'acceptOwnGameFranchiseOffer' },
   'POST /v1/franchise-licenses/:id/end': { operationId: 'endOwnGameFranchiseLicense' },
+  'GET /v1/intel-forecasts': { operationId: 'getOwnGameForecastJobs' },
+  'POST /v1/intel-forecasts/reporters/:id/jobs': {
+    operationId: 'fundGameForecastJob', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['districtId', 'minimumStock', 'feeCash', 'targetAt'], properties: {
+        districtId: { type: 'string', minLength: 1, maxLength: 128 },
+        minimumStock: { type: 'integer', minimum: 1, maximum: 40 },
+        feeCash: { type: 'integer', minimum: 50, maximum: 5000 },
+        targetAt: { type: 'string', format: 'date-time', maxLength: 64 },
+      } },
+  },
+  'POST /v1/intel-forecasts/:id/report': {
+    operationId: 'submitOwnGameForecastReport', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['predictsAvailable'], properties: { predictsAvailable: { type: 'boolean' } } },
+  },
+  'POST /v1/intel-forecasts/:id/cancel': { operationId: 'refundOwnOpenGameForecastJob' },
+  'POST /v1/intel-forecasts/:id/resolve': { operationId: 'resolveOwnObservedGameForecast' },
   'POST /v1/invites': { operationId: 'issueCrewLaunchInvite', requestSchema: { type: 'object' } },
   'GET /v1/agent/turn': {
     operationId: 'getAgentTurn',

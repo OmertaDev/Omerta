@@ -1,11 +1,12 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-export const CITY_HOMES_SERVER_PIN = 'b4f3b05696f97697e119e806fec327ec2201ccb5a6e40dac3fe1d0823f43e26d';
-export const CITY_HOMES_SOURCE_BASE_REVISION = '0d39ddd64a1e8828980124bfc2be50fcf2e7aa15';
-export const CITY_HOMES_SERVER_BLOB = '00fa216036671347c0817c98bb3ab8d696b8f98c';
-export const CITY_HOMES_PREDECESSOR_SERVER_BLOB = '6fc8c1d21e4b346d52d9e8214ce723f7a92d7a7a';
+export const CITY_HOMES_SERVER_PIN = '5db473cc77800d45848e2a292153b53da579706b90c13a2228ceed30ac059646';
+export const CITY_HOMES_SOURCE_BASE_REVISION = 'a4475f52d397c6cd754a73ad49b11c501a104104';
+export const CITY_HOMES_SERVER_BLOB = 'c6d6b85a35414c1a256f98a8cc10039effde9a3f';
+export const CITY_HOMES_PREDECESSOR_SERVER_BLOB = 'cb1b1a2acf90fcd702c0cf31b26705477e1f72c1';
 export const CITY_HOMES_SOURCE_INVERSES = Object.freeze([
   "import { registerCityHomes } from './routes/cityhomes.js';\n",
   "  registerCityHomes(app, { pool, auth });\n",
@@ -19,8 +20,8 @@ export function assertCityHomesServerTransfer(text) {
   assert.equal(baselineText.split(chunk).length, 2, 'City homes inverse is not exact and unique');
   baselineText = baselineText.replace(chunk, '');
  }
- assert.equal(hash(baselineText), FRANCHISE_SOURCE_CURRENT_PINS['src/server.js'], 'Server differs beyond exact City homes registration');
- return { actualSha256, baselineText, baselineSha256: FRANCHISE_SOURCE_CURRENT_PINS['src/server.js'],
+ assert.equal(hash(baselineText), INTEL_SOURCE_CURRENT_PINS['src/server.js'], 'Server differs beyond exact City homes registration');
+ return { actualSha256, baselineText, baselineSha256: INTEL_SOURCE_CURRENT_PINS['src/server.js'],
   sourceBaseRevision: CITY_HOMES_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_SERVER_BLOB,
   predecessorServerBlob: CITY_HOMES_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
 }
@@ -106,6 +107,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   assert(FRANCHISE_SOURCE_CURRENT_PINS[file], 'Unknown franchise compatibility source');
   const actualSha256 = hash(text);
   assert.equal(actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file], 'Franchise source changed: ' + file);
@@ -264,6 +269,10 @@ export const WAREHOUSE_ESTATE_SOURCE_INVERSES = Object.freeze([
   ]
 ]);
 export function assertWarehouseEstateSourceChange(text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/social/estate.js']) {
+    const transfer = qualifyIntelSource('src/social/estate.js', text), predecessor = assertWarehouseEstateSourceChange(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   const actualSha256 = hash(text);
   assert.equal(actualSha256, WAREHOUSE_ESTATE_PIN, 'Warehouse estate source changed');
   let baselineText = text;
@@ -540,6 +549,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -590,6 +603,10 @@ export function assertGenesisSnapshotServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisSnapshotServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisSnapshotServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
   }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
@@ -687,6 +704,10 @@ export function assertGenesisWrapperServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertGenesisWrapperServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertGenesisWrapperServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
   }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
@@ -806,6 +827,10 @@ export function assertHttpReceiptServerCompatibility(text) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
   }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertHttpReceiptServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
     return { ...assertHttpReceiptServerCompatibility(transfer.baselineText), actualSha256: hash(text), franchiseSourceTransfer: transfer };
@@ -880,6 +905,10 @@ export function assertDeedServerCompatibility(text) {
   if (hash(text) === CITY_HOMES_SERVER_PIN) {
     const transfer = assertCityHomesServerTransfer(text);
     return { ...assertDeedServerCompatibility(transfer.baselineText), actualSha256: hash(text), cityHomesSourceTransfer: transfer };
+  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS['src/server.js']) {
+    const transfer = qualifyIntelSource('src/server.js', text), predecessor = assertDeedServerCompatibility(transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
   }
   if (hash(text) === FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']) {
     const transfer = assertFranchiseSourceTransfer('src/server.js', text);
@@ -1260,6 +1289,10 @@ export function assertEconomySourceTransfer(file, text) {
   const transfer = assertCityHomesServerTransfer(text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
   return { ...predecessor, actualSha256: hash(text), inverseChunks: predecessor.inverseChunks + transfer.inverseChunks, cityHomesSourceTransfer: transfer };
  }
+  if (hash(text) === INTEL_SOURCE_CURRENT_PINS[file]) {
+    const transfer = qualifyIntelSource(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text), intelSourceTransfer: transfer };
+  }
   if (file === 'src/server.js' && hash(text) === FRANCHISE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertFranchiseSourceTransfer(file, text), predecessor = assertEconomySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), franchiseSourceTransfer: transfer };

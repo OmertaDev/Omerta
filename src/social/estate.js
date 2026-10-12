@@ -15,6 +15,7 @@ import { voidListingsAtDeath, burnBidsAtDeath } from '../market.js';
 import { closeWarehouseClaimsAtDeath } from '../warehouseleases.js';
 import { voidLoansAtDeath } from '../loans.js';
 import { voidFavorsAtDeath } from '../favors.js';
+import { voidIntelForecastJobsAtDeath } from '../intelforecastjobs.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -394,6 +395,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // offer — a PLAYER fire-kill takes its share, the rest burns (never a loot-proof vault).
   const fv = await voidFavorsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
   if (opts.killerCh && fv.looted) report.favorLoot = fv.looted;
+  const intel = await voidIntelForecastJobsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
+  if (opts.killerCh && intel.looted) report.intelForecastLoot = intel.looted;
   if (h.victimOwned.gangId) await removeMember(client, h.victimOwned.gangId, victim.id);
 
   victim.alive = false;

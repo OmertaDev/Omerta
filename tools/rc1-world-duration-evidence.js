@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { canonicalJson, sha256 } from './rc1-native-proof.js';
 import { WORKER_SOURCE_PINS } from './rc1-native-worker.js';
+import { qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 
 const SEASON_MS = 28 * 86400000;
 const hash = value => sha256(canonicalJson(value));
@@ -18,7 +19,11 @@ export function measureWorldWorkerDuration({ sourceRevision, configurationSha256
   for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
     const edit = trace.transformations.find(row => row.file === file);
     assert(edit && edit.pinnedLfSha256 === pinnedLfSha256, 'Worker transformation source mismatch: ' + file);
-    assert.equal(sha256(edit.originalSource.replaceAll('\r\n', '\n')), pinnedLfSha256);
+    const actual = edit.originalSource.replaceAll('\r\n', '\n');
+    // Match the loader's exact historical scope, independently of trace metadata.
+    // Current Intel refunds require their separate native domain/API proofs.
+    const baseline = file === 'src/worker.js' ? qualifyIntelSource(file, actual).baselineText : actual;
+    assert.equal(sha256(baseline), pinnedLfSha256);
     assert.equal(sha256(edit.transformedSource), edit.transformedSourceSha256);
   }
   const timers = new Map(), counts = {}, callbackCounts = {};

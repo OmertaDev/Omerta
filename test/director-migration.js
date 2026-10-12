@@ -33,7 +33,8 @@ const economyTables = ['business_depots', 'business_depot_journal', 'business_op
 // Optional stacked features are recognized only by explicit identity and frozen
 // inventory. Nothing discovered from the backend becomes an expected constraint.
 const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_offers: [9, 10],
-  business_warehouse_leases: [14, 13], crew_logistics_links: [8, 9], depot_brand_licenses: [14, 16] });
+  business_warehouse_leases: [14, 13], crew_logistics_links: [8, 9], depot_brand_licenses: [14, 16],
+  intel_forecast_jobs: [16, 11] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));

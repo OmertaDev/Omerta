@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Test-only measurements. Consume isolated committed world snapshots; never
 // import game/db or feed this observer's information back to actor policies.
 import assert from 'node:assert/strict';
@@ -56,7 +57,8 @@ export function loanRefundCustodyFromJournal(journal) {
   if (checks.some(matches => matches.length !== 1)) return null;
   if (!refundSourceChecked) {
     for (const [file, expected] of Object.entries(LOAN_REFUND_METRIC_SOURCE_PINS)) {
-      const text = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+      const raw = readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
       const baseline = file === 'src/loans.js' ? qualifyLoanCancelSource(text).baselineText
         : file === 'src/game.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
         ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;

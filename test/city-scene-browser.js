@@ -6,6 +6,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../src/server.js';
+import { levelOf } from '../src/rules.js';
 
 // Cached options must never update or destroy a different current identity while its read is pending.
 const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
@@ -987,18 +988,19 @@ try {
     // Observe the real mutation while its reply holds the authenticated queue.
     // This removes elapsed-time regeneration from the exact action-cost proof.
     await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [characterId, new Date(Date.now() + 600000)]);
-    dispatchedBefore = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
+    dispatchedBefore = (await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0];
     const reply = await route.fetch();
-    dispatchedAfter = (await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0];
+    dispatchedAfter = (await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0];
     await route.fulfill({ response: reply });
   });
   for (const approach of ['quiet', 'standard', 'loud']) {
     const fundedNerve = coreCrime.nerve * 2;
-    await app.pool.query('UPDATE characters SET nerve=$2,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
+    // Isolate the action cost from the real level-up refill, including bonus-rep city events.
+    await app.pool.query('UPDATE characters SET nerve=$2,respect=0,last_accrued_at=$3 WHERE id=$1', [characterId, fundedNerve, new Date(Date.now() + 600000)]);
     const fundedRead = page.waitForResponse(async reply => {
       if (new URL(reply.url()).pathname !== '/v1/projections/player' || reply.status() !== 200) return false;
       const body = await reply.json(), character = body.player?.character || body.player;
-      return character?.nerve === fundedNerve;
+      return character?.nerve === fundedNerve && character?.respect === 0 && character?.level === levelOf(0);
     });
     await page.locator('#btn-refresh').click();
     const fundedBody = (await (await fundedRead).json()).player;
@@ -1013,6 +1015,8 @@ try {
     const outcome = await reply.json();
     assert.equal(outcome.success, true); assert.equal(outcome.approach, approach);
     const prior = dispatchedBefore, after = dispatchedAfter;
+    assert.equal(Number(prior.respect), 0, 'The actual cost-proof dispatch starts at the observed level-one baseline.');
+    assert.equal(levelOf(Number(after.respect)), levelOf(Number(prior.respect)), 'The cost proof does not include a legitimate level-up refill.');
     assert.equal(Number(after.nerve), Number(prior.nerve) - coreCrime.nerve, 'The explicit job spends its server nerve cost once.');
     assert.equal(Number(after.cash), Number(prior.cash) + outcome.take, 'Cash reflects the real outcome rather than a promised baseline.');
     const terms = crimeRules.crimeApproaches.find(entry => entry.id === approach);
@@ -1022,7 +1026,7 @@ try {
     const replay = await app.inject({ method: 'POST', url: '/v1/crimes/' + coreCrime.id,
       headers: { ...headers, 'Idempotency-Key': reply.request().headers()['idempotency-key'] }, payload: { approach } });
     assert.equal(replay.statusCode, 200); assert.deepEqual(replay.json(), outcome);
-    assert.deepEqual((await app.pool.query('SELECT nerve,cash,heat FROM characters WHERE id=$1', [characterId])).rows[0], after);
+    assert.deepEqual((await app.pool.query('SELECT nerve,cash,heat,respect FROM characters WHERE id=$1', [characterId])).rows[0], after);
     assert.equal(await page.locator('[data-city-approach="standard"]').isDisabled(), false, 'Core jobs introduce no cooldown when the next nerve cost is funded.');
     await assertPosition(page, fixerPose, 'A committed job keeps the same City pose');
   }

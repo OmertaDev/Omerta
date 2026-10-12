@@ -1,3 +1,4 @@
+import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
@@ -38,15 +39,16 @@ for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
   const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(actual) : null;
-  const franchiseInput = homes ? homes.baselineText : actual;
+  const intelInput = homes ? homes.baselineText : actual;
   if (homes) {
     assert.equal(hash(actual), CITY_HOMES_SERVER_PIN);
     assert.equal(homes.sourceBlob, CITY_HOMES_SERVER_BLOB);
-    assert.equal(homes.baselineSha256, FRANCHISE_SOURCE_CURRENT_PINS['src/server.js']);
+    assert.equal(homes.baselineSha256, INTEL_SOURCE_CURRENT_PINS['src/server.js']);
     assert.equal(homes.inverseChunks, 2);
-    assert.equal(franchiseInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-    assert.equal(franchiseInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(intelInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(intelInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
+  const franchiseInput = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, intelInput).baselineText : intelInput;
   const franchise = file === 'src/server.js' ? assertFranchiseSourceTransfer(file, franchiseInput) : null;
   if (franchise) assert.equal(franchise.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
   const crewInput = franchise ? franchise.baselineText : franchiseInput;
