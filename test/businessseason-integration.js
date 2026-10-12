@@ -277,7 +277,7 @@ try {
     const realId = real.season.id; await enroll(realOwner, { seasonId: realId, depotId: realDepot, published: true });
     assert.equal((await observe(realOwner, realId, false)).phase, 'waiting');
     console.log('Native prospective clock proof: waiting for canonical60s enrollment then60s observed trading window');
-    await new Promise(resolve => setTimeout(resolve, Math.max(0, +new Date(real.season.startsAt) - Date.now() + 100)));
+    await new Promise(resolve => setTimeout(resolve, Math.max(0, +new Date(real.season.enrollmentClosesAt) - Date.now() + 100)));
     assert.equal((await runBusinessSeasons(app.pool, 25)).results.find(r => r.seasonId === realId).phase, 'running');
     await api(realBuyer, 'POST', `/v1/depot/${realDepot}/buy`, { qty: 2, maxUnitPrice: 1000 });
     await api(realOwner, 'POST', `/v1/depot/${realDepot}/withdraw`, { amount: 1000 });
