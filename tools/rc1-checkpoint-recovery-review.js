@@ -67,7 +67,45 @@ export function recoveryCatalog(content) {
   return { nodes: [...content.registry.nodes.values()], graphs: content.coordinationRegistry.graphs,
     operations: content.operations, objects: content.objects };
 }
+export const CHECKPOINT_GUI_CATALOG_TRANSFER = Object.freeze({
+  "sourceRevision": "1a2c80a5ce2b0482e613b2f4eb48007a4b0b32dd",
+  "predecessorRevision": "425de0010a3ee3500870a04e796029d671f464ef",
+  "actualSha256": "3414895eac00bdec45efdd88ad7b0fce7274d86f903bee75a29cbc7b86f42268",
+  "predecessorSha256": "146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6",
+  "packageIds": Object.freeze([
+    "district-docks-story",
+    "district-neon-story",
+    "district-foundry-story",
+    "district-brick-story",
+    "district-canal-story",
+    "district-cathedral-story",
+    "staged-crew-missions",
+    "city-neighbor-favors",
+    "city-shutter-lock",
+    "city-loading-route",
+    "city-careful-negotiation",
+    "city-sealed-record",
+    "city-rotating-account-0",
+    "city-rotating-account-1",
+    "city-rotating-account-2",
+    "city-rotating-account-3"
+  ]),
+  "addedNodes": 121,
+  "addedNodesSha256": "7717c06e66d53b856d12a3d43d1d5d8adc330ccff75a9e39b5c25e40b3124cc6",
+  "scope": "Exact independently compiled additive catalog inverse only. Preserve complete prior57-node catalog and prior9-node inverse. New gameplay authority, reachability, completion and native world results remain UNKNOWN to historical checkpoint review."
+});
+export function preGameplayRecoveryCatalog(catalog) {
+  const transfer = CHECKPOINT_GUI_CATALOG_TRANSFER;
+  if (hash(catalog) !== transfer.actualSha256) return catalog;
+  const added = catalog.nodes.filter(node => transfer.packageIds.includes(node.packageId));
+  assert.equal(added.length, transfer.addedNodes, 'Gameplay catalog additions changed');
+  assert.equal(hash(added), transfer.addedNodesSha256, 'Gameplay catalog additions differ from exact compiled source');
+  const predecessor = { ...catalog, nodes: catalog.nodes.filter(node => !transfer.packageIds.includes(node.packageId)) };
+  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Prior complete catalog differs beyond exact gameplay additions');
+  return predecessor;
+}
 export function historicalRecoveryCatalog(catalog) {
+  catalog = preGameplayRecoveryCatalog(catalog);
   const transfer = CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer;
   if (hash(catalog) !== transfer.actualSha256) return catalog;
   const added = catalog.nodes.filter(node => node.packageId === transfer.packageId);
@@ -150,7 +188,8 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       const ownerMatches = instance && account && (instance.owner_scope === 'account' ? instance.owner_id === accountId : ch?.account_id === accountId);
       // Custody-bearing recovery remains the existing escrow proof's responsibility.
       const emptyEscrow = !table('operation_escrow').some(row => row.operation_id === subject.id);
-      const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId;
+      const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId
+        || CHECKPOINT_GUI_CATALOG_TRANSFER.packageIds.includes(instance?.graph_id);
       const reachable = !newRpg && ownerMatches && instance.status === 'active' && emptyEscrow;
       emit('objectives', obligation, reachable ? 'REACHABLE' : 'UNKNOWN', reachable
         ? 'Original cancellation binds immutable stored owner/account/graph/version; no recipe, current definition or living-character completion gate; this instance has no escrow.'

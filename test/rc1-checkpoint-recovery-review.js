@@ -3,7 +3,7 @@ import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
-import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
+import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog, preGameplayRecoveryCatalog, CHECKPOINT_GUI_CATALOG_TRANSFER,
   reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
@@ -71,16 +71,22 @@ for (const file of extensionFiles) {
   const block = text.slice(start, end);
   assert.throws(() => assertCitySourceTransfer(file, text.replace(block, block + block)), /source changed/);
 }
+const cityCatalog = preGameplayRecoveryCatalog(catalog);
+assert.equal(hash(catalog), CHECKPOINT_GUI_CATALOG_TRANSFER.actualSha256);
+assert.equal(hash(cityCatalog), CHECKPOINT_GUI_CATALOG_TRANSFER.predecessorSha256);
+assert.equal(catalog.nodes.length - cityCatalog.nodes.length, 121);
+assert.equal(hash(catalog.nodes.filter(node => CHECKPOINT_GUI_CATALOG_TRANSFER.packageIds.includes(node.packageId))), CHECKPOINT_GUI_CATALOG_TRANSFER.addedNodesSha256);
+assert.equal(preGameplayRecoveryCatalog(cityCatalog), cityCatalog);
 const historicalCatalog = historicalRecoveryCatalog(catalog);
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
+assert.equal(hash(cityCatalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
 assert.equal(hash(historicalCatalog), CHECKPOINT_RECOVERY_REVIEW.catalogSha256,
   'Exact additive City catalog inverse retains the complete independently reviewed historical catalog hash.');
-assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 9);
+assert.equal(cityCatalog.nodes.length - historicalCatalog.nodes.length, 9);
 assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'neighborhood-initiation')),
   CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.addedNodesSha256);
 assert.equal(historicalRecoveryCatalog(historicalCatalog), historicalCatalog);
 assert(!historicalCatalog.nodes.some(node => node.packageId === 'neighborhood-initiation'));
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256,
+assert.equal(hash(catalog), CHECKPOINT_GUI_CATALOG_TRANSFER.actualSha256,
   'The catalog inverse must not mutate the current content catalog.');
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 const logicalAt = Date.parse('2026-09-24T00:00:00Z'), configurationSha256 = hash('effective isolated configuration');
@@ -137,6 +143,17 @@ assert(reviewed.details.some(row => row.id === 'shared-canal-path' && row.ok));
   for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN',
     'New RPG authority cannot inherit historical ' + scope + ' coverage.');
   assert.equal(result.witnesses.find(row => row.id === 'mystery:m1').status, 'REACHABLE');
+}
+for (const packageId of CHECKPOINT_GUI_CATALOG_TRANSFER.packageIds) {
+  const changed = clone(catalog); changed.nodes.find(node => node.packageId === packageId).version++;
+  assert.equal(preGameplayRecoveryCatalog(changed), changed, 'Every added package remains exactly pinned');
+  assert.equal(historicalRecoveryCatalog(changed), changed);
+  const input = fixture(data); input.catalog = changed;
+  assert.equal(reviewCanonicalCheckpoint(input).catalogApplicable, false);
+  const unknown = clone(data); unknown.mystery_instances.push({ id: 'new-gameplay-' + packageId, graph_id: packageId, graph_version: 1, owner_scope: 'character', owner_id: 'c0', authority_account_id: 'a0', status: 'active' });
+  const result = reviewCanonicalCheckpoint(fixture(unknown));
+  assert.equal(result.witnesses.find(row => row.id === 'mystery:new-gameplay-' + packageId).status, 'UNKNOWN');
+  for (const scope of ['objectives','resources','knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN');
 }
 for (const mutate of [
   changed => changed.nodes.find(node => node.packageId === 'neighborhood-initiation').metadata.description = 'tampered dialogue',
