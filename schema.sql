@@ -8125,3 +8125,54 @@ CREATE TABLE IF NOT EXISTS company_workflow_proofs (
   PRIMARY KEY(source_type,source_id),
   CHECK ((stage='delivery' AND source_type='finance') OR (stage<>'delivery' AND source_type='depot_journal'))
 );
+
+-- Verified account premises have at most two prepaid, exclusive business slots.
+-- Rent transfers immediately between character pockets; these rows hold no cash.
+CREATE TABLE IF NOT EXISTS commercial_premises_offers (
+  id TEXT PRIMARY KEY,
+  landlord_account TEXT NOT NULL UNIQUE REFERENCES accounts(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  revision INT NOT NULL CHECK(revision BETWEEN 1 AND 2147483647),
+  company_revision INT NOT NULL CHECK(company_revision BETWEEN 1 AND 2147483647),
+  depot_id TEXT REFERENCES business_depots(id),
+  premises_kind TEXT NOT NULL CHECK(premises_kind IN ('estate','street')),
+  premises_key TEXT NOT NULL,
+  premises_district TEXT,
+  slots INT NOT NULL CHECK(slots BETWEEN 1 AND 2),
+  rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000),
+  duration_seconds INT NOT NULL CHECK(duration_seconds BETWEEN 60 AND 86400),
+  published BOOLEAN NOT NULL,
+  state TEXT NOT NULL DEFAULT 'offered' CHECK(state IN ('offered','cancelled','invalidated')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  CHECK((premises_kind='estate' AND premises_district IS NULL) OR (premises_kind='street' AND premises_district IS NOT NULL))
+);
+CREATE TABLE IF NOT EXISTS commercial_premises_leases (
+  id TEXT PRIMARY KEY,
+  offer_id TEXT NOT NULL REFERENCES commercial_premises_offers(id),
+  slot INT NOT NULL CHECK(slot BETWEEN 1 AND 2),
+  landlord_account TEXT NOT NULL REFERENCES accounts(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  tenant_account TEXT NOT NULL REFERENCES accounts(id),
+  tenant_character TEXT NOT NULL REFERENCES characters(id),
+  offer_revision INT NOT NULL CHECK(offer_revision BETWEEN 1 AND 2147483647),
+  revision INT NOT NULL DEFAULT 1 CHECK(revision BETWEEN 1 AND 2147483647),
+  depot_id TEXT REFERENCES business_depots(id),
+  premises_kind TEXT NOT NULL CHECK(premises_kind IN ('estate','street')),
+  premises_key TEXT NOT NULL,
+  premises_district TEXT,
+  rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000),
+  starts_at TIMESTAMPTZ NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL CHECK(expires_at>starts_at),
+  state TEXT NOT NULL DEFAULT 'active' CHECK(state IN ('active','expired','cancelled','invalidated','landlord_dead','tenant_dead')),
+  CHECK(landlord_account<>tenant_account AND landlord_character<>tenant_character),
+  CHECK((premises_kind='estate' AND premises_district IS NULL) OR (premises_kind='street' AND premises_district IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS commercial_premises_one_occupant ON commercial_premises_leases(offer_id,slot) WHERE state='active';
+CREATE TABLE IF NOT EXISTS commercial_premises_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  action TEXT NOT NULL CHECK(action IN ('offer','lease','cancel_offer','cancel_lease')),
+  request_key TEXT NOT NULL,
+  terms JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  PRIMARY KEY(account_id,action,request_key)
+);
