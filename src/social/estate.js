@@ -17,6 +17,8 @@ import { voidLoansAtDeath } from '../loans.js';
 import { voidFavorsAtDeath } from '../favors.js';
 import { voidIntelForecastJobsAtDeath } from '../intelforecastjobs.js';
 import { voidEmploymentAtDeath } from '../gameemployment.js';
+import { closeCompanyWorkflowsAtDeath } from '../companyworkflows.js';
+import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -410,6 +412,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   if (opts.killerCh && intel.looted) report.intelForecastLoot = intel.looted;
   const employment = await voidEmploymentAtDeath(client, h, victim, opts.killerCh, estateLootRate);
   if (employment.lootedCash) report.employmentLoot = employment.lootedCash;
+  await closeCompanyWorkflowsAtDeath(client, victim.id);
+  await voidCommercialPremisesAtDeath(client, victim);
   if (h.victimOwned.gangId) await removeMember(client, h.victimOwned.gangId, victim.id);
 
   victim.alive = false;

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -19,7 +20,7 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 let completeTextComparisons = 0, sha256Comparisons = 0, blobComparisons = 0, negatives = 0, totalHunks = 2;
 const entire = (actual, expected, message) => { assert.equal(actual, expected, message); completeTextComparisons++; };
-const file = 'src/server.js', current = normalize(cityGameplaySourceBaseline(file,fs.readFileSync(file,'utf8'))), baseline = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[file]);
+const file = 'src/server.js', current = normalize(companyWorkflowSourceBaseline(file,cityGameplaySourceBaseline(file,fs.readFileSync(file,'utf8')))), baseline = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[file]);
 assert.deepEqual(Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS), [file, 'src/invariants.js', 'src/social/estate.js'], 'Closed authorized source domains, no new worker scope');
 for (const spec of [GAME_EMPLOYMENT_SOURCE_CURRENT_BLOBS[file], `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:${file}`, 'e9d2aa81c4547ec792efa7a75270c8afa98151db:src/server.js', '56ccfe6e03c8a1b161e3203179cc0fa2605a6d39:src/server.js']) entire(current, git('show', spec), 'Complete frozen employment runtime');
 entire(baseline, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:${file}`), 'Complete N01 predecessor');
@@ -71,7 +72,7 @@ for (const unknown of ['src/worker.js', 'src/gameemployment.js', 'toString']) {
   assert.throws(() => assertGameEmploymentSourceTransfer(unknown, ''), /Unknown Game Employment/); assert.throws(() => qualifyGameEmploymentSource(unknown, ''), /Unknown Game Employment/);
 }
 assert.equal(gameEmploymentSourceBaseline('src/unknown.js', 'unknown'), 'unknown');
-const worker = normalize(fs.readFileSync('src/worker.js', 'utf8'));
+const worker = companyWorkflowSourceBaseline('src/worker.js', fs.readFileSync('src/worker.js', 'utf8'));
 entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:src/worker.js`)); entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:src/worker.js`));
 assert.equal(hash(worker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']); sha256Comparisons++;
 assert.equal(blob(worker), COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS['src/worker.js']); blobComparisons++;
@@ -90,7 +91,7 @@ const actual = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMEN
 const historical = await verifyWorldRecoverySources({ sourceRevision: GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION, readFile: candidate => candidate === file ? baseline : fs.readFileSync(candidate) });
 assert.deepEqual(actual, historical, 'Historical qualification parity unchanged');
 for (const sourceFile of ['src/invariants.js', 'src/social/estate.js']) {
-  const source = normalize(cityGameplaySourceBaseline(sourceFile,fs.readFileSync(sourceFile,'utf8'))), prior = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[sourceFile]);
+  const source = normalize(companyWorkflowSourceBaseline(sourceFile,cityGameplaySourceBaseline(sourceFile,fs.readFileSync(sourceFile,'utf8')))), prior = git('show', GAME_EMPLOYMENT_SOURCE_BASELINE_BLOBS[sourceFile]);
   entire(source, git('show', GAME_EMPLOYMENT_SOURCE_CURRENT_BLOBS[sourceFile])); entire(source, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:${sourceFile}`));
   entire(prior, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:${sourceFile}`));
   assert.equal(hash(source), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[sourceFile]); assert.equal(hash(prior), GAME_EMPLOYMENT_SOURCE_BASELINE_PINS[sourceFile]); sha256Comparisons += 2;

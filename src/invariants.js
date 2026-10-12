@@ -8,6 +8,8 @@ import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { employmentCashInvariant } from './gameemploymentinvariants.js';
+import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
+import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -108,6 +110,7 @@ const KNOWN_REASONS = {
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
     'intel_job:', 'employment:reserve:', 'employment:wage:', 'employment:refund:', 'employment:estate:loot:',
+    'commercial_premises:rent:pay', 'commercial_premises:rent:receive',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
     // refunded on an enacted motion (`commission:refund`) or forfeited to the confiscation pool
     // (`commission:forfeit`) — reconciled by the treasury check (b) + the commission-escrow check
@@ -668,6 +671,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const employment = await employmentCashInvariant(pool);
   push('game employment escrow', employment.actual, employment.expected, 0);
   push('game employment loot ledger', employment.lootedCash, employment.lootedCash - employment.lootDelta, 0);
+  const workflows = await runCompanyWorkflowInvariants(pool);
+  push('company workflow provenance', workflows.issues.length, 0, 0, { issues: workflows.issues });
+  const premises = await commercialPremisesInvariant(pool);
+  push(premises.name, premises.defects.length, 0, 0, { defects: premises.defects });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);

@@ -11,8 +11,10 @@ and `73aa3509a2d6f48cf207450d1f2ebd39c4fb225e` pin official PostgreSQL image acq
 retain its registry finding/drift controls, corresponding to `e19badf9`/`1fc6049c`; they grant no
 gameplay authority. Native-fixture repair source `9634fca0` addresses the first candidate’s actual
 SQL preparation, catalogue-count and upgrade-fixture failures without relaxing limits.
-The subsequent integration includes reviewed payroll main `f43ecf610b67e8b3ea90a57939a9c109d3f9bfab`.
-The closed gameplay transfer reconstructs that complete parent before unchanged employment,
+The subsequent integration includes reviewed payroll main `f43ecf610b67e8b3ea90a57939a9c109d3f9bfab`
+and reviewed workflow/premises source `425de0010a3ee3500870a04e796029d671f464ef`.
+The closed gameplay transfer reconstructs the complete current parent before unchanged premises,
+workflow, employment,
 operator and older source-transfer layers. Those layers qualify source only, not the added
 gameplay, native migration, worker, activation or deployment authority. These pins identify
 the assembled candidate, not native or production qualification.
@@ -45,7 +47,7 @@ preserves its immutable result; fresh keys recheck actors. Explicit old-version 
 stored original authority solely to return custody, without interpreting current/retired effects.
 
 The following local evidence applies to its recorded gameplay source and producer pins; it does
-not automatically qualify the assembled payroll/operator/gameplay candidate. Incoming workflows
+not automatically qualify the assembled premises/workflow/payroll/operator/gameplay candidate. Incoming workflows
 retain their separate authority and review limits.
 
 The opportunity API/control entry passed disposable pg-mem playthroughs for all nine
@@ -82,3 +84,9 @@ the exact compiled new additions are projected. Parent and child URLs reject unk
 databases, fragments and options before writes; the child permits only the exact parent-issued
 owned search-path/timeouts. Independent structural and blocked-socket controls passed locally.
 They are not actual PostgreSQL16/18.4 execution, which remains required on the final head.
+
+The workflow and premises integration preserves complete incoming runtime modules, native
+command/ledger definitions and architecture JSON. Their real domain and JWT/estate memory
+checks pass with the gameplay source. Closed source normalization retains every predecessor
+assertion and negative control; it grants no new gameplay/native/deployment qualification.
+Source declares 64 native steps; actual final-head execution remains unobserved and mandatory.

@@ -10,6 +10,10 @@ import { CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_SOURCE_INVERSES,
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { GAME_EMPLOYMENT_SOURCE_CURRENT_PINS, GAME_EMPLOYMENT_SOURCE_BASELINE_PINS, GAME_EMPLOYMENT_SOURCE_INVERSES,
   assertGameEmploymentSourceTransfer, gameEmploymentSourceBaseline } from '../tools/rc1-game-employment-source-compatibility.js';
+import { COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, COMPANY_WORKFLOW_SOURCE_INVERSES,
+  assertCompanyWorkflowSourceTransfer, companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
+import { COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, COMMERCIAL_PREMISES_SOURCE_INVERSES,
+  assertCommercialPremisesSourceTransfer, commercialPremisesSourceBaseline } from '../tools/rc1-commercial-premises-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -20,7 +24,7 @@ const files = ['package-lock.json','package.json','schema.sql','src/agentgateway
   'src/server.js','src/social/estate.js','src/worldgraph-ui.js','src/worldgraph-validate.js'];
 assert.deepEqual(Object.keys(CITY_GAMEPLAY_SOURCE_CURRENT_PINS), files);
 for (const pins of [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS]) assert.deepEqual(Object.keys(pins), files);
-assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['f43ecf610b67e8b3ea90a57939a9c109d3f9bfab']);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['425de0010a3ee3500870a04e796029d671f464ef']);
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
@@ -60,8 +64,14 @@ for (const file of files) {
   }
 }
 for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), parent = cityGameplaySourceBaseline(file, current);
-  assert.equal(hash(parent), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete payroll parent: ' + file);
+  const current = normalize(fs.readFileSync(file, 'utf8')), combinedParent = cityGameplaySourceBaseline(file, current);
+  assert.equal(hash(combinedParent), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete premises parent: ' + file);
+  const workflow = commercialPremisesSourceBaseline(file, combinedParent);
+  assert.equal(hash(workflow), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]);
+  assert.equal(workflow, assertCommercialPremisesSourceTransfer(file, combinedParent).baselineText);
+  const parent = companyWorkflowSourceBaseline(file, combinedParent);
+  assert.equal(hash(parent), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[file], 'The unchanged premises/workflow adapters preserve the complete payroll parent: ' + file);
+  assert.equal(parent, assertCompanyWorkflowSourceTransfer(file, workflow).baselineText);
   const operator = gameEmploymentSourceBaseline(file, parent);
   assert.equal(hash(operator), GAME_EMPLOYMENT_SOURCE_BASELINE_PINS[file]);
   assert.equal(operator, assertGameEmploymentSourceTransfer(file, parent).baselineText);
@@ -90,14 +100,49 @@ for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
     }
   }
 }
+for (const layer of [
+  { pins: COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, inverses: COMMERCIAL_PREMISES_SOURCE_INVERSES,
+    baseline: input => input, assertTransfer: assertCommercialPremisesSourceTransfer },
+  { pins: COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, inverses: COMPANY_WORKFLOW_SOURCE_INVERSES,
+    baseline: (input,file) => commercialPremisesSourceBaseline(file,input), assertTransfer: assertCompanyWorkflowSourceTransfer },
+]) {
+  for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
+    const current = normalize(fs.readFileSync(file,'utf8')), parent = layer.baseline(cityGameplaySourceBaseline(file,current),file);
+    assert.equal(hash(parent),layer.pins[file]);
+    for (const chunk of layer.inverses[file]) {
+      assert.equal(parent.split(chunk.current).length,2,'Each premises/workflow predecessor hunk is exact and unique: ' + file);
+      for (const changed of [parent.replace(chunk.current,''),parent.replace(chunk.current,chunk.current + chunk.current),
+        parent.replace(chunk.current,chunk.current + '// altered premises/workflow predecessor hunk\n')]) {
+        assert.equal(cityGameplaySourceBaseline(file,changed),changed);
+        assert.equal(companyOperatorSourceBaseline(file,changed),changed);
+        assert.throws(() => qualifyCityGameplaySource(file,changed),/source changed/);
+        assert.throws(() => layer.assertTransfer(file,changed),/source changed/); negatives++;
+      }
+      const anchor = chunk.current.split('\n').find(line => line.trim() && !chunk.baseline.split('\n').includes(line)
+        && current.split(line + '\n').length === 2);
+      assert(anchor,'The combined current file retains an exact added premises/workflow line: ' + file);
+      for (const changed of [current.replace(anchor + '\n',''),current.replace(anchor + '\n',anchor + '\n' + anchor + '\n'),
+        current.replace(anchor + '\n',anchor + ' // altered combined premises/workflow authority\n')]) {
+        assert.equal(cityGameplaySourceBaseline(file,changed),changed);
+        assert.equal(companyOperatorSourceBaseline(file,changed),changed);
+        assert.throws(() => qualifyCityGameplaySource(file,changed),/source changed/);
+        assert.throws(() => layer.assertTransfer(file,changed),/source changed/); negatives++;
+      }
+    }
+  }
+}
 const server = normalize(fs.readFileSync('src/server.js', 'utf8')), parentServer = cityGameplaySourceBaseline('src/server.js', server);
-assert.equal(hash(parentServer), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the payroll envelope.');
+assert.equal(hash(parentServer), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the premises envelope.');
+assert.equal(hash(commercialPremisesSourceBaseline('src/server.js',parentServer)), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS['src/server.js'],
+  'The unchanged premises adapter retains the complete workflow envelope.');
+assert.equal(hash(companyWorkflowSourceBaseline('src/server.js',parentServer)), GAME_EMPLOYMENT_SOURCE_CURRENT_PINS['src/server.js'],
+  'The unchanged workflow adapter retains the complete payroll envelope.');
 assert.equal(hash(gameEmploymentSourceBaseline('src/server.js', parentServer)), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/server.js'],
   'The unchanged payroll adapter retains the complete operator envelope.');
 const homeServer = companyOperatorSourceBaseline('src/server.js', parentServer);
 assert.equal(hash(homeServer), CITY_HOMES_LEAGUE_SERVER_PIN);
 assert.equal(cityHomesLeagueSourceBaseline('src/server.js', server), assertCityHomesLeagueServerTransfer(homeServer).baselineText,
-  'Exactly one gameplay layer preserves the exact payroll and operator envelopes before unchanged Homes and older layers.');
+  'Exactly one gameplay layer preserves the exact premises, workflow, payroll and operator envelopes before unchanged Homes and older layers.');
 for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   for (const changed of [server.replace(chunk, ''), server.replace(chunk, chunk + chunk), server.replace(chunk, chunk.replace('registerCityHomes','registerUnreviewedHomes'))]) {
     assert.notEqual(changed, server); assert.equal(cityHomesLeagueSourceBaseline('src/server.js', changed), changed);
@@ -105,12 +150,14 @@ for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   }
 }
 for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/city-world-opportunities.js','src/city-home-migration.js',
-  'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js']) {
-  const text = fs.readFileSync(file, 'utf8'); assert.equal(cityGameplaySourceBaseline(file, text), text, 'New modules have no predecessor alias.');
+  'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js','src/commercialpremises.js',
+  'src/commercialpremisesinvariants.js','src/routes/commercialpremises.js','src/companyworkflows.js','src/companyworkflowrunner.js',
+  'src/companyworkflowinvariants.js','src/routes/companyworkflows.js','src/worker.js']) {
+  const text = fs.readFileSync(file, 'utf8'); assert.equal(cityGameplaySourceBaseline(file, text), text, 'Files outside the closed17 map have no gameplay predecessor alias.');
   assert.throws(() => qualifyCityGameplaySource(file, text), /Unknown gameplay source/); negatives++;
 }
 for (const file of ['toString','constructor','./src/server.js']) {
   assert.equal(cityGameplaySourceBaseline(file, server), server); assert.throws(() => qualifyCityGameplaySource(file, server), /Unknown gameplay source/); negatives++;
 }
-console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/f43-payroll-parent files, exact employment-to-operator101/8dbe predecessors, preserved payroll/operator envelopes, CRLF controls,', negatives,
+console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full current/425-premises-parent files, exact premises/workflow/employment-to-operator101/8dbe predecessors, preserved premises/workflow/payroll/operator envelopes, CRLF controls,', negatives,
   'tamper/unknown/no-new-module negatives; historical source-only transfer excludes all new authority/native/worker/migration/activation/deployment');
