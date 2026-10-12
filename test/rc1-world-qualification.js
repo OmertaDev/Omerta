@@ -15,6 +15,7 @@ import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-sourc
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
   coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
+import { COMMERCIAL_PREMISES_SOURCE_TRANSFER } from '../tools/rc1-commercial-premises-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
   FRANCHISE_SOURCE_PREDECESSOR_PINS, FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
@@ -560,7 +561,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 26);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 27);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER);
 assert.match(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer.scope, /require separate current-source workflow proofs/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
@@ -783,3 +784,5 @@ for (const change of [
   assert.throws(() => evaluateWorldDuration(value), /opening and closing/);
 }
 console.log('PASS rc1-world-qualification: source pins, exact checkpoint subjects, canonical cash/ammo/Family guards, unknown preservation, lifecycle executions, distinct season boundaries and reviewed window joins; no native-world qualification');
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer, COMMERCIAL_PREMISES_SOURCE_TRANSFER);
