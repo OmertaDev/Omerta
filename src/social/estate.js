@@ -21,6 +21,7 @@ import { closeCompanyWorkflowsAtDeath } from '../companyworkflows.js';
 import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { closeCompanyBankPortfoliosAtDeath } from '../companybankportfolios.js';
 import { voidLogisticsHubsAtDeath } from '../companylogisticshubs.js';
+import { recoverBuyerCooperativesAtDeath } from '../buyercooperativecustody.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -385,6 +386,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // (red-team) the seasonal lootMult covers EVERY fire-kill loot surface — escrow legs included; the
   // BLOOD OATH decree mult (threaded from fire) rides the SAME clamp so the escrow legs match the pocket loot.
   const estateLootRate = opts.loot ? Math.min(0.5, M3.CASH_LOOT_RATE * (seasonModOf().lootMult || 1) * (opts.bloodOathMult || 1)) : 0;
+  const cooperative = await recoverBuyerCooperativesAtDeath(client, victim.id, h.ledger, opts.killerCh, estateLootRate);
+  if (cooperative.looted) report.cooperativeLoot = cooperative.looted;
   const mkt = await voidListingsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
   if (opts.killerCh && mkt.selfRefund) opts.killerCh.cash = Number(opts.killerCh.cash) + mkt.selfRefund;
   await burnBidsAtDeath(client, victim.id);

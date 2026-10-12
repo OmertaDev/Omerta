@@ -629,6 +629,8 @@ const DISPOSITION = {
   commercial_premises_offers: 'special', // canonical estate invalidates the dead original landlord's published offer
   commercial_premises_leases: 'special', // canonical estate closes occupancy for either original party; rent is already settled
   company_logistics_hubs: 'special', // canonical estate closes original supplier/landlord consent; all value stays in canonical warehouse and loan books
+  buyer_cooperatives: 'escrow', // canonical estate settles the bound market order and preserves living members custody; organizer pocket is never backing
+  buyer_cooperative_members: 'escrow', // original member death burns/loots only unclaimed entitlement; immutable allocation/death history grants heirs no claim
   company_bank_portfolios: 'metadata', // canonical estate disables the original owner grant; no custody or new heir authority
   company_bank_portfolio_loans: 'metadata', // immutable original lender provenance; canonical loans own all debt and inherited active claims
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds

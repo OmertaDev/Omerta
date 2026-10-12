@@ -87,6 +87,7 @@ import { register as registerCompanyWorkflows } from './routes/companyworkflows.
 import { register as registerCommercialPremises } from './routes/commercialpremises.js';
 import { register as registerCompanyBankPortfolios } from './routes/companybankportfolios.js';
 import { register as registerCompanyLogisticsHubs } from './routes/companylogisticshubs.js';
+import { register as registerBuyerCooperatives } from './routes/buyercooperatives.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -2416,6 +2417,7 @@ export async function buildServer() {
   registerCommercialPremises(app, { pool, auth });
   registerCompanyBankPortfolios(app, { pool, auth });
   registerCompanyLogisticsHubs(app, { pool, auth });
+  registerBuyerCooperatives(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 

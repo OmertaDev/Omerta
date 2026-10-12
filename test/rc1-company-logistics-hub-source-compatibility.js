@@ -1,3 +1,4 @@
+import { buyerCooperativeSourceBaseline } from '../tools/rc1-buyer-cooperative-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -16,7 +17,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS),['src/server.js','src/invariants.js','src/social/estate.js']);
 for(const file of Object.keys(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS)) {
- const current=lf(fs.readFileSync(file,'utf8')),prior=git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=buyerCooperativeSourceBaseline(file,fs.readFileSync(file,'utf8')),prior=git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`880f494311b3aad625ce06af99fcb245b146a351:${file}`));
  entire(current,git('show',P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS,P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_BLOBS],[prior,P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_PINS,P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
@@ -38,7 +39,7 @@ for(const file of Object.keys(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS)) {
  if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.companyLogisticsHubSourceTransfer,proof);assert.deepEqual(actual.companyBankSourceTransfer,old.companyBankSourceTransfer);assert.deepEqual(actual.commercialPremisesSourceTransfer,old.commercialPremisesSourceTransfer);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}
 }
 for(const file of ['src/worker.js','src/companylogisticshubs.js','toString']){assert.throws(()=>P.assertCompanyLogisticsHubSourceTransfer(file,''));assert.throws(()=>P.qualifyCompanyLogisticsHubSource(file,''));}
-const worker=lf(fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.companyLogisticsHubSourceBaseline('src/worker.js',worker),worker);
+const worker=buyerCooperativeSourceBaseline('src/worker.js',fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.companyLogisticsHubSourceBaseline('src/worker.js',worker),worker);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer,P.COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer,W.COMPANY_BANK_SOURCE_TRANSFER);
 const currentReader=file=>fs.readFileSync(file,'utf8'),priorReader=file=>Object.hasOwn(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}));
