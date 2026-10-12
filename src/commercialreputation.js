@@ -167,10 +167,10 @@ export async function publicCommercialReputation(client, account) {
   const publication = await one(client, 'SELECT published FROM commercial_reputation_publications WHERE account_id=$1', [account]);
   if (!company?.published || !publication?.published) return { available: false };
   const records = await evidence(client, account);
-  const registered = (await client.query('SELECT category,source_id FROM commercial_reputation_proofs WHERE account_id=$1 ORDER BY category,source_id LIMIT 500', [account])).rows;
+  const registered = (await client.query('SELECT category,source_id,original_character FROM commercial_reputation_proofs WHERE account_id=$1 ORDER BY category,source_id LIMIT 500', [account])).rows;
   const categories = {};
   for (const category of COMMERCIAL_REPUTATION.categories) {
-    const valid = records.filter(r => r.category === category && r.valid && registered.some(p => p.category === category && p.source_id === r.sourceId));
+    const valid = records.filter(r => r.category === category && r.valid && registered.some(p => p.category === category && p.source_id === r.sourceId && p.original_character === r.originalCharacter));
     categories[category] = new Set(valid.flatMap(r => r.counterparties)).size >= 3 ? band(valid.length) : null;
   }
   // Recheck both visibility grants after the potentially lengthy source traversal.
@@ -178,5 +178,5 @@ export async function publicCommercialReputation(client, account) {
   const currentPublication = await one(client, 'SELECT published FROM commercial_reputation_publications WHERE account_id=$1', [account]);
   if (!currentCompany?.published || !currentPublication?.published) return { available: false };
   return { available: true, companyName: currentCompany.name, categories, sourceWindowPerCategory: 100,
-    minimumIndependentAccounts: 3, scope: 'Separate coarse game engagement counts; categories may overlap. No Sybil, creditworthiness or profit claim.' };
+    proofLimit: 500, minimumIndependentAccounts: 3, scope: 'Separate coarse game engagement counts; categories may overlap. No Sybil, creditworthiness or profit claim.' };
 }
