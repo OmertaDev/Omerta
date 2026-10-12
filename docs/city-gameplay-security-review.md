@@ -1,13 +1,17 @@
 # City gameplay source scope and qualification
 
-Date: 2026-10-12. Phase: active source integration; final combined qualification pending.
+Date: 2026-10-12. Phase: integrated candidate source; final combined qualification pending.
 Gameplay source: `c75eb6de12ad9816d4a48f1e614a099098144eec`, originally based on
 `727df2f02b2d0e5031b4c5a4516144de67aba0a8`, branch `codex/city-gameplay-expansion`.
 Incoming operator source base: `101cdaaec2d5f235102e3de839043ba1fef21f81`;
 its knowledge-refresh head is `8dbe85846035dc0fcdba76992834e411632c6f1b`.
-The integration preserves the gameplay producers and incoming operator source. These parent pins
-identify inputs, not a qualified combined head. Qualification must name the later final source
-revision and its own checks. This record is not a release or deployment attestation.
+Integrated source: `549fdfaff1b5de732dcdb84ac25d4e7a5e2dcfb6` preserves the gameplay producers
+and incoming operator source. Image-only commits `8fb08a5bae1d4a80decf5e742ba6fea20a90a34a`
+and `73aa3509a2d6f48cf207450d1f2ebd39c4fb225e` pin official PostgreSQL image acquisition and
+retain its registry finding/drift controls, corresponding to `e19badf9`/`1fc6049c`; they grant no
+gameplay authority. These pins identify the assembled candidate, not native or production qualification.
+Qualification must name the later final source revision and its own checks. This record is not
+a release or deployment attestation.
 The separately verified PR252 map-affordance release does not qualify these new gameplay authorities.
 
 The ten mechanics are district story arcs; functional deed interiors/storage/workbench; learned
@@ -35,7 +39,7 @@ preserves its immutable result; fresh keys recheck actors. Explicit old-version 
 stored original authority solely to return custody, without interpreting current/retired effects.
 
 The following local evidence applies to its recorded gameplay source and producer pins; it does
-not automatically qualify the active operator/gameplay merge. Incoming operator workflows retain
+not automatically qualify the assembled operator/gameplay candidate. Incoming operator workflows retain
 their separate authority and review limits.
 
 The opportunity API/control entry passed disposable pg-mem playthroughs for all nine
