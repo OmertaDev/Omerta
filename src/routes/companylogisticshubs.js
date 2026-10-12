@@ -1,7 +1,8 @@
 import * as G from '../game.js';
 import * as Hub from '../companylogisticshubs.js';
 export function register(app,{ pool,auth }) {
-  const base='/v1/company/logistics-hubs', key=req=>req.headers['idempotency-key'];
+  const base='/v1/company/logistics-hubs';
+  const key=req=>req.headers['idempotency-key'];
   app.get(base,{ preHandler:auth },req=>G.readCharacter(pool,req.user.sub,(ch,client)=>Hub.logisticsHubBoard(client,ch.account_id)));
   app.post(base,{ preHandler:auth },async req=>{
     const prior=await Hub.replayLogisticsHubRequest(req.user.sub,'setup',null,req.body,key(req),pool); if(prior) return prior;
