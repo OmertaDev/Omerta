@@ -46,8 +46,8 @@ async function player() {
   const row = (await app.pool.query('SELECT * FROM characters WHERE account_id=$1 AND alive', [account])).rows[0];
   await app.pool.query("UPDATE characters SET cash=100000,bank=0,loc='docks',last_accrued_at=$2 WHERE id=$1", [row.id, new Date(Date.now() + 3600000)]);
   await G.ledger(app.pool, { characterId: row.id, currency: 'cash', amount: 100000 - Number(row.cash) - Number(row.bank), reason: 'crime:season-integration-fixture' });
-  await app.pool.query('INSERT INTO agent_company_profiles(account_id,revision,name,published) VALUES($1,1,$2,true)', [account, `Season Company ${sequence}`]);
-  await app.pool.query('INSERT INTO commercial_reputation_publications(account_id,published,revision) VALUES($1,true,1)', [account]);
+  await api({ token }, 'POST', '/v1/resources/company', { expectedRevision: 0, name: `Season Company ${sequence}`, published: true, premises: null });
+  await api({ token }, 'POST', '/v1/company/reputation', { expectedRevision: 0, published: true });
   const agent = (await api({ token }, 'POST', '/v1/auth/agent-key')).token;
   assert.equal(JSON.parse(Buffer.from(agent.split('.')[1], 'base64url')).agent, true);
   return { id: row.id, account, token, agent };
@@ -112,9 +112,12 @@ try {
   assert.equal(publicResult.standings[0].operatingResultBand, 'positive');
   assert.equal(publicResult.standings[0].observedSaleDepletion, 'observed');
   for (const secret of [owner.id, owner.account, depot, supplier.id, customer.id, borrowed.id, result.baselineHash, 'operatingResult":', 'costOfGoodsSold']) assert.equal(JSON.stringify(publicResult).includes(secret), false, secret);
-  await app.pool.query('UPDATE commercial_reputation_publications SET published=false WHERE account_id=$1', [owner.account]);
+  await api(owner, 'POST', '/v1/company/reputation', { expectedRevision: 1, published: false }, undefined, true);
   assert.equal((await api(null, 'GET', `${base}/public/${season}`)).standings.length, 0);
-  await app.pool.query('UPDATE commercial_reputation_publications SET published=true WHERE account_id=$1', [owner.account]);
+  await api(owner, 'POST', '/v1/company/reputation', { expectedRevision: 2, published: true }, undefined, false);
+  await api(owner, 'POST', '/v1/resources/company', { expectedRevision: 1, name: 'Season Company Revoked', published: false, premises: null });
+  assert.equal((await api(null, 'GET', `${base}/public/${season}`)).standings.length, 0);
+  await api(owner, 'POST', '/v1/resources/company', { expectedRevision: 2, name: 'Season Company Restored', published: true, premises: null });
   await api(owner, 'POST', `${base}/visibility`, { seasonId: season, published: false, expectedRevision: 1 }, undefined, false);
   assert.equal((await S.publicBusinessSeason(app.pool, season)).standings.length, 0);
   const missing = (await make(owner, 'missing-baseline')).season.id;
