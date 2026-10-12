@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
-import { DISTRICTS, districtNeighbours } from '../src/rules.js';
 
 const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -17,7 +16,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.route('http://world-ui.test/art/**', route => route.fulfill({ contentType: 'image/png', body: fs.readFileSync(path.resolve('public/art', path.basename(new URL(route.request().url()).pathname))) }));
     await page.setContent('<base href="http://world-ui.test"><header id="tools-host"></header><section class="omerta-city"><div id="guidance"></div><div id="toolbar"></div><div id="viewport"><div id="map"></div></div></section>');
-    await page.addStyleTag({ content: '.omerta-city{width:calc(100% - 32px);max-width:960px;margin:12px auto;background:#172626;color:#eadfc4;font-family:Arial}#map{height:280px;position:relative}button{background:#26352f;color:#efe4c6;border:1px solid #85785c;padding:6px}button:not([data-city-map-view]){min-height:44px}button:focus{outline:2px solid #e9b85b}' });
+    await page.addStyleTag({ content: '.omerta-city{width:calc(100% - 32px);max-width:960px;margin:12px auto;background:#172626;color:#eadfc4;font-family:Arial}#map{height:280px;position:relative}button{background:#26352f;color:#efe4c6;border:1px solid #85785c;min-height:44px;padding:6px}button:focus{outline:2px solid #e9b85b}' });
     await page.addStyleTag({ path: 'public/city-world-ui.css' });
     await page.addScriptTag({ path: 'public/city-world-ui.js' });
     await page.evaluate(() => {
@@ -389,176 +388,6 @@ try {
       const state = ui.getState(); ui.destroy(); return { joined: state.chatJoined, colors };
     });
     assert.deepEqual(hydrated, { joined: true, colors: ['wine'] }, 'Mount consumes the current host-supplied cached preference without reverting a saved look or consent.');
-
-    await page.evaluate(districts => {
-      window.__atlasReads = []; window.__homeBoards = []; window.__homeWalks = []; window.__travelSent = []; window.__travelReceipts = []; window.__deedJumps = [];
-      window.__atlasCharacter = { id: 'atlas-owner', generation: 1, loc: 'docks', cash: 1000, jailSeconds: 0 };
-      window.__atlasFrame = { world: { width: 960, height: 640 }, position: { x: 430, y: 366 }, homes: [], obstacles: [] };
-      window.__atlasDistricts = districts;
-      window.__atlasOptions = { scopeKey: 'atlas-session', character: window.__atlasCharacter, district: { id: 'docks', name: 'The Docks' },
-        viewport: document.querySelector('#viewport'), toolbar: document.querySelector('#toolbar'), toolsHost: document.querySelector('#tools-host'),
-        rules: { districts, travelCost: 250 }, getState: () => window.__atlasFrame,
-        onRead: (kind, context) => new Promise(resolve => window.__atlasReads.push({ kind, districtId: context.districtId, cursor: context.cursor, context, resolve })),
-        onHomes: board => { window.__homeBoards.push(board); if (board?.districtId === 'docks') window.__atlasFrame.homes = board.homes.map(home => ({ ...home, entrance: { x: 900, y: 300 } })); if (!board) window.__atlasFrame.homes = []; },
-        onHome: key => window.__homeWalks.push(key), onNavigate: (tab, context) => window.__deedJumps.push({ tab, context }),
-        onTravel: async (district, context) => {
-          if (window.__queueTravel) await new Promise(resolve => { window.__releaseTravelQueue = resolve; });
-          if (!context.beforeDispatch()) return { code: 499, ignored: true, body: {} };
-          window.__travelSent.push(district);
-          if (window.__holdTravel) await new Promise(resolve => { window.__releaseTravel = resolve; });
-          window.__travelReceipts.push(district); return { code: 200, body: { loc: district, cost: 250 } };
-        }
-      };
-      window.__atlasUI = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), window.__atlasOptions);
-      const launch = document.createElement('button'); launch.id = 'atlas-launch'; launch.textContent = 'World map'; launch.onclick = () => window.__atlasUI.openMapOverview(); document.querySelector('#tools-host').append(launch);
-    }, DISTRICTS.map(district => ({ ...district, neighbours: districtNeighbours(district.id), deeds: 3 })));
-    const atlasRead = async (kind, districtId) => {
-      await page.waitForFunction(({ kind, districtId }) => window.__atlasReads.some(read => !read.used && read.context.isCurrent() && read.kind === kind && (!districtId || read.districtId === districtId)), { kind, districtId });
-      return page.evaluate(({ kind, districtId }) => { const index = window.__atlasReads.findIndex(read => !read.used && read.context.isCurrent() && read.kind === kind && (!districtId || read.districtId === districtId)); window.__atlasReads[index].used = true; return index; }, { kind, districtId });
-    };
-    const atlasReply = async (index, body) => {
-      await page.evaluate(({ index, body }) => window.__atlasReads[index].resolve({ code: 200, body }), { index, body });
-      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    };
-    const homes = (districtId, start, count, nextCursor = null, myHome = null) => ({ viewer: { characterId: 'atlas-owner', generation: 1, district: 'docks' }, districtId, placement: 'illustrative',
-      homes: Array.from({ length: count }, (_, index) => ({ key: 'street ' + String(start + index).padStart(3, '0'), street: 'Street ' + (start + index), districtId,
-        owner: { name: ['Public Player', '<img src=x onerror=window.__atlasXss=1>', 'NPC Steward'][index % 3], kind: ['player', 'agent', 'npc'][index % 3] }, mine: false, ownership: 'city' })), myHome, nextCursor, total: 100 });
-    const ownHome = { key: 'zz own street', street: 'Your recorded street', districtId: 'docks', owner: { name: 'Viewer', kind: 'player' }, mine: true, ownership: 'city' };
-    await click('#atlas-launch'); assert.equal(await page.locator('[data-city-world-panel]').count(), 6);
-    assert.deepEqual(await page.locator('[data-city-map-view]').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height)), [44, 44],
-      'Both map mode controls get their touch size from the actual WorldUI stylesheet.');
-    const firstAtlas = await atlasRead('atlas'), firstCollection = await atlasRead('collection');
-    await atlasReply(firstAtlas, { districts: DISTRICTS.map(district => ({ ...district, neighbours: districtNeighbours(district.id), deeds: 3 })) });
-    await atlasReply(firstCollection, { categories: [{ id: 'districts', items: DISTRICTS.map(district => ({ id: district.id, name: district.name, got: district.id === 'brick' })) }] });
-    const firstHomes = await atlasRead('homes', 'docks');
-    await atlasReply(firstHomes, homes('docks', 0, 32, 'street 031', ownHome));
-    await page.evaluate(board => { window.__firstHomesHydration = board; window.__atlasUI.update({ homes: board }); }, homes('docks', 0, 32, 'street 031', ownHome));
-    assert.equal(await page.locator('[data-city-district]').count(), 6);
-    assert.match(await page.locator('[data-city-district="docks"]').innerText(), /Here.*Not recorded/);
-    assert.match(await page.locator('[data-city-district="brick"]').innerText(), /Visited/);
-    assert.equal(await page.locator('.city-world__atlas-diagram line').count(), new Set(DISTRICTS.flatMap(district => districtNeighbours(district.id).map(other => [district.id, other].sort().join(':')))).size);
-    assert.equal(await page.locator('[data-city-home]').count(), 33, 'The own-home peek is included beyond the first public page without double counting.');
-    assert.match(await page.locator('.city-world__home-list').innerText(), /Public Player.*player/);
-    assert.match(await page.locator('.city-world__home-list').innerText(), /NPC Steward.*npc/);
-    assert.equal(await page.locator('.city-world__home-list img').count(), 0); assert.equal(await page.evaluate(() => window.__atlasXss), undefined);
-    assert.deepEqual(await page.evaluate(() => window.__travelSent), [], 'Overview, visits and directory inspection never travel.');
-    await click('[data-city-home="street 001"]');
-    assert.match(await page.locator('[data-city-home-detail]').innerText(), /img.*agent/);
-    assert.equal(await page.locator('button:has-text("Open Street Deeds")').count(), 0, 'Another owner has no private deed or hideout controls.');
-    await click('[data-city-home="zz own street"]');
-    const mapPalette = await page.locator('.city-world__home-detail button,.city-world__homes > button').evaluateAll(nodes => nodes.map(node => {
-      const style = getComputedStyle(node); return { appearance: style.appearance, color: style.color, background: style.backgroundColor,
-        shadow: style.boxShadow, height: node.getBoundingClientRect().height };
-    }));
-    assert(mapPalette.length >= 4 && mapPalette.every(style => style.appearance === 'none' && style.color === 'rgb(236, 210, 161)'
-      && style.background === 'rgb(36, 34, 29)' && style.shadow.includes('inset') && style.height >= 44),
-    'New home, deed, hideout and directory controls use the existing City palette and touch size.');
-    await page.keyboard.press('Tab');
-    assert.equal(await page.locator('.city-world__home-detail button:focus-visible').count(), 1);
-    assert.deepEqual(await page.locator('.city-world__home-detail button:focus-visible').evaluate(node => {
-      const style = getComputedStyle(node); return { color: style.outlineColor, width: style.outlineWidth, offset: style.outlineOffset };
-    }), { color: 'rgb(232, 179, 75)', width: '2px', offset: '-3px' });
-    await click('button:has-text("Open Street Deeds")');
-    assert.deepEqual(await page.evaluate(() => window.__deedJumps.at(-1)), { tab: 'deeds', context: { venueId: 'clubhouse', streetKey: ownHome.key, districtId: 'docks', focus: 'owned-deed' } });
-    await page.evaluate(() => window.__atlasUI.openMapOverview());
-    await click('[data-city-homes-more]'); const moreHomes = await atlasRead('homes', 'docks');
-    assert.equal(await page.evaluate(index => window.__atlasReads[index].cursor, moreHomes), 'street 031');
-    await atlasReply(moreHomes, homes('docks', 32, 32, 'street 063', ownHome));
-    assert.equal(await page.locator('[data-city-home]').count(), 64); assert.equal(await page.locator('[data-city-home="zz own street"]').count(), 1);
-    await click('[data-city-home="street 063"]');
-    const pagedWindow = await page.evaluate(() => ({ keys: [...document.querySelectorAll('[data-city-home]')].map(node => node.dataset.cityHome),
-      scroll: document.querySelector('.city-world__dock').scrollTop, state: window.__atlasUI.getState() }));
-    await page.evaluate(() => window.__atlasUI.update({ homes: window.__firstHomesHydration,
-      social: { preferences: { outfit: 'classic', chatEnabled: false, room: { furniture: [] } } } }));
-    assert.deepEqual(await page.evaluate(() => ({ keys: [...document.querySelectorAll('[data-city-home]')].map(node => node.dataset.cityHome),
-      scroll: document.querySelector('.city-world__dock').scrollTop, state: window.__atlasUI.getState() })), pagedWindow,
-    'Republishing the host\'s retained first page with unrelated social state preserves loaded pages, selection and reading position.');
-    await page.evaluate(() => window.__atlasUI.update({ homes: structuredClone(window.__firstHomesHydration) }));
-    assert.deepEqual(await page.locator('[data-city-home]').evaluateAll(nodes => nodes.map(node => node.dataset.cityHome)), pagedWindow.keys,
-      'An equivalent fresh JSON first page also preserves the loaded window.');
-    const changedFirstPage = homes('docks', 0, 32, 'street 031', null);
-    changedFirstPage.homes[31].owner = { name: 'Winning public steward', kind: 'agent' }; changedFirstPage.total = 101;
-    await page.evaluate(board => window.__atlasUI.update({ homes: board }), changedFirstPage);
-    assert.equal(await page.locator('[data-city-home="street 000"]').count(), 0, 'Hydration does not displace a loaded later row with an out-of-window first-page row.');
-    assert.equal(await page.locator('[data-city-home="street 063"]').count(), 1);
-    assert.equal(await page.locator('[data-city-home="zz own street"]').count(), 0, 'A fresh null own peek removes stale private deed links without inventing a new steward.');
-    assert.match(await page.locator('[data-city-home="street 031"]').innerText(), /Winning public steward.*agent/);
-    assert.match(await page.locator('.city-world__homes').innerText(), /101 recorded streets/);
-    await click('[data-city-homes-more]'); const laterHomes = await atlasRead('homes', 'docks');
-    assert.equal(await page.evaluate(index => window.__atlasReads[index].cursor, laterHomes), 'street 063');
-    await atlasReply(laterHomes, homes('docks', 64, 32, null, ownHome));
-    assert.equal(await page.locator('[data-city-home]').count(), 64); assert.equal(await page.locator('[data-city-home="zz own street"]').count(), 1);
-    assert.equal(await page.locator('[data-city-home="street 095"]').count(), 1, 'Later pages remain reachable within the bounded window.');
-    assert(await page.evaluate(() => window.__homeBoards.filter(Boolean).every(board => board.homes.length <= 64)));
-    const physicalWindow = await page.evaluate(() => window.__atlasFrame.homes.map(home => home.key));
-    assert.equal(physicalWindow.length, 64);
-    await click('[data-city-atlas-district="brick"]'); const oldBrickHomes = await atlasRead('homes', 'brick');
-    await click('[data-city-district="cathedral"]'); const currentCathedralHomes = await atlasRead('homes', 'cathedral');
-    const beforeOldHomes = await page.evaluate(() => window.__homeBoards.length);
-    await atlasReply(oldBrickHomes, homes('brick', 0, 3));
-    assert.equal(await page.evaluate(() => window.__homeBoards.length), beforeOldHomes, 'A retired district response cannot update home plots.');
-    const cathedral = homes('cathedral', 0, 3); cathedral.homes[0] = { key: 'outside street', street: 'External street', districtId: 'cathedral', owner: null, mine: false, ownership: 'external' };
-    cathedral.homes[1] = { key: 'estate street', street: 'Estate street', districtId: 'cathedral', owner: null, mine: false, ownership: 'estate' };
-    await atlasReply(currentCathedralHomes, cathedral);
-    assert.match(await page.locator('[data-city-home="outside street"]').innerText(), /External deed record/);
-    assert.match(await page.locator('[data-city-home="estate street"]').innerText(), /no living steward/);
-    const inspectedRemote = await page.locator('[data-city-home]').evaluateAll(nodes => nodes.map(node => node.dataset.cityHome));
-    await page.evaluate(() => window.__atlasUI.update({ homes: window.__firstHomesHydration }));
-    assert.deepEqual(await page.locator('[data-city-home]').evaluateAll(nodes => nodes.map(node => node.dataset.cityHome)), inspectedRemote,
-      'Current-district hydration cannot replace an inspected remote directory.');
-    assert.deepEqual(await page.evaluate(() => window.__atlasFrame.homes.map(home => home.key)), physicalWindow,
-      'Current-district hydration while inspecting a foreign district preserves the accepted physical plot window.');
-    assert.equal((await page.evaluate(() => window.__atlasUI.getState())).districtId, 'cathedral');
-    await click('button:has-text("Refresh streets")'); const wrongViewerHomes = await atlasRead('homes', 'cathedral');
-    const wrongViewer = homes('cathedral', 20, 3); wrongViewer.viewer.characterId = 'another-owner';
-    const beforeWrongViewer = await page.evaluate(() => window.__homeBoards.length);
-    await atlasReply(wrongViewerHomes, wrongViewer);
-    assert.equal(await page.evaluate(() => window.__homeBoards.length), beforeWrongViewer, 'A board for another viewer cannot populate directory or scene plots.');
-    assert.equal(await page.locator('[data-city-home="street 020"]').count(), 0);
-    await click('[data-city-travel="cathedral"]'); await page.waitForFunction(() => !window.__atlasUI.getState().pending);
-    assert.deepEqual(await page.evaluate(() => window.__travelSent), ['cathedral']);
-    assert.deepEqual(await page.evaluate(() => window.__atlasCharacter.loc), 'docks', 'A travel receipt never optimistically changes location or visited flags.');
-    await page.evaluate(() => { window.__atlasUI.update({ character: { ...window.__atlasCharacter, cash: 249 } }); });
-    assert.equal(await page.locator('[data-city-travel="cathedral"]').isDisabled(), true);
-    assert.equal(await page.locator('[data-city-travel="cathedral"]').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(41, 39, 31)', 'An unavailable fare retains the disabled City tone.');
-    await page.evaluate(() => window.__atlasUI.update({ rules: { districts: window.__atlasDistricts, travelCost: null } }));
-    assert.equal(await page.locator('[data-city-travel="cathedral"]').isDisabled(), true, 'A missing fare is not presented as a free ride.');
-    await page.evaluate(() => window.__atlasUI.update({ rules: { districts: window.__atlasDistricts, travelCost: 250 } }));
-    await page.evaluate(() => window.__atlasUI.update({ character: { ...window.__atlasCharacter, jailSeconds: 10 } }));
-    assert.equal(await page.locator('[data-city-travel="cathedral"]').isDisabled(), true);
-    await page.evaluate(() => { window.__atlasUI.update({ character: window.__atlasCharacter }); window.__queueTravel = true; });
-    await click('[data-city-travel="cathedral"]'); await page.waitForFunction(() => !!window.__releaseTravelQueue);
-    await click('[data-city-world-close]'); await page.evaluate(() => window.__atlasUI.openMapOverview('cathedral'));
-    await page.evaluate(() => { window.__queueTravel = false; window.__releaseTravelQueue(); }); await page.waitForFunction(() => !window.__atlasUI.getState().pending);
-    assert.equal(await page.evaluate(() => window.__travelSent.length), 1, 'Close and reopen permanently cancel a queued old travel opening.');
-    await page.evaluate(() => { window.__holdTravel = true; });
-    await click('[data-city-travel="cathedral"]'); await page.waitForFunction(() => !!window.__releaseTravel);
-    await click('[data-city-world-close]'); await page.evaluate(() => { window.__holdTravel = false; window.__releaseTravel(); });
-    await page.waitForFunction(() => !window.__atlasUI.getState().pending);
-    assert.equal(await page.evaluate(() => window.__travelReceipts.length), 2, 'A sent trip can complete after close without a second dispatch or reopening.');
-    assert.equal(await page.locator('.city-world__dock').isVisible(), false);
-    await page.evaluate(() => { window.__atlasUI.update({ recovery: true }); window.__atlasUI.openMapOverview('cathedral'); });
-    assert.equal(await page.locator('[data-city-travel="cathedral"]').isDisabled(), true, 'Unresolved same-key recovery blocks a fresh ride.');
-    await page.evaluate(() => window.__atlasUI.update({ recovery: false }));
-    await page.evaluate(() => window.__atlasUI.openMapOverview('docks'));
-    const staleCollection = await atlasRead('collection');
-    await page.evaluate(() => window.__atlasUI.update({ scopeKey: 'other-owner', character: { id: 'other-owner', generation: 2, loc: 'docks', cash: 1000 } }));
-    await atlasReply(staleCollection, { categories: [{ id: 'districts', items: [{ id: 'docks', got: true }] }] });
-    assert.equal(await page.locator('.city-world__dock').isVisible(), false); assert.equal(await page.locator('[data-city-home]').count(), 0);
-    assert.equal(await page.evaluate(() => window.__homeBoards.at(-1)), null, 'Identity retirement clears the accepted directory, not just its display.');
-    if (viewport.width <= 680) {
-      await page.setViewportSize({ width: 320, height: 568 });
-      await page.evaluate(() => { window.__atlasUI.update({ character: window.__atlasCharacter, scopeKey: 'atlas-session', atlas: { districts: window.__atlasDistricts } }); window.__atlasUI.openMapOverview(); });
-      const smallAtlas = await atlasRead('atlas'); await atlasReply(smallAtlas, { districts: DISTRICTS.map(district => ({ ...district, neighbours: districtNeighbours(district.id), deeds: 3 })) });
-      const targets = await page.locator('[data-city-district]').evaluateAll(nodes => nodes.map(node => ({ width: node.getBoundingClientRect().width, height: node.getBoundingClientRect().height })));
-      assert(targets.every(target => target.width >= 44 && target.height >= 44));
-      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'The overview fits a 320px reduced-motion phone.');
-      await page.evaluate(() => window.__atlasUI.setHeight(64));
-      const close = await page.locator('[data-city-world-close]').evaluate(node => { const box = node.getBoundingClientRect(); return {
-        height: box.height, hits: [box.top + 3, box.bottom - 3].map(y => { const hit = document.elementFromPoint(box.left + box.width / 2, y); return hit === node || node.contains(hit); }) }; });
-      assert(close.height >= 44 && close.hits.every(Boolean), 'The atlas keeps the existing compact Close control reachable.');
-    }
-    await page.evaluate(() => { window.__atlasUI.destroy(); document.querySelector('#atlas-launch').remove(); });
     assert.deepEqual(errors, []); await context.close();
   }
   console.log('City world UI PASS: map, equipment, queued/dispatched lifecycle, same-key receipt recovery, default-off chat/XSS, furniture targets, confirmed gains and owner teardown on phone/desktop.');

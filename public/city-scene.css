@@ -114,15 +114,6 @@
 .omerta-city__resources--walking dt { font-size: 9px; letter-spacing: 0; margin-bottom: 2px; }
 .omerta-city__resources--walking dd { font-size: 12px; line-height: 1.25; }
 .omerta-city__resources--walking .omerta-city__resource-meter { margin-top: 3px; }
-.omerta-city__world-head { display: flex; align-items: center; gap: 4px; }
-.omerta-city__world-head .omerta-city__resources { flex: 1; min-width: 0; }
-.omerta-city__world-map {
-  flex: 0 0 60px; min-height: 44px; margin: 3px 6px 3px 0; padding: 4px;
-  border: 1px solid #8c7655; border-radius: 3px; background: #24221d; color: #ecd2a1;
-  font: 600 10px/1.25 var(--mono, monospace); cursor: pointer;
-}
-.omerta-city__world-map:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
-.omerta-city:is(.is-gameplay, .is-inspecting) .omerta-city__world-map { display: none; }
 .omerta-city__world-hud .omerta-city__readiness { padding: 5px 10px; gap: 3px 6px; font-size: 10px; }
 .omerta-city__resource.is-low progress::-webkit-progress-value { background: #d98779; }
 .omerta-city__resource.is-low progress::-moz-progress-bar { background: #d98779; }
@@ -228,20 +219,6 @@ body.city-player-view .omerta-city__viewport .omerta-city__canvas {
 .omerta-city__presence h4 { margin: 0; font: 13px/1.4 var(--mono, monospace); color: var(--city-gold); }
 .omerta-city__presence-heading button { padding: 6px 10px; }
 .omerta-city__placement { margin: 8px 0; font: 10px/1.5 var(--mono, monospace); }
-.omerta-city__homes { padding: 12px 14px; background: #18201c; border-top: 1px solid #625644; }
-.omerta-city__homes h4 { margin: 0; font: 13px/1.4 var(--mono, monospace); color: var(--city-gold); }
-.omerta-city__home-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.omerta-city__home { display: grid; gap: 4px; min-width: 0; text-align: left; overflow-wrap: anywhere; }
-.omerta-city__home strong { font-size: 12px; color: var(--city-paper); }
-.omerta-city__home span { font: 10px/1.4 var(--mono, monospace); color: #b7c1b5; }
-.omerta-city__homes button { min-height: 44px; padding: 8px 10px; cursor: pointer; }
-.omerta-city__homes button, .omerta-city__actor-body [data-city-home-action] {
-  appearance: none; border: 1px solid #8c7655; border-radius: 3px;
-  background: #24221d; color: #ecd2a1; font-family: var(--mono, monospace);
-}
-.omerta-city__homes button:hover, .omerta-city__actor-body [data-city-home-action]:hover { background: #302b23; border-color: #c89d57; }
-.omerta-city__homes button:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
-.omerta-city__exit-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .omerta-city__actor-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .omerta-city__actor { display: grid; gap: 4px; padding: 9px 10px; min-width: 0; text-align: left; overflow-wrap: anywhere; }
 .omerta-city__actor strong { font-size: 12px; color: var(--city-paper); }
@@ -257,7 +234,6 @@ body.city-player-view .omerta-city__viewport .omerta-city__canvas {
 .omerta-city__actor-body:focus-visible, .omerta-city__presence button:focus-visible, .omerta-city__actor-dock button:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
 @media (max-width: 680px) {
   .omerta-city__actor-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .omerta-city__home-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .omerta-city__presence { padding: 10px; }
   .omerta-city__presence-heading { align-items: flex-start; }
   .omerta-city__actor-body { font-size: 10px; }

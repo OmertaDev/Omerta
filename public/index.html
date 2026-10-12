@@ -1247,8 +1247,8 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261011-world-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261011-world-1">
+<link rel="stylesheet" href="/city-scene.css?v=20261009-game-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261011-tools-2">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
@@ -5218,9 +5218,9 @@
   // THE TRAVEL PICKER — reachable from anywhere, because "where can I even move?" turned out to be
   // the question the 25-screen nav answered worst. Used by the masthead location and by any refusal
   // that names a district.
-  function travelTo(district, operationOptions = {}) {
+  function travelTo(district) {
     const place = (rules?.districts || []).find((d) => (d.id || d) === district);
-    return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}`, ...operationOptions })
+    return act('POST', `/v1/travel/${district}`, {}, { label: `travel to ${place?.name || district}` })
       .then((r) => { if (r.code < 400) renderActive({ afterAction: true }); return r; });
   }
   function openTravel() {
@@ -8746,9 +8746,8 @@
   let _cityTrainingReceipt = null;
   let _cityFixerReceipt = null;
   let _cityWorldData = null, _cityWorldReceipt = null, _cityWorldPending = false;
-  let _cityHomeEntry = null, _cityDeedEntry = null;
   let _cityPeople = null, _cityIntel = null, _cityPeopleRevision = 0, _cityEncounterPending = false, _cityEncounterReceipt = null;
-  function clearCityPeople() { _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityHomeEntry = null; _cityDeedEntry = null; _cityPeopleRevision++; }
+  function clearCityPeople() { _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityPeopleRevision++; }
   function cityBoardCurrent(board) {
     return board?.viewer?.characterId === me?.id && board.viewer.generation === me?.generation
       && board.viewer.district === me?.loc;
@@ -9039,7 +9038,6 @@
     const receipt = _cityWorldReceipt?.key === key && _cityWorldReceipt.current() ? _cityWorldReceipt.receipt : null;
     return { worldScopeKey: String(projections.snapshot().epoch), rules,
       worldSocial: data?.social || null, worldChat: data?.chat || null,
-      worldAtlas: data?.atlas || null, worldCollection: data?.collection || null, worldHomes: data?.homesByDistrict?.[me?.loc] || null,
       worldRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery.run === 'function',
       worldReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
         recovery: receipt.recovery ? { sameKey: receipt.recovery.sameKey === true, label: receipt.recovery.label, text: receipt.recovery.text } : null } : null };
@@ -9050,23 +9048,14 @@
     _cityScene?.update?.({ ...cityWorldOptions(), character: { ...me } });
   }
   async function readCityWorld(kind, context = {}) {
-    if (!['inventory', 'social', 'chat', 'atlas', 'collection', 'homes'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
+    if (!['inventory', 'social', 'chat'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
     const stamp = projections.snapshot(), key = cityIdentity(), scene = _cityScene;
     const current = () => projections.current(stamp) && key === cityIdentity() && scene === _cityScene
       && currentTab === 'map' && _mapMode === 'walk' && (!context.isCurrent || context.isCurrent());
     if (!_cityWorldData || _cityWorldData.key !== key || !projections.current(_cityWorldData.stamp)) _cityWorldData = { key, stamp, tickets: {} };
-    const lane = kind === 'homes' ? 'homes:' + String(context.districtId || me.loc) + (context.cursor ? ':page' : ':first') : kind;
-    const cache = _cityWorldData, ticket = (cache.tickets[lane] || 0) + 1; cache.tickets[lane] = ticket;
+    const cache = _cityWorldData, ticket = (cache.tickets[kind] || 0) + 1; cache.tickets[kind] = ticket;
     const socialAtDispatch = cache.social, socialTicketAtDispatch = cache.tickets.social || 0;
-    let chatQuery, homesQuery;
-    if (kind === 'homes') {
-      const district = String(context.districtId || me.loc);
-      if (!(rules?.districts || []).some(d => (d.id || d) === district)
-        || context.cursor != null && (typeof context.cursor !== 'string' || context.cursor.length > 128))
-        return { code: 422, body: { error: 'city_homes_query' } };
-      homesQuery = new URLSearchParams({ district });
-      if (context.cursor) homesQuery.set('after', context.cursor);
-    }
+    let chatQuery;
     if (kind === 'chat') {
       const social = cache.social;
       if (!cityBoardCurrent(social) || social.preferences?.chatEnabled !== true || social.chat?.available !== true) return { code: 409, body: { error: 'city_chat_opt_in_required' } };
@@ -9076,11 +9065,8 @@
     }
     const result = kind === 'inventory' ? await api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current })
       : kind === 'social' ? await api('GET', '/v1/city/social', undefined, { isCurrent: current })
-      : kind === 'atlas' ? await api('GET', '/v1/map', undefined, { isCurrent: current })
-      : kind === 'collection' ? await api('GET', '/v1/collection', undefined, { isCurrent: current })
-      : kind === 'homes' ? await api('GET', '/v1/city/homes?' + homesQuery, undefined, { isCurrent: current })
       : await api('GET', '/v1/city/nearby-chat?' + chatQuery, undefined, { isCurrent: current });
-    if (!current() || cache !== _cityWorldData || cache.tickets[lane] !== ticket) return { ignored: true, code: 499, body: {} };
+    if (!current() || cache !== _cityWorldData || cache.tickets[kind] !== ticket) return { ignored: true, code: 499, body: {} };
     if (result.code === 401 || (result.code === 403 && result.body?.error === 'banned')) {
       projections.setSession(null); token = null; localStorage.removeItem('omerta_token');
       if (ws) { ws.close(); ws = null; }
@@ -9088,8 +9074,7 @@
       return result;
     }
     if (result.code === 409 && result.body?.error === 'city_social_identity_changed'
-      || result.code < 400 && ['social', 'chat', 'homes'].includes(kind) && !cityBoardCurrent(result.body)) {
-      delete cache.homes; delete cache.homesByDistrict;
+      || result.code < 400 && kind !== 'inventory' && !cityBoardCurrent(result.body)) {
       delete cache.social; delete cache.chat;
       _cityWorldReceipt = null;
       cache.tickets.social = (cache.tickets.social || 0) + 1; cache.tickets.chat = (cache.tickets.chat || 0) + 1;
@@ -9106,17 +9091,10 @@
       return result;
     }
     if (kind === 'chat' && result.code < 400 && (!cityBoardCurrent(cache.social) || cache.social.preferences?.chatEnabled !== true)) return { ignored: true, code: 499, body: {} };
-    if (kind === 'homes' && result.code < 400 && result.body?.districtId !== homesQuery.get('district'))
-      return { ignored: true, code: 499, body: {} };
-    if (result.code < 400 && (['inventory', 'atlas', 'collection'].includes(kind) || cityBoardCurrent(result.body))) {
+    if (result.code < 400 && (kind === 'inventory' || cityBoardCurrent(result.body))) {
       cache[kind] = result.body;
-      if (kind === 'homes' && !context.cursor) {
-        cache.homesByDistrict ||= Object.create(null);
-        cache.homesByDistrict[result.body.districtId] = result.body;
-      }
       if (kind === 'social' && result.body.preferences?.chatEnabled === false) { delete cache.chat; cache.tickets.chat = (cache.tickets.chat || 0) + 1; }
       publishCityWorld();
-      if (kind === 'homes' || kind === 'atlas') fulfillCityHomeEntry();
     }
     return result;
   }
@@ -9175,82 +9153,13 @@
       return result;
     } finally { _cityWorldPending = false; }
   }
-  function cityActorScope() {
-    const stamp = projections.snapshot(), id = me?.id, generation = me?.generation;
-    return () => !!id && projections.current(stamp) && me?.id === id && me?.generation === generation;
-  }
-  function queueCityHomeEntry({ overview = false, key = null, districtId = null, current }) {
-    _cityHomeEntry = { overview, key, districtId, current, navigation: navigationRevision, deadline: Date.now() + 15000 };
-    fulfillCityHomeEntry();
-  }
-  function fulfillCityHomeEntry() {
-    const entry = _cityHomeEntry;
-    if (!entry) return;
-    if (!entry.current() || Date.now() > entry.deadline || entry.navigation !== navigationRevision
-      || currentTab !== 'map' || _mapMode !== 'walk') { _cityHomeEntry = null; return; }
-    if (!_cityScene) return;
-    if (entry.overview) {
-      const deed = cityWorldOptions().worldAtlas?.deed;
-      if (!deed || entry.key && String(deed.name).toLowerCase() !== entry.key) return;
-      if (_cityScene.showWorldMap?.(deed.district) === true) _cityHomeEntry = null;
-      return;
-    }
-    const homes = cityWorldOptions().worldHomes;
-    if (me.loc !== entry.districtId || !cityBoardCurrent(homes) || homes.districtId !== me.loc
-      || homes.myHome?.key !== entry.key || homes.myHome.mine !== true) return;
-    if (_cityScene.walkHome?.(entry.key) === true) _cityHomeEntry = null;
-  }
-  async function travelFromCity(district, context = {}) {
-    const place = (rules?.districts || []).find(d => (d.id || d) === district);
-    if (!place || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk' || acting
-      || _cityWorldPending || cityWorldOptions().worldRecovery) return { code: 409, body: { error: 'city_travel_unavailable' } };
-    const current = cityActorScope(), scene = _cityScene, location = me.loc;
-    const fare = Number(rules?.travelCost), navigation = navigationRevision;
-    const beforeDispatch = () => current() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
-      && navigation === navigationRevision && me.loc === location && Number(rules?.travelCost) === fare
-      && (!context.isCurrent || context.isCurrent()) && (!context.beforeDispatch || context.beforeDispatch());
-    if (!beforeDispatch()) return { ignored: true, code: 499, body: {} };
-    if (!Number.isFinite(fare) || fare < 0) return { code: 409, body: { error: 'city_travel_fare_unavailable' } };
-    if (district === me.loc) return { code: 400, body: { error: 'there', message: 'You are already here.' } };
-    if (Number(me.jailSeconds) > 0) return { code: 400, body: { error: 'jailed', message: 'No travel from lockup.' } };
-    if (Number(me.cash) < fare) return { code: 400, body: { error: 'cash', message: 'You cannot cover the ride fare.' } };
-    const confirmed = await ask('Travel to ' + (place.name || district) + '?',
-      'A ride costs $' + fmt(fare) + '. Your district changes only when the server confirms the move.',
-      { yes: 'Travel — $' + fmt(fare), no: 'Stay here' });
-    if (!confirmed || !beforeDispatch()) return { ignored: true, code: 499, body: {} };
-    _cityWorldPending = true;
-    try {
-      const result = await travelTo(district, { beforeDispatch, retryBeforeDispatch: current, isCurrent: current,
-        onReceipt: receipt => {
-          if (current()) { _cityWorldReceipt = { key: cityIdentity(), current, travelDistrict: district, homeKey: context.homeKey || null, receipt }; publishCityWorld(); }
-        } });
-      if (current() && result.code < 400 && me.loc === district) {
-        if (context.homeKey) queueCityHomeEntry({ overview: false, key: context.homeKey, districtId: district, current });
-        if (_cityScene && currentTab === 'map' && _mapMode === 'walk') await readCityWorld('collection');
-      }
-      return result;
-    } finally { _cityWorldPending = false; }
-  }
-  function acquireCityDeed(method, path, body) {
-    const current = cityActorScope(), navigation = navigationRevision;
-    return act(method, path, body, { beforeDispatch: () => current() && currentTab === 'deeds' && navigation === navigationRevision,
-      retryBeforeDispatch: current, isCurrent: current,
-      onReceipt: receipt => {
-        if (receipt.state !== 'success' || !current() || currentTab !== 'deeds' || navigation !== navigationRevision) return;
-        navigateFromCity('map', { venueId: 'clubhouse' });
-        queueCityHomeEntry({ overview: true, current });
-      } });
-  }
   async function retryCityWorld() {
     const pending = _cityWorldReceipt;
     if (_cityWorldPending || pending?.key !== cityIdentity() || !pending.current() || pending.receipt.recovery?.sameKey !== true || !pending.receipt.recovery.run) return { ignored: true, code: 499, body: {} };
     _cityWorldPending = true;
     try {
       const result = await pending.receipt.recovery.run();
-      if (pending.current() && result.code < 400 && pending.travelDistrict) {
-        if (pending.homeKey && me.loc === pending.travelDistrict) queueCityHomeEntry({ overview: false, key: pending.homeKey, districtId: pending.travelDistrict, current: pending.current });
-        if (_cityScene && currentTab === 'map' && _mapMode === 'walk') await readCityWorld('collection');
-      } else if (pending.current() && result.code < 400) {
+      if (pending.current() && result.code < 400) {
         await readCityWorld(pending.kind === 'equip' ? 'inventory' : 'social');
         if (pending.current() && ['send-chat', 'emote'].includes(pending.kind)) await readCityWorld('chat');
       }
@@ -9363,9 +9272,9 @@
   function loadCityAssets() {
     if (!_citySceneAssets) {
       _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261011-world-1', () => !!window.OmertaCityScene),
+        loadCityScript('/city-scene.js?v=20261011-walk-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261011-world-1', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261011-panel-1', () => !!window.OmertaCityWorldUI),
       ]).then(([scene, engine, world]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if (engine.status === 'rejected' || world.status === 'rejected') _citySceneAssets = null;
@@ -9384,13 +9293,10 @@
   function navigateFromCity(tab, context = {}) {
     if (!Object.hasOwn(TABS, tab)) return;
     const gym = context.venueId === 'training' && tab === 'streets';
-    const deedEntry = tab === 'deeds' && context.focus === 'owned-deed'
-      ? { current: cityActorScope(), key: context.streetKey || null, districtId: context.districtId || null } : null;
     if (gym) localStorage.setItem('omerta_sect_streets-train', '1');
     _citySession = { key: cityIdentity(), venueId: context.venueId || _citySession?.venueId || 'directory' };
     if (tab === 'map') _mapMode = context.venueId === 'waterfront' ? 'territory' : 'walk';
     setTab(tab);
-    if (deedEntry) _cityDeedEntry = { ...deedEntry, navigation: navigationRevision };
     if (gym) spotlight('#streets-gym-terms');
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
@@ -9404,12 +9310,7 @@
     if (!host || !options || currentTab !== 'map' || _mapMode !== 'walk') return;
     const key = `${options.character.id}:${options.character.generation}:${options.district.id}`;
     if (key !== cityIdentity()) return;
-    if (_cityScene && _citySceneKey === key) {
-      _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() });
-      fulfillCityHomeEntry();
-      readCityWorld('homes', { districtId: me.loc }).catch(() => {});
-      return;
-    }
+    if (_cityScene && _citySceneKey === key) { _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() }); return; }
     destroyCityScene();
     const epoch = _citySceneEpoch;
     host.innerHTML = citySceneFallback('Opening your neighborhood… You can also choose a place below.');
@@ -9422,10 +9323,8 @@
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED,
         onPresencePage: loadCityPeoplePage, onEncounter: performCityEncounter, onIntelAction: performCityIntelAction,
         onEncounterRetry: retryCityEncounter, renderTraining: body => renderCityTraining(body, key, epoch),
-        renderFixer: body => renderCityFixer(body, key, epoch), onWorldRead: readCityWorld, onWorldAction: performCityWorld, onWorldRetry: retryCityWorld, onWorldTravel: travelFromCity });
+        renderFixer: body => renderCityFixer(body, key, epoch), onWorldRead: readCityWorld, onWorldAction: performCityWorld, onWorldRetry: retryCityWorld });
       _citySceneKey = key;
-      fulfillCityHomeEntry();
-      readCityWorld('homes', { districtId: me.loc }).catch(() => {});
     } catch {
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;
       host.innerHTML = citySceneFallback('The neighborhood could not open. Your game actions are still available.')
@@ -9548,10 +9447,6 @@
     const t = $('#tab-map');
     const revision = ++_mapReadRevision, navigation = navigationRevision;
     const stamp = projections.snapshot(), identity = cityIdentity();
-    if (!_cityWorldData || _cityWorldData.key !== identity || !projections.current(_cityWorldData.stamp))
-      _cityWorldData = { key: identity, stamp, tickets: {} };
-    const atlasCache = _cityWorldData, atlasTicket = (atlasCache.tickets.atlas || 0) + 1;
-    atlasCache.tickets.atlas = atlasTicket;
     const questPromise = cityQuestProjection(stamp).catch(() => ({ quests: {}, actions: new Map() }));
     const peopleRevision = ++_cityPeopleRevision;
     const actorPage = _cityPeople?.key === identity ? _cityScene?.getState?.().actorPage || 0 : 0;
@@ -9573,8 +9468,6 @@
       if (intelReply.code < 400) acceptCityIntel(intel);
     }
     const b = reply.body || {};
-    if (reply.code < 400 && atlasCache === _cityWorldData && atlasCache.tickets.atlas === atlasTicket)
-      atlasCache.atlas = b;
     const districts = b.districts || [], powers = b.powers || [], season = b.season || {}, mine = b.mine || {};
     const seasonBanner = season.reckoning
       ? `<div class="card" style="border-color:#e0a800;background:linear-gradient(180deg,rgba(224,168,0,.08),transparent)"><span class="t">⚔ THE RECKONING</span> <span class="d">— the last week. Turf is cheap to challenge and contests settle fast — whatever you hold when the books close is what the city remembers.</span></div>`
@@ -9641,11 +9534,7 @@
   // in-game (a later phase); this screen is the deed + its legend + the map's build-up. ──
   async function renderDeeds() {
     const t = $('#tab-deeds');
-    const navigation = navigationRevision, current = cityActorScope();
-    const valid = () => current() && currentTab === 'deeds' && navigation === navigationRevision;
-    const reply = await api('GET', '/v1/deeds', undefined, { isCurrent: valid });
-    if (!valid() || reply.ignored) return;
-    const b = reply.body || {};
+    const b = (await api('GET', '/v1/deeds')).body || {};
     const deed = b.deed, districts = b.districts || [], history = b.history || [], ranks = b.ranks || [];
     const upgrades = b.upgrades || {}, rewards = b.rewards || {}, nextUpgrade = upgrades.next;
     const upgradeReasons = {
@@ -9770,7 +9659,7 @@
       ${chainCard()}
       ${rewardCard}
       ${upgradeCard}
-      ${deed ? `<h2 id="city-owned-deed" tabindex="-1">${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
+      ${deed ? `<h2>${esc(deed.name)} <span class="d" style="font-size:12.5px">· ${esc(deed.districtName)} · ${esc(b.rank)}</span></h2>
         <div class="card" style="border-color:var(--gold)"><span class="t">The Deed</span>
           <div class="d">You hold the deed to <b>${esc(deed.name)}</b>, on ${esc(deed.districtName)}${deed.neighborhood ? ' — ' + esc(deed.neighborhood) + (deed.frontier ? ' (the frontier)' : '') : ''}. It's yours — nobody takes it off you, and it outlives your street: the heir inherits it.</div>
           <div class="d" style="margin-top:3px">Legend: <b>${b.renown}</b> renown · <span class="chip good">${esc(b.rank)}</span> ${vaultChip(deed.vault)}</div>
@@ -9795,7 +9684,7 @@
     t.querySelectorAll('[data-claimdist]').forEach((btn) => btn.onclick = () => {
       const name = ($('#deed-name') && $('#deed-name').value || '').trim();
       if (!name) { toast('Name your street first.'); return; }
-      acquireCityDeed('POST', '/v1/deeds/claim', { name, district: btn.dataset.claimdist });
+      act('POST', '/v1/deeds/claim', { name, district: btn.dataset.claimdist }).then(() => renderDeeds());
     });
     { const el = $('#deed-collect'); if (el) el.onclick = () => act('POST', '/v1/deeds/corner').then(() => renderDeeds()); }
     t.querySelectorAll('[data-shake]').forEach((btn) => btn.onclick = () =>
@@ -9831,22 +9720,12 @@
           vaultLine = `\n\nITS VAULT HAS RECEIVED: ${rec.map((h) => h.units + ' ' + h.ticker).join(', ')}. We can't read the live balance right now, and the owner can move it out — check the account yourself before you pay${r.body.vault && r.body.vault.tba ? ': ' + r.body.vault.tba : '.'}`;
       }
       const ok = await ask(`Buy this street for $${price}? You get the name and its legend — the corner you'll have to fight for.${vaultLine}`, 'Buy it');
-      if (ok && valid()) acquireCityDeed('POST', '/v1/deeds/buy/' + btn.dataset.buydeed);
+      if (ok) act('POST', '/v1/deeds/buy/' + btn.dataset.buydeed).then(() => renderDeeds());
     });
     { const el = $('#streets-lb-link'); if (el) el.onclick = async (ev) => { ev.preventDefault();
       const lb = (await api('GET', '/v1/leaderboard/streets')).body || {};
       $('#streets-lb').innerHTML = `<div class="grid" style="margin-top:4px">${(lb.streets || []).map((s) => `
         <div class="card"><span class="t">#${s.pos} ${esc(s.name)}</span><div class="d">${esc(s.steward)} · ${esc(s.districtName)} · ${esc(s.rank)} · ${s.renown} renown</div></div>`).join('') || '<span class="d">no storied streets yet</span>'}</div>`; }; }
-    const entry = _cityDeedEntry;
-    if (entry?.current() && entry.navigation === navigationRevision && valid()) {
-      _cityDeedEntry = null;
-      if (!entry.key || deed && String(deed.name).toLowerCase() === entry.key) {
-        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-name');
-        destination?.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
-        destination?.focus({ preventScroll: true });
-      }
-    }
-
   }
 
   // ── THE ROLODEX (Find People) — player discovery. Humans near your level, who's looking for a crew,

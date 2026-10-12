@@ -1,5 +1,3 @@
-import { cityHomesFeedSourceBaseline, assertCityHomesFeedServerTransfer, CITY_HOMES_SOURCE_INVERSES,
-  assertCityHomesServerTransfer, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB } from '../tools/rc1-deed-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -10,26 +8,9 @@ import { MARKET_FEED_SOURCE_CURRENT_PINS, MARKET_FEED_SOURCE_BASELINE_PINS, MARK
 const normalize = text => text.replaceAll('\r\n', '\n');
 const gitText = spec => normalize(execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-assert.equal(assertCityHomesServerTransfer(gitText(CITY_HOMES_SERVER_BLOB)).baselineText,
-  gitText(CITY_HOMES_PREDECESSOR_SERVER_BLOB), 'Existing Company and Home envelope remains independently frozen');
-const homeRaw=normalize(fs.readFileSync('src/server.js','utf8'));
-const homeProof=assertCityHomesFeedServerTransfer(homeRaw);
-assert.equal(homeProof.baselineText,gitText('2395509e2b0c980bd9e80e6cc4aef78209f2b38e:src/server.js'));
-assert.deepEqual(assertCityHomesFeedServerTransfer(homeRaw.replaceAll('\n','\r\n')),homeProof);
-for(const chunk of CITY_HOMES_SOURCE_INVERSES) {
- for(const altered of [homeRaw.replace(chunk,''),homeRaw.replace(chunk,chunk+chunk),homeRaw.replace(chunk,chunk.replace('registerCityHomes','registerOtherHomes'))]) {
-  assert.equal(cityHomesFeedSourceBaseline('src/server.js',altered),altered);
-  assert.throws(()=>assertCityHomesFeedServerTransfer(altered),/source changed/);
- }
-}
-for(const altered of [homeRaw+'\n// unknown Home suffix\n',homeRaw.replace('registerMarketFeed(app','registerOtherFeed(app')]) {
- assert.notEqual(altered,homeRaw);
- assert.equal(cityHomesFeedSourceBaseline('src/server.js',altered),altered);
- assert.throws(()=>assertCityHomesFeedServerTransfer(altered),/source changed/);
-}
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(MARKET_FEED_SOURCE_CURRENT_PINS)) {
-  const current = normalize(cityHomesFeedSourceBaseline(file, fs.readFileSync(file, 'utf8'))), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(fs.readFileSync(file, 'utf8')), baseline = gitText(MARKET_FEED_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(marketFeedSourceBaseline(file, current), baseline);
   assert.equal(marketFeedSourceBaseline(file, baseline), baseline);
   const unknown = current + '\n// unknown source suffix\n';

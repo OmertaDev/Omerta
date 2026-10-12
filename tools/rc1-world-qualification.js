@@ -1,8 +1,5 @@
-import { MARKET_FEED_SOURCE_CURRENT_PINS } from './rc1-market-feed-source-compatibility.js';
-import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from './rc1-company-succession-source-compatibility.js';
-import { STRATEGY_SOURCE_TRANSFER } from './rc1-strategy-source-compatibility.js';
-import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from './rc1-invoice-source-compatibility.js';
-import { coverageSourceBaseline, COVERAGE_SOURCE_TRANSFER } from './rc1-logistics-coverage-source-compatibility.js';
+import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from './rc1-invoice-source-compatibility.js';
+import { coverageSourceBaseline } from './rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 // Observer-only adapters for the EXISTING frozen assertions. Never feed results to actors.
 import assert from 'node:assert/strict';
@@ -19,7 +16,6 @@ import { assertCarMeltRulesCompatibility, assertDeedServerCompatibility, DEED_RU
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS,
   GOODS_SOURCE_REVIEWED_REVISION, GOODS_SOURCE_PREDECESSOR_REVISION,
-  CITY_HOMES_FEED_SERVER_PIN, CITY_HOMES_FEED_SOURCE_BASE_REVISION, CITY_HOMES_FEED_SERVER_BLOB, CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB, assertCityHomesFeedServerTransfer,
   CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
@@ -43,7 +39,6 @@ const sourceFiles = Object.freeze({
   'src/rules.js': '57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae',
   'src/rules.generated.js': '4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f',
   'src/rules.tail.js': DEED_RULES_CURRENT_PIN,
-  // Historical consumer pins are normalized; current Home runtime has a separate mandatory envelope proof.
   'src/server.js': FRANCHISE_SOURCE_CURRENT_PINS['src/server.js'],
   ...GENESIS_SNAPSHOT_MODULE_PINS,
   'src/http-idempotency.js': HTTP_RECEIPT_HELPER_PIN,
@@ -54,16 +49,7 @@ const sourceFiles = Object.freeze({
   'src/director/runtime.js': '04ff17562903a3593725921a9ba3b2f90620a1c6e71b85a3ae053540bc49e0f8',
   'src/content/runtime.js': '753a7429a4447ea57c60ea450a3d5dc3dd33f6481c5ee50e64c651f73d73e901',
 });
-export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 23, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
-  companySuccessionSourceReviewTransfer: COMPANY_SUCCESSION_SOURCE_TRANSFER,
-  strategySourceReviewTransfer: STRATEGY_SOURCE_TRANSFER,
-  coverageSourceReviewTransfer: COVERAGE_SOURCE_TRANSFER,
-  invoiceSourceReviewTransfer: INVOICE_SOURCE_TRANSFER,
-  intelSourceReviewTransfer: INTEL_SOURCE_TRANSFER,
-  cityHomesSourceReviewTransfer: { sourceBaseRevision: CITY_HOMES_FEED_SOURCE_BASE_REVISION, sourceBlob: CITY_HOMES_FEED_SERVER_BLOB, predecessorServerBlob: CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB,
-    actualServerSha256: CITY_HOMES_FEED_SERVER_PIN, predecessorServerSha256: MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js'], inverseChunks: 2,
-    evidence: 'docs/city-homes-security-review.md', phase: 'source compatibility; financial activation disabled',
-    scope: 'Exact City homes import and registration inverses reconstruct the entire Feed predecessor from the immutable source base. The mandatory actual-runtime Home envelope proof is separate from normalized historical consumer parity. Only unchanged historical recovery guards transfer. New directory authentication, living-steward selection, private projection, pagination, external/estate labels and native read snapshot require separate current-source proofs; no historical runtime, native, financial activation, deployment or onchain qualification is inherited.' },
+export const WORLD_RECOVERY_REVIEW = Object.freeze({ version: 17, reviewedRevision: GENESIS_SNAPSHOT_REVIEWED_REVISION, sourceFiles,
   franchiseSourceReviewTransfer: { sourceRevision: FRANCHISE_SOURCE_REVIEWED_REVISION, predecessorRevision: FRANCHISE_SOURCE_PREDECESSOR_REVISION,
     currentPins: FRANCHISE_SOURCE_CURRENT_PINS, predecessorPins: FRANCHISE_SOURCE_PREDECESSOR_PINS,
     currentBlobs: FRANCHISE_SOURCE_CURRENT_BLOBS, predecessorBlobs: FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
@@ -169,9 +155,7 @@ export async function verifyWorldRecoverySources({ readFile, sourceRevision }) {
   assert(/^[a-f0-9]{40}$/.test(sourceRevision));
   for (const [file, expected] of Object.entries(sourceFiles)) {
     const raw = String(await readFile(file)).replace(/\r\n/g, '\n');
-    const homeBaseline = file === 'src/server.js' && sha256(raw) === CITY_HOMES_FEED_SERVER_PIN
-      ? assertCityHomesFeedServerTransfer(raw).baselineText : raw;
-    const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, homeBaseline));
+    const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, raw));
     const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline;
     assert.equal(sha256(text), expected, 'Recovery rule source changed: ' + file);
     if (file === 'src/game.js') assertCrewLogisticsSourceTransfer(file, text);

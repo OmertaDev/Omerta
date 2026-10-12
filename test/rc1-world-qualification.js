@@ -1,8 +1,4 @@
-import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
-import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
-import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
-import { COVERAGE_SOURCE_TRANSFER } from '../tools/rc1-logistics-coverage-source-compatibility.js';
-import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
+import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
 import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
@@ -14,7 +10,6 @@ import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISI
   FRANCHISE_SOURCE_PREDECESSOR_PINS, FRANCHISE_SOURCE_CURRENT_BLOBS, FRANCHISE_SOURCE_PREDECESSOR_BLOBS,
   FRANCHISE_SOURCE_INVERSES, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs/promises';
-import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { assertDeedServerCompatibility, assertHttpReceiptServerCompatibility, DEED_SERVER_BASELINE_PIN,
   DEED_SERVER_CURRENT_PIN, HTTP_RECEIPT_SERVER_PIN, HTTP_RECEIPT_HELPER_PIN } from '../tools/rc1-deed-source-compatibility.js';
@@ -25,7 +20,6 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
-  CITY_HOMES_FEED_SERVER_PIN, CITY_HOMES_FEED_SOURCE_BASE_REVISION, CITY_HOMES_FEED_SERVER_BLOB, CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesFeedServerTransfer, cityHomesFeedSourceBaseline,
   CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
@@ -44,30 +38,12 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
-const homesProof = assertCityHomesFeedServerTransfer(homesServerText);
-assert.equal(homesProof.actualSha256, CITY_HOMES_FEED_SERVER_PIN);
-assert.equal(homesProof.baselineSha256, MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']);
-assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_FEED_SOURCE_BASE_REVISION);
-assert.equal(homesProof.sourceBlob, CITY_HOMES_FEED_SERVER_BLOB);
-assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB);
-assert.equal(crypto.createHash('sha1').update(`blob ${Buffer.byteLength(homesServerText)}\0`).update(homesServerText).digest('hex'), CITY_HOMES_FEED_SERVER_BLOB);
-assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_FEED_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-assert.equal(CITY_HOMES_SOURCE_INVERSES.length, 2);
-for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
-  assert.equal(homesServerText.split(chunk).length, 2);
-  for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
-    assert.throws(() => assertCityHomesFeedServerTransfer(changed), /source changed/);
-}
-assert.throws(() => assertCityHomesFeedServerTransfer(homesServerText + '\n// unsupported City homes drift\n'), /source changed/);
 const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
-  const raw = file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
-  const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, raw));
-  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline;
-  const proof = assertFranchiseSourceTransfer(file, text);
+  const actual = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, actual));
+  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline, proof = assertFranchiseSourceTransfer(file, text);
   franchiseSources.set(file, proof);
   assert.equal(proof.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
   assert.equal(proof.baselineSha256, FRANCHISE_SOURCE_PREDECESSOR_PINS[file]);
@@ -475,23 +451,11 @@ assert.equal(assertDeedServerCompatibility(serverProof.baselineText).actualSha25
 assert.throws(() => assertDeedServerCompatibility(serverText.replace("app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }")), /source changed/);
 assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\napp.post('/unsupported', async () => ({}));\n"), /source changed/);
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
-for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
-  for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
-    await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-      readFile: file => file === 'src/server.js' ? changed : fs.readFile(file) }), /source changed/);
-}
-await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
-  readFile: file => file === 'src/server.js' ? homesServerText + '\n// unknown Home envelope change\n' : fs.readFile(file) }), /source changed/);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_FEED_SERVER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, MARKET_FEED_SOURCE_CURRENT_PINS['src/server.js']);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_FEED_SOURCE_BASE_REVISION);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
-assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
 // The recovery consumer closes complete current Coverage -> Invoice -> Intel
 // sources back to its unchanged pins, never by trusting a supplied transfer tag.
 let coverageSourceControls = 0;
 for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
-  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, cityHomesFeedSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')))));
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))));
   assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
   const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
@@ -554,19 +518,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 23);
-for (const [name, transfer] of [['companySuccessionSourceReviewTransfer', COMPANY_SUCCESSION_SOURCE_TRANSFER],
-  ['strategySourceReviewTransfer', STRATEGY_SOURCE_TRANSFER], ['coverageSourceReviewTransfer', COVERAGE_SOURCE_TRANSFER]]) {
-  assert.deepEqual(WORLD_RECOVERY_REVIEW[name], transfer);
-  assert.match(transfer.scope, /separate current-source native proof/);
-  assert.match(transfer.scope, /no historical runtime, native, deployment or financial qualification/);
-}
-assert.deepEqual(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer, source.invoiceSourceTransfer);
-assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /separate current-source native proof/);
-assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /no historical runtime, native, deployment or financial qualification/);
-assert.deepEqual(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer, source.intelSourceTransfer);
-assert.match(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer.scope, /separate current-source native proof/);
-assert.match(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer.scope, /no historical runtime, native, deployment or financial qualification/);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 17);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.franchiseSourceReviewTransfer.predecessorPins, FRANCHISE_SOURCE_PREDECESSOR_PINS);
 assert.match(WORLD_RECOVERY_REVIEW.franchiseSourceReviewTransfer.scope, /separate current-source native proofs/);
 assert.match(WORLD_RECOVERY_REVIEW.franchiseSourceReviewTransfer.scope, /No new runtime eligibility or estate qualification/);
