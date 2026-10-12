@@ -146,9 +146,9 @@ export async function voidEmploymentAtDeath(client, h, victim, killerCh = null, 
   const original=(await client.query('SELECT id,account_id FROM characters WHERE id=$1',[id(victim.id)])).rows[0];
   if (!original || original.account_id!==victim.account_id) fail('estate_party');
   if (killerCh) {
-    person(killerCh);
+    if (!killerCh.alive || !killerCh.account_id) fail('party');
     const killer=(await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[killerCh.id])).rows[0];
-    if (!killer || !killer.alive || killer.is_npc || killer.account_id!==killerCh.account_id
+    if (!killer || !killer.alive || killer.account_id!==killerCh.account_id
         || killerCh.id===victim.id || killerCh.account_id===victim.account_id) fail('estate_party');
   }
   const jobs = (await client.query("SELECT * FROM game_employment_jobs WHERE employer_character=$1 AND employer_account=$2 AND state='open' ORDER BY id FOR UPDATE", [victim.id, victim.account_id])).rows;
