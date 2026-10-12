@@ -1,3 +1,4 @@
+import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_REVIEWED_REVISION, FRANCHISE_SOURCE_PREDECESSOR_REVISION, FRANCHISE_SOURCE_CURRENT_PINS,
@@ -37,7 +38,7 @@ const hash = value => sha256(canonicalJson(value)), clone = value => structuredC
 const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
 const homesProof = assertCityHomesServerTransfer(homesServerText);
 assert.equal(homesProof.actualSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(homesProof.baselineSha256, INTEL_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(homesProof.baselineSha256, INVOICE_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(homesProof.sourceBlob, CITY_HOMES_SERVER_BLOB);
 assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_PREDECESSOR_SERVER_BLOB);
@@ -55,7 +56,8 @@ const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
   const raw = file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
-  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, raw).baselineText : raw;
+  const invoiceBaseline = invoiceSourceBaseline(file, raw);
+  const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline;
   const proof = assertFranchiseSourceTransfer(file, text);
   franchiseSources.set(file, proof);
   assert.equal(proof.actualSha256, FRANCHISE_SOURCE_CURRENT_PINS[file]);
@@ -466,7 +468,7 @@ assert.throws(() => assertDeedServerCompatibility(serverProof.baselineText + "\n
 const source = await verifyWorldRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 assert.equal(source.sourceFiles['src/server.js'], CITY_HOMES_SERVER_PIN);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, INTEL_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, INVOICE_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
 assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
@@ -512,7 +514,10 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 19);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 20);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer, source.invoiceSourceTransfer);
+assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /separate current-source native proof/);
+assert.match(WORLD_RECOVERY_REVIEW.invoiceSourceReviewTransfer.scope, /no historical runtime, native, deployment or financial qualification/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer, source.intelSourceTransfer);
 assert.match(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer.scope, /separate current-source native proof/);
 assert.match(WORLD_RECOVERY_REVIEW.intelSourceReviewTransfer.scope, /no historical runtime, native, deployment or financial qualification/);

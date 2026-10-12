@@ -1,3 +1,4 @@
+import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS } from '../tools/rc1-invoice-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { assertCityHomesServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import fs from 'node:fs';
@@ -12,10 +13,10 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 let chunks = 0, negatives = 0;
 for (const file of Object.keys(INTEL_SOURCE_CURRENT_PINS)) {
   const raw = normalize(fs.readFileSync(file, 'utf8'));
-  // The separately pinned Home envelope reconstructs complete Intel bytes first.
+  // The separately pinned Home envelope reconstructs complete Invoice bytes first.
   const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(raw) : null;
-  if (homes) assert.equal(homes.baselineSha256, INTEL_SOURCE_CURRENT_PINS[file]);
-  const current = homes ? homes.baselineText : raw, baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
+  if (homes) assert.equal(homes.baselineSha256, INVOICE_SOURCE_CURRENT_PINS[file]);
+  const current = invoiceSourceBaseline(file, homes ? homes.baselineText : raw), baseline = gitText(INTEL_SOURCE_BASELINE_BLOBS[file]);
   assert.equal(current, gitText(INTEL_SOURCE_CURRENT_BLOBS[file]), 'Complete Intel bytes after any exact Home inverse match frozen current Git blob: ' + file);
   assert.equal(current, gitText(INTEL_SOURCE_REVIEWED_REVISION + ':' + file));
   assert.equal(baseline, gitText(INTEL_SOURCE_PREDECESSOR_REVISION + ':' + file));

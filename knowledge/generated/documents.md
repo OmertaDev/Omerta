@@ -378,6 +378,7 @@
 | [docs/crew-logistics-security-review.md](../../docs/crew-logistics-security-review.md) | documentation | 76 | 2026-10-11 |
 | [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 92 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |
+| [docs/delivery-finance-security-review.md](../../docs/delivery-finance-security-review.md) | documentation | 41 | 2026-10-11 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |

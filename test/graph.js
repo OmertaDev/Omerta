@@ -62,6 +62,7 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
   'character cash',
+  'delivery finance bindings',
   'desk inventory backed',
   'family operation capital',
   'family operation custody',
@@ -110,6 +111,14 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+// An advance is metadata over canonical loan escrow, not another cash bucket.
+// Pin the real debt/receipt checks and retain the underlying monetary edge.
+assert.match(invariantSource, /const financeRequests = .*SELECT \* FROM delivery_loan_requests/);
+assert.match(invariantSource, /loan\.borrower_character !== request\.supplier_character/);
+assert.match(invariantSource, /repayment\.paid !== owed \|\| repayment\.vig !== loanVig\(owed\)/);
+assert.match(invariantSource, /push\('delivery finance bindings', financeFaults, 0, 0\)/);
+assert(g.edges.some(edge => edge.type === 'RECONCILES'
+  && edge.from === 'Check:loan escrow' && edge.to === 'Reason:loan:offer'));
 const intelHelperSource = fs.readFileSync(new URL('../src/intelforecastinvariants.js', import.meta.url), 'utf8');
 const intelTerms = extractIntelHelperReconciliations(invariantSource, intelHelperSource);
 assert.deepEqual(intelTerms.map(term => [term.check, term.reason]), [

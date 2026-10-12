@@ -357,6 +357,24 @@ const OPERATION_CONTRACTS = {
   'POST /v1/franchise-licenses/:id/accept': { operationId: 'acceptOwnGameFranchiseOffer' },
   'POST /v1/franchise-licenses/:id/end': { operationId: 'endOwnGameFranchiseLicense' },
   'GET /v1/intel-forecasts': { operationId: 'getOwnGameForecastJobs' },
+  'GET /v1/delivery-finance': { operationId: 'getOwnGameDeliveryAdvances' },
+  'POST /v1/delivery-finance/requests': {
+    operationId: 'requestFundedGameDeliveryAdvance', requestSchema: { type: 'object', additionalProperties: false,
+      required: ['supplierId', 'lenderId', 'commitmentId', 'principal', 'rate', 'hours'], properties: {
+        supplierId: { type: 'string', minLength: 1, maxLength: 128 },
+        lenderId: { type: 'string', minLength: 1, maxLength: 128 },
+        commitmentId: { type: 'string', minLength: 1, maxLength: 128 },
+        principal: { type: 'integer', minimum: 5000, maximum: 1000000 },
+        rate: { type: 'number', exclusiveMinimum: 0, maximum: 0.5 },
+        hours: { type: 'integer', minimum: 1, maximum: 72 },
+      } },
+  },
+  'POST /v1/delivery-finance/:id/offer': { operationId: 'fundOwnRequestedGameDeliveryAdvance',
+    requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/delivery-finance/:id/take': { operationId: 'acceptOwnFundedGameDeliveryAdvance',
+    requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/delivery-finance/:id/cancel': { operationId: 'cancelOwnUnfundedGameDeliveryAdvance',
+    requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/intel-forecasts/reporters/:id/jobs': {
     operationId: 'fundGameForecastJob', requestSchema: { type: 'object', additionalProperties: false,
       required: ['districtId', 'minimumStock', 'feeCash', 'targetAt'], properties: {
