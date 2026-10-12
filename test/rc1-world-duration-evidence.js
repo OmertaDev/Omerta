@@ -5,6 +5,7 @@ import { createWorkerSchedule, WORKER_SOURCE_PINS } from '../tools/rc1-native-wo
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence.js';
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
+import { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
 import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
   COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
@@ -45,7 +46,7 @@ assert.equal(measured.matrixQualifying, false);
 // duration scope; accepting additions never loosens the historical source pin.
 const workerFile = 'src/worker.js';
 assert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);
-const operatorWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
+const operatorWorker = companyWorkflowSourceBaseline(workerFile, controller.transformations.find(row => row.file === workerFile).originalSource);
 assert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);
 const currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);
 assert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);
