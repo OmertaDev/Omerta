@@ -1,0 +1,23 @@
+# Company opportunity exact source transfer review
+
+Implementation: `16bef25b518573183542e39a6e2ec4968274b9e4`, reviewed 2026-10-12, Node v24.19.0. Frozen current source: `5aadb5267bba9060716ddd82660e59f6aec89ea3`. Complete predecessor: `4fbf49d01e011118a1b64bbac2b9912cf97e7276`; its five included blobs are byte-identical to N07 `ac843ad2c444784a78cae377ab3b99aebb9f8a8f`. Phase: exact source transfer only; financial activation disabled.
+
+Included new opportunity compatibility tool/test; minimal old changes are Cooperative baseline composition, Deed server envelope, Intel worker envelope, World scoped declaration version 31, and Cooperative/World fixtures. Runtime, schema, package, CI, gates and KG are untouched. Only authorized SG2–SG7 guard/review dependencies were cherry-picked. Their complete resulting commit IDs are retained in `output/company-opportunity-source-transfer/dependency-commits.txt`; each preceding source/review pin remains in the imported guard and its original review.
+
+| Closed file | Current LF SHA256 | Current Git blob | Inverse hunks |
+| --- | --- | --- | --- |
+| src/server.js | f6f797b01206c09e081612e573f6b2f0da2b7667ae5ac8bbc13dcd321373da40 | cae0d2135adb4385c4ca71d46b6830e010631574 | 2 |
+| src/worker.js | 8f3c0bbcbd7a6ff82280dce3120e4dd84fc7fbfd1a7ad71bdde3a6f99c799f0a | 3ea6f8f97371148487c94c1a7e29de7fd2cc9851 | 2 |
+| src/invariants.js | c2879af55021696e1bc358e34bb95794737b3846a54de22be393c29101c68743 | 26ec65e64aa0c76519c2995df377c9529713fef4 | 0 |
+| src/social/estate.js | 6db50d8cd63eb0341971c4447b2b2c4b7c4bc82b8c8a98abd6232ab361a92498 | 3c1adee020c5804f871a9daffba3f01db185c12b | 0 |
+| src/market.js | 542653aab9034940a6624389f502c841908ebade121fe08b6975d6987349df7e | 34d9bb0dac36f554b26e97218d019372d529d1a8 | 0 |
+
+Current and predecessor full SHA256/Git blobs, complete bytes and four actual context-bearing Git inverse hunks are checked. Unknown file keys reject; unknown bytes pass unchanged into historical rejecting guards. CRLF→LF is the sole normalization. All three unchanged domains remain closed and source drift there rejects. There is no generic strip, source evaluation, runtime import or monetary operation. Opportunity metadata remains separate from untouched prior metadata; no prior full pin, inverse, negative control or qualification scope was relaxed.
+
+Applied actual single-agent JavaScript/Git adaptations of pinned source/trust-boundary passes: pashov `c577eb7799c349de0acb187ba00ca98e14e436fd`, Plamen `795962b96e254f2e423a2635fe7f8cb8ea1e6d69`, and Trail of Bits `d3323cefbcf645678b8dc481de204b02ad3d02dc`. This records source trace, specification comparison, adversarial mutation and static triage; it does not claim upstream orchestration. Native database locking/accounting, provider behavior and Solidity are outside this pure adapter's scope.
+
+All 33 required focused source/unit suites passed: new opportunity guard plus the previous 32 required guards, lifecycle, worker-unit, checkpoint, duration, backlog, capital/resource/query suites enumerated in the Cooperative review. Commands are `node test/rc1-<name>.js`. New proof: four actual Git hunks, 153 complete-text comparisons, 15 SHA256 and 15 Git-blob comparisons, 33 unknown/missing/duplicate/reordered/context/auth/import/worker-cap/cadence/order/unchanged-domain controls; LF/CRLF; complete N07 metadata parity. All earlier 83/34/46/37/47/36/24 controls remain. Syntax checks for all eight touched JavaScript files and `git diff --check` passed. Raw logs, full pins, dependency map and caller trace remain under ignored `output/company-opportunity-source-transfer/`.
+
+Resolved integration lead O-S01: the starting branch lacked SG2–SG4 as well as SG5–SG7. Attempting SG5 exposed missing-Premises/content conflicts; cherry-pick was aborted without runtime edits. Coordinator authorized the exact missing guard/review chain, applied cleanly. No broader root candidate or package/CI dependency was taken. Static inspection and tests confirm pure acyclic imports, complete baseline reconstruction and fail-closed unknown source. No remaining required failures or open actionable finding in this bounded scope.
+
+Optional retained-history reclassifiers still lack explicit original pinned roots; previous strict refusals remain retained in `output/buyer-cooperative-source-transfer/`. They were not rerun, repaired or counted as clearance. Current opportunity owner consent, source attribution, agent API, budgets/retry/execution and any new runner behavior need separate current-source proof. This adds no financial/accounting audit clearance, new world-soak/native qualification, deployment or onchain qualification. Root owns pretest/package/full-gate/release integration.
