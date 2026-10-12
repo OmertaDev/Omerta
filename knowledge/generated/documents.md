@@ -355,6 +355,10 @@
 | [docs/company-operator-migration-review.md](../../docs/company-operator-migration-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/company-operator-source-transfer-review.md](../../docs/company-operator-source-transfer-review.md) | documentation | 123 | 2026-10-12 |
 | [docs/company-operators-security-review.md](../../docs/company-operators-security-review.md) | documentation | 57 | 2026-10-12 |
+| [docs/company-opportunities-security-review.md](../../docs/company-opportunities-security-review.md) | documentation | 58 | 2026-10-12 |
+| [docs/company-opportunity-integration-review.md](../../docs/company-opportunity-integration-review.md) | documentation | 37 | 2026-10-12 |
+| [docs/company-opportunity-migration-review.md](../../docs/company-opportunity-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/company-opportunity-source-transfer-review.md](../../docs/company-opportunity-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/company-workflow-integration-review.md](../../docs/company-workflow-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/company-workflow-migration-review.md](../../docs/company-workflow-migration-review.md) | documentation | 10 | 2026-10-12 |
