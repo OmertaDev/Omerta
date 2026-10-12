@@ -1,7 +1,8 @@
 // Public district snapshots and private, nonfinancial encounter progression.
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
-import { DISTRICTS, levelOf } from './rules.js';
+import { DISTRICTS, levelOf, jailed, hospitalized } from './rules.js';
+import { recordPlayerIntel } from './playerintel.js';
 import { withItemRead, withItemTransaction, withItemMutation, registerItemTransactionUndo } from './items.js';
 
 export const CITY_JOURNAL_LIMIT = 32;
@@ -128,7 +129,7 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
     return withItemMutation(client, { scope: 'character', id: owner.id }, 'world_action', receiptKey(accountId, key),
       { action: 'city_encounter', actorId, ...body }, async () => {
         // The item replay guard locks no character. Acquire both characters in one sorted order.
-        const rows = (await client.query(`SELECT id,account_id,name,generation,loc,respect,is_npc,alive
+        const rows = (await client.query(`SELECT id,account_id,name,generation,loc,respect,is_npc,alive,jail_until,hosp_until,guard_price
           FROM characters WHERE id IN ($1,$2) ORDER BY id FOR UPDATE`, [owner.id, actorId])).rows;
         const me = rows.find(r => r.id === owner.id), target = rows.find(r => r.id === actorId);
         if (!identityMatches(me, body, accountId)) fail('city_identity_changed', 'Your character changed. Refresh the neighborhood.');
@@ -161,6 +162,21 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
           VALUES($1,$2,$3,$4,$5) ON CONFLICT(character_id,generation) DO UPDATE
           SET sequence=EXCLUDED.sequence,journal=EXCLUDED.journal,objectives=EXCLUDED.objectives`,
         [viewer.characterId, viewer.generation, sequence, JSON.stringify(journal), JSON.stringify(state)]);
+        // Collecting a local source's intel updates only the observer's notebook. Keep the write
+        // inside the replay callback, so an old receipt never refreshes a past sighting.
+        const intelPair = [me.account_id, target.id];
+        const priorIntel = (await client.query(`SELECT * FROM player_intel
+          WHERE owner_account=$1 AND target_character=$2`, intelPair)).rows;
+        registerItemTransactionUndo(client, async () => {
+          await client.query(`DELETE FROM player_intel
+            WHERE owner_account=$1 AND target_character=$2`, intelPair);
+          for (const row of priorIntel) await client.query(`INSERT INTO player_intel
+            (owner_account,target_character,facts,source,source_name,observed_at,learned_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+            [row.owner_account,row.target_character,JSON.stringify(row.facts),row.source,row.source_name,row.observed_at,row.learned_at]);
+        });
+        const observedAt = new Date(intel.collectedAt);
+        await recordPlayerIntel(client, me.account_id, target, { observedAt, source: 'city_encounter',
+          location: !jailed(me) && !hospitalized(me) && !jailed(target) && !hospitalized(target) });
         return { ok: true, encounteredActor: source, intel,
           ...projectBoard(viewer, { sequence, journal, objectives: state }) };
       });

@@ -1,5 +1,4 @@
 // Player intel is earned before an investigation can spend or disclose facts.
-process.env.SEARCH_MS = '0';
 import assert from 'node:assert/strict';
 import { buildServer } from '../src/server.js';
 import { recordPlayerIntel, readPlayerIntel } from '../src/playerintel.js';
@@ -7,9 +6,16 @@ import { recordPlayerIntel, readPlayerIntel } from '../src/playerintel.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, player, body) => {
-  const res = await app.inject({ method, url,
-    headers: player ? { authorization: `Bearer ${player.token}` } : {}, payload: body });
-  return { code: res.statusCode, body: res.json() };
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await app.inject({ method, url,
+      headers: player ? { authorization: `Bearer ${player.token}` } : {}, payload: body });
+    const result = { code: res.statusCode, body: res.json() };
+    // Native fixtures obey the production admission brake instead of disabling it.
+    if (!process.env.DATABASE_URL || result.code !== 429 || result.body.error !== 'rate_limited' || attempt === 3)
+      return result;
+    const seconds = Number(res.headers['retry-after'] || result.body.cooldownSeconds || 3);
+    await new Promise(resolve => setTimeout(resolve, Math.max(1000, seconds * 1000 + 100)));
+  }
 };
 const mk = async (name, loc) => {
   const { body: { token } } = await call('POST', '/v1/auth/guest');
@@ -105,6 +111,8 @@ try {
 
   await pool.query("UPDATE characters SET gun='orchestra', ammo=500, energy=200, jail_until=NULL, hosp_until=NULL, shoot_cd_until=NULL WHERE id=$1", [watcher.id]);
   assert.equal((await call('POST', `/v1/streets/${mark.id}/search`, watcher)).code, 200);
+  await pool.query('UPDATE searches SET started_at=$1 WHERE hunter=$2',
+    [new Date(Date.now() - 86400000), watcher.id]);
   r = await call('POST', `/v1/streets/${mark.id}/fire`, watcher, { rounds: 50 });
   assert.equal(r.body.error, 'district');
   assert.equal(r.body.district, undefined, 'a failed shot cannot reveal the victim district');
