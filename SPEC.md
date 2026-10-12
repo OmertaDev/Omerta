@@ -12,16 +12,16 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **339** files, **113851** lines (recursive source inventory) |
-| Test suites | **509** files, **153181** lines (recursive source inventory) |
-| HTTP routes | **927** registrations (**927** unique; 876 under `/v1`) |
-| Database tables | **400** (`schema.sql`, 7876 lines) |
+| Backend modules | **343** files, **114235** lines (recursive source inventory) |
+| Test suites | **514** files, **153942** lines (recursive source inventory) |
+| HTTP routes | **933** registrations (**933** unique; 882 under `/v1`) |
+| Database tables | **401** (`schema.sql`, 7919 lines) |
 | Client | **14709** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **733** markdown files, **137950** lines — dated security evidence is indexed in `docs/AUDITS.md` |
-| Ledger invariants | **69** checks — **63** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
+| Design + audit docs | **734** markdown files, **137986** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Ledger invariants | **71** checks — **65** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **277,000 lines** of backend code, tests, schema and top-level contracts.
 
@@ -738,4 +738,5 @@ convention) is measured and accepted; D8–D10 are accepted as-is with guards; D
 runs in CI; D13 is an open, unidentified test flake rather than a defect in the system. What remains is not architecture: the founder's operational steps (the alert webhook, one
 production backup, the X token), the balance levers tracked in `SIGN-OFF.md`, and the chain track, which
 is gated on a third-party audit and the launch checklist rather than on any work in this repo.
+
 

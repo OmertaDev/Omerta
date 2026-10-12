@@ -81,7 +81,15 @@ try {
   await single(buyer,(ch,c,h)=>Jobs.cancelIntelForecastJob(ch,cancelled.id,c,h));
   assert.equal(await cash(buyer),before+100);assert.equal(await count('intel_job:refund',cancelled.id),1);
   const expired=(await create(buyer,reporter)).job;
-  await app.pool.query('UPDATE intel_forecast_jobs SET created_at=$2,target_at=$3 WHERE id=$1',[expired.id,new Date(Date.now()-600000),new Date(Date.now()+30000)]);
+  // Native SQL keeps its real clock while this price-block fixture freezes JS.
+  // Translate this deadline into both worker cutoff domains without changing either clock.
+  const sqlNow=+(await app.pool.query('SELECT clock_timestamp() AS at')).rows[0].at;
+  const expiryTarget=Math.min(Date.now(),sqlNow)+30000;
+  assert.ok(Number.isFinite(sqlNow));
+  assert.ok(expiryTarget<=sqlNow+60000,'Expiry candidate is due under the SQL clock');
+  assert.ok(Date.now()>=expiryTarget-60000,'Expiry refund is due under the JavaScript clock');
+  assert.equal(priceBlock(expiryTarget),priceBlock(Date.now()));
+  await app.pool.query('UPDATE intel_forecast_jobs SET created_at=$2,target_at=$3 WHERE id=$1',[expired.id,new Date(expiryTarget-600000),new Date(expiryTarget)]);
   assert.equal((await Jobs.expireIntelForecastJobs(app.pool)).refunded,1);
   assert.equal((await Jobs.expireIntelForecastJobs(app.pool)).refunded,0);
   assert.equal((await row(expired.id)).status,'expired');
