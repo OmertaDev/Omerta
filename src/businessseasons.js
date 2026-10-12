@@ -14,7 +14,23 @@ const exact = (body, fields) => { if (!body || typeof body !== 'object' || Array
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value, (_, item) => item && typeof item === 'object' && !Array.isArray(item)
   ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item)).digest('hex');
 const clock = async client => new Date((await client.query('SELECT clock_timestamp() AS at')).rows[0].at);
-const one = async (client, sql, args) => (await client.query(sql, args)).rows[0] || null;
+const one = async (client, sql, args) => {
+  switch (sql) {
+    case 'SELECT name,published FROM agent_company_profiles WHERE account_id=$1': return (await client.query('SELECT name,published FROM agent_company_profiles WHERE account_id=$1', args)).rows[0] || null;
+    case 'SELECT published FROM commercial_reputation_publications WHERE account_id=$1': return (await client.query('SELECT published FROM commercial_reputation_publications WHERE account_id=$1', args)).rows[0] || null;
+    case 'SELECT * FROM business_seasons WHERE creator_account=$1 AND request_key=$2': return (await client.query('SELECT * FROM business_seasons WHERE creator_account=$1 AND request_key=$2', args)).rows[0] || null;
+    case 'SELECT account_id FROM agent_company_profiles WHERE account_id=$1': return (await client.query('SELECT account_id FROM agent_company_profiles WHERE account_id=$1', args)).rows[0] || null;
+    case 'SELECT * FROM business_season_entries WHERE season_id=$1 AND account_id=$2': return (await client.query('SELECT * FROM business_season_entries WHERE season_id=$1 AND account_id=$2', args)).rows[0] || null;
+    case 'SELECT * FROM business_depots WHERE id=$1 AND owner_character=$2 FOR UPDATE': return (await client.query('SELECT * FROM business_depots WHERE id=$1 AND owner_character=$2 FOR UPDATE', args)).rows[0] || null;
+    case 'SELECT * FROM business_seasons WHERE id=$1 FOR UPDATE': return (await client.query('SELECT * FROM business_seasons WHERE id=$1 FOR UPDATE', args)).rows[0] || null;
+    case 'SELECT * FROM business_season_entries WHERE season_id=$1 AND account_id=$2 FOR UPDATE': return (await client.query('SELECT * FROM business_season_entries WHERE season_id=$1 AND account_id=$2 FOR UPDATE', args)).rows[0] || null;
+    case 'SELECT depot_id FROM business_season_entries WHERE season_id=$1 AND account_id=$2': return (await client.query('SELECT depot_id FROM business_season_entries WHERE season_id=$1 AND account_id=$2', args)).rows[0] || null;
+    case 'SELECT * FROM business_depots WHERE id=$1 FOR UPDATE': return (await client.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE', args)).rows[0] || null;
+    case 'SELECT account_id,alive FROM characters WHERE id=$1': return (await client.query('SELECT account_id,alive FROM characters WHERE id=$1', args)).rows[0] || null;
+    case 'SELECT * FROM business_seasons WHERE id=$1': return (await client.query('SELECT * FROM business_seasons WHERE id=$1', args)).rows[0] || null;
+    default: throw new Error('Unknown business season query');
+  }
+};
 const sourcePin = () => ({ accountingVersion: BUSINESS_SEASONS.accountingVersion, canonicalRevision: BUSINESS_SEASONS.canonicalRevision, sourceFingerprint });
 const neutral = new Set(['fund', 'withdraw', 'restock_escrow', 'restock_refund', 'receive', 'inventory_withdrawal', 'warehouse_deposit', 'warehouse_withdraw', 'warehouse_tenant_death']);
 
@@ -152,10 +168,9 @@ export async function dueBusinessSeasonEntries(client, limit = 25) {
   if (!Number.isSafeInteger(limit) || limit < 1 || limit > 25) fail('candidate_limit');
   // PostgreSQL semijoin; pg-mem cannot evaluate correlated EXISTS. The uncorrelated
   // fallback has the same account membership and never dispatches an absent actor.
-  const living = dbCaps.skipLocked
-    ? 'EXISTS (SELECT 1 FROM characters c WHERE c.account_id=e.account_id AND c.alive AND NOT c.is_npc)'
-    : 'e.account_id IN (SELECT account_id FROM characters WHERE alive AND NOT is_npc)';
-  return (await client.query(`SELECT e.season_id,e.account_id,e.original_character FROM business_season_entries e JOIN business_seasons s ON s.id=e.season_id WHERE e.final_result IS NULL AND ${living} AND s.starts_at<=clock_timestamp() AND (e.baseline IS NULL OR s.ends_at<=clock_timestamp()) ORDER BY s.ends_at,e.season_id,e.account_id LIMIT $1`, [limit])).rows;
+  return dbCaps.skipLocked
+    ? (await client.query('SELECT e.season_id,e.account_id,e.original_character,e.visibility_revision,e.next_observation_at FROM business_season_entries e JOIN business_seasons s ON s.id=e.season_id WHERE e.final_result IS NULL AND EXISTS (SELECT 1 FROM characters c WHERE c.account_id=e.account_id AND c.alive AND NOT c.is_npc) AND e.next_observation_at<=clock_timestamp() AND s.starts_at<=clock_timestamp() AND (e.baseline IS NULL OR s.ends_at<=clock_timestamp()) ORDER BY e.next_observation_at,s.ends_at,e.season_id,e.account_id LIMIT $1', [limit])).rows
+    : (await client.query('SELECT e.season_id,e.account_id,e.original_character,e.visibility_revision,e.next_observation_at FROM business_season_entries e JOIN business_seasons s ON s.id=e.season_id WHERE e.final_result IS NULL AND e.account_id IN (SELECT account_id FROM characters WHERE alive AND NOT is_npc) AND e.next_observation_at<=clock_timestamp() AND s.starts_at<=clock_timestamp() AND (e.baseline IS NULL OR s.ends_at<=clock_timestamp()) ORDER BY e.next_observation_at,s.ends_at,e.season_id,e.account_id LIMIT $1', [limit])).rows;
 }
 export async function publicBusinessSeason(client, seasonId) {
   id(seasonId);

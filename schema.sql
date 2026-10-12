@@ -8393,6 +8393,7 @@ CREATE TABLE IF NOT EXISTS business_season_entries (
   published BOOLEAN NOT NULL,
   visibility_revision INT NOT NULL DEFAULT 1 CHECK (visibility_revision BETWEEN 1 AND 2147483647),
   enrollment_receipt JSONB NOT NULL,
+  next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
   baseline JSONB,
   end_snapshot JSONB,
   final_result JSONB,
@@ -8400,3 +8401,6 @@ CREATE TABLE IF NOT EXISTS business_season_entries (
   UNIQUE(season_id,depot_id)
 );
 CREATE INDEX IF NOT EXISTS business_season_owned ON business_season_entries(account_id,season_id);
+
+ALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
+CREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;

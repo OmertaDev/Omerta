@@ -56,6 +56,7 @@ import { runPopulation, runResidentBehaviour } from './population.js';
 import { runCompanyOperators } from './companyoperatorrunner.js';
 import { runCompanyWorkflows } from './companyworkflowrunner.js';
 import { runCompanyOpportunities } from './companyopportunityrunner.js';
+import { runBusinessSeasons } from './businessseasonrunner.js';
 import { runCompanyBankPortfolios } from './companybankportfoliorunner.js';
 import { expireBuyerCooperativeFunding } from './buyercooperativerunner.js';
 import { sweepLaw } from './law.js';
@@ -825,6 +826,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
       await safe('company bank portfolios', () => runCompanyBankPortfolios(pool, 20));
       await safe('buyer cooperative funding expiry', () => expireBuyerCooperativeFunding(pool, 20));
       await safe('company opportunities', () => runCompanyOpportunities(pool, 25));
+      await safe('business seasons', () => runBusinessSeasons(pool, 25));
     }
     finally { companyTicking = false; }
   };
