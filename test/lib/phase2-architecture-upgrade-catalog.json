@@ -3085,6 +3085,66 @@
       "table_name": "company_opportunity_subscriptions",
       "name": "company_opportunity_subscriptions_revision_check",
       "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_category_check",
+      "definition": "CHECK (category = ANY (ARRAY['deliveries'::text, 'paidWork'::text, 'closedStorage'::text, 'repaidLoans'::text, 'workflows'::text]))"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_evidence_hash_check",
+      "definition": "CHECK (char_length(evidence_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_pkey",
+      "definition": "PRIMARY KEY (category, source_id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_pkey",
+      "definition": "PRIMARY KEY (transaction_id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_source_id_fkey",
+      "definition": "FOREIGN KEY (source_id) REFERENCES loans(id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_transaction_id_fkey",
+      "definition": "FOREIGN KEY (transaction_id) REFERENCES transactions(id)"
     }
   ],
   "removed": [
@@ -4100,6 +4160,24 @@
       "source_hash",
       "source_id",
       "updated_at"
+    ],
+    "commercial_reputation_publications": [
+      "account_id",
+      "published",
+      "revision"
+    ],
+    "commercial_reputation_proofs": [
+      "account_id",
+      "category",
+      "evidence_hash",
+      "original_character",
+      "recorded_at",
+      "source_id"
+    ],
+    "commercial_reputation_settlements": [
+      "account_id",
+      "source_id",
+      "transaction_id"
     ]
   }
 }
