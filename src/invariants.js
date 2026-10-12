@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import { logisticsCoverageFaults } from './logisticscoverageinvariants.js';
 import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
+import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -666,6 +667,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
+  push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);
 
   // (f4) LOAN ESCROW (loan sharking): an OPEN offer holds the principal in escrow (the bounty-escrow
   // twin). escrow == offered − taken (escrow → borrower) − refunded (cancel/expiry) − deathBurned.

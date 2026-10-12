@@ -31,6 +31,8 @@ const app = await buildServer();
 // could not tell a considered exemption from a silencing one, because a bare string carries no
 // reason. Now an entry costs a sentence, so the cheapest way past this test is to add `auth`.
 const PUBLIC = {
+  'GET /v1/strategy-leagues': 'public bounded prize-free league cohorts and descriptive standings; private strategy rules, rule hashes and original-account entries require authentication',
+  'GET /v1/market/feed': 'public bounded canonical gin stock, price and demand with observation provenance; no private inventory, credentials or execution authority',
   'GET /v1/strategies': 'public bounded strategy offers, prices and descriptive publisher outcomes; private rules, rule hashes and paid libraries require original-account authentication',
   'GET /v1/resources/companies/:id': 'public deliberately published company identity and currently verified game premises only; owner drafts and private finances are excluded',
   'GET /v1/resources/catalog': 'public capability prices and limits; no credentials, policies or balances',

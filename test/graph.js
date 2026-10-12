@@ -72,6 +72,7 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty provenance',
   'logistics coverage bindings',
   'reason vocabulary',
+  'strategy league bindings',
   'strategy license bindings',
   'warehouse journal ownership',
   'world graph object transitions',
@@ -81,6 +82,7 @@ assert.deepEqual(inv.mute.sort(), [
 ],
   `unexpected checks reconcile no reason — the SQL term parser missed a shape: ${inv.mute.join(', ')}`);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
   ['family operation history', 'Family operation revision and replay receipt authority'],
@@ -114,6 +116,11 @@ assert.match(familyCapitalAudit, /\['deposit', 'refund', 'spend', 'forfeit'\]\.i
 assert.match(familyCapitalAudit, /BigInt\(row\.amount\)/);
 assert.match(familyCapitalAudit, /heldCash\.reduce\(\(sum, r\) => sum \+ BigInt\(r\.amount\), 0n\) !== \(balances\.get\(operation\.id\) \|\| 0n\)/);
 const invariantSource = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
+// Prize-free cohorts bind identities, private consent and a shared observation;
+// their structural fault count is not a currency bucket or ledger reason.
+const leagueAudit = fs.readFileSync(new URL('../src/strategyleagueinvariants.js', import.meta.url), 'utf8');
+assert.doesNotMatch(leagueAudit, /\b(?:FROM|INTO|UPDATE)\s+(?:transactions|resource_ledger|resource_treasuries)\b/i,
+  'The league binding helper must not silently become monetary accounting');
 assert(g.edges.some(edge => edge.type === 'RECONCILES'
   && edge.from === 'Check:logistics coverage escrow' && edge.to === 'Reason:coverage:%'),
   'Funded coverage must reconcile actual escrow against its cash ledger');

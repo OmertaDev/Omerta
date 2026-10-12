@@ -1,3 +1,4 @@
+import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS } from '../tools/rc1-company-succession-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
@@ -13,6 +14,8 @@ import { GOODS_SOURCE_CURRENT_PINS, GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_
   assertEconomySourceTransfer, assertDeedServerCompatibility, assertGenesisSnapshotServerCompatibility,
   assertGenesisWrapperServerCompatibility, assertHttpReceiptServerCompatibility,
   CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB, assertCityHomesServerTransfer,
+  CITY_HOMES_FEED_SERVER_PIN, CITY_HOMES_FEED_SOURCE_BASE_REVISION, CITY_HOMES_FEED_SERVER_BLOB, CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesFeedServerTransfer,
+  CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION, CITY_HOMES_LEAGUE_SERVER_BLOB, CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, assertCityHomesLeagueServerTransfer,
   CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
@@ -36,19 +39,49 @@ const oldStorefront = assertStorefrontServerTransfer(execFileSync('git', ['show'
 assert.equal(oldStorefront.actualSha256, STOREFRONT_SERVER_PIN);
 assert.equal(oldStorefront.baselineSha256, BUSINESS_SERVER_PIN);
 assert.equal(oldStorefront.inverseChunks, 2);
+const gitServer = spec => execFileSync('git', ['show', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+// The original Company+Home envelope remains a separate historical full-blob control.
+const oldHomesText=gitServer(CITY_HOMES_SERVER_BLOB), oldHomes=assertCityHomesServerTransfer(oldHomesText);
+assert.equal(hash(oldHomesText),CITY_HOMES_SERVER_PIN);
+assert.equal(oldHomes.sourceBlob,CITY_HOMES_SERVER_BLOB);
+assert.equal(oldHomes.baselineSha256,COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(oldHomes.inverseChunks,2);
+assert.equal(oldHomes.baselineText,gitServer(CITY_HOMES_SOURCE_BASE_REVISION+':src/server.js'));
+assert.equal(oldHomes.baselineText,gitServer(CITY_HOMES_PREDECESSOR_SERVER_BLOB));
+const normalizeCityHomesSource = input => {
+ const text=input.replaceAll('\r\n','\n');
+ if(hash(text)===CITY_HOMES_SERVER_PIN) return assertCityHomesServerTransfer(text);
+ return hash(text)===CITY_HOMES_FEED_SERVER_PIN ? assertCityHomesFeedServerTransfer(text) : assertCityHomesLeagueServerTransfer(text);
+};
+const oldFeedHomesText=gitServer(CITY_HOMES_FEED_SERVER_BLOB),oldFeedHomes=assertCityHomesFeedServerTransfer(oldFeedHomesText);
+assert.equal(oldFeedHomes.baselineText,gitServer(CITY_HOMES_FEED_PREDECESSOR_SERVER_BLOB));
+assert.equal(oldFeedHomes.baselineText,gitServer(CITY_HOMES_FEED_SOURCE_BASE_REVISION+':src/server.js'));
+assert.deepEqual(normalizeCityHomesSource(oldFeedHomesText.replaceAll('\n','\r\n')),oldFeedHomes);
+const currentHomeText=fs.readFileSync('src/server.js','utf8').replaceAll('\r\n','\n');
+assert.deepEqual(normalizeCityHomesSource(currentHomeText.replaceAll('\n','\r\n')),normalizeCityHomesSource(currentHomeText));
+assert.deepEqual(normalizeCityHomesSource(oldHomesText.replaceAll('\n','\r\n')),oldHomes);
+for(const chunk of CITY_HOMES_SOURCE_INVERSES) {
+ for(const changed of [currentHomeText.replace(chunk,''),currentHomeText.replace(chunk,chunk+chunk),currentHomeText.replace(chunk,chunk.replace('registerCityHomes','registerUnknownHomes'))])
+  assert.throws(()=>normalizeCityHomesSource(changed),/source changed/);
+}
+for(const changed of [currentHomeText+'\n// unknown GUI suffix\n',currentHomeText.replace('registerMarketFeed(app','registerUnknownFeed(app')]) {
+ assert.notEqual(changed,currentHomeText);
+ assert.throws(()=>normalizeCityHomesSource(changed),/source changed/);
+}
 const currentSources = new Map();
 for (const file of Object.keys(GOODS_SOURCE_CURRENT_PINS)) {
   const actual = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   // Social then Presence reconstruct Goods/car history; no new social authority is inherited.
-  const homes = file === 'src/server.js' ? assertCityHomesServerTransfer(actual) : null;
+  const homes = file === 'src/server.js' ? normalizeCityHomesSource(actual) : null;
   const invoiceInput = homes ? homes.baselineText : actual;
   if (homes) {
-    assert.equal(hash(actual), CITY_HOMES_SERVER_PIN);
-    assert.equal(homes.sourceBlob, CITY_HOMES_SERVER_BLOB);
-    assert.equal(homes.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
+    assert.equal(hash(actual), CITY_HOMES_LEAGUE_SERVER_PIN);
+    assert.equal(actual, gitServer(CITY_HOMES_LEAGUE_SERVER_BLOB));
+    assert.equal(homes.sourceBlob, CITY_HOMES_LEAGUE_SERVER_BLOB);
+    assert.equal(homes.baselineSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
     assert.equal(homes.inverseChunks, 2);
-    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+    assert.equal(invoiceInput, execFileSync('git', ['show', CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
   }
   const intelInput = invoiceSourceBaseline(file, invoiceInput);
   const franchiseInput = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, intelInput).baselineText : intelInput;

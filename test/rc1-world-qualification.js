@@ -1,9 +1,14 @@
+import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-league-source-compatibility.js';
+import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
+import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
 import { COVERAGE_SOURCE_TRANSFER } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { strategySourceBaseline } from '../tools/rc1-strategy-source-compatibility.js';
 import { companySuccessionSourceBaseline } from '../tools/rc1-company-succession-source-compatibility.js';
+import { marketFeedSourceBaseline } from '../tools/rc1-market-feed-source-compatibility.js';
+import { strategyLeagueSourceBaseline } from '../tools/rc1-strategy-league-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_BLOBS, COVERAGE_SOURCE_INVERSES,
   coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
@@ -23,7 +28,7 @@ import { assertGenesisWrapperServerCompatibility, GENESIS_SERVER_WRAPPER_PIN,
   CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REVIEWED_REVISION,
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer, GOODS_SOURCE_CURRENT_PINS,
   GOODS_SOURCE_PREDECESSOR_PINS, GOODS_SOURCE_REVIEWED_REVISION, assertGoodsSourceTransfer,
-  CITY_HOMES_SERVER_PIN, CITY_HOMES_SOURCE_BASE_REVISION, CITY_HOMES_SERVER_BLOB, CITY_HOMES_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesServerTransfer,
+  CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION, CITY_HOMES_LEAGUE_SERVER_BLOB, CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, CITY_HOMES_SOURCE_INVERSES, assertCityHomesLeagueServerTransfer, cityHomesFeedSourceBaseline,
   CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECESSOR_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_CURRENT_BLOBS, CREW_LOGISTICS_SOURCE_PREDECESSOR_BLOBS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer,
   WAREHOUSE_SERVER_PIN, WAREHOUSE_SOURCE_REVIEWED_REVISION, WAREHOUSE_SERVER_BLOB, WAREHOUSE_SERVER_PREDECESSOR_BLOB, WAREHOUSE_SERVER_SOURCE_INVERSES, assertWarehouseServerTransfer,
   SUPPLY_TENDER_SERVER_PIN, SUPPLY_TENDER_SOURCE_REVIEWED_REVISION, SUPPLY_TENDER_SERVER_BLOB, SUPPLY_TENDER_PREDECESSOR_SERVER_BLOB, SUPPLY_TENDER_SOURCE_INVERSES, assertSupplyTenderServerTransfer,
@@ -43,22 +48,22 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
 const homesServerText = (await fs.readFile('src/server.js', 'utf8')).replaceAll('\r\n', '\n');
-const homesProof = assertCityHomesServerTransfer(homesServerText);
-assert.equal(homesProof.actualSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(homesProof.baselineSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
-assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
-assert.equal(homesProof.sourceBlob, CITY_HOMES_SERVER_BLOB);
-assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_PREDECESSOR_SERVER_BLOB);
-assert.equal(crypto.createHash('sha1').update(`blob ${Buffer.byteLength(homesServerText)}\0`).update(homesServerText).digest('hex'), CITY_HOMES_SERVER_BLOB);
-assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
-assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+const homesProof = assertCityHomesLeagueServerTransfer(homesServerText);
+assert.equal(homesProof.actualSha256, CITY_HOMES_LEAGUE_SERVER_PIN);
+assert.equal(homesProof.baselineSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(homesProof.sourceBaseRevision, CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION);
+assert.equal(homesProof.sourceBlob, CITY_HOMES_LEAGUE_SERVER_BLOB);
+assert.equal(homesProof.predecessorServerBlob, CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB);
+assert.equal(crypto.createHash('sha1').update(`blob ${Buffer.byteLength(homesServerText)}\0`).update(homesServerText).digest('hex'), CITY_HOMES_LEAGUE_SERVER_BLOB);
+assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION + ':src/server.js'], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
+assert.equal(homesProof.baselineText, execFileSync('git', ['show', CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n'));
 assert.equal(CITY_HOMES_SOURCE_INVERSES.length, 2);
 for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
   assert.equal(homesServerText.split(chunk).length, 2);
   for (const changed of [homesServerText.replace(chunk, ''), homesServerText.replace(chunk, chunk + chunk)])
-    assert.throws(() => assertCityHomesServerTransfer(changed), /source changed/);
+    assert.throws(() => assertCityHomesLeagueServerTransfer(changed), /source changed/);
 }
-assert.throws(() => assertCityHomesServerTransfer(homesServerText + '\n// unsupported City homes drift\n'), /source changed/);
+assert.throws(() => assertCityHomesLeagueServerTransfer(homesServerText + '\n// unsupported City homes drift\n'), /source changed/);
 const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
@@ -480,16 +485,16 @@ for (const chunk of CITY_HOMES_SOURCE_INVERSES) {
 }
 await assert.rejects(verifyWorldRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: file => file === 'src/server.js' ? homesServerText + '\n// unknown Home envelope change\n' : fs.readFile(file) }), /source changed/);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_SERVER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, COMPANY_SUCCESSION_SOURCE_CURRENT_PINS['src/server.js']);
-assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_SOURCE_BASE_REVISION);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.actualServerSha256, CITY_HOMES_LEAGUE_SERVER_PIN);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.predecessorServerSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
+assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.sourceBaseRevision, CITY_HOMES_LEAGUE_SOURCE_BASE_REVISION);
 assert.equal(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.inverseChunks, 2);
 assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separate current-source proofs/);
 // The recovery consumer closes complete current Coverage -> Invoice -> Intel
 // sources back to its unchanged pins, never by trusting a supplied transfer tag.
 let coverageSourceControls = 0;
 for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
-  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, file === 'src/server.js' ? homesProof.baselineText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')));
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))))));
   assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
   const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
