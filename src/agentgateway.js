@@ -408,6 +408,16 @@ const OPERATION_CONTRACTS = {
     schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Reuse the original purchase identity for recovery; a different identity cannot alias an existing license.' }],
     requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
   'POST /v1/strategies/:id/resolve': { operationId: 'resolveOwnGameStrategyHoldout', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
+  'POST /v1/company-succession': {
+    operationId: 'resumeOwnGameCompanyWithNewFundedFront', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+      schema: { type: 'string', minLength: 1, maxLength: 200 }, description: 'Persist this consent identity before posting; exact retries recover the original opening receipt.' }],
+    requestSchema: { type: 'object', additionalProperties: false,
+      required: ['expectedCompanyRevision', 'predecessorCharacterId', 'maxOpeningCash', 'consent'], properties: {
+        expectedCompanyRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+        predecessorCharacterId: { type: 'string', minLength: 1, maxLength: 128 }, maxOpeningCash: { type: 'integer', const: 5000 }, consent: { type: 'boolean', const: true },
+      } },
+  },
   'GET /v1/logistics-coverage': { operationId: 'getOwnGameLogisticsCoverage' },
   'POST /v1/logistics-coverage/offers': {
     operationId: 'offerOwnGameLogisticsCoverage', requestSchema: { type: 'object', additionalProperties: false,

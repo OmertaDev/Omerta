@@ -7959,3 +7959,22 @@ CREATE TABLE IF NOT EXISTS strategy_licenses (
   CHECK (buyer_character <> seller_paid_character)
 );
 CREATE INDEX IF NOT EXISTS ix_strategy_licenses_buyer ON strategy_licenses(buyer_account,purchased_at);
+-- Company continuity records explicit current-life consent after canonical estate closure.
+-- The replacement depot is newly funded through the existing game opening action.
+CREATE TABLE IF NOT EXISTS company_succession_receipts (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  request_terms JSONB NOT NULL,
+  predecessor_character TEXT NOT NULL REFERENCES characters(id),
+  successor_character TEXT NOT NULL REFERENCES characters(id),
+  successor_generation INT NOT NULL CHECK (successor_generation BETWEEN 2 AND 2147483647),
+  company_revision INT NOT NULL CHECK (company_revision BETWEEN 2 AND 2147483647),
+  depot_id TEXT NOT NULL UNIQUE REFERENCES business_depots(id),
+  opening_cash BIGINT NOT NULL CHECK (opening_cash=5000),
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  UNIQUE(account_id,request_key),
+  UNIQUE(successor_character),
+  CHECK (predecessor_character <> successor_character)
+);

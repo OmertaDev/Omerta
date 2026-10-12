@@ -335,6 +335,7 @@
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
