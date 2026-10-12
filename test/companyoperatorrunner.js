@@ -4,6 +4,7 @@ process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.DEPOT_PILOT = 'on';
 process.env.POPULATION_OFF = 'on';
 process.env.RESOURCE_ECONOMY = 'off';
+process.env.MARKET_SEED = 'isolated-company-runner-market-seed-2026';
 process.env.RATE_LIMIT = 'off';
 const native = process.argv.includes('--postgres');
 if (native) {

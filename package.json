@@ -248,7 +248,7 @@
     "test:market-feed-api:postgres": "node test/marketfeed-api.js --postgres",
     "test:strategy-leagues:postgres": "node test/strategyleagues.js --postgres",
     "test:strategy-leagues-api:postgres": "node test/strategyleagues-api.js --postgres",
-    "test:company-operators:postgres": "node test/companyoperators.js --postgres",
+    "test:company-operators:postgres": "node test/companyoperators.js --postgres && node test/companyoperatorrunner.js --postgres",
     "test:company-operator-runner:postgres": "node test/companyoperatorrunner.js --postgres"
   },
   "dependencies": {
