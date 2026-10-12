@@ -2485,6 +2485,166 @@
       "table_name": "company_workflow_proofs",
       "name": "company_workflow_proofs_workflow_id_fkey",
       "definition": "FOREIGN KEY (workflow_id) REFERENCES company_workflows(id)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_check",
+      "definition": "CHECK (premises_kind = 'estate'::text AND premises_district IS NULL OR premises_kind = 'street'::text AND premises_district IS NOT NULL)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_company_revision_check",
+      "definition": "CHECK (company_revision >= 1 AND company_revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_duration_seconds_check",
+      "definition": "CHECK (duration_seconds >= 60 AND duration_seconds <= 86400)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_landlord_account_key",
+      "definition": "UNIQUE (landlord_account)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_premises_kind_check",
+      "definition": "CHECK (premises_kind = ANY (ARRAY['estate'::text, 'street'::text]))"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_rent_cash_check",
+      "definition": "CHECK (rent_cash >= 1 AND rent_cash <= 100000)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_slots_check",
+      "definition": "CHECK (slots >= 1 AND slots <= 2)"
+    },
+    {
+      "table_name": "commercial_premises_offers",
+      "name": "commercial_premises_offers_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'cancelled'::text, 'invalidated'::text]))"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_check",
+      "definition": "CHECK (expires_at > starts_at)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_check1",
+      "definition": "CHECK (landlord_account <> tenant_account AND landlord_character <> tenant_character)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_check2",
+      "definition": "CHECK (premises_kind = 'estate'::text AND premises_district IS NULL OR premises_kind = 'street'::text AND premises_district IS NOT NULL)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_offer_id_fkey",
+      "definition": "FOREIGN KEY (offer_id) REFERENCES commercial_premises_offers(id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_offer_revision_check",
+      "definition": "CHECK (offer_revision >= 1 AND offer_revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_premises_kind_check",
+      "definition": "CHECK (premises_kind = ANY (ARRAY['estate'::text, 'street'::text]))"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_rent_cash_check",
+      "definition": "CHECK (rent_cash >= 1 AND rent_cash <= 100000)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_slot_check",
+      "definition": "CHECK (slot >= 1 AND slot <= 2)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'expired'::text, 'cancelled'::text, 'invalidated'::text, 'landlord_dead'::text, 'tenant_dead'::text]))"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_tenant_account_fkey",
+      "definition": "FOREIGN KEY (tenant_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_premises_leases",
+      "name": "commercial_premises_leases_tenant_character_fkey",
+      "definition": "FOREIGN KEY (tenant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_premises_requests",
+      "name": "commercial_premises_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_premises_requests",
+      "name": "commercial_premises_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['offer'::text, 'lease'::text, 'cancel_offer'::text, 'cancel_lease'::text]))"
+    },
+    {
+      "table_name": "commercial_premises_requests",
+      "name": "commercial_premises_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
     }
   ],
   "removed": [
@@ -3333,6 +3493,45 @@
       "source_type",
       "stage",
       "workflow_id"
+    ],
+    "commercial_premises_offers": [
+      "company_revision",
+      "duration_seconds",
+      "expires_at",
+      "id",
+      "landlord_account",
+      "landlord_character",
+      "premises_key",
+      "premises_kind",
+      "published",
+      "rent_cash",
+      "revision",
+      "slots",
+      "state"
+    ],
+    "commercial_premises_leases": [
+      "expires_at",
+      "id",
+      "landlord_account",
+      "landlord_character",
+      "offer_id",
+      "offer_revision",
+      "premises_key",
+      "premises_kind",
+      "rent_cash",
+      "revision",
+      "slot",
+      "starts_at",
+      "state",
+      "tenant_account",
+      "tenant_character"
+    ],
+    "commercial_premises_requests": [
+      "account_id",
+      "action",
+      "receipt",
+      "request_key",
+      "terms"
     ]
   }
 }

@@ -1,0 +1,11 @@
+# Commercial premises integrated migration review
+
+Date: 2026-10-12. Phase: integrated source candidate, financial activation disabled. Runtime/schema basis: `064edcfd79cbeb5d18d89205ae628aca37a026e9`. Scope: frozen catalog and the explicit optional-feature migration manifest. Runtime occupancy/rent/estate proof remains separately scoped.
+
+Compared one-time native PostgreSQL18.4 capture with the three premises tables. Frozen semantic constraints / required columns: offers13/13, leases16/15, request receipts3/5. Original account/character/property bindings, one offer per landlord, bounded slot/rent/revision terms, distinct landlord/tenant and correct estate-null/street-present district rules remain exact. Optional depot/district fields are not promoted to required columns. Occupancy uniqueness is additionally enforced by the source's partial unique index and actual slot-race tests; this semantic-constraint catalog does not claim a separate index audit.
+
+All497 predecessor semantic-constraint entries, required-column inventories and removed-constraint records are preserved exactly. The recognized optional slice is now24 tables /243 constraints. Expected definitions remain committed literals, never inferred from the backend at test time. Existing missing/altered/unknown constraint/nullability controls cover the expanded slice.
+
+Actual populated Director migration passed twice on PostgreSQL18.4 (`180004`), preserving the original baseline `44f48a743e549591bd125a1f678099b8382dd78f` and populated canonical/Director history. Capture used owned fresh `commercial_premises_catalog_3167bd5881a55a2f`; migration creates a fresh internal `director_migration_*` namespace on loopback35439. Logs retained under ignored `output/commercial-premises-catalog-capture.json` and `output/commercial-premises-director-migration.log`. No ambient/production database was used; PostgreSQL16 remains a mandatory hosted gate.
+
+Policy methods: direct source/specification comparison, native persistence and adversarial catalog controls under the repository agent-led review policy. This migration scope grants no custody, property ownership, rent claim, deployment clearance or financial activation. Current-source authenticated routes, canonical rent/estate accounting, source-transfer envelopes and exact release gates remain required separately.
