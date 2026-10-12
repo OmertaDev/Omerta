@@ -11,6 +11,7 @@ import { employmentCashInvariant } from './gameemploymentinvariants.js';
 import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
+import { logisticsHubInvariant } from './companylogisticshubsinvariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -678,6 +679,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push(premises.name, premises.defects.length, 0, 0, { defects: premises.defects });
   const bankPortfolios = await runCompanyBankPortfolioInvariants(pool);
   push('company bank portfolio authority and lifetime budget', bankPortfolios.issues.length, 0, 0, { issues: bankPortfolios.issues });
+  const hubs = await logisticsHubInvariant(pool);
+  push(hubs.name, hubs.defects.length, 0, 0, { defects: hubs.defects });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
