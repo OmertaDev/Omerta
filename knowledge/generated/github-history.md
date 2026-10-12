@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `38ca94b697c0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `77983f566e3f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2909 |
+| Commits in clone | 2912 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Record verified league estate classification repair |
+| Latest commit | 2026-10-12 — Record verified league graph classification repair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1976 |
+| OmertaDev | 1979 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 88 |
@@ -30,18 +30,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 525 | historical |
-| knowledge/generated/graph-summary.md | 525 | historical |
-| knowledge/generated/graph.json | 525 | historical |
-| knowledge/generated/inventory.md | 525 | historical |
+| knowledge/generated/github-history.md | 526 | historical |
+| knowledge/generated/graph-summary.md | 526 | historical |
+| knowledge/generated/graph.json | 526 | historical |
+| knowledge/generated/inventory.md | 526 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 450 | yes |
-| [SPEC.md](../../SPEC.md) | 446 | yes |
+| [SPEC.md](../../SPEC.md) | 447 | yes |
 | [src/server.js](../../src/server.js) | 393 | yes |
 | [schema.sql](../../schema.sql) | 326 | yes |
 | [package.json](../../package.json) | 274 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/documents.md | 253 | historical |
+| knowledge/generated/documents.md | 254 | historical |
 | knowledge/generated/modules.md | 189 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [src/game.js](../../src/game.js) | 180 | yes |
