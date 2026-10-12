@@ -40,7 +40,9 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   company_workflows: [13, 13], company_workflow_receipts: [3, 5], company_workflow_proofs: [5, 6],
   commercial_premises_offers: [13, 13], commercial_premises_leases: [16, 15], commercial_premises_requests: [3, 5],
   company_bank_portfolios: [5, 9], company_bank_portfolio_receipts: [3, 5],
-  company_bank_portfolio_loans: [5, 6] });
+  company_bank_portfolio_loans: [5, 6],
+  company_logistics_hubs: [12, 13], company_logistics_hub_sources: [10, 6],
+  company_logistics_hub_requests: [3, 5] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -284,6 +286,15 @@ try {
     rejected(verifyFeatureConstraints, `${constraint.name} bank constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+  for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_logistics_hub'))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} hub constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} hub constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  for (const column of ['withdrawal_journal_id', 'settlement', 'completed_at'])
+    rejected(verifyFeatureNotNull, `hub pending ${column} remains optional`, [...featureNotNull,
+      { table_name: 'company_logistics_hub_sources', column_name: column }]);
   rejected(verifyFeatureNotNull, 'bank finance request identity remains optional', [...featureNotNull,
     { table_name: 'company_bank_portfolio_loans', column_name: 'finance_request_id' }]);
   rejected(verifyFeatureNotNull, 'operator price policy must remain optional', [...featureNotNull,
