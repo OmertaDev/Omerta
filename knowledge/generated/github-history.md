@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `11c318a2f5a1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `913016f95599`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2887 |
+| Commits in clone | 2889 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Merge pull request #250 from OmertaDev/codex/city-connected-world |
+| Latest commit | 2026-10-12 — fix(city): let district names open atlas details |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1946 |
+| OmertaDev | 1947 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 96 |
+| github-actions[bot] | 97 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,12 +30,12 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 527 | historical |
-| knowledge/generated/graph-summary.md | 527 | historical |
-| knowledge/generated/graph.json | 527 | historical |
-| knowledge/generated/inventory.md | 527 | historical |
+| knowledge/generated/github-history.md | 528 | historical |
+| knowledge/generated/graph-summary.md | 528 | historical |
+| knowledge/generated/graph.json | 528 | historical |
+| knowledge/generated/inventory.md | 528 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 451 | yes |
+| [public/index.html](../../public/index.html) | 452 | yes |
 | [SPEC.md](../../SPEC.md) | 438 | yes |
 | [src/server.js](../../src/server.js) | 392 | yes |
 | [schema.sql](../../schema.sql) | 325 | yes |
