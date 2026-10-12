@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `06956de897d4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `abaa2a95a3e4`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 2759 |
+| Commits in clone | 2760 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-12 — Isolate City job cost fixture from level-up refill |
+| Latest commit | 2026-10-12 — Record City fixture cause and measured coverage census |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 1826 |
+| OmertaDev | 1827 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 88 |
@@ -36,7 +36,7 @@
 | knowledge/generated/graph.json | 498 | historical |
 | knowledge/generated/inventory.md | 498 | historical |
 | [public/index.html](../../public/index.html) | 450 | yes |
-| [SPEC.md](../../SPEC.md) | 419 | yes |
+| [SPEC.md](../../SPEC.md) | 420 | yes |
 | [src/server.js](../../src/server.js) | 389 | yes |
 | [schema.sql](../../schema.sql) | 321 | yes |
 | [package.json](../../package.json) | 269 | yes |
