@@ -18,6 +18,11 @@ import { voidFavorsAtDeath } from '../favors.js';
 import { voidIntelForecastJobsAtDeath } from '../intelforecastjobs.js';
 import { voidEmploymentAtDeath } from '../gameemployment.js';
 import { voidServiceSubscriptionsAtDeath } from '../servicesubscriptions.js';
+import { voidWorkerTrainingAtDeath } from '../workertraining.js';
+import { voidEmploymentOrganizationsAtDeath } from '../employmentorganizations.js';
+import { retireBusinessPartnershipsAtDeath } from '../businesspartnerships.js';
+import { retireCompanyGovernanceAtDeath } from '../companygovernance.js';
+import { retireAcquisitionsAtDeath } from '../companyacquisitions.js';
 import { closeCompanyWorkflowsAtDeath } from '../companyworkflows.js';
 import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { closeCompanyBankPortfoliosAtDeath } from '../companybankportfolios.js';
@@ -431,6 +436,13 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   victim.alive = false;
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
   await voidServiceSubscriptionsAtDeath(client, h, victim);
+  if (!victim.is_npc) {
+    await voidWorkerTrainingAtDeath(client, h, victim);
+    await voidEmploymentOrganizationsAtDeath(client, victim);
+    await retireBusinessPartnershipsAtDeath(client, victim.id);
+    await retireCompanyGovernanceAtDeath(client, victim.id);
+    await retireAcquisitionsAtDeath(client, victim.id);
+  }
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
   for (const receipt of rentalRecovery) {
     // The canonical refund already updated SQL. G subsequently persists its

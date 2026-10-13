@@ -94,6 +94,13 @@ import { register as registerServiceSubscriptions } from './routes/servicesubscr
 import { relayEscrowCustody } from './items.js';
 import { register as registerCommercialNegotiation } from './routes/commercialnegotiation.js';
 import { register as registerContractAuctions } from './routes/contractauctions.js';
+import { register as registerWorkerTraining } from './routes/workertraining.js';
+import { register as registerEmploymentOrganizations } from './routes/employmentorganizations.js';
+import { register as registerBusinessPartnerships } from './routes/businesspartnerships.js';
+import { register as registerCompanyGovernance } from './routes/companygovernance.js';
+import { register as registerCompanyAcquisitions } from './companyacquisitions-routes.js';
+import { canonicalDepotAcquisitionRuntime } from './depotacquisitionruntime.js';
+import { withCrewTwoCharacters, withAcquisitionCharacters } from './company-middle-five-runtime.js';
 import { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';
 import { register as registerGameEmployment } from './routes/gameemployment.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
@@ -2445,6 +2452,11 @@ export async function buildServer() {
   registerServiceSubscriptions(app, { pool, auth });
   registerCommercialNegotiation(app, { pool, auth });
   registerContractAuctions(app, { pool, auth });
+  registerWorkerTraining(app, { pool, auth, withCrewTwoCharacters });
+  registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });
+  registerBusinessPartnerships(app, { pool, auth });
+  registerCompanyGovernance(app, { pool, auth });
+  registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
   registerCompanyWorkflows(app, { pool, auth });
   registerCompanyOpportunities(app, { pool, auth });

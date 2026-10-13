@@ -16,6 +16,8 @@ import { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';
 import { collectItemConditionIssues } from './itemdurability.js';
 import { collectEquipmentRentalIssues } from './equipmentrentals.js';
 import { collectServiceSubscriptionIssues } from './servicesubscriptions.js';
+import { collectWorkerTrainingIssues } from './workertraining.js';
+import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -55,6 +57,9 @@ const KNOWN_REASONS = {
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
+    'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
+    'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
+    'company_acquisition:pay', 'company_acquisition:receive',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
     // (the missions precedent — check (a) reconciles it per character).
@@ -717,6 +722,17 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('service subscription cash custody', subscriptionEscrow, subscriptionFunding + subscriptionBurn, 0);
   const subscriptionIssues = await collectServiceSubscriptionIssues(pool);
   push('service subscription repair bindings', subscriptionIssues.length, 0, 0, { issues: subscriptionIssues });
+  const trainingEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM worker_training_courses');
+  const trainingFunding = -(await sum(pool, "currency='cash' AND reason IN ('worker_training:reserve','worker_training:wage','worker_training:refund')"));
+  const trainingBurn = await sum(pool, "currency='cash' AND reason='death:worker_training'");
+  push('worker training cash custody', trainingEscrow, trainingFunding + trainingBurn, 0);
+  const trainingIssues = await collectWorkerTrainingIssues(pool);
+  push('worker training canonical source', trainingIssues.length, 0, 0, { issues: trainingIssues });
+  push('partnership capital transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:fund:pay','business_partnership:fund:receive')"), 0);
+  push('partnership profit transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:profit:pay','business_partnership:profit:receive')"), 0);
+  push('company acquisition transfers', 0, await sum(pool, "currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive')"), 0);
+  const middleIssues = await collectMiddleFiveIssues(pool);
+  push('company middle five source bindings', middleIssues.length, 0, 0, { issues: middleIssues });
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
   push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);

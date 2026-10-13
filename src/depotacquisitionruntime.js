@@ -20,8 +20,14 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'game_employment_jobs:depot_id','company_workflows:depot_id','commercial_premises_offers:depot_id','commercial_premises_leases:depot_id',
  'company_logistics_hubs:depot_id','business_season_entries:depot_id','company_production_receipts:business_id',
  'company_specializations:business_id','company_specialization_runs:business_id','commercial_negotiations:depot_id',
- 'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id']);
+ 'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
+ 'worker_training_courses:depot_id','employment_organizations:depot_id']);
 async function assertNoObligations(c,depotId){
+ // Historical authority is not deleted or adopted to manufacture a transfer.
+ if((await c.query('SELECT id FROM equipment_maintenance_offers WHERE id=$1 LIMIT 1',[depotId])).rows.length)fail('maintenance_archive_required');
+ if((await c.query('SELECT s.id FROM service_subscriptions s JOIN equipment_maintenance_offers o ON o.id=s.offer_id WHERE o.id=$1 LIMIT 1',[depotId])).rows.length)fail('subscription_archive_required');
+ if((await c.query('SELECT id FROM worker_training_courses WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('training_archive_required');
+ if((await c.query('SELECT id FROM employment_organizations WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('organization_archive_required');
  if((await c.query("SELECT id FROM market_listings WHERE depot_id=$1 AND (kind<>'order' OR status NOT IN ('sold','cancelled','expired') OR qty<>0 OR filled_qty<>0) LIMIT 1",[depotId])).rows.length)fail("market");
  if((await c.query("SELECT id FROM delivery_commitments WHERE depot_id=$1 AND status NOT IN ('delivered','expired') LIMIT 1",[depotId])).rows.length)fail("delivery");
  if((await c.query("SELECT r.id FROM delivery_loan_requests r JOIN delivery_commitments d ON d.id=r.commitment_id WHERE d.depot_id=$1 LIMIT 1",[depotId])).rows.length)fail("delivery_debt");
@@ -42,8 +48,8 @@ async function assertNoObligations(c,depotId){
  if((await c.query("SELECT id FROM company_logistics_hubs WHERE depot_id=$1 AND state IN ('draft','active') LIMIT 1",[depotId])).rows.length)fail("hub");
  if((await c.query("SELECT id FROM logistics_coverage_policies WHERE depot_id=$1 AND (state NOT IN ('expired','cancelled','paid') OR escrow_cash<>0) LIMIT 1",[depotId])).rows.length)fail("coverage");
  if((await c.query("SELECT depot_id FROM business_season_entries WHERE depot_id=$1 AND end_snapshot IS NULL LIMIT 1",[depotId])).rows.length)fail("season");
- if((await c.query("SELECT id FROM commercial_negotiations WHERE depot_id=$1 AND state NOT IN ('withdrawn','expired') LIMIT 1",[depotId])).rows.length)fail("negotiation");
- if((await c.query("SELECT id FROM contract_auctions WHERE depot_id=$1 AND state NOT IN ('cancelled','buyer_dead') LIMIT 1",[depotId])).rows.length)fail("auction");
+ if((await c.query('SELECT id FROM commercial_negotiations WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('negotiation_archive_required');
+ if((await c.query('SELECT id FROM contract_auctions WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('auction_archive_required');
  if((await c.query("SELECT depot_id FROM company_succession_receipts WHERE depot_id=$1 LIMIT 1",[depotId])).rows.length)fail("succession");
 }
 async function inspect({client:c,depot,seller,buyer}){assertItemTransaction(c);const scope=scopes.getStore();if(!scope?.active||scope.client!==c||!scope.characters.includes(seller?.id)||!scope.characters.includes(buyer?.id))fail('preflight_required');if(process.env.DEPOT_PILOT!=='on')fail('disabled');if(!seller?.alive||!buyer?.alive||seller.is_npc||buyer.is_npc||seller.account_id===buyer.account_id)fail('parties');id(seller.id);id(buyer.id);id(seller.account_id);id(buyer.account_id);id(depot?.id);

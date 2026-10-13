@@ -8690,3 +8690,85 @@ CREATE TABLE IF NOT EXISTS service_subscription_cycles (
  release_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id),
  fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), maintenance_key TEXT NOT NULL UNIQUE,
  UNIQUE(subscription_id,ordinal));
+
+-- Proposed F11-F15 canonical component integration.
+CREATE TABLE IF NOT EXISTS worker_training_courses (
+ id TEXT PRIMARY KEY, depot_id TEXT NOT NULL REFERENCES business_depots(id), employer_account TEXT NOT NULL REFERENCES accounts(id),
+ employer_character TEXT NOT NULL REFERENCES characters(id), stat TEXT NOT NULL CHECK(stat IN ('muscle','cunning','speed')),
+ sessions INT NOT NULL CHECK(sessions BETWEEN 1 AND 8), wage_cash INT NOT NULL CHECK(wage_cash BETWEEN 1 AND 10000),
+ total_cash INT NOT NULL CHECK(total_cash=sessions*wage_cash), escrow_cash INT NOT NULL CHECK(escrow_cash>=0),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash>=0), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0), burned_cash INT NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+ completed_sessions INT NOT NULL DEFAULT 0 CHECK(completed_sessions BETWEEN 0 AND sessions),
+ apprentice_account TEXT REFERENCES accounts(id), apprentice_character TEXT REFERENCES characters(id),
+ expires_at TIMESTAMPTZ NOT NULL, state TEXT NOT NULL CHECK(state IN ('offered','active','completed','recoverable','closed')),
+ reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ CHECK(total_cash=escrow_cash+paid_cash+refunded_cash+burned_cash), CHECK(paid_cash=completed_sessions*wage_cash),
+ CHECK((apprentice_account IS NULL AND apprentice_character IS NULL) OR (apprentice_account IS NOT NULL AND apprentice_character IS NOT NULL AND apprentice_account<>employer_account)),
+ CHECK((state='offered' AND apprentice_character IS NULL) OR state<>'offered'),
+ CHECK(state<>'active' OR apprentice_character IS NOT NULL), CHECK(state NOT IN ('completed','closed') OR escrow_cash=0));
+CREATE TABLE IF NOT EXISTS worker_training_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), action TEXT NOT NULL CHECK(action IN ('create','accept','train','close')),
+ request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128), original_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,action,request_key));
+CREATE TABLE IF NOT EXISTS worker_training_sessions (
+ course_id TEXT NOT NULL REFERENCES worker_training_courses(id), ordinal INT NOT NULL CHECK(ordinal BETWEEN 1 AND 8),
+ apprentice_character TEXT NOT NULL REFERENCES characters(id), stat TEXT NOT NULL CHECK(stat IN ('muscle','cunning','speed')),
+ stat_before INT NOT NULL, stat_after INT NOT NULL CHECK(stat_after>stat_before), energy_before INT NOT NULL, energy_after INT NOT NULL CHECK(energy_after<energy_before),
+ trained_at TIMESTAMPTZ NOT NULL, next_train_at TIMESTAMPTZ NOT NULL, wage_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ canonical_result JSONB NOT NULL, PRIMARY KEY(course_id,ordinal));
+CREATE TABLE IF NOT EXISTS employment_organizations (
+ id TEXT PRIMARY KEY, crew_id TEXT NOT NULL, depot_id TEXT NOT NULL REFERENCES business_depots(id),
+ founder_account TEXT NOT NULL REFERENCES accounts(id), founder_character TEXT NOT NULL REFERENCES characters(id),
+ revision INT NOT NULL CHECK(revision>=1), state TEXT NOT NULL CHECK(state IN ('active','revoked','founder_dead')));
+CREATE UNIQUE INDEX IF NOT EXISTS employment_organization_one_founder ON employment_organizations(founder_account) WHERE state='active';
+CREATE TABLE IF NOT EXISTS employment_organization_courses (
+ course_id TEXT PRIMARY KEY REFERENCES worker_training_courses(id), organization_id TEXT NOT NULL REFERENCES employment_organizations(id),
+ organization_revision INT NOT NULL CHECK(organization_revision>=1));
+CREATE TABLE IF NOT EXISTS employment_organization_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), action TEXT NOT NULL CHECK(action IN ('create','publish','accept','train','revoke')),
+ request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128), original_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,action,request_key));
+CREATE TABLE IF NOT EXISTS business_partnerships (
+ id TEXT PRIMARY KEY, depot_id TEXT NOT NULL REFERENCES business_depots(id), owner_account TEXT NOT NULL REFERENCES accounts(id),
+ partner_account TEXT NOT NULL REFERENCES accounts(id), owner_character TEXT NOT NULL REFERENCES characters(id), partner_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, terms_hash TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('invited','funding','active','closed','retired')),
+ owner_funded INT NOT NULL DEFAULT 0 CHECK(owner_funded BETWEEN 0 AND 100000), partner_funded INT NOT NULL DEFAULT 0 CHECK(partner_funded BETWEEN 0 AND 100000), paid_total INT NOT NULL DEFAULT 0 CHECK(paid_total BETWEEN 0 AND 100000), partner_paid INT NOT NULL DEFAULT 0 CHECK(partner_paid BETWEEN 0 AND paid_total),
+ created_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL, activation_at TIMESTAMPTZ);
+CREATE TABLE IF NOT EXISTS business_partnership_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity TEXT NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS business_partnership_distributions (
+ id TEXT PRIMARY KEY, partnership_id TEXT NOT NULL REFERENCES business_partnerships(id),
+ amount INT NOT NULL CHECK(amount BETWEEN 1 AND 100000), partner_cash INT NOT NULL CHECK(partner_cash BETWEEN 0 AND amount),
+ withdraw_journal_id TEXT NOT NULL UNIQUE REFERENCES business_depot_journal(id));
+CREATE TABLE IF NOT EXISTS business_partnership_contributions (
+ id TEXT PRIMARY KEY, partnership_id TEXT NOT NULL REFERENCES business_partnerships(id), actor_character TEXT NOT NULL REFERENCES characters(id),
+ amount INT NOT NULL CHECK(amount BETWEEN 1 AND 100000), fund_journal_id TEXT NOT NULL UNIQUE REFERENCES business_depot_journal(id),
+ UNIQUE(partnership_id,actor_character));
+CREATE TABLE IF NOT EXISTS company_governance (
+ partnership_id TEXT PRIMARY KEY REFERENCES business_partnerships(id), relationship_hash TEXT NOT NULL,
+ owner_opted BOOLEAN NOT NULL DEFAULT false, partner_opted BOOLEAN NOT NULL DEFAULT false,
+ revision INT NOT NULL DEFAULT 0 CHECK(revision BETWEEN 0 AND 2147483647), retired BOOLEAN NOT NULL DEFAULT false);
+CREATE TABLE IF NOT EXISTS company_governance_proposals (
+ id TEXT PRIMARY KEY, partnership_id TEXT NOT NULL REFERENCES company_governance(partnership_id), creator_character TEXT NOT NULL REFERENCES characters(id),
+ revision INT NOT NULL, snapshot_hash TEXT NOT NULL, config JSONB NOT NULL, proposal_hash TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('pending','rejected','executed','retired')),
+ created_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL, executed_at TIMESTAMPTZ);
+CREATE TABLE IF NOT EXISTS company_governance_votes (
+ proposal_id TEXT NOT NULL REFERENCES company_governance_proposals(id), account_id TEXT NOT NULL REFERENCES accounts(id),
+ character_id TEXT NOT NULL REFERENCES characters(id), proposal_hash TEXT NOT NULL, approve BOOLEAN NOT NULL,
+ voted_at TIMESTAMPTZ NOT NULL, PRIMARY KEY(proposal_id,account_id));
+CREATE TABLE IF NOT EXISTS company_governance_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity TEXT NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS company_acquisitions (
+ id TEXT PRIMARY KEY, depot_id TEXT NOT NULL REFERENCES business_depots(id),
+ seller_account TEXT NOT NULL REFERENCES accounts(id),buyer_account TEXT NOT NULL REFERENCES accounts(id),
+ seller_character TEXT NOT NULL REFERENCES characters(id),buyer_character TEXT NOT NULL REFERENCES characters(id),
+ price INT NOT NULL CHECK(price BETWEEN 1 AND 100000000),source_hash TEXT NOT NULL,terms_hash TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('offered','accepted','cancelled','executed','retired')),
+ created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,accepted_at TIMESTAMPTZ,executed_at TIMESTAMPTZ,
+ pay_journal TEXT UNIQUE,receive_journal TEXT UNIQUE);
+CREATE TABLE IF NOT EXISTS company_acquisition_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,identity TEXT NOT NULL,receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
