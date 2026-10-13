@@ -265,7 +265,40 @@ assert.equal(undeclared.length, 0,
 
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
+// This one collector is an internal read oracle, never a routed player verb. Bind
+// its complete reviewed body and sole invariant consumer before classifying it.
+const laboratoryOracleAdmission = (sources) => {
+  try {
+    const name='collectStrategyLaboratoryIssues', owner='strategylaboratories.js';
+    const source=sources[owner].replaceAll('\r\n','\n');
+    const ast=parse(source,{ecmaVersion:'latest',sourceType:'module'});
+    const exports=ast.body.filter(n=>n.type==='ExportNamedDeclaration'&&n.declaration?.id?.name===name);
+    if(exports.length!==1)return false;
+    const fn=exports[0].declaration;
+    if(fn.params.length!==1||fn.params[0].name!=='pool')return false;
+    if(createHash('sha256').update(source.slice(fn.start,fn.end)).digest('hex')!=='abd9395b0ee4cf0e64d04c3110141f362d63d4dfd480daa1de126f2b438a5a4f')return false;
+    const references=[];
+    const walk=(node,file)=>{if(!node||typeof node!=='object')return;if(node.type==='Identifier'&&node.name===name)references.push(file);for(const value of Object.values(node))if(Array.isArray(value))value.forEach(n=>walk(n,file));else if(value&&typeof value==='object')walk(value,file);};
+    for(const[file,text]of Object.entries(sources))walk(parse(text,{ecmaVersion:'latest',sourceType:'module'}),file);
+    if(references.some(file=>file!==owner&&file!=='invariants.js'))return false;
+    const invariant=sources['invariants.js'].replaceAll('\r\n','\n');
+    return references.filter(file=>file===owner).length===1&&references.filter(file=>file==='invariants.js').length===3
+      &&invariant.includes("import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';")
+      &&invariant.includes("const labIssues = await collectStrategyLaboratoryIssues(pool);\n  push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });");
+  }catch{return false;}
+};
+const laboratorySources=Object.fromEntries(files.map(file=>[relPath(SRC,file),fs.readFileSync(file,'utf8')]));
+assert(laboratoryOracleAdmission(laboratorySources),'Laboratory read oracle body/caller/issue-only return scope drift');
+assert(laboratoryOracleAdmission(Object.fromEntries(Object.entries(laboratorySources).map(([f,s])=>[f,s.replaceAll('\r\n','\n').replaceAll('\n','\r\n')]))),'CRLF remains the same exact reviewed oracle');
+for(const bad of [
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','return pool;')},
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','await pool.query("UPDATE characters SET cash=1");return issues;')},
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','issues.push({actor:pool});return issues;')},
+  {...laboratorySources,'routes/forged-laboratory.js':"import {collectStrategyLaboratoryIssues as exposed} from '../strategylaboratories.js'; export const route=exposed;"},
+  {...laboratorySources,'invariants.js':laboratorySources['invariants.js'].replace('labIssues.length, 0, 0','labIssues.length, 1, 0')},
+])assert(!laboratoryOracleAdmission(bad),'Mutation, raw/private DTO exposure, routed alias or monetary-credit drift must reject');
 const COLLECT_EXEMPT = {
+  collectStrategyLaboratoryIssues: 'exact read-only internal invariant oracle: original arm/source/horizon/observed books issues only; no routed actor, payment, mutation or private board authority',
   collectContractAuctionIssues: 'read-only canonical award/source binding oracle; no player collection, income or mutation authority',
   collectCompanyRestructuringIssues: 'read-only original-plan, request, source and canonical effect history oracle; no player collection or mutation authority',
   collectCommercialHistoryIssues: 'read-only original dispute, concession and territory history bindings; no player collection or mutation authority',
