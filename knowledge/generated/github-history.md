@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `95bd834a99db`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4c985277add0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3508 |
+| Commits in clone | 3512 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Freeze exact equipment release source for scoped upgrade and rollback |
+| Latest commit | 2026-10-13 — Repin second additive source for explicit recovery fixture repair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2550 |
+| OmertaDev | 2554 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 612 | historical |
-| knowledge/generated/graph-summary.md | 612 | historical |
-| knowledge/generated/graph.json | 612 | historical |
-| knowledge/generated/inventory.md | 612 | historical |
+| knowledge/generated/github-history.md | 613 | historical |
+| knowledge/generated/graph-summary.md | 613 | historical |
+| knowledge/generated/graph.json | 613 | historical |
+| knowledge/generated/inventory.md | 613 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 496 | yes |
 | [public/index.html](../../public/index.html) | 458 | yes |
 | [src/server.js](../../src/server.js) | 416 | yes |
 | [schema.sql](../../schema.sql) | 347 | yes |
-| knowledge/generated/documents.md | 303 | historical |
+| knowledge/generated/documents.md | 304 | historical |
 | [package.json](../../package.json) | 300 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 220 | historical |
