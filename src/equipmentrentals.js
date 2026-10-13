@@ -240,6 +240,16 @@ export async function recoverEquipmentRentalsAtDeath(client, characterId, scope)
   assertItemTransaction(client);
   try {
     const state = await assertEquipmentRentalDeathScope(client, characterId, scope);
+    const original = (await client.query('SELECT account_id,alive FROM characters WHERE id=$1', [characterId])).rows[0];
+    if (!original || original.alive !== false) fail('death_required');
+    // Retire the dead original's publication consent, preserving its historical
+    // receipt and the inherited account-title tool. A fresh heir must opt in anew.
+    const offers = (await client.query("SELECT id FROM equipment_rental_offers WHERE landlord_character=$1 AND landlord_account=$2 AND status='open' ORDER BY id LIMIT 6 FOR UPDATE", [characterId, original.account_id])).rows;
+    if (offers.length > 5) fail('offer_limit');
+    for (const offer of offers) {
+      registerItemTransactionUndo(client, () => client.query("UPDATE equipment_rental_offers SET status='open' WHERE id=$1", [offer.id]));
+      await client.query("UPDATE equipment_rental_offers SET status='cancelled' WHERE id=$1 AND landlord_character=$2 AND landlord_account=$3 AND status='open'", [offer.id, characterId, original.account_id]);
+    }
     const hints = (await client.query("SELECT id,landlord_character,borrower_character FROM equipment_rental_leases WHERE status='active' AND (landlord_character=$1 OR borrower_character=$1) ORDER BY id LIMIT 4", [id(characterId)])).rows;
     if (hints.length > 3) fail('death_limit'); const locked = [];
     for (const actorId of [...new Set(hints.flatMap(row => [row.landlord_character, row.borrower_character]))].sort()) {

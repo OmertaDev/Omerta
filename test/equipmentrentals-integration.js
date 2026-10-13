@@ -153,6 +153,8 @@ try {
   await ok(borrower, 'POST', `/v1/streets/${landlord.id}/search`);
   await pool.query('UPDATE searches SET started_at=$2 WHERE hunter=$1', [borrower.id, new Date(0)]);
   const liveBefore = await cash(borrower);
+  const unusedTerms = { itemId: deadBorrower.tool, rentCash: 100, depositCash: 250, durationSeconds: 3600, offerSeconds: 3600, published: true };
+  const unused = await ok(landlord, 'POST', '/v1/equipment/rentals/offers', unusedTerms, 'rental-unused-original-offer');
   const landlordDeath = await ok(borrower, 'POST', `/v1/streets/${landlord.id}/fire`, { rounds: 5000 }, 'rental-integration-fire');
   assert.equal(landlordDeath.kill, true);
   const loot = (await pool.query("SELECT amount FROM transactions WHERE character_id=$1 AND reason='whack:loot' AND currency='cash' AND counterparty=$2", [borrower.id, landlord.id])).rows;
@@ -163,6 +165,15 @@ try {
   assert.deepEqual(await R.collectEquipmentRentalIssues(pool), []); assert.deepEqual(await Q.collectItemConditionIssues(pool), []);
   const finalBooks = await Inv.runLedgerInvariants(pool);
   assert.equal(finalBooks.ok, true, JSON.stringify(finalBooks.checks.filter(check => !check.ok)));
+  assert.equal((await pool.query('SELECT status FROM equipment_rental_offers WHERE id=$1', [unused.offerId])).rows[0].status, 'cancelled', 'Dead original offer cannot retain exclusive item publication authority');
+  const oldAck = await ok(landlord, 'POST', '/v1/equipment/rentals/offers', unusedTerms, 'rental-unused-original-offer');
+  assert.equal(oldAck.offerId, unused.offerId, 'Historical ACK never reopens the original offer');
+  const newOffer = await ok(landlord, 'POST', '/v1/equipment/rentals/offers', unusedTerms, 'rental-heir-new-offer');
+  assert.notEqual(newOffer.offerId, unused.offerId);
+  const currentHeir = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [landlord.account])).rows[0].id;
+  assert.equal((await pool.query('SELECT landlord_character FROM equipment_rental_offers WHERE id=$1', [newOffer.offerId])).rows[0].landlord_character, currentHeir);
+  assert.equal((await custody(deadBorrower.tool)).owner_id, landlord.account, 'No tool mint or title change');
+  const heirBooks = await Inv.runLedgerInvariants(pool);assert(heirBooks.ok, JSON.stringify(heirBooks.checks.filter(c=>!c.ok)));
   console.log('Post-estate independent canonical books:', finalBooks.checks.length, 'checks, zero drift');
   console.log(`equipment rental integration ${native ? 'native18.4' : 'memory'} PASS: actual shared rental/Mystery/mod estate/fire registrars; real paid leases, 100/150 birth, same UID relay back, once wear, cancel/replay/privacy, actual killer loot+refund and dead borrower burn${native ? '; two-key contention, post-item-wait expiry and full native late-fault rollback' : '; native concurrency/rollback not claimed by memory'}.`);
 } finally { await app.close(); }
