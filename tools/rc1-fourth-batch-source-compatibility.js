@@ -213,6 +213,26 @@ export const FOURTH_BATCH_SOURCE_DOMAINS=Object.freeze({
         "baseline": "  if (!pre || ![pre.supplier_character, pre.buyer_character].includes(ch.id)) throw new GameError('no_commitment', 'No commitment of yours.');\n  await client.query('SELECT id FROM market_listings WHERE id=$1 FOR UPDATE', [pre.order_id]);\n  const c = (await client.query(\"SELECT * FROM delivery_commitments WHERE id=$1 AND status='accepted' FOR UPDATE\", [id])).rows[0];\n  if (!c || new Date(c.deadline) > new Date()) throw new GameError('delivery_deadline', 'Only an elapsed commitment can be closed without delivery.');\n  await client.query(\"UPDATE delivery_commitments SET status='expired' WHERE id=$1\", [id]);\n  return { ok: true, released: Number(c.remaining), paid: 0 };\n}\n"
       }
     ]
+  },
+  "src/depot.js": {
+    "currentSha256": "c8d2baf1eab9e23c0b672443929ec7c7c6476adeb6dcdf026514b567a2f1a1ef",
+    "currentBlob": "6d7208c0e0deb9a9cc6e34d0158564d9855597f6",
+    "baselineSha256": "87ecc31f935fae40b09820cdcd6bccd7226c2f10dc71ada9e2479a2cac4e4eb7",
+    "baselineBlob": "6011e6d9be973b26c2f3c9ce6aad5b149e5309ed",
+    "inverses": [
+      {
+        "current": "import { warehouseReservedUnits } from './warehouseleases.js';\nimport { prepareFranchiseSale, settleFranchiseSale } from './franchiselicenses.js';\nimport { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';\nimport { assertCommercialDisputeAccess } from './commercialdisputes.js';\n\nexport const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });\nexport const depotPilotEnabled = () => process.env.DEPOT_PILOT === 'on';\n",
+        "baseline": "import { warehouseReservedUnits } from './warehouseleases.js';\nimport { prepareFranchiseSale, settleFranchiseSale } from './franchiselicenses.js';\nimport { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';\n\nexport const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });\nexport const depotPilotEnabled = () => process.env.DEPOT_PILOT === 'on';\n"
+      },
+      {
+        "current": "  if (automated) await requirePolicy(client, row, policyId, 'receive');\n  const order = (await client.query(\"SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' FOR UPDATE\", [orderId, id])).rows[0];\n  if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No procurement order of this business.');\n  await assertCommercialDisputeAccess(client, { orderId: order.id, action: 'receive_order' });\n  const qty = Number(order.filled_qty);\n  if (!qty) throw new GameError('empty', 'No supplier delivery is waiting.');\n  if (Number(row.stock) + qty + await warehouseReservedUnits(client, id) > DEPOT.capacity)\n",
+        "baseline": "  if (automated) await requirePolicy(client, row, policyId, 'receive');\n  const order = (await client.query(\"SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' FOR UPDATE\", [orderId, id])).rows[0];\n  if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No procurement order of this business.');\n  const qty = Number(order.filled_qty);\n  if (!qty) throw new GameError('empty', 'No supplier delivery is waiting.');\n  if (Number(row.stock) + qty + await warehouseReservedUnits(client, id) > DEPOT.capacity)\n"
+      },
+      {
+        "current": "  mobile(ch); await own(ch, id, client);\n  const order = (await client.query(\"SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' AND status IN ('live','expired') FOR UPDATE\", [orderId, id])).rows[0];\n  if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No cancellable order of this business.');\n  await assertCommercialDisputeAccess(client, { orderId: order.id, action: 'cancel_order' });\n  if (await reservedQuantity(client, order.id)) throw new GameError('committed_order', 'Accepted supplier quantities cannot be cancelled before their deadlines.');\n  const refund = order.status === 'live' ? Number(order.qty) * Number(order.price) : 0;\n  if (refund) {\n",
+        "baseline": "  mobile(ch); await own(ch, id, client);\n  const order = (await client.query(\"SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' AND status IN ('live','expired') FOR UPDATE\", [orderId, id])).rows[0];\n  if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No cancellable order of this business.');\n  if (await reservedQuantity(client, order.id)) throw new GameError('committed_order', 'Accepted supplier quantities cannot be cancelled before their deadlines.');\n  const refund = order.status === 'live' ? Number(order.qty) * Number(order.price) : 0;\n  if (refund) {\n"
+      }
+    ]
   }
 });
 export function assertFourthBatchSourceTransfer(file,input){
