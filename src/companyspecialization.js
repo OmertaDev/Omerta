@@ -1,6 +1,7 @@
 import { GameError } from './game.js';
 import { assertItemTransaction,registerItemTransactionUndo,poisonItemTransaction } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
+import { concessionToolAuthority, withInfrastructureProductionScope } from './infrastructureconcessions.js';
 import { latestPolicy } from './operatingpolicy.js';
 
 export const COMPANY_SPECIALIZATION=Object.freeze({volume:Object.freeze({maxCrafts:6,cadence:300}),quality:Object.freeze({maxCrafts:2,cadence:180}),speed:Object.freeze({maxCrafts:1,cadence:60}),niche:Object.freeze({maxCrafts:3,cadence:300})});
@@ -45,18 +46,24 @@ async function business(client,character,businessId) {
 async function healthy(client,policy,ch) {
   if(policy.kind!=='quality')return;
   const tool=(await client.query('SELECT owner_scope,owner_id FROM item_instances WHERE id=$1',[policy.tool_item_id])).rows[0];
-  if(!tool||!((tool.owner_scope==='account'&&tool.owner_id===ch.account_id)||(tool.owner_scope==='character'&&tool.owner_id===ch.id)))fail('tool_owner');
+  if(!tool)fail('tool_owner');
+  if(!((tool.owner_scope==='account'&&tool.owner_id===ch.account_id)||(tool.owner_scope==='character'&&tool.owner_id===ch.id))){
+    const proof=await concessionToolAuthority(client,{accountId:ch.account_id,characterId:ch.id,businessId:policy.business_id,itemId:policy.tool_item_id});
+    return proof.expiresAt;
+  }
   await assertEquipmentUsable(client,{itemId:policy.tool_item_id,owner:{scope:tool.owner_scope,id:tool.owner_id},minimum:80});
+  return null;
 }
 async function setCompanySpecializationImpl(client,accountId,body,requestKey,{ownerSession=false}={}) {
   assertItemTransaction(client);const terms=companySpecializationTerms(body);key(requestKey);
   const prior=(await client.query('SELECT identity,receipt FROM company_specialization_requests WHERE account_id=$1 AND request_key=$2',[id(accountId),requestKey])).rows[0];
   if(prior){if(stable(prior.identity)!==stable(terms))fail('request_conflict');return {...prior.receipt,replayed:true};}
   if(terms.allowAgentProduction&&ownerSession!==true)fail('owner_authority');
+  return withInfrastructureProductionScope(client,{accountId,businessId:terms.businessId,toolItemId:terms.toolItemId},async()=>{
   const ch=await actor(client,accountId);await business(client,ch,terms.businessId);
   const old=(await client.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[terms.businessId])).rows[0];
   if(Number(old?.revision??0)!==terms.expectedRevision||(old&&(old.account_id!==accountId||old.original_character!==ch.id)))fail('revision');
-  await healthy(client,{kind:terms.kind,tool_item_id:terms.toolItemId},ch);
+  await healthy(client,{kind:terms.kind,tool_item_id:terms.toolItemId,business_id:terms.businessId},ch);
   const revision=terms.expectedRevision+1;
   const now=(await client.query('SELECT clock_timestamp() AS now')).rows[0].now,expires=terms.allowAgentProduction?new Date(new Date(now).getTime()+terms.agentGrantSeconds*1000):null,spent=terms.renewAgentGrant?0:Number(old?.grant_spent??0);
   if(terms.allowAgentProduction&&spent>terms.maxGrantCashCost)fail('grant_budget');
@@ -64,6 +71,7 @@ async function setCompanySpecializationImpl(client,accountId,body,requestKey,{ow
   else {await client.query('INSERT INTO company_specializations(business_id,account_id,original_character,revision,kind,recipe_ids,tool_item_id,allow_agent_production,grant_expires_at,max_batch_cash,max_grant_cash,grant_spent) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[terms.businessId,accountId,ch.id,revision,terms.kind,JSON.stringify(terms.recipeIds),terms.toolItemId,terms.allowAgentProduction,expires,terms.maxBatchCashCost,terms.maxGrantCashCost,spent]);registerItemTransactionUndo(client,()=>client.query('DELETE FROM company_specializations WHERE business_id=$1',[terms.businessId]));}
   const receipt={ok:true,businessId:terms.businessId,revision,kind:terms.kind,...COMPANY_SPECIALIZATION[terms.kind],immutableRecipeQuality:true,agentGrant:{enabled:terms.allowAgentProduction,expiresAt:expires?.toISOString()??null,maxBatchCashCost:terms.maxBatchCashCost,maxGrantCashCost:terms.maxGrantCashCost,spent}};
   await client.query('INSERT INTO company_specialization_requests(account_id,request_key,identity,receipt) VALUES($1,$2,$3,$4)',[accountId,requestKey,terms,receipt]);registerItemTransactionUndo(client,()=>client.query('DELETE FROM company_specialization_requests WHERE account_id=$1 AND request_key=$2',[accountId,requestKey]));return receipt;
+  });
 }
 async function assertCompanySpecializationBeforeCraftImpl(client,ctx) {
   assertItemTransaction(client);const ch=await actor(client,ctx.accountId,id(ctx.originalCharacter));await business(client,ch,ctx.businessId);
@@ -72,7 +80,7 @@ async function assertCompanySpecializationBeforeCraftImpl(client,ctx) {
   const restrictive=ctx.agent?await latestPolicy(client,ctx.businessId,true):null;
   const policy=(await client.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[ctx.businessId])).rows[0];if(!policy){if(restrictive)fail('production_consent');return {kind:'unselected',productionAuthorized:true,grant:'canonical_baseline',agentGrantExpiresAt:null};}
   if(policy.account_id!==ctx.accountId||policy.original_character!==ch.id)fail('original_actor');
-  const limits=COMPANY_SPECIALIZATION[policy.kind];if(ctx.totalCrafts>limits.maxCrafts||(policy.kind==='niche'&&!policy.recipe_ids.includes(ctx.recipeId)))fail('profile_limit');await healthy(client,policy,ch);
+  const limits=COMPANY_SPECIALIZATION[policy.kind];if(ctx.totalCrafts>limits.maxCrafts||(policy.kind==='niche'&&!policy.recipe_ids.includes(ctx.recipeId)))fail('profile_limit');const productionSourceExpiresAt=await healthy(client,policy,ch);
   const now=(await client.query('SELECT clock_timestamp() AS now')).rows[0].now;
   if(restrictive&&(!policy.allow_agent_production||!policy.grant_expires_at||new Date(policy.grant_expires_at)<=new Date(now)||ctx.totalCashCost>Number(policy.max_batch_cash)))fail('production_consent');
   const old=(await client.query('SELECT * FROM company_specialization_runs WHERE account_id=$1 AND request_key=$2',[ctx.accountId,ctx.requestKey])).rows[0];
@@ -86,7 +94,7 @@ async function assertCompanySpecializationBeforeCraftImpl(client,ctx) {
     await client.query('INSERT INTO company_specialization_runs(account_id,request_key,business_id,original_character,revision,total_crafts) VALUES($1,$2,$3,$4,$5,$6)',[ctx.accountId,ctx.requestKey,ctx.businessId,ch.id,policy.revision,ctx.totalCrafts]);registerItemTransactionUndo(client,()=>client.query('DELETE FROM company_specialization_runs WHERE account_id=$1 AND request_key=$2',[ctx.accountId,ctx.requestKey]));
     await client.query('UPDATE company_specializations SET next_run_at=$2 WHERE business_id=$1',[ctx.businessId,new Date(new Date(now).getTime()+limits.cadence*1000)]);registerItemTransactionUndo(client,()=>client.query('UPDATE company_specializations SET next_run_at=$2 WHERE business_id=$1',[ctx.businessId,policy.next_run_at]));
   }
-  return {kind:policy.kind,revision:policy.revision,maxCrafts:limits.maxCrafts,cadenceSeconds:limits.cadence,immutableRecipeQuality:true,equipmentWear:false,productionAuthorized:true,grant:restrictive?'explicit_owner_game_grant':'canonical_baseline',agentGrantExpiresAt:restrictive?new Date(policy.grant_expires_at).toISOString():null};
+  return {kind:policy.kind,revision:policy.revision,maxCrafts:limits.maxCrafts,cadenceSeconds:limits.cadence,immutableRecipeQuality:true,equipmentWear:false,productionAuthorized:true,grant:restrictive?'explicit_owner_game_grant':'canonical_baseline',productionSourceExpiresAt:productionSourceExpiresAt??null,agentGrantExpiresAt:restrictive?new Date(policy.grant_expires_at).toISOString():null};
 }
 export async function ownCompanySpecializations(client,accountId) {
   return (await client.query('SELECT business_id,revision,kind,recipe_ids,tool_item_id,next_run_at,allow_agent_production,grant_expires_at,max_batch_cash,max_grant_cash,grant_spent FROM company_specializations WHERE account_id=$1 ORDER BY business_id LIMIT 20',[id(accountId)])).rows;

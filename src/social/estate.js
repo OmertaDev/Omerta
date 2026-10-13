@@ -28,8 +28,13 @@ import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { closeCompanyBankPortfoliosAtDeath } from '../companybankportfolios.js';
 import { voidLogisticsHubsAtDeath } from '../companylogisticshubs.js';
 import { recoverBuyerCooperativesAtDeath } from '../buyercooperativecustody.js';
-import { assertItemTransaction, registerItemTransactionUndo } from '../items.js';
+import { assertItemTransaction, registerItemTransactionUndo, poisonItemTransaction, itemTransactionIdentity } from '../items.js';
 import { assertEquipmentRentalDeathScope, recoverEquipmentRentalsAtDeath } from '../equipmentrentals.js';
+import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';
+import { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';
+import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
+import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
+import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -37,6 +42,23 @@ import { recordDeath } from '../bloodline.js';
 import { recordDeedEvent } from '../deeds.js';
 import { checkScandal } from '../dynasty.js';
 import { fire, huntWanted, npcHit } from './combat.js';
+const estateResolutionScopes = new WeakMap();
+// Verifier only: the capability is created privately by actual runEstate and never returned.
+export async function assertEstateResolutionScope(client, victimId, scope) {
+  const state = estateResolutionScopes.get(scope);
+  try {
+    assertItemTransaction(client);
+    if (!state?.active || state.client !== client || state.transaction !== itemTransactionIdentity(client)
+        || state.victimId !== victimId) throw new GameError('estate_scope', 'Canonical estate resolution is required.');
+    const original = (await client.query('SELECT account_id FROM characters WHERE id=$1', [victimId])).rows[0];
+    if (original?.account_id !== state.accountId) throw new GameError('estate_scope', 'Original estate identity changed.');
+    return { victimId: state.victimId, accountId: state.accountId };
+  } catch (error) {
+    if (state?.active) { try { poisonItemTransaction(state.client, error); } catch {} }
+    try { poisonItemTransaction(client, error); } catch {}
+    throw error;
+  }
+}
 import { claimBounty, postBounty, refundPot } from './contracts.js';
 import { bodyguardAbsorbs } from './defense.js';
 import { removeMember } from './gangs.js';
@@ -142,6 +164,15 @@ export async function clearInboundPointers(client, charId, accountId) {
 export async function runEstate(client, h, victim, killerName, opts = {}) {
   assertItemTransaction(client);
   await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);
+  const originalVictim = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [victim.id])).rows[0];
+  if (!originalVictim?.alive || originalVictim.account_id !== victim.account_id) {
+    const error = new GameError('estate_scope', 'Only the original living street can enter estate resolution.');
+    poisonItemTransaction(client, error); throw error;
+  }
+  const estateScope = Object.freeze({}), priorEstateScope = h.estateResolutionScope;
+  const resolution = { active: true, client, transaction: itemTransactionIdentity(client), victimId: victim.id, accountId: victim.account_id };
+  estateResolutionScopes.set(estateScope, resolution); h.estateResolutionScope = estateScope;
+  try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
   await closeWarehouseClaimsAtDeath(client, victim.id);
@@ -408,7 +439,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   const estateLootRate = opts.loot ? Math.min(0.5, M3.CASH_LOOT_RATE * (seasonModOf().lootMult || 1) * (opts.bloodOathMult || 1)) : 0;
   const cooperative = await recoverBuyerCooperativesAtDeath(client, victim.id, h.ledger, opts.killerCh, estateLootRate);
   if (cooperative.looted) report.cooperativeLoot = cooperative.looted;
-  const mkt = await voidListingsAtDeath(client, victim.id, opts.killerCh, estateLootRate);
+  const mkt = await voidListingsAtDeath(client, victim.id, opts.killerCh, estateLootRate, estateScope);
   if (opts.killerCh && mkt.selfRefund) opts.killerCh.cash = Number(opts.killerCh.cash) + mkt.selfRefund;
   await burnBidsAtDeath(client, victim.id);
   // the heir id (generated early so the lender-death loan claim can pass to it below — the debt survives)
@@ -435,6 +466,11 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
 
   victim.alive = false;
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
+  await voidCompanyRestructuringAtDeath(client, victim);
+  await voidCommercialDisputesAtDeath(client, victim);
+  await recoverEquipmentInsuranceAtDeath(client, h, victim);
+  await voidInfrastructureConcessionsAtDeath(client, victim);
+  await voidTerritoryEconomicsAtDeath(client, victim.id);
   await voidServiceSubscriptionsAtDeath(client, h, victim);
   if (!victim.is_npc) {
     await voidWorkerTrainingAtDeath(client, h, victim);
@@ -520,7 +556,15 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // §12 + §10.4: the death event carries the destroyed fleet size for car conservation
   await client.query('INSERT INTO telemetry (id, account_id, event, props) VALUES ($1,$2,$3,$4)',
     [uid(), victim.account_id, 'death', JSON.stringify({ by: killerName, cars: h.victimOwned.cars.length, lvl })]);
+  const finalVictim = (await client.query('SELECT account_id,alive FROM characters WHERE id=$1', [resolution.victimId])).rows[0];
+  const finalHeir = (await client.query('SELECT account_id,alive,generation FROM characters WHERE id=$1', [heirId])).rows[0];
+  if (finalVictim?.alive !== false || finalVictim.account_id !== resolution.accountId || !finalHeir?.alive
+      || finalHeir.account_id !== resolution.accountId || Number(finalHeir.generation) !== Number(originalVictim.generation) + 1)
+    throw new GameError('estate_scope', 'Canonical estate resolution did not finish.');
   return { heirId, report, orderLoot: mkt.looted };
+  } catch (error) { poisonItemTransaction(client, error); throw error; }
+  finally { resolution.active = false; estateResolutionScopes.delete(estateScope);
+    if (priorEstateScope === undefined) delete h.estateResolutionScope; else h.estateResolutionScope = priorEstateScope; }
 }
 
 // ═══════════════ VENDETTA step two — THE SIT-DOWN (consensual peace) + the blood-debt board ═══════════════

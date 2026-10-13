@@ -8,6 +8,7 @@ import { latestPolicy, policyLive, policyTermsMatch, policyView, requirePolicy }
 import { warehouseReservedUnits } from './warehouseleases.js';
 import { prepareFranchiseSale, settleFranchiseSale } from './franchiselicenses.js';
 import { latestSupplyContract, supplyDue, supplyContractView, requireSupplyContract, recordSupplyDispatch } from './supplycontracts.js';
+import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 
 export const DEPOT = Object.freeze({ good: 'gin', capacity: 40, openingCost: 5000, cashReserve: 1000 });
 export const depotPilotEnabled = () => process.env.DEPOT_PILOT === 'on';
@@ -129,6 +130,7 @@ export async function receiveDepot(ch, id, orderId, client, { automated = false,
   if (automated) await requirePolicy(client, row, policyId, 'receive');
   const order = (await client.query("SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' FOR UPDATE", [orderId, id])).rows[0];
   if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No procurement order of this business.');
+  await assertCommercialDisputeAccess(client, { orderId: order.id, action: 'receive_order' });
   const qty = Number(order.filled_qty);
   if (!qty) throw new GameError('empty', 'No supplier delivery is waiting.');
   if (Number(row.stock) + qty + await warehouseReservedUnits(client, id) > DEPOT.capacity)
@@ -144,6 +146,7 @@ export async function cancelDepotOrder(ch, id, orderId, client, h) {
   mobile(ch); await own(ch, id, client);
   const order = (await client.query("SELECT * FROM market_listings WHERE id=$1 AND depot_id=$2 AND kind='order' AND status IN ('live','expired') FOR UPDATE", [orderId, id])).rows[0];
   if (!order || order.seller_character !== ch.id) throw new GameError('no_order', 'No cancellable order of this business.');
+  await assertCommercialDisputeAccess(client, { orderId: order.id, action: 'cancel_order' });
   if (await reservedQuantity(client, order.id)) throw new GameError('committed_order', 'Accepted supplier quantities cannot be cancelled before their deadlines.');
   const refund = order.status === 'live' ? Number(order.qty) * Number(order.price) : 0;
   if (refund) {

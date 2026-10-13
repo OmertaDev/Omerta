@@ -1,0 +1,90 @@
+import { installCommercialContractProof } from './lib/company-commercial-dto.js';
+import assert from 'node:assert/strict';
+const native = process.argv.includes('--postgres'); let version = 'memory';
+assert(!process.env.DATABASE_URL, 'Production integration refuses ambient database endpoints');
+if (native) {
+  const url = new URL(process.env.INFRASTRUCTURE_CONCESSION_TEST_DATABASE_URL);
+  assert(['postgres:', 'postgresql:'].includes(url.protocol)); assert.equal(url.hostname, '127.0.0.1');
+  const local = ['35439', '35449'].includes(url.port) && url.username === 'pilot_runner' && !url.password;
+  const ci = url.port === '5432' && url.username === 'postgres' && url.password === 'pgcheck';
+  assert(local || ci); assert(!url.search && !url.hash); assert.match(url.pathname, /^\/infrastructure_concession_test_[a-z0-9_]+$/);
+  const { default: pg } = await import('pg'), pre = new pg.Client({ connectionString: url.href }); await pre.connect();
+  try {
+    await pre.query('BEGIN READ ONLY'); version = (await pre.query('SHOW server_version')).rows[0].server_version;
+    assert.match(version, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
+    assert.equal((await pre.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
+    await pre.query('ROLLBACK');
+  } finally { await pre.end(); }
+  process.env.DATABASE_URL = url.href;
+}
+Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', INVITE_MODE: 'off',
+  JWT_SECRET: 'production-combined-native-fixture-secret', MARKET_SEED: 'production-combined-fixture-market-seed-long', MOD_KEY: 'production-combined-fixture-moderator' });
+const { buildServer } = await import('../src/server.js'), G = await import('../src/game.js');
+const I = await import('../src/items.js'), { runEstate } = await import('../src/social/estate.js');
+const { runLedgerInvariants } = await import('../src/invariants.js');
+const app=await buildServer(),{default:Fastify}=await import('fastify'),Concessions=await import('../src/infrastructureconcessions.js'),ConcessionRoutes=await import('../src/routes/infrastructureconcessions.js'),S=await import('../src/companyspecialization.js'),Rentals=await import('../src/equipmentrentals.js');const component=Fastify();component.setErrorHandler((e,_r,p)=>p.code(e.statusCode||400).send({error:e.code,message:e.message}));ConcessionRoutes.register(component,{pool:app.pool,auth:async req=>{try{req.user=app.jwt.verify(String(req.headers.authorization||'').replace(/^Bearer /,''));}catch{throw Object.assign(Error('Authentication required'),{statusCode:401});}}});let sequence=0;
+installCommercialContractProof(app);
+// Existing global schema/actual root leases+rentals; actual F19 registered routes with global DDL.
+async function call(p, method, url, body, key = `combined-${++sequence}`, agent = false) {
+  const r = await app.inject({ method, url, payload: body, headers: { ...(p ? { authorization: `Bearer ${agent ? p.agent : p.token}` } : {}), 'idempotency-key': key } });
+  return { code: r.statusCode, body: r.json(), headers: r.headers };
+}
+async function ok(...args) { const r = await call(...args); assert.equal(r.code, 200, JSON.stringify(r)); return r.body; }
+async function refusal(...args) { const r = await call(...args); assert([400, 409, 422].includes(r.code), JSON.stringify(r)); return r; }
+async function player() {
+  const p = { token: (await ok(null, 'POST', '/v1/auth/guest')).token };
+  await ok(p, 'POST', '/v1/character', { name: `Combined Factory ${++sequence}` }); p.account = app.jwt.verify(p.token).sub;
+  const row = (await app.pool.query('SELECT id,cash,bank FROM characters WHERE account_id=$1 AND alive', [p.account])).rows[0]; p.id = row.id;
+  await app.pool.query("UPDATE characters SET cash=100000,bank=0,loc='foundry',respect=10000,last_accrued_at=$2 WHERE id=$1", [p.id, new Date(Date.now() + 3600000)]);
+  await G.ledger(app.pool, { characterId: p.id, currency: 'cash', amount: 100000 - Number(row.cash) - Number(row.bank), reason: 'crime:combined-production-fixture' });
+  await app.pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network')", [p.id]);
+  await ok(p, 'POST', '/v1/resources/company', { expectedRevision: 0, name: `Private Factory ${sequence}`, published: false, premises: null });
+  p.business = (await ok(p, 'POST', '/v1/depot', { salePrice: 1000, bidPrice: 500, targetStock: 2, reorderAt: 0, restockBudget: 2000 })).id;
+  p.agent = (await ok(p, 'POST', '/v1/auth/agent-key')).token; assert.equal(app.jwt.verify(p.agent).agent, true); return p;
+}
+async function materials(p, count = 1) {
+  for (let i = 0; i < count; i++) {
+    await app.pool.query('UPDATE characters SET gta_at=$2,energy=100 WHERE id=$1', [p.id, new Date(0)]);
+    const random = Math.random; let boost;
+    try { Math.random = () => 0.001; boost = await ok(p, 'POST', '/v1/garage/boost', {}); } finally { Math.random = random; }
+    assert.equal(boost.success, true); assert.equal(boost.car.model, 'junker');
+    await ok(p, 'POST', `/v1/worldgraph/recipes/recipe:car_salvage_basic/salvage/${boost.car.id}`, {});
+    assert.equal((await app.pool.query('SELECT id FROM cars WHERE id=$1', [boost.car.id])).rows.length, 0);
+  }
+}
+const base='/v1/company/concessions',wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const stock=async p=>(await app.pool.query("SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1 AND template_id='mat:scrap_steel' AND quality='standard'",[p.account])).rows[0]?.quantity||0;
+const cash=async p=>Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1',[p.id])).rows[0].cash);
+const ledger=async()=>{const checks=(await runLedgerInvariants(app.pool,{alert:false})).checks;assert.deepEqual(checks.filter(x=>!x.ok),[]);assert.deepEqual(await Rentals.collectEquipmentRentalIssues(app.pool),[]);};
+const invoke=async(p,fn)=>I.withItemTransaction(app.pool,async c=>{const ctx=await Concessions.concessionProductionContext(c,{accountId:p.account,businessId:p.business});return Concessions.withInfrastructureConcession(c,ctx,()=>fn(c));});
+try{
+const landlord=await player(),operator=await player(),foreign=await player();
+// Explicit canonical property baseline. The concession never creates/acquires land;
+// property acquisition is outside this fixture, paid occupancy below is actual gameplay.
+await app.pool.query('INSERT INTO estates(account_id,tier,name) VALUES($1,1,$2)',[landlord.account,'Private fixture workshop']);
+await ok(landlord,'POST','/v1/resources/company',{expectedRevision:1,name:'Workshop Landlord',published:true,premises:'estate'});
+await materials(landlord);await materials(operator);
+const made=await ok(landlord,'POST','/v1/company/production/run',{businessId:landlord.business,steps:[{recipeId:'recipe:hardened_steel',repeat:1},{recipeId:'recipe:precision_lock_tool',repeat:1}]},'actual-workshop-tool',true);const itemId=made.crafts[1].receipt.outputs[0].id;
+const premises=(await ok(landlord,'POST','/v1/company/premises/offers',{expectedRevision:0,expectedCompanyRevision:2,depotId:landlord.business,slots:1,rentCash:300,durationSeconds:600,offerExpiresAt:new Date(Date.now()+3600000).toISOString(),published:true},'premises-offer',true)).offer;
+const rental=await ok(landlord,'POST','/v1/equipment/rentals/offers',{itemId,rentCash:100,depositCash:250,durationSeconds:600,offerSeconds:600,published:true},'rental-offer',true);
+assert.equal((await call(null,'GET',base)).code,401);
+const body={premisesOfferId:premises.id,rentalOfferId:rental.offerId,expiresInSeconds:600,published:true},offered=await ok(landlord,'POST',base+'/publish',body,'publish',true);assert.deepEqual(await ok(landlord,'POST',base+'/publish',body,'publish'),offered);assert.equal((await call(landlord,'POST',base+'/publish',{...body,expiresInSeconds:700},'publish')).body.error,'idempotency_key_reuse');
+const publicBoard=await ok(foreign,'GET',base+'/offers');assert.equal(publicBoard.offers.length,1);for(const secret of [itemId,landlord.account,landlord.id,'Private fixture workshop'])assert.equal(JSON.stringify(publicBoard).includes(secret),false);assert.deepEqual((await ok(foreign,'GET',base)).concessions,[]);
+const before=[await cash(operator),await cash(landlord)],premisesLease=(await ok(operator,'POST',`/v1/company/premises/offers/${premises.id}/lease`,{expectedRevision:premises.revision,slot:1,maxRentCash:300,consent:true},'paid-premises',true)).lease;
+const rentalLease=await ok(operator,'POST','/v1/equipment/rentals/accept',{offerId:rental.offerId,maxRentCash:100,maxDepositCash:250,consent:true},'paid-tool',true);assert.deepEqual([await cash(operator),await cash(landlord)],[before[0]-650,before[1]+400]);
+const accept={concessionId:offered.concessionId,expectedRevision:1,sourceHash:offered.sourceHash,premisesLeaseId:premisesLease.id,rentalLeaseId:rentalLease.leaseId,businessId:operator.business,consent:true};assert.equal((await call(foreign,'POST',base+'/accept',accept,'foreign')).code,400);
+const money=[await cash(operator),await cash(landlord)];await assert.rejects(I.withItemTransaction(app.pool,async c=>{await Concessions.acceptInfrastructureConcession(c,operator.account,accept,'late-accept');throw Error('late concession accept fault');}),/late concession accept fault/);assert.equal((await app.pool.query('SELECT state FROM infrastructure_concessions WHERE id=$1',[offered.concessionId])).rows[0].state,'offered');
+const race=native?await Promise.all([ok(operator,'POST',base+'/accept',accept,'accept',true),ok(operator,'POST',base+'/accept',accept,'accept',true)]):[await ok(operator,'POST',base+'/accept',accept,'accept',true)];const accepted=race[0];if(native)assert.deepEqual(race[0],race[1]);assert.equal(accepted.cashMoved,0);assert.deepEqual([await cash(operator),await cash(landlord)],money);assert.deepEqual(await ok(operator,'POST',base+'/accept',accept,'accept'),accepted);
+const authorityContext={accountId:operator.account,characterId:operator.id,businessId:operator.business,itemId};await assert.rejects(I.withItemTransaction(app.pool,c=>Concessions.concessionToolAuthority(c,authorityContext)),/preflight_required/);const proof=await invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext));assert.equal(proof.remaining,100);assert.equal(proof.spendingAuthority,false);assert.equal(proof.title,'original_landlord_account');assert.equal(proof.equipmentWear,false);
+await assert.rejects(invoke(operator,c=>Concessions.concessionToolAuthority(c,{...authorityContext,accountId:foreign.account})),/preflight_required/);await assert.rejects(I.withItemTransaction(app.pool,async c=>{const ctx=await Concessions.concessionProductionContext(c,{accountId:operator.account,businessId:operator.business});await Concessions.withInfrastructureConcession(c,ctx,()=>Concessions.concessionToolAuthority(c,authorityContext));return Concessions.concessionToolAuthority(c,authorityContext);}),/preflight_required/);const priorStock=await stock(operator);await assert.rejects(I.withItemTransaction(app.pool,async c=>{const ctx=await Concessions.concessionProductionContext(c,{accountId:operator.account,businessId:operator.business});try{await Concessions.withInfrastructureConcession(c,ctx,async()=>{await I.consumeStack(c,{scope:'account',id:operator.account},'mat:scrap_steel',1,'standard','explicit negative scope rollback','concession-scope-negative');throw Error('caught concession scope fault');});}catch{}return {claimedSuccess:true};}),/caught concession scope fault/);assert.equal(await stock(operator),priorStock);assert.equal((await app.pool.query('SELECT idempotency_key FROM item_mutation_guards WHERE idempotency_key=$1',['concession-scope-negative'])).rows.length,0);
+const quality={businessId:operator.business,expectedRevision:0,kind:'quality',recipeIds:[],toolItemId:itemId,allowAgentProduction:false,maxBatchCashCost:0,maxGrantCashCost:0,agentGrantSeconds:0,renewAgentGrant:false};await ok(operator,'POST','/v1/company/specializations',quality,'integrated-quality');assert.equal((await app.pool.query('SELECT business_id FROM company_specializations WHERE business_id=$1',[operator.business])).rows.length,1);
+await app.pool.query("UPDATE characters SET loc='docks' WHERE id=$1",[operator.id]);await assert.rejects(invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext)),/workshop_location/);await app.pool.query("UPDATE characters SET loc='foundry' WHERE id=$1",[operator.id]);
+await ok(landlord,'POST','/v1/resources/company',{expectedRevision:2,name:'Private workshop',published:false,premises:'estate'});assert.equal((await ok(foreign,'GET',base+'/offers')).offers.length,0);await invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext));
+await ledger();
+if(native){const results=await Promise.all([invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext)),invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext))]);assert.deepEqual(results[0],results[1]);await app.pool.query('UPDATE infrastructure_concessions SET expires_at=$2 WHERE id=$1',[offered.concessionId,new Date(Date.now()+1500)]);const held=await app.pool.connect();await held.query('BEGIN');await held.query('SELECT id FROM item_instances WHERE id=$1 FOR UPDATE',[itemId]);const beforeStock=await stock(operator),pending=invoke(operator,async c=>{await I.consumeStack(c,{scope:'account',id:operator.account},'mat:scrap_steel',1,'standard','explicit negative postwait rollback','concession-negative-consume');await c.query('SELECT id FROM item_instances WHERE id=$1 FOR UPDATE',[itemId]);return {claimedSuccess:true};}),rejection=assert.rejects(pending,/expired/);await wait(1900);await held.query('COMMIT');held.release();await rejection;assert.equal(await stock(operator),beforeStock);assert.equal((await app.pool.query('SELECT idempotency_key FROM item_mutation_guards WHERE idempotency_key=$1',['concession-negative-consume'])).rows.length,0);assert.deepEqual([await cash(operator),await cash(landlord)],money);await ledger();await app.pool.query('UPDATE infrastructure_concessions SET expires_at=$2 WHERE id=$1',[offered.concessionId,new Date(accepted.expiresAt)]);}
+await ok(operator,'POST',`/v1/depot/${operator.business}/policy`,{expectedRevision:0,enabled:true,allowRestock:true,allowReceive:true,businessPriority:false,maxSpend:1000,reserveCash:1000,expiresInSeconds:600});await assert.rejects(invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext)),/source_changed/);
+const cancelled=await ok(operator,'POST',base+'/cancel',{concessionId:offered.concessionId,expectedRevision:2,sourceHash:offered.sourceHash},'cancel',true);assert.equal(cancelled.cashMoved,0);await assert.rejects(invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext)),/context/);
+const returned=await ok(operator,'POST','/v1/equipment/rentals/end',{leaseId:rentalLease.leaseId},'canonical-return',true);assert.equal(returned.refunded,250);assert.deepEqual([await cash(operator),await cash(landlord)],[before[0]-400,before[1]+400]);assert.equal((await app.pool.query('SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',[itemId])).rows[0].owner_id,landlord.account);await ledger();
+const deathRental=await ok(landlord,'POST','/v1/equipment/rentals/offers',{itemId,rentCash:100,depositCash:250,durationSeconds:600,offerSeconds:600,published:true},'death-rental-offer');const deathTerms={...body,rentalOfferId:deathRental.offerId,published:false},deathOffer=await ok(landlord,'POST',base+'/publish',deathTerms,'death-concession');const deathTool=await ok(operator,'POST','/v1/equipment/rentals/accept',{offerId:deathRental.offerId,maxRentCash:100,maxDepositCash:250,consent:true},'death-paid-tool');const deathAccept={...accept,concessionId:deathOffer.concessionId,sourceHash:deathOffer.sourceHash,rentalLeaseId:deathTool.leaseId};const deathAccepted=await ok(operator,'POST',base+'/accept',deathAccept,'death-accept');await invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext));assert.equal((await call(operator,'POST','/v1/company/production/run',{businessId:operator.business,steps:[{recipeId:'recipe:hardened_steel',repeat:1}]},'concession-no-spend-grant',true)).body.message,'production_consent');assert.deepEqual(await Concessions.infrastructureConcessionDeathCounterparts(app.pool,operator.id),[landlord.id]);await G.withTwoCharacters(app.pool,foreign.account,operator.id,(_ch,target,c,h)=>runEstate(c,h,target,'concession original operator death'),{meet:false});await assert.rejects(invoke(operator,c=>Concessions.concessionToolAuthority(c,authorityContext)),/context/);assert.deepEqual(await ok(operator,'POST',base+'/accept',deathAccept,'death-accept'),deathAccepted);const dead=(await app.pool.query('SELECT * FROM characters WHERE id=$1',[operator.id])).rows[0];await I.withItemTransaction(app.pool,c=>Concessions.voidInfrastructureConcessionsAtDeath(c,dead));assert.equal((await app.pool.query('SELECT state FROM infrastructure_concessions WHERE id=$1',[deathOffer.concessionId])).rows[0].state,'party_dead');assert.equal((await app.pool.query('SELECT owner_id FROM item_instances WHERE id=$1',[itemId])).rows[0].owner_id,landlord.account);assert.equal((await app.pool.query('SELECT deposit_remaining,status FROM equipment_rental_leases WHERE id=$1',[deathTool.leaseId])).rows[0].status,'death_ended');await ledger();
+console.log(`infrastructureconcessions ${native?'native '+version:'memory'} PASS: actual crafted tool and paid canonical premises/rental routes, original landlord title/cash/deposit/escrow, private scoped admission authority, postwait whole-root rollback, replay/source/delegation boundaries. Actual borrowed F03 quality admission and canonical estate recovery are integrated in this proposal; bounded production proof is in the dedicated integration suite.`);
+}finally{await component.close();await app.close();}
