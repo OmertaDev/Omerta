@@ -451,8 +451,8 @@ try {
   await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0, undefined, { timeout: 15000 });
   assert.equal((await state(page)).selectedVenue, 'stories');
   await page.waitForFunction(() => [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')]
-    .some(node => !node.hidden && node.textContent.includes('THE EDITOR')));
-  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /A clue is a lead/);
+    .some(node => !node.hidden && node.textContent.includes('ELENA SERRA')));
+  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /Ink stays longer than anger/);
   assert.deepEqual(mutations(requests.slice(beforeWaypoint)), []);
   await page.keyboard.press('Escape');
   let walkingPose = (await state(page)).position;
@@ -818,7 +818,7 @@ try {
     'The first short-phone Player entry shows its issued objective with the map.');
   await panel(tiny.page, 'map'); await tiny.page.locator('[data-city-waypoint="stories"]').click();
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
-  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('THE EDITOR'));
+  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('ELENA SERRA'));
   await assertFrame(tiny.page);
   assert.deepEqual(mutations(tiny.requests.slice(tinyStart)), [], 'Short-frame authored NPC dialogue/waypoints remain read-only.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-dialogue-320.png') });

@@ -138,6 +138,20 @@ try {
     await fixture.page.locator('.omerta-city__interaction').waitFor({ state: 'visible' });
     await fixture.page.waitForFunction(venueId => window.__arcHandles.at(-1).handle.getState().selectedVenue === venueId, venueId);
   };
+  const selectCase = async (fixture, graphId) => {
+    if (await fixture.page.locator('.city-world__dock').isVisible()) await activate(fixture, fixture.page.locator('[data-city-world-close]'));
+    await activate(fixture, fixture.page.locator('[data-city-journal]'));
+    const select = fixture.page.locator('[data-city-case-select]'); await select.waitFor();
+    const index = await select.locator('option').evaluateAll((options, id) => options.findIndex(option => option.value === id), graphId);
+    assert(index >= 0); const before = fixture.requests.length;
+    await select.focus(); await fixture.page.keyboard.press('Home');
+    for (let step = 0; step < index; step++) await fixture.page.keyboard.press('ArrowDown');
+    await fixture.page.keyboard.press('Enter');
+    await fixture.page.waitForFunction(id => document.querySelector('[data-city-case-select]')?.value === id, graphId);
+    assert.deepEqual(fixture.requests.slice(before).filter(request => request.method === 'POST'
+      && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Selecting a tracked case is read-only.');
+    await activate(fixture, fixture.page.locator('[data-city-world-close]'));
+  };
   const questButton = (fixture, id) => fixture.page.locator(`[data-city-quest-action="${id}"]`);
   const graphRoot = story => '/v1/worldgraph/mysteries/' + encodeURIComponent(story.package.id);
   const action = async (fixture, id, expectedPath) => {
@@ -199,6 +213,7 @@ try {
     assert.deepEqual(await pose(fixture), before, 'Canonical skill navigation returns to its saved world pose.');
   };
   const queuedClose = async (fixture, story) => {
+    await selectCase(fixture, story.package.id);
     await visit(fixture, 'fixer');
     const gate = deferred(), observed = deferred(); let once = false;
     const hold = async route => { if (once) return route.continue(); once = true; observed.resolve(); await gate.promise; await route.continue(); };
@@ -301,6 +316,7 @@ try {
   };
   const uncertainStart = async viewport => {
     const actor = await create('Arc Uncertain ' + viewport.width), fixture = await newPage(actor, viewport), story = DISTRICT_STORY_ARCS[0];
+    await selectCase(fixture, story.package.id);
     await visit(fixture, 'fixer');
     const before = await pose(fixture), entry = await fixture.page.evaluateHandle(() => window.__arcHandles.at(-1));
     const path = graphRoot(story) + '/start', abort = route => route.abort('failed');
@@ -321,6 +337,7 @@ try {
     await settled(fixture); await fixture.page.waitForFunction(() => !window.__arcHandles.at(-1).handle.getState().worldUI.pending);
     await activate(fixture, fixture.page.locator('[data-city-world-close]'));
     await sameScenePose(fixture, before, entry); await entry.dispose();
+    await selectCase(fixture, 'neighborhood-initiation');
     await visit(fixture, 'fixer'); assert.equal(await questButton(fixture, 'start').isEnabled(), true,
       'Resolved in-place recovery re-enables the independent original introduction.');
     assert.equal((await app.pool.query('SELECT id FROM mystery_instances WHERE graph_id=$1 AND owner_id=$2',
@@ -329,6 +346,7 @@ try {
   };
   const privacy = async viewport => {
     const actor = await create('Arc Privacy ' + viewport.width), fixture = await newPage(actor, viewport), story = DISTRICT_STORY_ARCS[0];
+    await selectCase(fixture, story.package.id);
     await visit(fixture, 'fixer');
     const gate = deferred(), committed = deferred(), logoutGate = deferred(), logoutObserved = deferred();
     const path = graphRoot(story) + '/start';
@@ -363,10 +381,13 @@ try {
     const learned = new Set();
     await queuedClose(fixture, DISTRICT_STORY_ARCS[0]);
     for (const [index, story] of DISTRICT_STORY_ARCS.entries()) {
-      await travel(fixture, story.presentation.districtId); await visit(fixture, 'fixer');
+      await travel(fixture, story.presentation.districtId);
+      await selectCase(fixture, 'neighborhood-initiation'); await visit(fixture, 'fixer');
+      assert.equal(await questButton(fixture, 'start').isEnabled(), true, 'The unchanged introduction remains explicitly selectable.');
+      await selectCase(fixture, story.package.id); await visit(fixture, 'fixer');
       const prefix = story.package.id + ':', root = graphRoot(story);
       const ids = await fixture.page.locator('[data-city-quest-action]').evaluateAll(nodes => nodes.map(node => node.dataset.cityQuestAction));
-      assert(ids.includes('start') && ids.includes(prefix + 'start'), 'The original introduction and district story coexist at the same actual venue.');
+      assert(ids.includes(prefix + 'start') && !ids.includes('start'), 'Only the selected case appears at the venue; the original introduction retains its independent opaque ID.');
       assert.equal(new Set(ids).size, ids.length);
       assert.equal(await questButton(fixture, prefix + 'start').textContent(), 'Begin ' + story.presentation.title);
       assert(!ids.some(id => id.startsWith('district-') && !id.startsWith(prefix)), 'Other districts do not appear as physical venue offers.');

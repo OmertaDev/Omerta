@@ -3,12 +3,12 @@
   'use strict';
   const PANELS = [['map', 'Map'], ['bag', 'Bag'], ['skills', 'Skills'], ['adventures', 'Adventures'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
   const VOICES = {
-    fixer: ['THE FIXER', 'Every job carries a risk. Check your nerve before you step out.'],
-    training: ['THE TRAINER', 'Pick a skill. Put in the work. Catch your breath between sessions.'],
-    workshop: ['THE MECHANIC', 'Good equipment earns its place. Check what you are carrying.'],
-    clubhouse: ['THE DOORMAN', 'Your crew’s next move starts with a conversation.'],
-    stories: ['THE EDITOR', 'A clue is a lead. Follow it, then compare what you find.'],
-    waterfront: ['THE FERRYMAN', 'Check the travel board before you leave the district.']
+    fixer: ['NICO BELLINI', 'You can hear ten versions of a story on this corner. Bring me the one that holds together.'],
+    training: ['THE TRAINER', 'Shoulders down. Breathe. Show me one clean attempt before you ask for another.'],
+    workshop: ['ADA FERRI', 'Leave the rumors outside. Put the broken thing on my bench and tell me what you actually saw.'],
+    clubhouse: ['THE DOORMAN', 'I remember who keeps somebody waiting. If you have made a promise upstairs, see it through.'],
+    stories: ['ELENA SERRA', 'Ink stays longer than anger. Give me a date, a name and something I can check.'],
+    waterfront: ['THE FERRYMAN', 'A rope, a tide, a passenger still on the quay. That is how I measure time.']
   };
   const PATROLS = [
     [{ x: 875, y: 398 }, { x: 915, y: 398 }, { x: 915, y: 370 }, { x: 875, y: 370 }],
@@ -94,7 +94,7 @@
         const marker = readPending[kind];
         return marker && current(marker.token, marker.owner) && marker.ticket === readTickets[kind];
       }));
-      const label = PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
+      const label = panel === 'journal' ? 'Case journal' : PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
       const heading = label + (loading ? ' · Loading…' : ''), busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
       const altered = title.textContent !== heading || content.getAttribute('aria-busy') !== busy || state.textContent !== copy;
       if (title.textContent !== heading) title.textContent = heading;
@@ -211,7 +211,7 @@
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
     }
     function open(id = 'map', { world = false, choices = false } = {}) {
-      if (destroyed || !tabs.has(id)) return;
+      if (destroyed || !tabs.has(id) && id !== 'journal') return;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
       stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
       choicesShown = choices; paintChoices();
@@ -638,6 +638,7 @@
       else if(panel==='adventures'&&window.CityAdventureUi)window.CityAdventureUi.render(content,{encounters:boards.encounters,index:boards.opportunities,
         detail:boards['opportunity-detail'],pending:pending||options.recovery===true,onBind:onRender,onRead:(kind,input)=>read(kind,opening,input),
         onAction:issued=>action('adventure-action',{id:issued.id,path:issued.path,body:{...issued.body}}),onCrew:()=>options.onCrew?.()});
+      else if (panel === 'journal') renderCaseJournal();
       else if (panel === 'room') renderRoom(); else if (panel === 'style') renderStyle(); else if (panel === 'chat') renderChat();
       for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) {
         const draft=drafts.get(field.getAttribute('aria-label'));field.value=draft.value;if(field.type==='checkbox')field.checked=draft.checked;
@@ -686,9 +687,62 @@
       for (const actor of list(state.actorMarkers, 24)) { context.fillStyle = actor.kind === 'agent' ? '#9ec5ef' : actor.kind === 'npc' ? '#c6b696' : '#a5d9c6'; context.fillRect(actor.x * sx - 2, actor.y * sy - 2, 4, 4); }
       const pose = state.position || state.player; if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(pose.x * sx, pose.y * sy, 5, 0, Math.PI * 2); context.fill(); }
     }
+    function renderCaseJournal() {
+      const journal = options.caseJournal;
+      heading('Your current case', 'Keep one thread in view. Reading, selecting and pinning a lead do not spend anything.');
+      if (!journal) { heading('The journal is unavailable', 'Use Refresh to request your current case record.'); return; }
+      const select = el('select'); select.setAttribute('aria-label', 'Tracked case'); select.dataset.cityCaseSelect = '';
+      for (const entry of list(journal.entries, 32)) { const option = el('option', '', entry.title + (entry.status === 'completed' ? ' · completed' : ''));
+        option.value = entry.graphId; option.selected = entry.graphId === journal.selected; select.append(option); }
+      select.disabled = pending || options.casePending || options.recovery;
+      onRender(select, 'change', () => { if (!select.disabled) options.onSelectCase?.(select.value); }); content.append(select);
+      heading(journal.title, journal.description);
+      const token = opening, owner = scope;
+      const lead = list(journal.leads).find(lead => list(lead.actions).some(action => action.available && !action.isCancel)) || list(journal.leads)[0];
+      const evidence = el('div', 'city-world__evidence'); evidence.dataset.cityCaseEvidence = '';
+      for (const clue of list(journal.evidence)) { const card = el('article', 'city-world__card');
+        card.append(el('strong', '', clue.title), el('p', '', clue.description)); evidence.append(card); }
+      if (evidence.childElementCount) { heading('Evidence you acquired'); content.append(evidence); }
+      if (lead) {
+        const beat = el('section', 'city-world__card'); beat.dataset.cityCaseBeat = lead.nodeId || 'offer';
+        beat.append(el('h4', '', lead.title), el('p', '', lead.dialogue));
+        const place = list(options.venues, 16).find(venue => venue.id === lead.venueId);
+        if (place) beat.append(button('Pin lead · ' + place.name, () => { if (!current(token, owner)) return; close(false); options.onWaypoint?.(place.id); }));
+        for (const action of list(lead.actions)) {
+          const act = button(action.label, async () => {
+            if (pending || options.casePending || options.recovery || !current(token, owner)) return;
+            pending = true; render();
+            try { await options.onCaseAction?.(lead.venueId, action.id, { beforeDispatch: () => current(token, owner) }); }
+            finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) { render(); changed(); } } }
+          });
+          act.dataset.cityCaseAction = action.id; act.disabled = !action.available || pending || options.casePending || options.recovery;
+          if (!action.available) { const copy = list(action.blockedBy).map(item => item.message || item.label || 'Follow the earlier evidence first.').join(' ');
+            beat.append(el('p', 'city-world__hint', copy)); }
+          beat.append(act);
+        }
+        content.append(beat);
+      } else if (journal.status === 'completed') {
+        heading(journal.selected === 'first-errand-case-v2' ? 'Elena kept your signed account' : 'Case completed', 'Nico has paying work. Read the actual nerve cost and risk, attempt a job, then check its confirmed receipt. A failed job may pay nothing.');
+        content.append(button('Ask Nico for a paying job', () => { if (current(token, owner)) { close(false); options.onJob?.(); } }));
+      } else heading('No current lead', 'The case may be closed. Choose another case or open the full archive.');
+      const discovered = list(journal.nodes).filter(node => node.venueId && node.status !== 'completed' && list(node.uiActions || node.actions).some(action => action.available));
+      if (discovered.length > 1) {
+        const choices = el('details'); choices.append(el('summary', '', 'Other visible leads'));
+        for (const node of discovered) { const place = list(options.venues, 16).find(venue => venue.id === node.venueId);
+          if (place) choices.append(button(node.title + ' · ' + place.name, () => { if (current(token, owner)) { close(false); options.onInspectVenue?.(place.id); } })); }
+        content.append(choices);
+      }
+      content.append(button('Full case archive & fieldwork →', () => { if (current(token, owner)) options.onNavigate?.('fieldwork', { venueId: 'directory', initialView: 'mysteries' }); }));
+    }
     function speak(venueId, now) {
       if (!VOICES[venueId]) return;
-      const [name, copy] = VOICES[venueId]; showSpeech(name + ' · NPC', copy, now);
+      const [name, greeting] = VOICES[venueId];
+      const completed = list(options.caseJournal?.entries).some(entry => entry.graphId === 'first-errand-case-v2' && entry.status === 'completed');
+      const memory = { fixer: 'Ada says Parcel 47 is back where it belongs. You checked before you pointed a finger. I have work for someone like that.',
+        workshop: 'Parcel 47. I remember. The motor is running again, and nobody had to wear a mistake that was not theirs.',
+        stories: 'Your signed correction is in the morning edition. Keep bringing me evidence with the dates intact.',
+        waterfront: 'You are the one who checked Valli’s signature. He read your correction before the first sailing.' };
+      showSpeech(name + ' · NPC', completed && memory[venueId] || greeting, now);
     }
     function showSpeech(name, copy, now) {
       const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
@@ -725,7 +779,7 @@
           options.atlas = null; options.collection = null; options.homes = null;
           selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
           options.onHomes?.(null);
-          options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
+          options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {}; options.caseJournal = next.caseJournal || null;
           pending = false; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
           lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
         }
@@ -768,7 +822,7 @@
         }
         if (speechUntil && now > speechUntil) clearSpeech();
       },
-      open, close,
+      open, close, openJournal() { open('journal'); },
       openMapOverview(districtId) {
         const allowed = atlasDistricts().some(district => district.id === districtId)
           || list(options.rules?.districts).some(district => (district.id || district) === districtId);

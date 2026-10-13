@@ -1108,10 +1108,11 @@ assert.deepEqual(phase1First.packageIds, [
   'staged-crew-missions', 'city-neighbor-favors', 'city-shutter-lock', 'city-loading-route',
   'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',
   'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',
+  'first-errand-case-v2',
 ]);
-assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 20);
-assert.equal(phase1First.packages, 20);
-assert.equal(phase1First.nodes, 151);
+assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 21);
+assert.equal(phase1First.packages, 21);
+assert.equal(phase1First.nodes, 164);
 assert.equal(phase1First.recipes, 3);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
 assert.deepEqual(phase1First.executableDefinitions, {
@@ -1857,7 +1858,7 @@ const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
     fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),
   )).sort();
 assert.deepEqual(packageSources, [
-  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'core-materials.js', 'district-story-arcs.js', 'neighborhood-initiation.js', 'phase1.js', 'staged-crew-missions.js',
+  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'core-materials.js', 'district-story-arcs.js', 'first-errand-case.js', 'neighborhood-initiation.js', 'phase1.js', 'staged-crew-missions.js',
 ], 'every production world-graph package module must be present in the canonical Phase 1 manifest');
 const phase1RuntimeFiles = [
   'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
@@ -1865,7 +1866,7 @@ const phase1RuntimeFiles = [
   'src/content/core-materials.js', 'src/content/automotive-salvage.js',
   'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
   'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',
-  'src/content/district-story-arcs.js', 'src/content/city-quest-presentation.js',
+  'src/content/district-story-arcs.js', 'src/content/first-errand-case.js', 'src/content/city-quest-presentation.js',
   'src/content/staged-crew-missions.js', 'src/content/city-world-opportunities.js',
   'src/content/phase1-validation.js',
   'tools/worldgraph-content.js',

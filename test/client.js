@@ -455,6 +455,7 @@ const CATALOGS = {
 // exactly how `{path:'earner'}` survived. Catalog it, or declare it here as not-an-API-value.
 const NOT_API = new Set([
   'venueId', // City scene navigation/breadcrumb context; never an executable mutation body.
+  'focus', // City banking handoff scroll target; presentation-only, never an API body.
   'block',      // scrollIntoView({block:'nearest'})
   'behavior',   // scrollIntoView({behavior:'instant'}), a browser option, never an API body.
   'error',      // the client's own {error:'offline'} shape

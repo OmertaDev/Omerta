@@ -1247,8 +1247,8 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261013-shell-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261013-shell-1">
+<link rel="stylesheet" href="/city-scene.css?v=20261013-critique-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261013-critique-1">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
@@ -8768,16 +8768,16 @@
   let _cityScene = null, _citySceneKey = null, _citySceneEpoch = 0, _citySceneAssets = null;
   let _mapMode = 'walk', _mapReadRevision = 0, _citySceneOptions = null;
   let _citySession = null, _cityQuestPending = false, _cityNpcActions = new Map(), _cityQuestReceipt = null;
-  let _cityEntry = null;
+  let _cityEntry = null, _cityCaseSelection = null, _cityCaseState = null;
   let _cityTrainingReceipt = null;
-  let _cityFixerReceipt = null;
+  let _cityFixerReceipt = null, _cityFirstJob = null;
   let _cityWorldData = null, _cityWorldReceipt = null, _cityWorldPending = false;
   let _cityHomeEntry = null, _cityDeedEntry = null;
   let _cityCrewState = null;
   let _cityAuthorityRevision = 0;
   function retireCityCrew(epoch = null) { if (epoch !== null && _cityCrewState?.epoch !== epoch) return; _cityCrewState?.controller?.destroy(); _cityCrewState = null; }
   let _cityPeople = null, _cityIntel = null, _cityPeopleRevision = 0, _cityEncounterPending = false, _cityEncounterReceipt = null;
-  function clearCityPeople() { retireCityCrew(); _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityQuestReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityHomeEntry = null; _cityDeedEntry = null; _cityPeopleRevision++; }
+  function clearCityPeople() { _cityCaseSelection = null; _cityCaseState = null; retireCityCrew(); _cityPeople = null; _cityIntel = null; _cityEncounterReceipt = null; _cityTrainingReceipt = null; _cityFixerReceipt = null; _cityFirstJob = null; _cityQuestReceipt = null; _cityWorldData = null; _cityWorldReceipt = null; _cityHomeEntry = null; _cityDeedEntry = null; _cityPeopleRevision++; }
   function cityBoardCurrent(board) {
     return board?.viewer?.characterId === me?.id && board.viewer.generation === me?.generation
       && board.viewer.district === me?.loc;
@@ -8785,7 +8785,7 @@
   function invalidateCityAuthority() {
     _cityAuthorityRevision++; clearCityPeople(); _cityNpcActions = new Map();
     if (_citySceneOptions) _citySceneOptions.npcQuests = {};
-    _cityScene?.update?.({ ...cityWorldOptions(), npcQuests: {}, actors: [], intel: [], objectives: [] });
+    _cityScene?.update?.({ ...cityWorldOptions(), npcQuests: {}, caseJournal: null, actors: [], intel: [], objectives: [] });
   }
   function cityPeopleOptions() {
     const key = cityIdentity();
@@ -9030,6 +9030,7 @@
       ${model ? `${model.terms}<div class="omerta-city__training-stats">${model.choices}</div>` : '<p role="status">Job terms are unavailable. Refresh to check your session.</p>'}
       ${readableReceipt ? `<div tabindex="-1" data-city-fixer-result role="region" aria-label="Job result">${operationReceiptMarkup(readableReceipt)}
         ${recovery ? `<button class="act" data-city-fixer-retry>${esc(receipt.recovery.label)}</button>` : ''}</div>` : ''}
+      ${_cityFirstJob?.key === key && _cityFirstJob.current() && _cityFirstJob.take > 0 ? `<section data-city-first-pay><b>Nico: That one paid.</b><p>The confirmed job receipt shows ${fmt(_cityFirstJob.take)} received. You carry ${fmt(me.cash)} now. Deposits travel in lootable transit before clearing. Choose an amount at the bank; nothing moves just by opening it.</p><button class="act" data-city-first-bank>Learn banking with this payout →</button></section>` : ''}
       <button class="act omerta-city__training-full" data-city-fixer-full>All street jobs &amp; hustle →</button>`;
     if (host.dataset.fixerContent !== html) {
       const focused = host.contains(document.activeElement), approach = document.activeElement?.dataset.cityApproach;
@@ -9046,6 +9047,8 @@
       button.disabled = !!model?.blocked || recovery || host.dataset.fixerPending === '1';
       button.onclick = event => { event.stopPropagation(); run(button, button.dataset.cityApproach); };
     });
+    const firstBank = host.querySelector('[data-city-first-bank]');
+    if (firstBank) firstBank.onclick = event => { if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'fixer', focus: 'bank' }); };
     const retry = host.querySelector('[data-city-fixer-retry]');
     if (retry) { retry.disabled = host.dataset.fixerPending === '1'; retry.onclick = () => run(retry, null); }
     host.querySelector('[data-city-fixer-full]').onclick = event => { if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'fixer' }); };
@@ -9060,6 +9063,7 @@
       try {
         if (approach) await act('POST', '/v1/crimes/' + encodeURIComponent(crime.id), { approach }, { label: crime.name + ': ' + approach,
           beforeDispatch: () => retryCurrent() && active() && host.dataset.fixerOpening === opening && host.dataset.fixerCrime === crime.id, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
+          onResult: result => { if (retryCurrent() && result.code === 200 && result.body?.success === true && Number(result.body.take) > 0) _cityFirstJob = { key, current: retryCurrent, take: Number(result.body.take) }; },
           onReceipt: receipt => { if (retryCurrent()) { _cityFixerReceipt = { key, stamp, receipt }; if (_citySceneKey === key) _cityScene?.update?.({}); } } });
         else await receipt.recovery.run();
       } finally {
@@ -9464,41 +9468,58 @@
   }
   async function cityQuestProjection(stamp = projections.snapshot()) {
     const reply = await api('GET', '/v1/worldgraph/mysteries', undefined, { isCurrent: () => projections.current(stamp) });
-    const quests = {}, actions = new Map();
-    if (reply.code !== 200 || reply.ignored || !projections.current(stamp)) return { quests, actions };
+    const quests = {}, actions = new Map(), key = cityIdentity();
+    if (reply.code !== 200 || reply.ignored || !projections.current(stamp)) return { quests, actions, cases: null };
     const entries = (Array.isArray(reply.body?.mysteries) ? reply.body.mysteries : []).filter(entry =>
       (entry.cityQuest === true || entry.graphId === 'neighborhood-initiation')
       && typeof entry.graphId === 'string' && /^[a-z0-9][a-z0-9:_-]{0,127}$/.test(entry.graphId)
       && (!entry.districtId || entry.districtId === me.loc));
-    function add(graphId, venueId, title, dialogue, entries, started, questOrder) {
+    const remembered = _cityCaseSelection?.key === key ? _cityCaseSelection.graphId : '';
+    const selected = entries.find(entry => entry.graphId === remembered)
+      || entries.find(entry => entry.status === 'active')
+      || entries.find(entry => entry.graphId === 'first-errand-case-v2' && !entry.started)
+      || entries.find(entry => !entry.started) || entries[0];
+    const cases = { selected: selected?.graphId || '', entries: entries.map(entry => ({ graphId: entry.graphId,
+      title: entry.title, status: entry.status, started: entry.started, description: entry.description })),
+      title: selected?.title || '', status: selected?.status || '', description: selected?.description || '', nodes: [], leads: [], evidence: [] };
+    function add(graphId, venueId, title, dialogue, issued, started, questOrder, nodeId = '') {
       const prefix = '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId) + '/';
-      const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
+      const valid = (issued || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
         && typeof action.id === 'string' && typeof action.path === 'string' && action.path.startsWith(prefix)
         && /^(?:start|cancel|explore|nodes\/[^/?#]+\/complete|choices\/[^/?#]+)$/.test(action.path.slice(prefix.length)));
       if (!valid.length) return;
-      const quest = quests[venueId] || (quests[venueId] = { title, dialogue: '', actions: [] });
-      if (dialogue) quest.dialogue += (quest.dialogue ? '\n\n' : '') + dialogue;
+      const lead = { title, dialogue: String(dialogue || ''), venueId, nodeId, actions: [] };
       for (const action of valid) {
         actions.set(venueId + ':' + action.id, action);
-        quest.actions.push({ id: action.id, label: action.label, available: action.available,
+        lead.actions.push({ id: action.id, label: action.label, available: action.available,
           blockedBy: action.blockedBy || [], started, questOrder, questTitle: title,
           isCancel: action.path === prefix + 'cancel' });
       }
+      cases.leads.push(lead);
+      const useful = lead.actions.some(action => action.available && !action.isCancel);
+      if (!quests[venueId] || useful && !quests[venueId].actions.some(action => action.available && !action.isCancel))
+        quests[venueId] = { ...lead, title: cases.title === title ? title : cases.title + ' · ' + title };
     }
-    for (const [questOrder, entry] of entries.entries()) {
-      if (!entry.started) add(entry.graphId, entry.startVenueId || 'fixer', entry.title, entry.description, entry.uiActions ?? entry.actions, false, questOrder);
-      else if (entry.status === 'active') {
-        const detail = await api('GET', '/v1/worldgraph/mysteries/' + encodeURIComponent(entry.graphId), undefined, { isCurrent: () => projections.current(stamp) });
-        if (detail.code !== 200 || detail.ignored || !projections.current(stamp) || detail.body?.graph?.id !== entry.graphId) continue;
-        for (const action of detail.body?.uiActions ?? detail.body?.actions ?? []) if (action.venueId) {
-          add(entry.graphId, action.venueId, entry.title, 'Follow the available lead to continue your investigation.', [action], true, questOrder);
-        }
-        for (const node of detail.body?.nodes || []) if (node.venueId && node.status !== 'excluded' && (!node.districtId || node.districtId === me.loc)) {
-          add(entry.graphId, node.venueId, node.title, node.dialogue || node.description, node.uiActions ?? node.actions, true, questOrder);
-        }
+    if (selected && !selected.started) add(selected.graphId, selected.startVenueId || 'fixer', selected.title,
+      selected.description, selected.uiActions ?? selected.actions, false, 0);
+    else if (selected) {
+      const detail = await api('GET', '/v1/worldgraph/mysteries/' + encodeURIComponent(selected.graphId), undefined, { isCurrent: () => projections.current(stamp) });
+      if (detail.code === 200 && !detail.ignored && projections.current(stamp) && detail.body?.graph?.id === selected.graphId) {
+        cases.nodes = (detail.body.nodes || []).filter(node => node.status !== 'excluded');
+        cases.evidence = cases.nodes.filter(node => node.type === 'evidence' && node.status === 'completed')
+          .map(node => ({ id: node.id, title: node.title, description: node.description }));
+        for (const node of cases.nodes) if (node.venueId && node.status !== 'completed' && (!node.districtId || node.districtId === me.loc))
+          add(selected.graphId, node.venueId, node.title, node.dialogue || node.description, node.uiActions ?? node.actions, true, 0, node.id);
+        for (const action of detail.body.uiActions ?? detail.body.actions ?? []) if (action.venueId)
+          add(selected.graphId, action.venueId, 'Look for the next lead', 'Compare your notes with Elena before deciding where to look.', [action], true, 0);
       }
     }
-    return { quests, actions };
+    return { quests, actions, cases };
+  }
+  async function selectCityCase(graphId) {
+    if (_cityQuestPending || cityWorldOptions().worldRecovery || !_cityCaseState?.entries.some(entry => entry.graphId === graphId)) return;
+    _cityCaseSelection = { key: cityIdentity(), graphId };
+    await renderMap();
   }
   async function performCityQuest(venueId, actionId, context = {}) {
     const action = _cityNpcActions.get(venueId + ':' + actionId), identity = cityIdentity();
@@ -9508,7 +9529,7 @@
     const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
       && (typeof context.beforeDispatch !== 'function' || context.beforeDispatch());
     if (!beforeDispatch()) return;
-    _cityQuestPending = true;
+    _cityQuestPending = true; _cityScene?.update?.({ casePending: true });
     try {
       if (action.consequence && !await ask(action.label, action.consequence, { yes: 'Confirm', danger: action.id === 'cancel' })) return;
       if (!beforeDispatch()) return;
@@ -9517,7 +9538,7 @@
         onReceipt: receipt => { if (ownerCurrent()) { _cityQuestReceipt = { key: identity, current: ownerCurrent, quest: true, receipt }; publishCityWorld(); } },
       });
       if (currentTab === 'map' && identity === cityIdentity()) await renderMap();
-    } finally { _cityQuestPending = false; }
+    } finally { _cityQuestPending = false; if (ownerCurrent()) _cityScene?.update?.({ casePending: false }); }
   }
   function destroyCityScene() {
     if (_cityEntry && _cityEntry.epoch !== null) cancelCityEntry();
@@ -9546,11 +9567,11 @@
   function loadCityAssets() {
     if (!_citySceneAssets) {
       _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261013-shell-1', () => !!window.OmertaCityScene),
+        loadCityScript('/city-scene.js?v=20261013-critique-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261013-shell-1', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261013-critique-1', () => !!window.OmertaCityWorldUI),
         loadCityScript('/city-home-ui.js?v=20261013-ui-1', () => !!window.CityHomeUi),
-        loadCityScript('/city-adventure-ui.js?v=20261013-drill-1', () => !!window.CityAdventureUi),
+        loadCityScript('/city-adventure-ui.js?v=20261013-critique-1', () => !!window.CityAdventureUi),
         loadCityScript('/world-fieldwork.js?v=20261013-ui-1', () => !!window.OmertaFieldwork),
       ]).then(([scene, engine, world, home, adventure, fieldwork]) => {
         if (scene.status === 'rejected') throw scene.reason;
@@ -9583,6 +9604,7 @@
     setTab(tab);
     if (deedEntry) _cityDeedEntry = { ...deedEntry, navigation: navigationRevision };
     if (gym) spotlight('#streets-gym-terms');
+    if (tab === 'streets' && context.focus === 'bank') spotlight('#streets-bank-terms', true);
     $('#tab-' + tab)?.focus({ preventScroll: true });
   }
   function bindCityFallback(host) {
@@ -9609,7 +9631,7 @@
       const scene = await loadCityAssets();
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || _mapMode !== 'walk' || !host.isConnected
         || me?.id !== options.character.id || me?.generation !== options.character.generation || me?.loc !== options.district.id) return;
-      _cityScene = scene.mount(host, { ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest,
+      _cityScene = scene.mount(host, { ...options, ...cityWorldOptions(), character: { ...me }, progress: cityProgress(), onNavigate: navigateFromCity, onQuestAction: performCityQuest, onSelectCase: selectCityCase,
         position: savedCityPosition(key), onPositionChange: position => rememberCityPosition(key, position), reducedMotion: REDUCED,
         onPresencePage: loadCityPeoplePage, onEncounter: performCityEncounter, onIntelAction: performCityIntelAction,
         onEncounterRetry: retryCityEncounter, renderTraining: body => renderCityTraining(body, key, epoch),
@@ -9815,9 +9837,10 @@
     if (me?.loc) {
       const district = districts.find((d) => d.id === me.loc)
         || { id: me.loc, name: me.loc.replace(/[-_]/g, ' '), state: null };
-      _cityNpcActions = quest.actions;
+      _cityNpcActions = quest.actions; _cityCaseState = quest.cases || null;
+      if (_cityCaseState?.selected) _cityCaseSelection = { key: identity, graphId: _cityCaseState.selected };
       _citySceneOptions = { district, character: { ...me }, progress: cityProgress(),
-        venueActions: cityVenueActions(), npcQuests: quest.quests, ...cityPeopleOptions() };
+        venueActions: cityVenueActions(), npcQuests: quest.quests, caseJournal: _cityCaseState, ...cityPeopleOptions() };
     } else {
       _citySceneOptions = null;
       destroyCityScene();

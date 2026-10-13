@@ -68,6 +68,8 @@
       if(!list(index.npcs).length)hint('No available NPC is published here. Explore another district through the World Map.');
       for(const npc of list(index.npcs)){
         const card=el('section',null,'city-world__card');card.append(el('strong',npc.name),el('p',(npc.tier||'stranger')+' · Favors '+npc.favor+'/3'));
+        const memories=['We have not spoken properly. There is a note I could use a careful pair of eyes on.', 'You brought my corrected note back. I remember who takes the trouble.', 'You stayed to put my account straight. There is more I can trust you with now.', 'Three times you kept faith with me. The marked route is yours to follow.'];
+        card.append(el('p',npc.name+': '+memories[Math.max(0,Math.min(3,Math.floor(Number(npc.favor)||0)))],'city-world__npc-memory'));
         for(const opportunity of list(index.opportunities).filter(entry=>entry.npcId===npc.id)){
           const entry=el('div',null,'city-world__opportunity');entry.append(el('strong',opportunity.title),el('p',opportunity.description));
           if(list(opportunity.blockedBy).length)entry.append(el('p',list(opportunity.blockedBy).map(reason=>reason.message||reason.code||String(reason)).join(' · ')));

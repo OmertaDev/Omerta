@@ -134,7 +134,8 @@
     let gameKind = '', gameOpening = 0, gameReturn = null, venueOpening = 0;
     let pathInk = null, destinationInk = null;
     let clearPlayerNameClamp = null;
-    const actorSprites = new Map();
+    const actorSprites = new Map(), caseProps = new Map();
+    let casePropsSignature = '';
     let actorPage = 0, selectedActor = null, pendingActor = null, actorOpening = 0, actorView = '', actorReturn = null;
     let paging = false, encounterPending = false, pagingNotice = '', actorNotice = '', actorRenderSignature = '', presenceSignature = '';
     const sceneIdentity = () => [character.id, character.generation, district.id].join(':');
@@ -210,7 +211,7 @@
     const readinessLabel = element('strong');
     const readinessCopy = element('span');
     readiness.append(readinessLabel, readinessCopy);
-    const journal = element('button', 'omerta-city__journal', 'Quest journal & fieldwork →');
+    const journal = element('button', 'omerta-city__journal', 'Case journal →');
     journal.type = 'button';
     journal.setAttribute('data-city-journal', '');
     hud.append(resourceGrid, progressRow, journal);
@@ -425,7 +426,9 @@
           onHome: key => { if (!walkHome(key)) showHome(key); }, onHomes: acceptHomes,
           onTravel: options.onWorldTravel,
           onRead: options.onWorldRead, onAction: options.onWorldAction, onRetry: options.onWorldRetry,
-          onCrew: () => showGameDock('crew'),
+          onCrew: () => showGameDock('crew'), onJob: () => showGameDock('fixer'),
+          onSelectCase: graphId => options.onSelectCase?.(graphId),
+          onCaseAction: (venueId, actionId, context) => options.onQuestAction?.(venueId, actionId, context),
           onLook: preset => { look = Object.hasOwn(lookTints, preset) ? preset : 'classic'; player?.setTint(lookTints[look]); } });
         document.getElementById('player-view-switch')?.classList.add('has-world-tools');
       } catch (_) { /* A tools failure must preserve the playable neighborhood and original doors. */ }
@@ -437,7 +440,7 @@
     function worldOptions() {
       const tracked = !nextQuest() && (Array.isArray(options.objectives) ? options.objectives : []).some(objective => objective?.status === 'available' && objective.available !== false);
       return { character, district, rules: options.rules, actors: options.actors || [], objectives: options.objectives || [],
-        intel: options.intel || [], npcQuests: options.npcQuests || {}, progress: options.progress, reducedMotion,
+        intel: options.intel || [], npcQuests: options.npcQuests || {}, caseJournal: options.caseJournal, casePending: options.casePending === true, progress: options.progress, reducedMotion,
         scopeKey: options.worldScopeKey, receipt: options.worldReceipt, recovery: options.worldRecovery === true,
         social: options.worldSocial, chat: options.worldChat, atlas: options.worldAtlas,
         collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, trackerVisible: tracked };
@@ -1054,7 +1057,7 @@
     }
     function renderQuest(venue) {
       const quest = options.npcQuests?.[venue.id];
-      const signature = venue.id + ':' + String(options.worldRecovery === true) + ':' + JSON.stringify(quest || null);
+      const signature = venue.id + ':' + String(options.worldRecovery === true) + ':' + String(options.casePending === true) + ':' + JSON.stringify(quest || null);
       if (signature === renderedQuestSignature) return;
       renderedQuestSignature = signature;
       const focused = questButtons.contains(document.activeElement) ? document.activeElement.dataset.cityQuestAction : null;
@@ -1068,7 +1071,7 @@
           const button = element('button', '', String(action.label || action.id));
           button.type = 'button';
           button.dataset.cityQuestAction = action.id;
-          button.disabled = action.available === false || options.worldRecovery === true;
+          button.disabled = action.available === false || options.worldRecovery === true || options.casePending === true;
           const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
           const blockerText = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
           if (button.disabled && blockerText) { button.title = blockerText; button.append(element('small', '', blockerText)); }
@@ -1102,7 +1105,7 @@
       const tab = character.coach?.tab;
       if (typeof tab === 'string' && tab) navigate(tab, VENUES.find(v => actionsFor(v).some(a => a.tab === tab))?.id || 'directory');
     });
-    listen(journal, 'click', () => navigate('fieldwork', { venueId: 'directory', initialView: 'mysteries' }));
+    listen(journal, 'click', () => { if (worldUI) worldUI.openJournal(); else navigate('fieldwork', { venueId: 'directory', initialView: 'mysteries' }); });
     listen(questButtons, 'click', event => {
       const button = event.target.closest('[data-city-quest-action]');
       if (button && !button.disabled && selected && questButtons.contains(button) && typeof options.onQuestAction === 'function') {
@@ -1712,6 +1715,7 @@
         for (const marker of actorSprites.values()) reveal(marker.name);
         for (const marker of homeMarkers.values()) reveal(marker.name);
         for (const label of exitLabels.values()) reveal(label);
+        for (const prop of caseProps.values()) reveal(prop.label);
       }
       nameCamera.on('followupdate', placePlayerName);
       function removePlayerNameClamp() {
@@ -1770,6 +1774,8 @@
         if (home) { walkHome(home.key); return; }
         const exit = exits.find(exit => Math.hypot(point.x - exit.x, point.y - exit.y) < 30);
         if (exit) { walkExit(exit.id); return; }
+        const prop = Array.from(caseProps.values()).find(prop => Math.abs(point.x - prop.x) <= 18 && Math.abs(point.y - prop.y) <= 18);
+        if (prop) { showVenue(VENUES.find(venue => venue.id === prop.venueId)); return; }
         const venue = VENUES.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
           (v.building && point.x >= v.building.x && point.x <= v.building.x + v.building.width &&
            point.y >= v.building.y && point.y <= v.building.y + v.building.height));
@@ -1780,6 +1786,7 @@
         redrawPath();
       });
       ready = true;
+      syncCaseProps();
       syncActorSprites();
       drawHomes();
       for (const button of moveButtons.values()) button.disabled = false;
@@ -1882,6 +1889,26 @@
         actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })) });
     }
 
+    function syncCaseProps() {
+      if (!scene || !ready) return;
+      const journal = options.caseJournal;
+      const placements = [
+        { nodeId: 'mystery:first-errand-receipt', venueId: 'workshop', name: 'Receipt', x: 244, y: 495 },
+        { nodeId: 'mystery:first-errand-book', venueId: 'waterfront', name: 'Ferry book', x: 695, y: 522 },
+        { nodeId: 'mystery:first-errand-side-door', venueId: 'workshop', name: 'Side door', x: 302, y: 488 }
+      ].filter(prop => journal?.selected === 'first-errand-case-v2' && journal.nodes?.some(node => node.id === prop.nodeId && node.status !== 'excluded'));
+      const signature = JSON.stringify(placements.map(prop => [prop.nodeId, journal.nodes.find(node => node.id === prop.nodeId).status]));
+      if (signature === casePropsSignature) return;
+      casePropsSignature = signature;
+      for (const prop of caseProps.values()) { prop.paper.destroy(); prop.label.destroy(); }
+      caseProps.clear();
+      for (const prop of placements) {
+        const complete = journal.nodes.find(node => node.id === prop.nodeId).status === 'completed';
+        const paper = scene.add.rectangle(prop.x, prop.y, 20, 16, complete ? 0x879581 : 0xe4ce94).setStrokeStyle(2, 0x362c21).setDepth(8);
+        const label = scene.add.text(prop.x, prop.y - 21, prop.name, { fontFamily: 'monospace', fontSize: '10px', color: '#fff0c7', backgroundColor: '#24322e', padding: { x: 3, y: 2 } }).setOrigin(.5).setDepth(9);
+        caseProps.set(prop.nodeId, { ...prop, paper, label, complete });
+      }
+    }
     function sceneState() {
         const camera = scene && scene.cameras.main;
         return {
@@ -1890,6 +1917,7 @@
           selectedActor, actorOpening, actorPage,
           trainingOpen: gameKind === 'training', gameDock: gameKind || null, gameOpening, worldUI: worldUI?.getState() || null, look,
           actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })),
+          caseProps: Array.from(caseProps.values(), prop => ({ nodeId: prop.nodeId, name: prop.name, x: prop.x, y: prop.y, complete: prop.complete })),
           actions: Object.fromEntries(VENUES.map(v => [v.id, actionsFor(v)])),
           player: player ? { x: player.x, y: player.y } : null,
           destinations: VENUES.map(v => ({ id: v.id, x: v.x, y: v.y, tab: v.tab })),
@@ -1902,6 +1930,16 @@
       }
 
     return {
+      async openJournal(graphId) {
+        if (destroyed || !worldUI) return false;
+        if (graphId !== undefined) {
+          if (typeof graphId !== 'string' || options.casePending || options.worldRecovery
+            || !options.caseJournal?.entries?.some(entry => entry.graphId === graphId)) return false;
+          await options.onSelectCase?.(graphId);
+          if (destroyed || options.caseJournal?.selected !== graphId) return false;
+        }
+        worldUI.openJournal(); return true;
+      },
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
         const identity = sceneIdentity();
@@ -1916,16 +1954,17 @@
         if (identity !== sceneIdentity() || worldScopeChanged) {
           hideGameDock(false); hideVenue(false);
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
-          options.worldAtlas = null; options.worldCollection = null; options.worldHomes = null;
+          options.worldAtlas = null; options.worldCollection = null; options.worldHomes = null; options.caseJournal = null;
           homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); hideActor(false); stopMovement();
           look = 'classic'; player?.setTint(lookTints.classic);
         }
         if (typeof nextOptions.onNavigate === 'function') options.onNavigate = nextOptions.onNavigate;
         if (typeof nextOptions.onPositionChange === 'function') options.onPositionChange = nextOptions.onPositionChange;
         if (typeof nextOptions.onQuestAction === 'function') options.onQuestAction = nextOptions.onQuestAction;
+        if (typeof nextOptions.onSelectCase === 'function') options.onSelectCase = nextOptions.onSelectCase;
         for (const key of ['renderTraining', 'renderFixer']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
-        for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
+        for (const key of ['venueActions', 'progress', 'npcQuests', 'caseJournal', 'casePending', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
         region = REGIONS[district.id] || REGIONS.docks;
         walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
@@ -1933,6 +1972,7 @@
         if (!worldUI) acceptHomes(options.worldHomes);
         updateGeometry();
         updateLabels();
+        syncCaseProps();
         updateHud();
         if (selected) { renderActions(selected); renderQuest(selected); }
         renderPresence(); renderActorDock(); renderGameDock();
@@ -1954,7 +1994,7 @@
         selectedActor = null; actorOpening++; actorBody.replaceChildren(); options.intel = []; options.objectives = []; options.actors = [];
         gameKind = ''; gameOpening++; gameBody.replaceChildren();
         options.encounterReceipt = null; options.encounterRecovery = false;
-        actorSprites.clear();
+        actorSprites.clear(); caseProps.clear();
         homeMarkers.clear(); exitLabels.clear(); homeSlots.clear(); permeableHomes.clear(); homes = []; homeBoard = null;
         if (game) { game.destroy(true); game = null; }
         player = null; scene = null;

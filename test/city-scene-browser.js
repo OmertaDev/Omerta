@@ -1335,6 +1335,18 @@ try {
   await assertVenueOnscreen(page);
   assert.deepEqual(requests.slice(beforeDirectory).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
     'Revealing venue details from the destination list submits no gameplay action.');
+  const selectTrackedCase = async graphId => {
+    await page.locator('[data-city-journal]').click();
+    const select = page.locator('[data-city-case-select]'); await select.waitFor();
+    const index = await select.locator('option').evaluateAll((options, id) => options.findIndex(option => option.value === id), graphId);
+    assert(index >= 0); await select.focus(); await page.keyboard.press('Home');
+    for (let step = 0; step < index; step++) await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(id => document.querySelector('[data-city-case-select]')?.value === id, graphId);
+    await page.locator('[data-city-world-close]').click();
+  };
+  await selectTrackedCase('neighborhood-initiation');
+  await page.locator('[data-destination="fixer"]').click();
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Nico Bellini'));
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
@@ -1368,12 +1380,18 @@ try {
   const nextDistrictStory = (await app.inject({ method: 'GET', url: '/v1/worldgraph/mysteries', headers })).json().mysteries
     .find(entry => entry.cityQuest === true && entry.districtId === 'docks' && !entry.started);
   assert(nextDistrictStory, 'The server publishes an unstarted Docks story after the newcomer quest.');
+  await selectTrackedCase(nextDistrictStory.graphId);
   await page.waitForFunction(title => document.querySelector('.omerta-city__next-move')?.dataset.cityGuidance === 'quest'
     && document.querySelector('.omerta-city__next-move strong')?.textContent === title, nextDistrictStory.title);
   assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), 'Visit The Fixer',
     'Completing the newcomer quest surfaces the next real district story.');
   await page.setViewportSize({ width: 1440, height: 1000 });
+  const journalPose = (await state(page)).position, journalReadStart = requests.length;
   await activateNeighborhood(page, '[data-city-journal]');
+  await page.locator('[data-city-case-select]').waitFor();
+  await assertPosition(page, journalPose, 'The in-world case journal retains the real walking pose');
+  assert.deepEqual(gameplayRequests(requests.slice(journalReadStart)), [], 'Opening the in-world case journal is read-only.');
+  await page.getByRole('button', { name: 'Full case archive & fieldwork →', exact: true }).click();
   await page.waitForSelector('#tab-fieldwork.on', { state: 'visible' });
   await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
   await page.locator('[data-fieldwork-view="inventory"]').click();

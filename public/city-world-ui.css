@@ -132,3 +132,8 @@
 @media (max-width: 680px) { .city-world__toolbar { gap: 4px; } .city-world__tracker { font-size: 11px; flex-basis: 130px; } .city-world__dock { padding-inline: 8px; } .city-world__tabs { gap: 3px; } .city-world__room { max-width: 300px; } }
 @media (prefers-reduced-motion: no-preference) { .city-world__speech { animation: city-world-arrive 180ms ease-out; } }
 @keyframes city-world-arrive { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+.city-world__evidence { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 8px; }
+.city-world__evidence .city-world__card { margin: 0; }
+.city-world__content [data-city-case-select] { width: 100%; min-height: 44px; box-sizing: border-box; background: #172927; color: #f1e6ca; border: 1px solid #718068; border-radius: 4px; padding: 6px; }
+.omerta-city .city-world__content [data-city-case-action] { display: block; min-height: 44px; margin-block: 6px; }
+.city-world__npc-memory { color: #ded4ba; border-left: 2px solid #a38a5a; padding-left: 8px; }

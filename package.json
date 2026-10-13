@@ -264,7 +264,7 @@
     "test:city-gameplay": "node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js",
     "test:city-gameplay:postgres": "node tools/city-gameplay-native.js",
     "test:player-intel:postgres": "node tools/player-intel-native.js",
-    "test:city-gameplay:browser": "node test/city-district-arcs-browser.js && node test/city-gameplay-panels-browser.js"
+    "test:city-gameplay:browser": "node test/city-district-arcs-browser.js && node test/city-gameplay-panels-browser.js && node test/city-case-story-browser.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
