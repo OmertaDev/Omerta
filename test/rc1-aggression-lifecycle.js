@@ -129,6 +129,10 @@ try {
   }
   async function act(accountId, label) {
     const view = await observe(accountId), policy = policies[accountId];
+    const actualTurn = (await invoke(accountId, 'GET', '/v1/agent/turn')).body;
+    const issuedConflictActions = actualTurn.actions.filter((action) => action.executable === true
+      && action.method === 'POST' && /^\/v1\/streets\/[a-zA-Z0-9_-]+\/(jump|search|fire)$/.test(action.path)).length;
+    originalConsole.log(JSON.stringify({ component: 'rc1-issued-combat-diagnostic', label, issuedConflictActions }));
     const decision = policy.choose(view, { logicalAt: at });
     const counters = policy.summary();
     originalConsole.log(JSON.stringify({ component: 'rc1-aggression-choice', label,
