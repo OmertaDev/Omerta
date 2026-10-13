@@ -15,6 +15,7 @@
 // guard is reserved. Content supplies data only: no callback, SQL, cash, or OMR adapter exists.
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
+import { assertEquipmentUsable, recordEquipmentUse } from './itemdurability.js';
 import {
   consumeItem,
   createItem,
@@ -1412,6 +1413,10 @@ async function applyEffects({ client, context, owner, instance, effects, mutatio
       results.push({ kind: 'item_consume', item });
     } else if (effect.adapter === 'item_escrow') {
       const itemId = await selectOwnedItem(client, owner, effect.templateId);
+      if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
+        && effect.templateId === 'item:precision_lock_tool') {
+        await assertEquipmentUsable(client, { itemId, owner, mutation });
+      }
       const item = await escrowItem(
         client, owner, instance.id, itemId,
         `mystery ${instance.graph_id} escrow`, mutation, 'used_in_mystery',
@@ -1455,10 +1460,18 @@ async function completeGraphNode({
     client, context, owner, actor, instance, states, node, interactionId, lock: true,
   });
   if (blockers.length) throwBlocker(blockers[0]);
-  await applyEffects({
+  const appliedEffects = await applyEffects({
     client, context, owner, instance, effects: [...(node.effects || []), ...extraEffects], mutation,
   });
   const row = await setNodeState(client, instance.id, node.id, 'completed');
+  if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
+    && node.id === 'mystery:belladonna-lock') {
+    for (const effect of appliedEffects) if (effect.kind === 'item_escrow'
+      && effect.item.templateId === 'item:precision_lock_tool') {
+      await recordEquipmentUse(client, { instanceId: instance.id, nodeId: node.id,
+        itemId: effect.item.id, mutation });
+    }
+  }
   await closeExcludedBranches(client, context, instance, node.excludes || []);
   const result = {
     ok: true,

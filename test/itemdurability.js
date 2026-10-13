@@ -4,7 +4,7 @@ if(native){const u=new URL(process.env.ITEM_DURABILITY_TEST_DATABASE_URL);assert
 const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),Q=await import('../src/itemdurability.js'),C=await import('../src/crafting.js');
 const pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn),owner={scope:'account',id:'wear-a'};
 try{
-await pool.query(Q.itemDurabilityDDL);
+
 for(const [a,c]of [['wear-a','wear-c'],['other-a','other-c'],['rollback-a','rollback-c']]){await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)',[a,'test']);await pool.query("INSERT INTO characters(id,account_id,name,season,loc,respect,cash) VALUES($1,$2,$1,1,'foundry',10000,10000)",[c,a]);await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)',[a]);await pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network')",[c]);}
 await tx(async c=>{await I.grantStack(c,owner,'mat:hardened_steel',1,'standard','condition fixture inputs','wear-steel');await I.grantStack(c,owner,'mat:salvage_parts',2,'standard','condition fixture inputs','wear-parts');});
 const craft=await tx(c=>C.craftWorldGraphRecipe(c,{accountId:'wear-a'},'recipe:precision_lock_tool','wear-canonical-craft')),itemId=craft.outputs[0].id;

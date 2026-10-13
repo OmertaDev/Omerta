@@ -24,11 +24,15 @@ const Items = await import('../src/items.js'), Crafting = await import('../src/c
 const Production = await import('../src/companyproduction.js'), Routes = await import('../src/routes/companyproduction.js');
 const { runLedgerInvariants } = await import('../src/invariants.js'), { runEstate } = await import('../src/social/estate.js');
 assert.throws(() => Routes.register({}, { pool: {} }), /authenticated canonical item transactions/);
-const app = await buildServer(); await app.pool.query(PRODUCTION_DDL);
-// Owned route registration fixture: shared main registration remains coordinator work.
-Routes.register(app, { pool: app.pool, auth: req => req.jwtVerify(), beforeCraft: async () => ({ productionAuthorized: true, agentGrantExpiresAt: null }) });
+const app = await buildServer();
+// Isolated component route fixture; the real server owns its separate mandatory F03 registration.
+const { default: Fastify } = await import('fastify');
+const component = Fastify();
+component.setErrorHandler((error,req,reply)=>reply.code(error.statusCode || (error instanceof G.GameError ? 400 : 500)).send({error:error.code||'internal',message:error.message}));
+Routes.register(component, { pool: app.pool, auth: async req => { try { if (!String(req.headers.authorization || '').startsWith('Bearer ')) throw Error('auth'); req.user = app.jwt.verify(req.headers.authorization.slice(7)); } catch { throw Object.assign(Error('Authentication required'), { statusCode: 401 }); } },
+  beforeCraft: async () => ({ productionAuthorized: true, agentGrantExpiresAt: null }) });
 let serial = 0;
-const call = (p, method, url, body, key = `production-http-${++serial}`, agent = false) => app.inject({ method, url, payload: body,
+const call = (p, method, url, body, key = `production-http-${++serial}`, agent = false) => (url.startsWith('/v1/company/production') ? component : app).inject({ method, url, payload: body,
   headers: { ...(p ? { authorization: `Bearer ${agent ? p.agent : p.token}` } : {}), 'idempotency-key': key } });
 const ok = async (...args) => { const reply = await call(...args); assert.equal(reply.statusCode, 200, reply.body); return reply.json(); };
 const tx = action => Items.withItemTransaction(app.pool, action);
@@ -202,4 +206,4 @@ try {
   await assert.rejects(run({ ...p, id: death.heirId }, chain(p), 'fresh-old-business'), /business_owner/);
   await global();
   console.log(`company production PASS ${native ? 'native PostgreSQL' : 'memory'}: owned open business, actual salvage-to-authored multi-stage inputs/output/provenance, canonical fee, atomic poisoned rollback, human/agent routes, exact replay/foreign boundaries, estate history${native ? ', same/different-key contention' : ''}`);
-} finally { await app.close(); await app.pool.end(); }
+} finally { await component.close(); await app.close(); await app.pool.end(); }

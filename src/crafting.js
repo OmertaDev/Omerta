@@ -980,7 +980,7 @@ export async function craftWorldGraphRecipe(
   if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {
     fail('salvage_required', 'Vehicle recipes must use salvageCar.');
   }
-  return withItemMutation(
+  const result = await withItemMutation(
     client,
     owner,
     'craft',
@@ -988,6 +988,10 @@ export async function craftWorldGraphRecipe(
     graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
+      if (recipe.id === 'recipe:tempered_precision_lock_tool') {
+        const account = (await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR UPDATE', [accountId])).rows[0];
+        if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
+      }
       if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');
       const asOf = Date.now();
       await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
@@ -1009,6 +1013,11 @@ export async function craftWorldGraphRecipe(
       };
     },
   );
+  if (recipe.id === 'recipe:tempered_precision_lock_tool') {
+    const { recordManufacturedQuality } = await import('./itemdurability.js');
+    await recordManufacturedQuality(client, { requestKey: idempotencyKey, itemId: result.outputs[0].id });
+  }
+  return result;
 }
 
 /** Execute one exact-car salvage recipe inside an active `withItemTransaction` callback. */

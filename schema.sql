@@ -8415,3 +8415,54 @@ CREATE INDEX IF NOT EXISTS business_season_owned ON business_season_entries(acco
 
 ALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
 CREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;
+
+-- Canonical business production, scoped game-only policies, and immutable physical equipment condition.
+CREATE TABLE IF NOT EXISTS company_production_receipts (
+  account_id TEXT NOT NULL,
+  account_ref TEXT REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+  run_id TEXT NOT NULL UNIQUE,
+  original_character TEXT REFERENCES characters(id),
+  business_id TEXT REFERENCES business_depots(id),
+  body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+  source_pin JSONB NOT NULL,
+  normalized_body JSONB NOT NULL,
+  receipt JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,request_key),
+  CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND business_id IS NULL)
+    OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND business_id IS NOT NULL
+      AND normalized_body->>'businessId' IS NOT NULL AND receipt->>'businessId' IS NOT NULL AND receipt->>'originalCharacter' IS NOT NULL
+      AND normalized_body->>'businessId'=business_id AND receipt->>'businessId'=business_id
+      AND receipt->>'originalCharacter'=original_character))
+);
+CREATE TABLE IF NOT EXISTS company_specializations (
+ business_id TEXT PRIMARY KEY REFERENCES business_depots(id), account_id TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL CHECK(revision BETWEEN 1 AND 2147483647),
+ kind TEXT NOT NULL CHECK(kind IN ('volume','quality','speed','niche')), recipe_ids JSONB NOT NULL,
+ tool_item_id TEXT REFERENCES item_instances(id), next_run_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+ allow_agent_production BOOLEAN NOT NULL DEFAULT false, grant_expires_at TIMESTAMPTZ,
+ max_batch_cash INT NOT NULL DEFAULT 0 CHECK(max_batch_cash BETWEEN 0 AND 1800),
+ max_grant_cash INT NOT NULL DEFAULT 0 CHECK(max_grant_cash BETWEEN 0 AND 1800),
+ grant_spent INT NOT NULL DEFAULT 0 CHECK(grant_spent BETWEEN 0 AND 1800));
+CREATE TABLE IF NOT EXISTS company_specialization_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity JSONB NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS company_specialization_runs (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, business_id TEXT NOT NULL REFERENCES business_depots(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL, total_crafts INT NOT NULL CHECK(total_crafts BETWEEN 1 AND 6),
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS item_durability_states (
+ item_id TEXT PRIMARY KEY REFERENCES item_instances(id), creation_event TEXT NOT NULL REFERENCES item_events(id),
+ remaining INT NOT NULL CHECK(remaining BETWEEN 0 AND 150), revision INT NOT NULL CHECK(revision>=1));
+CREATE TABLE IF NOT EXISTS item_durability_uses (
+ event_id TEXT PRIMARY KEY REFERENCES item_events(id), item_id TEXT NOT NULL REFERENCES item_durability_states(item_id),
+ instance_id TEXT NOT NULL REFERENCES mystery_instances(id), node_id TEXT NOT NULL,
+ mutation_key TEXT NOT NULL, before_condition INT NOT NULL CHECK(before_condition BETWEEN 10 AND 150),
+ after_condition INT NOT NULL CHECK(after_condition = before_condition - 10),
+ UNIQUE(item_id,instance_id,node_id));
+CREATE TABLE IF NOT EXISTS item_durability_birth_quality (
+ item_id TEXT PRIMARY KEY REFERENCES item_instances(id), craft_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ creation_event TEXT NOT NULL UNIQUE REFERENCES item_events(id), authority_account TEXT NOT NULL REFERENCES accounts(id),
+ request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), recipe_identity JSONB NOT NULL,
+ grade TEXT NOT NULL CHECK(grade='tempered'), maximum INT NOT NULL CHECK(maximum=150));

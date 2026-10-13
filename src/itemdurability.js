@@ -25,7 +25,7 @@ async function physical(client,itemId,owner) {
   const item=(await client.query('SELECT * FROM item_instances WHERE id=$1 FOR UPDATE',[id(itemId)])).rows[0];
   if(!item||item.template_id!==ITEM_DURABILITY.templateId||item.definition_hash!==null) fail('unsupported');
   if(owner&&(item.owner_scope!==owner.scope||item.owner_id!==owner.id||item.state!=='active')) fail('custody');
-  const created=(await client.query("SELECT id,template_id,quality FROM item_events WHERE item_id=$1 AND event_kind='created' AND provenance_kind='crafted' ORDER BY sequence LIMIT 2",[item.id])).rows;
+  const created=(await client.query("SELECT id,template_id,quality FROM item_events WHERE item_id=$1 AND event_kind='created' AND provenance_kind IN ('crafted','salvaged','awarded','imported') ORDER BY sequence LIMIT 2",[item.id])).rows;
   if(created.length!==1||created[0].template_id!==item.template_id||created[0].quality!=='standard') fail('creation');
   const state=(await client.query('SELECT * FROM item_durability_states WHERE item_id=$1 FOR UPDATE',[item.id])).rows[0];
   if(state&&state.creation_event!==created[0].id) fail('creation');
@@ -68,7 +68,7 @@ async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,m
   return {itemId,remaining:after,maximum:equipment.maximum,replayed:false};
 }
 export async function ownItemDurability(client,accountId,characterId) {
-  const rows=(await client.query("SELECT DISTINCT i.id,s.remaining,s.revision,b.maximum,b.grade FROM item_instances i LEFT JOIN item_durability_states s ON s.item_id=i.id LEFT JOIN item_durability_birth_quality b ON b.item_id=i.id JOIN item_events e ON e.item_id=i.id AND e.event_kind='created' AND e.provenance_kind='crafted' WHERE i.template_id=$1 AND i.definition_hash IS NULL AND ((i.owner_scope='account' AND i.owner_id=$2) OR (i.owner_scope='character' AND i.owner_id=$3)) ORDER BY i.id LIMIT 50",[ITEM_DURABILITY.templateId,id(accountId),id(characterId)])).rows;
+  const rows=(await client.query("SELECT DISTINCT i.id,s.remaining,s.revision,b.maximum,b.grade FROM item_instances i LEFT JOIN item_durability_states s ON s.item_id=i.id LEFT JOIN item_durability_birth_quality b ON b.item_id=i.id JOIN item_events e ON e.item_id=i.id AND e.event_kind='created' AND e.provenance_kind IN ('crafted','salvaged','awarded','imported') WHERE i.template_id=$1 AND i.definition_hash IS NULL AND ((i.owner_scope='account' AND i.owner_id=$2) OR (i.owner_scope='character' AND i.owner_id=$3)) ORDER BY i.id LIMIT 50",[ITEM_DURABILITY.templateId,id(accountId),id(characterId)])).rows;
   return {items:rows.map(r=>({itemId:r.id,remaining:Number(r.remaining??r.maximum??100),maximum:Number(r.maximum??100),manufacturingGrade:r.grade??'standard',revision:Number(r.revision??0),creationQualityUnchanged:true})),repairAvailable:false};
 }
 export async function collectItemConditionIssues(client) {
@@ -77,7 +77,7 @@ export async function collectItemConditionIssues(client) {
   for(const state of states) {
     const item=(await client.query('SELECT id,template_id,definition_hash FROM item_instances WHERE id=$1',[state.item_id])).rows[0];
     const created=(await client.query('SELECT * FROM item_events WHERE id=$1',[state.creation_event])).rows[0];
-    if(!item||item.template_id!==ITEM_DURABILITY.templateId||item.definition_hash!==null||created?.item_id!==item.id||created.template_id!==item.template_id||created.quality!=='standard'||created.event_kind!=='created'||created.provenance_kind!=='crafted') issues.push({itemId:state.item_id,reason:'creation'});
+    if(!item||item.template_id!==ITEM_DURABILITY.templateId||item.definition_hash!==null||created?.item_id!==item.id||created.template_id!==item.template_id||created.quality!=='standard'||created.event_kind!=='created'||!['crafted','salvaged','awarded','imported'].includes(created.provenance_kind)) issues.push({itemId:state.item_id,reason:'creation'});
     const birth=(await client.query('SELECT * FROM item_durability_birth_quality WHERE item_id=$1',[state.item_id])).rows[0],maximum=birth?150:100;
     const uses=(await client.query('SELECT u.*,e.sequence FROM item_durability_uses u LEFT JOIN item_events e ON e.id=u.event_id WHERE u.item_id=$1 ORDER BY e.sequence,u.event_id LIMIT 16',[state.item_id])).rows;
     if(uses.length>maximum/10||Number(state.remaining)!==maximum-uses.length*10) issues.push({itemId:state.item_id,reason:'condition_conservation'});
@@ -91,6 +91,15 @@ export async function collectItemConditionIssues(client) {
   }
   const births=(await client.query('SELECT * FROM item_durability_birth_quality ORDER BY item_id')).rows;
   for(const birth of births){try{const witness=await manufacturingWitness(client,birth.craft_key,birth.item_id,false);if(birth.request_hash!==witness.guard.request_hash||birth.creation_event!==witness.event.id||birth.authority_account!==witness.guard.owner_id||stable(birth.recipe_identity)!==stable(witness.recipe))throw Error('birth');}catch{issues.push({itemId:birth.item_id,reason:'manufacturing_birth'});}}
+  const craftGuards = (await client.query("SELECT idempotency_key,result_json FROM item_mutation_guards WHERE mutation_kind='craft' AND result_json IS NOT NULL ORDER BY idempotency_key")).rows;
+  for (const guard of craftGuards) {
+    let result; try { result = JSON.parse(guard.result_json); } catch { continue; }
+    if (result?.recipe?.recipeId === TEMPERED) for (const output of result.outputs || []) {
+      if (!births.some(birth => birth.item_id === output.id && birth.craft_key === guard.idempotency_key)) {
+        issues.push({ itemId: output.id, reason: 'manufacturing_birth_missing' });
+      }
+    }
+  }
   return issues;
 }
 async function manufacturingWitness(client,requestKey,itemId,atBirth) {

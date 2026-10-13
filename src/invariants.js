@@ -13,6 +13,7 @@ import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
 import { logisticsHubInvariant } from './companylogisticshubsinvariants.js';
 import { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';
+import { collectItemConditionIssues } from './itemdurability.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -695,6 +696,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);
   push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
+  const equipmentIssues = await collectItemConditionIssues(pool);
+  push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
   push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);

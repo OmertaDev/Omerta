@@ -4,7 +4,7 @@ if(native){const u=new URL(process.env.COMPANY_SPECIALIZATION_TEST_DATABASE_URL)
 process.env.DEPOT_PILOT='on';const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),S=await import('../src/companyspecialization.js'),Q=await import('../src/itemdurability.js'),C=await import('../src/crafting.js');
 const pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn),body=(kind,rev=0)=>({businessId:'specialization-depot',expectedRevision:rev,kind,recipeIds:kind==='niche'?['recipe:precision_lock_tool']:[],toolItemId:null,allowAgentProduction:false,maxBatchCashCost:0,maxGrantCashCost:0,agentGrantSeconds:0,renewAgentGrant:false});
 try{
-await pool.query(S.companySpecializationDDL);await pool.query(Q.itemDurabilityDDL);
+
 for(const [a,c]of [['spec-a','spec-c'],['foreign-a','foreign-c']]){await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)',[a,'test']);await pool.query("INSERT INTO characters(id,account_id,name,season,loc,respect,cash) VALUES($1,$2,$1,1,'foundry',10000,10000)",[c,a]);await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)',[a]);}
 await pool.query("INSERT INTO business_depots(id,owner_character,district,sale_price,bid_price,target_stock,reorder_at,restock_budget) VALUES('specialization-depot','spec-c','foundry',600,500,2,0,2000)");
 await tx(c=>I.grantStack(c,{scope:'account',id:'spec-a'},'mat:scrap_steel',30,'standard','paid-production test fixture','spec-materials'));

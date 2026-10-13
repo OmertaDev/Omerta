@@ -4,7 +4,7 @@ if(native){const u=new URL(process.env.ITEM_DURABILITY_QUALITY_TEST_DATABASE_URL
 const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),Q=await import('../src/itemdurability.js'),C=await import('../src/crafting.js');
 const pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn),owner={scope:'account',id:'quality-a'};
 try {
-await pool.query(Q.itemDurabilityDDL);
+
 for(const [a,c]of [['quality-a','quality-c'],['foreign-a','foreign-c']]){await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)',[a,'test']);await pool.query("INSERT INTO characters(id,account_id,name,season,loc,respect,cash) VALUES($1,$2,$1,1,'foundry',1000000,10000)",[c,a]);await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)',[a]);await pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network')",[c]);}
 await tx(async c=>{await I.grantStack(c,owner,'mat:scrap_steel',48,'standard','grade raw input fixture','quality-scrap');await I.grantStack(c,owner,'mat:salvage_parts',24,'standard','grade raw input fixture','quality-parts');for(let n=0;n<12;n++)await C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:hardened_steel','quality-paid-steel-'+n);});
 const manufacture=key=>tx(async c=>{const result=await C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:tempered_precision_lock_tool',key);const grade=await Q.recordManufacturedQuality(c,{requestKey:key,itemId:result.outputs[0].id});return {result,grade};});
@@ -15,7 +15,12 @@ assert((await manufacture('quality-first')).grade.replayed);assert.equal((await 
 await assert.rejects(tx(c=>Q.recordManufacturedQuality(c,{requestKey:'quality-first',itemId:first.grade.itemId,grade:'override'})),/birth_terms/);
 const ordinary=await tx(c=>C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:precision_lock_tool','quality-ordinary'));await assert.rejects(tx(c=>Q.recordManufacturedQuality(c,{requestKey:'quality-ordinary',itemId:ordinary.outputs[0].id})),/fresh_birth_required/);
 assert.equal((await tx(c=>Q.assertEquipmentUsable(c,{itemId:ordinary.outputs[0].id,owner}))).maximum,100);
-const old=await tx(c=>C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:tempered_precision_lock_tool','quality-missing-hook'));await assert.rejects(tx(c=>Q.recordManufacturedQuality(c,{requestKey:'quality-missing-hook',itemId:old.outputs[0].id})),/fresh_birth_required/);
+const old=await tx(c=>C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:tempered_precision_lock_tool','quality-missing-hook'));
+const oldCertificate=(await pool.query('SELECT * FROM item_durability_birth_quality WHERE item_id=$1',[old.outputs[0].id])).rows[0];
+await pool.query('DELETE FROM item_durability_birth_quality WHERE item_id=$1',[old.outputs[0].id]);
+await assert.rejects(tx(c=>Q.recordManufacturedQuality(c,{requestKey:'quality-missing-hook',itemId:old.outputs[0].id})),/fresh_birth_required/);
+assert((await Q.collectItemConditionIssues(pool)).some(issue=>issue.itemId===old.outputs[0].id&&issue.reason==='manufacturing_birth_missing'),'Missing birth is corruption, not an ordinary quality downgrade');
+await pool.query('INSERT INTO item_durability_birth_quality(item_id,craft_key,creation_event,authority_account,request_hash,recipe_identity,grade,maximum) VALUES($1,$2,$3,$4,$5,$6,$7,$8)',[oldCertificate.item_id,oldCertificate.craft_key,oldCertificate.creation_event,oldCertificate.authority_account,oldCertificate.request_hash,oldCertificate.recipe_identity,oldCertificate.grade,oldCertificate.maximum]);
 const baseline=(await pool.query("SELECT cash FROM characters WHERE id='quality-c'")).rows[0].cash,count=(await pool.query('SELECT * FROM item_durability_birth_quality')).rows.length;
 await assert.rejects(tx(async c=>{const result=await C.craftWorldGraphRecipe(c,{accountId:'quality-a'},'recipe:tempered_precision_lock_tool','quality-rollback');await Q.recordManufacturedQuality(c,{requestKey:'quality-rollback',itemId:result.outputs[0].id});throw Error('quality rollback');}),/quality rollback/);
 assert.equal((await pool.query('SELECT * FROM item_durability_birth_quality')).rows.length,count);assert.equal((await pool.query("SELECT cash FROM characters WHERE id='quality-c'")).rows[0].cash,baseline);
