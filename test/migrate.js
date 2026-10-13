@@ -651,6 +651,23 @@ const DISPOSITION = {
   company_governance_proposals: 'special', // original-party death retires pending config proposals; fresh execution requires both original votes and current source policy
   company_governance_votes: 'ledger', // immutable original account, actor, hash and consent history grants no inherited votes
   company_acquisitions: 'special', // original-party death retires pending offers; executed title and paired payments remain immutable history
+  company_restructuring_plans: 'special', // actual post-death hook retires ready original-owner plans without moving cash or inheriting config authority
+  company_restructuring_requests: 'ledger', // immutable original actor/account/body/key acknowledgements grant no fresh owner authority
+  commercial_disputes: 'special', // actual post-death hook retires original-party consent; canonical order and Delivery books own all value
+  commercial_dispute_requests: 'ledger', // original actor reconciliation receipts retain canonical source identity without heir settlement rights
+  equipment_insurance_policies: 'escrow', // real reserve survives only original living obligations; actual estate burns unrecoverable escrow, without heir claim authority
+  infrastructure_concessions: 'special', // actual original-party estate hook retires concession consent while canonical leases retain their normal recovery
+  infrastructure_concession_requests: 'ledger', // original actor consent and source receipts are historical, without fresh lease or policy grants
+  territory_economics_profiles: 'special', // actual post-death hook disables the original profile and preserves history without inherited tribute authority
+  territory_economics_requests: 'ledger', // historical original-owner requests cannot authorize heir payments
+  coordination_instances: 'metadata', // immutable original actor and definition bind fresh execution; heirs may read history or cancel metadata without action grants
+  coordination_events: 'ledger', // original action, actor and definition event lineage survives without fresh execution authority
+  coordination_claims: 'ledger', // event-bound knowledge/discovery evidence remains historical and never grants execution authority
+  crew_logistics_links: 'metadata', // fresh visibility requires current living generations, Crew and source; shared execution authority is explicitly absent
+  city_home_visitors: 'special', // clearInboundPointers revokes original host/guest relationships on actual estate or resident retirement
+  city_npc_favors: 'wiped', // actual owner death clears its favors; target trust remains historical and current NPC generation remains required
+  city_encounters: 'wiped', // actual owner estate clears encounter progress
+  city_home_activities: 'special', // clearInboundPointers closes original host activity as host_departed
   game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
   game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value
@@ -706,7 +723,8 @@ const charTables = new Set();
     // enumerating members: a suffix rule generalises, a list of five does not.
     // Portfolio history retains an original_lender character FK. Its metadata
     // disposition must remain checked even though it has no live claim authority.
-    if (/(?:^|,)\s*(character_id|[a-z0-9_]+_(character|char|fighter|lender)|hunter)\b\s+(?:TEXT|VARCHAR|UUID|INT|INTEGER|BIGINT)\b/im.test(body)) charTables.add(mm[1]);
+    if (/(?:^|,)\s*(character_id|[a-z0-9_]+_(character|char|fighter|lender)|hunter)\b\s+(?:TEXT|VARCHAR|UUID|INT|INTEGER|BIGINT)\b/im.test(body)
+      || /\bREFERENCES\s+characters\s*\(\s*id\s*\)/i.test(body)) charTables.add(mm[1]);
   }
 }
 // (a) every character_id table is classified; no stale classifications
@@ -1224,5 +1242,5 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
   }
 }
 
-console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id OR a named %_character role) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: ${Object.keys(PHASE1_DISPOSITION).length} world-graph tables and ${Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).length} generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.`);
+console.log(`✅ Schema-integrity test passed — MED-1: ${stmts.length} idempotent ADD COLUMN IF NOT EXISTS statements derived from schema.sql (no leakage, clean no-op on a fresh DB, a dropped later-added column is RE-ADDED). MED-2: all ${charTables.size} character-scoped tables (character_id, a named role or a direct character FK) have a documented death disposition (${Object.values(DISPOSITION).filter((v) => v === 'wiped').length} wiped / ${Object.values(DISPOSITION).filter((v) => v === 'special').length} special / ${Object.values(DISPOSITION).filter((v) => v === 'escrow').length} escrow / ${Object.values(DISPOSITION).filter((v) => v === 'ledger' || v === 'log').length} ledger — a new unclassified table fails CI closed, and every wiped/special table has a DELETE or a resolving status UPDATE in src). Phase 1: ${Object.keys(PHASE1_DISPOSITION).length} world-graph tables and ${Object.keys(PHASE1_OWNER_TUPLE_DISPOSITION).length} generic owner/depositor tuple roles have explicit fail-closed no-inheritance dispositions.`);
 process.exit(0);
