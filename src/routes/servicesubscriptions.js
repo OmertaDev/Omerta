@@ -1,0 +1,4 @@
+import { withItemTransaction } from '../items.js';
+import * as Subscriptions from '../servicesubscriptions.js';
+import { GameError } from '../game.js';
+export function register(app,{pool,auth}){const base='/v1/company/service-subscriptions';app.get(base,{preHandler:auth},req=>Subscriptions.ownServiceSubscriptions(pool,req.user.sub));app.post(base,{preHandler:auth},req=>withItemTransaction(pool,c=>Subscriptions.createServiceSubscription(c,req.user.sub,req.body,req.headers['idempotency-key'])));app.post(`${base}/:id/close`,{preHandler:auth},req=>{if(req.body&&Object.keys(req.body).length)throw new GameError('service_subscription','terms');return withItemTransaction(pool,c=>Subscriptions.closeServiceSubscription(c,req.user.sub,req.params.id,req.headers['idempotency-key']));});}
