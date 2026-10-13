@@ -24,7 +24,7 @@ if(process.argv.includes('--postgres')){
   assert(['postgres:','postgresql:'].includes(endpoint.protocol));assert.match(endpoint.pathname,/^\/equipment_migration_test_[a-f0-9]{12}$/);assert(!endpoint.search&&!endpoint.hash);
   const client=new pg.Client({connectionString:endpoint.href});await client.connect();
   try{
-    assert.match((await client.query('SHOW server_version')).rows[0].server_version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);assert.equal((await client.query('SELECT current_user')).rows[0].current_user,local?'pilot_runner':'postgres');
+    const nativeVersion=(await client.query('SHOW server_version')).rows[0].server_version;assert.match(nativeVersion,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);assert.equal((await client.query('SELECT current_user')).rows[0].current_user,local?'pilot_runner':'postgres');
     assert.equal((await client.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0);
     await client.query(source.current);
     const read=async()=>({constraints:(await client.query("SELECT t.relname::text table_name,c.conname::text name,c.contype::text type,c.convalidated validated FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid WHERE c.conrelid='item_events'::regclass AND c.conname='item_event_kind'")).rows});
@@ -43,6 +43,6 @@ if(process.argv.includes('--postgres')){
       assert.throws(()=>equipmentEconomyMigrationProjection(source.current,{constraints:[{...metadata.constraints[0],validated:false}]}),error=>error.code==='ERR_ASSERTION');
       const invalidMetadata=await read();assert.throws(()=>projection.verifyMetadata(invalidMetadata),error=>error.code==='ERR_ASSERTION');
     }finally{await client.query('ROLLBACK');}
-    console.log('Equipment migration native18.4 PASS: independently compiled full current/predecessor schemas equal frozen predicates; real NOT VALID refusal.');
+    console.log('Equipment migration native '+nativeVersion+' PASS: independently compiled full current/predecessor schemas equal frozen predicates; real NOT VALID refusal.');
   }finally{await client.end();}
 }

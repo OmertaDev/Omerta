@@ -98,7 +98,7 @@ try {
   const delivery=compile({$ref:'#/components/schemas/ContractAuctionAwardReceipt'});
   assert(!delivery({...replay,delivery:{...replay.delivery,cryptoBacking:true}}));
   assert(!delivery({...replay,fulfillment:'delivered'}));
-  console.log(`Equipment economy contracts positive PASS: 21 actual registered authenticated routes, closed requests/history/receipts, actual replay variants, sealed bid projections and canonical award delivery; component ${f.native?'native18.4':'memory'} contract proof only.`);
+  console.log(`Equipment economy contracts positive PASS: 21 actual registered authenticated routes, closed requests/history/receipts, actual replay variants, sealed bid projections and canonical award delivery; component ${f.native?'native '+f.version:'memory'} contract proof only.`);
   // These exact negatives require the coordinator's registrar tightening. They
   // intentionally fail against the earlier40479023 dependency; no assertion waiver.
   const negativeResults=[];

@@ -4,6 +4,7 @@ import addFormats from 'ajv-formats';
 import { buildOpenApi } from '../src/agentgateway.js';
 assert(!process.env.DATABASE_URL, 'Refuse ambient endpoint');
 const native = process.argv.includes('--postgres');
+let nativeVersion = null;
 if (native) {
   const u = new URL(process.env.EQUIPMENT_RENTAL_INTEGRATION_TEST_DATABASE_URL);
   assert.equal(u.hostname, '127.0.0.1'); assert(['postgres:', 'postgresql:'].includes(u.protocol));
@@ -12,7 +13,7 @@ if (native) {
   const ci = u.port === '5432' && u.username === 'postgres' && u.password === 'pgcheck';
   assert(local || ci, 'Owned fresh native fixture endpoint only');
   const { default: pg } = await import('pg'), p = new pg.Pool({ connectionString: u.href });
-  try { assert.match((await p.query('SHOW server_version')).rows[0].server_version, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
+  try { nativeVersion = (await p.query('SHOW server_version')).rows[0].server_version; assert.match(nativeVersion, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
     assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
     assert.equal((await p.query('SELECT current_user AS role')).rows[0].role, local ? 'pilot_runner' : 'postgres');
   } finally { await p.end(); }
@@ -175,5 +176,5 @@ try {
   assert.equal((await custody(deadBorrower.tool)).owner_id, landlord.account, 'No tool mint or title change');
   const heirBooks = await Inv.runLedgerInvariants(pool);assert(heirBooks.ok, JSON.stringify(heirBooks.checks.filter(c=>!c.ok)));
   console.log('Post-estate independent canonical books:', finalBooks.checks.length, 'checks, zero drift');
-  console.log(`equipment rental integration ${native ? 'native18.4' : 'memory'} PASS: actual shared rental/Mystery/mod estate/fire registrars; real paid leases, 100/150 birth, same UID relay back, once wear, cancel/replay/privacy, actual killer loot+refund and dead borrower burn${native ? '; two-key contention, post-item-wait expiry and full native late-fault rollback' : '; native concurrency/rollback not claimed by memory'}.`);
+  console.log(`equipment rental integration ${native ? 'native '+nativeVersion : 'memory'} PASS: actual shared rental/Mystery/mod estate/fire registrars; real paid leases, 100/150 birth, same UID relay back, once wear, cancel/replay/privacy, actual killer loot+refund and dead borrower burn${native ? '; two-key contention, post-item-wait expiry and full native late-fault rollback' : '; native concurrency/rollback not claimed by memory'}.`);
 } finally { await app.close(); }
