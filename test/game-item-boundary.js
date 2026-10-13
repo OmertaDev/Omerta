@@ -63,6 +63,27 @@ try {
     return { shouldNotCommit: true };
   }), /positive whole number/);
   assert.equal((await pool.query('SELECT cash FROM characters WHERE id=$1', ['one-actor'])).rows[0].cash, beforeCash);
+  const scopedRows = await rows(), trace = [];
+  const hooks = {
+    withActionScope: async (client, accountId, execute) => {
+      assert.equal(accountId, 'one'); I.assertItemTransaction(client); trace.push('scope-before');
+      const result = await execute(); trace.push('scope-after');
+      throw new G.GameError('scope_fixture_failure', 'source expired after action');
+    },
+    beforeCharacterLock: async client => { I.assertItemTransaction(client); trace.push('prelock'); },
+  };
+  await assert.rejects(G.withCharacter(pool, 'one', async (ch, client) => {
+    trace.push('action'); ch.cash = Number(ch.cash) + 123;
+    await I.grantStack(client, owner, 'mat:salvage_parts', 1, 'standard', 'scoped rollback', 'game-item-scoped');
+    return { completed: true };
+  }, hooks), /source expired after action/);
+  assert.deepEqual(trace, ['scope-before', 'prelock', 'action', 'scope-after']);
+  assert.deepEqual(await rows(), scopedRows);
+  assert.equal((await pool.query('SELECT cash FROM characters WHERE id=$1', ['one-actor'])).rows[0].cash, beforeCash);
+  await assert.rejects(G.withCharacter(pool, 'one', () => ({ ignored: true }), { withActionScope: async () => ({ fabricated: true }) }), /Couldn't complete/);
+  await assert.rejects(G.withCharacter(pool, 'one', async () => ({ completed: true }), {
+    withActionScope: async (_, __, execute) => { const result = await execute(); try { await execute(); } catch { /* cannot conceal a second invocation */ } return result; },
+  }), /Couldn't complete/);
   const raw = await pool.connect();
   try { assert.throws(() => I.assertItemTransaction(raw), /active withItemTransaction/); } finally { raw.release(); }
   console.log(JSON.stringify({ status: 'PASS', native, checks: ['canonical single and pair brand', 'released and raw clients refused', 'late item rollback', 'caught leaf poison rolls back', 'phase-one settlement remains separate'] }));

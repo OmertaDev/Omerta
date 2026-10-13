@@ -1112,11 +1112,34 @@ async function settleIfDue(pool, accountId) {
   } finally { client.release(); }
 }
 
+// Trusted source adapters can keep their private authority scope around prelocks and gameplay.
+// Their final source validation finishes before actor persistence, so a rejected scope never
+// persists an in-memory actor in the nontransactional memory driver. Item commit stays outside.
+async function runCharacterActionScope(client, accountId, execute, hook) {
+  if (hook == null) return execute();
+  if (typeof hook !== 'function') throw new GameError('action_scope', "Couldn't complete that action. Try again.");
+  let called = false, completed = false, failure = null, ownedResult;
+  const result = await hook(client, accountId, async () => {
+    if (called) {
+      failure = new GameError('action_scope', "Couldn't complete that action. Try again.");
+      throw failure;
+    }
+    called = true;
+    try { ownedResult = await execute(); completed = true; return ownedResult; }
+    catch (error) { failure ||= error; throw error; }
+  });
+  if (failure) throw failure;
+  if (!completed || result !== ownedResult) throw new GameError('action_scope', "Couldn't complete that action. Try again.");
+  assertItemTransactionHealthy(client);
+  return ownedResult;
+}
+
 export async function withCharacter(pool, accountId, fn, lockHooks = null) {
   await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
   try {
     const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
     try {
+    const action = await runCharacterActionScope(client, accountId, async () => {
     const prelockState = lockHooks?.beforeCharacterLock
       ? await lockHooks.beforeCharacterLock(client, accountId) : null;
     // THE DEATH RACE. Found by playing: get killed with the tab open and the very next request
@@ -1169,11 +1192,12 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId, pool };
     const result = await fn(ch, client, h);
     assertItemTransactionHealthy(client);
-
-    if (ch.alive !== false) await persistCharacter(client, ch); // a killed row is finalized by the estate
-    await persistKitchen(client, ch, owned);
-    await persistAccount(client, accountId, acct);
     return { ch, acct, owned, result };
+    }, lockHooks?.withActionScope);
+    if (action.ch.alive !== false) await persistCharacter(client, action.ch);
+    await persistKitchen(client, action.ch, action.owned);
+    await persistAccount(client, accountId, action.acct);
+    return action;
     } catch (error) { throw deadlockToRetry(error); }
     });
     // Hooks below use the pool themselves. Return this connection first: a saturated pool must
