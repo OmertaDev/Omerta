@@ -246,11 +246,16 @@ try {
         right: (bounds.right - camera.worldView.x) * camera.zoom * box.width / camera.width }; });
       const tools = document.querySelector('[data-city-world-tools]'), guidance = document.querySelector('.omerta-city__next-move');
       const close = document.querySelector('[data-city-world-close]'), dock = document.querySelector('.city-world__dock');
+      const overlays = ['.omerta-city__world-hud', '.omerta-city__minimap', '.omerta-city__next-move',
+        '.omerta-city__controls', '.city-world__quick-nav', '.city-world__dock', '.omerta-city__actor-dock',
+        '.omerta-city__training', '.omerta-city__interaction', '.omerta-city__overview[open]', '#toast.show']
+        .map(selector => document.querySelector(selector)).filter(node => node && !node.hidden)
+        .map(rect).filter(bounds => bounds.width > 0 && bounds.height > 0);
       const bottom = ['bnav', 'toast'].map(id => document.getElementById(id)).filter(node => {
         const style = node && getComputedStyle(node), bounds = node?.getBoundingClientRect();
         return bounds?.height && ['fixed', 'sticky'].includes(style.position) && (node.id !== 'toast' || node.classList.contains('show'));
       }).reduce((limit, node) => Math.min(limit, node.getBoundingClientRect().top), innerHeight);
-      return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar,
+      return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar, overlays,
         header: rect(document.querySelector('#top')), tools: rect(tools), toolsHit: hit(tools), guidance: rect(guidance),
         close: close && !close.closest('[hidden]') ? { bounds: rect(close), hit: hit(close) } : null, dock: dock && !dock.hidden ? rect(dock) : null, width: innerWidth, height: innerHeight,
         overflow: document.documentElement.scrollWidth, tint: sprite.tintTopLeft, bottom,
@@ -263,12 +268,24 @@ try {
     const view = await inspectFrame(page), detail = JSON.stringify(view);
     assert(view.tools.height >= 44 && view.toolsHit && view.tools.top >= 0 && view.tools.bottom <= view.height, 'World tools stay visible in the global header: ' + detail);
     assert(view.overflow <= view.width + 1, 'The header does not widen the phone: ' + detail);
-    assert(view.hud.top >= view.header.bottom - 1 && view.canvas.bottom <= view.bottom + 1, 'HUD and map remain in the usable frame: ' + detail);
+    assert(view.hud.top >= view.header.bottom - 1 && Math.abs(view.canvas.top - view.header.bottom) <= 1
+      && Math.abs(view.canvas.bottom - view.height) <= 1 && view.canvas.left === 0 && Math.abs(view.canvas.width - view.width) <= 1,
+    'The map fills the browser below the real header; the HUD overlays it without shrinking the world: ' + detail);
     assert(Math.abs(view.canvas.height - view.engine.height) <= 1 && Math.abs(view.canvas.width - view.engine.width) <= 1, 'CSS and Phaser dimensions agree: ' + detail);
     assert(view.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= view.canvas.height + 1 && bounds.left >= -1 && bounds.right <= view.canvas.width + 1), 'Complete actual avatar/name stay visible: ' + detail);
+    assert(view.avatar.every(bounds => view.overlays.every(overlay =>
+      bounds.right + view.canvas.left <= overlay.left + 1 || bounds.left + view.canvas.left >= overlay.right - 1
+      || bounds.bottom + view.canvas.top <= overlay.top + 1 || bounds.top + view.canvas.top >= overlay.bottom - 1)),
+    'Actual avatar and full name remain clear of every HUD, activity and feedback overlay: ' + detail);
     if (view.close) assert(view.close.bounds.height >= 44 && view.close.hit, 'The world-panel close remains usable: ' + detail);
     if (view.dock) assert(view.dock.top >= view.header.bottom - 1 && view.dock.bottom <= view.bottom + 1, 'The entire bounded world dock stays above fixed chrome: ' + detail);
     return view;
+  };
+  const assertHudReadingTarget = async page => {
+    assert(await page.locator('.omerta-city__world-hud').evaluate(node => {
+      const overflow = node.scrollHeight > node.clientHeight;
+      return overflow ? node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll') : !node.hasAttribute('tabindex');
+    }), 'Only actual HUD overflow adds a keyboard reading target; closing a window does not discard unread resources.');
   };
 
   const assertPanelLoading = async (page, label) => {
@@ -391,7 +408,8 @@ try {
   const pose = (await state(page)).position, handles = await page.evaluate(() => window.__worldHandles.length), initial = requests.length;
   let view = await assertFrame(page);
   if (process.env.CITY_WORLD_SHOTS) { fs.mkdirSync(process.env.CITY_WORLD_SHOTS, { recursive: true }); await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-entry-375.png') }); }
-  assert(view.guidance.top >= view.header.bottom - 1 && view.guidance.bottom <= view.canvas.top, 'A fresh player sees the issued NPC objective above the map: ' + JSON.stringify(view));
+  assert(view.guidance.height > 0 && view.guidance.top >= view.hud.bottom && view.guidance.bottom <= view.canvas.bottom,
+    'A fresh player sees the issued NPC objective below the HUD inside the open map: ' + JSON.stringify(view));
   assert.match(await page.locator('.omerta-city__next-move').textContent(), /Visit The Fixer/);
   assert.equal(requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0, 'Default-off chat makes no feed request.');
   await panel(page, 'bag');
@@ -713,10 +731,18 @@ try {
         const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
         assert.equal(frameBeforeReading.header.height, 177.75);
         assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
-        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
-          'Resources and the complete warning are initially visible in the supported CI geometry.');
+        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.resources.bottom <= frameBeforeReading.hud.bottom,
+          'The current resource values are initially visible before reading the bounded HUD: ' + JSON.stringify(frameBeforeReading));
         assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
           'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
+        await hud.focus(); await page.keyboard.press('ArrowDown');
+        await page.waitForFunction(() => {
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
+          return warning.top >= hud.top && warning.bottom <= hud.bottom;
+        });
+        assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness,
+          'Native keyboard scrolling reveals the complete current warning without abbreviating it.');
+        await assertFrame(page);
         await hud.focus(); await readHudEnd();
         const feedbackVisible = () => {
           const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
@@ -732,10 +758,10 @@ try {
           if (values.length === 30) resolve(values); else requestAnimationFrame(sample);
         }; requestAnimationFrame(sample); }));
         assert(readingFrames.every(frame => frame.outer === reading.outer && frame.inner === reading.inner && frame.focused),
-          'Passive fitting preserves both reading positions and focus without ResizeObserver.');
+          'Passive fitting preserves both reading positions and focus without ResizeObserver: ' + JSON.stringify({ reading, readingFrames }));
         await page.locator('#toast.show').focus();
         await page.locator('[data-city-world-close]').click();
-        assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
+        await assertHudReadingTarget(page);
         await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
         await panel(page, 'map'); const pressure = await assertFrame(page);
         assert.equal(pressure.header.height, 215);
@@ -769,14 +795,21 @@ try {
         await page.waitForFunction(() => document.querySelector('#toast').scrollTop > 0);
         await new Promise(resolve => setTimeout(resolve, 3500));
         assert(await page.locator('#toast.show').isVisible(), 'The existing dismiss clock pauses while the player reads the focused toast.');
+        const panelBeforeDismissal = await page.locator('.city-world__dock').boundingBox();
         await page.keyboard.press('Escape');
         assert.equal(await page.locator('#toast.show').count(), 0); assert.equal((await state(page)).worldUI.panel, 'map', 'Dismissing the focused toast does not close the gameplay panel.');
+        await page.waitForFunction(before => {
+          const dock = document.querySelector('.city-world__dock').getBoundingClientRect();
+          return dock.bottom > before.bottom + 20 && dock.height > before.height;
+        }, { bottom: panelBeforeDismissal.y + panelBeforeDismissal.height, height: panelBeforeDismissal.height });
+        assert.deepEqual((await state(page)).position, walkingPose, 'Real toast dismissal restores window space without a resize event or player movement.');
+        await assertFrame(page);
         assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1 && !node.contains(document.activeElement)),
           'Escape retires the toast and all descendant focus targets.');
         await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
       }
       await page.locator('[data-city-world-close]').click();
-      assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
+      await assertHudReadingTarget(page);
       assert.deepEqual((await state(page)).position, walkingPose);
     }
   } finally { await restoreToastClock(); }
@@ -814,11 +847,17 @@ try {
   assert.equal(await page.evaluate(() => window.__toastActions), 1); assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1));
   const tiny = await newPage({ width: 320, height: 568 }, { noResizeObserver: true });
   const tinyStart = tiny.requests.length, tinyInitial = await assertFrame(tiny.page);
-  assert(tinyInitial.guidance.top >= tinyInitial.header.bottom - 1 && tinyInitial.guidance.bottom <= tinyInitial.canvas.top,
+  assert(tinyInitial.guidance.height > 0 && tinyInitial.guidance.top >= tinyInitial.hud.bottom && tinyInitial.guidance.bottom <= tinyInitial.canvas.bottom,
     'The first short-phone Player entry shows its issued objective with the map.');
   await panel(tiny.page, 'map'); await tiny.page.locator('[data-city-waypoint="stories"]').click();
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
   await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('ELENA SERRA'));
+  await tiny.page.locator('.omerta-city__world-hud').focus(); await tiny.page.keyboard.press('End');
+  await tiny.page.waitForFunction(() => {
+    const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), dialogue = document.querySelector('.city-world__dialogue').getBoundingClientRect();
+    return dialogue.top >= hud.top && dialogue.bottom <= hud.bottom;
+  });
+  assert(await tiny.page.locator('.city-world__speech').evaluate(node => node.hidden), 'World-first dialogue uses the readable HUD instead of a bubble obscured by it.');
   await assertFrame(tiny.page);
   assert.deepEqual(mutations(tiny.requests.slice(tinyStart)), [], 'Short-frame authored NPC dialogue/waypoints remain read-only.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-dialogue-320.png') });

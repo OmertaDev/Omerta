@@ -423,11 +423,13 @@ try {
       const guide = document.querySelector('.omerta-city__next-move').getBoundingClientRect();
       const map = document.querySelector('.omerta-city__viewport').getBoundingClientRect();
       const button = document.querySelector('[data-city-nextmove]').getBoundingClientRect();
-      return { top: guide.top, bottom: guide.bottom, mapTop: map.top, buttonWidth: button.width,
+      const hit = document.elementFromPoint(button.left + button.width / 2, button.top + button.height / 2);
+      return { top: guide.top, bottom: guide.bottom, mapTop: map.top, worldFirst: document.querySelector('.omerta-city').classList.contains('is-world-first'),
+        hit: hit === document.querySelector('[data-city-nextmove]') || document.querySelector('[data-city-nextmove]').contains(hit), buttonWidth: button.width,
         buttonHeight: button.height, width: document.documentElement.scrollWidth, viewport: innerWidth, height: innerHeight };
     });
-    assert(layout.top >= -1 && layout.bottom <= layout.height + 1 && layout.bottom <= layout.mapTop + 1,
-      'The current quest objective is visible above the map: ' + JSON.stringify(layout));
+    assert(layout.top >= -1 && layout.bottom <= layout.height + 1 && layout.hit && (layout.worldFirst || layout.bottom <= layout.mapTop + 1),
+      'The current quest objective is visible and reachable beside the world: ' + JSON.stringify(layout));
     assert(layout.width <= layout.viewport + 1 && layout.buttonWidth >= 44 && layout.buttonHeight >= 44,
       'The objective and destination control fit a phone with a usable touch target.');
     const beforeVisit = requests.length;
@@ -440,19 +442,45 @@ try {
   };
   const assertEntered = async page => {
     await page.waitForFunction(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas'));
-    const layout = await page.evaluate(() => {
-      const canvas = document.querySelector('.omerta-city__canvas canvas'), rect = canvas.getBoundingClientRect();
-      return { top: rect.top, bottom: rect.bottom, height: innerHeight,
-        toastTop: document.getElementById('toast').classList.contains('show') ? document.getElementById('toast').getBoundingClientRect().top : innerHeight,
-        hits: [rect.top + 3, rect.top + rect.height / 2, rect.bottom - 3].map(y => document.elementFromPoint(rect.left + rect.width / 2, y) === canvas),
-        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => {
-          const node = document.getElementById(id), rect = node?.getBoundingClientRect();
-          return { id, position: node && getComputedStyle(node).position, top: rect?.top, bottom: rect?.bottom };
-        }) };
+    await assertWorldHud(page);
+  };
+  const readHudByKeyboard = async page => {
+    const hud = page.locator('.omerta-city__world-hud'), priorFocus = await page.evaluateHandle(() => document.activeElement);
+    const priorScroll = await hud.evaluate(node => node.scrollTop), priorPose = (await state(page)).position;
+    const read = () => hud.evaluate(node => {
+      const clip = node.getBoundingClientRect(), fragments = [];
+      for (const [group, control] of [...node.querySelectorAll('[data-city-resource]'), node.querySelector('.omerta-city__readiness')].entries()) {
+        const walker = document.createTreeWalker(control, NodeFilter.SHOW_TEXT); let text, index = 0;
+        while ((text = walker.nextNode())) {
+          if (!text.textContent.trim()) continue;
+          const range = document.createRange(); range.selectNodeContents(text);
+          for (const bounds of range.getClientRects()) {
+            const hit = document.elementFromPoint((bounds.left + bounds.right) / 2, (bounds.top + bounds.bottom) / 2);
+            fragments.push({ id: group + ':' + index++, text: text.textContent.trim(), visible: bounds.top >= clip.top - 1 && bounds.bottom <= clip.bottom + 1
+              && bounds.left >= clip.left && bounds.right <= clip.right && (hit === text.parentElement || text.parentElement.contains(hit)) });
+          }
+        }
+      }
+      return fragments;
     });
-    assert(layout.top >= 0 && layout.bottom <= layout.height + 1 && layout.hits.every(Boolean),
-      'Explicit entry reveals the ready canvas above fixed chrome: ' + JSON.stringify(layout));
-    assert(layout.bottom <= layout.toastTop + 1, 'A visible toast does not cover the entered map.');
+    try {
+      assert.equal(await hud.getAttribute('tabindex'), '0', 'Overflowing resource and warning content is keyboard reachable.');
+      await hud.focus(); await page.keyboard.press('Home'); await waitForFrames(page, 2);
+      const expected = await read(), seen = new Set();
+      assert(expected.length > 0);
+      for (let step = 0; step < 24; step++) {
+        for (const fragment of await read()) if (fragment.visible) seen.add(fragment.id);
+        if (expected.every(fragment => seen.has(fragment.id))) break;
+        await page.keyboard.press('ArrowDown'); await waitForFrames(page, 2);
+      }
+      assert(expected.every(fragment => seen.has(fragment.id)), 'Every actual resource and complete warning line is readable through native keyboard scrolling: '
+        + JSON.stringify(expected.filter(fragment => !seen.has(fragment.id))));
+    } finally {
+      await hud.evaluate((node, value) => { node.scrollTop = value; }, priorScroll);
+      if (await priorFocus.evaluate(node => node.isConnected)) await priorFocus.asElement().focus();
+      await priorFocus.dispose();
+    }
+    await assertPosition(page, priorPose, 'Reading the walking HUD does not move the player');
   };
   const assertWorldHud = async page => {
     const layout = await page.evaluate(() => {
@@ -470,8 +498,14 @@ try {
           left: (bounds.left - camera.worldView.x) * camera.zoom * rect.width / camera.width,
           right: (bounds.right - camera.worldView.x) * camera.zoom * rect.width / camera.width };
       });
+      const overlays = [...document.querySelectorAll('.omerta-city__world-hud, .omerta-city__minimap, .omerta-city__next-move, .omerta-city__controls, .omerta-city__interaction, .omerta-city__actor-dock, .omerta-city__training, .city-world__dock, .city-world__quick-nav, .omerta-city__overview[open], #toast.show')]
+        .filter(node => !node.hidden && !node.closest('[hidden]')).map(node => ({ className: node.className, bounds: node.getBoundingClientRect() }))
+        .filter(node => node.bounds.width && node.bounds.height);
+      const occluded = avatar.map(bounds => overlays.filter(({ bounds: other }) => other.right > rect.left + bounds.left && other.left < rect.left + bounds.right
+        && other.bottom > rect.top + bounds.top && other.top < rect.top + bounds.bottom).map(node => node.className));
       return { hud: hudRect.toJSON(), canvas: rect.toJSON(), camera: scene.camera, player,
-        avatar, chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })),
+        avatar, occluded, worldFirst: document.querySelector('.omerta-city').classList.contains('is-world-first'), width: innerWidth, height: innerHeight,
+        chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })),
         overflow: document.documentElement.scrollWidth > innerWidth + 1,
         visible: controls.every(control => { const b = control.getBoundingClientRect();
           const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2); return control === hit || control.contains(hit); }),
@@ -479,8 +513,14 @@ try {
         fields: controls.slice(0, -1).map(control => control.dataset.cityResource),
         readinessCount: document.querySelectorAll('.omerta-city__readiness[role="status"]').length };
     });
-    assert(!layout.overflow && layout.visible && layout.playerVisible, 'Walking HUD and player are visible without covering the canvas: ' + JSON.stringify(layout));
-    assert(layout.hud.bottom <= layout.canvas.top + 1, 'The HUD reserves its own space outside the playable camera.');
+    if (!layout.visible) await readHudByKeyboard(page);
+    assert(!layout.overflow && layout.playerVisible, 'Walking HUD and player remain visible in the world: ' + JSON.stringify(layout));
+    if (layout.worldFirst) {
+      assert(Math.abs(layout.canvas.width - layout.width) <= 1 && Math.abs(layout.canvas.bottom - layout.height) <= 1
+        && Math.abs(layout.canvas.top - layout.chrome.find(node => node.id === 'top').bottom) <= 1,
+      'Player view fills the viewport below the real header: ' + JSON.stringify(layout));
+      assert(layout.occluded.every(nodes => nodes.length === 0), 'Actual overlays never cover the complete avatar or name: ' + JSON.stringify(layout));
+    } else assert(layout.hud.bottom <= layout.canvas.top + 1, 'The fallback HUD reserves its own space outside the playable camera.');
     assert(Math.abs(layout.camera.width - layout.canvas.width) <= 1 && Math.abs(layout.camera.height - layout.canvas.height) <= 1,
       'Phaser dimensions match the CSS viewport after compact resizing.');
     assert(layout.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= layout.canvas.height + 1 && bounds.left >= -1 && bounds.right <= layout.canvas.width + 1),
@@ -514,7 +554,7 @@ try {
         }), 'The view switch remains reachable above the active player scene.');
       }
     };
-    await toggle.locator('#map-mode-walk').click(); await assertEntered(toggle);
+    await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
     await assertSwitch(true);
     const repeatedHandles = await toggle.evaluate(() => window.__cityHandles.length);
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
@@ -529,7 +569,7 @@ try {
     await toggle.locator('#btn-dashboard-view').click();
     assert.equal(await toggle.locator('#tabbodies > .on').getAttribute('id'), dashboard, 'Dashboard returns to the previous screen.');
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
-    await toggle.locator('#map-mode-territory').click(); await assertSwitch(false);
+    await showTerritory(toggle); await assertSwitch(false);
     await toggle.locator('#btn-player-view').click(); await assertEntered(toggle);
     await toggle.locator('#btn-dashboard-view').click();
     assert.equal(await toggle.locator('#map-mode-territory').getAttribute('aria-pressed'), 'true', 'Returning restores the prior territory board.');
@@ -538,22 +578,31 @@ try {
     await toggle.close();
   }
 
-  const activateNeighborhood = async (page, selector) => {
-    // A viewport change can return before the scene reparents its phone Overview.
+  async function activateNeighborhood(page, selector) {
+    // A viewport change can return before the scene reparents its District guide.
     await page.waitForFunction(selector => {
       const control = document.querySelector(selector), root = control?.closest('.omerta-city');
       const overview = root?.querySelector('.omerta-city__overview');
-      const compact = innerWidth <= 680 && document.body.classList.contains('city-player-view') && !root?.classList.contains('omerta-city--unavailable');
-      return !!root && !!overview && root.classList.contains('is-play-shell') === compact
-        && overview.hidden === !compact && !!control.closest('.omerta-city__overview') === compact;
+      const player = document.body.classList.contains('city-player-view') && !root?.classList.contains('omerta-city--unavailable');
+      return !!root && !!overview && root.classList.contains('is-play-shell') === (player && innerWidth <= 680)
+        && root.classList.contains('is-world-first') === player && overview.hidden === !player && !!control.closest('.omerta-city__overview') === player;
     }, selector);
     const control = page.locator(selector), touch = await page.evaluate(() => navigator.maxTouchPoints > 0);
+    if (await page.locator('.omerta-city__overview > summary').getAttribute('aria-disabled') === 'true') {
+      const close = page.locator('[data-city-training-close]:visible, [data-city-actor-close]:visible, [data-city-close]:visible, [data-city-world-close]:visible').first();
+      if (touch) await close.tap(); else await close.click();
+    }
     if (await control.evaluate(node => { const overview = node.closest('.omerta-city__overview'); return overview && !overview.hidden && !overview.open; })) {
       const summary = page.locator('.omerta-city__overview > summary');
       if (touch) await summary.tap(); else await summary.click();
     }
     if (touch) await control.tap(); else await control.click();
-  };
+  }
+  async function showTerritory(page) {
+    await activateNeighborhood(page, '[data-destination="waterfront"]');
+    await page.locator('[data-city-action="map"]').click();
+    await page.locator('#map-mode-territory[aria-pressed="true"]').waitFor({ state: 'visible' });
+  }
   const openCoreTraining = async page => {
     await activateNeighborhood(page, '[data-destination="training"]');
     await page.locator('[data-city-action="streets"]').click();
@@ -566,6 +615,95 @@ try {
     await page.locator('[data-city-gameplay="fixer"]').waitFor({ state: 'visible' });
     await waitForFrames(page, 2);
   };
+  const assertFixerOpening = async (page, requests) => {
+    const before = (await state(page)).position, requestStart = requests.length;
+    const panel = page.locator('[data-city-gameplay="fixer"]');
+    const opening = await panel.evaluate(node => {
+      const box = node.getBoundingClientRect(), select = node.querySelector('[data-city-crime-select]'), terms = node.querySelector('#city-fixer-terms > .operation-terms');
+      const firstAction = node.querySelector('[data-city-crime]:not(:disabled)');
+      const visible = control => { const b = control.getBoundingClientRect(), hit = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2);
+        return b.top >= box.top && b.bottom <= box.bottom && (hit === control || control.contains(hit)); };
+      return { top: node.scrollTop, focus: document.activeElement.classList.contains('omerta-city__training-body'), select: visible(select),
+        termsFirst: node.scrollHeight > node.clientHeight && firstAction.getBoundingClientRect().bottom + node.scrollTop > box.bottom,
+        job: select.selectedOptions[0].textContent, copy: terms.textContent, box: box.toJSON(), selectBox: select.getBoundingClientRect().toJSON(), termsBox: terms.getBoundingClientRect().toJSON() };
+    });
+    if (!opening.termsFirst) return; // An independently measured full-size dock retains primary-action focus.
+    assert(opening.focus, 'An overflowing Fixer whose first approach lies below the opening frame focuses the readable body.');
+    assert.equal(opening.top, 0, 'A compact Fixer starts with its current job and terms.');
+    assert(opening.select && opening.selectBox.height >= 44, 'The complete selected job remains visible at opening: ' + JSON.stringify(opening));
+    assert.match(opening.copy, /COST.*nerve.*BASELINE WIN.*not guaranteed/);
+    const readTerms = () => panel.evaluate(node => {
+      const clip = node.getBoundingClientRect(), terms = node.querySelector('#city-fixer-terms > .operation-terms'), fragments = [];
+      const walker = document.createTreeWalker(terms, NodeFilter.SHOW_TEXT); let text, index = 0;
+      while ((text = walker.nextNode())) {
+        if (!text.textContent.trim()) continue;
+        const range = document.createRange(); range.selectNodeContents(text);
+        for (const bounds of range.getClientRects()) {
+          const hit = document.elementFromPoint((bounds.left + bounds.right) / 2, (bounds.top + bounds.bottom) / 2);
+          fragments.push({ id: index++, text: text.textContent.trim(), visible: bounds.top >= clip.top && bounds.bottom <= clip.bottom
+            && bounds.left >= clip.left && bounds.right <= clip.right && (hit === text.parentElement || text.parentElement.contains(hit)) });
+        }
+      }
+      return fragments;
+    });
+    const expectedTerms = await readTerms(), seenTerms = new Set();
+    assert(expectedTerms.length > 0);
+    for (let step = 0; step < 24; step++) {
+      for (const fragment of await readTerms()) if (fragment.visible) seenTerms.add(fragment.id);
+      if (expectedTerms.every(fragment => seenTerms.has(fragment.id))) break;
+      await page.keyboard.press('ArrowDown'); await waitForFrames(page, 2);
+    }
+    assert(expectedTerms.every(fragment => seenTerms.has(fragment.id)), 'Native keyboard scrolling exposes every actual cost, baseline, guarantee and jail term before approach selection: '
+      + JSON.stringify(expectedTerms.filter(fragment => !seenTerms.has(fragment.id))));
+    await page.keyboard.press('Home');
+    await page.waitForFunction(() => document.querySelector('[data-city-gameplay="fixer"]').scrollTop === 0);
+    assert.equal(await panel.evaluate(node => node.scrollTop), 0);
+    const seen = new Set();
+    for (let step = 0; step < 10 && seen.size < 3; step++) {
+      await page.keyboard.press('Tab'); await waitForFrames(page, 2);
+      const action = await page.evaluate(() => {
+        const node = document.activeElement; if (!node.matches('[data-city-crime]')) return null;
+        const b = node.getBoundingClientRect(), hit = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2);
+        return { approach: node.dataset.cityApproach, visible: b.width >= 44 && b.height >= 44 && (hit === node || node.contains(hit)) };
+      });
+      if (action) { assert(action.visible, 'Native Tab reveals a usable existing approach.'); seen.add(action.approach); }
+    }
+    assert.deepEqual([...seen].sort(), ['loud', 'quiet', 'standard']);
+    await page.locator('.omerta-city__training-body').focus(); await page.keyboard.press('Home');
+    await page.waitForFunction(() => document.querySelector('[data-city-gameplay="fixer"]').scrollTop === 0);
+    assert.equal(await panel.evaluate(node => node.scrollTop), 0, 'Native Home returns to the opening job terms.');
+    const touch = await page.context().newCDPSession(page), bounds = await panel.boundingBox();
+    try {
+      for (let step = 0; step < 8; step++) {
+        await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: bounds.x + 5, y: bounds.y + bounds.height - 8 }] });
+        for (const distance of [12, 24, 40]) await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: bounds.x + 5, y: bounds.y + bounds.height - 8 - distance }] });
+        await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await waitForFrames(page, 2);
+        if (await page.locator('[data-city-crime]').first().evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2); return hit === node || node.contains(hit); })) break;
+      }
+      assert(await page.locator('[data-city-crime]').first().evaluate(node => { const b = node.getBoundingClientRect(), hit = document.elementFromPoint((b.left + b.right) / 2, (b.top + b.bottom) / 2); return hit === node || node.contains(hit); }), 'Native swipe reaches the existing approaches.');
+    } finally { await touch.detach(); }
+    await assertPosition(page, before, 'Reading Fixer terms and approaches preserves pose');
+    assert.deepEqual(gameplayRequests(requests.slice(requestStart)), [], 'Reading and navigating Fixer terms does not choose an approach.');
+  };
+  const assertDisabledGuide = async (page, requests) => {
+    const pose = (await state(page)).position;
+    const activityBeforeSummary = await page.locator('.omerta-city__training-body').evaluate(node => ({ opening: node.dataset.trainingOpening, text: node.textContent }));
+    const requestStart = requests.length;
+    const summary = page.locator('.omerta-city__overview > summary');
+    assert.equal(await summary.getAttribute('aria-disabled'), 'true');
+    assert.match(await summary.textContent(), /Close this activity/);
+    await summary.tap(); await waitForFrames(page, 2);
+    assert.equal(await page.locator('.omerta-city__overview').evaluate(node => node.open), false, 'Native disabled-summary activation retains the current activity.');
+    assert.equal(await page.evaluate(() => document.activeElement.closest('.omerta-city__training') !== null), true,
+      'Disabled summary restores activity focus so Escape and the current controls remain usable.');
+    await summary.focus(); await page.keyboard.press('Enter'); await waitForFrames(page, 2);
+    assert.equal(await page.locator('.omerta-city__overview').evaluate(node => node.open), false, 'Keyboard disabled-summary activation also retains the current activity.');
+    assert.equal(await page.evaluate(() => document.activeElement.closest('.omerta-city__training') !== null), true, 'Keyboard summary activation restores activity focus.');
+    assert.deepEqual(await page.locator('.omerta-city__training-body').evaluate(node => ({ opening: node.dataset.trainingOpening, text: node.textContent })), activityBeforeSummary,
+      'Disabled overview navigation retains the same activity opening and content.');
+    assert.deepEqual(requests.slice(requestStart), [], 'Disabled summary makes no reads or gameplay requests.');
+    await assertPosition(page, pose, 'Disabled overview navigation preserves pose');
+  };
   const assertCoreStats = async (page, character) => {
     for (const stat of ['muscle', 'cunning', 'speed']) assert.equal(
       Number((await page.locator(`[data-city-train="${stat}"] b`).textContent()).replace(/,/g, '')),
@@ -573,13 +711,20 @@ try {
   };
   const assertCoreTrainingLayout = async page => {
     await assertWorldHud(page);
+    // Compact sheets expose every existing control through their real scroll area.
+    for (const button of await page.locator('.omerta-city__training [data-city-train], .omerta-city__training [data-city-crime]').all()) {
+      await button.scrollIntoViewIfNeeded();
+      const control = await button.evaluate(node => { const rect = node.getBoundingClientRect(); return { width: rect.width, height: rect.height,
+        hits: [rect.top + 3, rect.bottom - 3].map(y => { const hit = document.elementFromPoint(rect.left + rect.width / 2, y); return hit === node || node.contains(hit); }) }; });
+      assert(control.width >= 44 && control.height >= 44 && control.hits.every(Boolean), 'Each actual training or approach control remains reachable: ' + JSON.stringify(control));
+    }
     const layout = await page.locator('.omerta-city__training').evaluate(panel => ({
       panel: panel.getBoundingClientRect().toJSON(), viewport: innerHeight,
       shell: { root: document.querySelector('.omerta-city').getBoundingClientRect().toJSON(), play: document.querySelector('.omerta-city__viewport').getBoundingClientRect().toJSON(),
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(), canvas: document.querySelector('.omerta-city__canvas canvas').getBoundingClientRect().toJSON(),
         styles: document.querySelector('.omerta-city').className, scrolling: { y: scrollY, height: document.documentElement.scrollHeight },
         chrome: ['top','toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() })) },
-      controls: [...panel.querySelectorAll('[data-city-train], [data-city-crime]'), panel.querySelector('[data-city-training-close]')].map(button => {
+      controls: [panel.querySelector('[data-city-training-close]')].map(button => {
         const bounds = button.getBoundingClientRect();
         return { rect: bounds.toJSON(), hits: [bounds.top + 3, bounds.bottom - 3].map(y => {
           const hit = document.elementFromPoint(bounds.left + bounds.width / 2, y); return hit === button || button.contains(hit);
@@ -613,18 +758,20 @@ try {
   const entryRequests = [];
   entry.on('request', request => entryRequests.push({ method: request.method(), path: new URL(request.url()).pathname }));
   await openCity(entry);
-  assert(await entry.locator('#intro-walk').isVisible(), 'First Map help offers a separate entry control.');
-  const entryPose = (await state(entry)).position, entryHandles = await entry.evaluate(() => window.__cityHandles.length);
+  const entryPose = (await state(entry)).position;
+  await showTerritory(entry);
+  assert(await entry.locator('#intro-walk').isVisible(), 'The Map dashboard retains its separate first-visit entry control.');
   const entryStart = entryRequests.length;
   await entry.locator('#intro-walk').click();
   await assertEntered(entry);
+  let entryHandles = await entry.evaluate(() => window.__cityHandles.length);
   await assertWorldHud(entry);
   assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), null, 'Entering does not dismiss first-visit help.');
   await assertPosition(entry, entryPose, 'First phone entry retains pose');
   assert.equal((await state(entry)).reducedMotion, true);
-  await entry.locator('#map-mode-walk').click();
+  await entry.locator('#btn-player-view').click();
   await assertEntered(entry);
-  assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Repeated Walk reuses the same Phaser game.');
+  assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Repeated Player view reuses the same Phaser game.');
   await assertPosition(entry, entryPose, 'Repeated entry retains pose');
   await app.pool.query('UPDATE characters SET cash=2222,health=22,energy=31,nerve=4 WHERE id=$1', [characterId]);
   const liveHud = entry.waitForResponse(async response => {
@@ -635,7 +782,7 @@ try {
   await entry.locator('#btn-refresh').evaluate(button => button.click());
   const projected = (await (await liveHud).json()).player;
   await assertHud(entry, projected?.character || projected);
-  await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+  await entry.locator('#btn-player-view').click(); await assertEntered(entry); await assertWorldHud(entry);
   assert.equal((await state(entry)).resources.health, (projected?.character || projected).health, 'Walk retains the current GET health instead of stale cached values.');
   assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Current-health reuse keeps the same scene handle.');
   assert.match(await entry.locator('.omerta-city__readiness').textContent(), /LOW HEALTH.*Heal before/);
@@ -659,12 +806,12 @@ try {
     await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
     if (width === 320) assert.deepEqual(await entry.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height, text: node.textContent, inert: node.inert })),
       { height: 56, text: 'Updated. Your current street view is ready. Check your next move before spending resources.', inert: false }, 'The short-frame fixture reaches the actual bounded toast and retains all its text.');
-    await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+    await entry.locator('#btn-player-view').click(); await assertEntered(entry); await assertWorldHud(entry);
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
     if (width === 320) {
       const initialHeight = (await state(entry)).camera.height;
       const initialHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
-      assert(initialHeight < 160, 'Short phone space with tall chrome and a visible toast can shrink below the former minimum: ' + JSON.stringify(await entry.evaluate(() => ({
+      assert.equal(initialHeight, 568 - 215, 'The pressure fixture preserves the whole map below its actual215px header: ' + JSON.stringify(await entry.evaluate(() => ({
         canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON(),
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
@@ -683,7 +830,7 @@ try {
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
       const warningHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
       assert(warningHudHeight > initialHudHeight + 3, 'The real winning warning must grow the measured pressure-fixture HUD before checking camera response: ' + JSON.stringify({ initialHudHeight, warningHudHeight }));
-      assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
+      assert.equal((await state(entry)).camera.height, initialHeight, 'A longer winning-projection warning preserves the full map without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
         initial, camera: window.__cityHandles.at(-1).handle.getState().camera, classes: document.querySelector('.omerta-city').className,
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(), hudText: document.querySelector('.omerta-city__world-hud').textContent,
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
@@ -710,8 +857,8 @@ try {
             return { text: node.textContent, lines: [...range.getClientRects()].map(rect => ({ top: rect.top, left: rect.left, right: rect.right })), bounds: node.getBoundingClientRect().toJSON() };
           }) };
       });
-      assert(strip.canvas.bottom <= strip.controls.top + 1 && strip.controls.bottom <= strip.bottom + 1,
-        'The visible map reserves the movement strip above actual app chrome: ' + JSON.stringify(strip));
+      assert(strip.controls.top >= strip.canvas.top && strip.controls.bottom <= strip.canvas.bottom + 1,
+        'The full map contains the anchored movement strip: ' + JSON.stringify(strip));
       assert(strip.buttons.every(button => button.width >= 44 && button.height >= 44 && button.visible), 'All six thumb controls remain real unobscured44px targets.');
       for (const value of strip.values) assert(value.lines.length === 1 && value.lines[0].left >= value.bounds.left - 1 && value.lines[0].right <= value.bounds.right + 1,
         'Each actual resource value fits on one unbroken readable line: ' + JSON.stringify(value));
@@ -737,19 +884,13 @@ try {
       const overviewRequests = entryRequests.length;
       const summary = entry.locator('.omerta-city__overview > summary');
       assert.equal(await summary.getAttribute('aria-disabled'), 'true');
-      assert.match(await summary.textContent(), /Close this activity/);
-      await summary.tap(); await waitForFrames(entry, 2);
-      assert.equal(await entry.locator('.omerta-city__overview').evaluate(node => node.open), false, 'Native disabled-summary activation retains the current activity.');
-      assert.equal(await entry.evaluate(() => document.activeElement.closest('.omerta-city__training') !== null), true,
-        'Disabled summary restores activity focus so Escape and the current controls remain usable.');
-      await summary.focus(); await entry.keyboard.press('Enter'); await waitForFrames(entry, 2);
-      assert.equal(await entry.locator('.omerta-city__overview').evaluate(node => node.open), false, 'Keyboard disabled-summary activation also retains the current activity.');
-      assert.equal(await entry.evaluate(() => document.activeElement.closest('.omerta-city__training') !== null), true, 'Keyboard summary activation restores activity focus.');
-      assert.deepEqual(await entry.locator('.omerta-city__training-body').evaluate(node => ({ opening: node.dataset.trainingOpening, text: node.textContent })), activityBeforeSummary,
-        'Disabled overview navigation retains the same activity opening and content.');
-      assert.deepEqual(entryRequests.slice(overviewRequests), [], 'Disabled summary makes no reads or gameplay requests.');
-      await assertPosition(entry, corePose, 'Disabled overview navigation preserves pose');
-      assert.equal(await entry.locator('.omerta-city__controls').evaluate(node => getComputedStyle(node).display), 'none', 'Short activity space reserves HUD, avatar and Close instead of the movement strip.');
+      assert.equal(await summary.isVisible(), false, 'Phone inspection folds District guide while the current activity remains open.');
+      assert.equal(await entry.evaluate(() => document.activeElement.closest('.omerta-city__training') !== null), true, 'Phone inspection retains focus in the current activity.');
+      await waitForFrames(entry, 2);
+      assert.deepEqual(await entry.locator('.omerta-city__training-body').evaluate(node => ({ opening: node.dataset.trainingOpening, text: node.textContent })), activityBeforeSummary, 'Folding the guide retains the same activity opening and content.');
+      assert.deepEqual(entryRequests.slice(overviewRequests), [], 'Folding the guide makes no reads or gameplay requests.');
+      await assertPosition(entry, corePose, 'Folding the guide preserves pose');
+      assert.notEqual(await entry.locator('.omerta-city__controls').evaluate(node => getComputedStyle(node).display), 'none', 'Short activity space retains the anchored movement strip alongside the full map.');
       assert.equal(await entry.locator('.omerta-city__move.is-held').count(), 0, 'Opening the pressure sheet releases held movement.');
       await waitForFrames(entry, 8); await assertPosition(entry, corePose, 'No hidden held control continues moving the avatar');
       const panel = entry.locator('.omerta-city__training'), bounds = await panel.boundingBox();
@@ -765,8 +906,8 @@ try {
       assert.equal((await state(entry)).trainingOpen, true, 'Touch scrolling outside the canvas leaves the dock open.');
       await touch.detach();
     }
-    await entry.keyboard.press('Escape'); await assertEntered(entry); await assertWorldHud(entry);
-    await waitForFrames(entry, 2);
+    await entry.keyboard.press('Escape'); await waitForFrames(entry, 2);
+    await assertEntered(entry); await assertWorldHud(entry);
     const restoredCamera = (await state(entry)).camera;
     if (Object.keys(normalCamera).some(field => typeof normalCamera[field] === 'number' && Math.abs(restoredCamera[field] - normalCamera[field]) > 1)) console.error('Play shell close geometry', JSON.stringify({ width, normalCamera, restoredCamera, layout: await entry.evaluate(() => ({
       classes: document.querySelector('.omerta-city').className, hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
@@ -782,9 +923,9 @@ try {
       await entry.locator('.omerta-city__overview > summary').tap();
       assert.equal(await entry.locator('.omerta-city__overview').evaluate(node => node.open), true, 'The actual restored summary expands normally.');
       await entry.locator('.omerta-city__overview > summary').tap();
-      await entry.locator('#map-mode-walk').click(); await assertEntered(entry);
+      await entry.locator('#btn-player-view').click(); await assertEntered(entry);
     }
-    await openFixer(entry); await assertCoreTrainingLayout(entry);
+    await openFixer(entry); await assertFixerOpening(entry, entryRequests); await assertCoreTrainingLayout(entry);
     await assertPosition(entry, corePose, 'Opening Fixer jobs keeps the same phone pose');
     assert.equal(await entry.locator('[data-city-crime]').count(), 3);
     assert.match(await entry.locator('#city-fixer-terms').textContent(), /Pay is not guaranteed/);
@@ -851,21 +992,29 @@ try {
   const phonePose = (await state(entry)).position;
   const phoneHeightOverride = await entry.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height'));
   await entry.setViewportSize({ width: 1440, height: 1000 }); await waitForFrames(entry, 3);
-  await entry.locator('#map-mode-walk').click(); await assertEntered(entry); await assertWorldHud(entry);
+  await entry.locator('#btn-player-view').click(); await assertEntered(entry); await assertWorldHud(entry);
   const desktopFit = await entry.locator('.omerta-city__canvas').evaluate(node => ({ override: node.style.getPropertyValue('--city-map-height'),
     height: node.getBoundingClientRect().height, width: node.getBoundingClientRect().width, engineHeight: node.querySelector('canvas').height, engineWidth: node.querySelector('canvas').width }));
   assert.notEqual(desktopFit.override, phoneHeightOverride, 'Leaving phone mode recomputes the measured Player frame without ResizeObserver.');
   assert(Math.abs(desktopFit.height - desktopFit.engineHeight) <= 1 && Math.abs(desktopFit.width - desktopFit.engineWidth) <= 1,
     'The recomputed desktop CSS/Phaser frame agrees: ' + JSON.stringify(desktopFit));
   await assertPosition(entry, phonePose, 'Leaving phone mode retains the player pose');
+  await openCoreTraining(entry); await assertDisabledGuide(entry, entryRequests);
+  await entry.keyboard.press('Escape'); await assertEntered(entry);
+  await assertPosition(entry, phonePose, 'Desktop disabled-guide and Close retain exploration pose');
   await app.pool.query('UPDATE characters SET cash=500,health=100,energy=50,nerve=10 WHERE id=$1', [characterId]);
   await refreshHudFromClient(entry);
   assert.deepEqual(gameplayRequests(entryRequests.slice(entryStart)), [], 'Entry never submits gameplay or travel actions.');
+  const beforeDismissPose = (await state(entry)).position;
+  await showTerritory(entry);
   await entry.evaluate(() => { window.__oldEntryButton = document.querySelector('#intro-walk'); });
   await entry.locator('#intro-got').click();
   assert.equal(await entry.evaluate(() => localStorage.getItem('omerta_seen_map')), '1', 'Existing got-it dismissal remains explicit.');
   await entry.evaluate(() => window.__oldEntryButton.click());
   assert.notEqual(await entry.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A disposed intro button cannot enter the scene.');
+  await entry.locator('#map-mode-walk').click(); await assertEntered(entry);
+  await assertPosition(entry, beforeDismissPose, 'The legacy Walk control restores the saved exploration pose');
+  entryHandles = await entry.evaluate(() => window.__cityHandles.length);
   const priorEntryResources = (await state(entry)).resources;
   try {
     await app.pool.query('UPDATE characters SET cash=$1, health=$2 WHERE id=$3', [2222, 22, characterId]);
@@ -878,7 +1027,7 @@ try {
     const freshEntryBody = await (await freshEntry).json();
     const freshEntryCharacter = freshEntryBody.player?.character || freshEntryBody.player;
     await assertHud(entry, freshEntryCharacter);
-    await entry.locator('#map-mode-walk').click();
+    await entry.locator('#btn-player-view').click();
     await assertEntered(entry);
     assert.equal((await state(entry)).resources.health, freshEntryCharacter.health, 'Walk retains the latest server health projection.');
     assert.equal((await state(entry)).resources.cash, freshEntryCharacter.cash, 'Walk retains the latest server cash projection.');
@@ -997,12 +1146,12 @@ try {
   } });
   await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
   await assertWalkingReadiness(page, beforeStoriesReadiness, storiesName);
-  await page.locator('#map-mode-territory').focus();
+  await page.locator('#btn-refresh').focus();
   await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength === 0);
   const afterBlur = await state(page);
   await waitForFrames(page, 16);
   assert.deepEqual((await state(page)).player, afterBlur.player, 'Leaving canvas focus cancels the pending venue walk.');
-  assert.equal(await page.evaluate(() => document.activeElement.id), 'map-mode-territory', 'Cancelled arrival never steals focus from another control.');
+  assert.equal(await page.evaluate(() => document.activeElement.id), 'btn-refresh', 'Cancelled arrival never steals focus from another control.');
   assert.equal(await page.locator('.omerta-city__interaction').isVisible(), false, 'Cancelled arrival opens no venue card.');
   assert.deepEqual(await readiness(page), beforeStoriesReadiness, 'Canvas blur clears the stale walking copy.');
   assert.equal(await page.evaluate(() => window.__cityHandles.length), walkingHandles);
@@ -1038,7 +1187,7 @@ try {
   }
 
   // Selecting an existing district board never presents a second travel transaction.
-  await page.locator('#map-mode-territory').click();
+  await showTerritory(page);
   assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Territory mode disposes the walking canvas.');
   assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), 'Territory mode destroys the scene handle.');
   await page.locator('#map-mode-walk').click();
@@ -1303,7 +1452,7 @@ try {
   await waitForCity(page);
   await assertPosition(page, reloadPose, 'Reload restores the character/generation/district-scoped session position');
 
-  // On a phone the above-map guide follows the original introduction's real issued objectives.
+  // On a phone the in-world guide follows the original introduction's real issued objectives.
   // Opening a destination remains separate from explicit conversations, choices, and item award.
   await page.setViewportSize({ width: 375, height: 812 });
   await dismissCelebration(page);
@@ -1314,16 +1463,16 @@ try {
     await activateNeighborhood(page, '[data-destination="fixer"]');
     await assertVenueOnscreen(page);
   }
-  // A tall real header forces the existing 96px map floor and 64px venue cap.
+  // A tall real header leaves the full 140px world frame and a 64px venue cap.
   // The sticky close must fit that cap after focusing/scrolling the primary action.
   const tightVenuePose = (await state(page)).position, tightVenueReads = requests.length;
   const previousHeaderStyle = await page.locator('#top').getAttribute('style');
   try {
     await page.keyboard.press('Escape');
     await page.locator('#top').evaluate(header => { header.style.height = '180px'; header.style.minHeight = '180px'; header.style.maxHeight = '180px'; dispatchEvent(new Event('resize')); });
-    await page.waitForFunction(() => document.querySelector('.omerta-city__canvas canvas')?.height === 96);
+    await page.waitForFunction(() => document.querySelector('.omerta-city__canvas canvas')?.height === 140);
     await activateNeighborhood(page, '[data-destination="fixer"]');
-    assert.equal(await page.locator('.omerta-city__interaction').evaluate(card => card.getBoundingClientRect().height), 64, 'The regression reaches the actual minimum-map venue cap.');
+    assert.equal(await page.locator('.omerta-city__interaction').evaluate(card => card.getBoundingClientRect().height), 64, 'The regression reaches the actual minimum venue cap over the full world frame.');
     await assertVenueOnscreen(page);
     assert(await page.locator('.omerta-city__interaction').evaluate(card => card.scrollTop > 0), 'The real primary-action focus scrolls the short sheet before testing Close.');
     const nonStickyClose = await page.addStyleTag({ content: '.omerta-city__interaction-controls { position: relative !important; top: 0 !important; }' });
@@ -1413,10 +1562,9 @@ try {
   assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), 'Visit The Fixer',
     'Completing the newcomer quest surfaces the next real district story.');
   await page.setViewportSize({ width: 1440, height: 1000 });
-  // The resize event moves Journal out of the phone Overview. Wait for that actual
-  // arrangement before the helper chooses between Overview and the desktop control.
+  // The desktop frame retains the same accessible District guide.
   await page.waitForFunction(() => !document.querySelector('.omerta-city').classList.contains('is-play-shell')
-    && document.querySelector('.omerta-city__overview').hidden);
+    && document.querySelector('.omerta-city').classList.contains('is-world-first') && !document.querySelector('.omerta-city__overview').hidden);
   const journalPose = (await state(page)).position, journalReadStart = requests.length;
   await activateNeighborhood(page, '[data-city-journal]');
   await page.locator('[data-city-case-select]').waitFor();
@@ -1709,7 +1857,7 @@ try {
   assert(initialLand.world.width > 960 && initialLand.world.height === 960, 'Real deeds extend the residential width while the authored southern walks retain their 960px height.');
   assert.deepEqual(new Set(initialLand.homes.map(home => home.owner.kind)), new Set(['player', 'agent', 'npc']));
   assert.equal(new Set(initialLand.homes.map(home => home.key)).size, 3);
-  await land.locator('[data-city-world-map]').click();
+  await activateNeighborhood(land, '[data-city-world-map]');
   await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().worldUI.mapView === 'world');
   assert.deepEqual((await state(land)).position, initialLand.position, 'Opening the connected atlas never relocates the character.');
   await land.locator('[data-city-world-close]').click();
@@ -1805,18 +1953,30 @@ try {
   try { await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 700); }
   finally { await land.evaluate(() => { window.__cityRegionalInputCleanup(); delete window.__cityRegionalInputCleanup; delete window.__cityRegionalInput; }); }
   await waitForFrames(land, 3);
-  const roadPixels = await land.evaluate(x => {
+  const roadPixels = await land.evaluate(road => {
     const game = window.__cityGames.at(-1), camera = game.scene.getScenes(true)[0].cameras.main, canvas = game.canvas;
+    const art = game.textures.exists('city-art-background') ? game.textures.get('city-art-background').getSourceImage() : null;
+    const source = document.createElement('canvas');
+    if (art) { source.width = art.width; source.height = art.height; source.getContext('2d').drawImage(art, 0, 0); }
+    const x = road.x + road.width / 2;
+    // Canvas roundPixels rounds the road transform and expands its drawImage
+    // destination by half a pixel. Sample source pixels at rendered pixel centers.
+    const origin = camera.matrix.transformPoint(road.x - camera.scrollX, road.y - camera.scrollY);
+    if (camera.renderRoundPixels) { origin.x = Math.floor(origin.x + .5); origin.y = Math.floor(origin.y + .5); }
+    const rounding = camera.roundPixels ? .5 : 0;
     return [744, 758, 772].map(y => {
       const px = Math.round((x - camera.worldView.x) * camera.zoom * canvas.width / camera.width);
       const py = Math.round((y - camera.worldView.y) * camera.zoom * canvas.height / camera.height);
+      const sourceX = Math.floor((px + .5 - origin.x) / camera.zoom * road.width / (road.width + rounding));
+      const sourceY = Math.floor((py + .5 - origin.y) / camera.zoom * road.height / (road.height + rounding));
       return { visible: px >= 0 && py >= 0 && px < canvas.width && py < canvas.height,
+        expected: art ? [...source.getContext('2d').getImageData(420 + sourceX % 64, 250 + sourceY % 40, 1, 1).data] : [62, 68, 69, 255],
         color: [...canvas.getContext('2d').getImageData(px, py, 1, 1).data] };
     });
-  }, roadX);
+  }, residentialRoad);
   assert(roadPixels.every(pixel => pixel.visible), 'Actual keyboard walking brings the lower deed-backed road into view');
-  assert.deepEqual(roadPixels.map(pixel => pixel.color), [[62,68,69,255],[62,68,69,255],[62,68,69,255]],
-    'The southern ground does not cover the rendered residential road');
+  assert.deepEqual(roadPixels.map(pixel => pixel.color), roadPixels.map(pixel => pixel.expected),
+    'The residential road renders the exact existing paving crop, or original flat road when art is unavailable, above the southern ground');
   assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, landHandle));
   assert.deepEqual(landRequests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'The southern residential walk makes no gameplay write');
   if (shots) await land.screenshot({ path: path.join(shots, 'southern-residential-road.png') });

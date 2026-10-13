@@ -32,7 +32,7 @@
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1, choicesShown = false;
-    let homeView = {}, renderedHomeScope = '', renderedHomeActivity = '';
+    let homeView = {}, renderedHomeScope = '', renderedHomeActivity = '', returnFocus = null;
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -50,8 +50,9 @@
     const bar = el('div', 'city-world__dock-bar');
     const back = el('button', 'city-world__back', 'Tools ↑'); back.type = 'button'; back.dataset.cityWorldBack = ''; back.setAttribute('aria-label', 'Back to world tool choices');
     const title = el('strong', '', 'World tools');
+    const scrollHint = el('span', 'city-world__scroll-hint', 'Scroll ↓'); scrollHint.hidden = true; scrollHint.setAttribute('aria-hidden', 'true');
     const closeButton = el('button', 'city-world__close', '×'); closeButton.type = 'button'; closeButton.dataset.cityWorldClose = ''; closeButton.setAttribute('aria-label', 'Close world tools');
-    bar.append(back, title, closeButton);
+    bar.append(back, title, scrollHint, closeButton);
     const navigation = el('nav', 'city-world__tabs'); navigation.setAttribute('aria-label', 'World tool panels');
     const tabs = new Map();
     for (const [id, label] of PANELS) {
@@ -65,13 +66,37 @@
     const speech = el('div', 'city-world__speech'); speech.hidden = true; speech.setAttribute('role', 'status'); speech.setAttribute('aria-live', 'polite');
     (options.mapLayer || root).append(speech);
     const on = (target, name, handler) => { target.addEventListener(name, handler); listeners.push(() => target.removeEventListener(name, handler)); };
+    const quickNav = el('nav', 'city-world__quick-nav'); quickNav.setAttribute('aria-label', 'Player tools');
+    const quickButtons = new Map();
+    const shortcuts = [
+      ['map', 'World', 'M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2V5zm6-2v16m6-14v16'],
+      ['bag', 'Bag', 'M5 8h14l2 13H3L5 8zm3 0V6a4 4 0 018 0v2'],
+      ['journal', 'Journal', 'M4 3h16v18H4V3zm4 0v18m3-13h6m-6 4h6m-6 4h4'],
+      ['skills', 'Skills', 'M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-7z'],
+      ['adventures', 'Quests', 'M6 22V3m0 1c5-5 8 5 14 0v10c-6 5-9-5-14 0'],
+      ['room', 'Home', 'M2 11l10-9 10 9M5 9v13h14V9m-10 13v-8h6v8'],
+      ['style', 'Style', 'M8 3l4 3 4-3 6 5-4 4v10H6V12L2 8l6-5z'],
+      ['chat', 'Chat', 'M3 3h18v14H9l-6 5V3zm4 5h10M7 12h7']
+    ];
+    for (const [id, label, drawing] of shortcuts) {
+      const control = el('button', 'city-world__shortcut'); control.type = 'button'; control.dataset.cityQuickPanel = id;
+      control.setAttribute('aria-label', id === 'map' ? 'World map and district travel' : label); control.setAttribute('aria-pressed', 'false');
+      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true'); icon.setAttribute('focusable', 'false');
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('d', drawing); icon.append(line);
+      control.append(icon, el('span', '', label)); quickNav.append(control); quickButtons.set(id, control);
+      on(control, 'click', () => panel === id && (id !== 'map' || mapView === 'world') ? close() : open(id, { world: id === 'map', focusReturn: control }));
+    }
+    (options.viewport || root).append(quickNav);
     const onRender = (target, name, handler) => { target.addEventListener(name, handler); renderListeners.push(() => target.removeEventListener(name, handler)); };
     function clearRenderedListeners() { renderListeners.splice(0).forEach(remove => remove()); }
     function button(label, action, className) {
       const node = el('button', className, label); node.type = 'button'; node.dataset.worldControl = label; onRender(node, 'click', action); return node;
     }
     function changed() { if (typeof options.onPanelChange === 'function') options.onPanelChange(); }
-    const compactTools = () => window.innerWidth <= 680 && document.body.classList.contains('city-player-view');
+    const compactTools = () => document.body.classList.contains('city-player-view') && (window.innerWidth <= 680 || root.classList.contains('is-world-first'));
+    function paintScrollHint() { scrollHint.hidden = !root.classList.contains('is-world-first') || dock.hidden || dock.scrollHeight - dock.scrollTop <= dock.clientHeight + 3; }
+    on(dock, 'scroll', paintScrollHint);
     function paintChoices() {
       navigation.hidden = compactTools() && !choicesShown;
       back.setAttribute('aria-expanded', String(!navigation.hidden));
@@ -211,8 +236,9 @@
       } catch { if (current(token, owner)) setNotice('Confirmation is unavailable. Check the action receipt before trying a new choice.'); }
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
     }
-    function open(id = 'map', { world = false, choices = false } = {}) {
+    function open(id = 'map', { world = false, choices = false, focusReturn = null } = {}) {
       if (destroyed || !tabs.has(id) && id !== 'journal') return;
+      returnFocus = focusReturn || tools;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
       stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
       choicesShown = choices; paintChoices();
@@ -237,7 +263,9 @@
       clearSpeech();
       homeView = {};
       stopPolling(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren(); paintReadState();
-      tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
+      tools.setAttribute('aria-expanded', 'false');
+      for (const control of quickButtons.values()) control.setAttribute('aria-pressed', 'false');
+      changed(); if (focus) (returnFocus?.isConnected && returnFocus.getClientRects().length ? returnFocus : tools).focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
     }
     on(tools, 'click', () => dock.hidden ? open('map', { choices: true }) : close());
@@ -674,6 +702,7 @@
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
+      for (const [id, control] of quickButtons) control.setAttribute('aria-pressed', String(id === panel));
       if (panel === 'map') renderMap(); else if (panel === 'bag') renderBag(); else if (panel === 'skills') renderSkills();
       else if(panel==='adventures'&&window.CityAdventureUi)window.CityAdventureUi.render(content,{encounters:boards.encounters,index:boards.opportunities,
         detail:boards['opportunity-detail'],pending:pending||options.recovery===true,onBind:onRender,onRead:(kind,input)=>read(kind,opening,input),
@@ -786,7 +815,7 @@
       showSpeech(name + ' · NPC', completed && memory[venueId] || greeting, now);
     }
     function showSpeech(name, copy, now) {
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      const roomy = !root.classList.contains('is-world-first') && (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
       const wasInline = !dialogue.hidden;
       speech.replaceChildren(el('strong', '', name), el('span', '', copy)); speech.hidden = !roomy;
       dialogue.textContent = name + ': ' + copy; dialogue.hidden = roomy; speechUntil = now + 6500;
@@ -795,7 +824,7 @@
     function clearSpeech() { const wasInline = !dialogue.hidden; speech.hidden = true; dialogue.hidden = true; speech.replaceChildren(); dialogue.textContent = ''; speechUntil = 0; if (wasInline) changed(); }
     function fitSpeech() {
       if (!speechUntil || !speech.childNodes.length) return;
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      const roomy = !root.classList.contains('is-world-first') && (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
       if (dialogue.hidden === roomy && speech.hidden === !roomy) return;
       speech.hidden = !roomy; dialogue.hidden = roomy; changed();
     }
@@ -876,9 +905,9 @@
       },
       isOpen: () => !dock.hidden,
       panelHeight: () => dock.hidden ? 0 : dock.getBoundingClientRect().height,
-      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); } },
+      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); paintScrollHint(); } },
       getState: () => ({ panel, opening, pending, scope, mapView, districtId: selectedDistrict, selectedHome, chatJoined: socialPreferences().chatEnabled === true }),
-      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
+      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); quickNav.remove(); dock.remove(); speech.remove(); }
     };
     handle.update(input);
     return handle;

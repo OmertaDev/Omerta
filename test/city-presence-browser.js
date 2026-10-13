@@ -107,24 +107,34 @@ try {
   const state = page => page.evaluate(() => window.__presenceHandles.at(-1).handle.getState());
   const revealRoster = async page => {
     const overview = page.locator('.omerta-city__overview');
-    if (!await overview.isVisible() || await overview.getAttribute('open') !== null) return;
     const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
     for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
       const close = page.locator(selector); if (await close.isVisible()) await native(close);
     }
+    if (!await overview.isVisible() || await overview.getAttribute('open') !== null) return;
     await native(overview.locator('summary'));
+  };
+  const openIntel = async page => {
+    await revealRoster(page);
+    const button = page.locator('[data-city-intel-open]');
+    if (await page.evaluate(() => navigator.maxTouchPoints > 0)) await button.tap(); else await button.click();
   };
   const frames = page => page.evaluate(() => new Promise(resolve => { let observed = 0; const next = () => ++observed < 8 ? requestAnimationFrame(next) : resolve(); requestAnimationFrame(next); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
   const markerFrame = async page => {
     const { position, camera, actorPage, selectedActor, actorOpening, actorMarkers, pathLength } = await state(page);
+    const hittable = await page.locator('.omerta-city__canvas canvas').evaluate((canvas, { camera, actorMarkers }) => {
+      const box = canvas.getBoundingClientRect();
+      return actorMarkers.filter(marker => document.elementFromPoint(box.left + (marker.x - camera.x) * camera.zoom,
+        box.top + (marker.y - 15 - camera.y) * camera.zoom) === canvas).map(marker => marker.id);
+    }, { camera, actorMarkers });
     return { current: { position, camera, actorPage, selectedActor, actorOpening, actorMarkers, pathLength },
-      box: await page.locator('.omerta-city__canvas canvas').boundingBox() };
+      box: await page.locator('.omerta-city__canvas canvas').boundingBox(), hittable };
   };
-  const visibleMarker = ({ current, box }) => current.actorMarkers.find(marker => {
+  const visibleMarker = ({ current, box, hittable }) => current.actorMarkers.find(marker => {
     const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
-    return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
+    return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15 && hittable.includes(marker.id);
   });
   const preparePhoneMarker = async (page, viewport) => {
     let view = await markerFrame(page);
@@ -149,10 +159,10 @@ try {
         await page.keyboard.down('ArrowRight');
         try {
           await page.waitForFunction(() => {
-            const current = window.__presenceHandles.at(-1).handle.getState(), box = document.querySelector('.omerta-city__canvas canvas').getBoundingClientRect();
+            const current = window.__presenceHandles.at(-1).handle.getState(), canvas = document.querySelector('.omerta-city__canvas canvas'), box = canvas.getBoundingClientRect();
             return current.actorMarkers.some(marker => {
               const x = (marker.x - current.camera.x) * current.camera.zoom, y = (marker.y - 15 - current.camera.y) * current.camera.zoom;
-              return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15;
+              return x > 15 && x < box.width - 15 && y > 15 && y < box.height - 15 && document.elementFromPoint(box.left + x, box.top + y) === canvas;
             });
           }, undefined, { timeout: 5000 });
         } finally { await page.keyboard.up('ArrowRight'); }
@@ -202,22 +212,30 @@ try {
       });
       const controls = [...hud.querySelectorAll('[data-city-resource] dd'), hud.querySelector('.omerta-city__readiness')];
       const toast = document.querySelector('#toast'), toastBox = toast?.classList.contains('show') ? rect(toast) : null;
-      const toastTop = toastBox && toastBox.bottom > 0 && toastBox.top < innerHeight ? toastBox.top : innerHeight;
+      const visibleToast = toastBox && toastBox.bottom > 0 && toastBox.top < innerHeight ? toastBox : null;
+      const overlays = [...document.querySelectorAll('.omerta-city__world-hud, .omerta-city__minimap, .omerta-city__next-move, .omerta-city__controls, .omerta-city__interaction, .omerta-city__actor-dock, .omerta-city__training, .city-world__dock, .city-world__quick-nav, .omerta-city__overview[open], #toast.show')]
+        .filter(node => !node.hidden && !node.closest('[hidden]')).map(node => ({ name: node.className, box: rect(node) }))
+        .filter(node => node.box.width && node.box.height);
+      const occluded = avatar.map(bounds => overlays.filter(({ box: other }) => other.right > box.left + bounds.left && other.left < box.left + bounds.right
+        && other.bottom > box.top + bounds.top && other.top < box.top + bounds.bottom).map(node => node.name));
       return { hud: rect(hud), canvas: box, dock: rect(dock), close: rect(close), header: rect(document.querySelector('#top')),
         engine: { width: canvas.width, height: canvas.height }, avatar, viewport: rect(document.querySelector('.omerta-city__viewport')),
-        worldWidth: 960 * camera.zoom, height: innerHeight, toastTop, controlsVisible: controls.every(hit), closeVisible: hit(close),
-        canvasVisible: [box.top + 3, box.top + box.height / 2, box.bottom - 3].every(y => document.elementFromPoint(box.left + box.width / 2, y) === canvas),
+        width: innerWidth, height: innerHeight, toast: visibleToast, controlsVisible: controls.every(hit), closeVisible: hit(close), occluded,
         name: live.data.get('playerName').text, expectedName: window.__presenceHandles.at(-1).character.name.slice(0, 26) };
     });
     const detail = JSON.stringify(geometry);
     assert(geometry.hud.top >= geometry.header.bottom && geometry.controlsVisible, 'Current resource values and readiness stay below sticky chrome: ' + detail);
-    assert(geometry.canvasVisible && geometry.dock.bottom <= Math.min(geometry.height, geometry.toastTop) + 1, 'The map and reserved dock fit the usable window: ' + detail);
+    const toastOverlapsDock = geometry.toast && geometry.toast.right > geometry.dock.left && geometry.toast.left < geometry.dock.right
+      && geometry.toast.bottom > geometry.dock.top && geometry.toast.top < geometry.dock.bottom;
+    assert(geometry.occluded.every(nodes => nodes.length === 0) && !toastOverlapsDock && geometry.dock.bottom <= geometry.height + 1,
+      'The complete avatar and name stay clear of every actual overlay, and the dock fits the usable window: ' + detail);
     assert(geometry.close.height >= 44 && geometry.closeVisible, 'The dock close control remains reachable: ' + detail);
     assert(Math.abs(geometry.engine.width - geometry.canvas.width) <= 1 && Math.abs(geometry.engine.height - geometry.canvas.height) <= 1, 'CSS and Phaser share actual viewport geometry: ' + detail);
     assert.equal(geometry.name, geometry.expectedName, 'Keeping the label visible must preserve the complete player name.');
     assert(geometry.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= geometry.canvas.height + 1 && bounds.left >= -1 && bounds.right <= geometry.canvas.width + 1), 'The complete actual avatar and name remain in the map: ' + detail);
-    assert(geometry.viewport.width <= 960 && Math.abs(geometry.viewport.left - (page.viewportSize().width - geometry.viewport.width) / 2) <= 1, 'Wide Player maps are centered at the world width: ' + detail);
-    assert(geometry.canvas.width <= geometry.worldWidth + 1 && Math.abs(geometry.canvas.left - (page.viewportSize().width - geometry.canvas.width) / 2) <= 1, 'The centered canvas does not extend into empty space beyond the world: ' + detail);
+    for (const frame of [geometry.viewport, geometry.canvas]) assert(Math.abs(frame.left) <= 1 && Math.abs(frame.width - geometry.width) <= 1
+      && Math.abs(frame.top - geometry.header.bottom) <= 1 && Math.abs(frame.bottom - geometry.height) <= 1,
+    'The Player world fills the exact viewport below the real header: ' + detail);
     return geometry;
   };
   const assertFallbackMap = async page => {
@@ -615,9 +633,9 @@ try {
   assert.equal(board.progress.completedObjectives, 3);
   assert.equal(new Set(board.journal.map(entry => entry.id)).size, 7);
   assert.deepEqual((await state(page)).position, pose);
-  await page.locator('[data-city-actor-close]').click(); await page.locator('[data-city-intel-open]').click();
-  // Actor/journal panels reserve desktop space rather than scrolling resource
-  // values under sticky chrome, including a short landscape window.
+  await page.locator('[data-city-actor-close]').click(); await openIntel(page);
+  // Actor/journal panels overlay the full world without obscuring the avatar,
+  // name or resource controls, including a short landscape window.
   const desktopReads = requests.length;
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 1366, height: 600 }]) {
     await page.setViewportSize(viewport);
@@ -625,7 +643,7 @@ try {
     const closed = await page.locator('.omerta-city__canvas canvas').boundingBox();
     const closedFit = await page.locator('.omerta-city__canvas').evaluate(node => node.style.getPropertyValue('--city-map-height'));
     assert(Number.isFinite(parseFloat(closedFit)) && parseFloat(closedFit) >= 96, 'The closed Player map has a measured desktop fit.');
-    await page.locator('[data-city-intel-open]').click();
+    await openIntel(page);
     await assertDockFrame(page);
     assert.deepEqual((await state(page)).position, pose); assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
     const shots = process.env.CITY_PRESENCE_SHOTS;
@@ -640,14 +658,14 @@ try {
     assert(Math.abs(restored.width - closed.width) <= 1 && Math.abs(restored.height - closed.height) <= 1, 'Closing restores actual original desktop dimensions: ' + JSON.stringify({ closed, restored }));
     assert(Math.abs(restored.engineWidth - restored.width) <= 1 && Math.abs(restored.engineHeight - restored.height) <= 1, 'Closing restores matching Phaser dimensions.');
     assert.deepEqual((await state(page)).position, pose);
-    await page.locator('[data-city-intel-open]').click();
+    await openIntel(page);
   }
   assert.deepEqual(mutations(requests.slice(desktopReads)), [], 'Desktop journal/actor opening and resizing never submit gameplay.');
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.locator('[data-city-actor-close]').click(); await page.locator('[data-city-intel-open]').click();
+  await page.locator('[data-city-actor-close]').click(); await openIntel(page);
   const noObserver = await newPage({ width: 1366, height: 600 }, { noResizeObserver: true });
   const noObserverPose = (await state(noObserver.page)).position;
-  await noObserver.page.locator('[data-city-intel-open]').click(); await assertDockFrame(noObserver.page);
+  await openIntel(noObserver.page); await assertDockFrame(noObserver.page);
   await inspect(noObserver.page, npc.id); await assertDockFrame(noObserver.page);
   assert.deepEqual((await state(noObserver.page)).position, noObserverPose);
   assert.deepEqual(mutations(noObserver.requests), []);
@@ -692,7 +710,7 @@ try {
   await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().selectedActor === null);
   assert.equal(await page.locator('.omerta-city__actor-dock:not([hidden])').count(), 0);
   assert.equal((await readIntel()).progress.totalEncounters, 9);
-  await page.locator('[data-city-intel-open]').click(); await page.waitForSelector('[data-city-intel]');
+  await openIntel(page); await page.waitForSelector('[data-city-intel]');
   assert.equal(await page.locator('[data-city-intel]').count(), 9);
 
   // The server, not a fabricated response, reports key reuse for a fresh issuer
@@ -734,7 +752,7 @@ try {
   await page.evaluate(() => window.__retiredEncounter.click()); await frames(page);
   assert.equal(requests.slice(beforeRetired).filter(request => request.path.startsWith('/v1/city/encounters/')).length, 0);
   assert.equal((await readIntel()).progress.totalEncounters, 0, 'A new generation cannot inherit private encounter intel.');
-  await page.locator('[data-city-intel-open]').click();
+  await openIntel(page);
   assert.equal(await page.locator('[data-city-intel]').count(), 0);
   await context.close();
 
@@ -777,6 +795,10 @@ try {
       await phone.waitForFunction(() => document.querySelector('[data-city-actors-more]')?.textContent === 'More people');
       await frames(phone);
     }
+    const rosterPose = (await state(phone)).position;
+    await phone.locator('.omerta-city__overview > summary').tap(); await frames(phone);
+    assert.equal(await phone.locator('.omerta-city__overview').evaluate(node => node.open), false, 'Native guide Close reveals the actual marker before tapping it.');
+    assert.deepEqual((await state(phone)).position, rosterPose, 'Closing the roster preserves the exploration pose.');
     const view = await preparePhoneMarker(phone, viewport), current = view.current, marker = visibleMarker(view);
     assert.equal(mutations(mobile.requests).length, beforeNavigation, 'Marker navigation setup performs no gameplay POST.');
     const beforeTouch = mutations(mobile.requests).length;
@@ -797,22 +819,39 @@ try {
     await phone.keyboard.press('Escape');
     assert.equal(mutations(mobile.requests).length, beforeTouch);
     if (viewport.width === 375) {
-      await revealRoster(phone);
-      await phone.locator('.omerta-city__actor-list').evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
-      const outside = await phone.evaluate(() => {
-        const list = document.querySelector('.omerta-city__actor-list'), rect = list.getBoundingClientRect();
-        const x = rect.left + rect.width / 2, y = Math.min(640, rect.bottom - 20, innerHeight - 130), hit = document.elementFromPoint(x, y);
-        return { x, y, scroll: scrollY, rosterHit: list.contains(hit), canvasHit: hit?.tagName === 'CANVAS' };
-      });
-      assert(outside.rosterHit && !outside.canvasHit, 'Native outside scrolling starts on the actual visible roster: ' + JSON.stringify(outside));
       const outsidePose = (await state(phone)).position;
+      await revealRoster(phone);
+      while (!await phone.locator('[data-city-actors-previous]').isDisabled()) await phone.locator('[data-city-actors-previous]').tap();
+      // The short final roster page can already be at the scroll limit. Give
+      // the unchanged native upward swipe real room at the first roster entry.
+      await phone.locator('[data-city-actor]').first().focus();
+      assert(await phone.evaluate(() => document.activeElement?.hasAttribute('data-city-actor')), 'Keyboard scroll setup focuses the actual roster, not the map.');
+      await phone.keyboard.press('ArrowDown'); await frames(phone);
+      const outside = await phone.evaluate(() => {
+        const list = document.querySelector('.omerta-city__actor-list'), rect = list.getBoundingClientRect(), guide = document.querySelector('.omerta-city__overview');
+        const clip = guide.getBoundingClientRect(), summary = guide.querySelector('summary').getBoundingClientRect();
+        const x = rect.left + rect.width / 2, y = Math.min(640, rect.bottom, clip.bottom, innerHeight - 110) - 20, hit = document.elementFromPoint(x, y);
+        return { x, y, scroll: guide.scrollTop, scrollMax: guide.scrollHeight - guide.clientHeight,
+          list: rect.toJSON(), guide: clip.toJSON(), summary: summary.toJSON(), rosterHit: list.contains(hit), canvasHit: hit?.tagName === 'CANVAS',
+          clipped: y > Math.max(rect.top, summary.bottom) && y < Math.min(rect.bottom, clip.bottom) };
+      });
+      assert(outside.clipped && outside.rosterHit && !outside.canvasHit, 'Native outside scrolling starts on the actual visible roster: ' + JSON.stringify(outside));
+      assert(outside.scrollMax - outside.scroll >= 220, 'The real guide has room for the complete native upward swipe: ' + JSON.stringify(outside));
+      assert.deepEqual((await state(phone)).position, outsidePose, 'Native guide scroll preparation preserves the exploration pose.');
       assert.equal((await state(phone)).pathLength, 0);
       const touch = await phone.context().newCDPSession(phone);
       try {
         await touch.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: outside.x, y: outside.y }] });
         for (const offset of [55, 110, 165, 220]) { await touch.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: outside.x, y: outside.y - offset }] }); await frames(phone); }
       } finally { await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] }); await touch.detach(); }
-      await phone.waitForFunction(before => scrollY > before + 20, outside.scroll);
+      try { await phone.waitForFunction(before => document.querySelector('.omerta-city__overview').scrollTop > before + 20, outside.scroll); }
+      catch (error) {
+        console.error('Native roster scroll geometry: ' + JSON.stringify({ before: outside, after: await phone.evaluate(() => {
+          const guide = document.querySelector('.omerta-city__overview');
+          return { scroll: guide.scrollTop, scrollMax: guide.scrollHeight - guide.clientHeight, open: guide.open };
+        }) }));
+        throw error;
+      }
       assert.deepEqual((await state(phone)).position, outsidePose, 'Native roster scrolling does not move the player.');
       assert.equal((await state(phone)).pathLength, 0, 'Native roster scrolling cannot start a map path.');
       assert.equal(mutations(mobile.requests).length, beforeTouch, 'Native touch scrolling remains usable outside the canvas.');
@@ -845,7 +884,7 @@ try {
   await fallback.waitForFunction(() => document.querySelector('.omerta-city__actor-notice')?.textContent.startsWith('Intel recorded:'));
   await fallback.locator('[data-city-actor-close]').click();
   await fallback.waitForFunction(() => document.activeElement?.hasAttribute('data-city-actor'));
-  await fallback.locator('[data-city-intel-open]').click(); assert.equal(await fallback.locator('[data-city-intel]').count(), 1);
+  await openIntel(fallback); assert.equal(await fallback.locator('[data-city-intel]').count(), 1);
   await fallbackContext.close();
 
   const realm = await newPage({ width: 375, height: 812 });

@@ -141,7 +141,7 @@ try {
   };
   const selectCase = async (fixture, graphId) => {
     if (await fixture.page.locator('.city-world__dock').isVisible()) await activate(fixture, fixture.page.locator('[data-city-world-close]'));
-    await activate(fixture, fixture.page.locator('[data-city-journal]'));
+    await activate(fixture, fixture.page.locator('[data-city-quick-panel="journal"]'));
     const select = fixture.page.locator('[data-city-case-select]'); await select.waitFor();
     const index = await select.locator('option').evaluateAll((options, id) => options.findIndex(option => option.value === id), graphId);
     assert(index >= 0); const before = fixture.requests.length;

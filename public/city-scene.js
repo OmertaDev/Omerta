@@ -147,7 +147,8 @@
     let obstacles = baseObstacles();
     let homeBoard = null, homes = [], exits = [], selectedHome = null, selectedExit = null;
     const homeSlots = new Map(), homeMarkers = new Map(), exitLabels = new Map(), permeableHomes = new Set();
-    let extensionGround = null, regionInk = null;
+    let extensionGround = null, regionInk = null, extensionPaving = null;
+    const residentialRoadArt = new Map();
     const canWalk = (x, y) => traversable(x, y, world, obstacles, walkBottom);
     const findRoute = (start, end) => route(start, end, world, obstacles, walkBottom);
     world.width = widthForHomes(district.deeds);
@@ -315,7 +316,16 @@
     const gameBody = element('div', 'omerta-city__training-body');
     gameBody.tabIndex = -1;
     gameControls.append(gameClose); gameDock.append(gameControls, gameBody);
-    viewport.append(worldHud, mapLayer, actorDock, gameDock);
+    const minimap = element('div', 'omerta-city__minimap');
+    const minimapLabel = element('div', 'omerta-city__minimap-label');
+    const minimapCanvas = document.createElement('canvas');
+    minimapCanvas.width = 164; minimapCanvas.height = 112;
+    minimapCanvas.setAttribute('aria-hidden', 'true');
+    minimap.setAttribute('role', 'img');
+    minimap.hidden = true;
+    minimap.append(minimapLabel, minimapCanvas);
+    let minimapFrame = -Infinity;
+    viewport.append(worldHud, mapLayer, minimap, actorDock, gameDock);
     const instructions = element('p', 'omerta-city__instructions');
     const walking = element('span');
     walking.append(element('strong', '', 'Tap to walk.'), document.createTextNode(' Focus the map for WASD / arrows.'));
@@ -421,7 +431,7 @@
         target?.focus({ preventScroll: true }); revealVenue(viewport);
       }
     });
-    let compactShell = false;
+    let compactShell = false, worldFirst = false, safeCamera = null, objectiveHeight = 60;
     root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence, overview);
     listen(overview, 'toggle', () => { root.classList.toggle('is-overview-open', overview.open); fitWorldFrame(); });
     listen(homeList, 'click', event => {
@@ -577,10 +587,20 @@
     }
     function drawHomes() {
       if (!scene || !ready) return;
-      if (!extensionGround) extensionGround = scene.add.graphics().setDepth(0);
+      const residentialArt = scene.textures.exists('city-art-background');
+      if (residentialArt) {
+        const texture = scene.textures.get('city-art-background');
+        // Reuse unoccupied paving and the unbranded central facade from the
+        // existing 960x640 town art. These frames add no new map geometry.
+        if (!texture.has('residential-paving')) texture.add('residential-paving', 0, 420, 250, 64, 40);
+        if (!texture.has('residential-facade')) texture.add('residential-facade', 0, 280, 0, 230, 194);
+        if (!extensionPaving) extensionPaving = scene.add.tileSprite(0, 0, world.width, world.height, 'city-art-background', 'residential-paving').setOrigin(0).setDepth(-1).setAlpha(.8);
+        extensionPaving.setSize(world.width, world.height);
+      }
+      if (!extensionGround) extensionGround = scene.add.graphics().setDepth(.6);
       extensionGround.clear();
       if (world.width > WORLD.width) {
-        extensionGround.fillStyle(region.ground).fillRect(WORLD.width, 0, world.width - WORLD.width, world.height);
+        if (!residentialArt) extensionGround.fillStyle(region.ground).fillRect(WORLD.width, 0, world.width - WORLD.width, world.height);
         extensionGround.fillStyle(region.road).fillRect(WORLD.width, 248, world.width - WORLD.width, 48);
         for (const road of roadState().filter(road => road.x > WORLD.width)) extensionGround.fillRect(road.x, road.y, road.width, road.height);
         for (let y = 252; y < 294; y += 10) for (let x = WORLD.width + (y % 20 ? 12 : 0); x < world.width; x += 24) {
@@ -591,12 +611,20 @@
       }
       if (!regionInk) regionInk = scene.add.graphics().setDepth(1);
       regionInk.clear();
-      regionInk.fillStyle(region.ground).fillRect(0,640,world.width,world.height-640);
+      if (!residentialArt) regionInk.fillStyle(region.ground).fillRect(0,640,world.width,world.height-640);
       // Continue deed-backed residential roads over the southern ground layer.
       for(const road of roadState().filter(road=>road.x>=WORLD.width&&road.y+road.height>640)){
         const y=Math.max(640,road.y);
         regionInk.fillStyle(region.road).fillRect(road.x,y,road.width,road.y+road.height-y);
       }
+      const eastRoads = roadState().map(road => ({ ...road, x: Math.max(WORLD.width, road.x), width: road.width - Math.max(0, WORLD.width - road.x) }))
+        .filter(road => road.width > 0);
+      const roadKeys = new Set();
+      if (residentialArt) for (const road of eastRoads) {
+        const key = [road.x, road.y, road.width, road.height].join(':'); roadKeys.add(key);
+        if (!residentialRoadArt.has(key)) residentialRoadArt.set(key, scene.add.tileSprite(road.x, road.y, road.width, road.height, 'city-art-background', 'residential-paving').setOrigin(0).setDepth(1.05));
+      }
+      for (const [key, tile] of residentialRoadArt) if (!roadKeys.has(key)) { tile.destroy(); residentialRoadArt.delete(key); }
       if(world.width>WORLD.width)regionInk.fillStyle(region.water).fillRect(WORLD.width,walkBottom+14,world.width-WORLD.width,world.height-walkBottom-14);
       // Replace the original decorative waterfront only where the new crossing
       // actually opens. All obstacles are the same rectangles used by canWalk.
@@ -629,11 +657,11 @@
         label.setPosition(exit.x, exit.y - 25).setText('→ ' + exit.name).setDepth(3);
       }
       const active = new Set(homes.map(home => home.key));
-      for (const [key, marker] of homeMarkers) if (!active.has(key)) { marker.ink.destroy(); marker.name.destroy(); homeMarkers.delete(key); }
+      for (const [key, marker] of homeMarkers) if (!active.has(key)) { marker.ink.destroy(); marker.facade?.destroy(); marker.name.destroy(); homeMarkers.delete(key); }
       for (const home of homes) {
         let marker = homeMarkers.get(home.key);
         if (!marker) {
-          marker = { ink: scene.add.graphics().setDepth(1), name: scene.add.text(0, 0, '', { fontFamily: 'monospace', fontSize: 10,
+          marker = { ink: scene.add.graphics().setDepth(1.1), name: scene.add.text(0, 0, '', { fontFamily: 'monospace', fontSize: 10,
             color: '#e8d7b2', stroke: '#18201e', strokeThickness: 2, align: 'center', wordWrap: { width: 136 } }).setOrigin(0.5) };
           homeMarkers.set(home.key, marker);
         }
@@ -641,6 +669,10 @@
         const roof = home.mine ? 0x706c49 : home.owner?.kind === 'agent' ? 0x506275 : 0x73544b;
         g.fillStyle(0x111819, 0.4).fillRect(b.x + 10, b.y + 9, b.width, b.height);
         g.fillStyle(0x272b28).fillRect(b.x - 4, b.y - 4, b.width + 8, b.height + 8);
+        if (residentialArt) {
+          if (!marker.facade) marker.facade = scene.add.image(b.x, b.y, 'city-art-background', 'residential-facade').setOrigin(0).setDepth(1.2);
+          marker.facade.setPosition(b.x, b.y).setDisplaySize(b.width, b.height);
+        } else {
         g.fillStyle(0x79634e).fillRect(b.x, b.y, b.width, b.height);
         for (let y = b.y + 32; y < b.y + b.height; y += 8) {
           g.fillStyle(0x9a8060, 0.4).fillRect(b.x + 2, y, b.width - 4, 1);
@@ -661,11 +693,12 @@
         g.fillStyle(0x262621).fillRect(b.x + b.width / 2 - 16, b.y + b.height - 40, 32, 40);
         g.fillStyle(0x66503b).fillRect(b.x + b.width / 2 - 12, b.y + b.height - 36, 24, 36);
         g.fillStyle(0xd2b879).fillRect(b.x + b.width / 2 + 7, b.y + b.height - 18, 2, 3);
+        }
         g.fillStyle(0x9b9174).fillRect(home.entrance.x - 16, b.y + b.height, 32, home.entrance.y - b.y - b.height + 4);
         g.fillStyle(0x252e2c).fillRect(b.x + 8, b.y + 102, b.width - 16, 28);
         g.lineStyle(2, home.mine ? 0xe8b34b : 0x9da99b, 0.8).strokeRect(home.entrance.x - 9, home.entrance.y - 9, 18, 18);
         const sign = home.street.length > 32 ? home.street.slice(0, 31) + '…' : home.street;
-        marker.name.setPosition(b.x + b.width / 2, b.y + 112).setText(sign + '\n' + (home.owner ? home.owner.kind.toUpperCase() : home.ownership.toUpperCase())).setDepth(b.y + 1);
+        marker.name.setPosition(b.x + b.width / 2, b.y + 112).setText(sign + '\n' + (home.owner ? home.owner.kind.toUpperCase() : home.ownership.toUpperCase())).setBackgroundColor(residentialArt ? '#252e2c' : null).setDepth(b.y + 1);
       }
     }
     function openWorldMap(districtId, fallback = true) {
@@ -1200,8 +1233,12 @@
       root.classList.add('is-gameplay'); root.classList.toggle('is-training', kind === 'training');
       renderGameDock(); fitWorldFrame(); revealVenue(viewport);
       const firstAction = gameBody.querySelector('[data-city-train]:not(:disabled), [data-city-crime]:not(:disabled)') || gameBody;
-      firstAction.focus({ preventScroll: true });
-      if (firstAction !== gameBody) firstAction.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      const openingTerms = worldFirst && kind === 'fixer' && gameDock.scrollHeight > gameDock.clientHeight
+        && firstAction !== gameBody && firstAction.getBoundingClientRect().bottom > gameDock.getBoundingClientRect().bottom;
+      const focusTarget = openingTerms ? gameBody : firstAction;
+      focusTarget.focus({ preventScroll: true });
+      if (openingTerms) gameDock.scrollTop = 0;
+      else if (focusTarget !== gameBody) focusTarget.scrollIntoView({ block: 'nearest', behavior: 'instant' });
       syncPointerBounds(); return true;
     }
     function hideGameDock(focusCanvas) {
@@ -1251,6 +1288,7 @@
       open.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
     function revealVenue(target = card, scroll = true) {
+      if (worldFirst) { fitWorldFrame(); syncPointerBounds(); return; }
       if (compactShell && target === card) { fitWorldFrame(); target = viewport; }
       const height = window.innerHeight;
       let top = 0, bottom = height;
@@ -1400,9 +1438,13 @@
     }
     function syncPointerBounds() { if (game?.canvas) game.scale.updateBounds(); }
     function arrangePlayShell(phone) {
-      const next = phone && document.body.classList.contains('city-player-view') && !root.classList.contains('omerta-city--unavailable');
-      if (next !== compactShell) {
-        compactShell = next; root.classList.toggle('is-play-shell', next); overview.hidden = !next;
+      const next = document.body.classList.contains('city-player-view') && !root.classList.contains('omerta-city--unavailable');
+      compactShell = next && phone;
+      root.classList.toggle('is-play-shell', compactShell);
+      root.classList.toggle('is-world-first', next);
+      minimap.hidden = !next;
+      if (next !== worldFirst) {
+        worldFirst = next; overview.hidden = !next;
         if (next) {
           overviewBody.append(header, worldMapButton, hud, instructions, destinations, homeSection, presence);
           viewport.insertBefore(card, actorDock); viewport.append(controls); root.append(nextMove, viewport, overview);
@@ -1412,7 +1454,8 @@
           root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence, overview);
           worldResources.style.removeProperty('--city-resource-columns');
           root.style.removeProperty('min-height');
-          overview.open = false; root.classList.remove('is-overview-open');
+          for (const variable of ['--city-shell-top', '--city-viewport-height', '--city-world-panel-height', '--city-world-panel-bottom', '--city-hud-bottom']) root.style.removeProperty(variable);
+          overview.open = false; root.classList.remove('is-overview-open', 'is-overlay-pressure');
         }
         cancel.textContent = next ? 'Stop' : 'Stop walking';
       }
@@ -1421,7 +1464,7 @@
       if (next && viewport.lastElementChild !== controls) viewport.append(controls);
       const activity = !card.hidden || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen();
       overviewSummary.setAttribute('aria-disabled', String(next && activity));
-      setText(overviewSummary, next && activity ? 'Close this activity to open World map & neighborhood info' : 'World map & neighborhood info');
+      setText(overviewSummary, next && activity ? 'Close this activity to open District guide' : 'District guide');
       if (next && activity) overview.open = false;
       root.classList.toggle('is-overview-open', overview.open);
     }
@@ -1443,12 +1486,78 @@
     }
     function fitWorldFrame() {
       if (destroyed) return;
+      const hudScroll = worldHud.scrollTop;
       const phone = window.innerWidth <= 680;
       arrangePlayShell(phone);
-      const inspecting = Boolean((!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen() || compactShell && !card.hidden) && document.body.classList.contains('city-player-view'));
+      const inspecting = Boolean((!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen() || worldFirst && !card.hidden) && document.body.classList.contains('city-player-view'));
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
       fitResourceColumns();
+      if (worldFirst) {
+        const visual = window.visualViewport;
+        const viewportTop = visual?.offsetTop || 0;
+        const bottom = viewportTop + (visual?.height || window.innerHeight);
+        const headerBounds = document.getElementById('top')?.getBoundingClientRect();
+        const top = Math.max(viewportTop, Math.min(bottom - 96, headerBounds?.bottom || 0));
+        const height = Math.max(96, Math.floor(bottom - top));
+        root.style.setProperty('--city-shell-top', top + 'px');
+        root.style.setProperty('--city-viewport-height', height + 'px');
+        root.style.removeProperty('min-height');
+        root.classList.remove('is-tight-frame');
+        canvasHost.style.setProperty('--city-map-height', height + 'px');
+        let panelBottom = phone ? 116 : 96;
+        const toast = document.getElementById('toast'), toastStyle = toast && getComputedStyle(toast);
+        const aboveToast = base => {
+          if (!toast?.classList.contains('show') || !['fixed', 'sticky'].includes(toastStyle.position)) return base;
+          const bounds = toast.getBoundingClientRect(), frame = viewport.getBoundingClientRect();
+          const panelLeft = phone ? frame.left + 8 : frame.right - 376, panelRight = frame.right - (phone ? 8 : 16);
+          return bounds.height && bounds.right > panelLeft && bounds.left < panelRight && bounds.top < bottom && bounds.bottom > top ? Math.max(base, bottom - bounds.top + 8) : base;
+        };
+        panelBottom = aboveToast(panelBottom);
+        let hudHeight = Math.max(64, Math.min(phone ? 144 : 180, height * .28));
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
+        let hudBottom = Math.max(0, worldHud.getBoundingClientRect().bottom - top);
+        root.style.setProperty('--city-hud-bottom', Math.ceil(hudBottom + 8) + 'px');
+        if (nextMove.parentNode === root && !nextMove.hidden) objectiveHeight = nextMove.getBoundingClientRect().height;
+        const naturalTop = Math.max(hudBottom + (nextMove.hidden ? 0 : 8 + objectiveHeight), phone ? 104 : 156);
+        const pressure = phone && height - naturalTop - panelBottom < 96 + 16 + (inspecting ? 64 : 0);
+        root.classList.toggle('is-overlay-pressure', pressure);
+        if (pressure && nextMove.parentNode !== overviewBody) overviewBody.prepend(nextMove);
+        else if (!pressure && nextMove.parentNode !== root) root.insertBefore(nextMove, viewport);
+        panelBottom = aboveToast(phone ? pressure ? 62 : 116 : 96);
+        root.style.setProperty('--city-world-panel-bottom', Math.ceil(panelBottom) + 'px');
+        if (pressure) {
+          hudHeight = Math.max(48, Math.min(hudHeight, height - panelBottom - (inspecting ? 64 : 0) - 96 - 16 - 8));
+          worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
+          hudBottom = Math.max(0, worldHud.getBoundingClientRect().bottom - top);
+          root.style.setProperty('--city-hud-bottom', Math.ceil(hudBottom + 8) + 'px');
+        }
+        const topStackBottom = () => pressure ? hudBottom : Math.max(hudBottom, minimap.getBoundingClientRect().bottom - top, nextMove.hidden ? 0 : nextMove.getBoundingClientRect().bottom - top);
+        if (phone && inspecting) {
+          const shortage = 64 - (height - topStackBottom() - 96 - 16 - panelBottom);
+          if (shortage > 0) {
+            hudHeight = Math.max(48, hudHeight - shortage);
+            worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
+            hudBottom = Math.max(0, worldHud.getBoundingClientRect().bottom - top);
+            root.style.setProperty('--city-hud-bottom', Math.ceil(hudBottom + 8) + 'px');
+          }
+        }
+        const overflow = worldHud.scrollHeight > worldHud.clientHeight;
+        if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
+        worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
+        const panelHeight = phone ? Math.max(64, Math.min(height * .42, height - topStackBottom() - 96 - 16 - panelBottom)) : Math.max(96, height - 172 - panelBottom);
+        root.style.setProperty('--city-world-panel-height', Math.floor(panelHeight) + 'px');
+        actorDock.style.setProperty('--city-actor-height', Math.floor(panelHeight) + 'px');
+        gameDock.style.setProperty('--city-training-height', Math.floor(panelHeight) + 'px');
+        card.style.setProperty('--city-card-height', Math.floor(panelHeight) + 'px');
+        if (worldUI?.isOpen()) worldUI.setHeight(Math.floor(panelHeight));
+        // Measuring a larger natural cap can clamp a reader's current position.
+        // Restore against only the final viewport, without moving keyboard focus.
+        worldHud.scrollTop = Math.min(hudScroll, Math.max(0, worldHud.scrollHeight - worldHud.clientHeight));
+        fitCamera();
+        drawMinimap();
+        return;
+      }
       if (!phone || !inspecting) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
@@ -1508,13 +1617,70 @@
       syncPointerBounds();
     }
     const hudObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitWorldFrame) : null;
-    if (hudObserver) { hudObserver.observe(worldHud); hudObserver.observe(nextMove); hudObserver.observe(actorDock); hudObserver.observe(gameDock); }
+    if (hudObserver) {
+      for (const node of [worldHud, nextMove, minimap, controls, card, actorDock, gameDock, viewport.querySelector('.city-world__dock'), document.getElementById('top')]) if (node) hudObserver.observe(node);
+    }
+    const toastNode = document.getElementById('toast');
+    if (toastNode) {
+      const toastObserver = typeof MutationObserver === 'function' ? new MutationObserver(fitWorldFrame) : null;
+      if (toastObserver) { toastObserver.observe(toastNode, { attributes: true, attributeFilter: ['class'] }); listeners.push(() => toastObserver.disconnect()); }
+      listen(toastNode, 'transitionend', fitWorldFrame);
+    }
     listen(window, 'resize', fitWorldFrame);
+    if (window.visualViewport) {
+      listen(window.visualViewport, 'resize', fitWorldFrame);
+      listen(window.visualViewport, 'scroll', fitWorldFrame);
+    }
+    // Choose a free screen rectangle from the actual overlays. This shifts only
+    // the camera; walking coordinates, collisions and the canvas stay unchanged.
+    function cameraSafeFrame(size) {
+      const canvas = canvasHost.getBoundingClientRect();
+      const nodes = [worldHud, minimap, nextMove, controls, card, actorDock, gameDock,
+        viewport.querySelector('.city-world__dock'), viewport.querySelector('.city-world__quick-nav'),
+        overview.open ? overview : null, document.getElementById('toast')?.classList.contains('show') ? document.getElementById('toast') : null];
+      const blocked = nodes.filter(node => node && !node.hidden).map(node => {
+        const bounds = node.getBoundingClientRect();
+        return { left: Math.max(0, bounds.left - canvas.left - 8), top: Math.max(0, bounds.top - canvas.top - 8),
+          right: Math.min(size.width, bounds.right - canvas.left + 8), bottom: Math.min(size.height, bounds.bottom - canvas.top + 8), visible: bounds.width > 0 && bounds.height > 0 };
+      }).filter(bounds => bounds.visible && bounds.right > bounds.left && bounds.bottom > bounds.top);
+      const xs = [...new Set([8, size.width - 8, ...blocked.flatMap(bounds => [bounds.left, bounds.right])])].sort((a, b) => a - b);
+      const ys = [...new Set([8, size.height - 8, ...blocked.flatMap(bounds => [bounds.top, bounds.bottom])])].sort((a, b) => a - b);
+      const minimumWidth = Math.min(size.width - 16, Math.max(160, (scene?.data.get('playerName')?.displayWidth || 0) * (window.innerWidth <= 680 ? .9 : 1) + 16));
+      let best = null, area = 0;
+      for (let l = 0; l < xs.length; l++) for (let r = l + 1; r < xs.length; r++) {
+        const width = xs[r] - xs[l];
+        if (width < minimumWidth) continue;
+        for (let t = 0; t < ys.length; t++) for (let b = t + 1; b < ys.length; b++) {
+          const height = ys[b] - ys[t], nextArea = width * height;
+          if (height < 96 || nextArea <= area || blocked.some(bounds => bounds.right > xs[l] && bounds.left < xs[r] && bounds.bottom > ys[t] && bounds.top < ys[b])) continue;
+          best = { left: xs[l], right: xs[r], top: ys[t], bottom: ys[b] }; area = nextArea;
+        }
+      }
+      return best || { left: 8, right: size.width - 8, top: 8, bottom: size.height - 8 };
+    }
     function fitCamera() {
       if (!scene || !game || !player) return;
       const size = dimensions();
       if (game.scale.width !== size.width || game.scale.height !== size.height) game.scale.resize(size.width, size.height);
       const camera = scene.cameras.main;
+      if (worldFirst) {
+        const zoom = window.innerWidth <= 680 ? .9 : 1;
+        const safe = cameraSafeFrame(size);
+        const targetX = (safe.left + safe.right) / 2, targetY = (safe.top + safe.bottom) / 2 + Math.min(36, (safe.bottom - safe.top) / 2 - 12);
+        const offsetX = (targetX - size.width / 2) / zoom, offsetY = (targetY - size.height / 2) / zoom;
+        const name = scene.data.get('playerName');
+        safeCamera = { ...size, zoom, safe, targetX, targetY,
+          halfWidth: Math.max(24, (name?.displayWidth || 0) / 2 + 4),
+          above: (artState.player === 'generated' ? 72 : 40) + (name?.displayHeight || 0) / 2 + 4 };
+        camera.setZoom(zoom).setBackgroundColor(region.ground);
+        fitCameraEdges();
+        camera.startFollow(player, true, reducedMotion ? 1 : .16, reducedMotion ? 1 : .16, offsetX, offsetY);
+        camera.centerOn(player.x - offsetX, player.y - offsetY);
+        fitCameraEdges();
+        syncPointerBounds();
+        return;
+      }
+      safeCamera = null;
       const zoom = size.width >= 720 ? Math.min(size.width / WORLD.width, size.height / WORLD.height) : 0.82;
       camera.setZoom(zoom);
       camera.setBounds(0, 0, world.width, world.height);
@@ -1523,6 +1689,46 @@
       camera.startFollow(player, true, reducedMotion ? 1 : 0.16, reducedMotion ? 1 : 0.16, 0, followOffsetY);
       camera.centerOn(player.x, player.y - followOffsetY);
       syncPointerBounds();
+    }
+    function fitCameraEdges() {
+      if (!worldFirst || !safeCamera || !scene || !player) return;
+      // Only boundary poses need space outside the map. Reuse the measured safe
+      // frame while walking; no DOM geometry or world coordinates change here.
+      const { width, height, zoom, safe, targetX, targetY, halfWidth, above } = safeCamera;
+      const viewWidth = width / zoom, viewHeight = height / zoom, camera = scene.cameras.main;
+      const minX = player.x - safe.right / zoom + halfWidth, maxX = player.x - safe.left / zoom - halfWidth;
+      const minY = player.y - safe.bottom / zoom + 4, maxY = player.y - safe.top / zoom - above;
+      const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
+      const x = clamp(clamp(player.x - targetX / zoom, 0, Math.max(0, world.width - viewWidth)), minX, maxX);
+      const y = clamp(clamp(player.y - targetY / zoom, 0, Math.max(0, world.height - viewHeight)), minY, maxY);
+      const left = Math.max(0, -x), right = Math.max(0, x + viewWidth - world.width);
+      const top = Math.max(0, -y), bottom = Math.max(0, y + viewHeight - world.height);
+      const bounds = [-left, -top, world.width + left + right, world.height + top + bottom];
+      if (!safeCamera.bounds || bounds.some((value, i) => value !== safeCamera.bounds[i])) {
+        camera.setBounds(...bounds); safeCamera.bounds = bounds;
+      }
+      // Bound follow smoothing too, so a moving sprite cannot lag under a sheet.
+      const shiftX = (viewWidth - width) / 2, shiftY = (viewHeight - height) / 2;
+      camera.setScroll(clamp(camera.scrollX, minX + shiftX, maxX + shiftX), clamp(camera.scrollY, minY + shiftY, maxY + shiftY));
+    }
+    function drawMinimap() {
+      if (!worldFirst || !player) return;
+      const context = minimapCanvas.getContext('2d');
+      if (!context) return;
+      const width = minimapCanvas.width, height = minimapCanvas.height;
+      const scale = Math.min((width - 12) / world.width, (height - 12) / world.height);
+      const x = (width - world.width * scale) / 2, y = (height - world.height * scale) / 2;
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = '#1a2220'; context.fillRect(0, 0, width, height);
+      context.fillStyle = '#' + region.ground.toString(16).padStart(6, '0');
+      context.fillRect(x, y, world.width * scale, world.height * scale);
+      context.fillStyle = '#b9ab83';
+      for (const road of roadState()) context.fillRect(x + road.x * scale, y + road.y * scale, road.width * scale, road.height * scale);
+      context.fillStyle = '#342f2b';
+      for (const building of [...baseObstacles(), ...homes.map(home => home.building)]) context.fillRect(x + building.x * scale, y + building.y * scale, building.width * scale, building.height * scale);
+      context.fillStyle = '#fff0b9'; context.beginPath(); context.arc(x + player.x * scale, y + player.y * scale, 3, 0, Math.PI * 2); context.fill();
+      setText(minimapLabel, district.name || 'Neighborhood');
+      minimap.setAttribute('aria-label', (district.name || 'Neighborhood') + '. Local street overview and your own position. Other people are not tracked.');
     }
     const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(fitCamera) : null;
     if (resizeObserver) resizeObserver.observe(canvasHost);
@@ -1957,6 +2163,7 @@
       ring.setPosition(Math.round(player.x), Math.round(player.y + 1)).setDepth(player.y - 1);
       const name = scene.data.get('playerName');
       name.setPosition(Math.round(player.x), Math.round(player.y - (artState.player === 'generated' ? 72 : 40))).setDepth(player.y + 1);
+      fitCameraEdges();
       if (!reducedMotion) {
         let decorative = 0;
         scene.data.get('npcs').forEach((npc, i) => {
@@ -1980,6 +2187,7 @@
       const nextStatus = nearby && card.hidden && actorDock.hidden ? nearbyName + ' · Press E / Enter or tap to inspect' : '';
       if (status.textContent !== nextStatus) status.textContent = nextStatus;
       updateReadiness();
+      if (time - minimapFrame >= 200) { minimapFrame = time; drawMinimap(); }
       reportPosition(false);
       worldUI?.frame({ position: positionState(), world: { ...world }, obstacles, homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
         actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })) });
@@ -2098,7 +2306,7 @@
         gameKind = ''; gameOpening++; gameBody.replaceChildren();
         options.encounterReceipt = null; options.encounterRecovery = false;
         actorSprites.clear(); caseProps.clear();
-        homeMarkers.clear(); exitLabels.clear(); homeSlots.clear(); permeableHomes.clear(); homes = []; homeBoard = null;
+        homeMarkers.clear(); residentialRoadArt.clear(); exitLabels.clear(); homeSlots.clear(); permeableHomes.clear(); homes = []; homeBoard = null;
         if (game) { game.destroy(true); game = null; }
         player = null; scene = null;
         root.remove();

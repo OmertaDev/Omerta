@@ -48,9 +48,7 @@ try {
     const state = () => page.evaluate(() => window.__caseHandles.at(-1).handle.getState());
     const openJournal = async () => {
       if (await page.locator('.omerta-city__interaction').isVisible()) await activate(page.locator('[data-city-close]'));
-      const overview = page.locator('.omerta-city__overview');
-      if (await overview.evaluate(node => !node.hidden && !node.open)) await activate(overview.locator('summary'));
-      await activate(page.locator('.omerta-city__journal'));
+      await activate(page.locator('[data-city-quick-panel="journal"]'));
     };
     const gameplay = () => requests.filter(request => request.method === 'POST' && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
     await page.goto(base, { waitUntil: 'networkidle' }); await page.locator('#screen-main:not(.hidden)').waitFor();
