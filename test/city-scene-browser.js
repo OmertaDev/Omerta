@@ -1494,6 +1494,7 @@ try {
   await mobile.locator('[data-city-close]').tap();
   assert.equal(await mobile.locator('.omerta-city__interaction').isVisible(), false, 'Touch users can close venue details.');
   if (shots) await mobile.locator('#city-scene-host').screenshot({ path: path.join(shots, 'city-mobile.png'), style: sceneShotStyle });
+  await mobile.context().close();
 
   // An image outage retains local exploration and the existing gameplay destinations.
   const missingArt = await newPage();
@@ -1513,6 +1514,7 @@ try {
   await activateNeighborhood(missingArt, '.omerta-city__destination[data-destination="stories"]');
   await missingArt.locator('[data-city-open]').click();
   await missingArt.waitForSelector('#tab-desk.on', { state: 'attached' });
+  await missingArt.context().close();
 
   // A slow asset response must not resurrect a scene after the player has left Map.
   const delayed = await newPage();
@@ -1536,6 +1538,7 @@ try {
   assert.equal(await delayed.locator('.omerta-city__canvas canvas').count(), 0, 'Delayed engine cannot mount onto an abandoned Map tab.');
   assert(await delayed.evaluate(() => window.__cityHandles.every(entry => entry.destroyed)), 'No live renderer handle survives a delayed tab departure.');
   assert.notEqual(await delayed.evaluate(() => document.activeElement?.tagName), 'CANVAS', 'A departed entry intent cannot steal focus.');
+  await delayed.context().close();
 
   // Later modal focus and authoritative identity changes cancel pending entry before readiness.
   for (const reason of ['modal', 'identity', 'wheel', 'keyboard', 'touch', 'blur', 'hidden']) {
@@ -1641,6 +1644,7 @@ try {
   for (const tab of tabs) assert(fallbackTabs.includes(tab), 'Missing scene module retains gameplay destination ' + tab);
   await missingScene.locator('[data-city-jump="streets"]').first().click();
   await missingScene.waitForSelector('#tab-streets.on', { state: 'attached' });
+  await missingScene.context().close();
 
   // Missing Phaser retains the renderer's accessible destinations.
   const missingEngine = await newPage();
@@ -1677,6 +1681,7 @@ try {
   await selectTab(missingEngine, 'map');
   await waitForCity(missingEngine);
   assert.equal(await missingEngine.locator('.omerta-city__canvas canvas').count(), 1, 'Returning after an engine load failure retries the engine successfully.');
+  await missingEngine.context().close();
 
   // Confirmed directory rows create physical plots; the server still owns travel and deeds.
   const landActor = async (name, kind = 'player') => {
@@ -1771,7 +1776,34 @@ try {
   const roadX = residentialRoad.x + residentialRoad.width / 2;
   if (roadStart.x < roadX) await holdKey(land, 'ArrowRight', x => window.__cityHandles.at(-1).handle.getState().player.x >= x, roadX);
   else await holdKey(land, 'ArrowLeft', x => window.__cityHandles.at(-1).handle.getState().player.x <= x, roadX);
-  await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 700);
+  await land.evaluate(road => {
+    const game = window.__cityGames.at(-1), scene = game.scene.getScenes(true)[0], canvas = game.canvas;
+    const input = window.__cityRegionalInput = { phase: 'residential-road', road,
+      start: window.__cityHandles.at(-1).handle.getState().player, frames: 0, simulatedMs: 0, recent: [], events: [], keys: [] };
+    const frame = (time, delta) => {
+      input.frames++; input.simulatedMs += Math.min(delta, 50);
+      input.recent.push({ delta, fps: game.loop.actualFps, player: window.__cityHandles.at(-1).handle.getState().player });
+      if (input.recent.length > 8) input.recent.shift();
+    };
+    const event = event => {
+      if (event.type === 'keydown') input.keys = [...new Set([...input.keys, event.key])];
+      if (event.type === 'keyup') input.keys = input.keys.filter(key => key !== event.key);
+      if (event.type === 'blur' || document.hidden) input.keys = [];
+      input.events.push({ type: event.type, key: event.key, trusted: event.isTrusted, hidden: document.hidden,
+        focused: document.hasFocus(), active: document.activeElement?.tagName, frames: input.frames, simulatedMs: input.simulatedMs });
+      if (input.events.length > 8) input.events.shift();
+    };
+    scene.events.on('update', frame);
+    for (const type of ['keydown', 'keyup', 'blur']) canvas.addEventListener(type, event);
+    window.addEventListener('blur', event); document.addEventListener('visibilitychange', event);
+    window.__cityRegionalInputCleanup = () => {
+      scene.events.off('update', frame);
+      for (const type of ['keydown', 'keyup', 'blur']) canvas.removeEventListener(type, event);
+      window.removeEventListener('blur', event); document.removeEventListener('visibilitychange', event);
+    };
+  }, residentialRoad);
+  try { await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 700); }
+  finally { await land.evaluate(() => { window.__cityRegionalInputCleanup(); delete window.__cityRegionalInputCleanup; delete window.__cityRegionalInput; }); }
   await waitForFrames(land, 3);
   const roadPixels = await land.evaluate(x => {
     const game = window.__cityGames.at(-1), camera = game.scene.getScenes(true)[0].cameras.main, canvas = game.canvas;
