@@ -1,6 +1,7 @@
 # F20 territory economics: source-bound integration design
 
 Phase: component design; no implemented payment, API, worker, or release qualification.
+Historical planning snapshot: the transaction seam was subsequently supplied by the coordinator and the actual component was implemented. See [the source-pinned component review](territory-economics-security-review.md) for executed proofs and remaining shared integration scope.
 Inspected base: `029312db26cf9e71058ce2512592c1f1cd734561`.
 Infrastructure dependency inspected separately: `fefebab7dbc62de04b5f3635b2194d527d0ff9a9`.
 The base does not contain `src/infrastructureconcessions.js`; no dependency was silently installed.
