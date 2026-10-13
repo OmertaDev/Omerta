@@ -8,6 +8,7 @@ import { buyGood } from './economy.js';
 import { goodsBuyQuote } from './goodsquote.js';
 import { DEPOT, buyFromDepot } from './depot.js';
 import { prepareFranchiseSale } from './franchiselicenses.js';
+import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 
 export const DELIVERY = Object.freeze({ maxActive: 2, maxUnits: 40, maxSpend: 100000, maxSeconds: 21600 });
 export const deliveryIntakeEnabled = () => process.env.DELIVERY_CONTRACTS === 'on';
@@ -29,6 +30,7 @@ export async function acceptDelivery(ch, orderId, body, client, { deadlineAt = n
     throw new GameError('delivery_terms', 'The promised delivery deadline must remain between one minute and six hours away.');
   if (!order?.depot_id || new Date(order.expires_at) < deadline) throw new GameError('no_order', 'Choose a depot order that remains funded through this deadline.');
   if (order.seller_character === ch.id) throw new GameError('own', 'You cannot contract with your own business.');
+  await assertCommercialDisputeAccess(client, { orderId: order.id, action: 'accept' });
   if (body.qty > Number(order.qty) - await reservedQuantity(client, order.id)) throw new GameError('reserved', 'That quantity is no longer available.');
   if (Number(order.price) !== body.unitPrice) throw new GameError('price_changed', 'Refresh the order quote before accepting its fixed price.');
   const id = crypto.randomUUID();
@@ -53,6 +55,7 @@ export async function deliverCommitment(ch, id, qty, client, h) {
   if (!integer(qty, 1, DELIVERY.maxUnits)) throw new GameError('delivery_terms', 'qty must be a bounded integer.');
   const c = await lockedCommitment(ch, id, client);
   await assertDeliveryFinanceDelivery(client, ch, c.id);
+  await assertCommercialDisputeAccess(client, { orderId: c.order_id, commitmentId: c.id, action: 'deliver' });
   if (qty > Number(c.remaining) || qty > Number(h.owned.cargo[c.good_id] || 0)) throw new GameError('qty', 'Deliver only committed quantities you actually hold.');
   return fillOrder(ch, c.order_id, qty, client, h, { commitmentId: c.id });
 }
@@ -61,6 +64,8 @@ export async function deliveryStep(ch, id, kind, body, client, h) {
   if (jailed(ch) || safeHoused(ch)) throw new GameError('status', 'Surface before procuring a delivery.');
   const c = await lockedCommitment(ch, id, client);
   let cost;
+  await assertCommercialDisputeAccess(client, { orderId: c.order_id, commitmentId: c.id,
+    action: kind === 'delivery_buy' ? 'procure' : 'travel' });
   if (kind === 'delivery_buy') {
     if (body.goodId !== c.good_id || !integer(body.qty, 1, Number(c.remaining))
         || body.qty + Number(h.owned.cargo[c.good_id] || 0) > Number(c.remaining))
@@ -86,6 +91,7 @@ export async function buyCommittedFromDepot(ch, owner, id, depotId, body, client
   const depot = (await prepareFranchiseSale(client, depotId)).operator;
   if (!depot || depot.status !== 'open' || depot.owner_character !== owner.id) throw new GameError('no_depot', 'That storefront is no longer operating.');
   const c = await lockedCommitment(ch, id, client);
+  await assertCommercialDisputeAccess(client, { orderId: c.order_id, commitmentId: c.id, action: 'procure' });
   if (c.good_id !== DEPOT.good || c.depot_id === depot.id || c.buyer_character === owner.id
       || body.qty + Number(h.owned.cargo[c.good_id] || 0) > Number(c.remaining))
     throw new GameError('delivery_terms', 'Buy only still-needed goods from an independent storefront.');
@@ -102,7 +108,10 @@ export async function expireCommitment(ch, id, client) {
   if (!pre || ![pre.supplier_character, pre.buyer_character].includes(ch.id)) throw new GameError('no_commitment', 'No commitment of yours.');
   await client.query('SELECT id FROM market_listings WHERE id=$1 FOR UPDATE', [pre.order_id]);
   const c = (await client.query("SELECT * FROM delivery_commitments WHERE id=$1 AND status='accepted' FOR UPDATE", [id])).rows[0];
-  if (!c || new Date(c.deadline) > new Date()) throw new GameError('delivery_deadline', 'Only an elapsed commitment can be closed without delivery.');
+  if (!c) throw new GameError('delivery_deadline', 'Only an elapsed commitment can be closed without delivery.');
+  await assertCommercialDisputeAccess(client, { orderId: c.order_id, commitmentId: c.id, action: 'expire' });
+  const observed = (await client.query('SELECT clock_timestamp() AS observed')).rows[0].observed;
+  if (new Date(c.deadline) > new Date(observed)) throw new GameError('delivery_deadline', 'Only an elapsed commitment can be closed without delivery.');
   await client.query("UPDATE delivery_commitments SET status='expired' WHERE id=$1", [id]);
   return { ok: true, released: Number(c.remaining), paid: 0 };
 }

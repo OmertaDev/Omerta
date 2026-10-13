@@ -8772,3 +8772,76 @@ CREATE TABLE IF NOT EXISTS company_acquisitions (
 CREATE TABLE IF NOT EXISTS company_acquisition_requests (
  account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,identity TEXT NOT NULL,receipt JSONB NOT NULL,
  PRIMARY KEY(account_id,request_key));
+-- F17-F20 isolated shared integration proposal: owned additive tables only.
+CREATE TABLE IF NOT EXISTS commercial_disputes (
+ id TEXT PRIMARY KEY, commitment_id TEXT NOT NULL, order_id TEXT NOT NULL, depot_id TEXT NOT NULL REFERENCES business_depots(id),
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), supplier_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id), supplier_character TEXT NOT NULL REFERENCES characters(id),
+ revision INT NOT NULL CHECK(revision BETWEEN 1 AND 4), quote_hash TEXT NOT NULL CHECK(char_length(quote_hash)=64), source_quote JSONB NOT NULL,
+ buyer_consent BOOLEAN NOT NULL, supplier_consent BOOLEAN NOT NULL, expires_at TIMESTAMPTZ NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('proposed','agreed','settled','withdrawn','expired','party_dead')), settlement_receipt JSONB,
+ CHECK(buyer_account<>supplier_account AND buyer_character<>supplier_character), CHECK(state<>'agreed' OR (buyer_consent AND supplier_consent)), CHECK((state='settled' AND settlement_receipt IS NOT NULL) OR (state<>'settled' AND settlement_receipt IS NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS commercial_dispute_live_order ON commercial_disputes(order_id) WHERE state IN ('proposed','agreed');
+CREATE TABLE IF NOT EXISTS commercial_dispute_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), run_id TEXT NOT NULL UNIQUE,
+ receipt JSONB, account_ref TEXT REFERENCES accounts(id), actor_ref TEXT REFERENCES characters(id), PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL) OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS equipment_insurance_policies (
+ id TEXT PRIMARY KEY, insurer_account TEXT NOT NULL REFERENCES accounts(id), insurer_character TEXT NOT NULL REFERENCES characters(id),
+ insured_account TEXT REFERENCES accounts(id), insured_character TEXT REFERENCES characters(id), item_id TEXT REFERENCES item_instances(id),
+ state TEXT NOT NULL CHECK(state IN ('offered','accepted','claimed','recovery','closed')), published BOOLEAN NOT NULL,
+ premium_cash INT NOT NULL CHECK(premium_cash BETWEEN 1 AND 1000), maximum_cash INT NOT NULL CHECK(maximum_cash BETWEEN 1 AND 1000),
+ coverage_seconds INT NOT NULL CHECK(coverage_seconds BETWEEN 60 AND 604800), offer_expires_at TIMESTAMPTZ NOT NULL,
+ accepted_at TIMESTAMPTZ, expires_at TIMESTAMPTZ, baseline_sequence BIGINT CHECK(baseline_sequence>=0),
+ reserve_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), premium_debit_id TEXT UNIQUE REFERENCES transactions(id), premium_credit_id TEXT UNIQUE REFERENCES transactions(id),
+ escrow_cash INT NOT NULL CHECK(escrow_cash>=0), paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+ refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0), burned_cash INT NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+ insurer_dead BOOLEAN NOT NULL DEFAULT false, close_reason TEXT,
+ CHECK(maximum_cash=escrow_cash+paid_cash+refunded_cash+burned_cash), CHECK(state NOT IN ('closed','claimed') OR escrow_cash=0),
+ CHECK((insured_account IS NULL AND insured_character IS NULL AND item_id IS NULL AND accepted_at IS NULL AND baseline_sequence IS NULL)
+ OR (insured_account IS NOT NULL AND insured_character IS NOT NULL AND item_id IS NOT NULL AND accepted_at IS NOT NULL AND expires_at IS NOT NULL AND baseline_sequence IS NOT NULL AND premium_debit_id IS NOT NULL AND premium_credit_id IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS equipment_insurance_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL, identity JSONB NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS equipment_insurance_claims (
+ policy_id TEXT PRIMARY KEY REFERENCES equipment_insurance_policies(id), repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id),
+ wear_event_id TEXT NOT NULL UNIQUE REFERENCES item_durability_uses(event_id), paid_fee INT NOT NULL CHECK(paid_fee BETWEEN 1 AND 1000),
+ payout_cash INT NOT NULL CHECK(payout_cash BETWEEN 1 AND paid_fee), payout_id TEXT NOT NULL UNIQUE REFERENCES transactions(id));
+CREATE TABLE IF NOT EXISTS infrastructure_concessions (
+ id TEXT PRIMARY KEY, landlord_account TEXT NOT NULL REFERENCES accounts(id), landlord_character TEXT NOT NULL REFERENCES characters(id),
+ premises_offer_id TEXT NOT NULL REFERENCES commercial_premises_offers(id), rental_offer_id TEXT NOT NULL REFERENCES equipment_rental_offers(id),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), source_quote JSONB NOT NULL, revision INT NOT NULL CHECK(revision BETWEEN 1 AND 3),
+ published BOOLEAN NOT NULL, expires_at TIMESTAMPTZ NOT NULL, state TEXT NOT NULL CHECK(state IN ('offered','accepted','cancelled','expired','party_dead')),
+ operator_account TEXT REFERENCES accounts(id), operator_character TEXT REFERENCES characters(id), business_id TEXT REFERENCES business_depots(id),
+ premises_lease_id TEXT REFERENCES commercial_premises_leases(id), rental_lease_id TEXT REFERENCES equipment_rental_leases(id), operator_policy JSONB,
+ CHECK((operator_account IS NULL AND operator_character IS NULL AND business_id IS NULL AND premises_lease_id IS NULL AND rental_lease_id IS NULL) OR
+ (operator_account IS NOT NULL AND operator_character IS NOT NULL AND business_id IS NOT NULL AND premises_lease_id IS NOT NULL AND rental_lease_id IS NOT NULL AND operator_account<>landlord_account AND operator_character<>landlord_character)),
+ CHECK(state<>'accepted' OR operator_account IS NOT NULL));
+CREATE UNIQUE INDEX IF NOT EXISTS infrastructure_concession_active_business ON infrastructure_concessions(business_id) WHERE state='accepted';
+CREATE UNIQUE INDEX IF NOT EXISTS infrastructure_concession_active_rental ON infrastructure_concessions(rental_lease_id) WHERE state='accepted';
+CREATE UNIQUE INDEX IF NOT EXISTS infrastructure_concession_open_tool ON infrastructure_concessions(rental_offer_id) WHERE state='offered';
+CREATE TABLE IF NOT EXISTS infrastructure_concession_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), run_id TEXT NOT NULL UNIQUE,
+ receipt JSONB, account_ref TEXT REFERENCES accounts(id), actor_ref TEXT REFERENCES characters(id), PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL) OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS territory_economics_profiles (
+ id TEXT PRIMARY KEY, business_id TEXT NOT NULL UNIQUE REFERENCES business_depots(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), gang_id TEXT NOT NULL, district_id TEXT NOT NULL REFERENCES districts(id),
+ concession_id TEXT NOT NULL REFERENCES infrastructure_concessions(id), source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ baseline_ids JSONB NOT NULL, revision INT NOT NULL CHECK(revision>=1), enabled BOOLEAN NOT NULL, share_bps INT NOT NULL CHECK(share_bps BETWEEN 1 AND 2000),
+ daily_cap INT NOT NULL CHECK(daily_cap BETWEEN 100 AND 5000), lifetime_cap INT NOT NULL CHECK(lifetime_cap BETWEEN 100 AND 10000),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash>=0 AND paid_cash<=lifetime_cap), expires_at TIMESTAMPTZ NOT NULL, next_run_at TIMESTAMPTZ NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('active','closed','party_dead')));
+CREATE TABLE IF NOT EXISTS territory_economics_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+ run_id TEXT NOT NULL UNIQUE, receipt JSONB, actor_ref TEXT REFERENCES characters(id), account_ref TEXT REFERENCES accounts(id),
+ PRIMARY KEY(account_id,key_hash), CHECK((receipt IS NULL AND actor_ref IS NULL AND account_ref IS NULL) OR
+ (receipt IS NOT NULL AND actor_ref IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS territory_economics_payments (
+ id TEXT PRIMARY KEY, profile_id TEXT NOT NULL REFERENCES territory_economics_profiles(id), revision INT NOT NULL CHECK(revision>=1),
+ amount_cash INT NOT NULL CHECK(amount_cash BETWEEN 100 AND 5000), paid_before INT NOT NULL CHECK(paid_before>=0), day_key INT NOT NULL, observed_profit NUMERIC NOT NULL CHECK(observed_profit>0),
+ share_bps INT NOT NULL CHECK(share_bps BETWEEN 1 AND 2000), daily_cap INT NOT NULL CHECK(daily_cap BETWEEN 100 AND 5000), lifetime_cap INT NOT NULL CHECK(lifetime_cap BETWEEN 100 AND 10000), source_ids JSONB NOT NULL,
+ withdraw_journal TEXT NOT NULL UNIQUE REFERENCES business_depot_journal(id), withdraw_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ tribute_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id), created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS territory_economics_sources (
+ journal_id TEXT PRIMARY KEY REFERENCES business_depot_journal(id), profile_id TEXT NOT NULL REFERENCES territory_economics_profiles(id),
+ payment_id TEXT NOT NULL REFERENCES territory_economics_payments(id));
