@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `40b742022f09`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f5019814b443`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3539 |
+| Commits in clone | 3548 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Freeze repaired source against the actual live wallet predecessor |
+| Latest commit | 2026-10-13 — Freeze complete equipment release fixture corrections |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2581 |
+| OmertaDev | 2590 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 620 | historical |
-| knowledge/generated/graph-summary.md | 620 | historical |
-| knowledge/generated/graph.json | 620 | historical |
-| knowledge/generated/inventory.md | 620 | historical |
+| knowledge/generated/github-history.md | 621 | historical |
+| knowledge/generated/graph-summary.md | 621 | historical |
+| knowledge/generated/graph.json | 621 | historical |
+| knowledge/generated/inventory.md | 621 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [SPEC.md](../../SPEC.md) | 499 | yes |
+| [SPEC.md](../../SPEC.md) | 501 | yes |
 | [public/index.html](../../public/index.html) | 459 | yes |
 | [src/server.js](../../src/server.js) | 416 | yes |
 | [schema.sql](../../schema.sql) | 347 | yes |
-| knowledge/generated/documents.md | 308 | historical |
+| knowledge/generated/documents.md | 309 | historical |
 | [package.json](../../package.json) | 300 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 222 | historical |
