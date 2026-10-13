@@ -13,7 +13,7 @@ const clientSource = fs.readFileSync(new URL('../public/index.html', import.meta
 const sceneSource = fs.readFileSync(new URL('../public/city-scene.js', import.meta.url), 'utf8');
 const geometry = {};
 vm.runInNewContext(sceneSource.slice(sceneSource.indexOf('  const WORLD ='), sceneSource.indexOf('  function mount('))
-  + '\nthis.route = route; this.traversable = traversable;', geometry);
+  + '\nthis.route = route; this.traversable = traversable; this.walks = DISTRICT_WALKS; this.base = OBSTACLES; this.regions = REGIONS;', geometry);
 const homeBuilding = { x: 1008, y: 52, width: 144, height: 140 };
 const expandedWorld = { width: 1216, height: 640 };
 const homeRoute = geometry.route({ x: 430, y: 366 }, { x: 1080, y: 224 }, expandedWorld, [homeBuilding], 540);
@@ -24,6 +24,17 @@ assert(homeRoute.slice(1).every((point, index) => Math.abs(point.x - homeRoute[i
 const gardenRoute = geometry.route({ x: 430, y: 366 }, { x: 560, y: 592 }, { width: 960, height: 640 }, [], 620);
 assert(gardenRoute.at(-1).y > 540, 'A regional land route no longer stops at the Docks waterfront boundary.');
 assert.equal(geometry.traversable(1080, 224), false, 'The default zero-home Docks bounds remain intact.');
+const regionalRoutes=new Set();
+for(const [id,walk] of Object.entries(geometry.walks)){
+  const obstacles=[...geometry.base,...walk.obstacles.map(([x,y,width,height])=>({x,y,width,height}))];
+  if(geometry.regions[id].landmark)obstacles.push(geometry.regions[id].landmark);
+  const world={width:960,height:960},points=geometry.route({x:430,y:366},walk,world,obstacles,940);
+  assert(points.length>20 && Math.hypot(points.at(-1).x-walk.x,points.at(-1).y-walk.y)<16,id+' landmark has a real connected walking route');
+  assert(points.every(point=>geometry.traversable(point.x,point.y,world,obstacles,940)),id+' route respects authored terrain');
+  for(const [x,y,width,height] of walk.obstacles)assert(!geometry.traversable(x+width/2,y+height/2,world,obstacles,940),id+' terrain has real collision');
+  regionalRoutes.add(JSON.stringify(points));
+}
+assert.equal(regionalRoutes.size,6,'All six districts have distinct real routes, beyond artwork and labels');
 const mountSource = clientSource.slice(clientSource.indexOf('  async function mountCityNeighborhood()'), clientSource.indexOf('  function syncMapMode()'));
 // The view predicate is checked only before an authenticated queued call dispatches.
 // Closing a dock after dispatch must retain the actual reply; token changes retain
@@ -1670,7 +1681,7 @@ try {
   await land.locator('#btn-player-view').click(); await waitForCity(land);
   await land.waitForFunction(() => window.__cityHandles.at(-1).handle.getState().homes?.length === 3);
   const landHandle = await land.evaluateHandle(() => window.__cityHandles.at(-1)), initialLand = await state(land);
-  assert(initialLand.world.width > 960 && initialLand.world.height === 640, 'Real deed records extend the walkable world beyond the original Docks.');
+  assert(initialLand.world.width > 960 && initialLand.world.height === 960, 'Real deeds extend the residential width while the authored southern walks retain their 960px height.');
   assert.deepEqual(new Set(initialLand.homes.map(home => home.owner.kind)), new Set(['player', 'agent', 'npc']));
   assert.equal(new Set(initialLand.homes.map(home => home.key)).size, 3);
   await land.locator('[data-city-world-map]').click();
@@ -1937,6 +1948,43 @@ try {
       selected: window.__cityHandles.at(-1).handle.getState().selectedVenue };
   });
   assert.deepEqual(retiredVisit, { guides: 0, selected: null }, 'A retired identity cannot reopen its old quest destination.');
+  // Independent living fixture: native waypoint input must reach the new paths
+  // on desktop and phone, without teleporting a pose or posting an action.
+  const terrainGuest=await app.inject({method:'POST',url:'/v1/auth/guest',payload:{birthDate:'1990-01-01'}});
+  assert.equal(terrainGuest.statusCode,200,terrainGuest.body);
+  const terrainToken=terrainGuest.json().token,terrainHeaders={authorization:'Bearer '+terrainToken};
+  const terrainMade=await app.inject({method:'POST',url:'/v1/character',headers:terrainHeaders,payload:{name:'Path Witness'}});
+  assert.equal(terrainMade.statusCode,200,terrainMade.body);
+  const terrainId=(await app.pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive',[app.jwt.verify(terrainToken).sub])).rows[0].id;
+  for(const [district,width] of [['brick',1440],['canal',375]]){
+    await app.pool.query('UPDATE characters SET loc=$2,last_accrued_at=$3 WHERE id=$1',[terrainId,district,new Date(Date.now()+86400000)]);
+    const terrainPage=await newPage({viewport:{width,height:width===375?812:1000},...(width===375?{isMobile:true,hasTouch:true}:{})},terrainToken);
+    const writes=[];terrainPage.on('request',request=>{if(request.method()==='POST')writes.push(new URL(request.url()).pathname);});
+    await openCity(terrainPage);const initial=await state(terrainPage),handleCount=await terrainPage.evaluate(()=>window.__cityHandles.length);
+    const activate=control=>width===375?control.tap():control.click();
+    await activate(terrainPage.locator('[data-city-world-tools]'));
+    await activate(terrainPage.locator('[data-city-waypoint="district-walk"]'));
+    await waitForInput(terrainPage,()=>window.__cityHandles.at(-1).handle.getState().pathLength>0);
+    await terrainPage.waitForFunction(()=>{const current=window.__cityHandles.at(-1).handle.getState();return current.pathLength===0&&current.selectedVenue==='district-walk';});
+    const arrived=await state(terrainPage),destination=geometry.walks[district];
+    assert(Math.hypot(arrived.position.x-destination.x,arrived.position.y-destination.y)<16,district+' native walking arrives at the actual landmark');
+    assert(arrived.position.y>840&&arrived.position.y-initial.position.y>400);
+    assert.equal(await terrainPage.evaluate(()=>window.__cityHandles.length),handleCount,'The district walk preserves its mounted scene');
+    await activate(terrainPage.locator('[data-city-trail-choice="'+(width===375?'quiet':'direct')+'"]'));
+    for(let leg=0;leg<3;leg++){
+      await terrainPage.waitForFunction(()=>{const state=window.__cityHandles.at(-1).handle.getState();return state.pathLength===0&&state.selectedVenue==='district-walk';});
+      const copy=await terrainPage.locator('.omerta-city__interaction').innerText();
+      if(leg===0)assert.match(copy,/courier|porter/);
+      if(leg===1)assert.match(copy,/routes come together/);
+      if(leg===2)assert.match(copy,width===375?/learned the quiet route/:/found the direct meeting/);
+      else await activate(terrainPage.getByRole('button',{name:'Walk to the next crossing',exact:true}));
+    }
+    assert.equal(await terrainPage.evaluate(()=>window.__cityHandles.length),handleCount,'Both spatial story choices retain their mounted world');
+    assert.deepEqual(writes.filter(path=>!['/v1/screens','/v1/commands/observations'].includes(path)),[],
+      'Local exploration never travels, grants progress or spends resources');
+    if(shots)await terrainPage.screenshot({path:path.join(shots,'district-walk-'+district+'-'+width+'.png')});
+    await terrainPage.close();
+  }
   assert.deepEqual(pageErrors, [], 'No uncaught browser errors.');
   for (const context of contexts) await context.close();
   console.log('city-scene-browser: generated art/fallbacks, movement/collision, live resource HUD, all gameplay destinations, real job receipt, saved return/reload poses, phone quest guidance/visits/district continuation, NPC quest/choice/keepsake/journal, mobile touch/release/cancel, reduced motion, identity/district reset, auth cleanup, and asset recovery pass' +

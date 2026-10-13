@@ -35,6 +35,8 @@
     arena.append(stats);
     if(cue)arena.append(el('p',cue[1],'city-drill__intent'));
     if(encounter.last)arena.append(el('p',encounter.last,'city-drill__result'));
+    if(encounter.mastery){const challenge=el('p',(encounter.mastery.achieved?'✓ Mastered · ':'Optional mastery · ')+encounter.mastery.challenge,'city-drill__mastery');
+      challenge.dataset.cityMastery=encounter.mastery.achieved?'achieved':'available';arena.append(challenge);}
     arena.append(el('small','Practice only · separate drill health and stamina. Core health, money and equipment are unchanged.'));
     return arena;
   }
@@ -59,7 +61,8 @@
             weaken_or_learn_fast_talker:'Weaken this opponent or learn Fast Talker.',return_to_encounter_district:'Return to the encounter district, or retreat here.'}[reason.code]||'Refresh the encounter to check this move.')).join(' '),'city-drill__blocked'));
           choices.append(choice);
         }card.append(choices);root.append(card);
-      }else for(const scenario of list(encounters.scenarios)){const card=el('section',null,'city-world__card');card.append(el('strong',scenario.name),el('p',scenario.description),issued(scenario.action));root.append(card);}
+      }else for(const scenario of list(encounters.scenarios)){const card=el('section',null,'city-world__card');card.append(el('strong',scenario.name),el('p',scenario.description));
+        if(scenario.challenge)card.append(el('p','Optional mastery · '+scenario.challenge,'city-drill__mastery'));card.append(issued(scenario.action));root.append(card);}
       if(list(encounters.history).length){const last=encounters.history[0];if(!active)root.append(stage(root,encounters,last));else root.append(el('p',last.name+' · '+last.status+' · '+last.last,'city-world__hint'));}
       for(const clue of list(encounters.clues)){const card=el('section',null,'city-world__card');card.dataset.cityEncounterClue=clue.scenarioId;card.append(el('strong',clue.title),el('p',clue.text));root.append(card);}
     }

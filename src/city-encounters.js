@@ -5,7 +5,7 @@ import { GameError } from './game.js';
 import { withItemRead, withItemTransaction, registerItemTransactionUndo } from './items.js';
 import { finalizeHttpIdempotency } from './http-idempotency.js';
 
-export const CITY_ENCOUNTERS = Object.freeze([
+const ORIGINAL_ENCOUNTERS = [
   ['docks','Quayside sentry','Read the sentry’s patrol rhythm.'],
   ['neon','Backstage bouncer','Get past a patient, defensive opponent.'],
   ['foundry','Foundry automaton','Time your response to its heavy wind-up.'],
@@ -13,7 +13,20 @@ export const CITY_ENCOUNTERS = Object.freeze([
   ['canal','Canal lookout','Use a feint or negotiate a quiet passage.'],
   ['cathedral','Hill watchkeeper','Choose when to defend and when to advance.'],
 ].map(([district,name,description]) => Object.freeze({ id: district + '-patrol', district, name, description,
-  enemyHealth: 24, enemyPower: 5, rounds: 12, clue: 'Patrol note: ' + name + ' announces a strike, a brace or a pressure move before committing.' })));
+  enemyHealth: 24, enemyPower: 5, rounds: 12, clue: 'Patrol note: ' + name + ' announces a strike, a brace or a pressure move before committing.' }));
+// New scenario IDs retain the original six drills and their historical receipts unchanged.
+const MASTER_ENCOUNTERS = [
+  ['docks','Quayside counter-watch','Two quick strikes give way to an opening. Save your feint for it.', ['strike','strike','brace','pressure']],
+  ['neon','Backstage opening act','Repeated bracing rewards a patient feint rather than another direct hit.', ['brace','brace','strike','pressure']],
+  ['foundry','Foundry pressure test','Pressure repeats before the heavy swing. Recover before the wind-up.', ['pressure','pressure','strike','brace']],
+  ['brick','Kiln-yard counterpuncher','Short attacks alternate with a brace. Build momentum between openings.', ['strike','brace','strike','brace']],
+  ['canal','Lockside negotiator','Pressure alternates with a defensive pause. A quiet truce remains an option.', ['pressure','brace','pressure','brace']],
+  ['cathedral','Watchkeeper’s measure','A long wind-up ends in two committed attacks. Read the announcement.', ['brace','pressure','strike','strike']],
+].map(([district,name,description,cycle]) => Object.freeze({ id:district+'-mastery-v1',district,name,description,
+  enemyHealth:28,enemyPower:6,rounds:12,cycle:Object.freeze(cycle),
+  challenge:'Win in 8 rounds or fewer with at least half your drill health. A truce is a different conclusion.',
+  clue:'Field note: '+name+' follows a four-beat rhythm. The announced intent is the reliable cue, even when an intent repeats.' }));
+export const CITY_ENCOUNTERS = Object.freeze([...ORIGINAL_ENCOUNTERS,...MASTER_ENCOUNTERS]);
 const MOVES = Object.freeze(['strike','guard','feint','negotiate','retreat']);
 const fail = (code, message) => { throw new GameError(code, message); };
 const viewer = actor => ({ characterId: actor.id, generation: Number(actor.generation), district: actor.loc });
@@ -47,7 +60,10 @@ function current(actor, body) {
 function action(id, label, path, body, blockedBy = []) {
   return { id, label, method: 'POST', path, body, available: !blockedBy.length, blockedBy };
 }
-function intent(model) { return ['strike','brace','pressure'][(model.turn + model.pattern) % 3]; }
+function intent(model, scenario) {
+  const cycle = scenario?.cycle || ['strike','brace','pressure'];
+  return cycle[(model.turn + model.pattern) % cycle.length];
+}
 function modelOf(row) {
   let model;
   try { model = JSON.parse(row.model_json); } catch { fail('encounter_integrity', 'The encounter cannot refresh.'); }
@@ -86,8 +102,10 @@ function project(actor, row) {
   return { id: row.id, scenarioId: scenario.id, name: scenario.name, district: row.district,
     revision: Number(row.revision), status: row.status, turn: model.turn, roundLimit: scenario.rounds,
     health: model.health, maxHealth: model.maxHealth, stamina: model.stamina,
-    enemyHealth: model.enemyHealth, enemyMaxHealth: model.enemyMaxHealth, intent: row.status === 'active' ? intent(model) : null,
-    last: model.last, clue: ['won','truce'].includes(row.status) ? scenario.clue : null, actions };
+    enemyHealth: model.enemyHealth, enemyMaxHealth: model.enemyMaxHealth, intent: row.status === 'active' ? intent(model,scenario) : null,
+    last: model.last, clue: ['won','truce'].includes(row.status) ? scenario.clue : null, actions,
+    ...(scenario.challenge ? { mastery:{ challenge:scenario.challenge,
+      achieved:row.status==='won' && model.turn<=8 && model.health>=Math.ceil(model.maxHealth/2) } } : {}) };
 }
 export async function encounterBoard(pool, accountId) {
   return withItemRead(pool, async client => {
@@ -105,6 +123,7 @@ export async function encounterBoard(pool, accountId) {
     }
     return { viewer: viewer(actor), mode: 'district-drill', description: 'Tactical encounters use separate drill health and stamina. Core health, resources and money do not change.',
       scenarios: CITY_ENCOUNTERS.filter(scenario => scenario.district === actor.loc).map(scenario => ({ id:scenario.id,district:scenario.district,name:scenario.name,description:scenario.description,
+        ...(scenario.challenge ? { challenge:scenario.challenge } : {}),
         action: action('start:' + scenario.id, 'Prepare encounter', '/v1/city/encounters/start', { ...viewer(actor), scenarioId: scenario.id },
           active ? [{ code: 'encounter_already_active' }] : []) })),
       active: active ? project(actor, active) : null, history: rows.filter(row => row.status !== 'active').map(row => project(actor,row)), clues };
@@ -153,7 +172,7 @@ export function takeEncounterTurn(pool, accountId, id, body, receipt) {
     if (row.district !== actor.loc && body.move!=='retreat' || Number(row.revision) !== body.expectedRevision) fail('encounter_changed', 'Refresh or return to the encounter district before choosing another move.');
     const available = project(actor,row).actions.find(action => action.id === body.move);
     if (!available?.available) fail('encounter_move_unavailable', 'That tactic is unavailable.');
-    const model = modelOf(row), announced = intent(model), scenario = CITY_ENCOUNTERS.find(value => value.id === row.scenario_id);
+    const model = modelOf(row), scenario = CITY_ENCOUNTERS.find(value => value.id === row.scenario_id), announced = intent(model,scenario);
     let status = 'active', dealt = 0, taken = 0;
     if (body.move === 'retreat') { status='retreated'; model.last='You withdraw. Core health and resources are unchanged.'; }
     else if (body.move === 'negotiate') { status='truce'; model.last='A negotiated passage reveals the patrol rhythm.'; }
@@ -178,6 +197,13 @@ export function takeEncounterTurn(pool, accountId, id, body, receipt) {
     }
     model.turn++;
     if (status==='active' && model.turn>=scenario.rounds) { status='stalemate'; model.last+=' The drill ends at its round limit.'; }
+    if (scenario.challenge && status!=='active') {
+      if (status==='won') model.last += model.turn<=8 && model.health>=Math.ceil(model.maxHealth/2)
+        ? ' Rhythm mastered: a decisive finish with your footing intact.'
+        : ' The drill is won. Try a faster, healthier finish for the optional mastery.';
+      else if (status==='truce') model.last='You leave on agreed terms and learn the four-beat rhythm. The optional mastery remains for another visit.';
+      else if (status==='lost' || status==='stalemate') model.last+=' The practice ends here. Return with a different response to the announced rhythm.';
+    }
     registerItemTransactionUndo(client, () => client.query('UPDATE city_encounters SET revision=$2,status=$3,model_json=$4,completed_at=$5 WHERE id=$1',
       [row.id,row.revision,row.status,row.model_json,row.completed_at]));
     const changed=(await client.query(`UPDATE city_encounters SET revision=revision+1,status=$2,model_json=$3,

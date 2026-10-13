@@ -52,6 +52,28 @@
     canal: { ground: 0x5f6c63, road: 0x3d4946, water: 0x294e51, landmark: { name: 'Lockkeeper Garden', x: 542, y: 44, width: 96, height: 128 } },
     neon: { ground: 0x635860, road: 0x3d3540, water: 0x353a4b, landmark: { name: 'Lantern Court', x: 544, y: 44, width: 88, height: 128 } }
   };
+  // Authored local terrain, never tracked actor/property coordinates. The original
+  // block stays intact; the southern walks have distinct real collision routes.
+  const DISTRICT_WALKS = {
+    docks: { name:'Outer Wharf', x:808,y:856,description:'A narrow gangway opens onto the outer wharf. The water forces a deliberate crossing before the broad quay.',
+      obstacles:[[0,548,376,184,'water'],[456,548,504,184,'water'],[96,808,576,32,'crate']],
+      roads:[[380,536,72,212],[380,732,476,48],[760,732,96,176]] },
+    brick: { name:'Kiln Switchbacks',x:144,y:888,description:'Kiln walls stagger across the yard. Follow the gaps around their ends to reach the brickmakers’ rest.',
+      obstacles:[[80,688,640,40,'brick'],[240,792,640,40,'brick']],
+      roads:[[380,620,396,56],[736,640,56,128],[160,736,632,48],[160,752,56,152],[112,864,160,48]] },
+    cathedral: { name:'Processional Garden',x:448,y:872,description:'Two hedge aisles frame a quiet garden. Circle the central bed, then return through either side.',
+      obstacles:[[312,688,56,152,'hedge'],[528,688,56,152,'hedge'],[392,728,112,40,'stone']],
+      roads:[[380,620,136,80],[264,664,368,32],[264,680,40,224],[592,680,40,224],[280,864,352,40],[408,784,80,104]] },
+    foundry: { name:'Casting Lanes',x:792,y:872,description:'Casting racks divide the iron yard into lanes. The alternating openings lead past each cold furnace.',
+      obstacles:[[280,680,56,176,'steel'],[512,752,56,184,'steel'],[744,680,56,136,'steel']],
+      roads:[[376,620,72,280],[328,864,168,40],[448,688,256,48],[632,704,72,200],[656,848,208,56]] },
+    canal: { name:'Lock Crossings',x:792,y:872,description:'The lock has two staggered footbridges. Cross the first near the west bank, then follow the towpath to the eastern span.',
+      obstacles:[[0,688,192,48,'water'],[272,688,688,48,'water'],[0,800,704,48,'water'],[784,800,176,48,'water']],
+      roads:[[208,624,240,48],[200,640,64,128],[216,752,568,40],[712,752,64,152],[728,864,136,40]] },
+    neon: { name:'Lantern Arcade',x:800,y:872,description:'Lantern stalls create a winding arcade. Follow the open lanes between the awnings into the late-night court.',
+      obstacles:[[144,688,176,96,'awning'],[440,784,176,96,'awning'],[664,680,176,112,'awning']],
+      roads:[[368,620,56,284],[312,728,352,48],[616,752,40,152],[632,856,248,48]] }
+  };
   let instanceSequence = 0;
 
   function element(tag, className, text) {
@@ -117,8 +139,11 @@
     let district = options.district || {};
     let character = options.character || {};
     let region = REGIONS[district.id] || REGIONS.docks;
-    const world = { ...WORLD };
-    let walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
+    let districtWalk = DISTRICT_WALKS[district.id] || DISTRICT_WALKS.docks;
+    const venues = [...VENUES,{id:'district-walk',name:districtWalk.name,detail:'Explore the southern paths',tab:'desk',
+      x:districtWalk.x,y:districtWalk.y,description:districtWalk.description}];
+    const world = { ...WORLD,height:960 };
+    let walkBottom = world.height-20;
     let obstacles = baseObstacles();
     let homeBoard = null, homes = [], exits = [], selectedHome = null, selectedExit = null;
     const homeSlots = new Map(), homeMarkers = new Map(), exitLabels = new Map(), permeableHomes = new Set();
@@ -128,6 +153,7 @@
     world.width = widthForHomes(district.deeds);
     const reducedMotion = Boolean(options.reducedMotion);
     let destroyed = false, ready = false, game = null, scene = null, bootTimer = null;
+    let streetTrail = null;
     let worldUI = null, worldOpening = false, look = 'classic';
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
     let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, path = [];
@@ -262,7 +288,12 @@
     questCard.append(questTitle, questDialogue, questButtons);
     questCard.hidden = true;
     let renderedActionSignature = '', renderedQuestSignature = '';
-    card.append(cardControls, cardTitle, cardText, questCard, open, actionList);
+    const trailChoices=element('div','omerta-city__interaction-controls');trailChoices.hidden=true;
+    for(const [id,label] of [['quiet','Follow the sheltered route'],['direct','Intercept at the lit crossing']]){
+      const choice=element('button','',label);choice.type='button';choice.dataset.cityTrailChoice=id;
+      trailChoices.append(choice);listen(choice,'click',()=>beginStreetTrail(id));
+    }
+    card.append(cardControls, cardTitle, cardText, questCard, trailChoices, open, actionList);
     mapLayer.append(canvasHost, status, card);
     const actorDock = element('section', 'omerta-city__actor-dock');
     actorDock.hidden = true;
@@ -340,7 +371,7 @@
     const destinations = element('nav', 'omerta-city__destinations');
     destinations.setAttribute('aria-label', 'Neighborhood destinations');
     const buttons = new Map();
-    for (const [i, venue] of VENUES.entries()) {
+    for (const [i, venue] of venues.entries()) {
       const button = element('button', 'omerta-city__destination');
       button.type = 'button';
       button.dataset.destination = venue.id;
@@ -407,8 +438,8 @@
       try {
         worldUI = window.OmertaCityWorldUI.mount(root, { ...worldOptions(), viewport, mapLayer,
           toolbar: worldHud, toolsHost: document.getElementById('player-view-switch'), toolsLabel: 'Tools', trackerHost: nextMove,
-          venues: VENUES, getState: sceneState, onOpenIntel: showIntel, onNavigate: navigate,
-          onInspectVenue: id => { const venue = VENUES.find(venue => venue.id === id); if (venue) showVenue(venue); },
+          venues: venues, getState: sceneState, onOpenIntel: showIntel, onNavigate: navigate,
+          onInspectVenue: id => { const venue = venues.find(venue => venue.id === id); if (venue) showVenue(venue); },
           onBeforeOpen: () => { stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false); worldOpening = true; },
           onPanelChange: () => {
             if (destroyed) return;
@@ -416,7 +447,7 @@
             if (worldOpening && worldUI?.isOpen()) { worldOpening = false; revealVenue(viewport); syncPointerBounds(); }
           },
           onWaypoint: id => {
-            const venue = VENUES.find(venue => venue.id === id);
+            const venue = venues.find(venue => venue.id === id);
             if (!ready || !player || !venue || destroyed) return;
             stopMovement(); hideVenue(false); hideActor(false); hideGameDock(false);
             game.canvas.focus({ preventScroll: true });
@@ -456,6 +487,7 @@
         const { x, y, width, height } = region.landmark;
         result.push({ x, y, width, height });
       }
+      for(const [x,y,width,height] of districtWalk.obstacles)result.push({x,y,width,height});
       return result;
     }
     function homeState() {
@@ -468,6 +500,7 @@
         { x: 732, y: 210, width: 44, height: 342 }];
       for (let x = WORLD.width + 208; x < world.width; x += 192) roads.push({ x, y: 192, width: 32, height: Math.max(336, walkBottom - 192) });
       if (district.id !== 'docks') roads.push({ x: 510, y: 180, width: 154, height: 32 });
+      roads.push(...districtWalk.roads.map(([x,y,width,height])=>({x,y,width,height})));
       return roads;
     }
     function acceptHomes(board) {
@@ -547,17 +580,41 @@
       if (!extensionGround) extensionGround = scene.add.graphics().setDepth(0);
       extensionGround.clear();
       if (world.width > WORLD.width) {
-        extensionGround.fillStyle(region.ground).fillRect(WORLD.width, 0, world.width - WORLD.width, WORLD.height);
+        extensionGround.fillStyle(region.ground).fillRect(WORLD.width, 0, world.width - WORLD.width, world.height);
         extensionGround.fillStyle(region.road).fillRect(WORLD.width, 248, world.width - WORLD.width, 48);
         for (const road of roadState().filter(road => road.x > WORLD.width)) extensionGround.fillRect(road.x, road.y, road.width, road.height);
         for (let y = 252; y < 294; y += 10) for (let x = WORLD.width + (y % 20 ? 12 : 0); x < world.width; x += 24) {
           extensionGround.fillStyle(y % 20 ? 0x55534c : 0x484a45).fillRect(x, y, 21, 7);
         }
-        extensionGround.fillStyle(region.water).fillRect(WORLD.width, walkBottom + 14, world.width - WORLD.width, WORLD.height - walkBottom - 14);
+        extensionGround.fillStyle(region.water).fillRect(WORLD.width, walkBottom + 14, world.width - WORLD.width, world.height - walkBottom - 14);
         extensionGround.lineStyle(2, 0xb0a184, 0.6).lineBetween(WORLD.width, 246, world.width, 246).lineBetween(WORLD.width, 298, world.width, 298);
       }
       if (!regionInk) regionInk = scene.add.graphics().setDepth(1);
       regionInk.clear();
+      regionInk.fillStyle(region.ground).fillRect(0,640,world.width,world.height-640);
+      // Continue deed-backed residential roads over the southern ground layer.
+      for(const road of roadState().filter(road=>road.x>=WORLD.width&&road.y+road.height>640)){
+        const y=Math.max(640,road.y);
+        regionInk.fillStyle(region.road).fillRect(road.x,y,road.width,road.y+road.height-y);
+      }
+      if(world.width>WORLD.width)regionInk.fillStyle(region.water).fillRect(WORLD.width,walkBottom+14,world.width-WORLD.width,world.height-walkBottom-14);
+      // Replace the original decorative waterfront only where the new crossing
+      // actually opens. All obstacles are the same rectangles used by canWalk.
+      if(district.id==='docks')regionInk.fillStyle(region.water).fillRect(0,548,960,92);
+      for(const [x,y,width,height] of districtWalk.roads)regionInk.fillStyle(region.road).fillRect(x,y,width,height);
+      for(const [x,y,width,height,kind] of districtWalk.obstacles){
+        const color={water:region.water,crate:0x786344,brick:0x8b5844,hedge:0x415d43,stone:0x928873,steel:0x666e70,awning:0x77526e}[kind];
+        regionInk.fillStyle(0x15221f,0.35).fillRect(x+5,y+5,width,height);
+        regionInk.fillStyle(color).fillRect(x,y,width,height);
+        regionInk.lineStyle(2,kind==='water'?0x567b7f:0xb39b74,0.7).strokeRect(x,y,width,height);
+        for(let mark=x+12;mark<x+width;mark+=24)regionInk.lineStyle(1,0x1c2725,0.4).lineBetween(mark,y+4,mark,y+height-4);
+      }
+      regionInk.lineStyle(2,0xd7c18b,0.85).strokeCircle(districtWalk.x,districtWalk.y,18);
+      if(streetTrail?.target){const point=streetTrail.target;
+        regionInk.fillStyle(0xf1d88e,0.2).fillCircle(point.x,point.y,22);
+        regionInk.lineStyle(2,0xf1d88e).strokeCircle(point.x,point.y,12);
+        regionInk.fillStyle(0xc4ac80).fillTriangle(point.x-5,point.y-4,point.x+5,point.y-4,point.x,point.y+5);
+      }
       if (region.landmark) {
         const mark = region.landmark;
         regionInk.fillStyle(district.id === 'cathedral' ? 0x87937b : 0x8b6552).fillRect(mark.x, mark.y, mark.width, mark.height);
@@ -708,7 +765,7 @@
       const slots = [];
       for (let y = 224; y <= 532; y += 44) for (let x = 64; x < 930; x += 44) {
         if (canWalk(x, y) && Math.hypot(x - initialPosition.x, y - initialPosition.y) > 54
-          && !VENUES.some(venue => Math.hypot(x - venue.x, y - venue.y) < 42)) slots.push({ x, y });
+          && !venues.some(venue => Math.hypot(x - venue.x, y - venue.y) < 42)) slots.push({ x, y });
       }
       return slots;
     }
@@ -981,7 +1038,7 @@
         nextButton.hidden = true;
         nextButton.removeAttribute('aria-label');
       }
-      journal.hidden = !VENUES.some(v => actionsFor(v).some(action => action.tab === 'fieldwork'));
+      journal.hidden = !venues.some(v => actionsFor(v).some(action => action.tab === 'fieldwork'));
       const tracked = !!worldUI && worldOptions().trackerVisible;
       nextCopy.hidden = tracked;
       if (tracked) { nextMove.hidden = false; nextButton.hidden = true; }
@@ -1007,7 +1064,7 @@
     }
     function nextQuest() {
       let next = null;
-      for (const venue of VENUES) {
+      for (const venue of venues) {
         const quest = options.npcQuests?.[venue.id];
         for (const action of Array.isArray(quest?.actions) ? quest.actions : []) {
           if (!action || typeof action.id !== 'string' || !action.id || action.id === 'cancel'
@@ -1104,7 +1161,7 @@
       const quest = nextQuest();
       if (quest) { showVenue(quest.venue); return; }
       const tab = character.coach?.tab;
-      if (typeof tab === 'string' && tab) navigate(tab, VENUES.find(v => actionsFor(v).some(a => a.tab === tab))?.id || 'directory');
+      if (typeof tab === 'string' && tab) navigate(tab, venues.find(v => actionsFor(v).some(a => a.tab === tab))?.id || 'directory');
     });
     listen(journal, 'click', () => { if (worldUI) worldUI.openJournal(); else navigate('fieldwork', { venueId: 'directory', initialView: 'mysteries' }); });
     listen(questButtons, 'click', event => {
@@ -1176,6 +1233,13 @@
       cardTitle.textContent = venue.name;
       cardText.textContent = venue.description;
       open.textContent = 'Open ' + venue.name + ' →';
+      trailChoices.hidden=venue.id!=='district-walk'||streetTrail?.stage>0;
+      open.hidden=venue.id==='district-walk'&&(!streetTrail||streetTrail.stage===0);
+      if(venue.id==='district-walk'&&streetTrail){
+        cardTitle.textContent=districtWalk.name+' · The late courier';
+        cardText.textContent=streetTrail.text;
+        open.textContent=streetTrail.stage>=3?'Walk the story again':'Walk to the next crossing';
+      }else if(venue.id==='district-walk')cardText.textContent=venue.description+' A late courier crosses these paths. Choose where to meet the route; walk each leg yourself or use the guided walking control.';
       renderActions(venue);
       renderQuest(venue);
       card.hidden = false;
@@ -1231,8 +1295,38 @@
       }
     }
     listen(open, 'click', () => {
+      if(selected?.id==='district-walk'){
+        if(streetTrail?.stage>=3){streetTrail=null;showVenue(venues.at(-1));drawHomes();}
+        else advanceStreetTrail();
+        return;
+      }
       if (selected && !showGameDock(selected.id)) navigate(selected.tab, selected.id);
     });
+    function beginStreetTrail(choice){
+      if(!ready||!player||destroyed||!['quiet','direct'].includes(choice))return;
+      streetTrail={choice,stage:0,target:null,text:''};advanceStreetTrail();
+    }
+    function advanceStreetTrail(){
+      if(!ready||!player||!streetTrail||streetTrail.stage>=3)return;
+      const stops=[{x:streetTrail.choice==='quiet'?96:880,y:920},{x:416,y:656},{x:districtWalk.x,y:districtWalk.y}];
+      const target=stops[streetTrail.stage],route=findRoute(player,target);
+      if(!route.length||Math.hypot(route.at(-1).x-target.x,route.at(-1).y-target.y)>18)return;
+      hideVenue(false);stopMovement();streetTrail.target=target;path=route;
+      game.canvas.focus({preventScroll:true});redrawPath();drawHomes();
+    }
+    function arriveStreetTrail(){
+      if(!streetTrail?.target||!player||Math.hypot(player.x-streetTrail.target.x,player.y-streetTrail.target.y)>=18)return;
+      streetTrail.target=null;streetTrail.stage++;
+      const quiet=streetTrail.choice==='quiet';
+      streetTrail.text=streetTrail.stage===1
+        ? quiet?'Behind the sheltered crossing, the courier pauses to check a chalk mark. You can follow the trail without stepping into the light.'
+          :'At the lit crossing you get ahead of the courier. A porter points back toward the narrow entrance to the walk.'
+        :streetTrail.stage===2
+          ?'At the entrance, the routes come together. The same chalk mark points back to '+districtWalk.name+'. Follow it to see where this delivery ends.'
+          :quiet?'You reach the resting place from cover. The courier leaves a parcel beneath the marked bench and slips away. You learned the quiet route; try the crossing for a different ending.'
+            :'You arrive openly and meet the courier at the resting place. “For the night porter,” comes the greeting. You found the direct meeting; try the sheltered route to watch the handoff.';
+      showVenue(venues.at(-1));drawHomes();reportPosition(true);
+    }
     listen(close, 'click', () => hideVenue(true));
     listen(card, 'keydown', event => {
       if (event.key === 'Escape') { event.preventDefault(); hideVenue(true); }
@@ -1272,7 +1366,7 @@
     }
     function nearVenue() {
       if (!player) return null;
-      return VENUES.find(v => Math.hypot(v.x - player.x, v.y - player.y) < 42) || null;
+      return venues.find(v => Math.hypot(v.x - player.x, v.y - player.y) < 42) || null;
     }
     function nearActor() {
       if (!player) return null;
@@ -1471,7 +1565,7 @@
       if (s.textures.exists('city-art-background') && district.id === 'docks') {
         artState.background = 'generated';
         s.add.image(0, 0, 'city-art-background').setOrigin(0).setDisplaySize(WORLD.width, WORLD.height).setDepth(0);
-        for (const v of VENUES.filter(v => v.building)) {
+        for (const v of venues.filter(v => v.building)) {
           placeNames.push(s.add.text(v.building.x + v.building.width / 2, v.labelY, v.name.toUpperCase(), {
             fontFamily: 'monospace', fontSize: 14, fontStyle: 'bold', resolution: 2,
             color: '#f4dfad', backgroundColor: '#17191c',
@@ -1574,7 +1668,7 @@
             rect(b.x + b.width - 43, b.y + 80, 20, 6, 0x8c8570);
           } else windowPane(b.x + 18, b.y + b.height - 43, 28, 29, true);
         }
-        VENUES.filter(v => v.building).forEach(building);
+        venues.filter(v => v.building).forEach(building);
 
         function lamp(x, y) {
           g.fillStyle(0xe8bc6c, 0.045).fillCircle(x, y, 40);
@@ -1663,7 +1757,7 @@
       pathInk = s.add.graphics().setDepth(3);
       destinationInk = s.add.graphics().setDepth(3);
       const markerObjects = [];
-      VENUES.forEach((v, i) => {
+      venues.forEach((v, i) => {
         const marker = s.add.graphics().setDepth(4);
         marker.lineStyle(2, 0xe8b34b, 0.9).strokeRect(v.x - 10, v.y - 10, 20, 20);
         marker.fillStyle(0x1d2426, 0.95).fillRect(v.x - 8, v.y - 8, 16, 16);
@@ -1776,8 +1870,8 @@
         const exit = exits.find(exit => Math.hypot(point.x - exit.x, point.y - exit.y) < 30);
         if (exit) { walkExit(exit.id); return; }
         const prop = Array.from(caseProps.values()).find(prop => Math.abs(point.x - prop.x) <= 18 && Math.abs(point.y - prop.y) <= 18);
-        if (prop) { showVenue(VENUES.find(venue => venue.id === prop.venueId)); return; }
-        const venue = VENUES.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
+        if (prop) { showVenue(venues.find(venue => venue.id === prop.venueId)); return; }
+        const venue = venues.find(v => Math.hypot(point.x - v.x, point.y - v.y) < 35 ||
           (v.building && point.x >= v.building.x && point.x <= v.building.x + v.building.width &&
            point.y >= v.building.y && point.y <= v.building.y + v.building.height));
         if (venue && Math.hypot(player.x - venue.x, player.y - venue.y) < 42) { showVenue(venue); return; }
@@ -1840,6 +1934,7 @@
         moving = true;
       }
       const movedX = player.x - previousX, movedY = player.y - previousY;
+      arriveStreetTrail();
       moving = Math.hypot(movedX, movedY) > 0.01;
       if (moving) {
         if (Math.abs(movedX) > Math.abs(movedY)) playerFacing = movedX < 0 ? 'left' : 'right';
@@ -1919,9 +2014,9 @@
           trainingOpen: gameKind === 'training', gameDock: gameKind || null, gameOpening, worldUI: worldUI?.getState() || null, look,
           actorMarkers: Array.from(actorSprites, ([id, marker]) => ({ id, kind: marker.actor.kind, x: marker.x, y: marker.y })),
           caseProps: Array.from(caseProps.values(), prop => ({ nodeId: prop.nodeId, name: prop.name, x: prop.x, y: prop.y, complete: prop.complete })),
-          actions: Object.fromEntries(VENUES.map(v => [v.id, actionsFor(v)])),
+          actions: Object.fromEntries(venues.map(v => [v.id, actionsFor(v)])),
           player: player ? { x: player.x, y: player.y } : null,
-          destinations: VENUES.map(v => ({ id: v.id, x: v.x, y: v.y, tab: v.tab })),
+          destinations: venues.map(v => ({ id: v.id, x: v.x, y: v.y, tab: v.tab })),
           obstacles: obstacles.map(r => ({ ...r })), homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
           selectedHome, selectedExit, region: { id: district.id, landmark: region.landmark?.name || 'The Waterfront' },
           ambient: scene && ready ? scene.data.get('npcs').filter(n => !n.title).map(n => ({ x: n.sprite.x, y: n.sprite.y })) : [],
@@ -1956,6 +2051,7 @@
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
+          streetTrail=null;
           hideGameDock(false); hideVenue(false);
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
           options.worldAtlas = null; options.worldCollection = null; options.worldHomes = null; options.caseJournal = null;
@@ -1971,7 +2067,10 @@
         for (const key of ['venueActions', 'progress', 'npcQuests', 'caseJournal', 'casePending', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
         region = REGIONS[district.id] || REGIONS.docks;
-        walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
+        districtWalk = DISTRICT_WALKS[district.id] || DISTRICT_WALKS.docks;
+        Object.assign(venues.at(-1),{name:districtWalk.name,x:districtWalk.x,y:districtWalk.y,description:districtWalk.description});
+        buttons.get('district-walk').querySelector('.omerta-city__destination-name').textContent=districtWalk.name;
+        walkBottom = world.height-20;
         if ('worldHomes' in nextOptions && nextOptions.worldHomes === null) { homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); }
         if (!worldUI) acceptHomes(options.worldHomes);
         updateGeometry();

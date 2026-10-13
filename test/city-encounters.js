@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import Ajv from 'ajv';
 import { CITY_ENCOUNTER_SCHEMAS } from '../src/city-encounters-contract.js';
+import { proveEncounterMastery } from './lib/city-encounter-mastery-proof.js';
+import { proveEncounterCatalogueMigration } from './lib/city-encounter-migration-proof.js';
 const postgres=process.argv.includes('--postgres');
 let admin,namespace,app;
 for(const key of ['JWT_SECRET','MOD_KEY','MARKET_SEED']) process.env[key]=crypto.randomBytes(32).toString('hex');
@@ -18,6 +20,7 @@ try {
   }else assert(!process.env.DATABASE_URL,'Memory proof requires disposable pg-mem');
   const {buildServer}=await import('../src/server.js');app=await buildServer();
   if(postgres){const row=(await app.pool.query('SELECT current_schema() AS schema,version() AS version')).rows[0];assert.equal(row.schema,namespace);assert.match(row.version,/^PostgreSQL /);}
+  if(postgres)await proveEncounterCatalogueMigration({ pool:app.pool,fixtureSchema:namespace });
   const ajv=new Ajv({strict:false});for(const [name,schema]of Object.entries(CITY_ENCOUNTER_SCHEMAS))ajv.addSchema(schema,'#/components/schemas/'+name);
   const valid=(schema,value)=>assert(ajv.getSchema('#/components/schemas/'+schema)(value),JSON.stringify(ajv.getSchema('#/components/schemas/'+schema).errors));
   const call=(actor,method,url,payload,key=crypto.randomUUID())=>app.inject({method,url,...(payload===undefined?{}:{payload}),headers:{...(actor?.headers||{}),...(method==='POST'?{'idempotency-key':key}:{})}});
@@ -36,7 +39,7 @@ try {
   assert.equal((await call(null,'GET','/v1/city/encounters')).statusCode,401);
   assert.equal((await call(p,'GET','/v1/city/encounters?owner='+other.id)).statusCode,400);
   const before=await core(),initial=await board(p);assert.equal(initial.active,null);assert.deepEqual(initial.clues,[]);
-  assert.equal(initial.scenarios.length,1);assert(!Object.hasOwn(initial.scenarios[0],'clue'),'The award clue is hidden before resolution');
+  assert.equal(initial.scenarios.filter(s=>s.id.endsWith('-patrol')).length,1);assert(!Object.hasOwn(initial.scenarios[0],'clue'),'The award clue is hidden before resolution');
   const start=initial.scenarios[0].action,startKey=crypto.randomUUID(),opened=await act(p,start,startKey);
   assert.deepEqual(await act(p,start,startKey),opened);assert.equal(Number((await app.pool.query('SELECT count(*) n FROM city_encounters WHERE owner_character_id=$1',[p.id])).rows[0].n),1);
   assert.equal((await call(p,start.method,start.path,{...start.body,scenarioId:'neon-patrol'})).statusCode,400,'Canonical district gate');
@@ -82,4 +85,5 @@ try {
   assert.equal((await board(p)).history[0].status,'won','Responding to each real announced intent wins the tactical drill');
   assert.equal(before.ledger,trainingBaseline.ledger);assert.equal(before.character.cash,trainingBaseline.character.cash);
   console.log('City encounters: actual prepare/intent/turns/core skill, exact replay, stale revision/body/owner/district/privacy, late rollback/retry and persistent clues passed');
+  await proveEncounterMastery({ app,player,board,act,call,ok });
 }finally{if(app)await app.close();if(admin){await admin.query(`DROP SCHEMA ${namespace} CASCADE`);await admin.end();}}

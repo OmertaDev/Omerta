@@ -4,7 +4,8 @@ const integer={type:'integer',minimum:0},positive={type:'integer',minimum:1};
 const ref=name=>({$ref:'#/components/schemas/'+name});
 const viewer={characterId:id,generation:positive,district:id};
 export const CITY_ENCOUNTER_BODIES=Object.freeze({
-  start:object({...viewer,scenarioId:{type:'string',enum:['docks-patrol','neon-patrol','foundry-patrol','brick-patrol','canal-patrol','cathedral-patrol']}}),
+  start:object({...viewer,scenarioId:{type:'string',enum:['docks-patrol','neon-patrol','foundry-patrol','brick-patrol','canal-patrol','cathedral-patrol',
+    'docks-mastery-v1','neon-mastery-v1','foundry-mastery-v1','brick-mastery-v1','canal-mastery-v1','cathedral-mastery-v1']}}),
   turn:object({...viewer,expectedRevision:positive,move:{type:'string',enum:['strike','guard','feint','negotiate','retreat']}}),
 });
 export const CITY_ENCOUNTER_SCHEMAS=Object.freeze({
@@ -16,11 +17,13 @@ export const CITY_ENCOUNTER_SCHEMAS=Object.freeze({
     status:{type:'string',enum:['active','won','truce','lost','retreated','stalemate']},turn:{...integer,maximum:12},roundLimit:{const:12},
     health:integer,maxHealth:positive,stamina:{...integer,maximum:10},enemyHealth:integer,enemyMaxHealth:positive,
     intent:{anyOf:[{type:'string',enum:['strike','brace','pressure']},{type:'null'}]},last:text,
-    clue:{anyOf:[text,{type:'null'}]},actions:{type:'array',maxItems:5,items:ref('CityEncounterAction')}}),
+    clue:{anyOf:[text,{type:'null'}]},actions:{type:'array',maxItems:5,items:ref('CityEncounterAction')},
+    mastery:object({challenge:text,achieved:{type:'boolean'}})},
+    ['id','scenarioId','name','district','revision','status','turn','roundLimit','health','maxHealth','stamina','enemyHealth','enemyMaxHealth','intent','last','clue','actions']),
   CityEncounterBoard:object({viewer:ref('CityEncounterViewer'),mode:{const:'district-drill'},description:text,
-    scenarios:{type:'array',maxItems:1,items:object({id,district:id,name:text,description:text,action:ref('CityEncounterAction')})},
+    scenarios:{type:'array',maxItems:2,items:object({id,district:id,name:text,description:text,action:ref('CityEncounterAction'),challenge:text},['id','district','name','description','action'])},
     active:{anyOf:[ref('CityEncounter'),{type:'null'}]},history:{type:'array',maxItems:16,items:ref('CityEncounter')},
-    clues:{type:'array',maxItems:6,items:object({scenarioId:id,title:text,text})}}),
+    clues:{type:'array',maxItems:12,items:object({scenarioId:id,title:text,text})}}),
   CityEncounterAck:object({ok:{const:true},viewer:ref('CityEncounterViewer'),encounter:ref('CityEncounter'),message:text}),
 });
 export const CITY_ENCOUNTER_CONTRACTS=Object.freeze({
