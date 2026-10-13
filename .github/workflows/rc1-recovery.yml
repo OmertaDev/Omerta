@@ -5,6 +5,12 @@ on:
     branches: [codex/rc1-release-validation]
   workflow_dispatch:
     inputs:
+      rollback_profile:
+        description: 'Exact rollback predecessor; preserve the historical profile or rehearse the deployed City source'
+        required: false
+        type: choice
+        default: legacy_observed468
+        options: [legacy_observed468, actual_deployed_f254]
       replay_source:
         description: 'Optional exact source SHA for diagnostic PostgreSQL18.4 alliance replay only'
         required: false
@@ -31,6 +37,10 @@ env:
 permissions:
   contents: read
 
+env:
+  RC1_ROLLBACK_PROFILE: ${{ inputs.rollback_profile || 'legacy_observed468' }}
+  RC1_ROLLBACK_SOURCE: ${{ inputs.rollback_profile == 'actual_deployed_f254' && 'f254c64a54a019665d7a516d382d56b46f2dcd82' || '468516d8d6f3729514711ad5a0b83e440c5c46f9' }}
+
 jobs:
   retention-controls:
     name: Authenticated evidence transport controls
@@ -38,6 +48,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -71,6 +83,8 @@ jobs:
       RC1_CI_POSTGRES: ${{ matrix.postgres }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -85,11 +99,19 @@ jobs:
           set -o pipefail
           umask 077
           npm run test:rc1:market:postgres 2>&1 | tee "$RUNNER_TEMP/rc1-market-policy.log"
+      - name: Validate exact rollback profile
+        if: '!cancelled()'
+        run: |
+          case "$RC1_ROLLBACK_PROFILE:$RC1_ROLLBACK_SOURCE" in
+            legacy_observed468:468516d8d6f3729514711ad5a0b83e440c5c46f9|actual_deployed_f254:f254c64a54a019665d7a516d382d56b46f2dcd82) ;;
+            *) echo "Invalid exact rollback profile" >&2; exit 1 ;;
+          esac
+          printf 'rollback profile=%s predecessor=%s candidate=%s\n' "$RC1_ROLLBACK_PROFILE" "$RC1_ROLLBACK_SOURCE" "$GITHUB_SHA"
       - name: Check out the observed Render rollback predecessor
         if: '!cancelled()'
         uses: actions/checkout@v4
         with:
-          ref: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          ref: ${{ env.RC1_ROLLBACK_SOURCE }}
           path: tmp/rc1-predecessor
           fetch-depth: 0
       - name: Install predecessor dependencies from its own lockfile
@@ -100,7 +122,7 @@ jobs:
         env:
           RC1_PAIR_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
           RC1_PAIR_PREDECESSOR_DIRECTORY: ${{ github.workspace }}/tmp/rc1-predecessor
-          RC1_PAIR_PREDECESSOR_SHA: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          RC1_PAIR_PREDECESSOR_SHA: ${{ env.RC1_ROLLBACK_SOURCE }}
           RC1_PAIR_OUTPUT: ${{ runner.temp }}/rc1-source-pair
         run: |
           set -o pipefail
@@ -157,6 +179,8 @@ jobs:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_phone
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -222,6 +246,8 @@ jobs:
       RC1_SHUTDOWN_EVIDENCE: ${{ github.workspace }}/tmp/rc1-linux-sigterm
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -317,10 +343,18 @@ jobs:
           set -o pipefail
           umask 077
           npm run test:rc1:concurrent:postgres 2>&1 | tee "$RC1_SHUTDOWN_EVIDENCE/concurrent-replay.log"
+      - name: Validate exact rollback profile
+        if: '!cancelled()'
+        run: |
+          case "$RC1_ROLLBACK_PROFILE:$RC1_ROLLBACK_SOURCE" in
+            legacy_observed468:468516d8d6f3729514711ad5a0b83e440c5c46f9|actual_deployed_f254:f254c64a54a019665d7a516d382d56b46f2dcd82) ;;
+            *) echo "Invalid exact rollback profile" >&2; exit 1 ;;
+          esac
+          printf 'rollback profile=%s predecessor=%s candidate=%s\n' "$RC1_ROLLBACK_PROFILE" "$RC1_ROLLBACK_SOURCE" "$GITHUB_SHA"
       - name: Check out the observed Render rollback predecessor
         uses: actions/checkout@v4
         with:
-          ref: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          ref: ${{ env.RC1_ROLLBACK_SOURCE }}
           path: tmp/rc1-predecessor
           fetch-depth: 0
       - name: Install predecessor dependencies from its own lockfile
@@ -329,7 +363,7 @@ jobs:
         env:
           RC1_PAIR_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
           RC1_PAIR_PREDECESSOR_DIRECTORY: ${{ github.workspace }}/tmp/rc1-predecessor
-          RC1_PAIR_PREDECESSOR_SHA: 468516d8d6f3729514711ad5a0b83e440c5c46f9
+          RC1_PAIR_PREDECESSOR_SHA: ${{ env.RC1_ROLLBACK_SOURCE }}
           RC1_PAIR_OUTPUT: ${{ runner.temp }}/rc1-source-pair
         run: |
           set -o pipefail
@@ -376,6 +410,8 @@ jobs:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_world_control
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -486,6 +522,8 @@ jobs:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_authority
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -585,6 +623,8 @@ jobs:
       RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -731,6 +771,8 @@ jobs:
       RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -787,6 +829,8 @@ jobs:
       RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -848,6 +892,8 @@ jobs:
       RC1_RESOURCE_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/postgres
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -991,6 +1037,8 @@ jobs:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_pressure_control
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -1114,6 +1162,8 @@ jobs:
       COORDINATION_TEST_DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/rc1_alliance_world_control
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -1249,6 +1299,8 @@ jobs:
       RC1_CI_POSTGRES: '18.4'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
