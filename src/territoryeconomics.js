@@ -202,3 +202,30 @@ export async function runTerritoryEconomics(pool,limit=20){const candidates=awai
     else await pool.query("UPDATE territory_economics_profiles SET next_run_at=$6 WHERE id=$1 AND original_account=$2 AND original_character=$3 AND revision=$4 AND state='active' AND enabled=true AND next_run_at=$5",[row.id,row.original_account,row.original_character,row.revision,row.due_stamp,stamp]);
     if(error&&!(error instanceof GameError))throw error;
   }return {attempted:results.length,results};}
+
+// Trusted internal observation only. Public bodies never supply this baseline: consumers persist
+// the capture alongside their immutable start receipt and validate it before subsequent reads.
+// The hash binds exact UUIDs to the original party/business/current profile revision; it grants
+// no ownership, configuration or spending right. F19's live private scope remains mandatory.
+export async function observeTerritoryEconomicsSources(client,ctx){
+  assertItemTransaction(client);
+  if(!exact(ctx,['accountId','characterId','businessId','profileId','profileRevision','baseline']))fail('observation_context');
+  for(const k of ['accountId','characterId','businessId','profileId'])identity(ctx[k]);integer(ctx.profileRevision,1,1000000);
+  const concession=await concessionProductionContext(client,{accountId:ctx.accountId,businessId:ctx.businessId});if(!concession||concession.operatorCharacter!==ctx.characterId)fail('observation_context');
+  const proof=await concessionToolAuthority(client,{accountId:ctx.accountId,characterId:ctx.characterId,businessId:ctx.businessId,itemId:concession.itemId});
+  const ch=(await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE',[ctx.characterId])).rows[0],h={accountId:ctx.accountId,owned:{gangId:null}};
+  const depot=await original(client,ch,h,ctx.businessId),hint=(await client.query('SELECT * FROM territory_economics_profiles WHERE id=$1',[ctx.profileId])).rows[0];
+  if(!hint||hint.business_id!==ctx.businessId)fail('observation_context');h.owned.gangId=hint.gang_id;await family(client,ch,h,depot,hint);
+  const profile=(await client.query('SELECT * FROM territory_economics_profiles WHERE id=$1 FOR UPDATE',[ctx.profileId])).rows[0];
+  if(profile.original_account!==ctx.accountId||profile.original_character!==ctx.characterId||profile.business_id!==ctx.businessId||Number(profile.revision)!==ctx.profileRevision||profile.state!=='active'||!profile.enabled||profile.concession_id!==proof.concessionId||profile.source_hash!==proof.sourceHash)fail('observation_context');
+  const frame=ids=>({kind:'canonical_depot_uuid_baseline',accountId:ctx.accountId,characterId:ctx.characterId,businessId:ctx.businessId,profileId:profile.id,profileRevision:ctx.profileRevision,ids});
+  let baseline=profile.baseline_ids;
+  if(ctx.baseline!==null){const b=ctx.baseline;if(!exact(b,['ids','hash'])||!Array.isArray(b.ids)||b.ids.length>500||typeof b.hash!=='string'||!/^[a-f0-9]{64}$/.test(b.hash)||hash(frame(b.ids))!==b.hash)fail('observation_baseline');
+    if(b.ids.some((id,i)=>typeof id!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id)||(i>0&&b.ids[i-1]>=id)))fail('observation_baseline');baseline=b.ids;}
+  let source;try{source=await sourceProfit(client,depot.id,baseline);for(const sale of source.fresh.filter(r=>r.reason==='sale')){const customer=(await client.query('SELECT account_id FROM characters WHERE id=$1',[sale.customer_character])).rows[0];if(!customer?.account_id||customer.account_id===ctx.accountId)fail('source_unknown');sale.originalCustomerAccount=customer.account_id;}}
+  catch(e){if(e instanceof GameError&&e.code==='territory_economics'&&e.message==='source_unknown')return Object.freeze({status:'UNKNOWN',reason:'incomplete_or_invalid_canonical_source',netCash:null,costCash:null,sourceIds:[]});throw e;}
+  const now=await clock(client);if(+now>=+new Date(profile.expires_at)||+now>=+new Date(proof.expiresAt))fail('expired');
+  const ids=source.rows.map(r=>r.id),events=source.fresh.map(r=>({id:r.id,kind:r.reason,netCash:r.reason==='sale'?Number(r.cash_delta):0,costCash:r.reason==='sale'?-Number(r.cost_delta):0,expenseCash:Number(r.expense),units:r.reason==='sale'?-Number(r.stock_delta):0,customerAccount:r.originalCustomerAccount||null}));
+  const cost=events.reduce((n,r)=>n+r.costCash+r.expenseCash,0);if(!Number.isSafeInteger(cost))return Object.freeze({status:'UNKNOWN',reason:'incomplete_or_invalid_canonical_source',netCash:null,costCash:null,sourceIds:[]});
+  return Object.freeze({status:'observed',asOf:now.toISOString(),profileId:profile.id,profileRevision:ctx.profileRevision,netCash:source.profit,costCash:cost,sourceIds:events.map(r=>r.id),events,baseline:Object.freeze({ids,hash:hash(frame(ids))}),authority:'original_scope_read_only',mutations:0});
+}
