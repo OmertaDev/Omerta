@@ -1911,8 +1911,28 @@ try {
   await page.locator('[data-city-training-close]').click();
   await page.unroute('**/v1/projections/player');
   await page.unroute('**/v1/map');
-  await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [characterId]);
-  await page.locator('#btn-refresh').click();
+  // Complete native Refresh before retiring its identity: background reads may
+  // otherwise correctly remove the control first. Only real player GETs are held.
+  const refreshIntoRetiredIdentity = async (target, mutate, status, error) => {
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    const handler = async route => { await gate; await route.continue(); };
+    await target.route('**/v1/projections/player', handler);
+    const request = target.waitForRequest(request => new URL(request.url()).pathname === '/v1/projections/player');
+    const response = target.waitForResponse(response => new URL(response.url()).pathname === '/v1/projections/player' && response.status() === status);
+    try {
+      await target.locator('#btn-refresh').click();
+      await request;
+      await mutate();
+      release();
+      assert.equal((await (await response).json()).error, error, 'The real player read observes the retired identity.');
+    } finally {
+      release();
+      await target.unroute('**/v1/projections/player', handler);
+    }
+  };
+  await refreshIntoRetiredIdentity(page,
+    () => app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [characterId]), 404, 'no_character');
   await page.waitForSelector('#screen-create:not(.hidden)');
   assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'No living character disposes the City renderer.');
   const authGuest = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });
@@ -1924,8 +1944,9 @@ try {
   await openCity(authPage);
   await authPage.getByRole('button', { name: 'Visit The Fixer', exact: true }).waitFor();
   await authPage.evaluate(() => { window.__oldQuestVisit = document.querySelector('[data-city-nextmove]'); });
-  assert.equal((await app.inject({ method: 'POST', url: '/v1/auth/logout-all', headers: authHeaders })).statusCode, 200);
-  await authPage.locator('#btn-refresh').click();
+  await refreshIntoRetiredIdentity(authPage, async () => {
+    assert.equal((await app.inject({ method: 'POST', url: '/v1/auth/logout-all', headers: authHeaders })).statusCode, 200);
+  }, 401, 'token_revoked');
   await authPage.waitForSelector('#screen-auth:not(.hidden)');
   assert.equal(await authPage.locator('.omerta-city__canvas canvas').count(), 0, 'A revoked session disposes City and returns to sign-in.');
   const retiredVisit = await authPage.evaluate(() => {
