@@ -12,6 +12,7 @@ import { CITY_WORLD_OPPORTUNITY_REQUEST_SCHEMAS, CITY_WORLD_OPPORTUNITY_INDEX_SC
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
 import { COMPANY_ECONOMY_CONTRACTS, COMPANY_ECONOMY_SCHEMAS } from './company-economy-contracts.js';
 import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';
+import { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
@@ -292,6 +293,7 @@ export const COORDINATION_SCHEMAS = {
 const OPERATION_CONTRACTS = {
   ...COMPANY_ECONOMY_CONTRACTS,
   ...EQUIPMENT_ECONOMY_CONTRACTS,
+  ...COMPANY_WORKFORCE_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
   'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
@@ -924,6 +926,7 @@ const OPERATION_CONTRACTS = {
 const AGENT_SCHEMAS = {
   ...COMPANY_ECONOMY_SCHEMAS,
   ...EQUIPMENT_ECONOMY_SCHEMAS,
+  ...COMPANY_WORKFORCE_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,
   CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,

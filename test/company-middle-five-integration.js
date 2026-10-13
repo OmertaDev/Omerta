@@ -1,6 +1,7 @@
+import {assertFreshMiddleFiveNative} from './lib/company-middle-five-native.js';
 import assert from 'node:assert/strict';
 assert(!process.env.DATABASE_URL,'No ambient endpoint');const native=process.argv.includes('--postgres');
-if(native){const u=new URL(process.env.COMPANY_MIDDLE_FIVE_TEST_DATABASE_URL);assert.equal(u.hostname,'127.0.0.1');assert.equal(u.username,'pilot_runner');assert(!u.password&&!u.search&&!u.hash);assert(['35439','35449'].includes(u.port));assert.match(u.pathname,/^\/company_middle_five_test_[a-f0-9]{12}$/);const{default:pg}=await import('pg'),p=new pg.Client({connectionString:u.href});await p.connect();try{await p.query('BEGIN READ ONLY');assert.match((await p.query('SHOW server_version')).rows[0].server_version,/^18\.4\b/);assert.equal((await p.query('SELECT current_user')).rows[0].current_user,'pilot_runner');assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0);await p.query('ROLLBACK');}finally{await p.end();}process.env.DATABASE_URL=u.href;}
+if(native){const checked=await assertFreshMiddleFiveNative(process.env.COMPANY_MIDDLE_FIVE_TEST_DATABASE_URL,'company_middle_five_test_');process.env.DATABASE_URL=checked.endpoint;}
 Object.assign(process.env,{DEPOT_PILOT:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',INVITE_MODE:'off',JWT_SECRET:'middle-five-fixture-secret',MOD_KEY:'middle-five-fixture-moderator-key',MARKET_SEED:'middle-five-fixture-market-seed'});
 const{buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js'),R=await import('../src/depotacquisitionruntime.js'),{runLedgerInvariants}=await import('../src/invariants.js');
 const app=await buildServer(),pool=app.pool;let serial=0;
