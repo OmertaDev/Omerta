@@ -13,6 +13,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepCrewInvites, CREW_FIRST_CHARACTER_LOCKS, setRecruiting } from '../src/crew.js';
 import { withCharacter } from '../src/game.js';
 import { CREW } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 import { readFileSync as _readSrc } from 'node:fs';
 
 const app = await buildServer();
@@ -72,11 +73,20 @@ assert.equal(tb.invites[0].name, 'The Dockside Boys', 'from the right crew');
 // a stranger cannot accept an invite that was not theirs
 assert.equal((await call('POST', `/v1/crew/accept/${crewId}`, { token: vito.token })).body.error, 'no_invite', "you can't gatecrash");
 assert.equal((await call('POST', `/v1/crew/accept/${crewId}`, { token: tony.token })).code, 200, 'Tony joins');
+const tonySeen = await recordPlayerIntel(pool, await acctOf(boss.id),
+  (await pool.query('SELECT * FROM characters WHERE id=$1', [tony.id])).rows[0]);
 // the board shows both, the leader flagged
 let bb = (await call('GET', '/v1/crew', { token: boss.token })).body;
 assert.equal(bb.crew.members.length, 2, 'two on the board');
 assert.equal(bb.crew.members.find((m) => m.isMe).leader, true, 'the boss is flagged leader');
-assert.equal(bb.crew.members.find((m) => m.name === 'Tony Two').level >= 3, true, 'members carry live level');
+assert.equal(bb.crew.members.find((m) => m.name === 'Tony Two').level, tonySeen.level, 'members carry last-known level');
+await seed(tony.id, "loc='neon', respect=80000");
+const movedTony = (await call('GET', '/v1/crew', { token: boss.token })).body.crew.members.find((m) => m.characterId === tony.id);
+assert.equal(movedTony.district, 'docks', 'crew membership does not update a member location');
+assert.equal(movedTony.level, tonySeen.level, 'crew membership does not update a member level');
+assert.equal(new Date(movedTony.observedAt).getTime(), new Date(tonySeen.observedAt).getTime(), 'the member observation keeps its age');
+assert.equal(movedTony.source, 'encounter', 'the member card identifies its observation source');
+await kit(tony.id);
 
 // The composed wrapper must settle earned income before the Crew-first action transaction.
 // Removing that first settle leaves a refused action's income ledger without its persisted cash

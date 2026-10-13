@@ -1,6 +1,7 @@
 import { cityGameplaySourceBaseline } from './rc1-city-gameplay-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 
 const normalize = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -101,7 +102,7 @@ export function qualifyBusinessSeasonSource(file, input) {
 }
 // Unknown bytes are retained for their original rejecting source guard, never stripped by pattern.
 export function businessSeasonSourceBaseline(file, input) {
-  const text = normalize(cityGameplaySourceBaseline(file, input));
+  const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file, input));
   return Object.hasOwn(BUSINESS_SEASON_SOURCE_CURRENT_PINS, file) && hash(text) === BUSINESS_SEASON_SOURCE_CURRENT_PINS[file]
     ? assertBusinessSeasonSourceTransfer(file, text).baselineText : text;
 }

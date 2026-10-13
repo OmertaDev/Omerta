@@ -650,6 +650,9 @@
     }
     function pageActors() { return publicActors().slice(actorPage * ACTOR_PAGE_SIZE, (actorPage + 1) * ACTOR_PAGE_SIZE); }
     function findActor(id) { return publicActors().find(actor => actor.id === id); }
+    function actorName(actor) {
+      return String(actor?.name || (actor?.kind === 'npc' ? 'Unnamed resident' : actor?.kind === 'agent' ? 'Unknown agent' : 'Unknown player'));
+    }
     function actorActions(actor) {
       return (Array.isArray(actor?.actions) ? actor.actions : []).filter(action => action && typeof action.id === 'string'
         && action.method === 'POST' && action.path === '/v1/city/encounters/' + encodeURIComponent(actor.id));
@@ -668,8 +671,8 @@
           const button = element('button', 'omerta-city__actor');
           button.type = 'button'; button.dataset.cityActor = actor.id;
           button.setAttribute('aria-expanded', String(selectedActor === actor.id && !actorDock.hidden));
-          button.append(element('strong', '', String(actor.name || 'Unnamed person')),
-            element('span', '', actor.kind.toUpperCase() + (Number.isFinite(Number(actor.level)) ? ' · Level ' + actor.level : '')));
+          button.append(element('strong', '', actorName(actor)),
+            element('span', '', actor.kind.toUpperCase() + (Number.isFinite(actor.level) ? ' · ' + (actor.kind === 'npc' ? 'Level ' : 'Last known level ') + actor.level : '')));
           actorList.append(button);
         }
         if (!actors.length) actorList.append(element('p', '', 'No public people have been reported in this district.'));
@@ -734,10 +737,18 @@
       const scroll = actorDock.scrollTop;
       actorBody.replaceChildren();
       if (actorView === 'person') {
-        actorBody.append(element('h4', '', actor ? String(actor.name || 'Unnamed person') : 'This person is no longer on the current district list.'));
+        actorBody.append(element('h4', '', actor ? actorName(actor) : 'This person is no longer on the current district list.'));
         if (actor) {
           actorBody.append(element('p', 'omerta-city__actor-facts', actor.kind.toUpperCase() + ' · Reported in ' + String(district.name || district.id)
-            + (Number.isFinite(Number(actor.level)) ? ' · Level ' + actor.level : '') + (actor.gangTag ? ' · ' + actor.gangTag : '')));
+            + (actor.kind === 'npc' && Number.isFinite(actor.level) ? ' · Level ' + actor.level : '') + (actor.gangTag ? ' · ' + actor.gangTag : '')));
+          if (actor.kind !== 'npc') {
+            const observation = new Date(actor.observedAt || '').getTime();
+            actorBody.append(element('p', '', actor.name ? 'Last learned: ' + actorName(actor)
+              + (Number.isFinite(actor.level) ? ' · Level ' + actor.level : '')
+              + (actor.lastSeenDistrict ? ' · ' + String(actor.lastSeenDistrict) : '')
+              + (Number.isFinite(observation) ? ' · observed ' + new Date(observation).toLocaleString() : '')
+              + '. These are recorded facts, not live tracking.' : 'Meet this person or hear about them to learn their name and other facts.'));
+          }
           actorBody.append(element('p', '', 'Collect a neighborhood clue and advance your intel objectives.'));
           for (const action of actorActions(actor)) {
             const button = element('button', '', String(action.label || 'Collect intel'));
@@ -1076,7 +1087,7 @@
       const tab = character.coach?.tab;
       if (typeof tab === 'string' && tab) navigate(tab, VENUES.find(v => actionsFor(v).some(a => a.tab === tab))?.id || 'directory');
     });
-    listen(journal, 'click', () => navigate('fieldwork', 'directory'));
+    listen(journal, 'click', () => navigate('fieldwork', { venueId: 'directory', initialView: 'mysteries' }));
     listen(questButtons, 'click', event => {
       const button = event.target.closest('[data-city-quest-action]');
       if (button && !button.disabled && selected && questButtons.contains(button) && typeof options.onQuestAction === 'function') {
@@ -1784,10 +1795,10 @@
       }
       const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
       interact.disabled = !nearby;
-      const nearbyName = target?.actor ? target.actor.actor.name : target?.home?.street || target?.exit?.name || target?.venue?.name;
+      const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.exit?.name || target?.venue?.name;
       for (const [id, marker] of actorSprites) {
         const copy = id === selectedActor || id === target?.actor?.id
-          ? String(marker.actor.name || 'Unnamed person').slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
+          ? actorName(marker.actor).slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
         if (marker.name.text !== copy) marker.name.setText(copy);
       }
       const nearbyText = nearbyName ? 'Nearby: ' + nearbyName : 'Move near a person or place to interact.';

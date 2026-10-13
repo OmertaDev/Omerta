@@ -9,6 +9,7 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { VOUCH } from '../src/rules.js';
 import * as Vouch from '../src/vouch.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -30,6 +31,11 @@ const txCount = async () => Number((await pool.query('SELECT COUNT(*) n FROM tra
 
 const a = await mk('Vito'), b = await mk('Sonny'), c = await mk('Clemenza');
 const txBefore = await txCount();
+const unknown = (await call('GET', '/v1/discovery', { token: a.token })).body;
+assert.equal([...unknown.peers, ...unknown.newcomers].some((r) => r.id === b.id), false,
+  'a reputation board cannot supply an unknown player identity');
+await recordPlayerIntel(pool, a.acct,
+  (await pool.query('SELECT * FROM characters WHERE id=$1', [b.id])).rows[0]);
 
 // ════════════ GATES ════════════
 assert.equal((await call('POST', `/v1/vouch/${a.id}`, { token: a.token })).body.error, 'self', "you can't vouch for yourself");
@@ -71,6 +77,10 @@ const counts = await Vouch.vouchCounts(pool, [a.id, b.id, c.id]);
 assert.equal(counts.get(b.id), 1, 'B carries one vouch on their card');
 assert.equal(counts.get(a.id), 1, 'A carries one (from B) on their card');
 assert.equal(counts.get(c.id) || 0, 0, 'C, unvouched, carries none');
+const learned = (await call('GET', '/v1/discovery', { token: a.token })).body;
+const knownCard = [...learned.peers, ...learned.newcomers].find((r) => r.id === b.id);
+assert.equal(knownCard.name, 'Sonny', 'explicitly learned identity appears');
+assert.equal(knownCard.vouches, null, 'a sighting does not silently reveal current reputation');
 
 // ════════════ REVOKE — A pulls their name, freeing a slot ════════════
 const pull = await call('DELETE', `/v1/vouch/${b.id}`, { token: a.token });

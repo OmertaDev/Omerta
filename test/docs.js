@@ -4037,9 +4037,9 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
 // ═══ THE SMOKE-DEBRIS NOTE — a runbook line that makes two claims about code ══════════════════════
 // DEPLOY.md §8's smoke check creates a real player on the live box, once per deploy, forever. The
 // launch rehearsal found 10 of 12 entries on `/v1/live` were dead level-1 accounts from old smoke
-// runs, and the fix at the time was a recency gate on the player-facing boards. That closed the
-// board half and left the OTHER half unstated: the ops overview's headline counts have no recency
-// gate, so smoke debris inflates the founder's own player figure permanently.
+// runs. Live public discovery lists require recency gates; earned historical observations now
+// intentionally retain what a player learned, without querying the subject's current activity.
+// The ops overview's headline counts remain ungated, so smoke debris still inflates that figure.
 //
 // The note now says both halves — and a note is prose, which rots. Two claims in it are checkable
 // against code, so they are checked, and the guard is deliberately two-sided: it fails when the
@@ -4050,17 +4050,38 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const R = await import('../src/rules.js');
   const deploy = read('DEPLOY.md');
 
-  const cited = deploy.match(/ages off the player-facing boards after `DISCOVERY\.SEEN_DAYS` \((\d+)\)/);
-  assert(cited, 'DEPLOY.md §8 must state the window smoke debris ages off the boards after, citing DISCOVERY.SEEN_DAYS');
+  const cited = deploy.match(/live public discovery lists must use `seenSince\(\)` and `DISCOVERY\.SEEN_DAYS` \((\d+)\)/);
+  assert(cited, 'DEPLOY.md §8 must retain the recency requirement for live public discovery lists, citing DISCOVERY.SEEN_DAYS');
   assert.equal(Number(cited[1]), R.DISCOVERY.SEEN_DAYS,
     `DEPLOY.md §8 quotes DISCOVERY.SEEN_DAYS as ${cited[1]}; the live lever is ${R.DISCOVERY.SEEN_DAYS}`);
 
-  // Half one: the boards really are gated, so "debris self-clears there and needs no sweep" is true.
-  // Asserted at the CALL SITE, not at the lever — a helper that exists and is never called gates
-  // nothing, which is exactly the shape the rehearsal found.
-  for (const f of ['src/collision.js', 'src/discovery.js'])
-    assert(/seenSince\(\)/.test(read(f)),
-      `${f} must apply seenSince() — DEPLOY.md §8 tells the operator smoke debris ages off these boards`);
+  // Historical intel is the exact reviewed exception. New live discovery/presence board modules
+  // must still call the recency helper; the historical modules must not become activity trackers.
+  const historical = ['src/collision.js', 'src/discovery.js'];
+  const discoveryBoards = walkSrc('src').filter((f) =>
+    /export\s+async\s+function\s+(?:collision|discovery|presence)Board\b/.test(read(f)));
+  assert(discoveryBoards.length >= historical.length, 'the discovery-board collector must still find both reviewed projections');
+  for (const f of historical) assert(discoveryBoards.includes(f), `${f} must remain in the checked discovery-board catalog`);
+  for (const f of discoveryBoards) {
+    const source = read(f);
+    if (!historical.includes(f)) {
+      assert(/seenSince\(\)/.test(source), `${f} is live discovery/presence and must apply seenSince()`);
+      continue;
+    }
+    assert(/playerIntelMap\(client, ch\.account_id\)/.test(source), `${f} must read the viewer's earned intel`);
+    assert(/observedAt:\s*seen\.observedAt/.test(source), `${f} must preserve the observation timestamp`);
+    assert(!/last_accrued_at|seenSince\(\)|online\.has\(/.test(source),
+      `${f} must not filter stored notes by current activity or socket presence`);
+    assert(!/\bc\.(?:loc|respect)\b/.test(source), `${f} must not fetch a subject's live location or level`);
+  }
+  const notebook = read('src/playerintel.js');
+  assert(/const known = await playerIntelMap\(q, ch\.account_id\)/.test(notebook), 'the streets notebook must start with owned observations');
+  assert(/observedAt: row\.observed_at/.test(notebook), 'the streets notebook must retain stored observation times');
+  assert(!/last_accrued_at|seenSince\(\)/.test(notebook), 'historical notebooks must not erase offline acquaintances');
+  assert(/Historical notebooks are different:[\s\S]*?retain learned sightings/.test(deploy),
+    'DEPLOY.md §8 must explain why historical notebooks retain earned sightings');
+  const presence = read('src/server.js').match(/app\.get\('\/v1\/online'[\s\S]*?return \{ online: wsClients\.size,[\s\S]*?\n  \}\);/);
+  assert(presence && /15 \* 60000/.test(presence[0]), 'the public online count must retain its 15-minute telemetry window');
 
   // Half two: the overview's headline counts really are UNGATED, so "counts permanently" is true.
   const ops = read('src/ops.js');
@@ -4093,7 +4114,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   assert(/runEstate\(/.test(read('src/routes/modtools.js')),
     'POST /v1/mod/kill must run the estate — DEPLOY.md §8 warns it creates an heir');
 
-  console.log('✓ DEPLOY.md §8 states the smoke-debris window the code enforces, the asymmetry it warns about, and that no sweep exists');
+  console.log('✓ DEPLOY.md §8 distinguishes historical intel from live recency windows, ungated totals, and the absence of a sweep');
 }
 
 // ─── INVARIANT_WEBHOOK_URL is not worker-only any more, and the runbook said it was ──────────────

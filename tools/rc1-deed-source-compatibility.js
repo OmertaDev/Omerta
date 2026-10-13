@@ -1,3 +1,4 @@
+import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from './player-intel-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, qualifyStrategyLeagueSource } from './rc1-strategy-league-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, qualifyCompanySuccessionSource } from './rc1-company-succession-source-compatibility.js';
@@ -21,8 +22,11 @@ import { COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, assertCommercialReputationSo
 import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 function operatorEnvelope(file, input, predecessorGuard) {
- const actualText = input.replaceAll('\r\n', '\n'), text = cityGameplaySourceBaseline(file, actualText);
- const gameplay = text !== actualText ? qualifyCityGameplaySource(file, actualText) : null;
+ const actualText = input.replaceAll('\r\n', '\n'), gameplayText = cityGameplaySourceBaseline(file, actualText);
+ const gameplay = gameplayText !== actualText ? qualifyCityGameplaySource(file, actualText) : null;
+ const playerIntel = Object.hasOwn(PLAYER_INTEL_SOURCE_TRANSFER.currentPins, file) && hash(gameplayText) === PLAYER_INTEL_SOURCE_TRANSFER.currentPins[file]
+   ? assertPlayerIntelSourceTransfer(file, gameplayText) : null;
+ const text = playerIntel?.baselineText || gameplayText;
  const season = Object.hasOwn(BUSINESS_SEASON_SOURCE_CURRENT_PINS, file) && hash(text) === BUSINESS_SEASON_SOURCE_CURRENT_PINS[file] ? assertBusinessSeasonSourceTransfer(file, text) : null;
  const reputationText = season?.baselineText || text;
  const reputation = Object.hasOwn(COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, file) && hash(reputationText) === COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS[file] ? assertCommercialReputationSourceTransfer(file, reputationText) : null;
@@ -45,7 +49,7 @@ function operatorEnvelope(file, input, predecessorGuard) {
  const transfer = assertCompanyOperatorSourceTransfer(file, operatorText);
  const home = file === 'src/server.js' ? assertCityHomesLeagueServerTransfer(transfer.baselineText) : null;
  const predecessor = predecessorGuard(home?.baselineText || transfer.baselineText);
- return { ...predecessor, actualSha256: hash(actualText), companyOperatorSourceTransfer: transfer, ...(gameplay ? { gameplaySourceTransfer: gameplay } : {}), ...(season ? { businessSeasonSourceTransfer: season } : {}), ...(reputation ? { commercialReputationSourceTransfer: reputation } : {}), ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
+ return { ...predecessor, actualSha256: hash(actualText), companyOperatorSourceTransfer: transfer, ...(gameplay ? { gameplaySourceTransfer: gameplay } : {}), ...(playerIntel ? { playerIntelSourceTransfer: playerIntel } : {}), ...(season ? { businessSeasonSourceTransfer: season } : {}), ...(reputation ? { commercialReputationSourceTransfer: reputation } : {}), ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
 }
 export const CITY_HOMES_SERVER_PIN = 'f66e2f5a40394d3dc1ac92a779486fa0cb7b5a3d005eae2f4a99214e65105dd6';
 export const CITY_HOMES_SOURCE_BASE_REVISION = '9506c37e18bbc1be45ae8150951e42451eb909de';

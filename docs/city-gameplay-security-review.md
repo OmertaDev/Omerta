@@ -135,3 +135,29 @@ pinned expectation, predicate, limit or oracle is weakened; fresh complete nativ
 and all other final-head release gates remain required. The obsolete normal workflow is actually
 cancelled; its incomplete full npm, skipped RC1/simulation/browser and native tails do not qualify
 the repaired source. Forge and recovery passed only that obsolete head.
+
+Candidate `e4772b20` subsequently passed both complete native lanes: all 76 actual steps,
+including the seven gameplay proofs, strict Phase2 metadata, the complete original Director
+catalog and backup/chaos/load/concurrency. Forge and recovery also passed. Its application
+suite failed a cold-start Home request without the required selector; the browser lane did
+not run. Test-only `b7a0e842` now supplies a valid unowned selector and requires the exact
+opaque `home_unavailable` refusal, preserving malformed/unrelated-refusal negatives and
+complete route enumeration. These results do not qualify the later integrated head.
+
+The current integration includes reviewed main `30f61aeb3dbb6deac89591b0fcd57d3f6b51574c`
+and its earned-player-intel privacy. Nearby human/agent names and levels come only from the
+viewer's dated notebook; unknown facts are null, and gang/online state is not disclosed.
+Public NPC lore and approximate district encounter handles retain their existing scope.
+GET reads do not create knowledge. An explicit encounter records its notebook observation
+within the existing atomic receipt transaction before projecting the newly earned facts.
+Older private journals and replay receipts remain immutable historical records, not a live
+feed. Current-source tests cover unknown identities, dated snapshots after live-row changes,
+owner isolation, newer-note preservation, replay and failed-receipt rollback/retry.
+
+The incoming PlayerIntel PK and six required columns have their own closed native migration
+envelope, separate from gameplay's seven tables, 63 constraints and 72 typed columns.
+The three unchanged PlayerIntel authority tests are appended to the existing City native
+command in fresh, positively owned schemas, with native provenance and persisted-observation
+checks. Local guard and catalog controls are not native execution; both final PostgreSQL lanes
+and all other release gates remain required. Historical source normalization preserves exact
+425, fb and 30f parent bytes and excludes this added runtime/native/deployment authority.

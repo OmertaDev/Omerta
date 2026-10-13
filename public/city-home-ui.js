@@ -5,6 +5,16 @@
     if (className) element.className = className; return element;
   }
   const list = value => Array.isArray(value) ? value.slice(0, 64) : [];
+  const ingredientTitle = item => String(item.title || (item.kind === 'car' ? 'Car' : item.kind === 'material' ? 'Material' : 'Item'))
+    .replace(/^[^:]+:/, '').replace(/[_-]+/g, ' ');
+  const recipeBlocker = reason => ({
+    recipe_location: 'Visit the required crafting location.',
+    recipe_owns_car: 'An eligible car is required.',
+    recipe_skill: 'Learn the required skill.',
+    recipe_level: 'Reach the required level.',
+    recipe_cash: 'More cash is required.',
+    salvage_required: 'Use Crafting for car salvage.',
+  }[reason?.code] || 'A recipe requirement has not been met.');
   function render(root, { board, invitations, recovery, history, homes, actors, pending, onRead, onAction, onBind }) {
     const bind = (element, name, handler) => onBind(element, name, handler);
     const button = (label, handler, disabled = false, readOnly = false) => {
@@ -92,9 +102,9 @@
     paragraph('Craft using your own materials and the existing recipe, skill, location and cash requirements. Stored inputs must be withdrawn.');
     for (const recipe of list(board.workbench?.recipes)) {
       const card = node('section', null, 'city-world__card'); card.append(node('strong', recipe.title || recipe.id));
-      card.append(node('p', list(recipe.inputs).map(item => (item.quantity || item.qty || 1) + ' × ' + (item.title || item.templateId || item.id)).join(', ')));
+      card.append(node('p', list(recipe.inputs).map(item => (item.quantity || item.qty || 1) + ' × ' + ingredientTitle(item)).join(', ')));
       if (recipe.cashCost) card.append(node('p', 'Existing cash cost: $' + recipe.cashCost));
-      if (list(recipe.blockedBy).length) card.append(node('p', recipe.blockedBy.map(reason => reason.code || String(reason)).join(' · ')));
+      if (list(recipe.blockedBy).length) card.append(node('p', recipe.blockedBy.map(recipeBlocker).join(' ')));
       card.append(issued(recipe.action)); root.append(card);
     }
     const invite = actions.find(action => action.id === 'invite');

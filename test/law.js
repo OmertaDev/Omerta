@@ -22,6 +22,7 @@ import { buildServer } from '../src/server.js';
 import { LAW } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepLaw } from '../src/law.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -242,6 +243,8 @@ assert.equal((await call('POST', '/v1/law/witpro', { token: rat.token })).body.e
 // a witpro'd rat is untouchable — an NPC hit can't reach them (the rat is over the level floor)
 await seedCh(poster.id, 'cash=5000000, respect=500');
 await seedCh(rat.id, 'respect=500');
+await recordPlayerIntel(pool, (await rawCh(poster.id)).account_id, await rawCh(rat.id),
+  { source: 'gossip', sourceName: 'A witness', location: false });
 const hit = await call('POST', `/v1/streets/${rat.id}/npchit`, { token: poster.token, body: { tier: 'legbreaker' } });
 assert.equal(hit.body.error, 'witpro', 'the marshals put the rat beyond a contractor reach');
 

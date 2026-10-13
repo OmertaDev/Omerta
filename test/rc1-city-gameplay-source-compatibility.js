@@ -1,3 +1,4 @@
+import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from '../tools/player-intel-source-compatibility.js';
 import { companyBankSourceBaseline } from '../tools/rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -6,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, CITY_GAMEPLAY_SOURCE_CURRENT_PINS,
   CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS,
   CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS,
+  CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS,
   CITY_GAMEPLAY_SOURCE_TRANSFER, qualifyCityGameplaySource, cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { CITY_HOMES_LEAGUE_SERVER_PIN, CITY_HOMES_SOURCE_INVERSES,
   cityHomesLeagueSourceBaseline, assertCityHomesLeagueServerTransfer } from '../tools/rc1-deed-source-compatibility.js';
@@ -25,22 +27,25 @@ const files = ['package-lock.json','package.json','schema.sql','src/agentgateway
   'src/content/phase1.js','src/crafting.js','src/db.js','src/deeds.js','src/invariants.js','src/items.js','src/mysteries.js',
   'src/server.js','src/social/estate.js','src/worldgraph-ui.js','src/worldgraph-validate.js'];
 assert.deepEqual(Object.keys(CITY_GAMEPLAY_SOURCE_CURRENT_PINS), files);
-for (const pins of [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS]) assert.deepEqual(Object.keys(pins), files);
+for (const pins of [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS]) assert.deepEqual(Object.keys(pins), files);
 assert.deepEqual(CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS, ['425de0010a3ee3500870a04e796029d671f464ef']);
 assert.deepEqual(CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS, ['fb695d002198a67c68ff49df48469e033684e99c']);
 assert.deepEqual(CITY_GAMEPLAY_SOURCE_TRANSFER.mainPredecessorPins, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS);
 assert.deepEqual(CITY_GAMEPLAY_SOURCE_TRANSFER.mainPredecessorBlobs, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS, ['30f61aeb3dbb6deac89591b0fcd57d3f6b51574c']);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_TRANSFER.latestMainPredecessorPins, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS);
+assert.deepEqual(CITY_GAMEPLAY_SOURCE_TRANSFER.latestMainPredecessorBlobs, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS);
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
-  const raw = fs.readFileSync(file, 'utf8'), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS[file]);
+  const raw = fs.readFileSync(file, 'utf8'), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);
   assert.equal(hash(current), CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file], 'Exact current source: ' + file);
   assert.equal(blob(current), CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]);
-  assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS[file]);
-  for (const revision of CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS) assert.equal(git('show', revision + ':' + file), parent, 'Complete reviewed predecessor: ' + file);
+  assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);
+  for (const revision of CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS) assert.equal(git('show', revision + ':' + file), parent, 'Complete reviewed predecessor: ' + file);
   const proof = qualifyCityGameplaySource(file, current);
   assert.equal(proof.baselineText, parent); assert.equal(proof.actualSha256, CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file]);
-  assert.equal(proof.baselineSha256, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS[file]); assert.equal(proof.wholeBlobInverses, 1); assert.equal(proof.sourceOnly, true);
+  assert.equal(proof.baselineSha256, CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS[file]); assert.equal(proof.wholeBlobInverses, 1); assert.equal(proof.sourceOnly, true);
   assert.deepEqual(qualifyCityGameplaySource(file, current.replaceAll('\n', '\r\n')), proof);
   assert.equal(cityGameplaySourceBaseline(file, raw), parent);
   assert.equal(cityGameplaySourceBaseline(file, parent), parent);
@@ -52,7 +57,7 @@ for (const file of files) {
     assert.throws(() => qualifyCityGameplaySource(file, unknown), /source changed/); negatives++;
   }
   // Mutate each actual complete gameplay diff hunk. Full-file admission must reject removed, duplicated and altered hunks alike.
-  for (const revision of [CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0]]) {
+  for (const revision of [CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0]]) {
     const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', revision, '--', file));
     const hunks = []; let hunk;
     for (const line of diff.split('\n')) {
@@ -70,18 +75,23 @@ for (const file of files) {
     }
   }
 }
-for (const file of files) {
-  const parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_PARENT_BLOBS[file]);
-  assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_PARENT_PINS[file]);
-  assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_PARENT_BLOBS[file]);
-  for (const revision of CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS) assert.equal(git('show', revision + ':' + file), parent, 'Complete original reviewed predecessor: ' + file);
-  assert.equal(cityGameplaySourceBaseline(file, parent), parent);
-  assert.equal(cityGameplaySourceBaseline(file, parent.replaceAll('\n', '\r\n')), parent);
-  assert.equal(qualifyCityGameplaySource(file, parent).baselineText, parent);
-  assert.equal(qualifyCityGameplaySource(file, parent).wholeBlobInverses, 0);
-  for (const unknown of [parent + '\n// unreviewed predecessor source suffix\n', parent.replaceAll('\n', '\r\n') + '// unknown CRLF suffix\r\n']) {
-    assert.equal(cityGameplaySourceBaseline(file, unknown), unknown);
-    assert.throws(() => qualifyCityGameplaySource(file, unknown), /source changed/); negatives++;
+for (const [pins, blobs, revisions] of [
+  [CITY_GAMEPLAY_SOURCE_MAIN_PARENT_PINS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_BLOBS, CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS],
+  [CITY_GAMEPLAY_SOURCE_PARENT_PINS, CITY_GAMEPLAY_SOURCE_PARENT_BLOBS, CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS],
+]) {
+  for (const file of files) {
+    const parent = git('cat-file', 'blob', blobs[file]);
+    assert.equal(hash(parent), pins[file]);
+    assert.equal(blob(parent), blobs[file]);
+    for (const revision of revisions) assert.equal(git('show', revision + ':' + file), parent, 'Complete original reviewed predecessor: ' + file);
+    assert.equal(cityGameplaySourceBaseline(file, parent), parent);
+    assert.equal(cityGameplaySourceBaseline(file, parent.replaceAll('\n', '\r\n')), parent);
+    assert.equal(qualifyCityGameplaySource(file, parent).baselineText, parent);
+    assert.equal(qualifyCityGameplaySource(file, parent).wholeBlobInverses, 0);
+    for (const unknown of [parent + '\n// unreviewed predecessor source suffix\n', parent.replaceAll('\n', '\r\n') + '// unknown CRLF suffix\r\n']) {
+      assert.equal(cityGameplaySourceBaseline(file, unknown), unknown);
+      assert.throws(() => qualifyCityGameplaySource(file, unknown), /source changed/); negatives++;
+    }
   }
 }
 for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
@@ -152,7 +162,12 @@ for (const layer of [
     }
   }
 }
-const server = normalize(fs.readFileSync('src/server.js', 'utf8')), parentServer = companyBankSourceBaseline('src/server.js', cityGameplaySourceBaseline('src/server.js', server));
+const server = normalize(fs.readFileSync('src/server.js', 'utf8')), latestParentServer = cityGameplaySourceBaseline('src/server.js', server);
+const intel = assertPlayerIntelSourceTransfer('src/server.js', latestParentServer);
+assert.equal(intel.baselineText, git('show', CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0] + ':src/server.js'));
+assert.equal(intel.baselinePins['src/server.js'], PLAYER_INTEL_SOURCE_TRANSFER.baselinePins['src/server.js']);
+assert.equal(intel.phase, 'exact source transfer only');
+const parentServer = companyBankSourceBaseline('src/server.js', latestParentServer);
 assert.equal(hash(parentServer), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS['src/server.js'], 'The complete gameplay parent retains the premises envelope.');
 assert.equal(hash(commercialPremisesSourceBaseline('src/server.js',parentServer)), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS['src/server.js'],
   'The unchanged premises adapter retains the complete workflow envelope.');
@@ -180,5 +195,5 @@ for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/c
 for (const file of ['toString','constructor','./src/server.js']) {
   assert.equal(cityGameplaySourceBaseline(file, server), server); assert.throws(() => qualifyCityGameplaySource(file, server), /Unknown gameplay source/); negatives++;
 }
-console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full merged-current/fb-main/original425-parent files, all six incoming business envelopes, exact premises/workflow/employment-to-operator101/8dbe predecessors, preserved premises/workflow/payroll/operator envelopes, CRLF controls,', negatives,
+console.log('rc1-city-gameplay-source-compatibility PASS:', files.length, 'exact full merged-current/30f-latest/fb-main/original425-parent files, exact Player Intel and all six incoming business envelopes, exact premises/workflow/employment-to-operator101/8dbe predecessors, preserved premises/workflow/payroll/operator envelopes, CRLF controls,', negatives,
   'tamper/unknown/no-new-module negatives; historical source-only transfer excludes all new authority/native/worker/migration/activation/deployment');

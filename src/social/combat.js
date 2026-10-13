@@ -11,6 +11,7 @@ import { M3, CONSTANTS, LOAN, levelOf, rankIdxOf, cityEventOf, dayOf, btkOf, gun
 import { activeDecree } from '../commission.js';
 import { bumpHonor } from '../honor.js';
 import { recordRival, revengeOwed } from '../rivals.js';
+import { requireKnownPlayer } from '../playerintel.js';
 import { settleFirstBlood } from '../firstblood.js';   // THE AHA MOMENT — settle the scripted first rival
 import { alertMentor } from '../mentor.js';
 import { logCarCollect } from '../collection.js';
@@ -153,6 +154,7 @@ export async function jump(ch, victim, client, h, intent) {
 // ═══════════════════ HIT CONTRACTS (§7.7) ═══════════════════
 export async function startSearch(ch, targetCharacterId, client, h) {
   if (targetCharacterId === ch.id) throw new GameError('self', 'You know where you are.');
+  await requireKnownPlayer(client, ch, targetCharacterId);
   const t = (await client.query(
     `SELECT c.id, c.name, c.wanted_until, a.rat FROM characters c JOIN account_persistent a ON a.account_id=c.account_id
       WHERE c.id=$1 AND c.alive`, [targetCharacterId])).rows[0];
@@ -306,7 +308,7 @@ export async function fire(ch, victim, client, h, rounds) {
   // THE CREW — you don't put a body on your own crew (the omertà twin; rat/WANTED forfeit it).
   if (h.owned.crewId && h.victimOwned.crewId === h.owned.crewId && !h.victimAcct.rat && !isWanted(victim))
     return callOff('crew', "They run with your crew now. The hit's off.");
-  if (victim.loc !== ch.loc) throw new GameError('district', `They were placed in ${districtName(victim.loc)} — you're in ${districtName(ch.loc)}. Travel there, then fire.`, { district: victim.loc });
+  if (victim.loc !== ch.loc) throw new GameError('district', 'Your tail lost them — get a fresh fix before firing.');
 
   ch.energy = Number(ch.energy) - M3.FIRE_ENERGY;
   ch.ammo = Number(ch.ammo) - fired;

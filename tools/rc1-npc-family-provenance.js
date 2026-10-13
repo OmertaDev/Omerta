@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 import { createNativeCommitObserver } from './rc1-native-commit-observer.js';
 import { assertCarMeltRulesCompatibility, DEED_RULES_CURRENT_PIN } from './rc1-deed-source-compatibility.js';
 import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
@@ -52,7 +53,8 @@ function captureFrames() {
 }
 export function assertNpcFamilySourcePins() {
   for (const [file, pin] of Object.entries(NPC_FAMILY_SOURCE_PINS)) {
-    const text = fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+    const text = playerIntelSourceBaseline(file,
+      fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8').replaceAll('\r\n', '\n'));
     const baseline = file === 'src/game.js' && hash(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
       ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
     assert.equal(hash(baseline), pin, `NPC provenance source changed: ${file}`);

@@ -14,6 +14,7 @@ import crypto from 'node:crypto';
 import { GameError, bus, notify } from './game.js';
 import { SECRETS, secretKindOf, WIRE, intelCost, spyPerksOf, disinfoActive, usd , coolLeft, coolWait } from './rules.js';
 import { spendOmr } from './vanity.js';
+import { requireKnownPlayer } from './playerintel.js';
 
 const uid = () => crypto.randomUUID();
 const spyOps = async (client, accountId) => Number((await client.query(
@@ -35,6 +36,7 @@ async function juiciestSecret(client, target) {
 
 export async function digSecret(ch, targetId, client, h) {
   if (targetId === ch.id) throw new GameError('self', 'You know where your own bodies are buried.');
+  await requireKnownPlayer(client, ch, targetId);
   const target = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
   if (!target) throw new GameError('gone', 'No such mark on the street.');
   if (target.account_id === ch.account_id) throw new GameError('self', 'Same house, same secrets.');

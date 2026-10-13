@@ -1,3 +1,9 @@
+import { recordPlayerIntel } from '../src/playerintel.js';
+async function seedKnownPlayer(q, ownerCharacterId, targetId) {
+  const owner = (await q.query('SELECT account_id FROM characters WHERE id=$1', [ownerCharacterId])).rows[0];
+  const target = (await q.query('SELECT * FROM characters WHERE id=$1', [targetId])).rows[0];
+  await recordPlayerIntel(q, owner.account_id, target, { source: 'gossip', location: false });
+}
 // THE CLIENT'S WIRING (the 53rd suite).
 //
 // tools/mobile.js proves the screens LAY OUT. Nothing proved the buttons WORK. This does, for the
@@ -2873,6 +2879,7 @@ if (mark) {
   const digMark = (await app.pool.query(
     'SELECT id, name FROM characters WHERE alive AND NOT is_npc AND id <> $1 ORDER BY created_at DESC', [charId]))
     .rows.find((c) => !held.has(c.name)) || mark;
+  await seedKnownPlayer(app.pool, charId, digMark.id);
   await app.pool.query("UPDATE characters SET wash_used=500000, wash_at=now() WHERE id=$1", [digMark.id]);
   // ONE CALL, and that matters: addAction SPLICES AT A FIXED INDEX, so a later call lands BEFORE an
   // earlier one rather than after it. Split across two calls, the sweep below ran first and cleared
@@ -5410,6 +5417,7 @@ assert(offLine && /\$10,000|stake/i.test(offLine),
   // case file and never reaches describe(), so this is the ONLY surface that would have caught it.
   const spy = await mk45('Ledger Spy ');
   const mark = await mk45('Ledger Mark ');
+  assert.equal((await inject('POST', `/v1/streets/${mark.id}/meet`, spy.t, {})).code, 200);
   await app.pool.query('UPDATE account_persistent SET omr=100000 WHERE account_id=' +
     '(SELECT account_id FROM characters WHERE id=$1)', [spy.id]);
   await inject('POST', '/v1/wire/subscribe', spy.t, { tier: 1 });
@@ -5919,6 +5927,7 @@ assert.deepEqual(mute, [], `${mute.length} action(s) a player PRESSES say nothin
     await inject('POST', '/v1/character', t, { name: n + Math.random().toString(36).slice(2, 6) });
     const id = (await inject('GET', '/v1/me', t)).body.character.id; return { t, id }; };
   const spy = await mk('Hush Spy '), tgt = await mk('Hush Mark ');
+  await seedKnownPlayer(app.pool, spy.id, tgt.id);
   await app.pool.query("UPDATE characters SET cash=2000000, wash_used=500000, wash_at=now() WHERE id IN ($1,$2)", [spy.id, tgt.id]);
   await app.pool.query('UPDATE account_persistent SET omr=500 WHERE account_id=(SELECT account_id FROM characters WHERE id=$1)', [spy.id]);
   const dig = await inject('POST', `/v1/wire/dig/${tgt.id}`, spy.t, {});
@@ -6887,6 +6896,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   const idMark = (await inject('GET', '/v1/me', tMark)).body.character.id;
   await app.pool.query('UPDATE characters SET respect=900000, loc=$2 WHERE id=$1', [idMark, 'docks']);
   await app.pool.query('UPDATE characters SET cash=90000000 WHERE id=$1', [id65]);
+  await seedKnownPlayer(app.pool, id65, idMark);
   const hit = await drive65(`/v1/streets/${idMark}/npchit`, { tier: 'legbreaker' });
   // the SERVER must send all four, or the line below has nothing to read — this is the half a
   // synthetic passes straight through, which is why the whole block is driven.
@@ -7539,6 +7549,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
   await app.pool.query('UPDATE characters SET respect=900000, cash=90000000 WHERE id=$1', [B1.id]);
   await app.pool.query('UPDATE characters SET respect=90000, health=100 WHERE id=$1', [V1.id]);
   await kit(B1.id, 'burner', 3); await jail(B1.id);
+  await seedKnownPlayer(app.pool, B1.id, V1.id);
   const burn73 = await driveP(`/v1/pen/burner/${V1.id}`, B1.t, { tier: 'legbreaker' }, 'the burner call');
   assert(burn73.r.body.op === 'npchit' && burn73.r.body.burner === true && burn73.r.body.cost > 0,
     `the burner call must ride the hired-gun terms block: ${JSON.stringify(burn73.r.body)}`);
@@ -9197,6 +9208,7 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
   // synthetic literal passes straight through the mutation that stops a field being sent.
   const hunter79 = await mk11('W79h');
   const mark79 = await mk11('W79m');
+  await seedKnownPlayer(app11.pool, hunter79.id, mark79.id);
   const srch79 = await inj11('POST', `/v1/streets/${mark79.id}/search`, hunter79.token, {});
   assert.equal(srch79.code, 200, `WAVE 79 fixture: the search must be placed (${JSON.stringify(srch79.body)})`);
   // backdate the search past ANY hunter clock, and arm the trigger — the cooldown gate sits directly

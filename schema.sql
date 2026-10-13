@@ -3271,6 +3271,17 @@ CREATE TABLE IF NOT EXISTS contacts (
   PRIMARY KEY (owner_account, contact_account)
 );
 ALTER TABLE contacts ADD COLUMN IF NOT EXISTS jobs INT NOT NULL DEFAULT 0;
+-- Observations are account-owned, character-specific snapshots. Reading a board never updates them.
+CREATE TABLE IF NOT EXISTS player_intel (
+  owner_account TEXT NOT NULL,
+  target_character TEXT NOT NULL,
+  facts JSONB NOT NULL,
+  source TEXT NOT NULL,
+  source_name TEXT,
+  observed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  learned_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (owner_account, target_character)
+);
 -- migration seed: pre-gate DM threads mean both parties already have each other's line
 INSERT INTO contacts (owner_account, contact_account, how)
   SELECT DISTINCT from_account::text, to_account::text, 'called' FROM dm_messages ON CONFLICT DO NOTHING;

@@ -22,15 +22,21 @@
 //     contact line is a mutual meeting. The `detail` JSONB is deliberately NOT surfaced (it can
 //     carry amounts), and nothing here pierces anonymity — the $OMR peek/trace stay the piercers.
 import { GameError } from './game.js';
-import { levelOf } from './rules.js';
 import { marriageOf } from './dynasty.js';
 import { vouchCounts } from './vouch.js';
+import { hasContact } from './contacts.js';
+import { playerIntelMap } from './playerintel.js';
 
 // a bloodline's face: its current LIVING street, else the freshest name the record holds
-async function faceOf(client, accountId, fallbackName = null) {
+async function faceOf(client, accountId, intel, fallbackName = null) {
   const live = (await client.query(
-    'SELECT id, name, respect, loc FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
-  if (live) return { id: live.id, name: live.name, level: levelOf(Number(live.respect)), loc: live.loc, alive: true };
+    'SELECT id, name FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0];
+  if (live) {
+    const seen = intel.get(live.id);
+    return { id: live.id, name: seen?.name || live.name, level: seen?.level ?? null,
+      loc: seen?.loc ?? null, alive: true, observedAt: seen?.observedAt || null,
+      source: seen?.source || null, sourceName: seen?.sourceName || null };
+  }
   if (fallbackName) return { id: null, name: fallbackName, level: null, loc: null, alive: false };
   const last = (await client.query(
     'SELECT name FROM characters WHERE account_id=$1 ORDER BY created_at DESC LIMIT 1', [accountId])).rows[0];
@@ -50,6 +56,7 @@ async function bloodBetween(client, mine, theirs) {
 // ── THE CAST ─────────────────────────────────────────────────────────────────────────────────────
 export async function peopleBoard(client, ch) {
   const me = ch.account_id;
+  const intel = await playerIntelMap(client, me);
   // THE NEMESIS — the bloodline with the most recorded malice against you (the rivals board's #1,
   // re-aggregated here as a top-1 because the enrichment needs the aggressor ACCOUNT internally,
   // which rivalsBoard rightly never returns), enriched with the blood ledger + the vendetta state.
@@ -67,7 +74,7 @@ export async function peopleBoard(client, ch) {
         WHERE ((avenger_account=$1 AND target_account=$2) OR (avenger_account=$2 AND target_account=$1))
           AND expires_at > now()`, [me, top.acct])).rows;
     nemesis = {
-      street: await faceOf(client, top.acct), total: Number(top.n), lastAt: top.last_at,
+      street: await faceOf(client, top.acct, intel), total: Number(top.n), lastAt: top.last_at,
       kills: { ours: blood.ours, theirs: blood.theirs }, bloodOwed: blood.bloodOwed,
       vendetta: { mine: vend.some((v) => v.avenger_account === me),
                   theirs: vend.some((v) => v.avenger_account === top.acct) },
@@ -77,14 +84,14 @@ export async function peopleBoard(client, ch) {
   const m = await marriageOf(client, me);
   const spouseAcct = m ? (m.account_a === me ? m.account_b : m.account_a) : null;
   const spouse = spouseAcct ? {
-    street: await faceOf(client, spouseAcct),
+    street: await faceOf(client, spouseAcct, intel),
     dynasty: (await client.query('SELECT dynasty_name FROM account_persistent WHERE account_id=$1', [spouseAcct])).rows[0]?.dynasty_name || null,
     since: m.created_at,
   } : null;
   // THE CONSIGLIERE — the adviser this dynasty named (accepted), and how many houses I counsel
   const adv = (await client.query(
     'SELECT adviser_account FROM consiglieri WHERE dynasty_account=$1 AND accepted', [me])).rows[0];
-  const consigliere = adv ? { street: await faceOf(client, adv.adviser_account) } : null;
+  const consigliere = adv ? { street: await faceOf(client, adv.adviser_account, intel) } : null;
   const advising = Number((await client.query(
     'SELECT COUNT(*) n FROM consiglieri WHERE adviser_account=$1 AND accepted', [me])).rows[0].n);
   // THE FAMILY — name/tag/role off the roster (null when running solo)
@@ -135,6 +142,7 @@ export async function pairHistory(client, ch, targetCharacterId) {
   if (!t) throw new GameError('gone', 'No such soul in the city, living or dead.');
   const me = ch.account_id, them = t.account_id;
   if (them === me) throw new GameError('self', 'Your own story you already know.');
+  const intel = await playerIntelMap(client, me);
   const ev = [];
   // recorded malice, both directions — kind + when + which way, never the detail JSONB
   const strikes = (await client.query(
@@ -166,10 +174,12 @@ export async function pairHistory(client, ch, targetCharacterId) {
   const met = (await client.query(
     "SELECT met_at FROM contacts WHERE owner_account=$1 AND contact_account=$2 AND how='met'", [me, them])).rows[0];
   if (met) ev.push({ at: met.met_at, kind: 'met', who: 'us' });
+  if (!intel.has(t.id) && !ev.length && !(await hasContact(client, me, them)))
+    throw new GameError('unknown_player', 'Meet them or hear about them before opening their story.');
   ev.sort((x, y) => new Date(y.at) - new Date(x.at));
   const blood = await bloodBetween(client, me, them);
   return {
-    them: { id: t.id, name: t.name, face: await faceOf(client, them, t.name) },
+    them: { id: t.id, name: intel.get(t.id)?.name || t.name, face: await faceOf(client, them, intel, t.name) },
     kills: { ours: blood.ours, theirs: blood.theirs }, bloodOwed: blood.bloodOwed,
     events: ev.slice(0, 60),
   };

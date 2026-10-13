@@ -207,10 +207,27 @@ try {
 
   await page.goto(base + '/fieldwork-browser-fixture'); await idle();
   assert.deepEqual(await page.evaluate(() => window.__fieldworkCalls), [], 'Opening the module performs no mutation.');
+  const explicitViewBefore = await page.evaluate(() => {
+    window.__fieldworkRoot = document.querySelector('.world-fieldwork');
+    return { reads: window.__fieldworkReads.length, calls: window.__fieldworkCalls.length };
+  });
+  assert.equal(await page.evaluate(() => window.__fieldwork.selectView('mysteries')), true);
+  assert.equal(await page.locator('[data-fieldwork-view="mysteries"]').getAttribute('aria-pressed'), 'true', 'Explicit navigation opens the Journal on the existing controller.');
+  assert.equal(await page.evaluate(() => window.__fieldworkRoot === document.querySelector('.world-fieldwork')), true, 'Explicit Journal navigation keeps the same controller root.');
+  assert.deepEqual(await page.evaluate(() => ({ reads: window.__fieldworkReads.length, calls: window.__fieldworkCalls.length })), explicitViewBefore, 'Choosing an already loaded section adds no reads or gameplay calls.');
+  assert.equal(await page.evaluate(() => window.__fieldwork.selectView('unknown-view')), false, 'Unpublished section names are rejected.');
+  await page.locator('[data-fieldwork-view="inventory"]').click();
+  await page.evaluate(id => window.__fieldwork.update({ character: { id }, initialView: 'mysteries' }), players[0].characterId);
+  await idle();
+  assert.equal(await page.locator('[data-fieldwork-view="inventory"]').getAttribute('aria-pressed'), 'true', 'Background updates retain the reader-selected section rather than reapplying the mount entry view.');
+  assert.deepEqual(await page.evaluate(() => window.__fieldworkCalls), [], 'Explicit section navigation and background refresh add no game mutations.');
   await page.locator('[data-fieldwork-view="recipes"]').click();
   const salvage = page.getByRole('button', { name: 'Salvage junker', exact: true });
   await salvage.click();
   assert.equal(await page.evaluate(() => window.__fieldworkCalls.length), 0, 'Salvage confirmation is shown before dispatch.');
+  assert.equal(await page.evaluate(() => window.__fieldwork.selectView('mysteries')), false, 'Explicit navigation honors the same busy guard as disabled section controls.');
+  assert.equal(await page.locator('[data-fieldwork-view="recipes"]').getAttribute('aria-pressed'), 'true');
+  assert.equal(await page.locator('[data-fieldwork-confirm]').count(), 1, 'Rejected busy navigation retains the pending confirmation.');
   await page.locator('[data-fieldwork-cancel]').click(); await idle();
   assert.equal((await app.pool.query('SELECT count(*) AS n FROM cars WHERE id=$1', [carId])).rows[0].n, 1, 'Cancelling preserves the exact car.');
   await salvage.click(); await confirm();
@@ -223,6 +240,9 @@ try {
   await page.locator('[data-fieldwork-recipe="recipe:hardened_steel"] [data-fieldwork-action]').click();
   await page.locator('[data-fieldwork-confirm]').click();
   await page.locator('[data-fieldwork-retry]').waitFor();
+  await page.evaluate(() => window.__fieldwork.selectView('mysteries'));
+  assert.equal(await page.locator('[data-fieldwork-retry]').count(), 1, 'Changing sections retains uncertain same-key action recovery.');
+  await page.evaluate(() => window.__fieldwork.selectView('recipes'));
   const committed = await app.pool.query("SELECT quantity FROM item_stacks WHERE owner_scope='account' AND owner_id=$1 AND template_id=$2", [players[0].accountId, hardenedOutput]);
   const cashBeforeRetry = (await app.pool.query('SELECT cash FROM characters WHERE id=$1', [players[0].characterId])).rows[0].cash;
   await page.locator('[data-fieldwork-retry]').click(); await idle();
@@ -353,6 +373,7 @@ try {
   assert.deepEqual(await page.evaluate(() => window.__navigate), ['map']);
   await page.evaluate(() => window.__fieldwork.destroy());
   assert.equal(await page.locator('.world-fieldwork').count(), 0, 'Destroy removes module UI.');
+  assert.equal(await page.evaluate(() => window.__fieldwork.selectView('mysteries')), false, 'A retired controller cannot restore private UI.');
   assert.deepEqual(errors, [], 'No uncaught browser errors.');
   console.log('world-fieldwork-browser: pane failure isolation/retry, cached action guards, session clearing, stale-generation/teardown, confirmation/cancel, salvage/crafting/carry, exact-key recovery, hidden-lead discovery/replay, journal completion, four-account operation/private clue, old-Crew escrow recovery/privacy, mobile layout and historical cancellation pass' + (shots ? '\nScreenshots: ' + shots + '/fieldwork-desktop.png and fieldwork-mobile.png' : ''));
   await context.close();

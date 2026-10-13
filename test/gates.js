@@ -402,6 +402,7 @@ const DISTRICT_WAIVED = {
 };
 const mute = [];
 let districtGates = 0;
+let privateTargetRefusals = 0;
 for (const f of files) {
   const rel = relPath(process.cwd(), f);
   const src = fs.readFileSync(f, 'utf8');
@@ -416,6 +417,12 @@ for (const f of files) {
       else if (src[i] === ')') { d--; if (!d) { end = i; break; } }
     }
     const args = src.slice(m.index, end);
+    // A moved target's current destination is private. Match only this exact refusal, rather
+    // than waiving combat location gates, so adding a live district to it fails this guard.
+    if (rel === 'src/social/combat.js' && /^new GameError\(\s*'district'\s*,\s*'Your tail lost them — get a fresh fix before firing\.'\s*$/.test(args)) {
+      privateTargetRefusals++;
+      continue;
+    }
     if (!/district:/.test(args) && !DISTRICT_WAIVED[rel]) {
       mute.push(`${rel}:${src.slice(0, m.index).split('\n').length} — ${args.slice(0, 90)}…`);
     }
@@ -425,11 +432,12 @@ for (const f of files) {
 assert(districtGates >= 20,
   `the location-gate scan found only ${districtGates} site(s) — the extractor has stopped seeing the `
   + 'throws it keys on, so this check is passing over code it never read');
+assert.equal(privateTargetRefusals, 1, 'the lost-tail refusal never reveals a current target destination');
 assert.equal(mute.length, 0,
   `location refusal(s) that name the destination in prose but not in DATA, so the client cannot offer\n`
   + `      a one-tap way out (pass it as the third GameError argument: { district: <id> }):\n   - ${mute.join('\n   - ')}`);
-console.log(`✓ all ${districtGates - Object.keys(DISTRICT_WAIVED).length} wrong-location refusals carry the `
-  + 'destination as data — the client turns every one into a "go there" button');
+console.log(`✓ all ${districtGates - Object.keys(DISTRICT_WAIVED).length - privateTargetRefusals} public wrong-location refusals carry the `
+  + 'destination as data; the lost-tail refusal protects its private destination');
 
 console.log('✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, '
   + 'checked through direct calls, shared assert helpers and inline column comparisons alike; the '
@@ -3267,6 +3275,7 @@ scopedSocialContext = async function(db) {
     'src/world.js|extra': 'freeQ(extra,params) — literal predicate at both call sites; values bound',
     'src/pen.js|cols': 'break setMember/setMemberRat — literal SET clause at every call site; values bound',
     'src/wire.js|col': "claim(w,col) — three literal column names ('alerted_hunt'/'_wanted'/'_indicted')",
+    'src/playerintel.js|conflict': 'saveIntel chooses DO NOTHING or one literal DO UPDATE fragment from facts.loc presence; facts and every account/character/source value are bound parameters',
     'src/game.js|set': 'persistAccountFields — SET clause generated from ACCOUNT_PERSIST_COLUMNS entries the field list was validated against (an unknown field throws); every value bound',
     'src/keepertransactions.js|columns': 'private journal-progress update checks every column against seven literal allowedColumns before generating numbered placeholders; every value is bound and signed-authority fields cannot be updated',
     'src/rwanominations.js|setClause': 'updateQueueNominationIds(...,setClause,marker) — literal at every call site',
@@ -3587,6 +3596,8 @@ scopedSocialContext = async function(db) {
     '        run: npx playwright-core install --with-deps chromium',
     '      - name: Invite gate and Crew invitation controls in the browser',
     '        run: npm run test:invites:browser',
+    '      - name: Discovery-based player intel in the browser',
+    '        run: node test/player-intel-browser.js',
     '      - name: City Mode and RPG desktop/mobile journeys',
     '        run: npm run test:city:browser',
     '      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)',

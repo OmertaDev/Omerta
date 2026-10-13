@@ -541,6 +541,7 @@ const DISPOSITION = {
   // historical. Room/host lifecycle closes active rounds; heirs never inherit a
   // member's participation or its private history.
   city_home_activity_members: 'ledger',
+  player_intel: 'log', // Account-owned historical sightings retain the observed character; never follow heirs.
   // Durable command/receipt linkage is historical, never inherited authority.
   // Execution binds the original living character; the command race/API suites
   // prove that succession cannot execute or recover the old character's view.

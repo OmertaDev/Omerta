@@ -13,7 +13,8 @@
 // pure transfer). Zero new faucet.
 import crypto from 'node:crypto';
 import { GameError, notify } from './game.js';
-import { CONTACTS, GOODS, DISTRICTS, goodPriceOf, levelOf, contactRankOf, contactNextRank, contactStandingOf, jailed, districtName } from './rules.js';
+import { CONTACTS, GOODS, DISTRICTS, goodPriceOf, contactRankOf, contactNextRank, contactStandingOf, jailed, districtName } from './rules.js';
+import { playerIntelMap } from './playerintel.js';
 
 const uid = () => crypto.randomUUID();
 
@@ -56,9 +57,10 @@ export async function hasContact(q, ownerAccount, contactAccount) {
 // client keys every action on the living characterId). A line with no living street is kept
 // (the number outlives the man — the heir answers), shown dead until the heir rises.
 export async function contactsBoard(pool, accountId) {
+  const intel = await playerIntelMap(pool, accountId);
   const rows = (await pool.query(
     `SELECT ct.contact_account, ct.how, ct.met_at, ct.jobs,
-            c.id AS char_id, c.name, c.respect, c.loc, c.is_npc
+            c.id AS char_id, c.name, c.is_npc
        FROM contacts ct
        LEFT JOIN characters c ON c.account_id = ct.contact_account AND c.alive
       WHERE ct.owner_account=$1 ORDER BY ct.met_at DESC LIMIT 200`, [accountId])).rows;
@@ -74,11 +76,18 @@ export async function contactsBoard(pool, accountId) {
   return {
     lines, rank: contactRankOf(lines),
     nextRank: next ? { title: next.title, at: next.at, need: next.at - lines } : null,
-    contacts: rows.map((r) => ({
-      how: r.how, metAt: r.met_at,
-      jobs: Number(r.jobs || 0), standing: contactStandingOf(r.jobs).name,
-      street: r.char_id ? { id: r.char_id, name: r.name, level: levelOf(Number(r.respect)), loc: r.loc, npc: !!r.is_npc } : null,
-    })),
+    contacts: rows.map((r) => {
+      const seen = intel.get(r.char_id);
+      return {
+        how: r.how, metAt: r.met_at,
+        jobs: Number(r.jobs || 0), standing: contactStandingOf(r.jobs).name,
+        // Holding a number reveals identity, never the contact's current whereabouts.
+        street: r.char_id ? { id: r.char_id, name: seen?.name || r.name,
+          level: seen?.level ?? null, loc: seen?.loc ?? null, npc: !!r.is_npc,
+          observedAt: seen?.observedAt || null, source: seen?.source || null,
+          sourceName: seen?.sourceName || null } : null,
+      };
+    }),
     call: call && call.npc_name ? {
       from: call.npc_name, kind: call.kind, good: call.good_id, qty: call.qty ? Number(call.qty) : null,
       district: call.district, pay: Number(call.pay),

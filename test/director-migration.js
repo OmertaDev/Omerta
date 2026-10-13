@@ -72,6 +72,10 @@ const economyExtensionNames = Object.freeze([
 const resourceTables = ['resource_treasuries', 'resource_ledger', 'resource_compute_policies', 'resource_rounds', 'resource_bids', 'resource_credits', 'resource_calls', 'resource_payments', 'resource_payment_intents', 'resource_services', 'resource_jobs', 'resource_bounties', 'resource_labor_bids'];
 const goodsMarketTables = ['goods_market_liquidity'];
 const companyTables = ['agent_company_profiles'];
+const playerIntelConstraints = Object.freeze([
+  { table_name: 'player_intel', name: 'player_intel_pkey', definition: 'PRIMARY KEY (owner_account, target_character)' },
+]);
+const playerIntelColumns = Object.freeze(['facts', 'learned_at', 'observed_at', 'owner_account', 'source', 'target_character']);
 const companyConstraints = inventory.added.filter(row => companyTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
 assert.equal(companyConstraints.length, 6, 'All company PK/FK/CHECK constraints must be frozen');
@@ -140,6 +144,8 @@ try {
     'The pinned baseline predates the private City intel table');
   assert.equal(oldConstraints.filter((row) => row.table_name === 'city_social_preferences').length, 0,
     'The pinned baseline predates opt-in City social preferences');
+  assert.equal(oldConstraints.filter((row) => row.table_name === 'player_intel').length, 0,
+    'The pinned baseline predates account-owned player observations');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
   const gameplayCatalog = await createCityGameplayMigrationCatalog(admin, address);
   const migrate = async () => {
@@ -152,7 +158,7 @@ try {
   await migrate();
   assert.deepEqual(await capture(canonicalTables), oldRows, 'Migration preserves all existing canonical rows and receipts');
   const upgradedConstraints = await constraints();
-  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && !economyTables.includes(row.table_name) && !featureTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
+  const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && row.table_name !== 'player_intel' && !economyTables.includes(row.table_name) && !featureTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
   // The original complete oracle is unchanged. Only independently verified, pinned
   // gameplay additions/replacements are removed/restored before entering it.
@@ -180,6 +186,13 @@ try {
   const verifySocialNotNull = columns => assert.deepEqual(columns, socialColumns, 'All five social ownership/consent/presentation columns remain non-null');
   const socialNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='city_social_preferences' AND is_nullable='NO' ORDER BY column_name")).rows.map(row => row.column_name);
   verifySocialNotNull(socialNotNull);
+  const verifyPlayerIntelConstraints = rows => assert.deepEqual(rows.filter(row => row.table_name === 'player_intel'), playerIntelConstraints,
+    'Player intel migration installs exactly its account-and-character observation identity');
+  verifyPlayerIntelConstraints(upgradedConstraints);
+  const verifyPlayerIntelNotNull = columns => assert.deepEqual(columns, playerIntelColumns,
+    'Player intel migration preserves exactly its required observation columns');
+  const playerIntelNotNull = (await pool.query("SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='player_intel' AND is_nullable='NO' ORDER BY column_name")).rows.map(row => row.column_name);
+  verifyPlayerIntelNotNull(playerIntelNotNull);
   const mutateConstraint = (table, name, change) => {
     const rows = upgradedConstraints.map((row) => ({ ...row })), index = rows.findIndex((row) => row.table_name === table && row.name === name);
     assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
@@ -207,6 +220,14 @@ try {
   rejected(verifySocialConstraints, 'Social free outfit catalog widened', mutateConstraint('city_social_preferences', 'city_social_preferences_outfit_check',
     (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   for (const column of socialColumns) rejected(verifySocialNotNull, 'Social '+column+' nullability removed', socialColumns.filter(name => name !== column));
+  rejected(verifyPlayerIntelConstraints, 'Player intel identity removed', mutateConstraint('player_intel', 'player_intel_pkey',
+    (rows, index) => rows.splice(index, 1)));
+  rejected(verifyPlayerIntelConstraints, 'Player intel identity weakened', mutateConstraint('player_intel', 'player_intel_pkey',
+    (rows, index) => { rows[index].definition = 'PRIMARY KEY (target_character)'; }));
+  rejected(verifyPlayerIntelConstraints, 'Player intel unreviewed constraint added', [...upgradedConstraints,
+    { table_name: 'player_intel', name: 'unexpected_player_intel_constraint', definition: 'CHECK (true)' }]);
+  for (const column of playerIntelColumns) rejected(verifyPlayerIntelNotNull, 'Player intel '+column+' nullability removed', playerIntelColumns.filter(name => name !== column));
+  rejected(verifyPlayerIntelNotNull, 'Player intel source label remains optional', [...playerIntelColumns, 'source_name'].sort());
   assert.deepEqual(upgradedConstraints.filter((row) => goodsMarketTables.includes(row.table_name)), [
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_bought_check', definition: 'CHECK (bought >= 0)' },
     { table_name: 'goods_market_liquidity', name: 'goods_market_liquidity_pkey', definition: 'PRIMARY KEY (good_id, district)' },

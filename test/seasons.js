@@ -15,6 +15,7 @@ import { SEASON_MODS, seasonModOf, seasonPhaseOf, seasonPhaseLeft, seasonFx, cit
 import { runLedgerInvariants } from '../src/invariants.js';
 import { onWatch } from '../src/social.js';
 import { runSeasonRollover } from '../src/worker.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -104,6 +105,9 @@ const mark = await mk('Marked Mel');
 await seedCh(killer.id, "respect=25000, muscle=120, energy=200, loc='docks', ammo=8000, cb=10, cash=cash+200000");
 await seedCh(mark.id, "respect=3610, cash=cash+1000000, health=1, loc='docks'");
 await call('POST', '/v1/armory/gun/lastresort/buy', { token: killer.token, body: {} });
+await recordPlayerIntel(pool, killer.aid,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [mark.id])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 await call('POST', `/v1/streets/${mark.id}/search`, { token: killer.token, body: {} });
 await new Promise((res) => setTimeout(res, 120)); // SEARCH_MS=50 — the search places
 const markCash = (await meOf(mark.token)).cash;

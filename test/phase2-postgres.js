@@ -219,9 +219,11 @@ async function child(url) {
       const normalized = normalize(upgradedConstraints);
       verifyUpgradeConstraintCatalog(oldConstraints,normalized,version);
       verifyUpgradeConstraintCausalNegatives(oldConstraints,normalized,version);
+      verifyPlayerIntelUpgradeCausalNegatives(oldConstraints,normalized,version);
       verifyGameplayUpgradeCausalNegatives(gameplayCatalog,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
+      console.log('phase2-postgres: exact account-owned PlayerIntel identity and required columns pass with removal, alteration, renamed binding and unknown-addition negatives');
       console.log(`phase2-postgres gameplay delta: immutable ${gameplayCatalog.source.revision}, ${gameplayCatalog.tableCount} tables/${gameplayCatalog.constraintCount} constraints/${gameplayCatalog.referenceColumns.length} typed columns, complete original oracle and exact declared native NOT NULL additions pass`);
       if(Number(settings.server_version_num)>=180000) console.log('phase2-postgres: frozen quoted-position NOT NULL removal and identifier alteration negatives pass');
       return;
@@ -383,13 +385,20 @@ const upgradeNotNullColumns = {
 };
 const catalogIdentity = (row) => `${row.table_name}\0${row.name}`;
 const orderedCatalog = (rows) => [...rows].sort((left,right) => catalogIdentity(left) < catalogIdentity(right) ? -1 : catalogIdentity(left) > catalogIdentity(right) ? 1 : 0);
+// Independent expectations for the reviewed 30f61aeb schema addition; keep this
+// account-owned observation table separate from the pinned gameplay 7/63/72 delta.
+const playerIntelUpgradeConstraints = Object.freeze([
+  constraintRow('player_intel','player_intel_pkey','PRIMARY KEY (owner_account, target_character)'),
+]);
+const playerIntelUpgradeNotNullColumns = Object.freeze(['facts','learned_at','observed_at','owner_account','source','target_character']);
 function expectedUpgradeConstraintCatalog(before,serverVersionNum) {
+  assert.equal(before.filter(row => row.table_name === 'player_intel').length,0,'The frozen predecessor predates PlayerIntel observations');
   const replacements = new Map(replacedUpgradeConstraints.map(({ before: prior,after }) => [catalogIdentity(prior),{ prior,after }]));
   for (const { prior } of replacements.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)),prior);
   const removed = new Map(architectureUpgradeCatalog.removed.map((prior) => [catalogIdentity(prior), prior]));
   for (const prior of removed.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)), prior);
-  const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after), ...architectureUpgradeCatalog.added];
-  if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries({ ...upgradeNotNullColumns, ...architectureUpgradeCatalog.notNullColumns })) {
+  const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after), ...architectureUpgradeCatalog.added,...playerIntelUpgradeConstraints];
+  if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries({ ...upgradeNotNullColumns, ...architectureUpgradeCatalog.notNullColumns,player_intel:playerIntelUpgradeNotNullColumns })) {
     for (const column of columns) additions.push(constraintRow(table,`${table}_${column}_not_null`,
       ['company_logistics_hub_sources','buyer_cooperative_members'].includes(table)&&column==='position'
         ? 'NOT NULL "position"' : `NOT NULL ${column}`));
@@ -398,6 +407,26 @@ function expectedUpgradeConstraintCatalog(before,serverVersionNum) {
 }
 function verifyUpgradeConstraintCatalog(before,after,serverVersionNum) {
   assert.deepEqual(orderedCatalog(after),expectedUpgradeConstraintCatalog(before,serverVersionNum));
+}
+function verifyPlayerIntelUpgradeCausalNegatives(before,after,serverVersionNum) {
+  const mutate = (name,change) => {
+    const rows = after.map(row => ({ ...row })), index = rows.findIndex(row => row.table_name === 'player_intel' && row.name === name);
+    assert(index >= 0,`PlayerIntel causal target ${name} exists`); change(rows,index); return rows;
+  };
+  const rejected = (label,rows) => assert.throws(() => verifyUpgradeConstraintCatalog(before,rows,serverVersionNum),
+    error => error?.code === 'ERR_ASSERTION',label);
+  rejected('PlayerIntel identity removed',mutate('player_intel_pkey',(rows,index) => rows.splice(index,1)));
+  rejected('PlayerIntel account boundary weakened',mutate('player_intel_pkey',(rows,index) => { rows[index].definition = 'PRIMARY KEY (target_character)'; }));
+  rejected('PlayerIntel unreviewed constraint added',[...after,constraintRow('player_intel','unexpected_player_intel_constraint','CHECK (true)')]);
+  if(serverVersionNum >= 180000) {
+    for(const column of playerIntelUpgradeNotNullColumns) {
+      const name = `player_intel_${column}_not_null`;
+      rejected(`PlayerIntel ${column} nullability removed`,mutate(name,(rows,index) => rows.splice(index,1)));
+      rejected(`PlayerIntel ${column} nullability altered`,mutate(name,(rows,index) => { rows[index].definition = 'NOT NULL source_name'; }));
+      rejected(`PlayerIntel ${column} nullability renamed`,mutate(name,(rows,index) => { rows[index].name = 'player_intel_source_name_not_null'; }));
+    }
+    rejected('PlayerIntel source label remains optional',[...after,constraintRow('player_intel','player_intel_source_name_not_null','NOT NULL source_name')]);
+  }
 }
 function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
   const mutate = (table,name,change) => {

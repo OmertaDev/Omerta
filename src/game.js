@@ -1,6 +1,7 @@
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
 import { recordMeeting } from './contacts.js';
+import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
 import { claimQualifiedAgentReferral } from './agentreferrals.js';
 import { EventEmitter } from 'node:events';
 import { CRIMES, DISTRICTS, DRUGS, RECRUIT_MILESTONES, CONSTANTS, RANKS,
@@ -1399,7 +1400,8 @@ export async function persistAccountFields(client, accountId, a, fields) {
 // exposure) opt OUT of the black-book meeting grant — the actor never openly met the victim, and
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
-export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true } = {}) {
+// Player-targeting verbs opt into requireKnown; this sorted settlement helper also serves already-authorized commerce.
+export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false } = {}) {
   // phase one for BOTH parties (the actor by account, the target by their street's account) — each
   // its own transaction, each holding one character, so no sorted-pair lock is needed here
   await settleIfDue(pool, accountId);
@@ -1422,6 +1424,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     const victim = firstId === myId ? second : first;
     if (!ch) throw new GameError('no_character', 'Create a character first.');
     if (!victim) throw new GameError('no_target', "They're gone — nobody by that name on the streets.");
+    if (requireKnown && (victim.loc !== ch.loc || !meet)) await requireKnownPlayer(client, ch, victim.id);
 
     const lockAcct = async (accId) =>
       (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [accId])).rows[0];
@@ -1443,7 +1446,14 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     // or intel, never free). Best-effort leaf insert; a gate refusal (a thrown GameError) never
     // reaches here, so a refused approach is not a meeting — and a COVERT action (opts.meet=false)
     // is not one either: the victim met a hired gun / "the wire", never the actor.
-    if (meet) await recordMeeting(client, ch.account_id, victim.account_id);
+    if (meet) {
+      await recordMeeting(client, ch.account_id, victim.account_id);
+      // Encounters store a dated sighting; remote or prison dealings reveal identity only.
+      const location = ch.loc === victim.loc && !jailed(ch) && !jailed(victim)
+        && !hospitalized(ch) && !hospitalized(victim);
+      await recordPlayerIntel(client, ch.account_id, victim, { location });
+      await recordPlayerIntel(client, victim.account_id, ch, { location });
+    }
 
     await persistCharacter(client, ch);
     await persistKitchen(client, ch, owned);
@@ -2424,13 +2434,7 @@ export async function travel(ch, district, client, h) {
   ch.cash = Number(ch.cash) - CONSTANTS.TRAVEL_COST; ch.loc = district;
   await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -CONSTANTS.TRAVEL_COST, reason: 'travel' });
   await logCollect(client, ch.account_id, 'districts', district); // THE COLLECTION — set foot everywhere
-  // THE CONVERGENCE NUDGE — a real human just walked into a district. Announce it on the streets
-  // channel so anyone STANDING there gets a live "someone real just showed up" push (the collision
-  // Home card + the 30s poll surface presence otherwise; this is the instant signal). Presence is
-  // already public (/v1/live shows who's in a district), so this leaks nothing. Real humans only —
-  // NPC residents move via residentAct (no emit), and agents are excluded like every other human
-  // presence surface (the collision board's rule). Best-effort, post-state.
-  if (!ch.is_npc && !h?.acct?.agent_flag) bus.emit('streets', { type: 'arrival', who: ch.name, cid: ch.id, district });
+  // Movement is private. Encounters and active surveillance supply locations, never a global feed.
   // THE FARE. A ride is charged and the line said only where you ended up — the purchase named and
   // the price silent, which is the bare-price catch-all inverted and just as unreadable. The figure
   // ships rather than being restated on the client, because CONSTANTS.TRAVEL_COST is a founder lever

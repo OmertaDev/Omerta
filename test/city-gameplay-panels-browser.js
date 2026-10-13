@@ -321,6 +321,11 @@ try {
     await activate(fixture, fixture.page.getByRole('button', { name: activation.label, exact: true }));
     const activationReply = await activated; assert.equal(activationReply.status(), 200); await settled(fixture);
     await fixture.page.locator('[data-city-deed-room]').waitFor({ state: 'visible' });
+    const salvage = fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText('Strip a Wreck', { exact: true }) });
+    assert((await salvage.textContent()).includes('1 × Car'), 'The real asset ingredient has a readable label.');
+    assert((await salvage.textContent()).includes('Use Crafting for car salvage.'), 'The real salvage refusal explains where to continue.');
+    assert(!(await fixture.page.locator('.city-world__content').textContent()).match(/undefined|recipe_location|recipe_owns_car|salvage_required/),
+      'Home recipe presentation does not print missing fields or internal blocker codes.');
     const privateBefore = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
     const furnishing = privateBefore.room.catalog[0].id;
     const occupied = new Set(privateBefore.room.furniture.filter(item => item.id !== furnishing).map(item => item.x + ':' + item.y));

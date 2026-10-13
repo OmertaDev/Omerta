@@ -1,4 +1,5 @@
 import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
+import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { FRANCHISE_SOURCE_CURRENT_PINS, assertFranchiseSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
@@ -17,7 +18,8 @@ for (const file of ['src/chain.js', 'src/invariants.js']) {
   assert.equal(proof.baselineText, execFileSync('git', ['show', 'db54f824004c4d855778668081ce2adfac173c39:' + file], { encoding: 'utf8' }).replaceAll('\r\n', '\n'));
 }
 for (const file of ['src/game.js', 'src/crew.js']) {
-  const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n'), proof = assertCrewLogisticsSourceTransfer(file, text);
+  const text = playerIntelSourceBaseline(file, fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n')),
+    proof = assertCrewLogisticsSourceTransfer(file, text);
   assert.equal(BACKLOG_SOURCE_PINS[file], CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]);
   assert.equal(proof.baselineSha256, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS[file]);
   for (const [chunk] of CREW_LOGISTICS_SOURCE_INVERSES[file])

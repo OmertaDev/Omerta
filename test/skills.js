@@ -15,6 +15,7 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { SKILLS, M4, COMMISSION } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -120,6 +121,10 @@ await seedCh(ex.id, "cash=500000, respect=5760, loc='docks'");
 for (const s of ['bruiser', 'doctors_friend', 'executioner'])
   assert.equal((await call('POST', `/v1/skills/${s}`, { token: ex.token })).code, 200, `${s} learned`);
 await seedCh(rob.id, "loc='docks'");
+await recordPlayerIntel(pool,
+  (await pool.query('SELECT account_id FROM characters WHERE id=$1', [ex.id])).rows[0].account_id,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [rob.id])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 r = await call('POST', `/v1/streets/${rob.id}/search`, { token: ex.token });
 assert.equal(r.code, 200, 'the search is out');
 const eta = new Date(r.body.placedAt).getTime() - Date.now();

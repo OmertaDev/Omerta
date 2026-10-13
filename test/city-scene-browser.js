@@ -1291,9 +1291,16 @@ try {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator('[data-city-journal]').click();
   await page.waitForSelector('#tab-fieldwork.on', { state: 'visible' });
+  await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
   await page.locator('[data-fieldwork-view="inventory"]').click();
   await page.locator('.fieldwork-item').filter({ hasText: 'Neighborhood Notebook' }).waitFor({ state: 'visible' });
-  await page.locator('[data-fieldwork-view="mysteries"]').click();
+  await page.evaluate(() => { window.__journalControllerRoot = document.querySelector('.world-fieldwork'); });
+  const repeatedJournalRequests = requests.length;
+  await page.locator('#city-journal').click();
+  await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
+  assert.equal(await page.evaluate(() => window.__journalControllerRoot === document.querySelector('.world-fieldwork')), true,
+    'Session Journal navigation selects the existing controller rather than remounting the reader.');
+  assert.deepEqual(gameplayRequests(requests.slice(repeatedJournalRequests)), [], 'Opening Journal again from Inventory submits no gameplay POST.');
   await page.locator('[data-fieldwork-mystery="neighborhood-initiation"]').click();
   await page.waitForFunction(() => document.querySelector('.fieldwork-case')?.textContent.toLowerCase().includes('completed'));
   await returnToCity(page);
