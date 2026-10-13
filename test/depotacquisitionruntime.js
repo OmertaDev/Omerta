@@ -68,6 +68,26 @@ const before=await snapshot(seller.business),balances=[await cash(seller),await 
 await assert.rejects(pair(seller,purchaser,async(s,b,c,h)=>{await service.execute(s,b,r.id,body,'late-full',c,h);throw Error('late whole acquisition fault');}),/late whole acquisition fault/);assert.deepEqual(await snapshot(seller.business),before);assert.deepEqual([await cash(seller),await cash(purchaser)],balances);assert.equal((await app.pool.query('SELECT state FROM company_acquisitions WHERE id=$1',[r.id])).rows[0].state,'accepted');assert.equal((await app.pool.query("SELECT request_key FROM company_acquisition_requests WHERE request_key='late-full'")).rows.length,0);
 const paid=native?await Promise.all([sameKeyReplay(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true),sameKeyReplay(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)]):[await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)];assert.deepEqual(paid[0],await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute'));if(native)assert.deepEqual(paid[0],paid[1]);assert.equal(paid[0].acquisition.ownershipTransferred,true);const after=await snapshot(seller.business);assert.deepEqual(after,{...before,depot:{...before.depot,owner_character:purchaser.id}});assert.deepEqual([await cash(seller),await cash(purchaser)],[balances[0]+10000,balances[1]-10000]);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[r.id])).rows.length,2);
 assert.equal((await call(seller,'POST',`/v1/depot/${seller.business}/configure`,config)).code,400);await ok(purchaser,'POST',`/v1/depot/${seller.business}/configure`,{...config,salePrice:1100},'buyer-configure',true);assert.equal((await call(foreign,'POST',`/v1/depot/${seller.business}/configure`,config)).code,400);await global();
+if(native){
+ const sourceSeller=await player(),sourceBuyer=await buyer(),sourceDeal=await deal(sourceSeller,sourceBuyer),originalState=await snapshot(sourceSeller.business),originalCash=[await cash(sourceSeller),await cash(sourceBuyer)];
+ const executeUrl=base+'/'+sourceDeal.id+'/execute',executeBody={termsHash:sourceDeal.termsHash};
+ for(const mode of ['missing','extra']){
+  let witnessed=0;const originalConnect=app.pool.connect.bind(app.pool);
+  app.pool.connect=async(...args)=>{const client=await originalConnect(...args),query=client.query.bind(client),release=client.release.bind(client);
+   client.query=async(sql,...rest)=>{const result=await query(sql,...rest),text=typeof sql==='string'?sql:sql?.text,parameters=Array.isArray(rest[0])?rest[0]:sql?.values;
+    if(text==="SELECT * FROM transactions WHERE counterparty=$1 AND currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive') ORDER BY id LIMIT 3"&&parameters?.[0]===sourceDeal.id&&result.rows.length===2&&++witnessed===2)
+     return {...result,rows:mode==='missing'?result.rows.slice(0,1):[...result.rows,{...result.rows[0],id:'inconsistent_read_view'}]};
+    return result;};
+   client.release=(...values)=>{client.query=query;client.release=release;return release(...values);};return client;};
+  try{const failed=await call(sourceSeller,'POST',executeUrl,executeBody,'source-view-'+mode,true);assert.equal(failed.code,400,JSON.stringify(failed));assert.equal(failed.body.message,'late_source_changed');assert.equal(witnessed,2,'The actual final source reread must observe the inconsistent view');}
+  finally{app.pool.connect=originalConnect;}
+  assert.deepEqual(await snapshot(sourceSeller.business),originalState);assert.deepEqual([await cash(sourceSeller),await cash(sourceBuyer)],originalCash);
+  assert.equal((await app.pool.query('SELECT state FROM company_acquisitions WHERE id=$1',[sourceDeal.id])).rows[0].state,'accepted');
+  assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[sourceDeal.id])).rows.length,0);
+  assert.equal((await app.pool.query('SELECT request_key FROM company_acquisition_requests WHERE request_key=$1',['source-view-'+mode])).rows.length,0);
+ }
+ await ok(sourceSeller,'POST',executeUrl,executeBody,'source-view-success',true);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[sourceDeal.id])).rows.length,2);await global();
+}
 const controlled=await player(),candidate=await buyer();await ok(controlled,'POST',`/v1/depot/${controlled.business}/policy`,{expectedRevision:0,enabled:false,allowRestock:false,allowReceive:false,businessPriority:false,maxSpend:0,reserveCash:1000,expiresInSeconds:600});assert.equal((await call(controlled,'POST',base+'/quote',{depotId:controlled.business,buyerCharacter:candidate.id})).body.message,'policy_archive_required');
 const pending=await player();await ok(pending,'POST',`/v1/depot/${pending.business}/fund`,{amount:5000});await ok(pending,'POST',`/v1/depot/${pending.business}/restock`,{});assert.equal((await call(pending,'POST',base+'/quote',{depotId:pending.business,buyerCharacter:candidate.id})).body.message,'market');
 const unknown=await player();await app.pool.query('CREATE TABLE unsupported_depot_scope(id TEXT PRIMARY KEY,depot_id TEXT)');assert.equal((await call(unknown,'POST',base+'/quote',{depotId:unknown.business,buyerCharacter:candidate.id})).body.message,'unsupported_schema');await app.pool.query('DROP TABLE unsupported_depot_scope');
