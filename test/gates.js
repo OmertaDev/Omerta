@@ -4575,9 +4575,19 @@ scopedSocialContext = async function(db) {
   // These two workflow refusal reasons describe immutable source uniqueness,
   // not wall-clock counters. Mask only their exact local error calls; a real
   // SQL column or variable with the same name must still fail closed.
+  const gameErrorHandler=fs.readFileSync('src/server.js','utf8');
+  const laboratorySourceConflict=(file,source,handler=gameErrorHandler)=>{
+    const mapping="if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });";
+    const original="if((await c.query('SELECT arm_id FROM strategy_laboratory_sources WHERE journal_id=$1 FOR UPDATE',[sourceId])).rows.length)fail('source_used');";
+    if(file!=='src/strategylaboratories.js'||source.split(original).length!==2||handler.split(mapping).length!==2)return source;
+    if(createHash('sha256').update(source.replaceAll('\r\n','\n')).digest('hex')!=='ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9')return source;
+    // Permanent one-journal/one-arm primary-key binding, not a replenishing
+    // allowance. Mask only the reviewed error token; all counter names remain.
+    return source.replace(original,original.replace("fail('source_used')",'fail()'));
+  };
   const bucketSource = (file, source) => file === 'src/companyworkflows.js'
     ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
-    : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : source;
+    : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : laboratorySourceConflict(file,source);
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
@@ -4588,6 +4598,21 @@ scopedSocialContext = async function(db) {
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
     'Actual counter columns cannot hide behind same-named workflow refusal reasons');
   assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
+  const laboratoryBucket=fs.readFileSync('src/strategylaboratories.js','utf8');
+  assert.deepEqual(bucketNames('src/strategylaboratories.js',laboratoryBucket),[],'Only actual immutable laboratory journal conflict is classified');
+  assert.deepEqual(bucketNames('src/strategylaboratories.js',laboratoryBucket.replaceAll('\r\n','\n').replaceAll('\n','\r\n')),[]);
+  for(const changed of [
+    laboratoryBucket.replace('[sourceId])).rows.length', '[arm.id])).rows.length'),
+    laboratoryBucket.replace("new GameError('strategy_laboratory',message)","new GameError('rate_limit',message)"),
+    laboratoryBucket+'\nconst source_used=0; const source_at=Date.now();\n',
+    laboratoryBucket+'\nexport function publicLiveWork(){return {financialActivation:true,source_used:1};}\n',
+  ]){assert.notEqual(changed,laboratoryBucket);assert(bucketNames('src/strategylaboratories.js',changed).includes('source_used'),'Changed identity/status/refill/public authority must remain unclassified');}
+  for(const handler of [gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.code(429)'),gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.header("Retry-After",1).code(400)')]){
+    assert.notEqual(handler,gameErrorHandler);assert(laboratorySourceConflict('src/strategylaboratories.js',laboratoryBucket,handler).includes("fail('source_used')"),'Changed HTTP/refill status cannot retain immutable-conflict classification');
+  }
+  assert(bucketNames('src/unknown.js',laboratoryBucket).includes('source_used'));
+  assert(bucketNames('src/strategylaboratories.js',"fail('source_used');").includes('source_used'),'Same token without reviewed canonical source is not admitted');
+  assert(bucketNames('src/strategylaboratories.js',laboratoryBucket+'\nconst unknown_used=0;').includes('unknown_used'),'Unknown counter names still enter the completeness corpus');
   for (const f of files) for (const name of bucketNames(`src/${relPath(SRC, f)}`, fs.readFileSync(f, 'utf8'))) found.add(name);
   assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
     + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');
