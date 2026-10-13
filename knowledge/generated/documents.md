@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 739 | 2026-10-12 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 743 | 2026-10-12 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -320,7 +320,7 @@
 | [content/README.md](../../content/README.md) | documentation | 282 | 2026-09-25 |
 | [CREDIT_CHECKPOINT.md](../../CREDIT_CHECKPOINT.md) | documentation | 88 | 2026-09-24 |
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
-| [DEPLOY.md](../../DEPLOY.md) | operations | 574 | 2026-09-09 |
+| [DEPLOY.md](../../DEPLOY.md) | operations | 578 | 2026-10-12 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
@@ -344,7 +344,7 @@
 | [docs/buyer-cooperative-migration-review.md](../../docs/buyer-cooperative-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
-| [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 138 | 2026-10-13 |
+| [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 164 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
