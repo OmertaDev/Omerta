@@ -1,3 +1,4 @@
+import { COMPANY_COMMERCIAL_CONTRACTS, COMPANY_COMMERCIAL_SCHEMAS } from './company-commercial-contracts.js';
 // THE AGENT GATEWAY — the machine-discovery layer. Agents are first-class players (see AGENTS.md),
 // so the game publishes a standard OpenAPI 3.1 contract + an llms.txt index, both auto-derived from
 // the live route registry (server.js collects routes via an onRoute hook, so this never drifts from
@@ -294,6 +295,7 @@ const OPERATION_CONTRACTS = {
   ...COMPANY_ECONOMY_CONTRACTS,
   ...EQUIPMENT_ECONOMY_CONTRACTS,
   ...COMPANY_WORKFORCE_CONTRACTS,
+  ...COMPANY_COMMERCIAL_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
   'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
@@ -927,6 +929,7 @@ const AGENT_SCHEMAS = {
   ...COMPANY_ECONOMY_SCHEMAS,
   ...EQUIPMENT_ECONOMY_SCHEMAS,
   ...COMPANY_WORKFORCE_SCHEMAS,
+  ...COMPANY_COMMERCIAL_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,
   CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,

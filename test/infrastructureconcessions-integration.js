@@ -1,3 +1,4 @@
+import { installCommercialContractProof } from './lib/company-commercial-dto.js';
 import assert from 'node:assert/strict';
 const native=process.argv.includes('--postgres');let version='memory';assert(!process.env.DATABASE_URL,'Refuse ambient database endpoint');
 if(native){const url=new URL(process.env.INFRASTRUCTURE_INTEGRATION_TEST_DATABASE_URL);assert(['postgres:','postgresql:'].includes(url.protocol));assert.equal(url.hostname,'127.0.0.1');
@@ -7,6 +8,7 @@ Object.assign(process.env,{RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',DEPOT_PILOT
 const {buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),I=await import('../src/items.js'),C=await import('../src/infrastructureconcessions.js'),T=await import('../src/territoryeconomics.js');
 const {runLedgerInvariants}=await import('../src/invariants.js'),{runEstate}=await import('../src/social/estate.js'),Rentals=await import('../src/equipmentrentals.js');
 const app=await buildServer(),{default:Fastify}=await import('fastify'),component=Fastify();
+installCommercialContractProof(app);
 component.setErrorHandler((e,_req,p)=>p.code(e.statusCode||400).send({error:e.code,message:e.message}));
 const deps={pool:app.pool,auth:async req=>{try{req.user=app.jwt.verify(String(req.headers.authorization||'').replace(/^Bearer /,''));}catch{throw Object.assign(Error('Authentication required'),{statusCode:401});}}};
 (await import('../src/routes/infrastructureconcessions.js')).register(component,deps);(await import('../src/routes/territoryeconomics.js')).register(component,deps);

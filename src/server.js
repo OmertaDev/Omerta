@@ -104,6 +104,7 @@ import { register as registerWorkerTraining } from './routes/workertraining.js';
 import { register as registerEmploymentOrganizations } from './routes/employmentorganizations.js';
 import { register as registerBusinessPartnerships } from './routes/businesspartnerships.js';
 import { register as registerCompanyGovernance } from './routes/companygovernance.js';
+import { register as registerCompanyRestructuring } from './routes/companyrestructuring.js';
 import { register as registerCompanyAcquisitions } from './companyacquisitions-routes.js';
 import { canonicalDepotAcquisitionRuntime } from './depotacquisitionruntime.js';
 import { withCrewTwoCharacters, withAcquisitionCharacters } from './company-middle-five-runtime.js';
@@ -2466,6 +2467,7 @@ export async function buildServer() {
   registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });
   registerBusinessPartnerships(app, { pool, auth });
   registerCompanyGovernance(app, { pool, auth });
+  registerCompanyRestructuring(app, { pool, auth });
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
   registerCompanyWorkflows(app, { pool, auth });

@@ -1,3 +1,4 @@
+import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { GameError, ledger } from './game.js';
@@ -21,8 +22,14 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'company_logistics_hubs:depot_id','business_season_entries:depot_id','company_production_receipts:business_id',
  'company_specializations:business_id','company_specialization_runs:business_id','commercial_negotiations:depot_id',
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
- 'worker_training_courses:depot_id','employment_organizations:depot_id']);
+ 'worker_training_courses:depot_id','employment_organizations:depot_id',
+ 'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id']);
 async function assertNoObligations(c,depotId){
+ if((await c.query("SELECT id FROM company_restructuring_plans WHERE depot_id=$1 AND state='ready' LIMIT 1",[depotId])).rows.length)fail('restructuring_pending');
+ if((await c.query("SELECT id FROM commercial_disputes WHERE depot_id=$1 AND state IN ('proposed','agreed') LIMIT 1",[depotId])).rows.length)fail('commercial_dispute_pending');
+ if((await c.query("SELECT id FROM infrastructure_concessions WHERE business_id=$1 AND state='accepted' LIMIT 1",[depotId])).rows.length)fail('concession_active');
+ if((await c.query("SELECT id FROM territory_economics_profiles WHERE business_id=$1 AND enabled=true AND state='active' AND expires_at>clock_timestamp() LIMIT 1",[depotId])).rows.length)fail('territory_authority_active');
+ if((await collectCompanyRestructuringIssues(c,depotId)).length||(await collectCommercialHistoryIssues(c,depotId)).length)fail('commercial_history_changed');
  // Historical authority is not deleted or adopted to manufacture a transfer.
  if((await c.query('SELECT id FROM equipment_maintenance_offers WHERE id=$1 LIMIT 1',[depotId])).rows.length)fail('maintenance_archive_required');
  if((await c.query('SELECT s.id FROM service_subscriptions s JOIN equipment_maintenance_offers o ON o.id=s.offer_id WHERE o.id=$1 LIMIT 1',[depotId])).rows.length)fail('subscription_archive_required');

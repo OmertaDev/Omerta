@@ -1,3 +1,4 @@
+import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 // §10.4 — the nightly ledger-invariant job. Value transfers, it is never minted:
 // every bucket of value must reconcile against the enumerated faucet/sink reasons
 // in the transactions ledger. Any drift beyond $1 (or one unit) — or any ledger
@@ -745,6 +746,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('partnership capital transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:fund:pay','business_partnership:fund:receive')"), 0);
   push('partnership profit transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:profit:pay','business_partnership:profit:receive')"), 0);
   push('company acquisition transfers', 0, await sum(pool, "currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive')"), 0);
+  const restructuringIssues = await collectCompanyRestructuringIssues(pool);
+  push('company restructuring canonical receipt books', restructuringIssues.length, 0, 0, { issues: restructuringIssues });
+  const commercialHistoryIssues = await collectCommercialHistoryIssues(pool);
+  push('commercial original source histories', commercialHistoryIssues.length, 0, 0, { issues: commercialHistoryIssues });
   const middleIssues = await collectMiddleFiveIssues(pool);
   push('company middle five source bindings', middleIssues.length, 0, 0, { issues: middleIssues });
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
