@@ -3632,6 +3632,8 @@ scopedSocialContext = async function(db) {
     '        run: npm run test:invites:browser',
     '      - name: Discovery-based player intel in the browser',
     '        run: node test/player-intel-browser.js',
+    '      - name: Wallet discovery, cancellation, and signature verification in the browser',
+    '        run: node test/wallet-connect-browser.js',
     '      - name: City Mode and RPG desktop/mobile journeys',
     '        run: npm run test:city:browser',
     '      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)',
