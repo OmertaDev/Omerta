@@ -41,12 +41,12 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
   tables: Object.freeze(['company_production_receipts', 'company_specialization_requests', 'company_specialization_runs',
     'company_specializations', 'item_durability_birth_quality', 'item_durability_states', 'item_durability_uses']),
 });
-// These pins are filled only after the complete combined source is frozen. A
-// pending profile cannot be selected or qualify a source-pair rehearsal.
+// A separate complete-source profile preserves the original first-five pins.
+// Only the three owned files and closed derivative outputs are excluded.
 export const CRITIQUE_ECONOMY_ADDITIVE_PAIR = Object.freeze({
-  predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: null,
-  predecessorTree: FIRST_FIVE_ADDITIVE_PAIR.predecessorTree, candidateTree: null,
-  predecessorSchema: FIRST_FIVE_ADDITIVE_PAIR.predecessorSchema, candidateSchema: null,
+  predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: '50ef6e976ee2b9326352fd6641ba8c3317378c93',
+  predecessorTree: FIRST_FIVE_ADDITIVE_PAIR.predecessorTree, candidateTree: '4f3dd3c0bdd6537f2eee8222ccaf238b5eb8d36d4ba8f47ea84b376ce819def6',
+  predecessorSchema: FIRST_FIVE_ADDITIVE_PAIR.predecessorSchema, candidateSchema: '58d8cc74253b4a63c63f3dbb73a4839dee035019f920050d9260b4b8310237cd',
   predecessorCatalog: FIRST_FIVE_ADDITIVE_PAIR.predecessorCatalog,
   candidateCatalog: FIRST_FIVE_ADDITIVE_PAIR.candidateCatalog,
   candidateTableCatalog: FIRST_FIVE_ADDITIVE_PAIR.candidateTableCatalog,
