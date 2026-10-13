@@ -1,3 +1,7 @@
+import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
+import { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';
+import { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';
+import { COMPANY_BANK_SOURCE_CURRENT_PINS, assertCompanyBankSourceTransfer } from './rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, assertCompanyOperatorSourceTransfer } from './rc1-company-operator-source-compatibility.js';
@@ -58,6 +62,22 @@ export const INTEL_SOURCE_TRANSFER = Object.freeze({ sourceRevision: INTEL_SOURC
   scope: 'Only exact Intel route registration, hourly refund sweep, buyer estate hook and invariant additions are removed to reconstruct complete predecessor sources. Historical qualifications remain scoped to those unchanged bytes. Intel cash, authorization, consent, expiry, death and outcome behavior requires separate current-source native proof; no historical runtime, native, deployment or financial qualification is expanded.' });
 
 export function assertIntelSourceTransfer(file, input) {
+  if (file === 'src/worker.js' && hash(normalize(input)) === BUSINESS_SEASON_SOURCE_CURRENT_PINS[file]) {
+    const season = assertBusinessSeasonSourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, season.baselineText);
+    return { ...predecessor, actualSha256: season.actualSha256, businessSeasonSourceTransfer: season };
+  }
+  if (file === 'src/worker.js' && hash(normalize(input)) === COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file]) {
+    const opportunity = assertCompanyOpportunitySourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, opportunity.baselineText);
+    return { ...predecessor, actualSha256: opportunity.actualSha256, companyOpportunitySourceTransfer: opportunity };
+  }
+  if (file === 'src/worker.js' && hash(normalize(input)) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
+    const cooperative = assertBuyerCooperativeSourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, cooperative.baselineText);
+    return { ...predecessor, actualSha256: cooperative.actualSha256, buyerCooperativeSourceTransfer: cooperative };
+  }
+  if (file === 'src/worker.js' && hash(normalize(input)) === COMPANY_BANK_SOURCE_CURRENT_PINS[file]) {
+    const bank = assertCompanyBankSourceTransfer(file, input), predecessor = assertIntelSourceTransfer(file, bank.baselineText);
+    return { ...predecessor, actualSha256: bank.actualSha256, companyBankSourceTransfer: bank };
+  }
   const workflow = file === 'src/worker.js' && hash(normalize(input)) === COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file] ? assertCompanyWorkflowSourceTransfer(file, input) : null;
   const operatorInput = workflow?.baselineText || input;
   if (file === 'src/worker.js' && hash(normalize(operatorInput)) === COMPANY_OPERATOR_SOURCE_CURRENT_PINS[file]) {

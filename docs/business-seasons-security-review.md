@@ -1,0 +1,65 @@
+# Business seasons security review
+
+Date: 2026-10-12. Phase: source integration candidate; financial activation remains OFF.
+Reviewed executable/test/schema source: `2c647722ecdc4f6199a39246f1f1e22930d04ae1`, based on `07dd9d862e353a39cd06fa90af87620fc0d8a79f`.
+Scope: new `src/businessseasons.js`, `src/routes/businessseasons.js`, their two tests and appended `business_seasons` / `business_season_entries` metadata tables/index. Included source traces: Depot treasury/journal bookkeeping, procurement/order receive, net retail sales, warehouse cash rent and franchise royalty journals; canonical loan funding and estate closure are exercised as relevant negative/source lifecycle fixtures. Excluded: root-owned server/worker/estate/gateway/invariant/census/catalog/test/CI integration, generated knowledge graph, deployment and real financial activation.
+
+## Approved success criteria and source limits
+
+The coordinator approved a prospective prize-free benchmark of a company's explicitly enrolled original Depot. It measures this Depot's realized game-cash operating journal window, not total company accounting, investment return, creditworthiness or future reliability. Other personal/account business lines, including employment wages and loan/portfolio yield, are outside the selected Depot journal and are not silently combined into a score. No prizes, escrow, real assets, provider, message or spending authority exist.
+
+| Journal input | Window treatment |
+| --- | --- |
+| sale | Add `cash_delta`, already net of the canonical market take; cost of goods sold is negative `cost_delta`; count negative `stock_delta` as units sold |
+| warehouse_rent, royalty_income | Add actual positive cash received; no inventory valuation |
+| restock_fee, royalty_expense | Subtract the explicit `expense`, validated equal to negative cash delta; never subtract both cash and expense |
+| open | Recognize actual cash opening expense if it is a new row in the observed window; normally it predates enrollment and is excluded by the baseline |
+| fund, withdraw | Capital movements/distributions, zero operating result; borrowed principal funded into the Depot is not revenue |
+| restock_escrow, restock_refund, receive | Procurement principal, refund and unsold inventory/cost basis, zero realized operating income; cost is recognized only when sold |
+| inventory_withdrawal | Owner inventory distribution, not operating revenue or a sale |
+| warehouse_deposit, warehouse_withdraw, warehouse_tenant_death | Custody movements, not business inventory revenue/cost |
+| death, unknown reason, malformed values, closed original business | Unknown/unranked; death bookkeeping combines capital, stock and rights and cannot honestly be ordinary operating profit |
+
+Thus result = net sales + cash rent + royalty income − sold inventory cost basis − explicit operating expenses. Unsold inventory is never marked up as profit. Canonical source reasons, columns, signs and rounding were followed through `bookDepot`, `buyFromDepot`, procurement and royalty settlement. The royalty arithmetic regression verifies net sales and royalty expense exactly once; the main end-to-end fixture uses actual canonical sales, procurement fees and received stock. No claim that an extra full franchise-license lifecycle was executed for this node.
+
+The only reliability label is **observed sale depletion/stockout events**: sales with canonical `stock_after=0`, compared with actual observed sales. It does not infer missed demand, filled delivery obligations, service guarantees or future profitability.
+
+## Prospective clocks, source pins and transactions
+
+Creation permits server-clock enrollment windows of 60–3600 seconds and season duration 60–86400 seconds, 2–10 companies per cohort, two active created seasons per account and three active enrolled seasons per account. Explicit enrollment requires the current original company owner and open owned Depot; human and agent sessions have the same normal account gameplay permission. Creator request keys bind original actor and exact terms; enrollment replay binds original actor, Depot, season and publication choice. Visibility updates have their own optimistic revision and cannot change the original source.
+
+Lock sequence for enrollment/observation is canonical character→Depot→season→entry. Every eligibility/observation clock is read with `clock_timestamp()` after blocking locks. Before the scheduled start observation is only waiting. A baseline is captured once at/after start and strictly before end; an account without such a baseline can never obtain a retroactive end-only score. Final observations occur at/after end and seal one immutable metadata receipt. Read-only historical observation by a current same-account heir grants no old wealth or operating authority; a dead original owner/closed original Depot yields unknown.
+
+Each snapshot reads at most 1001 journal rows, using the extra row solely to reject the 1000-row cap. Actual journal IDs and normalized economic content are pinned, sorted and hashed. End delta contains only new committed journal IDs; every baseline ID/content must remain intact. This avoids transaction-start `created_at` backdating: a transaction that began earlier but committed after the baseline is still new observed activity. Users cannot supply clocks, source vectors, snapshots, profit or scores. Hash serialization recursively sorts object keys so PostgreSQL JSONB key ordering cannot manufacture source drift.
+
+Source fingerprint covers the accounting module plus actual `depot.js`, `depotbook.js`, `warehouseleases.js` and `franchiselicenses.js` content, with normalized line endings. The approved canonical revision and accounting version are stored too. A changed accounting/source artifact during the observation period is unknown rather than mixing versions. This strict content pin can invalidate an open season even after a semantically harmless source edit; that conservative limitation is accepted. Historical sealed results remain point-in-time observed evidence, not a fresh statement about later business state.
+
+All results disclose actual baseline/end observation times. There is an explicit 60-second observation grace around each scheduled boundary; outside it the result is partial and unranked. Even inside the grace, the measurement is the actual observed interval, never an asserted exact-deadline snapshot. Late end observations can include later activity and are labeled accordingly. Missing baselines, cap overflow, altered source content, unknown reasons or original-source closure produce no ranked profit band.
+
+## Privacy, bounds and wiring
+
+Public standings require explicit entry publication **and** current canonical company publication **and** current reputation publication. The public projection uses one joined visibility statement, preserving immediate revocation at its observation point. It contains only current public company name, actual observation times, coverage, positive/flat/negative operating result bands and observed/none/no-sales depletion labels. Within a band companies tie and are displayed alphabetically; exact money or hidden numeric rankings are not disclosed. No original character/account, business/contract/customer/journal IDs, counterparties, balances, rules, source hashes or private source vectors are public. Season IDs are public cohort references, not private commercial contract IDs.
+
+Authenticated own boards bind account ownership, return at most ten historical entries and 25 enrollment-window season descriptions. Cohorts cap ten companies; worker discovery returns at most 25 candidates. Native discovery uses `EXISTS` for a current living non-NPC character on the same account, including heirs. The pg-mem fallback uses the equivalent uncorrelated account-membership condition because it cannot evaluate correlated EXISTS. No-living accounts cannot monopolize the dispatcher window. The core does not wire a worker or modify estate: root must take a finite candidate snapshot and call `G.withCharacter(account) → observeBusinessSeason` fairly, handling canonical gameplay errors without claiming completed snapshots.
+
+Both new tables are **informational enrollment/observation metadata**, not assets, liabilities, escrow or monetary conservation buckets. The subsystem writes only those tables; canonical money flows occur solely in existing game actions used as test sources. Finite terminal receipts do not pay or mint anything.
+
+## Methods, findings and static triage
+
+Applied native adaptations of all three pinned sources in `omerta-contracts/SECURITY-REVIEW-POLICY.md`: Trail of Bits trust-boundary/caller/specification/property mapping; Pashov authorization, replay, boundary and adversarial execution traces; Plamen canonical cash/cost/fee accounting and verified state-transition/failure hypotheses. No upstream orchestration or Solidity tooling is claimed.
+
+SEA-001 (medium, resolved): initial evidence hashes depended on object key insertion order. PostgreSQL JSONB reordered normalized rows, falsely marking an unchanged baseline as altered and making valid completed seasons unknown. Retained native failure: `native-jsonb-finding.log`. Correction: recursively canonicalize object key order. Retest on fresh PostgreSQL proves the exact actual operating result and simultaneous snapshot replay.
+
+SEA-002 (design lead, resolved): journal timestamps use transaction-start defaults and cannot safely establish a prospective committed window. Correction: capture locked journal ID/content sets and compute an immutable set delta, with fresh post-lock observation clocks. Regression gives a new actual sale a historical `created_at` yet correctly measures it after the baseline. Native observed lock wait crossing end rejects a backfilled baseline.
+
+SEA-003 (dispatcher lead, resolved): no-living accounts could remain earliest unresolved candidates and occupy bounded worker windows. Correction: current living non-NPC same-account membership in candidate discovery. Memory/native tests exclude the no-live account and then exercise actual `runEstate`, its created heir, closed original Depot and unknown historical terminal result.
+
+Source/privacy pass: actor-bound creation/enrollment, original source identity, current triple publication gating and authenticated owned diagnostics; extra clock/score input rejection. Accounting pass: exact net sale cash/COGS, expense once, neutral capital and stock movements, no fabricated yield. Concurrency/recovery pass: serialized cohort limit, original-character/Depot lock ordering, source immutability, baseline/end receipt replay and transactional snapshot failure. Static diagnostics: Node syntax checks and `git diff --check` pass without actionable findings; SQL values are parameterized and the driver-specific predicate comes only from fixed internal strings. Inapplicable: external funding, prizes, chain signer/callback/reentrancy and deployment rails.
+
+## Executed evidence and conclusion
+
+Ignored retained package: `output/business-season-20261012/` with `source-revision.log`, `source-hashes.log`, `memory-final.log`, `routes-final.log`, `static-final.log`, `native-probe.log`, `native-final.log` and the preserved JSONB finding log. Node `v24.19.0`. PostgreSQL `18.4`, role `pilot_runner`, existing loopback port `35439`, verified read-only before provisioning the fresh owned final database `business_season_test_ed736b70be6957e9`. Tests explicitly stage `BUSINESS_SEASON_TEST_DATABASE_URL`, require local owned-name prefix, overwrite ambient `DATABASE_URL` in native mode and discard it for memory. No service provisioning or production database use occurred.
+
+Commands exit 0: `node test/businessseasons.js`, `node test/businessseasons-api.js`, `node test/businessseasons.js --postgres`, source syntax checks, `git diff --check`. Actual canonical opening/funding, funded procurement, goods purchase/order fill/receive, borrowed game principal funded into the Depot, retail sale, replacement procurement and unsold received stock prove the exact realized result. Additional regressions cover creator/enrollment replay, original owner/foreign denial, no user clocks, waiting/missing/partial windows, changed source, 1000-journal cap, publication revocation and public data minimization. Native additionally proves competing cohort enrollments leave one remaining slot, simultaneous baseline/end snapshots agree, injected snapshot-write failure rolls back, and a real lock wait crosses the deadline without backfill. Actual canonical estate closure creates an heir and leaves the old business unranked without new authority.
+
+No confirmed high/critical finding remains in this exact core. Ready for root integration, conditional on authenticated/public route schemas, metadata classifications, finite fair worker dispatch, gateway/catalog/census/test wiring and final merged release gates. This review clears no financial activation or deployment, and does not claim a full audit of every canonical source dependency.

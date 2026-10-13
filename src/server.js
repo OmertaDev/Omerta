@@ -84,7 +84,13 @@ import { register as registerStrategyLeagues } from './routes/strategyleagues.js
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
 import { register as registerGameEmployment } from './routes/gameemployment.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
+import { register as registerCompanyOpportunities } from './routes/companyopportunities.js';
+import { register as registerCommercialReputation } from './routes/commercialreputation.js';
+import { register as registerBusinessSeasons } from './routes/businessseasons.js';
 import { register as registerCommercialPremises } from './routes/commercialpremises.js';
+import { register as registerCompanyBankPortfolios } from './routes/companybankportfolios.js';
+import { register as registerCompanyLogisticsHubs } from './routes/companylogisticshubs.js';
+import { register as registerBuyerCooperatives } from './routes/buyercooperatives.js';
 import { register as registerDepot } from './routes/depot.js';
 import { register as registerResources } from './routes/resources.js';
 import * as Speakeasy from './speakeasy.js';
@@ -2418,7 +2424,13 @@ export async function buildServer() {
   registerCompanyOperators(app, { pool, auth });
   registerGameEmployment(app, { pool, auth });
   registerCompanyWorkflows(app, { pool, auth });
+  registerCompanyOpportunities(app, { pool, auth });
+  registerCommercialReputation(app, { pool, auth });
+  registerBusinessSeasons(app, { pool, auth });
   registerCommercialPremises(app, { pool, auth });
+  registerCompanyBankPortfolios(app, { pool, auth });
+  registerCompanyLogisticsHubs(app, { pool, auth });
+  registerBuyerCooperatives(app, { pool, auth });
 
   registerHeists(app, { pool, auth });
 

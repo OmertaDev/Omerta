@@ -1,0 +1,22 @@
+# Business season exact shared-source transfer review
+
+Implementation: `8d58082f36b7a1a502220b7858b97aac6a5eb15a`, reviewed 2026-10-12 with Node v24.19.0. Frozen current source: `0ab4a3a5ad349d8ac7c01e2a5beb96b6ad156ae5`; complete N09 predecessor: `bcd22b9176186713749908aae5bd334d0362f040`. Phase: exact shared-source transfer only; financial activation disabled. No broader runtime fingerprint, feature behavior or financial clearance is claimed.
+
+New business-season compatibility tool/test and minimal prior Reputation baseline, Deed server wrapper, Intel worker wrapper, scoped World declaration version 33, Reputation/World fixtures. Runtime, schema, package, CI, gates and KG remain unchanged. Only the sixteen approved SG2–SG9 guard/review dependency commits were cherry-picked; complete resulting IDs are retained in `output/business-season-source-transfer/dependency-commits.txt`. Earlier source/review pins remain intact.
+
+| Changed file | Current LF SHA256 | Current Git blob | Exact Git inverse hunks |
+| --- | --- | --- | --- |
+| src/server.js | e0090465696793006f50496af54e7cea6146456b85d3c63a37de3844792a5536 | 4a33da610db9260f191c22ed678b4f9f2b68afdb | 2 |
+| src/worker.js | 61ba29e1cd6fdf6391515a2be7e6031c85e5d76707012eb9d3248aca53e3ff3a | 7cb2ad75443d6fccc0ff93d5a594fa0b2e317775 | 2 |
+
+The closed five-file envelope additionally verifies unchanged `src/invariants.js`, `src/social/estate.js`, and `src/market.js` against their exact complete N09 SHA256/Git blobs, with zero inverse hunks. All five literal current/predecessor pin maps and context-bearing hunks are exported by the new pure guard and retained in the hash manifest. Complete current hashes/blobs precede unique exact inverses; complete predecessor hashes/blobs follow them. Only CRLF→LF is normalized. Unknown keys reject; unknown bytes remain unchanged for historical rejecting guards.
+
+Distinct season metadata composes with unchanged Reputation/Opportunity/Cooperative/Hub/Bank/Premises/Workflow/Employment/Operator metadata. Worker metadata composes season directly into the prior unchanged N09 worker proof. No generic strip, source evaluation, runtime import, monetary action or historical coverage relaxation occurs. Season feature modules and runner implementation outside these five files remain excluded.
+
+Applied actual single-agent source-trace, trust-boundary, specification/property, mutation and static-triage adaptations from policy pins: pashov `c577eb7799c349de0acb187ba00ca98e14e436fd`, Plamen `795962b96e254f2e423a2635fe7f8cb8ea1e6d69`, Trail of Bits `d3323cefbcf645678b8dc481de204b02ad3d02dc`. These are JavaScript/Git passes, not upstream orchestration execution. Native financial accounting, concurrency, external providers and Solidity are outside this pure adapter's scope.
+
+All 35 required focused source/unit suites passed with exit 0: new season guard plus the preceding 34 guards, lifecycle, worker-unit, checkpoint, duration, backlog, capital/resource/query suites enumerated in the Reputation review. Commands: `node test/rc1-<name>.js`. New proof: four actual Git hunks, 153 complete-text comparisons, 15 SHA256 and 15 Git-blob comparisons, 33 unknown/missing/duplicate/reordered/context/import/auth/worker-cap/cadence/order/unchanged-domain controls, LF/CRLF, and prior metadata parity. All earlier 26/33/83/34/46/37/47/36/24 controls remain. Syntax checks for all eight touched JavaScript files and `git diff --check` passed. Raw logs, full pin manifest, dependency map and caller trace are retained under ignored `output/business-season-source-transfer/`.
+
+Static triage verified pure acyclic imports, full-file closed acceptance, unique context-bearing inverses, complete baseline checks and unchanged historical assertions. Initial and full focused runs passed; no open actionable findings or required failures remain in this bounded review. Optional retained-history reclassifiers still lack explicit pinned input roots: prior strict refusals remain under `output/buyer-cooperative-source-transfer/`, unexecuted here and never treated as clearance.
+
+Ready for shared-source guard integration at the exact implementation pin. Season provenance, score derivation, ranking privacy, agent API and expiry behavior require separate current-source proof. This adds no world-soak, native financial/accounting audit, deployment or onchain qualification. Root retains pretest/package/full-gate/release ownership.

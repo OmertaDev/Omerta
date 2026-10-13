@@ -2645,6 +2645,576 @@
       "table_name": "commercial_premises_requests",
       "name": "commercial_premises_requests_pkey",
       "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_origin_check",
+      "definition": "CHECK (origin = ANY (ARRAY['existing'::text, 'portfolio'::text]))"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_original_lender_fkey",
+      "definition": "FOREIGN KEY (original_lender) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_pkey",
+      "definition": "PRIMARY KEY (account_id, loan_id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_loans",
+      "name": "company_bank_portfolio_loans_principal_check",
+      "definition": "CHECK (principal >= 1 AND principal <= 1000000)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_bank_portfolio_receipts",
+      "name": "company_bank_portfolio_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_lifetime_spent_check",
+      "definition": "CHECK (lifetime_spent >= 0 AND lifetime_spent <= 1000000)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "company_bank_portfolios",
+      "name": "company_bank_portfolios_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['setup'::text, 'accept'::text, 'run'::text, 'cancel'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hub_requests",
+      "name": "company_logistics_hub_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_check",
+      "definition": "CHECK ((state = 'completed'::text) = (settlement IS NOT NULL AND completed_at IS NOT NULL))"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_finance_request_id_fkey",
+      "definition": "FOREIGN KEY (finance_request_id) REFERENCES delivery_loan_requests(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_finance_request_id_key",
+      "definition": "UNIQUE (finance_request_id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_hub_id_fkey",
+      "definition": "FOREIGN KEY (hub_id) REFERENCES company_logistics_hubs(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_pkey",
+      "definition": "PRIMARY KEY (hub_id, \"position\")"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_position_check",
+      "definition": "CHECK (\"position\" >= 1 AND \"position\" <= 3)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 10)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['pending'::text, 'completed'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_withdrawal_journal_id_fkey",
+      "definition": "FOREIGN KEY (withdrawal_journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "company_logistics_hub_sources",
+      "name": "company_logistics_hub_sources_withdrawal_journal_id_key",
+      "definition": "UNIQUE (withdrawal_journal_id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_check",
+      "definition": "CHECK (supplier_character <> landlord_character AND supplier_account <> landlord_account)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_premises_lease_id_fkey",
+      "definition": "FOREIGN KEY (premises_lease_id) REFERENCES commercial_premises_leases(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['draft'::text, 'active'::text, 'completed'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_supplier_account_fkey",
+      "definition": "FOREIGN KEY (supplier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_total_units_check",
+      "definition": "CHECK (total_units >= 1 AND total_units <= 10)"
+    },
+    {
+      "table_name": "company_logistics_hubs",
+      "name": "company_logistics_hubs_warehouse_lease_id_fkey",
+      "definition": "FOREIGN KEY (warehouse_lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_cash_delta_check",
+      "definition": "CHECK (cash_delta >= '-810000'::integer AND cash_delta <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_gin_delta_check",
+      "definition": "CHECK (gin_delta >= '-8'::integer AND gin_delta <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['fund'::text, 'post_order'::text, 'settle'::text, 'claim'::text, 'death'::text]))"
+    },
+    {
+      "table_name": "buyer_cooperative_journal",
+      "name": "buyer_cooperative_journal_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check",
+      "definition": "CHECK (funded_cash = 0 OR funded_cash = funding_required)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check1",
+      "definition": "CHECK (cash_entitlement >= 0 AND cash_entitlement <= funding_required)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check2",
+      "definition": "CHECK (gin_entitlement >= 0 AND gin_entitlement <= unit_share)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check3",
+      "definition": "CHECK (cash_claimed >= 0 AND cash_claimed <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check4",
+      "definition": "CHECK (gin_claimed >= 0 AND gin_claimed <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check5",
+      "definition": "CHECK (death_cash >= 0 AND death_cash <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check6",
+      "definition": "CHECK (death_gin >= 0 AND death_gin <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check7",
+      "definition": "CHECK (death_loot >= 0 AND death_loot <= death_cash)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check8",
+      "definition": "CHECK ((cash_claimed + death_cash) <= cash_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_check9",
+      "definition": "CHECK ((gin_claimed + death_gin) <= gin_entitlement)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_cooperative_id_position_key",
+      "definition": "UNIQUE (cooperative_id, \"position\")"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_funding_required_check",
+      "definition": "CHECK (funding_required >= 50 AND funding_required <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_pkey",
+      "definition": "PRIMARY KEY (cooperative_id, account_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_position_check",
+      "definition": "CHECK (\"position\" >= 0 AND \"position\" <= 2)"
+    },
+    {
+      "table_name": "buyer_cooperative_members",
+      "name": "buyer_cooperative_members_unit_share_check",
+      "definition": "CHECK (unit_share >= 1 AND unit_share <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_cooperative_id_fkey",
+      "definition": "FOREIGN KEY (cooperative_id) REFERENCES buyer_cooperatives(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_cooperative_id_key",
+      "definition": "UNIQUE (cooperative_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_orders",
+      "name": "buyer_cooperative_orders_pkey",
+      "definition": "PRIMARY KEY (order_id)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "buyer_cooperative_receipts",
+      "name": "buyer_cooperative_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 200)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_cash_balance_check",
+      "definition": "CHECK (cash_balance >= 0 AND cash_balance <= 810000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_check",
+      "definition": "CHECK (fee_paid >= 0 AND fee_paid <= fee_cap)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_check1",
+      "definition": "CHECK (purchased_units >= 0 AND purchased_units <= units)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_fee_cap_check",
+      "definition": "CHECK (fee_cap >= 1 AND fee_cap <= 10000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_gin_balance_check",
+      "definition": "CHECK (gin_balance >= 0 AND gin_balance <= 8)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_order_id_key",
+      "definition": "UNIQUE (order_id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_organizer_account_fkey",
+      "definition": "FOREIGN KEY (organizer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_organizer_character_fkey",
+      "definition": "FOREIGN KEY (organizer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['funding'::text, 'live'::text, 'settled'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_terms_hash_check",
+      "definition": "CHECK (char_length(terms_hash) = 64)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_unit_price_check",
+      "definition": "CHECK (unit_price >= 50 AND unit_price <= 100000)"
+    },
+    {
+      "table_name": "buyer_cooperatives",
+      "name": "buyer_cooperatives_units_check",
+      "definition": "CHECK (units >= 1 AND units <= 8)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES company_opportunity_subscriptions(account_id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_account_id_kind_source_id_key",
+      "definition": "UNIQUE (account_id, kind, source_id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['depot'::text, 'warehouse'::text, 'delivery'::text, 'tender'::text, 'employment'::text]))"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_opportunity_notices",
+      "name": "company_opportunity_notices_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "company_opportunity_subscriptions",
+      "name": "company_opportunity_subscriptions_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_category_check",
+      "definition": "CHECK (category = ANY (ARRAY['deliveries'::text, 'paidWork'::text, 'closedStorage'::text, 'repaidLoans'::text, 'workflows'::text]))"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_evidence_hash_check",
+      "definition": "CHECK (char_length(evidence_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_reputation_proofs",
+      "name": "commercial_reputation_proofs_pkey",
+      "definition": "PRIMARY KEY (category, source_id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "commercial_reputation_publications",
+      "name": "commercial_reputation_publications_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_pkey",
+      "definition": "PRIMARY KEY (transaction_id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_source_id_fkey",
+      "definition": "FOREIGN KEY (source_id) REFERENCES loans(id)"
+    },
+    {
+      "table_name": "commercial_reputation_settlements",
+      "name": "commercial_reputation_settlements_transaction_id_fkey",
+      "definition": "FOREIGN KEY (transaction_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_pkey",
+      "definition": "PRIMARY KEY (season_id, account_id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_season_id_depot_id_key",
+      "definition": "UNIQUE (season_id, depot_id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_season_id_fkey",
+      "definition": "FOREIGN KEY (season_id) REFERENCES business_seasons(id)"
+    },
+    {
+      "table_name": "business_season_entries",
+      "name": "business_season_entries_visibility_revision_check",
+      "definition": "CHECK (visibility_revision >= 1 AND visibility_revision <= 2147483647)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_check",
+      "definition": "CHECK (ends_at > starts_at)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_creator_account_fkey",
+      "definition": "FOREIGN KEY (creator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_creator_account_request_key_key",
+      "definition": "UNIQUE (creator_account, request_key)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_max_companies_check",
+      "definition": "CHECK (max_companies >= 2 AND max_companies <= 10)"
+    },
+    {
+      "table_name": "business_seasons",
+      "name": "business_seasons_pkey",
+      "definition": "PRIMARY KEY (id)"
     }
   ],
   "removed": [
@@ -3532,6 +4102,174 @@
       "receipt",
       "request_key",
       "terms"
+    ],
+    "company_bank_portfolios": [
+      "account_id",
+      "created_at",
+      "enabled",
+      "expires_at",
+      "lifetime_spent",
+      "next_run_at",
+      "owner_character",
+      "revision",
+      "terms"
+    ],
+    "company_bank_portfolio_receipts": [
+      "account_id",
+      "created_at",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "company_bank_portfolio_loans": [
+      "account_id",
+      "created_at",
+      "loan_id",
+      "origin",
+      "original_lender",
+      "principal"
+    ],
+    "company_logistics_hubs": [
+      "depot_id",
+      "district",
+      "expires_at",
+      "id",
+      "landlord_account",
+      "landlord_character",
+      "premises_lease_id",
+      "revision",
+      "state",
+      "supplier_account",
+      "supplier_character",
+      "total_units",
+      "warehouse_lease_id"
+    ],
+    "company_logistics_hub_sources": [
+      "finance_request_id",
+      "hub_id",
+      "position",
+      "quantity",
+      "snapshot",
+      "state"
+    ],
+    "company_logistics_hub_requests": [
+      "account_id",
+      "action",
+      "receipt",
+      "request_key",
+      "terms"
+    ],
+    "buyer_cooperatives": [
+      "cash_balance",
+      "created_at",
+      "district",
+      "fee_cap",
+      "fee_paid",
+      "funding_deadline",
+      "gin_balance",
+      "id",
+      "organizer_account",
+      "organizer_character",
+      "published",
+      "purchased_units",
+      "status",
+      "terms",
+      "terms_hash",
+      "unit_price",
+      "units"
+    ],
+    "buyer_cooperative_members": [
+      "account_id",
+      "cash_claimed",
+      "cash_entitlement",
+      "cooperative_id",
+      "death_cash",
+      "death_gin",
+      "death_loot",
+      "funded_cash",
+      "funding_required",
+      "gin_claimed",
+      "gin_entitlement",
+      "is_dead",
+      "original_character",
+      "position",
+      "unit_share"
+    ],
+    "buyer_cooperative_orders": [
+      "cooperative_id",
+      "order_id"
+    ],
+    "buyer_cooperative_receipts": [
+      "account_id",
+      "created_at",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "buyer_cooperative_journal": [
+      "cash_delta",
+      "cooperative_id",
+      "created_at",
+      "gin_delta",
+      "id",
+      "kind",
+      "ledger_ids"
+    ],
+    "company_opportunity_subscriptions": [
+      "account_id",
+      "enabled",
+      "filters",
+      "next_refresh_at",
+      "revision"
+    ],
+    "company_opportunity_notices": [
+      "account_id",
+      "id",
+      "kind",
+      "snapshot",
+      "source_hash",
+      "source_id",
+      "updated_at"
+    ],
+    "commercial_reputation_publications": [
+      "account_id",
+      "published",
+      "revision"
+    ],
+    "commercial_reputation_proofs": [
+      "account_id",
+      "category",
+      "evidence_hash",
+      "original_character",
+      "recorded_at",
+      "source_id"
+    ],
+    "commercial_reputation_settlements": [
+      "account_id",
+      "source_id",
+      "transaction_id"
+    ],
+    "business_seasons": [
+      "body_hash",
+      "creator_account",
+      "ends_at",
+      "id",
+      "max_companies",
+      "name",
+      "request_key",
+      "source_pin",
+      "starts_at"
+    ],
+    "business_season_entries": [
+      "account_id",
+      "body_hash",
+      "depot_id",
+      "enrollment_receipt",
+      "next_observation_at",
+      "original_character",
+      "published",
+      "season_id",
+      "visibility_revision"
     ]
   }
 }

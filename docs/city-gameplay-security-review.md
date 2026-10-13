@@ -13,8 +13,10 @@ gameplay authority. Native-fixture repair source `9634fca0` addresses the first 
 SQL preparation, catalogue-count and upgrade-fixture failures without relaxing limits.
 The subsequent integration includes reviewed payroll main `f43ecf610b67e8b3ea90a57939a9c109d3f9bfab`
 and reviewed workflow/premises source `425de0010a3ee3500870a04e796029d671f464ef`.
-The closed gameplay transfer reconstructs the complete current parent before unchanged premises,
-workflow, employment,
+The final integration incorporates verified economics main `fb695d002198a67c68ff49df48469e033684e99c`
+(runtime `b39721e377066aa032f42bef9bdf9653acae7016`). The closed gameplay transfer reconstructs
+that complete parent before the unchanged season, reputation, opportunity, cooperative, logistics,
+bank, premises, workflow and employment layers,
 operator and older source-transfer layers. Those layers qualify source only, not the added
 gameplay, native migration, worker, activation or deployment authority. These pins identify
 the assembled candidate, not native or production qualification.
@@ -89,7 +91,9 @@ The workflow and premises integration preserves complete incoming runtime module
 command/ledger definitions and architecture JSON. Their real domain and JWT/estate memory
 checks pass with the gameplay source. Closed source normalization retains every predecessor
 assertion and negative control; it grants no new gameplay/native/deployment qualification.
-Source declares 64 native steps; actual final-head execution remains unobserved and mandatory.
+The integrated source retains the incoming measured 60-minute native bound and complete native
+command ledger, including all seven current-source gameplay proofs. Actual final-head execution
+remains unobserved and mandatory.
 
 The next hosted candidate `c3da2906` passed recovery and static SQL preparation on both
 native versions, then the full pretest failed at an inherited current-API assertion expecting
@@ -106,3 +110,15 @@ the same faults only after the real SQL/COMMIT and restoring the original method
 rollback, replay, custody and native race assertions remain unchanged. Full Home memory
 and actual installed-library protocol controls pass; controlled transport is not a database
 proof. The final repaired native and full release gates remain required.
+
+The repaired `e49380cc` candidate executed all seven new gameplay proofs successfully on actual
+PostgreSQL 16.15 and 18.4. A later Phase2 reference-catalog check failed because its manifest
+contained a 64-byte implicit foreign-key name; PostgreSQL permits 63 identifier bytes. Official
+16.15/18.4 naming constructors derive the exact 63-byte `item__fkey` suffix. Source `e20aff59`
+corrects only the fixture expectation, rejects overlength declarations before database access,
+and prints bounded DDL-name mismatches while retaining both strict metadata assertions. No
+production schema or native oracle was relaxed. The obsolete workflow was cancelled; full npm,
+RC1, simulation, browser and native backup/chaos/load/concurrency tails were not qualified.
+The incoming 18 economic tables, lifecycle and worker loops remain separate authority, with
+their full source and current-source tests preserved. Fresh combined six-gate qualification and
+API plus functional-worker rollout remain required.
