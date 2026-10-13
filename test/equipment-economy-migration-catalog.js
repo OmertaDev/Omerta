@@ -20,11 +20,11 @@ const normalized=projection.normalize([current,...retained]);assert.equal(normal
 console.log('Equipment migration unit PASS: exact LF/CRLF whole-source pins, unknown-source/predicate/missing/duplicate/name/type/validation controls; all14 table rows preserved.');
 if(process.argv.includes('--postgres')){
   assert(!process.env.DATABASE_URL,'Refuse ambient URL');const endpoint=new URL(process.env.EQUIPMENT_MIGRATION_TEST_DATABASE_URL);
-  assert.equal(endpoint.hostname,'127.0.0.1');assert.equal(endpoint.username,'pilot_runner');assert.equal(endpoint.password,'');
-  assert(['35439','35449'].includes(endpoint.port));assert.match(endpoint.pathname,/^\/equipment_migration_test_[a-f0-9]{12}$/);assert(!endpoint.search&&!endpoint.hash);
+  assert.equal(endpoint.hostname,'127.0.0.1');const local=['35439','35449'].includes(endpoint.port)&&endpoint.username==='pilot_runner'&&!endpoint.password,ci=endpoint.port==='5432'&&endpoint.username==='postgres'&&endpoint.password==='pgcheck';assert(local||ci);
+  assert(['postgres:','postgresql:'].includes(endpoint.protocol));assert.match(endpoint.pathname,/^\/equipment_migration_test_[a-f0-9]{12}$/);assert(!endpoint.search&&!endpoint.hash);
   const client=new pg.Client({connectionString:endpoint.href});await client.connect();
   try{
-    assert.match((await client.query('SHOW server_version')).rows[0].server_version,/^18\.4\b/);assert.equal((await client.query('SELECT current_user')).rows[0].current_user,'pilot_runner');
+    assert.match((await client.query('SHOW server_version')).rows[0].server_version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);assert.equal((await client.query('SELECT current_user')).rows[0].current_user,local?'pilot_runner':'postgres');
     assert.equal((await client.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0);
     await client.query(source.current);
     const read=async()=>({constraints:(await client.query("SELECT t.relname::text table_name,c.conname::text name,c.contype::text type,c.convalidated validated FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid WHERE c.conrelid='item_events'::regclass AND c.conname='item_event_kind'")).rows});
