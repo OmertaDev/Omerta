@@ -4580,6 +4580,666 @@
       "table_name": "worker_training_sessions",
       "name": "worker_training_sessions_wage_transaction_key",
       "definition": "UNIQUE (wage_transaction)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "commercial_dispute_requests",
+      "name": "commercial_dispute_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_check",
+      "definition": "CHECK (buyer_account <> supplier_account AND buyer_character <> supplier_character)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_check1",
+      "definition": "CHECK (state <> 'agreed'::text OR buyer_consent AND supplier_consent)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_check2",
+      "definition": "CHECK (state = 'settled'::text AND settlement_receipt IS NOT NULL OR state <> 'settled'::text AND settlement_receipt IS NULL)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_quote_hash_check",
+      "definition": "CHECK (char_length(quote_hash) = 64)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 4)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['proposed'::text, 'agreed'::text, 'settled'::text, 'withdrawn'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_supplier_account_fkey",
+      "definition": "FOREIGN KEY (supplier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_disputes",
+      "name": "commercial_disputes_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_check",
+      "definition": "CHECK ((state = 'executed'::text) = (receipt IS NOT NULL))"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "company_restructuring_plans",
+      "name": "company_restructuring_plans_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['ready'::text, 'executed'::text, 'cancelled'::text, 'expired'::text, 'owner_dead'::text]))"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "company_restructuring_requests",
+      "name": "company_restructuring_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_check",
+      "definition": "CHECK (payout_cash >= 1 AND payout_cash <= paid_fee)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_paid_fee_check",
+      "definition": "CHECK (paid_fee >= 1 AND paid_fee <= 1000)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_payout_id_fkey",
+      "definition": "FOREIGN KEY (payout_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_payout_id_key",
+      "definition": "UNIQUE (payout_id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_pkey",
+      "definition": "PRIMARY KEY (policy_id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES equipment_insurance_policies(id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_repair_id_fkey",
+      "definition": "FOREIGN KEY (repair_id) REFERENCES equipment_maintenance_repairs(id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_repair_id_key",
+      "definition": "UNIQUE (repair_id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_wear_event_id_fkey",
+      "definition": "FOREIGN KEY (wear_event_id) REFERENCES item_durability_uses(event_id)"
+    },
+    {
+      "table_name": "equipment_insurance_claims",
+      "name": "equipment_insurance_claims_wear_event_id_key",
+      "definition": "UNIQUE (wear_event_id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_baseline_sequence_check",
+      "definition": "CHECK (baseline_sequence >= 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_burned_cash_check",
+      "definition": "CHECK (burned_cash >= 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_check",
+      "definition": "CHECK (maximum_cash = (escrow_cash + paid_cash + refunded_cash + burned_cash))"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_check1",
+      "definition": "CHECK ((state <> ALL (ARRAY['closed'::text, 'claimed'::text])) OR escrow_cash = 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_check2",
+      "definition": "CHECK (insured_account IS NULL AND insured_character IS NULL AND item_id IS NULL AND accepted_at IS NULL AND baseline_sequence IS NULL OR insured_account IS NOT NULL AND insured_character IS NOT NULL AND item_id IS NOT NULL AND accepted_at IS NOT NULL AND expires_at IS NOT NULL AND baseline_sequence IS NOT NULL AND premium_debit_id IS NOT NULL AND premium_credit_id IS NOT NULL)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_coverage_seconds_check",
+      "definition": "CHECK (coverage_seconds >= 60 AND coverage_seconds <= 604800)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_insured_account_fkey",
+      "definition": "FOREIGN KEY (insured_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_insured_character_fkey",
+      "definition": "FOREIGN KEY (insured_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_insurer_account_fkey",
+      "definition": "FOREIGN KEY (insurer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_insurer_character_fkey",
+      "definition": "FOREIGN KEY (insurer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_maximum_cash_check",
+      "definition": "CHECK (maximum_cash >= 1 AND maximum_cash <= 1000)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_premium_cash_check",
+      "definition": "CHECK (premium_cash >= 1 AND premium_cash <= 1000)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_premium_credit_id_fkey",
+      "definition": "FOREIGN KEY (premium_credit_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_premium_credit_id_key",
+      "definition": "UNIQUE (premium_credit_id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_premium_debit_id_fkey",
+      "definition": "FOREIGN KEY (premium_debit_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_premium_debit_id_key",
+      "definition": "UNIQUE (premium_debit_id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_reserve_id_fkey",
+      "definition": "FOREIGN KEY (reserve_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_reserve_id_key",
+      "definition": "UNIQUE (reserve_id)"
+    },
+    {
+      "table_name": "equipment_insurance_policies",
+      "name": "equipment_insurance_policies_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'claimed'::text, 'recovery'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "equipment_insurance_requests",
+      "name": "equipment_insurance_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_insurance_requests",
+      "name": "equipment_insurance_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "infrastructure_concession_requests",
+      "name": "infrastructure_concession_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_check",
+      "definition": "CHECK (operator_account IS NULL AND operator_character IS NULL AND business_id IS NULL AND premises_lease_id IS NULL AND rental_lease_id IS NULL OR operator_account IS NOT NULL AND operator_character IS NOT NULL AND business_id IS NOT NULL AND premises_lease_id IS NOT NULL AND rental_lease_id IS NOT NULL AND operator_account <> landlord_account AND operator_character <> landlord_character)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_check1",
+      "definition": "CHECK (state <> 'accepted'::text OR operator_account IS NOT NULL)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_operator_account_fkey",
+      "definition": "FOREIGN KEY (operator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_operator_character_fkey",
+      "definition": "FOREIGN KEY (operator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_premises_lease_id_fkey",
+      "definition": "FOREIGN KEY (premises_lease_id) REFERENCES commercial_premises_leases(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_premises_offer_id_fkey",
+      "definition": "FOREIGN KEY (premises_offer_id) REFERENCES commercial_premises_offers(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_rental_lease_id_fkey",
+      "definition": "FOREIGN KEY (rental_lease_id) REFERENCES equipment_rental_leases(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_rental_offer_id_fkey",
+      "definition": "FOREIGN KEY (rental_offer_id) REFERENCES equipment_rental_offers(id)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 3)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "infrastructure_concessions",
+      "name": "infrastructure_concessions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_amount_cash_check",
+      "definition": "CHECK (amount_cash >= 100 AND amount_cash <= 5000)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_daily_cap_check",
+      "definition": "CHECK (daily_cap >= 100 AND daily_cap <= 5000)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_lifetime_cap_check",
+      "definition": "CHECK (lifetime_cap >= 100 AND lifetime_cap <= 10000)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_observed_profit_check",
+      "definition": "CHECK (observed_profit > 0::numeric)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_paid_before_check",
+      "definition": "CHECK (paid_before >= 0)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_profile_id_fkey",
+      "definition": "FOREIGN KEY (profile_id) REFERENCES territory_economics_profiles(id)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_share_bps_check",
+      "definition": "CHECK (share_bps >= 1 AND share_bps <= 2000)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_tribute_transaction_fkey",
+      "definition": "FOREIGN KEY (tribute_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_tribute_transaction_key",
+      "definition": "UNIQUE (tribute_transaction)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_withdraw_journal_fkey",
+      "definition": "FOREIGN KEY (withdraw_journal) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_withdraw_journal_key",
+      "definition": "UNIQUE (withdraw_journal)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_withdraw_transaction_fkey",
+      "definition": "FOREIGN KEY (withdraw_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "territory_economics_payments",
+      "name": "territory_economics_payments_withdraw_transaction_key",
+      "definition": "UNIQUE (withdraw_transaction)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_business_id_key",
+      "definition": "UNIQUE (business_id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_check",
+      "definition": "CHECK (paid_cash >= 0 AND paid_cash <= lifetime_cap)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_concession_id_fkey",
+      "definition": "FOREIGN KEY (concession_id) REFERENCES infrastructure_concessions(id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_daily_cap_check",
+      "definition": "CHECK (daily_cap >= 100 AND daily_cap <= 5000)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_district_id_fkey",
+      "definition": "FOREIGN KEY (district_id) REFERENCES districts(id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_lifetime_cap_check",
+      "definition": "CHECK (lifetime_cap >= 100 AND lifetime_cap <= 10000)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_original_account_fkey",
+      "definition": "FOREIGN KEY (original_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_share_bps_check",
+      "definition": "CHECK (share_bps >= 1 AND share_bps <= 2000)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "territory_economics_profiles",
+      "name": "territory_economics_profiles_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'closed'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_check",
+      "definition": "CHECK (receipt IS NULL AND actor_ref IS NULL AND account_ref IS NULL OR receipt IS NOT NULL AND actor_ref IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "territory_economics_requests",
+      "name": "territory_economics_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "territory_economics_sources",
+      "name": "territory_economics_sources_journal_id_fkey",
+      "definition": "FOREIGN KEY (journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "territory_economics_sources",
+      "name": "territory_economics_sources_payment_id_fkey",
+      "definition": "FOREIGN KEY (payment_id) REFERENCES territory_economics_payments(id)"
+    },
+    {
+      "table_name": "territory_economics_sources",
+      "name": "territory_economics_sources_pkey",
+      "definition": "PRIMARY KEY (journal_id)"
+    },
+    {
+      "table_name": "territory_economics_sources",
+      "name": "territory_economics_sources_profile_id_fkey",
+      "definition": "FOREIGN KEY (profile_id) REFERENCES territory_economics_profiles(id)"
     }
   ],
   "removed": [
@@ -6009,6 +6669,146 @@
       "request_key",
       "identity",
       "receipt"
+    ],
+    "company_restructuring_plans": [
+      "id",
+      "depot_id",
+      "account_id",
+      "original_character",
+      "revision",
+      "terms",
+      "source_hash",
+      "source_snapshot",
+      "expires_at",
+      "state"
+    ],
+    "company_restructuring_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "commercial_disputes": [
+      "id",
+      "commitment_id",
+      "order_id",
+      "depot_id",
+      "buyer_account",
+      "supplier_account",
+      "buyer_character",
+      "supplier_character",
+      "revision",
+      "quote_hash",
+      "source_quote",
+      "buyer_consent",
+      "supplier_consent",
+      "expires_at",
+      "state"
+    ],
+    "commercial_dispute_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "equipment_insurance_policies": [
+      "id",
+      "insurer_account",
+      "insurer_character",
+      "state",
+      "published",
+      "premium_cash",
+      "maximum_cash",
+      "coverage_seconds",
+      "offer_expires_at",
+      "reserve_id",
+      "escrow_cash",
+      "paid_cash",
+      "refunded_cash",
+      "burned_cash",
+      "insurer_dead"
+    ],
+    "equipment_insurance_requests": [
+      "account_id",
+      "request_key",
+      "action",
+      "identity",
+      "receipt"
+    ],
+    "equipment_insurance_claims": [
+      "policy_id",
+      "repair_id",
+      "wear_event_id",
+      "paid_fee",
+      "payout_cash",
+      "payout_id"
+    ],
+    "infrastructure_concessions": [
+      "id",
+      "landlord_account",
+      "landlord_character",
+      "premises_offer_id",
+      "rental_offer_id",
+      "source_hash",
+      "source_quote",
+      "revision",
+      "published",
+      "expires_at",
+      "state"
+    ],
+    "infrastructure_concession_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "territory_economics_profiles": [
+      "id",
+      "business_id",
+      "original_account",
+      "original_character",
+      "gang_id",
+      "district_id",
+      "concession_id",
+      "source_hash",
+      "baseline_ids",
+      "revision",
+      "enabled",
+      "share_bps",
+      "daily_cap",
+      "lifetime_cap",
+      "paid_cash",
+      "expires_at",
+      "next_run_at",
+      "state"
+    ],
+    "territory_economics_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "territory_economics_payments": [
+      "id",
+      "profile_id",
+      "revision",
+      "amount_cash",
+      "paid_before",
+      "day_key",
+      "observed_profit",
+      "share_bps",
+      "daily_cap",
+      "lifetime_cap",
+      "source_ids",
+      "withdraw_journal",
+      "withdraw_transaction",
+      "tribute_transaction",
+      "created_at"
+    ],
+    "territory_economics_sources": [
+      "journal_id",
+      "profile_id",
+      "payment_id"
     ]
   }
 }
