@@ -44,8 +44,8 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
 // A separate complete-source profile preserves the original first-five pins.
 // Only the three owned files and closed derivative outputs are excluded.
 export const CRITIQUE_ECONOMY_ADDITIVE_PAIR = Object.freeze({
-  predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: '50ef6e976ee2b9326352fd6641ba8c3317378c93',
-  predecessorTree: FIRST_FIVE_ADDITIVE_PAIR.predecessorTree, candidateTree: '4f3dd3c0bdd6537f2eee8222ccaf238b5eb8d36d4ba8f47ea84b376ce819def6',
+  predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: 'f2fa417ec5d05bab5bded20d3b11008c325115cf',
+  predecessorTree: FIRST_FIVE_ADDITIVE_PAIR.predecessorTree, candidateTree: '82256c4b19e65f6ea7b86bf9993ac477423baba4100793e42e688a4043392ea0',
   predecessorSchema: FIRST_FIVE_ADDITIVE_PAIR.predecessorSchema, candidateSchema: '58d8cc74253b4a63c63f3dbb73a4839dee035019f920050d9260b4b8310237cd',
   predecessorCatalog: FIRST_FIVE_ADDITIVE_PAIR.predecessorCatalog,
   candidateCatalog: FIRST_FIVE_ADDITIVE_PAIR.candidateCatalog,
