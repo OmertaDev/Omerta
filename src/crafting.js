@@ -237,6 +237,14 @@ function graphMutationAuthority(context, recipe) {
   };
 }
 
+/** Read-only immutable canonical recipe witness for manufacturing provenance adapters. */
+export function canonicalCraftAuthority(recipeId) {
+  const context = contextOf(DEFAULT_CRAFTING_CONTEXT);
+  const recipe = recipeOf(context, recipeId);
+  return Object.freeze({ recipe: Object.freeze(graphIdentity(context, recipe)),
+    consumes: inputsOf(recipe), produces: outputsOf(recipe), cashCost: cashCostOf(recipe) });
+}
+
 const normalizedKey = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');
 
 function numericDeclaration(recipe, keys) {

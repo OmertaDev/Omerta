@@ -4,10 +4,12 @@ import { AUTOMOTIVE_SALVAGE_PACKAGE } from './automotive-salvage.js';
 import { BELLADONNA_PACKAGE } from './belladonna.js';
 import { CORE_MATERIALS_PACKAGE } from './core-materials.js';
 import { NEIGHBORHOOD_INITIATION_PACKAGE } from './neighborhood-initiation.js';
+import { COMPANY_PRODUCTION_QUALITY_PACKAGE } from './company-production-quality.js';
 
 export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   CORE_MATERIALS_PACKAGE,
   AUTOMOTIVE_SALVAGE_PACKAGE,
   BELLADONNA_PACKAGE,
   NEIGHBORHOOD_INITIATION_PACKAGE,
+  COMPANY_PRODUCTION_QUALITY_PACKAGE,
 ]);
