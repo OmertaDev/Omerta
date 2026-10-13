@@ -428,6 +428,7 @@
           onRead: options.onWorldRead, onAction: options.onWorldAction, onRetry: options.onWorldRetry,
           onCrew: () => showGameDock('crew'), onJob: () => showGameDock('fixer'),
           onSelectCase: graphId => options.onSelectCase?.(graphId),
+          onContinueCase: graphId => openJournal(graphId),
           onCaseAction: (venueId, actionId, context) => options.onQuestAction?.(venueId, actionId, context),
           onLook: preset => { look = Object.hasOwn(lookTints, preset) ? preset : 'classic'; player?.setTint(lookTints[look]); } });
         document.getElementById('player-view-switch')?.classList.add('has-world-tools');
@@ -1929,17 +1930,20 @@
         };
       }
 
-    return {
-      async openJournal(graphId) {
+    async function openJournal(graphId) {
         if (destroyed || !worldUI) return false;
+        const identity = sceneIdentity(), scope = options.worldScopeKey;
         if (graphId !== undefined) {
           if (typeof graphId !== 'string' || options.casePending || options.worldRecovery
             || !options.caseJournal?.entries?.some(entry => entry.graphId === graphId)) return false;
           await options.onSelectCase?.(graphId);
-          if (destroyed || options.caseJournal?.selected !== graphId) return false;
+          if (destroyed || identity !== sceneIdentity() || scope !== options.worldScopeKey
+            || options.caseJournal?.selected !== graphId) return false;
         }
         worldUI.openJournal(); return true;
-      },
+    }
+    return {
+      openJournal,
       update: function (nextOptions) {
         if (destroyed || !nextOptions) return;
         const identity = sceneIdentity();

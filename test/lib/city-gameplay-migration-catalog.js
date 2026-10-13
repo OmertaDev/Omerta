@@ -182,7 +182,8 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
     const old = (await client.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
       WHERE conrelid='pg_temp.city_gameplay_previous_reference'::regclass`)).rows;
     // This separate current-source envelope does not broaden the immutable gameplay pin.
-    // Exactly one named predicate admits the new cooperative puzzle, with no column delta.
+    // Exactly two named predicates admit the new puzzle and mastery scenarios;
+    // neither changes the pinned rows, constraint metadata or column envelope.
     await client.query(`CREATE TEMP TABLE city_home_cooperative_reference (puzzle_id TEXT,
       CONSTRAINT puzzle_original CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome')),
       CONSTRAINT puzzle_current CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome','two-voices-v1'))
@@ -190,12 +191,34 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
     const puzzleRows = (await client.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
       WHERE conrelid='pg_temp.city_home_cooperative_reference'::regclass`)).rows;
     const puzzleDefinitions = new Map(puzzleRows.map(row => [row.conname,row.definition]));
-    assert.equal(puzzleDefinitions.size, 2);
+    assert.deepEqual([...puzzleDefinitions.keys()].sort(), ['puzzle_current', 'puzzle_original']);
+    await client.query(`CREATE TEMP TABLE city_encounter_mastery_reference (scenario_id TEXT,
+      CONSTRAINT scenario_original CHECK (scenario_id IN ('docks-patrol','neon-patrol','foundry-patrol','brick-patrol','canal-patrol','cathedral-patrol')),
+      CONSTRAINT scenario_current CHECK (scenario_id IN ('docks-patrol','neon-patrol','foundry-patrol','brick-patrol','canal-patrol','cathedral-patrol',
+        'docks-mastery-v1','neon-mastery-v1','foundry-mastery-v1','brick-mastery-v1','canal-mastery-v1','cathedral-mastery-v1'))
+    ) ON COMMIT DROP`);
+    const scenarioRows = (await client.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
+      WHERE conrelid='pg_temp.city_encounter_mastery_reference'::regclass`)).rows;
+    const scenarioDefinitions = new Map(scenarioRows.map(row => [row.conname,row.definition]));
+    assert.deepEqual([...scenarioDefinitions.keys()].sort(), ['scenario_current', 'scenario_original']);
     const puzzleKey = 'city_home_activities.city_home_activities_puzzle_id_check';
-    const originalPuzzle = rows.filter(row => constraintKey(row) === puzzleKey);
-    assert.equal(originalPuzzle.length, 1);
-    assert.equal(originalPuzzle[0].definition, puzzleDefinitions.get('puzzle_original'), 'The original pinned puzzle admission is exact');
-    const qualifiedRows = rows.map(row => constraintKey(row) === puzzleKey ? { ...row, definition: puzzleDefinitions.get('puzzle_current') } : row);
+    const scenarioKey = 'city_encounters.city_encounters_scenario_id_check';
+    const contentPredicates = new Map([
+      [puzzleKey, { original: puzzleDefinitions.get('puzzle_original'), current: puzzleDefinitions.get('puzzle_current') }],
+      [scenarioKey, { original: scenarioDefinitions.get('scenario_original'), current: scenarioDefinitions.get('scenario_current') }],
+    ]);
+    assert.deepEqual([...contentPredicates.keys()].sort(), [scenarioKey, puzzleKey]);
+    for (const [key, expected] of contentPredicates) {
+      const pinned = rows.filter(row => constraintKey(row) === key);
+      assert.equal(pinned.length, 1, `The original pinned ${key} exists exactly once`);
+      assert.equal(typeof expected.current, 'string'); assert.notEqual(expected.current, expected.original);
+      assert.equal(pinned[0].definition, expected.original, `The original pinned ${key} admission is exact`);
+    }
+    const qualifiedRows = rows.map(row => contentPredicates.has(constraintKey(row))
+      ? Object.freeze({ ...row, definition: contentPredicates.get(constraintKey(row)).current }) : row);
+    assert.deepEqual(qualifiedRows.filter((row, index) => row.definition !== rows[index].definition).map(constraintKey).sort(),
+      [scenarioKey, puzzleKey], 'Only the two declared content admission predicates differ from the immutable pin');
+    Object.freeze(qualifiedRows);
     await client.query('COMMIT');
     const oldDefinitions = new Map(old.map(row => [row.conname.slice('original_'.length), row.definition]));
     assert.equal(oldDefinitions.size, 4);
@@ -209,7 +232,7 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
     };
     const normalize = (actual, original) => {
       assert.deepEqual(sortBy(actual.filter(constraintScope), constraintKey), qualifiedRows,
-        'Gameplay migration preserves the immutable catalogue with only the separately declared cooperative puzzle replacement');
+        'Gameplay migration preserves the immutable catalogue with only the separately declared puzzle and mastery predicate replacements');
       for (const key of replaced) {
         const prior = original.filter(row => constraintKey(row) === key);
         assert.equal(prior.length, 1, `Original ${key} exists exactly once`);
