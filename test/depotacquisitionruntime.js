@@ -30,6 +30,18 @@ async function call(p, method, url, body, key = `combined-${++sequence}`, agent 
   return { code: r.statusCode, body: r.json(), headers: r.headers };
 }
 async function ok(...args) { const r = await call(...args); assert.equal(r.code, 200, JSON.stringify(r)); return r.body; }
+async function sameKeyReplay(...args) {
+  const deadline = Date.now() + 10000;
+  for (;;) {
+    const result = await call(...args);
+    if (result.code === 200) return result.body;
+    assert.equal(result.code, 409, JSON.stringify(result));
+    assert.equal(result.body.error, 'in_progress');
+    assert.equal(result.headers['retry-after'], '1');
+    assert(Date.now() < deadline, 'Original-key receipt must settle within the fixture bound');
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+}
 async function refusal(...args) { const r = await call(...args); assert([400, 409, 422].includes(r.code), JSON.stringify(r)); return r; }
 async function player() {
   const p = { token: (await ok(null, 'POST', '/v1/auth/guest')).token };
@@ -54,7 +66,7 @@ const seller=await player(),purchaser=await buyer(),supplier=await player(),fore
 await ok(seller,'POST',`/v1/depot/${seller.business}/fund`,{amount:5000});const order=await ok(seller,'POST',`/v1/depot/${seller.business}/restock`,{});const Economy=await import('../src/economy.js'),Market=await import('../src/market.js');await G.withCharacter(app.pool,supplier.account,(ch,c,h)=>Economy.buyGood(ch,'gin',2,c,h));await G.withCharacter(app.pool,supplier.account,(ch,c,h)=>Market.fillOrder(ch,order.id,2,c,h));await ok(seller,'POST',`/v1/depot/${seller.business}/orders/${order.id}/receive`,{});
 const before=await snapshot(seller.business),balances=[await cash(seller),await cash(purchaser)];assert.equal(Number(before.depot.stock),2);assert.equal(Number(before.depot.stock_cost),1000);const r=await deal(seller,purchaser),body={termsHash:r.termsHash};
 await assert.rejects(pair(seller,purchaser,async(s,b,c,h)=>{await service.execute(s,b,r.id,body,'late-full',c,h);throw Error('late whole acquisition fault');}),/late whole acquisition fault/);assert.deepEqual(await snapshot(seller.business),before);assert.deepEqual([await cash(seller),await cash(purchaser)],balances);assert.equal((await app.pool.query('SELECT state FROM company_acquisitions WHERE id=$1',[r.id])).rows[0].state,'accepted');assert.equal((await app.pool.query("SELECT request_key FROM company_acquisition_requests WHERE request_key='late-full'")).rows.length,0);
-const paid=native?await Promise.all([ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true),ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)]):[await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)];assert.deepEqual(paid[0],await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute'));if(native)assert.deepEqual(paid[0],paid[1]);assert.equal(paid[0].acquisition.ownershipTransferred,true);const after=await snapshot(seller.business);assert.deepEqual(after,{...before,depot:{...before.depot,owner_character:purchaser.id}});assert.deepEqual([await cash(seller),await cash(purchaser)],[balances[0]+10000,balances[1]-10000]);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[r.id])).rows.length,2);
+const paid=native?await Promise.all([sameKeyReplay(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true),sameKeyReplay(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)]):[await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute',true)];assert.deepEqual(paid[0],await ok(seller,'POST',base+'/'+r.id+'/execute',body,'execute'));if(native)assert.deepEqual(paid[0],paid[1]);assert.equal(paid[0].acquisition.ownershipTransferred,true);const after=await snapshot(seller.business);assert.deepEqual(after,{...before,depot:{...before.depot,owner_character:purchaser.id}});assert.deepEqual([await cash(seller),await cash(purchaser)],[balances[0]+10000,balances[1]-10000]);assert.equal((await app.pool.query('SELECT id FROM transactions WHERE counterparty=$1',[r.id])).rows.length,2);
 assert.equal((await call(seller,'POST',`/v1/depot/${seller.business}/configure`,config)).code,400);await ok(purchaser,'POST',`/v1/depot/${seller.business}/configure`,{...config,salePrice:1100},'buyer-configure',true);assert.equal((await call(foreign,'POST',`/v1/depot/${seller.business}/configure`,config)).code,400);await global();
 const controlled=await player(),candidate=await buyer();await ok(controlled,'POST',`/v1/depot/${controlled.business}/policy`,{expectedRevision:0,enabled:false,allowRestock:false,allowReceive:false,businessPriority:false,maxSpend:0,reserveCash:1000,expiresInSeconds:600});assert.equal((await call(controlled,'POST',base+'/quote',{depotId:controlled.business,buyerCharacter:candidate.id})).body.message,'policy_archive_required');
 const pending=await player();await ok(pending,'POST',`/v1/depot/${pending.business}/fund`,{amount:5000});await ok(pending,'POST',`/v1/depot/${pending.business}/restock`,{});assert.equal((await call(pending,'POST',base+'/quote',{depotId:pending.business,buyerCharacter:candidate.id})).body.message,'market');
