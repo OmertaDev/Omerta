@@ -1,0 +1,17 @@
+# Fourth batch source transfer proposal
+
+Reviewed implementation: 209876b17b8362ddb85bbb8f44b76ef28840eb17. Gameplay/schema source: a303fc98a8ea27e4071f326c7894422e48fad45b. Exact predecessor: 90fed962b73a6e20717af4c89f4691d42fb70a1b, provisional release only; no deployed claim.
+
+Scope is eight literal complete-source domains: package.json, schema.sql, src/agentgateway.js, src/invariants.js, src/market.js, src/server.js, src/social/estate.js and src/worker.js. Each SHA256/Git blob and all28 inverses were checked against actual immutable Git diff contexts. Source inversion transfers no historical/native/world/financial qualification. No runtime, schema, catalog, source-profile, package, CI or generated outputs changed.
+
+FOURTH accepts only exact LF or pure CRLF known bytes. Unknown representations pass through byte-exact. FIRST/SECOND pass raw input to the next adapter before applying their original historical known-source normalization. THIRD composes FOURTH and retains its original inverses. Its test fixture read alone unwraps FOURTH, preserving the original six-domain/101 controls. No pin/inverse changes or new exclusions. Native equipment projection composes through existing THIRD schema entry; its exact predicate and all metadata rows remain unchanged.
+
+Memory checks PASS: FOURTH8 domains/28 hunks/195 negatives; FIRST15/189; SECOND14/356; THIRD6/101; equipment migration unit; business-season4 hunks/33 negatives. IV mixed/BOM/altered/appended bytes pass raw through the three baselines and reject through actual City/Deed/Franchise entrypoints. Removed/duplicated/reordered contexts fail FOURTH. Reconstructing the exact historical predecessor legitimately enters old historical controls, so those bytes are not falsely labelled globally unknown.
+
+Legacy limitation: playerIntelSourceBaseline and several old callers normalize unknown input or input before invocation. The proposal makes no universal historical EOL rejection claim and expands no caller permission. Initial forwarding-only failures on old historical pure-CRLF assertions were retained, then corrected by post-forwarding known-source normalization. The initial new-test expectation that exact historical reconstruction should remain unknown was corrected; its raw console failure was not persisted as a log.
+
+PostgreSQL verification is pending root recovery approval. 13tables/132constraints/114NOT NULL and total1048 existing added constraints are independently frozen catalog bindings checked in the focused unit test; this does not itself prove native schema validity or populated authority. Local16 has not run. Financial/paid-compute activation remains OFF.
+
+Manual methods: pinned policy Pashov execution/invariant/boundary passes, Plamen state/callback/refusal traces, and Trail of Bits source/specification and negative-property comparison; no complete upstream orchestration claim. Static triage inspected known callers and exact composition with native rg/Git. No broad security audit or release clearance.
+
+Durable source, mapping, logs and hash manifest: C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/game-employment/fourth-source-transfer-proposal. Resume native helper and Phase2 definitions/lots on an approved owned parent after root confirms PostgreSQL recovery; never remove unknown residue or broaden endpoint guards.
