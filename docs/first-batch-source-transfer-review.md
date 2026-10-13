@@ -1,4 +1,12 @@
-# First-batch exact source transfer: initial wired runtime
+# First-batch exact source transfer: final wired runtime
+
+Final guard implementation: `22def94a014ee551654286ba0f5154c3aa9c724a`. Final root runtime/gateway/package revision: `cf13ff307e70bbd3a6e9081a266433b31bd3d814`; complete predecessor: `30f61aeb3dbb6deac89591b0fcd57d3f6b51574c`. The fifteen-domain envelope includes the exact new gateway declaration, package test wiring, and company-economy-contracts module. The latter and the authored quality package have explicit predecessor absence. Market, worker, and estate remain complete unchanged predecessor bytes. The final new guard passes 104 complete-text, 28 SHA256, 28 Gitblob comparisons, 24 actual unique Git inverse hunks, and 173 rejecting controls, including CRLF. No runtime/package/catalog/CI file was changed by this follow-up.
+
+Root independently introduced a closed one-node production catalog inverse before its unchanged nine-node City inverse. Read-only inspection confirms complete current/predecessor and literal addition hashes; unknown catalog bytes retain strict historical refusal/UNKNOWN behavior. The checkpoint test passes with exactly ten removed additions. This catalog change is a root-owned dependency, not an automatic effect of source normalization or historical execution clearance. Final source-cohort logs are separately retained with `final-` names; initial failures below remain historical diagnostics.
+
+Final cohort result: **41/41 PASS**, including every historical source guard in the retained inventory, complete-envelope negatives, independent checkpoint catalog, world qualification, backlog, lifecycle/worker schedule/transitions, duration/checkpoint series, source-pair, resource/observer/order/market and provenance controls. The two explicitly native-only harnesses from the initial inventory remain unexecuted as native runs; source-only passing controls never replace their required runtime evidence. Full final result inventory and raw log hashes are retained in `output/first-batch-source-guard/final-manifest.json`.
+
+## Retained initial stage
 
 Guard implementation: `d17c8df0708d26a1a8a3d79fafc04214f11d5534`. Reviewed runtime: `9c7d7c7163d7b29ee732a790bb3297e91d779f2f`; complete predecessor: `30f61aeb3dbb6deac89591b0fcd57d3f6b51574c`. Scope is source compatibility only. Gateway discovery and mandatory package wiring are still root-owned follow-ups and are not blessed by these provisional pins. Financial activation remains off.
 
@@ -18,6 +26,6 @@ Initial backlog and City direct-source failures demonstrated the missing outer e
 
 The repository's pinned Pashov (`c577eb7799c349de0acb187ba00ca98e14e436fd`), Plamen (`795962b96e254f2e423a2635fe7f8cb8ea1e6d69`), and Trail of Bits (`d3323cefbcf645678b8dc481de204b02ad3d02dc`) methods were adapted to this exact-byte trust boundary: authority/scope tracing, adversarial source mutations, and complete Git/static inverse comparison. This is not execution of Solidity analyzers, whole-repository review, new game-domain accounting clearance, retained private-world execution, native catalog qualification, or release approval.
 
-## Required final maintenance
+## Final maintenance completed
 
-Once root announces the final source revision, add the demonstrated gateway and new company-economy-contracts module domains (new-module predecessor absence), and regenerate complete pins plus exact package test-wire inverse. The finite domain count becomes fifteen unless the actual final diff proves another authorized change. Rerun the new complete-envelope controls, affected historical cohort, and root's independent catalog tests. Do not dynamically bless observed catalog nodes or derive source acceptance from a runtime assertion. Root owns package, gateway, migrations, catalog, CI, census, and release checks; this review provides no waiver for any of them.
+The announced final revision is pinned above, including the gateway and new company-economy-contracts module domains and exact package test-wire inverse. Domain count is fifteen. The final cohort reruns complete-envelope controls and affected historical/catalog tests without modifying their pins or assertions. No observed catalog node is dynamically blessed. Root owns package, gateway, migrations, catalog, CI, census, native runtime evidence, and release checks; this review provides no waiver for any of them. New source hashes do not qualify new game-domain accounting, execution, item authority, or native-world behavior.
