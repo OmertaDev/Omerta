@@ -65,3 +65,24 @@ assert.throws(()=>qualifySecondBatchAdditiveBootstrap(old,fresh,predecessor,cand
 assert.deepEqual(qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate),qualified);
 for(const file of ['src/equipmentrentals.js','src/social/estate.js','.github/workflows/ci.yml','test/lib/equipment-economy-migration-catalog.js','knowledge/generated/not-listed.md'])assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords,record(file)]),sourceHash,'Second batch grants no new source exclusion');
 console.log(`rc1-source-pair-additive SECOND PASS: separate14-empty-table relation, ${secondNegatives} negatives, cross-relation refusal, exact unknown/old rows/sequences/catalog/source and unchanged original7 identity; no populated authority or backing claim`);
+
+const { SOURCE_PAIR_COMMAND_WINDOW: clockPolicy, sourcePairCommandWindow, waitForSourcePairCommandWindow, assertSourcePairCommandWindow } = await import('../tools/rc1-source-pair.js');
+assert.deepEqual(clockPolicy,{periodMs:600000,minimumCampaignMs:240000,schedulingHeadroomMs:30000,waitSliceMs:30000});
+assert.equal(sourcePairCommandWindow(330000).ready,true);
+assert.equal(sourcePairCommandWindow(330001).ready,false);
+assert.equal(sourcePairCommandWindow(600000).remainingMs,600000);
+for(const at of[-1,NaN,Infinity,0.5])assert.throws(()=>sourcePairCommandWindow(at),/Invalid/);
+let simulatedNow=599999;const waits=[];
+const scheduled=await waitForSourcePairCommandWindow({now:()=>simulatedNow,sleep:async ms=>{waits.push(ms);simulatedNow+=ms;}});
+assert.deepEqual(waits,[1]);assert.equal(scheduled.scheduledExpiresAt,new Date(1200000).toISOString());
+simulatedNow=330001;waits.length=0;
+await waitForSourcePairCommandWindow({now:()=>simulatedNow,sleep:async ms=>{waits.push(ms);simulatedNow+=ms;}});
+assert(waits.every(ms=>ms>0&&ms<=30000));assert.equal(waits.reduce((a,b)=>a+b,0),269999);
+await assert.rejects(waitForSourcePairCommandWindow({now:()=>599999,sleep:async()=>{throw Error('human interruption');}}),/human interruption/);
+const actualDeadline=new Date(600000).toISOString();assert.equal(assertSourcePairCommandWindow(actualDeadline,599999,'before').remainingMs,1);
+assert.throws(()=>assertSourcePairCommandWindow(actualDeadline,600000,'boundary'),/expired/);
+assert.throws(()=>assertSourcePairCommandWindow(actualDeadline,600001,'after'),/expired/);
+assert.throws(()=>assertSourcePairCommandWindow('invalid',0,'invalid'),/Invalid/);
+negative('expired-window added board remains a strict old-table change',(a,b)=>{a.tables.player_command_boards=['{"id":"old","expires_at":"old"}'];b.tables.player_command_boards=[...a.tables.player_command_boards,'{"id":"fresh","expires_at":"new"}'];},/row\/table changed/);
+secondNegative('clock metadata never normalizes a new projection',(a,b)=>{a.tables.player_command_boards=['{"id":"old","expires_at":"old"}'];b.tables.player_command_boards=[...a.tables.player_command_boards,'{"id":"fresh","expires_at":"new"}'];},/row\/table changed/);
+console.log('rc1-source-pair timing PASS: real-window scheduler bounds, exact boundary refusal, interrupt propagation, strict new-cache-row refusal in both historical relations; no runtime clock or TTL override');

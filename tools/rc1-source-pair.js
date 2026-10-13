@@ -8,11 +8,32 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync, fork } from 'node:child_process';
 import { Pool } from 'pg';
+import { setTimeout as delay } from 'node:timers/promises';
 import { canonicalDatabaseSnapshot, canonicalJson, sha256 } from './rc1-native-proof.js';
 import { sourceInventory } from './rc1-qualification.mjs';
 
 const option = (name, fallback) => process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? process.env[fallback];
 const accounts = ['rc1-pair-predecessor', 'rc1-pair-candidate'];
+export const SOURCE_PAIR_COMMAND_WINDOW = Object.freeze({ periodMs: 600000, minimumCampaignMs: 240000, schedulingHeadroomMs: 30000, waitSliceMs: 30000 });
+export function sourcePairCommandWindow(at) {
+  assert(Number.isSafeInteger(at) && at >= 0, 'Invalid source-pair wall clock');
+  const expires = (Math.floor(at / SOURCE_PAIR_COMMAND_WINDOW.periodMs) + 1) * SOURCE_PAIR_COMMAND_WINDOW.periodMs;
+  return { scheduledAt: new Date(at).toISOString(), scheduledExpiresAt: new Date(expires).toISOString(), remainingMs: expires - at,
+    ready: expires - at >= SOURCE_PAIR_COMMAND_WINDOW.minimumCampaignMs + SOURCE_PAIR_COMMAND_WINDOW.schedulingHeadroomMs };
+}
+export async function waitForSourcePairCommandWindow({ now = Date.now, sleep = delay, onWait = () => {} } = {}) {
+  for (;;) {
+    const window = sourcePairCommandWindow(now());
+    if (window.ready) return window;
+    const waitMs = Math.min(SOURCE_PAIR_COMMAND_WINDOW.waitSliceMs, window.remainingMs);
+    onWait({ ...window, waitMs }); await sleep(waitMs);
+  }
+}
+export function assertSourcePairCommandWindow(expiresAt, at, label) {
+  assert(Number.isSafeInteger(at) && at >= 0 && Number.isFinite(Date.parse(expiresAt)), 'Invalid source-pair command deadline');
+  assert(at < Date.parse(expiresAt), `${label}: actual issued command-board window expired; strict no-cache-write rehearsal failed`);
+  return { label, at: new Date(at).toISOString(), expiresAt, remainingMs: Date.parse(expiresAt) - at };
+}
 const additiveOwnedFiles = new Set(['tools/rc1-source-pair.js', 'test/rc1-source-pair-additive.js', 'docs/rc1-source-pair-additive-review.md']);
 // Derivative review outputs, not runtime, fixture or schema authority. Keep this literal closed
 // list; full checkout inventories retain their bytes and repository knowledge checks qualify them.
@@ -331,6 +352,8 @@ export async function runSourcePair() {
       reason: 'stampSchema updates timestamp and source schema hash on bootstrap. Validate the source stamp before comparing data; retain both raw snapshots and source descriptors.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
     receiptComparison: 'Validate completed command schema and database instance/owner/graph/mutation receipt, then compare durable result, identity and immediate feedback. Fresh projection/asOf and differential feedback are retained but not byte-compared.',
+    commandWindowPolicy: { ...SOURCE_PAIR_COMMAND_WINDOW, rule: 'FIRST board issuance waits for a real-clock scheduling window; actual stored board expiry bounds every subsequent replay and measured snapshot. No clock/TTL override or refreshed original board.',
+      scope: 'Strict no-cache-write comparison only inside the same actual ten-minute command-board window. Expired-board ACK legitimately issues a new projection on both versions and is not qualified by this rehearsal; all rows/sequences remain strict.' },
     additiveBootstrapPolicy: { predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate,
       stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
       sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test/scoped review and the ten literal derivative knowledge outputs; full checkout inventories retain all bytes',
@@ -345,6 +368,11 @@ export async function runSourcePair() {
   const event = (value) => syncFs.appendFileSync(path.join(output, 'history.jsonl'),
     JSON.stringify({ at: new Date().toISOString(), ...value }) + '\n', { mode: 0o600 });
   const phase = (value) => { report.phase = value; event({ phase: value }); update('result.json', report); };
+  const checkCommandWindow = (label) => {
+    if (!report.commandWindow?.firstBoardExpiresAt) return;
+    const checked = assertSourcePairCommandWindow(report.commandWindow.firstBoardExpiresAt, Date.now(), label);
+    report.commandWindow.checks.push(checked); update('result.json', report);
+  };
   const receipts = [], replays = [], children = [];
   update('receipts.json', receipts); update('replays.json', replays);
   let candidate, predecessor, admin, pool, env, running, count = 0, requests = 0, hardStopTimer;
@@ -432,14 +460,25 @@ export async function runSourcePair() {
   };
   async function execute(account) {
     phase(`execute-${account}`);
+    checkCommandWindow(`before issuance ${account}`);
     const board = await request(account, 'GET', '/v1/commands');
     const command = board.commands.find((row) => row.commandType === 'mystery.start' && row.availability === 'AVAILABLE');
     assert(command, 'Expected ordinary issued mystery.start command');
     const key = command.executionIdentity.executionId, payload = { executionId: key, confirmed: true };
+    const issued = (await interrupted(pool.query('SELECT expires_at FROM player_command_boards WHERE id=$1 AND account_id=$2', [key.split('.')[0], account]))).rows[0];
+    assert(issued, 'Actual issued command board missing');
+    const expiresAt = new Date(issued.expires_at).toISOString();
+    if (!report.commandWindow.firstBoardExpiresAt) {
+      assert.equal(expiresAt, report.commandWindow.scheduledExpiresAt, 'First issuance crossed the scheduled real window');
+      assert(Date.parse(expiresAt) - Date.now() >= SOURCE_PAIR_COMMAND_WINDOW.minimumCampaignMs, 'Actual board has insufficient measured campaign margin');
+      report.commandWindow.firstBoardExpiresAt = expiresAt; report.commandWindow.firstExecutionId = key;
+    } else assert.equal(expiresAt, report.commandWindow.firstBoardExpiresAt, 'Later issuance crossed the actual original window');
+    checkCommandWindow(`issued ${account}`);
     const graphId = command.parameters.graphId;
     const preCommandInstances = await interrupted(assertFreshMysteryStart(pool, account, graphId));
     put(`before-command-${receipts.length + 1}.json`, { account, graphId, preCommandInstances, key });
     const result = await request(account, 'POST', '/v1/commands/execute', payload, key);
+    checkCommandWindow(`executed ${account}`);
     validateMysteryResult(result, key, false);
     const receipt = { account, graphId, preCommandInstances, key, payload, result };
     receipt.durable = await interrupted(assertDurableMystery(pool, receipt));
@@ -449,8 +488,10 @@ export async function runSourcePair() {
   async function replayAll(label) {
     phase(label);
     for (const receipt of receipts) {
+      checkCommandWindow(`before ${label}: ${receipt.account}`);
       const result = await request(receipt.account, 'POST', '/v1/commands/execute', receipt.payload, receipt.key);
       replays.push({ label, account: receipt.account, result }); update('replays.json', replays);
+      checkCommandWindow(`after ${label}: ${receipt.account}`);
       validateMysteryResult(result, receipt.key, true);
       const durable = await interrupted(assertDurableMystery(pool, { ...receipt, result }));
       assert.deepEqual(durable, receipt.durable, `${label}: durable database receipt changed`);
@@ -481,6 +522,7 @@ export async function runSourcePair() {
       abort.signal.addEventListener('abort', clear, { once: true });
     }));
     const raw = await interrupted(canonicalDatabaseSnapshot(pool)); put(`${label}.json`, raw);
+    checkCommandWindow(`measured ${label}`);
     const value = normalized(raw), hash = sha256(canonicalJson(value));
     report.assertions.push({ id: label, stateSha256: hash, rawStateSha256: raw.stateSha256 }); update('result.json', report); return value;
   }
@@ -534,11 +576,20 @@ export async function runSourcePair() {
       assert.equal(sha256(schema), identity.inventory.find(([file]) => file === 'schema.sql')?.[1], 'Schema source bytes changed');
       assert.equal(sha256(packageBytes), identity.inventory.find(([file]) => file === 'package.json')?.[1], 'Package source bytes changed');
       schemas.set(root, { schema, appVersion: JSON.parse(packageBytes).version || '0.0.0' });
+      const commandBytes = await fs.readFile(path.join(root, 'src/player-commands.js'));
+      assert.equal(sha256(commandBytes), identity.inventory.find(([file]) => file === 'src/player-commands.js')?.[1], 'Command source bytes changed');
+      assert(commandBytes.toString('utf8').replaceAll('\r\n', '\n').split('\n').includes('const LIFETIME_MS = 10 * 60 * 1000;'), 'Unsupported command-board lifetime source');
     }
     predecessorSchema = schemas.get(previous).schema; candidateSchema = schemas.get(cwd).schema;
     put('schema-comparison.json', { predecessor: { source: predecessor.source, schemaSha256: sha256(predecessorSchema), appVersion: schemas.get(previous).appVersion },
       candidate: { source: candidate.source, schemaSha256: sha256(candidateSchema), appVersion: schemas.get(cwd).appVersion }, normalization: report.normalization });
-    await start(previous, true); await snapshot('fixture'); await execute(accounts[0]);
+    await start(previous, true); await snapshot('fixture');
+    phase('schedule-first-command-real-window');
+    report.commandWindow = { ...await waitForSourcePairCommandWindow({
+      sleep: (ms) => delay(ms, undefined, { signal: abort.signal }),
+      onWait: (value) => { event({ kind: 'command-window-wait', ...value }); console.log(JSON.stringify({ phase: 'command-window-wait', waitMs: value.waitMs, remainingMs: value.remainingMs })); },
+    }), checks: [] };
+    update('result.json', report); await execute(accounts[0]);
     const oldCommitted = await snapshot('predecessor-committed'); await stop();
     await start(cwd); equal(oldCommitted, await snapshot('upgraded'), 'upgrade preserves acknowledged state', true);
     await replayAll('predecessor receipt after upgrade'); equal(oldCommitted, await snapshot('upgrade-replayed'), 'upgrade replay creates no new effect', true);
@@ -550,7 +601,11 @@ export async function runSourcePair() {
     assert.deepEqual(await interrupted(sourcePairIdentity(cwd)), candidate, 'Candidate bytes changed');
     assert.deepEqual(await interrupted(sourcePairIdentity(previous)), predecessor, 'Predecessor bytes changed');
     abort.signal.throwIfAborted(); report.status = 'PASS_SCOPED';
-  } catch (error) { failure(error); }
+  } catch (error) {
+    failure(error);
+    if (pool && !abort.signal.aborted) try { put('failure-state.json', await canonicalDatabaseSnapshot(pool)); }
+    catch (captureError) { report.failureStateCaptureError = captureError.message; update('result.json', report); }
+  }
   finally {
     for (const child of children) {
       try { await stopSourcePairChild(child); }
