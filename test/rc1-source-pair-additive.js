@@ -35,8 +35,8 @@ console.log('rc1-source-pair-additive PASS: exact reviewed seven-empty-table rel
 const { SECOND_BATCH_ADDITIVE_PAIR: secondPin,qualifySecondBatchAdditiveBootstrap }=await import('../tools/rc1-source-pair.js');
 const { EQUIPMENT_ECONOMY_MIGRATION_TABLES }=await import('./lib/equipment-economy-migration-catalog.js');
 assert.deepEqual(secondPin.tables,[...EQUIPMENT_ECONOMY_MIGRATION_TABLES].sort());
-assert.equal(secondPin.predecessor,'ed903348ee59e354bfae72bfbc2aed8273229bb2');
-assert.equal(secondPin.reviewedCandidate,'8b13aeebe3d0a5bc43b61e6eb23d5f39a4c0e507');
+assert.equal(secondPin.predecessor,'18e28bda62759c4d18aaefea461a407b43c0b62f');
+assert.equal(secondPin.reviewedCandidate,'fdfd83148401e8e1cebc9b3246b552eb8eaf0a87');
 const secondPredecessor={source:secondPin.predecessor,secondBatchAdditiveSource:{tree:secondPin.predecessorTree,schema:secondPin.predecessorSchema,catalog:secondPin.predecessorCatalog}},secondCandidate={source:secondPin.reviewedCandidate,secondBatchAdditiveSource:{tree:secondPin.candidateTree,schema:secondPin.candidateSchema,catalog:secondPin.candidateCatalog,catalogTables:Object.fromEntries(secondPin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
 const secondOld={tables:{...old.tables,unknown_existing_custody:['{"owner":"original","reserved":3}']},sequences:structuredClone(old.sequences)},secondFresh={tables:{...secondOld.tables,...Object.fromEntries(secondPin.tables.map(name=>[name,[]]))},sequences:structuredClone(secondOld.sequences)};
 const secondQualified=qualifySecondBatchAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate);
