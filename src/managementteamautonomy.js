@@ -31,13 +31,15 @@ export async function replayManagementTeamAutonomy(pool,account,planId,body,key)
 async function context(c,ch,other,planId){
  const hint=(await c.query('SELECT partnership_id,proposal_id FROM management_team_plans WHERE id=$1',[id(planId)])).rows[0];if(!hint)fail('plan');
  const snapshot=await V.companyGovernanceSnapshot(ch,other,hint.partnership_id,c);
- const r=(await c.query('SELECT * FROM business_partnerships WHERE id=$1 FOR UPDATE',[hint.partnership_id])).rows[0];
+ const relationshipHint=(await c.query('SELECT depot_id FROM business_partnerships WHERE id=$1',[hint.partnership_id])).rows[0];if(!relationshipHint)fail('plan');
+ const depot=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[relationshipHint.depot_id])).rows[0];
+ const policy=await latestPolicy(c,relationshipHint.depot_id,true);
+ const r=(await c.query('SELECT * FROM business_partnerships WHERE id=$1 FOR UPDATE',[hint.partnership_id])).rows[0];if(!r||r.depot_id!==relationshipHint.depot_id)fail('source_or_votes');
  const proposal=(await c.query('SELECT * FROM company_governance_proposals WHERE id=$1 FOR UPDATE',[hint.proposal_id])).rows[0];
  const votes=(await c.query('SELECT * FROM company_governance_votes WHERE proposal_id=$1 ORDER BY account_id FOR UPDATE',[hint.proposal_id])).rows;
  const team=(await c.query('SELECT * FROM management_teams WHERE partnership_id=$1 FOR UPDATE',[hint.partnership_id])).rows[0];
  const plan=(await c.query('SELECT * FROM management_team_plans WHERE id=$1 FOR UPDATE',[planId])).rows[0];
- const depot=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[r.depot_id])).rows[0];
- const policy=await latestPolicy(c,r.depot_id,true),at=await now(c);
+ const at=await now(c);
  if(!ch.alive||!other.alive||ch.is_npc||other.is_npc||ch.id!==r.owner_character||ch.account_id!==r.owner_account||other.id!==r.partner_character||other.account_id!==r.partner_account||!team||team.retired||!team.operator_opted||!team.planner_opted||team.relationship_hash!==r.terms_hash||!plan||plan.state!=='planned'||Number(plan.team_revision)!==Number(team.revision)||plan.snapshot_hash!==snapshot.snapshotHash||proposal?.state!=='pending'||proposal.proposal_hash!==plan.proposal_hash||proposal.snapshot_hash!==plan.snapshot_hash||Number(proposal.revision)!==snapshot.revision||votes.length!==2||votes.some(v=>v.approve!==true||v.proposal_hash!==proposal.proposal_hash||v.character_id!==(v.account_id===r.owner_account?r.owner_character:v.account_id===r.partner_account?r.partner_character:null)||+new Date(v.voted_at)<+new Date(proposal.created_at)||+new Date(v.voted_at)>at))fail('source_or_votes');
  if(at>=+new Date(plan.expires_at)||at>=+new Date(r.expires_at)||at>=+new Date(proposal.expires_at))fail('expired');
  return{r,proposal,team,plan,depot,policy,at};
@@ -58,15 +60,16 @@ async function setAutonomy(ch,other,planId,body,key,c,agent){
 }
 async function validate(c,cap,after=false){
  const s=capabilities.get(cap),scope=scopes.getStore();if(!s||!s.active||!scope?.active||scope.client!==c||s.transaction!==itemTransactionIdentity(c))fail('scope');
- const g=(await c.query('SELECT * FROM management_team_autonomy_grants WHERE plan_id=$1 FOR UPDATE',[s.planId])).rows[0],team=(await c.query('SELECT * FROM management_teams WHERE partnership_id=$1 FOR UPDATE',[s.relationshipId])).rows[0],p=(await c.query('SELECT * FROM management_team_plans WHERE id=$1 FOR UPDATE',[s.planId])).rows[0];
- const d=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[s.depotId])).rows[0],policy=await latestPolicy(c,s.depotId,true),at=await now(c);
+ // Reacquire in the same Depot→team→plan→grant order as the retry path.
+ const d=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[s.depotId])).rows[0],policy=await latestPolicy(c,s.depotId,true);
+ const team=(await c.query('SELECT * FROM management_teams WHERE partnership_id=$1 FOR UPDATE',[s.relationshipId])).rows[0],p=(await c.query('SELECT * FROM management_team_plans WHERE id=$1 FOR UPDATE',[s.planId])).rows[0],g=(await c.query('SELECT * FROM management_team_autonomy_grants WHERE plan_id=$1 FOR UPDATE',[s.planId])).rows[0],at=await now(c);
  if(!g?.enabled||g.consumed!==after||g.grant_hash!==s.grantHash||grantHash(g)!==g.grant_hash||!team?.allow_autonomous||team.retired||!team.operator_opted||!team.planner_opted||Number(team.revision)!==Number(g.team_revision)||p?.plan_hash!==g.plan_hash||p.state!==(after?'executed':'planned')||d?.status!=='open'||d.owner_character!==g.original_owner||hash(policy)!==g.policy_hash||hash(config(d))!==hash(after?g.config:g.before_config)||at>=+new Date(g.expires_at)||at>=+new Date(p.expires_at))fail('grant_source_or_expiry');
  const actors=(await c.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1 OR id=$2',[g.original_owner,g.original_planner])).rows,relationship=(await c.query('SELECT owner_account,partner_account,owner_character,partner_character,terms_hash,state,expires_at,depot_id FROM business_partnerships WHERE id=$1',[s.relationshipId])).rows[0];
  if(actors.length!==2||actors.some(a=>!a.alive||a.is_npc||a.account_id!==(a.id===g.original_owner?g.owner_account:s.plannerAccount))||relationship?.state!=='active'||relationship.terms_hash!==s.relationshipHash||relationship.owner_character!==g.original_owner||relationship.partner_character!==g.original_planner||relationship.depot_id!==s.depotId||at>=+new Date(relationship.expires_at)||s.owner.cash!==s.ownerCash||s.planner.cash!==s.plannerCash)fail('original_source_or_cash');
  if(after&&hash(Object.fromEntries(Object.entries(d).filter(([k])=>!['sale_price','bid_price','target_stock','reorder_at','restock_budget'].includes(k))))!==s.assetsHash)fail('unexpected_asset_change');return s;
 }
 export async function beginManagementTeamConfiguration(c,ch,other,planId){
- const scope=scopes.getStore();if(!scope?.active||scope.client!==c)return null;const g=(await c.query('SELECT * FROM management_team_autonomy_grants WHERE plan_id=$1 FOR UPDATE',[planId])).rows[0];if(!g?.enabled)return null;
+ const scope=scopes.getStore();if(!scope?.active||scope.client!==c)return null;const g=(await c.query('SELECT * FROM management_team_autonomy_grants WHERE plan_id=$1',[planId])).rows[0];if(!g?.enabled)return null;
  if(g.original_owner!==ch.id||g.original_planner!==other.id||g.owner_account!==ch.account_id)fail('original_parties');
  const p=(await c.query('SELECT partnership_id FROM management_team_plans WHERE id=$1',[planId])).rows[0],r=(await c.query('SELECT depot_id,terms_hash,owner_account,partner_account FROM business_partnerships WHERE id=$1',[p.partnership_id])).rows[0],d=(await c.query('SELECT * FROM business_depots WHERE id=$1',[r.depot_id])).rows[0];
  const cap=Object.freeze({}),s={active:true,client:c,transaction:itemTransactionIdentity(c),planId,relationshipId:p.partnership_id,depotId:r.depot_id,proposalHash:g.proposal_hash,originalOwner:ch.id,relationshipHash:r.terms_hash,plannerAccount:r.partner_account,ownerCash:ch.cash,plannerCash:other.cash,owner:ch,planner:other,grantHash:g.grant_hash,config:g.config,assetsHash:hash(Object.fromEntries(Object.entries(d).filter(([k])=>!['sale_price','bid_price','target_stock','reorder_at','restock_budget'].includes(k))))};capabilities.set(cap,s);scope.caps.push(cap);await validate(c,cap);return cap;
