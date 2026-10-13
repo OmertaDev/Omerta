@@ -51,6 +51,18 @@ try {
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
   const activate = async (fixture, control) => {
+    if ((await control.getAttribute('data-destination') !== null || await control.getAttribute('data-city-world-map') !== null)
+      && await fixture.page.locator('.omerta-city__overview').isVisible() && await fixture.page.locator('.omerta-city__overview').getAttribute('open') === null) {
+      for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+        const close = fixture.page.locator(selector); if (await close.isVisible()) { if (fixture.viewport.width <= 680) await close.tap(); else await close.click(); }
+      }
+      const summary = fixture.page.locator('.omerta-city__overview > summary');
+      if (fixture.viewport.width <= 680) await summary.tap(); else await summary.click();
+    }
+    if (await control.getAttribute('data-city-world-panel') !== null && await fixture.page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+      const choices = fixture.page.locator('[data-city-world-back]');
+      if (fixture.viewport.width <= 680) await choices.tap(); else await choices.click();
+    }
     const at = await fixture.page.evaluate(() => window.__panelPointers.length);
     if (fixture.viewport.width <= 680) await control.tap(); else await control.click();
     const pointer = await fixture.page.evaluate(at => window.__panelPointers.slice(at).at(-1), at);
@@ -119,12 +131,29 @@ try {
   };
   const adventureRevisionJourney = async viewport => {
     const actor = await create('Panel Revision Player ' + viewport.width), fixture = await newPage(actor, viewport);
+    await fixture.page.emulateMedia({ reducedMotion: viewport.width <= 680 ? 'reduce' : 'no-preference' });
+    await fixture.page.evaluate(() => { window.__drillAnimations = []; document.addEventListener('animationstart', event => {
+      if (event.animationName === 'city-drill-step') window.__drillAnimations.push(event.target.closest('[data-city-drill]')?.dataset.cityDrillRevision);
+    }); });
     const entry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), position = (await state(fixture)).position;
     await panel(fixture, 'adventures');
     const prepared = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/encounters/start');
     await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-patrol"]'));
     const preparation = await prepared; assert.equal(preparation.status(), 200);
     const initial = (await preparation.json()).encounter; assert.equal(initial.revision, 1); await settled(fixture);
+    const drill = fixture.page.locator('[data-city-drill]');
+    assert.equal(await drill.count(), 1);
+    assert.equal(await drill.locator('.city-drill__stage').getAttribute('data-intent'), initial.intent);
+    assert.deepEqual(await drill.locator('meter').evaluateAll(nodes => nodes.map(node => [node.value, node.max])),
+      [[initial.health,initial.maxHealth],[initial.stamina,10],[initial.enemyHealth,initial.enemyMaxHealth]]);
+    assert.equal(await drill.locator('.city-drill__stage img').count(), 2, 'Both drill participants are staged visibly without adding world actors.');
+    await fixture.page.waitForFunction(() => [...document.querySelectorAll('.city-drill__stage img')].length === 2
+      && [...document.querySelectorAll('.city-drill__stage img')].every(node => node.complete && node.naturalWidth > 0));
+    assert(await drill.locator('.city-drill__stage img').evaluateAll(nodes => nodes.every(node => node.complete && node.naturalWidth > 0)), 'Existing pixel art actually loads.');
+    assert((await fixture.page.locator('.city-drill__moves').textContent()).includes('momentum from guarding strengthens it'));
+    assert((await fixture.page.locator('.city-drill__moves').textContent()).includes('Recover stamina up to its cap'));
+    assert.equal(await drill.locator('.city-drill__result').textContent(), initial.last);
+    await same(fixture, entry, position);
     const turnPath = '/v1/city/encounters/' + encodeURIComponent(initial.id) + '/turn';
     const gate = deferred(), committed = deferred(), playerGate = deferred(), playerHeld = deferred();
     let playerOnce = false;
@@ -187,6 +216,16 @@ try {
       const refreshed = await refresh; assert.equal(refreshed.status(), 200); const current = (await refreshed.json()).active;
       assert.equal(current.revision, 3); await settled(fixture);
       await fixture.page.locator(`[data-city-encounter="${initial.id}"]`).getByText(/^Round 3\/12/).waitFor();
+      if (viewport.width > 680) await fixture.page.waitForFunction(() => window.__drillAnimations.includes('3'));
+      else assert.equal(await fixture.page.locator('.city-drill__player').evaluate(node => getComputedStyle(node).animationName), 'none', 'Reduced motion keeps the same tactical information without a move animation.');
+      const animations = await fixture.page.evaluate(() => window.__drillAnimations.length);
+      const unchangedRead = fixture.page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/city/encounters');
+      await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh encounters', exact: true }));
+      const unchanged = await unchangedRead; assert.equal(unchanged.status(), 200); assert.equal((await unchanged.json()).active.revision, 3);
+      await settled(fixture);
+      await fixture.page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      assert.equal(await fixture.page.evaluate(() => window.__drillAnimations.length), animations, 'Refreshing the same confirmed revision does not replay a move animation.');
+      assert.deepEqual(posts, [], 'Inspecting intent, previews and unchanged results never sends a gameplay action.');
       const fresh = current.actions.find(action => action.id === 'guard'); assert(fresh?.available); assert.equal(fresh.body.expectedRevision, 3);
       const accepted = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === turnPath);
       await activate(fixture, fixture.page.locator('[data-city-adventure-action="guard"]'));

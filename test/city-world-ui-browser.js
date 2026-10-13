@@ -158,6 +158,35 @@ try {
     await page.locator('[data-city-nearby-input]').evaluate(node => node.setSelectionRange(3, 3));
     await page.evaluate(() => window.__ui.update({ chat: { messages: [] } }));
     assert.deepEqual(await page.locator('[data-city-nearby-input]').evaluate(node => [node.value, node.selectionStart, document.activeElement === node]), ['A draft stays here', 3, true]);
+    if (viewport.width <= 680) {
+      await page.evaluate(() => { const meta = document.createElement('meta'); meta.name = 'viewport'; meta.content = 'width=device-width, initial-scale=1'; document.head.append(meta); });
+      await page.waitForFunction(width => window.innerWidth === width, viewport.width);
+      await page.evaluate(() => { document.body.classList.add('city-player-view'); window.__ui.update({}); });
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false, 'A phone activity reserves its sheet for the selected content.');
+      const focusedOpening = await page.evaluate(() => ({ opening: window.__ui.getState().opening, reads: window.__reads.length, sent: window.__sent.length }));
+      const draftNode = await page.locator('[data-city-nearby-input]').elementHandle();
+      await click('[data-city-world-back]');
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), true);
+      assert.equal(await page.locator('[data-city-world-back]').getAttribute('aria-expanded'), 'true');
+      assert.equal(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), true);
+      await click('[data-city-world-back]');
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false);
+      assert.equal(await page.locator('[data-city-world-back]').getAttribute('aria-expanded'), 'false');
+      assert.equal(await draftNode.evaluate(node => node === document.querySelector('[data-city-nearby-input]') && node.value === 'A draft stays here'), true,
+        'Choosing or leaving the tool chooser keeps the same draft DOM, not a reconstructed copy.');
+      assert.deepEqual(await page.evaluate(() => ({ opening: window.__ui.getState().opening, reads: window.__reads.length, sent: window.__sent.length })), focusedOpening,
+        'The responsive chooser does not reopen a panel, read private data or issue an action.');
+      await page.setViewportSize({ width: 1366, height: 768 });
+      await page.waitForFunction(() => window.innerWidth === 1366 && !document.querySelector('.city-world__tabs').hidden);
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), true, 'Desktop keeps its complete tool navigation.');
+      await page.locator('[data-city-world-panel="map"]').focus();
+      await page.setViewportSize(viewport);
+      await page.waitForFunction(width => window.innerWidth === width && document.querySelector('.city-world__tabs').hidden, viewport.width);
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false, 'Returning to phone restores focused content.');
+      assert.equal(await page.locator('[data-city-world-back]').evaluate(node => document.activeElement === node), true,
+        'A focused desktop tab moves to the visible chooser control when phone layout hides the row.');
+      await page.evaluate(() => { document.body.classList.remove('city-player-view'); document.querySelector('meta[name="viewport"]').remove(); window.__ui.update({}); });
+    }
     await page.locator('[data-city-world-back]').focus(); await page.keyboard.press('Enter');
     assert.equal(await page.locator('[data-city-nearby-input]').inputValue(), 'A draft stays here', 'Returning to the chooser leaves an unsent message draft intact.');
     assert.equal(await page.evaluate(() => window.__ui.getState().panel), 'chat');

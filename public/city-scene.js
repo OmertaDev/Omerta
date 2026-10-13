@@ -216,7 +216,7 @@
     hud.append(resourceGrid, progressRow, journal);
     worldHead.append(worldResources, worldMapButton);
     worldHud.append(worldHead, readiness);
-    const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
+    const presenceCaption = element('p', 'omerta-city__presence-caption', 'People positions are approximate.');
     presenceCaption.hidden = true;
     worldHud.append(presenceCaption);
     const nextMove = element('div', 'omerta-city__next-move');
@@ -330,6 +330,7 @@
     interact.setAttribute('aria-describedby', nearbyCopy.id);
     const cancel = element('button', '', 'Stop walking');
     cancel.type = 'button';
+    cancel.setAttribute('aria-label', 'Stop walking');
     cancel.setAttribute('data-city-cancel', '');
     controlActions.append(interact, cancel, nearbyCopy, element('span', '', 'Hold an arrow to walk.'));
     controls.append(dpad, controlActions);
@@ -376,7 +377,21 @@
     const homeList = element('div', 'omerta-city__home-list');
     const exitList = element('div', 'omerta-city__exit-list');
     homeSection.append(element('h4', '', 'Street homes & district routes'), homeCaption, exitList, homeList);
-    root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence);
+    const overview = element('details', 'omerta-city__overview'); overview.hidden = true;
+    const overviewSummary = element('summary', '', 'World map & neighborhood info');
+    const overviewBody = element('div', 'omerta-city__overview-body');
+    overview.append(overviewSummary, overviewBody);
+    listen(overviewSummary, 'click', event => {
+      if (overviewSummary.getAttribute('aria-disabled') === 'true') {
+        event.preventDefault();
+        const target = !gameDock.hidden ? gameBody : !actorDock.hidden ? actorBody : !card.hidden ? open
+          : viewport.querySelector('.city-world__dock:not([hidden]) [data-city-world-close]');
+        target?.focus({ preventScroll: true }); revealVenue(viewport);
+      }
+    });
+    let compactShell = false;
+    root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence, overview);
+    listen(overview, 'toggle', () => { root.classList.toggle('is-overview-open', overview.open); fitWorldFrame(); });
     listen(homeList, 'click', event => {
       const button = event.target.closest('[data-city-home]');
       if (button && homeList.contains(button) && !walkHome(button.dataset.cityHome)) showHome(button.dataset.cityHome, button);
@@ -931,7 +946,7 @@
         const value = resources[key];
         const maximum = resources['max' + key[0].toUpperCase() + key.slice(1)];
         const copy = key === 'cash' && value !== null ? '$' + format(value)
-          : format(value) + (maximum !== undefined && maximum !== null ? ' / ' + format(maximum) : '');
+          : format(value) + (maximum !== undefined && maximum !== null ? '/' + format(maximum) : '');
         setText(nodes.value, copy);
         nodes.meter.hidden = value === null || maximum === undefined || maximum === null || maximum <= 0;
         if (!nodes.meter.hidden) { nodes.meter.max = maximum; nodes.meter.value = Math.max(0, Math.min(value, maximum)); }
@@ -1146,6 +1161,7 @@
     listen(gameDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideGameDock(true); } });
     function showVenue(venue) {
       if (destroyed) return;
+      if (compactShell) overview.open = false;
       venueOpening++;
       worldUI?.close(false);
       hideGameDock(false);
@@ -1160,12 +1176,14 @@
       renderQuest(venue);
       card.hidden = false;
       card.scrollTop = 0;
+      fitWorldFrame();
       for (const [id, button] of buttons) button.setAttribute('aria-expanded', String(id === venue.id));
       revealVenue();
       open.focus({ preventScroll: true });
       open.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     }
     function revealVenue(target = card, scroll = true) {
+      if (compactShell && target === card) { fitWorldFrame(); target = viewport; }
       const height = window.innerHeight;
       let top = 0, bottom = height;
       for (const id of ['top', 'vitals', 'bnav', 'toast']) {
@@ -1180,7 +1198,7 @@
           top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom);
         }
       }
-      card.style.setProperty('--city-card-height', Math.max(88, bottom - top - 16) + 'px');
+      if (!compactShell) card.style.setProperty('--city-card-height', Math.max(88, bottom - top - 16) + 'px');
       target.style.scrollMarginTop = (top + 8) + 'px';
       target.style.scrollMarginBottom = (height - bottom + 8) + 'px';
       if (scroll) {
@@ -1199,6 +1217,7 @@
       venueOpening++;
       card.hidden = true;
       selected = null;
+      fitWorldFrame();
       for (const button of buttons.values()) button.setAttribute('aria-expanded', 'false');
       if (focusCanvas && game && game.canvas) game.canvas.focus({ preventScroll: true });
       else if (focusCanvas && previousVenue) {
@@ -1229,6 +1248,7 @@
       if (game) { game.destroy(true); game = null; }
       homeMarkers.clear(); exitLabels.clear(); extensionGround = null; regionInk = null;
       scene = null; player = null;
+      fitWorldFrame();
       const waiting = queuedHome; queuedHome = null;
       if (waiting && waiting.identity === sceneIdentity() && waiting.scope === options.worldScopeKey) showHome(waiting.key);
     }
@@ -1281,12 +1301,56 @@
       return { width: Math.max(phone ? 160 : 280, Math.round(canvasHost.clientWidth)), height: Math.max(phone || fitted ? 96 : 320, Math.round(canvasHost.clientHeight)) };
     }
     function syncPointerBounds() { if (game?.canvas) game.scale.updateBounds(); }
+    function arrangePlayShell(phone) {
+      const next = phone && document.body.classList.contains('city-player-view') && !root.classList.contains('omerta-city--unavailable');
+      if (next !== compactShell) {
+        compactShell = next; root.classList.toggle('is-play-shell', next); overview.hidden = !next;
+        if (next) {
+          overviewBody.append(header, worldMapButton, hud, instructions, destinations, homeSection, presence);
+          viewport.insertBefore(card, actorDock); viewport.append(controls); root.append(nextMove, viewport, overview);
+        } else {
+          mapLayer.append(card);
+          worldHead.append(worldMapButton);
+          root.append(header, hud, nextMove, viewport, instructions, controls, destinations, homeSection, presence, overview);
+          worldResources.style.removeProperty('--city-resource-columns');
+          root.style.removeProperty('min-height');
+          overview.open = false; root.classList.remove('is-overview-open');
+        }
+        cancel.textContent = next ? 'Stop' : 'Stop walking';
+      }
+      // A World tools dock is mounted after the controls. Keep this same control
+      // node below every sheet, without replacing listeners or pending state.
+      if (next && viewport.lastElementChild !== controls) viewport.append(controls);
+      const activity = !card.hidden || !actorDock.hidden || !gameDock.hidden || worldUI?.isOpen();
+      overviewSummary.setAttribute('aria-disabled', String(next && activity));
+      setText(overviewSummary, next && activity ? 'Close this activity to open World map & neighborhood info' : 'World map & neighborhood info');
+      if (next && activity) overview.open = false;
+      root.classList.toggle('is-overview-open', overview.open);
+    }
+    function fitResourceColumns() {
+      if (compactShell) {
+        const gridStyle = getComputedStyle(worldResources);
+        const padding = parseFloat(gridStyle.paddingLeft) + parseFloat(gridStyle.paddingRight), gap = parseFloat(gridStyle.columnGap) || 0;
+        const width = worldResources.clientWidth - padding;
+        const needed = [...worldResources.querySelectorAll('.omerta-city__resource')].map(group => {
+          const range = document.createRange(); range.selectNodeContents(group.querySelector('dd'));
+          const style = getComputedStyle(group);
+          return range.getBoundingClientRect().width + parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
+            + (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+        });
+        const fits = columns => needed.every(value => value <= (width - gap * (columns - 1)) / columns);
+        const columns = fits(4) ? 4 : fits(2) ? 2 : 1;
+        worldResources.style.setProperty('--city-resource-columns', String(columns));
+      }
+    }
     function fitWorldFrame() {
       if (destroyed) return;
       const phone = window.innerWidth <= 680;
-      const inspecting = Boolean((!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen()) && document.body.classList.contains('city-player-view'));
+      arrangePlayShell(phone);
+      const inspecting = Boolean((!actorDock.hidden || !gameDock.hidden || worldUI?.isOpen() || compactShell && !card.hidden) && document.body.classList.contains('city-player-view'));
       viewport.classList.toggle('is-inspecting', inspecting);
       root.classList.toggle('is-inspecting', inspecting);
+      fitResourceColumns();
       if (!phone || !inspecting) {
         worldHud.style.removeProperty('--city-hud-height');
         worldHud.removeAttribute('tabindex');
@@ -1310,26 +1374,33 @@
         if (id === 'bnav' || id === 'toast') bottom = Math.min(bottom, bounds.top);
         else { const pinned = parseFloat(style.top); top = Math.max(top, style.position === 'sticky' && Number.isFinite(pinned) ? pinned + bounds.height : bounds.bottom); }
       }
+      // A compact frame can shrink the whole document below the scroll needed to
+      // pin the frame above fixed chrome. Reserve that scroll room, not pixels
+      // over the map, so focused sheet controls can always be revealed.
+      if (compactShell) root.style.minHeight = Math.ceil(nextMove.getBoundingClientRect().height + window.innerHeight - top - 8) + 'px';
+      root.classList.toggle('is-tight-frame', compactShell && inspecting && bottom - top - 16 < 96 + 64 + 45 + 44);
+      const controlHeight = compactShell ? controls.getBoundingClientRect().height : 0;
       if (phone && inspecting) {
         // Reserve the real map and dock floors before measuring the HUD. Long
         // warnings and confirmed feedback remain available by keyboard scroll.
-        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - 96 - 64) + 'px');
+        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - controlHeight - 96 - 64) + 'px');
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
       const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
         ? nextMove.getBoundingClientRect().height : 0;
-      const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - 16;
+      const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - controlHeight - 16;
       const available = frameAvailable - (guidanceHeight + 96 <= frameAvailable ? guidanceHeight : 0);
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
       if (!gameDock.hidden) gameDock.style.setProperty('--city-training-height', Math.max(64, Math.min(240, available - 96)) + 'px');
+      if (compactShell && !card.hidden) card.style.setProperty('--city-card-height', Math.max(64, Math.min(180, available - 96)) + 'px');
       if (worldUI?.isOpen()) {
         const panel = worldUI.getState().panel, preferred = ['room', 'map'].includes(panel) ? 360 : 240;
         worldUI.setHeight(Math.max(64, Math.min(preferred, available - 96)));
       }
       const maximum = phone ? 440 : Math.min(620, canvasHost.clientWidth * 2 / 3);
-      const panelHeight = (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height) + (gameDock.hidden ? 0 : gameDock.getBoundingClientRect().height) + (worldUI?.panelHeight() || 0);
+      const panelHeight = (actorDock.hidden ? 0 : actorDock.getBoundingClientRect().height) + (gameDock.hidden ? 0 : gameDock.getBoundingClientRect().height) + (compactShell && !card.hidden ? card.getBoundingClientRect().height : 0) + (worldUI?.panelHeight() || 0);
       const height = Math.max(96, Math.min(maximum, Math.floor(available - panelHeight)));
       const value = height + 'px';
       if (canvasHost.style.getPropertyValue('--city-map-height') !== value) {

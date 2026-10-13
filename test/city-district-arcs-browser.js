@@ -106,6 +106,18 @@ try {
   const settled = fixture => fixture.page.waitForFunction(() => !window.__arcProbe().pending && !document.querySelector('#busy.on'));
   const activate = async (fixture, control) => {
     await fixture.page.bringToFront();
+    if ((await control.getAttribute('data-destination') !== null || await control.getAttribute('data-city-world-map') !== null)
+      && await fixture.page.locator('.omerta-city__overview').isVisible() && await fixture.page.locator('.omerta-city__overview').getAttribute('open') === null) {
+      for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+        const close = fixture.page.locator(selector); if (await close.isVisible()) { if (fixture.viewport.width <= 680) await close.tap(); else await close.click(); }
+      }
+      const summary = fixture.page.locator('.omerta-city__overview > summary');
+      if (fixture.viewport.width <= 680) await summary.tap(); else await summary.click();
+    }
+    if (await control.getAttribute('data-city-world-panel') !== null && await fixture.page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+      const choices = fixture.page.locator('[data-city-world-back]');
+      if (fixture.viewport.width <= 680) await choices.tap(); else await choices.click();
+    }
     const at = await fixture.page.evaluate(() => window.__arcPointer.length);
     if (fixture.viewport.width <= 680) await control.tap(); else await control.click();
     const pointer = await fixture.page.evaluate(at => window.__arcPointer.slice(at).at(-1), at);

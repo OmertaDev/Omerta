@@ -116,6 +116,15 @@ try {
     return { page, context, requests, releaseArt };
   };
   const state = page => page.evaluate(() => window.__worldHandles.at(-1).handle.getState());
+  const revealPlaces = async page => {
+    const overview = page.locator('.omerta-city__overview');
+    if (!await overview.isVisible() || await overview.getAttribute('open') !== null) return;
+    const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
+    for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+      const close = page.locator(selector); if (await close.isVisible()) await native(close);
+    }
+    await native(overview.locator('summary'));
+  };
   const frames = page => page.evaluate(() => new Promise(resolve => { let count = 0; const step = () => ++count >= 8 ? resolve() : requestAnimationFrame(step); requestAnimationFrame(step); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
   const bounded = (promise, label) => new Promise((resolve, reject) => {
@@ -125,9 +134,15 @@ try {
   const dismissCine = async page => { if (await page.locator('#cine.on').count()) await page.locator('#cine.on').evaluate(node => node.click()); };
   const panel = async (page, kind) => {
     if (!await page.locator('.city-world__dock').isVisible()) await page.locator('[data-city-world-tools]').click();
+    if (await page.locator('.city-world__tabs').getAttribute('hidden') !== null) await page.locator('[data-city-world-back]').click();
     await page.locator(`[data-city-world-panel="${kind}"]`).click(); await frames(page);
   };
   const assertToolChoicesReturn = async (page, requests) => {
+    if (await page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+      if (page.viewportSize().width <= 680) await page.locator('[data-city-world-back]').tap();
+      else await page.locator('[data-city-world-back]').click();
+      await frames(page);
+    }
     const snapshot = () => page.evaluate(() => {
       const current = window.__worldHandles.at(-1).handle.getState();
       return { handles: window.__worldHandles.length, position: current.position, pathLength: current.pathLength,
@@ -271,7 +286,13 @@ try {
     await assertFrame(page);
   };
   const assertPanelReadFeedback = async viewport => {
-    const activate = (page, selector) => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    const activate = async (page, selector) => {
+      if (selector.startsWith('[data-city-world-panel') && await page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+        if (viewport.width <= 680) await page.locator('[data-city-world-back]').tap();
+        else await page.locator('[data-city-world-back]').click();
+      }
+      return viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    };
     for (const scenario of ['active', 'map', 'close']) {
       const fixture = await newPage(viewport, { noResizeObserver: viewport.width === 320 }), { page, requests } = fixture;
       const handle = await page.evaluateHandle(() => window.__worldHandles.at(-1)), position = (await state(page)).position;
@@ -438,7 +459,7 @@ try {
   await panel(page, 'skills');
   await page.locator('.city-world__stats').waitFor();
   await page.locator('[data-city-world-close]').click();
-  await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="streets"]').click();
+  await revealPlaces(page); await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="streets"]').click();
   const muscleBefore = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
   const trained = await post(page, '[data-city-train="muscle"]', '/v1/train/muscle');
   const muscleAfter = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
@@ -628,7 +649,7 @@ try {
   console.log('world host: queued/sent/uncertain same-key actions, historical preferences, consent retirement and emote receipts passed');
   await app.pool.query('UPDATE characters SET respect=$2,nerve=10,last_accrued_at=$3 WHERE id=$1', [viewer.character.id, PACING.LEVEL_DIVISOR - 1, new Date(Date.now() + 600000)]);
   const beforeLevel = await refresh(page); assert.equal(beforeLevel.level, 1);
-  await page.locator('[data-destination="fixer"]').click(); await page.locator('[data-city-open]').click();
+  await revealPlaces(page); await page.locator('[data-destination="fixer"]').click(); await page.locator('[data-city-open]').click();
   const smallJob = rules.crimes.filter(job => job.lvl === 1).sort((a, b) => a.nerve - b.nerve)[0];
   await page.locator('[data-city-crime-select]').selectOption(smallJob.id);
   await page.route('**/v1/crimes/' + smallJob.id, async route => {
@@ -821,7 +842,7 @@ try {
   await panel(fallback.page, 'bag'); await fallback.page.locator('[data-city-equip]').waitFor();
   assert.deepEqual(mutations(fallback.requests.slice(fallbackAt)), [], 'Engine failure preserves read-only World tools/inventory.');
   await fallback.page.locator('[data-city-world-close]').click();
-  await fallback.page.locator('[data-destination="training"]').click();
+  await revealPlaces(fallback.page); await fallback.page.locator('[data-destination="training"]').click();
   await fallback.page.locator('[data-city-open]').click();
   await fallback.page.locator('#tab-life.on').waitFor();
   assert.equal(await fallback.page.locator('[data-city-world-tools]').count(), 0, 'Fallback destination navigation retires its external Tools control.');
@@ -838,7 +859,7 @@ try {
   });
   assert(optionalFrames.every(frame => frame.inspecting === false && frame.hud === optionalFrames[0].hud && frame.canvas === optionalFrames[0].canvas),
     'Optional-module failure cannot toggle inspection styles or trigger a live resize loop: ' + JSON.stringify(optionalFrames));
-  await optional.page.locator('[data-destination="training"]').click(); await optional.page.locator('[data-city-open]').click();
+  await revealPlaces(optional.page); await optional.page.locator('[data-destination="training"]').click(); await optional.page.locator('[data-city-open]').click();
   assert.equal((await state(optional.page)).trainingOpen, true); assert.deepEqual((await state(optional.page)).position, optionalPose);
   assert.deepEqual(mutations(optional.requests.slice(optionalAt)), [], 'Optional tool failure preserves Core training and current pose.');
   await optional.context.close(); await page.bringToFront();
@@ -1001,6 +1022,7 @@ try {
     const joinedStyle = joinedLoader.page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
       && reply.status() === 200 && (await reply.json()).preferences.chatEnabled === true);
     await joinedLoader.page.locator('[data-city-world-tools]').tap();
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="style"]').tap(); await joinedStyle;
     await joinedLoader.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().worldUI.chatJoined
       && document.querySelectorAll('[data-city-outfit]').length === 4 && document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false');
@@ -1018,6 +1040,7 @@ try {
       assert((await reply.json()).messages.some(message => message.text === historyText));
       observedChat(); await chatGate; await route.fulfill({ response: reply });
     });
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap();
     await bounded(socialObserved, 'the joined Chat opening\'s actual Social200');
     assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0);
@@ -1047,6 +1070,7 @@ try {
     await joinedLoader.page.route('**/v1/city/social', async route => {
       const reply = await route.fetch(); assert.equal(reply.status(), 200); observedCached(); await cachedGate; await route.fulfill({ response: reply });
     });
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap(); await bounded(cachedObserved, 'the complete-history cached Social refresh');
     assert.equal(await joinedLoader.page.locator('.city-world__content').getAttribute('aria-busy'), 'false');
     assert.equal(await joinedLoader.page.locator('.city-world__dock-bar strong').textContent(), 'Nearby chat');
@@ -1079,7 +1103,10 @@ try {
     [neighbor.character.id, new Date(Date.now() + 600000)]);
   const connected = await newPage(undefined, { actor: neighbor });
   const cityPage = connected.page, cityRequests = connected.requests;
-  const activate = control => cityPage.viewportSize().width <= 680 ? control.tap() : control.click();
+  const activate = async control => {
+    if (await control.getAttribute('data-city-world-map') !== null || await control.getAttribute('data-destination') !== null) await revealPlaces(cityPage);
+    return cityPage.viewportSize().width <= 680 ? control.tap() : control.click();
+  };
   const currentActor = async actor => (await app.pool.query('SELECT id,account_id,generation,loc,cash FROM characters WHERE account_id=$1 AND alive', [actor.character.account_id])).rows[0];
   const fares = async actor => (await app.pool.query("SELECT amount FROM transactions WHERE character_id=$1 AND currency='cash' AND reason='travel'", [(await currentActor(actor)).id])).rows.map(row => Number(row.amount));
   const recorded = async actor => (await app.inject({ url: '/v1/collection', headers: actor.headers })).json().categories.find(category => category.id === 'districts').items;
@@ -1087,6 +1114,7 @@ try {
     const control = await page.locator('[data-city-home-action="map"]').isVisible()
       ? page.locator('[data-city-home-action="map"]') : await page.locator('.city-world__dock').isVisible()
         ? page.locator('[data-city-map-view="world"]') : page.locator('[data-city-world-map]');
+    if (await control.getAttribute('data-city-world-map') !== null) await revealPlaces(page);
     await (page.viewportSize().width <= 680 ? control.tap() : control.click());
     await page.waitForFunction(() => document.querySelectorAll('[data-city-district]').length === 6
       && !document.querySelector('.city-world__content').textContent.includes('recorded visits are loading'));
@@ -1103,6 +1131,7 @@ try {
   const enterDeeds = async page => {
     const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
     if (await page.locator('.city-world__dock').isVisible()) await native(page.locator('[data-city-world-close]'));
+    await revealPlaces(page);
     await native(page.locator('[data-destination="clubhouse"]'));
     await native(page.locator('[data-city-action="deeds"]'));
   };

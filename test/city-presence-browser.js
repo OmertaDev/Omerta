@@ -100,10 +100,20 @@ try {
     await page.waitForSelector('#screen-main:not(.hidden)');
     await page.locator('#btn-player-view').click();
     await page.waitForFunction(() => window.__presenceHandles.at(-1)?.handle.getState().ready);
+    await revealRoster(page);
     await page.waitForSelector('[data-city-actor]');
     return { page, context, requests, playerReply: playerReply ? await playerReply : null };
   };
   const state = page => page.evaluate(() => window.__presenceHandles.at(-1).handle.getState());
+  const revealRoster = async page => {
+    const overview = page.locator('.omerta-city__overview');
+    if (!await overview.isVisible() || await overview.getAttribute('open') !== null) return;
+    const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
+    for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+      const close = page.locator(selector); if (await close.isVisible()) await native(close);
+    }
+    await native(overview.locator('summary'));
+  };
   const frames = page => page.evaluate(() => new Promise(resolve => { let observed = 0; const next = () => ++observed < 8 ? requestAnimationFrame(next) : resolve(); requestAnimationFrame(next); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
@@ -221,6 +231,7 @@ try {
     assert(layout.height <= layout.statusHeight + layout.margins + 1, 'Fallback reserves its real status message without an empty map strip: ' + JSON.stringify(layout));
   };
   const inspect = async (page, id) => {
+    await revealRoster(page);
     if (await page.locator('.omerta-city__actor-dock:not([hidden])').count()) await page.locator('[data-city-actor-close]').click();
     while (!await page.locator('[data-city-actors-previous]').isDisabled()) await page.locator('[data-city-actors-previous]').click();
     for (let index = 0; index < 40; index++) {
@@ -758,6 +769,7 @@ try {
     await phone.locator('[data-city-actor-close]').click(); await frames(phone);
     // inspect(npc) can leave the roster on a later page. Search the complete
     // bounded real roster, including the earlier pages, for the touch target.
+    await revealRoster(phone);
     while (!await phone.locator('[data-city-actors-previous]').isDisabled()) await phone.locator('[data-city-actors-previous]').click();
     for (let rosterPage = 0; rosterPage < 40; rosterPage++) {
       if (visibleMarker(await markerFrame(phone)) || await phone.locator('[data-city-actors-more]').isDisabled()) break;
@@ -785,6 +797,7 @@ try {
     await phone.keyboard.press('Escape');
     assert.equal(mutations(mobile.requests).length, beforeTouch);
     if (viewport.width === 375) {
+      await revealRoster(phone);
       await phone.locator('.omerta-city__actor-list').evaluate(node => node.scrollIntoView({ block: 'center', behavior: 'instant' }));
       const outside = await phone.evaluate(() => {
         const list = document.querySelector('.omerta-city__actor-list'), rect = list.getBoundingClientRect();
@@ -905,6 +918,10 @@ try {
     assert.deepEqual((await state(p)).position, homePose);
     assert(await p.evaluate(record => window.__presenceHandles.at(-1) === record && !record.destroyed, record));
     await p.locator('[data-city-actor-close]').click();
+    const overview = p.locator('.omerta-city__overview');
+    if (await overview.isVisible() && await overview.getAttribute('open') === null) {
+      if (p.viewportSize().width <= 680) await overview.locator('summary').tap(); else await overview.locator('summary').click();
+    }
     await p.locator('[data-city-world-map]').click();
     await p.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().worldUI.mapView === 'world');
     assert.deepEqual((await state(p)).position, homePose, 'Atlas inspection preserves the actual local walking pose.');

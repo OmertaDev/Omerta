@@ -31,7 +31,7 @@
   function caption(value) { return String(value || '').replace(/[_-]/g, ' '); }
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
-    let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
+    let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1, choicesShown = false;
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -70,6 +70,16 @@
       const node = el('button', className, label); node.type = 'button'; node.dataset.worldControl = label; onRender(node, 'click', action); return node;
     }
     function changed() { if (typeof options.onPanelChange === 'function') options.onPanelChange(); }
+    const compactTools = () => window.innerWidth <= 680 && document.body.classList.contains('city-player-view');
+    function paintChoices() {
+      navigation.hidden = compactTools() && !choicesShown;
+      back.setAttribute('aria-expanded', String(!navigation.hidden));
+      if (navigation.hidden && navigation.contains(document.activeElement)) back.focus({ preventScroll: true });
+    }
+    function revealChoices() {
+      choicesShown = true; paintChoices(); dock.scrollTo({ top: 0, behavior: 'instant' });
+      changed(); tabs.values().next().value.focus({ preventScroll: true });
+    }
     function setNotice(value) { notice = String(value || ''); paintReadState(); }
     function current(token, owner) { return !destroyed && token === opening && owner === scope && owner === identity(); }
     function paintReadState() {
@@ -200,12 +210,15 @@
       } catch { if (current(token, owner)) setNotice('Confirmation is unavailable. Check the action receipt before trying a new choice.'); }
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
     }
-    function open(id = 'map', { world = false } = {}) {
+    function open(id = 'map', { world = false, choices = false } = {}) {
       if (destroyed || !tabs.has(id)) return;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
       stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
+      choicesShown = choices; paintChoices();
       if (id === 'map') mapView = world ? 'world' : 'neighborhood';
-      setNotice(''); render(); changed(); content.focus({ preventScroll: true });
+      setNotice(''); render(); changed();
+      if (choices && compactTools()) tabs.values().next().value.focus({ preventScroll: true });
+      else content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
       if (id === 'adventures') { read('encounters'); read('opportunities'); }
       if (['room', 'style', 'chat'].includes(id)) read('social');
@@ -225,10 +238,19 @@
       tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
     }
-    on(tools, 'click', () => dock.hidden ? open('map') : close());
+    on(tools, 'click', () => dock.hidden ? open('map', { choices: true }) : close());
     on(closeButton, 'click', () => close());
-    on(back, 'click', () => { dock.scrollTo({ top: 0, behavior: 'instant' }); tabs.values().next().value.focus({ preventScroll: true }); });
-    on(navigation, 'click', event => { const tab = event.target.closest('[data-city-world-panel]'); if (tab && navigation.contains(tab)) open(tab.dataset.cityWorldPanel); });
+    on(back, 'click', () => {
+      if (compactTools() && choicesShown && dock.scrollTop === 0) {
+        choicesShown = false; paintChoices(); changed(); content.focus({ preventScroll: true });
+      } else revealChoices();
+    });
+    on(navigation, 'click', event => {
+      const tab = event.target.closest('[data-city-world-panel]');
+      if (!tab || !navigation.contains(tab)) return;
+      open(tab.dataset.cityWorldPanel);
+    });
+    on(window, 'resize', () => { paintChoices(); if (!dock.hidden) changed(); });
     on(dock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
     on(tracker, 'click', () => { close(false); if (typeof options.onOpenIntel === 'function') options.onOpenIntel(); });
     function stopPolling() { if (pollTimer !== null) { clearInterval(pollTimer); pollTimer = null; } }
@@ -603,6 +625,7 @@
     }
     function render() {
       if (destroyed || !panel) return;
+      paintChoices();
       const scroll = dock.scrollTop, active = document.activeElement;
       const focused = content.contains(active) || receiptBox.contains(active);
       const focusKey = active?.dataset?.worldControl || active?.getAttribute('aria-label');
