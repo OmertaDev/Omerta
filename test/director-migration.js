@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
-import { equipmentEconomyMigrationProjection } from './lib/equipment-economy-migration-catalog.js';
+import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -52,8 +52,17 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   business_seasons: [6, 9], business_season_entries: [8, 9],
   company_production_receipts: [8, 7], company_specializations: [10, 11],
   company_specialization_requests: [2, 4], company_specialization_runs: [5, 6],
-  item_durability_states: [5, 4], item_durability_uses: [7, 7], item_durability_birth_quality: [10, 8] });
+  item_durability_states: [5, 4], item_durability_uses: [7, 7], item_durability_birth_quality: [10, 8],
+  // Existing independently frozen e150 equipment catalog; never inferred from the upgraded backend.
+  equipment_rental_requests: [6, 4], equipment_rental_offers: [8, 10], equipment_rental_leases: [15, 13],
+  equipment_maintenance_offers: [6, 7], equipment_maintenance_requests: [3, 5], equipment_maintenance_repairs: [16, 15],
+  commercial_negotiations: [10, 16], commercial_negotiation_requests: [2, 4],
+  service_subscriptions: [19, 20], service_subscription_requests: [2, 5], service_subscription_cycles: [10, 7],
+  contract_auctions: [11, 12], contract_auction_bids: [9, 8], contract_auction_requests: [5, 6] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
+assert.equal(EQUIPMENT_ECONOMY_MIGRATION_TABLES.length, 14);
+assert.deepEqual(EQUIPMENT_ECONOMY_MIGRATION_TABLES.filter(table => featureTables.includes(table)),
+  EQUIPMENT_ECONOMY_MIGRATION_TABLES, 'All fourteen reviewed equipment tables have explicit frozen bindings');
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
 for (const table of featureTables) {
@@ -320,6 +329,14 @@ try {
       featureNotNull.filter(row => row.table_name !== table || row.column_name !== column));
     rejected(verifyFeatureNotNull, `${table} unexpected required column`, [...featureNotNull,
       { table_name: table, column_name: 'unexpected_required_column' }]);
+  }
+  for (const constraint of featureConstraints.filter(row => EQUIPMENT_ECONOMY_MIGRATION_TABLES.includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint removed', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint altered', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint duplicated', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.push({ ...rows[index] })));
   }
   rejected(verifyCompletePreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
     { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
