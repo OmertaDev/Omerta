@@ -8466,3 +8466,19 @@ CREATE TABLE IF NOT EXISTS item_durability_birth_quality (
  creation_event TEXT NOT NULL UNIQUE REFERENCES item_events(id), authority_account TEXT NOT NULL REFERENCES accounts(id),
  request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), recipe_identity JSONB NOT NULL,
  grade TEXT NOT NULL CHECK(grade='tempered'), maximum INT NOT NULL CHECK(maximum=150));
+
+CREATE TABLE IF NOT EXISTS equipment_maintenance_offers (
+ id TEXT PRIMARY KEY REFERENCES business_depots(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL CHECK(revision>=1),
+ enabled BOOLEAN NOT NULL, fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), expires_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS equipment_maintenance_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('offer','repair')),
+ identity JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS equipment_maintenance_repairs (
+ id TEXT PRIMARY KEY, payer_account TEXT NOT NULL REFERENCES accounts(id), payer_character TEXT NOT NULL REFERENCES characters(id),
+ provider_account TEXT NOT NULL REFERENCES accounts(id), provider_character TEXT NOT NULL REFERENCES characters(id),
+ offer_id TEXT NOT NULL REFERENCES equipment_maintenance_offers(id), offer_revision INT NOT NULL,
+ item_id TEXT NOT NULL REFERENCES item_instances(id), request_key TEXT NOT NULL, material_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), debit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ credit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), condition_before INT NOT NULL, condition_after INT NOT NULL,
+ CHECK(condition_after>condition_before AND condition_after-condition_before<=10), UNIQUE(payer_account,request_key));

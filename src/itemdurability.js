@@ -1,4 +1,5 @@
 import { GameError } from './game.js';
+import crypto from 'node:crypto';
 import { assertItemTransaction, itemMutationContext, registerItemTransactionUndo,registerItemTransactionBeforeEventUndo,poisonItemTransaction,ownsItemMutationReservation } from './items.js';
 
 export const ITEM_DURABILITY = Object.freeze({ templateId:'item:precision_lock_tool', maximum:100, temperedMaximum:150, useCost:10 });
@@ -42,6 +43,44 @@ async function assertEquipmentUsableImpl(client,{itemId,owner,mutation,minimum=1
   const equipment=await physical(client,itemId,owner);if(equipment.remaining<minimum) fail('broken');
   return {itemId:equipment.item.id,remaining:equipment.remaining,maximum:equipment.maximum};
 }
+export async function equipmentCondition(client,{itemId,owner}) {
+  assertItemTransaction(client);
+  try { if(!owner||!['account','character'].includes(owner.scope))fail('maintenance_custody');id(owner.id);const value=await physical(client,itemId,owner);return {itemId,remaining:value.remaining,maximum:value.maximum}; }
+  catch(error){poisonItemTransaction(client,error);throw error;}
+}
+async function maintenanceWitness(client,repair) {
+  if(!repair||repair.payer_account===repair.provider_account||!Number.isSafeInteger(Number(repair.fee_cash))||Number(repair.fee_cash)<1||Number(repair.fee_cash)>1000)fail('maintenance_source');
+  const actors=(await client.query('SELECT id,account_id FROM characters WHERE id IN ($1,$2)',[repair.payer_character,repair.provider_character])).rows;
+  if(actors.find(a=>a.id===repair.payer_character)?.account_id!==repair.payer_account||actors.find(a=>a.id===repair.provider_character)?.account_id!==repair.provider_account)fail('maintenance_actor');
+  const guard=(await client.query('SELECT * FROM item_mutation_guards WHERE idempotency_key=$1',[repair.material_key])).rows[0];
+  const expectedHash=crypto.createHash('sha256').update(JSON.stringify({kind:'consume_stack',owner:{scope:'account',id:repair.payer_account},request:{templateId:'mat:scrap_steel',qty:2,quality:'standard',reason:'equipment maintenance'}})).digest('hex');
+  let result;try{result=JSON.parse(guard?.result_json);}catch{fail('maintenance_material');}
+  if(guard.mutation_kind!=='consume_stack'||!guard.completed_at||guard.request_hash!==expectedHash||guard.owner_scope!=='account'||guard.owner_id!==repair.payer_account||result.owner?.scope!=='account'||result.owner.id!==repair.payer_account||result.templateId!=='mat:scrap_steel'||result.quality!=='standard'||result.delta!==-2)fail('maintenance_material');
+  const events=(await client.query('SELECT * FROM item_events WHERE idempotency_key=$1 ORDER BY sequence LIMIT 2',[repair.material_key])).rows;
+  if(events.length!==1||events[0].event_kind!=='stack_consumed'||events[0].template_id!=='mat:scrap_steel'||events[0].quality!=='standard'||Number(events[0].quantity_delta)!==-2||events[0].from_owner_scope!=='account'||events[0].from_owner_id!==repair.payer_account)fail('maintenance_event');
+  const journals=(await client.query('SELECT * FROM transactions WHERE id IN ($1,$2)',[repair.debit_id,repair.credit_id])).rows;
+  for(const [txid,character,account,amount,reason,counterparty] of [[repair.debit_id,repair.payer_character,repair.payer_account,-Number(repair.fee_cash),'maintenance:pay',repair.provider_character],[repair.credit_id,repair.provider_character,repair.provider_account,Number(repair.fee_cash),'maintenance:receive',repair.payer_character]]){
+    const row=journals.find(tx=>tx.id===txid);if(!row||row.currency!=='cash'||row.character_id!==character||row.account_id!==account||Number(row.amount)!==amount||row.reason!==reason||row.counterparty!==counterparty)fail('maintenance_payment');
+  }
+  if(repair.debit_id===repair.credit_id)fail('maintenance_payment');
+  return events[0];
+}
+export async function recordEquipmentMaintenance(client,ctx) {
+  assertItemTransaction(client);
+  try {
+    if(!ctx||Object.keys(ctx).sort().join(',')!=='feeCash,itemId,materialKey,owner,payerCharacter,providerCharacter,receiptId,requestKey')fail('maintenance_terms');
+    const repair=(await client.query('SELECT * FROM equipment_maintenance_repairs WHERE id=$1 FOR UPDATE',[id(ctx.receiptId)])).rows[0];
+    if(!repair||repair.item_id!==ctx.itemId||repair.request_key!==ctx.requestKey||repair.material_key!==ctx.materialKey||repair.payer_character!==ctx.payerCharacter||repair.provider_character!==ctx.providerCharacter||Number(repair.fee_cash)!==ctx.feeCash)fail('maintenance_source');
+    if(!await ownsItemMutationReservation(client,ctx.materialKey))fail('maintenance_fresh_required');
+    await maintenanceWitness(client,repair);
+    const value=await physical(client,ctx.itemId,ctx.owner);
+    if(!value.state||value.remaining>=value.maximum||repair.condition_before!==value.remaining||Number(repair.condition_after)!==Math.min(value.maximum,value.remaining+10))fail('maintenance_condition');
+    if(!((ctx.owner.scope==='account'&&ctx.owner.id===repair.payer_account)||(ctx.owner.scope==='character'&&ctx.owner.id===repair.payer_character)))fail('maintenance_custody');
+    registerItemTransactionUndo(client,()=>client.query('UPDATE item_durability_states SET remaining=$2,revision=$3 WHERE item_id=$1',[ctx.itemId,value.remaining,value.revision]));
+    const changed=await client.query('UPDATE item_durability_states SET remaining=$2,revision=revision+1 WHERE item_id=$1 AND remaining=$3',[ctx.itemId,Number(repair.condition_after),value.remaining]);if(changed.rowCount!==1)fail('maintenance_contention');
+    return {itemId:ctx.itemId,remaining:Number(repair.condition_after),maximum:value.maximum};
+  }catch(error){poisonItemTransaction(client,error);throw error;}
+}
 async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,mutation}) {
   const root=itemMutationContext(client,mutation);if(root.mutationKind!=='mystery_action'||nodeId!=='mystery:belladonna-lock') fail('authority');
   const instance=(await client.query('SELECT * FROM mystery_instances WHERE id=$1',[id(instanceId)])).rows[0];
@@ -73,20 +112,33 @@ export async function ownItemDurability(client,accountId,characterId) {
 }
 export async function collectItemConditionIssues(client) {
   const states=(await client.query('SELECT * FROM item_durability_states ORDER BY item_id')).rows,issues=[];
+  const allRepairs=(await client.query('SELECT * FROM equipment_maintenance_repairs ORDER BY id')).rows;
+  for(const repair of allRepairs)if(!states.some(state=>state.item_id===repair.item_id))issues.push({itemId:repair.item_id,reason:'maintenance_state_missing'});
+  const payments=(await client.query("SELECT id FROM transactions WHERE reason IN ('maintenance:pay','maintenance:receive') ORDER BY id")).rows;
+  for(const payment of payments)if(!allRepairs.some(row=>row.debit_id===payment.id||row.credit_id===payment.id))issues.push({reason:'maintenance_payment_unbound',transactionId:payment.id});
 
   for(const state of states) {
     const item=(await client.query('SELECT id,template_id,definition_hash FROM item_instances WHERE id=$1',[state.item_id])).rows[0];
     const created=(await client.query('SELECT * FROM item_events WHERE id=$1',[state.creation_event])).rows[0];
     if(!item||item.template_id!==ITEM_DURABILITY.templateId||item.definition_hash!==null||created?.item_id!==item.id||created.template_id!==item.template_id||created.quality!=='standard'||created.event_kind!=='created'||!['crafted','salvaged','awarded','imported'].includes(created.provenance_kind)) issues.push({itemId:state.item_id,reason:'creation'});
     const birth=(await client.query('SELECT * FROM item_durability_birth_quality WHERE item_id=$1',[state.item_id])).rows[0],maximum=birth?150:100;
-    const uses=(await client.query('SELECT u.*,e.sequence FROM item_durability_uses u LEFT JOIN item_events e ON e.id=u.event_id WHERE u.item_id=$1 ORDER BY e.sequence,u.event_id LIMIT 16',[state.item_id])).rows;
-    if(uses.length>maximum/10||Number(state.remaining)!==maximum-uses.length*10) issues.push({itemId:state.item_id,reason:'condition_conservation'});
-    for(const [index,use] of uses.entries()) {
-      if(Number(use.before_condition)!==maximum-index*10||Number(use.after_condition)!==maximum-(index+1)*10)issues.push({itemId:state.item_id,reason:'condition_chain'});
+    const uses=(await client.query('SELECT u.*,e.sequence FROM item_durability_uses u LEFT JOIN item_events e ON e.id=u.event_id WHERE u.item_id=$1 ORDER BY e.sequence,u.event_id',[state.item_id])).rows;
+    const repairs=(await client.query('SELECT * FROM equipment_maintenance_repairs WHERE item_id=$1 ORDER BY id',[state.item_id])).rows;
+    const history=[];
+    for(const repair of repairs){try{const event=await maintenanceWitness(client,repair);history.push({sequence:event.sequence,before:Number(repair.condition_before),after:Number(repair.condition_after),repair:true});}catch{issues.push({itemId:state.item_id,reason:'maintenance_witness'});}}
+    for(const use of uses) {
+      history.push({sequence:use.sequence,before:Number(use.before_condition),after:Number(use.after_condition),repair:false});
       const event=(await client.query('SELECT * FROM item_events WHERE id=$1',[use.event_id])).rows[0];
       const instance=(await client.query('SELECT * FROM mystery_instances WHERE id=$1',[use.instance_id])).rows[0];
       const node=(await client.query('SELECT state,completed_at FROM mystery_node_state WHERE instance_id=$1 AND node_id=$2',[use.instance_id,use.node_id])).rows[0];
       if(!event||event.item_id!==state.item_id||event.idempotency_key!==use.mutation_key||event.event_kind!=='escrowed'||event.provenance_kind!=='used_in_mystery'||event.to_owner_scope!=='operation'||event.to_owner_id!==use.instance_id||instance?.graph_id!=='belladonna-demo'||Number(instance.graph_version)!==1||use.node_id!=='mystery:belladonna-lock'||node?.state!=='completed'||!node.completed_at) issues.push({itemId:state.item_id,reason:'canonical_use'});
+    }
+    if(history.some(e=>!/^\d+$/.test(String(e.sequence))))issues.push({itemId:state.item_id,reason:'condition_sequence'});
+    else {
+      history.sort((a,b)=>BigInt(a.sequence)<BigInt(b.sequence)?-1:BigInt(a.sequence)>BigInt(b.sequence)?1:0);
+      let remaining=maximum;
+      for(const effect of history){const after=effect.repair?Math.min(maximum,remaining+10):remaining-10;if(effect.before!==remaining||effect.after!==after||(effect.repair?effect.before>=maximum:effect.before<10))issues.push({itemId:state.item_id,reason:'condition_chain'});remaining=effect.after;}
+      if(remaining!==Number(state.remaining))issues.push({itemId:state.item_id,reason:'condition_conservation'});
     }
   }
   const births=(await client.query('SELECT * FROM item_durability_birth_quality ORDER BY item_id')).rows;

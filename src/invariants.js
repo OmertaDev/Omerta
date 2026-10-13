@@ -49,7 +49,7 @@ const KNOWN_REASONS = {
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
     'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'strategy:buy:', 'strategy:sell:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
-    'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
+    'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
     // (the missions precedent — check (a) reconciles it per character).
