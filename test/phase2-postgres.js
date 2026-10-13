@@ -200,6 +200,7 @@ async function child(url) {
       verifyUpgradeConstraintCausalNegatives(oldConstraints,upgradedConstraints,Number(settings.server_version_num));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
+      if(Number(settings.server_version_num)>=180000) console.log('phase2-postgres: frozen quoted-position NOT NULL removal and identifier alteration negatives pass');
       return;
     }
     const failureTarget = fixture('read-failure');
@@ -309,7 +310,9 @@ function expectedUpgradeConstraintCatalog(before,serverVersionNum) {
   for (const prior of removed.values()) assert.deepEqual(before.find((row) => catalogIdentity(row) === catalogIdentity(prior)), prior);
   const additions = [...requiredUpgradeConstraints,...replacedUpgradeConstraints.map(({ after }) => after), ...architectureUpgradeCatalog.added];
   if (serverVersionNum >= 180000) for (const [table,columns] of Object.entries({ ...upgradeNotNullColumns, ...architectureUpgradeCatalog.notNullColumns })) {
-    for (const column of columns) additions.push(constraintRow(table,`${table}_${column}_not_null`,`NOT NULL ${column}`));
+    for (const column of columns) additions.push(constraintRow(table,`${table}_${column}_not_null`,
+      ['company_logistics_hub_sources','buyer_cooperative_members'].includes(table)&&column==='position'
+        ? 'NOT NULL "position"' : `NOT NULL ${column}`));
   }
   return orderedCatalog([...before.filter((row) => !replacements.has(catalogIdentity(row)) && !removed.has(catalogIdentity(row))),...additions]);
 }
@@ -332,6 +335,15 @@ function verifyUpgradeConstraintCausalNegatives(before,after,serverVersionNum) {
   rejected('required addition removal',mutate('item_lots','item_lot_quantity_ck',(rows,index) => rows.splice(index,1)));
   rejected('required addition alteration',mutate('item_lots','item_lot_quantity_ck',(rows,index) => { rows[index].definition += ' altered'; }));
   rejected('unexpected addition',[...after,constraintRow('item_events','unexpected_upgrade_constraint','CHECK (true)')]);
+  if(serverVersionNum>=180000) for(const table of ['company_logistics_hub_sources','buyer_cooperative_members']) {
+    if(!architectureUpgradeCatalog.notNullColumns[table]?.includes('position')) continue;
+    rejected(`${table} quoted-position NOT NULL removal`,mutate(table,`${table}_position_not_null`,
+      (rows,index) => rows.splice(index,1)));
+    rejected(`${table} quoted-position NOT NULL wrong column`,mutate(table,`${table}_position_not_null`,
+      (rows,index) => { rows[index].definition='NOT NULL quantity'; }));
+    rejected(`${table} quoted-position NOT NULL renamed binding`,mutate(table,`${table}_position_not_null`,
+      (rows,index) => { rows[index].name=`${table}_quantity_not_null`; }));
+  }
   rejected('command board primary key removal',mutate('player_command_boards','player_command_boards_pkey',(rows,index) => rows.splice(index,1)));
   rejected('knowledge audience boundary alteration',mutate('coordination_claim_grants','coordination_claim_grants_recipient_kind_check',
     (rows,index) => { rows[index].definition += ' altered'; }));

@@ -1,3 +1,9 @@
+import { BUSINESS_SEASON_SOURCE_TRANSFER } from '../tools/rc1-business-season-source-compatibility.js';
+import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from '../tools/rc1-commercial-reputation-source-compatibility.js';
+import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from '../tools/rc1-company-opportunity-source-compatibility.js';
+import { BUYER_COOPERATIVE_SOURCE_TRANSFER } from '../tools/rc1-buyer-cooperative-source-compatibility.js';
+import { COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER } from '../tools/rc1-company-logistics-hub-source-compatibility.js';
+import { COMPANY_BANK_SOURCE_TRANSFER } from '../tools/rc1-company-bank-source-compatibility.js';
 import { COMPANY_OPERATOR_SOURCE_TRANSFER, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { GAME_EMPLOYMENT_SOURCE_TRANSFER } from '../tools/rc1-game-employment-source-compatibility.js';
 import { COMPANY_WORKFLOW_SOURCE_TRANSFER } from '../tools/rc1-company-workflow-source-compatibility.js';
@@ -563,7 +569,7 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 27);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 33);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER);
 assert.match(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer.scope, /require separate current-source workflow proofs/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);
@@ -788,3 +794,15 @@ for (const change of [
 console.log('PASS rc1-world-qualification: source pins, exact checkpoint subjects, canonical cash/ammo/Family guards, unknown preservation, lifecycle executions, distinct season boundaries and reviewed window joins; no native-world qualification');
 
 assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer, COMMERCIAL_PREMISES_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyBankSourceReviewTransfer, COMPANY_BANK_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyLogisticsHubSourceReviewTransfer, COMPANY_LOGISTICS_HUB_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.buyerCooperativeSourceReviewTransfer, BUYER_COOPERATIVE_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.companyOpportunitySourceReviewTransfer, COMPANY_OPPORTUNITY_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialReputationSourceReviewTransfer, COMMERCIAL_REPUTATION_SOURCE_TRANSFER);
+
+assert.deepEqual(WORLD_RECOVERY_REVIEW.businessSeasonSourceReviewTransfer, BUSINESS_SEASON_SOURCE_TRANSFER);

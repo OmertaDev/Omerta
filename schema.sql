@@ -8199,3 +8199,219 @@ CREATE TABLE IF NOT EXISTS commercial_premises_requests (
   receipt JSONB NOT NULL,
   PRIMARY KEY(account_id,action,request_key)
 );
+
+
+-- Company game-cash portfolios: consent/history only, canonical loans hold all money.
+CREATE TABLE IF NOT EXISTS company_bank_portfolios (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  owner_character TEXT NOT NULL REFERENCES characters(id),
+  enabled BOOLEAN NOT NULL DEFAULT true,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+  terms JSONB NOT NULL,
+  lifetime_spent INT NOT NULL DEFAULT 0 CHECK (lifetime_spent BETWEEN 0 AND 1000000),
+  expires_at TIMESTAMPTZ NOT NULL,
+  next_run_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS company_bank_portfolio_due ON company_bank_portfolios(enabled,next_run_at,account_id);
+CREATE TABLE IF NOT EXISTS company_bank_portfolio_receipts (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL CHECK (char_length(request_key) BETWEEN 1 AND 200),
+  identity JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS company_bank_portfolio_loans (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  loan_id TEXT NOT NULL,
+  original_lender TEXT NOT NULL REFERENCES characters(id),
+  principal INT NOT NULL CHECK (principal BETWEEN 1 AND 1000000),
+  origin TEXT NOT NULL CHECK (origin IN ('existing','portfolio')),
+  finance_request_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(account_id,loan_id)
+);
+
+
+-- Finite landlord-funded logistics batches hold no extra cash or cargo bucket.
+CREATE TABLE IF NOT EXISTS company_logistics_hubs (
+  id TEXT PRIMARY KEY,
+  supplier_character TEXT NOT NULL REFERENCES characters(id),
+  supplier_account TEXT NOT NULL REFERENCES accounts(id),
+  landlord_character TEXT NOT NULL REFERENCES characters(id),
+  landlord_account TEXT NOT NULL REFERENCES accounts(id),
+  premises_lease_id TEXT NOT NULL REFERENCES commercial_premises_leases(id),
+  warehouse_lease_id TEXT NOT NULL REFERENCES business_warehouse_leases(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  district TEXT NOT NULL,
+  total_units INT NOT NULL CHECK(total_units BETWEEN 1 AND 10),
+  revision INT NOT NULL DEFAULT 1 CHECK(revision BETWEEN 1 AND 2147483647),
+  state TEXT NOT NULL DEFAULT 'draft' CHECK(state IN ('draft','active','completed','closed')),
+  expires_at TIMESTAMPTZ NOT NULL,
+  CHECK(supplier_character<>landlord_character AND supplier_account<>landlord_account)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS company_logistics_hub_warehouse_live ON company_logistics_hubs(warehouse_lease_id) WHERE state IN ('draft','active');
+CREATE UNIQUE INDEX IF NOT EXISTS company_logistics_hub_premises_live ON company_logistics_hubs(premises_lease_id) WHERE state IN ('draft','active');
+CREATE TABLE IF NOT EXISTS company_logistics_hub_sources (
+  hub_id TEXT NOT NULL REFERENCES company_logistics_hubs(id),
+  position INT NOT NULL CHECK(position BETWEEN 1 AND 3),
+  finance_request_id TEXT NOT NULL UNIQUE REFERENCES delivery_loan_requests(id),
+  quantity INT NOT NULL CHECK(quantity BETWEEN 1 AND 10),
+  snapshot JSONB NOT NULL,
+  state TEXT NOT NULL DEFAULT 'pending' CHECK(state IN ('pending','completed')),
+  withdrawal_journal_id TEXT UNIQUE REFERENCES business_depot_journal(id),
+  settlement JSONB,
+  completed_at TIMESTAMPTZ,
+  PRIMARY KEY(hub_id,position),
+  CHECK((state='completed')=(settlement IS NOT NULL AND completed_at IS NOT NULL))
+);
+CREATE TABLE IF NOT EXISTS company_logistics_hub_requests (
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  action TEXT NOT NULL CHECK(action IN ('setup','accept','run','cancel')),
+  request_key TEXT NOT NULL,
+  terms JSONB NOT NULL,
+  receipt JSONB NOT NULL,
+  PRIMARY KEY(account_id,action,request_key)
+);
+
+
+-- Joint game-cash and GIN custody, independent of the organizer's estate/pocket.
+CREATE TABLE IF NOT EXISTS buyer_cooperatives (
+ id TEXT PRIMARY KEY,
+ organizer_account TEXT NOT NULL REFERENCES accounts(id),
+ organizer_character TEXT NOT NULL REFERENCES characters(id),
+ district TEXT NOT NULL,
+ units INT NOT NULL CHECK(units BETWEEN 1 AND 8),
+ unit_price INT NOT NULL CHECK(unit_price BETWEEN 50 AND 100000),
+ fee_cap INT NOT NULL CHECK(fee_cap BETWEEN 1 AND 10000),
+ fee_paid INT NOT NULL DEFAULT 0 CHECK(fee_paid BETWEEN 0 AND fee_cap),
+ terms JSONB NOT NULL,
+ terms_hash TEXT NOT NULL CHECK(char_length(terms_hash)=64),
+ published BOOLEAN NOT NULL,
+ status TEXT NOT NULL DEFAULT 'funding' CHECK(status IN ('funding','live','settled','cancelled')),
+ cash_balance INT NOT NULL DEFAULT 0 CHECK(cash_balance BETWEEN 0 AND 810000),
+ gin_balance INT NOT NULL DEFAULT 0 CHECK(gin_balance BETWEEN 0 AND 8),
+ purchased_units INT NOT NULL DEFAULT 0 CHECK(purchased_units BETWEEN 0 AND units),
+ funding_deadline TIMESTAMPTZ NOT NULL,
+ order_id TEXT UNIQUE,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS buyer_cooperative_due ON buyer_cooperatives(status,funding_deadline,id);
+CREATE TABLE IF NOT EXISTS buyer_cooperative_members (
+ cooperative_id TEXT NOT NULL REFERENCES buyer_cooperatives(id),
+ account_id TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id),
+ position INT NOT NULL CHECK(position BETWEEN 0 AND 2),
+ unit_share INT NOT NULL CHECK(unit_share BETWEEN 1 AND 8),
+ funding_required INT NOT NULL CHECK(funding_required BETWEEN 50 AND 810000),
+ funded_cash INT NOT NULL DEFAULT 0 CHECK(funded_cash=0 OR funded_cash=funding_required),
+ is_dead BOOLEAN NOT NULL DEFAULT false,
+ cash_entitlement INT NOT NULL DEFAULT 0 CHECK(cash_entitlement BETWEEN 0 AND funding_required),
+ gin_entitlement INT NOT NULL DEFAULT 0 CHECK(gin_entitlement BETWEEN 0 AND unit_share),
+ cash_claimed INT NOT NULL DEFAULT 0 CHECK(cash_claimed BETWEEN 0 AND cash_entitlement),
+ gin_claimed INT NOT NULL DEFAULT 0 CHECK(gin_claimed BETWEEN 0 AND gin_entitlement),
+ death_cash INT NOT NULL DEFAULT 0 CHECK(death_cash BETWEEN 0 AND cash_entitlement),
+ death_gin INT NOT NULL DEFAULT 0 CHECK(death_gin BETWEEN 0 AND gin_entitlement),
+ death_loot INT NOT NULL DEFAULT 0 CHECK(death_loot BETWEEN 0 AND death_cash),
+ PRIMARY KEY(cooperative_id,account_id), UNIQUE(cooperative_id,position),
+ CHECK(cash_claimed+death_cash<=cash_entitlement), CHECK(gin_claimed+death_gin<=gin_entitlement)
+);
+CREATE INDEX IF NOT EXISTS buyer_cooperative_member_character ON buyer_cooperative_members(original_character,cooperative_id);
+CREATE TABLE IF NOT EXISTS buyer_cooperative_orders (
+ order_id TEXT PRIMARY KEY,
+ cooperative_id TEXT NOT NULL UNIQUE REFERENCES buyer_cooperatives(id)
+);
+CREATE TABLE IF NOT EXISTS buyer_cooperative_receipts (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 200),
+ identity JSONB NOT NULL, receipt JSONB NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+ PRIMARY KEY(account_id,request_key)
+);
+CREATE TABLE IF NOT EXISTS buyer_cooperative_journal (
+ id TEXT PRIMARY KEY, cooperative_id TEXT NOT NULL REFERENCES buyer_cooperatives(id),
+ kind TEXT NOT NULL CHECK(kind IN ('fund','post_order','settle','claim','death')),
+ cash_delta INT NOT NULL CHECK(cash_delta BETWEEN -810000 AND 810000),
+ gin_delta INT NOT NULL CHECK(gin_delta BETWEEN -8 AND 8), ledger_ids JSONB NOT NULL,
+ order_id TEXT, member_account TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS buyer_cooperative_journal_coop ON buyer_cooperative_journal(cooperative_id,created_at);
+
+
+-- Account-scoped informational opportunities; no money or execution authority.
+CREATE TABLE IF NOT EXISTS company_opportunity_subscriptions (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  enabled BOOLEAN NOT NULL,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647),
+  filters JSONB NOT NULL,
+  next_refresh_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
+);
+CREATE INDEX IF NOT EXISTS company_opportunity_due ON company_opportunity_subscriptions(next_refresh_at,account_id) WHERE enabled;
+CREATE TABLE IF NOT EXISTS company_opportunity_notices (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES company_opportunity_subscriptions(account_id),
+  kind TEXT NOT NULL CHECK (kind IN ('depot','warehouse','delivery','tender','employment')),
+  source_id TEXT NOT NULL,
+  source_hash TEXT NOT NULL CHECK (char_length(source_hash)=64),
+  snapshot JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  acknowledged_at TIMESTAMPTZ,
+  UNIQUE(account_id,kind,source_id)
+);
+CREATE INDEX IF NOT EXISTS company_opportunity_inbox ON company_opportunity_notices(account_id,id);
+
+-- Coarse opt-in commercial reputation; canonical source states retain authority.
+CREATE TABLE IF NOT EXISTS commercial_reputation_publications (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  published BOOLEAN NOT NULL,
+  revision INT NOT NULL CHECK (revision BETWEEN 1 AND 2147483647)
+);
+CREATE TABLE IF NOT EXISTS commercial_reputation_proofs (
+  category TEXT NOT NULL CHECK (category IN ('deliveries','paidWork','closedStorage','repaidLoans','workflows')),
+  source_id TEXT NOT NULL,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  evidence_hash TEXT NOT NULL CHECK (char_length(evidence_hash)=64),
+  recorded_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  PRIMARY KEY(category,source_id)
+);
+CREATE INDEX IF NOT EXISTS commercial_reputation_account ON commercial_reputation_proofs(account_id,category,source_id);
+-- A loan repayment's actual debit/credit cannot certify another loan record.
+CREATE TABLE IF NOT EXISTS commercial_reputation_settlements (
+  transaction_id TEXT PRIMARY KEY REFERENCES transactions(id),
+  source_id TEXT NOT NULL REFERENCES loans(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id)
+);
+
+-- Prospective prize-free Depot journal observations; no escrow or money authority.
+CREATE TABLE IF NOT EXISTS business_seasons (
+  id TEXT PRIMARY KEY,
+  creator_account TEXT NOT NULL REFERENCES accounts(id),
+  request_key TEXT NOT NULL,
+  body_hash TEXT NOT NULL CHECK (char_length(body_hash)=64),
+  name TEXT NOT NULL,
+  starts_at TIMESTAMPTZ NOT NULL,
+  ends_at TIMESTAMPTZ NOT NULL CHECK (ends_at>starts_at),
+  max_companies INT NOT NULL CHECK (max_companies BETWEEN 2 AND 10),
+  source_pin JSONB NOT NULL,
+  UNIQUE(creator_account,request_key)
+);
+CREATE TABLE IF NOT EXISTS business_season_entries (
+  season_id TEXT NOT NULL REFERENCES business_seasons(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  original_character TEXT NOT NULL REFERENCES characters(id),
+  depot_id TEXT NOT NULL REFERENCES business_depots(id),
+  body_hash TEXT NOT NULL CHECK (char_length(body_hash)=64),
+  published BOOLEAN NOT NULL,
+  visibility_revision INT NOT NULL DEFAULT 1 CHECK (visibility_revision BETWEEN 1 AND 2147483647),
+  enrollment_receipt JSONB NOT NULL,
+  next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+  baseline JSONB,
+  end_snapshot JSONB,
+  final_result JSONB,
+  PRIMARY KEY(season_id,account_id),
+  UNIQUE(season_id,depot_id)
+);
+CREATE INDEX IF NOT EXISTS business_season_owned ON business_season_entries(account_id,season_id);
+
+ALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
+CREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;

@@ -1,3 +1,4 @@
+import { companyBankSourceBaseline } from '../tools/rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -17,7 +18,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS),['src/server.js','src/invariants.js','src/social/estate.js']);
 for(const file of Object.keys(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS)) {
- const current=playerIntelSourceBaseline(file,fs.readFileSync(file,'utf8')),prior=git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=companyBankSourceBaseline(file,playerIntelSourceBaseline(file,fs.readFileSync(file,'utf8'))),prior=git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`194ca68721886ad5bce8f5d32d25ad48ec6b3ff0:${file}`));
  entire(current,git('show',P.COMMERCIAL_PREMISES_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.COMMERCIAL_PREMISES_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS,P.COMMERCIAL_PREMISES_SOURCE_CURRENT_BLOBS],[prior,P.COMMERCIAL_PREMISES_SOURCE_BASELINE_PINS,P.COMMERCIAL_PREMISES_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
@@ -39,7 +40,7 @@ for(const file of Object.keys(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS)) {
  if(file==='src/invariants.js')for(const guard of ['assertFranchiseSourceTransfer','assertDeedBacklogCompatibility']){const actual=D[guard](file,current),old=D[guard](file,prior);assert.deepEqual(actual.commercialPremisesSourceTransfer,proof);assert.deepEqual(actual.companyWorkflowSourceTransfer,old.companyWorkflowSourceTransfer);assert.deepEqual(actual.gameEmploymentSourceTransfer,old.gameEmploymentSourceTransfer);}
 }
 for(const file of ['src/worker.js','src/commercialpremises.js','toString']){assert.throws(()=>P.assertCommercialPremisesSourceTransfer(file,''));assert.throws(()=>P.qualifyCommercialPremisesSource(file,''));}
-const worker=lf(fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.commercialPremisesSourceBaseline('src/worker.js',worker),worker);
+const worker=companyBankSourceBaseline('src/worker.js',fs.readFileSync('src/worker.js','utf8'));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:src/worker.js`));entire(worker,git('show',`${P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}:src/worker.js`));entire(P.commercialPremisesSourceBaseline('src/worker.js',worker),worker);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.commercialPremisesSourceReviewTransfer,P.COMMERCIAL_PREMISES_SOURCE_TRANSFER);assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer,W.COMPANY_WORKFLOW_SOURCE_TRANSFER);
 const currentReader=file=>fs.readFileSync(file,'utf8'),priorReader=file=>Object.hasOwn(P.COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS,file)?git('show',`${P.COMMERCIAL_PREMISES_SOURCE_PREDECESSOR_REVISION}:${file}`):currentReader(file);
 assert.deepEqual(await verifyWorldRecoverySources({readFile:currentReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}),await verifyWorldRecoverySources({readFile:priorReader,sourceRevision:P.COMMERCIAL_PREMISES_SOURCE_REVIEWED_REVISION}));

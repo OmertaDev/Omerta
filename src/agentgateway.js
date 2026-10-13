@@ -6,7 +6,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
-import { DISTRICTS } from './rules.js';
+import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -428,6 +428,51 @@ const OPERATION_CONTRACTS = {
   ] },
   'GET /v1/company-succession': { operationId: 'getOwnGameCompanySuccession' },
   'GET /v1/company/operator': { operationId: 'getOwnCompanyOperators' },
+  'GET /v1/buyer-cooperatives': {"operationId":"getOwnBuyerCooperativeCustody"},
+  'GET /v1/buyer-cooperatives/public': {"operationId":"getPublishedBuyerCooperativeTerms"},
+  'POST /v1/buyer-cooperatives': {"operationId":"createFrozenBuyerCooperative","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["members","unitPrice","feeCap","fundingSeconds","orderHours","published","partialPolicy"],"properties":{"members":{"type":"array","minItems":1,"maxItems":3,"items":{"type":"object","additionalProperties":false,"required":["accountId","units"],"properties":{"accountId":{"type":"string","minLength":1,"maxLength":128},"units":{"type":"integer","minimum":1,"maximum":8}}}},"unitPrice":{"type":"integer","minimum":50,"maximum":100000},"feeCap":{"type":"integer","minimum":1,"maximum":10000},"fundingSeconds":{"type":"integer","minimum":60,"maximum":21600},"orderHours":{"type":"integer","minimum":1,"maximum":24},"published":{"type":"boolean"},"partialPolicy":{"type":"string","const":"proportional"}}}},
+  'POST /v1/buyer-cooperatives/:id/fund': {"operationId":"ConsentAndFundOwnCooperativeShare","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["consent","termsHash","maxCash"],"properties":{"consent":{"type":"boolean","const":true},"termsHash":{"type":"string","pattern":"^[a-f0-9]{64}$"},"maxCash":{"type":"integer","minimum":1,"maximum":810000}}}},
+  'POST /v1/buyer-cooperatives/:id/launch': {"operationId":"LaunchFullyFundedCooperativeMarketOrder","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["termsHash"],"properties":{"termsHash":{"type":"string","pattern":"^[a-f0-9]{64}$"}}}},
+  'POST /v1/buyer-cooperatives/:id/settle': {"operationId":"SettleCooperativeMarketCustody","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["cancel"],"properties":{"cancel":{"type":"boolean"}}}},
+  'POST /v1/buyer-cooperatives/:id/claim': {"operationId":"ClaimOwnCooperativeAllocation","requestParameters":[{"name":"Idempotency-Key","in":"header","required":true,"schema":{"type":"string","minLength":1,"maxLength":200}}],"requestSchema":{"type":"object","additionalProperties":false,"required":["cash","ginQty"],"properties":{"cash":{"type":"boolean"},"ginQty":{"type":"integer","minimum":0,"maximum":8}}}},
+  'GET /v1/company/opportunities': { operationId: 'getOwnPublicOpportunityInbox', requestParameters: [{ name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50 } }, { name: 'after', in: 'query', schema: { type: 'string', maxLength: 36 } }] },
+  'POST /v1/company/opportunities/subscription': { operationId: 'SetOwnOpportunitySubscription', requestSchema: { type: 'object', additionalProperties: false, required: ['enabled','expectedRevision','kinds','district','good'], properties: { enabled: { type: 'boolean' }, expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, kinds: { type: 'array', minItems: 1, maxItems: 5, uniqueItems: true, items: { type: 'string', enum: ['depot','warehouse','delivery','tender','employment'] } }, district: { type: ['string','null'], enum: [null,...DISTRICTS.map(d=>d.id)] }, good: { type: ['string','null'], enum: [null,...GOODS.map(g=>g.id)] } } } },
+  'POST /v1/company/opportunities/refresh': { operationId: 'RefreshOwnPublicOpportunityInbox', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'POST /v1/company/opportunities/acknowledge': { operationId: 'AcknowledgeOwnExactOpportunityQuote', requestSchema: { type: 'object', additionalProperties: false, required: ['noticeId','expectedHash'], properties: { noticeId: { type: 'string', minLength: 36, maxLength: 36 }, expectedHash: { type: 'string', pattern: '^[0-9a-f]{64}$' } } } },
+  'GET /v1/company/reputation': { operationId: 'getOwnCanonicalCommercialReputation' },
+  'GET /v1/company/reputation/public/:accountId': { operationId: 'getCurrentlyPublishedCoarseCommercialReputation' },
+  'POST /v1/company/reputation': { operationId: 'SetOwnCommercialReputationPublication', requestSchema: { type: 'object', additionalProperties: false, required: ['published','expectedRevision'], properties: { published: { type: 'boolean' }, expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 } } } },
+  'POST /v1/company/reputation/refresh': { operationId: 'RefreshOwnCanonicalCommercialProofs', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/company/seasons': { operationId: 'getOwnProspectiveBusinessSeasons' },
+  'GET /v1/company/seasons/public/:id': { operationId: 'getConsentedPrizeFreeBusinessSeasonBands' },
+  'POST /v1/company/seasons': { operationId: 'createProspectivePrizeFreeBusinessSeason', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true, schema: { type: 'string', minLength: 1, maxLength: 128, pattern: '^[A-Za-z0-9_-]+$' } }], requestSchema: { type: 'object', additionalProperties: false, required: ['name','enrollmentSeconds','durationSeconds','maxCompanies'], properties: { name: { type: 'string', minLength: 3, maxLength: 64 }, enrollmentSeconds: { type: 'integer', minimum: 60, maximum: 3600 }, durationSeconds: { type: 'integer', minimum: 60, maximum: 86400 }, maxCompanies: { type: 'integer', minimum: 2, maximum: 10 } } } },
+  'POST /v1/company/seasons/enroll': { operationId: 'EnrollOwnOriginalDepotInBusinessSeason', requestSchema: { type: 'object', additionalProperties: false, required: ['seasonId','depotId','published'], properties: { seasonId: { type: 'string', minLength: 1, maxLength: 128 }, depotId: { type: 'string', minLength: 1, maxLength: 128 }, published: { type: 'boolean' } } } },
+  'POST /v1/company/seasons/visibility': { operationId: 'SetOwnBusinessSeasonPublication', requestSchema: { type: 'object', additionalProperties: false, required: ['seasonId','published','expectedRevision'], properties: { seasonId: { type: 'string', minLength: 1, maxLength: 128 }, published: { type: 'boolean' }, expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 } } } },
+  'POST /v1/company/seasons/:id/observe': { operationId: 'ObserveOwnActualBusinessSeasonJournal', requestSchema: { type: 'object', additionalProperties: false, properties: {} } },
+  'GET /v1/company/logistics-hubs': { operationId: 'getOwnConsentedLogisticsHubs' },
+  'POST /v1/company/logistics-hubs': { operationId: 'SetUpOwnLogisticsHub', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true, schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['premisesLeaseId', 'warehouseLeaseId', 'financeRequestIds'], properties: { premisesLeaseId: { type: 'string', minLength: 1, maxLength: 128 }, warehouseLeaseId: { type: 'string', minLength: 1, maxLength: 128 }, financeRequestIds: { type: 'array', minItems: 1, maxItems: 3, uniqueItems: true, items: { type: 'string', minLength: 1, maxLength: 128 } } } } },
+  'POST /v1/company/logistics-hubs/:id/accept': { operationId: 'ConsentToOwnLogisticsHub', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true, schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['consent', 'expectedRevision'], properties: { consent: { type: 'boolean', const: true }, expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 } } } },
+  'POST /v1/company/logistics-hubs/:id/run': { operationId: 'ExecuteOwnFundedLogisticsHubStage', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true, schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 } } } },
+  'POST /v1/company/logistics-hubs/:id/cancel': { operationId: 'CloseOwnLogisticsHub', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true, schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: { expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 } } } },
+  'GET /v1/company/bank': { operationId: 'getOwnGameCashBankPortfolio' },
+  'POST /v1/company/bank/policy': { operationId: 'SetOwnerConsentedGameCashBankPolicy', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { oneOf: [
+      { type: 'object', additionalProperties: false, required: ['enabled', 'expectedRevision'], properties: {
+        enabled: { type: 'boolean', const: false }, expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+      } },
+      { type: 'object', additionalProperties: false, required: ['expectedRevision', 'enabled', 'consent', 'borrowerIds', 'principal', 'rateBps', 'termHours', 'cashReserve', 'maxExposure', 'lifetimeBudget', 'expiresInSeconds'], properties: {
+        expectedRevision: { type: 'integer', minimum: 0, maximum: 2147483646 }, enabled: { type: 'boolean', const: true }, consent: { type: 'boolean', const: true },
+        borrowerIds: { type: 'array', minItems: 1, maxItems: 3, uniqueItems: true, items: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' } },
+        principal: { type: 'integer', minimum: 5000, maximum: 100000 }, rateBps: { type: 'integer', minimum: 1, maximum: 5000 },
+        termHours: { type: 'integer', minimum: 1, maximum: 72 }, cashReserve: { type: 'integer', minimum: 1000, maximum: 10000000 },
+        maxExposure: { type: 'integer', minimum: 5000, maximum: 300000 }, lifetimeBudget: { type: 'integer', minimum: 5000, maximum: 1000000 },
+        expiresInSeconds: { type: 'integer', minimum: 60, maximum: 604800 },
+      } },
+    ] } },
+  'POST /v1/company/bank/run': { operationId: 'RunOwnAuthorizedGameCashBankPortfolio', requestParameters: [{ name: 'Idempotency-Key', in: 'header', required: true,
+    schema: { type: 'string', minLength: 1, maxLength: 200 } }], requestSchema: { type: 'object', additionalProperties: false, required: ['expectedRevision'], properties: {
+    expectedRevision: { type: 'integer', minimum: 1, maximum: 2147483646 },
+  } } },
   'GET /v1/company/premises': { operationId: 'getOwnCommercialPremises' },
   'GET /v1/company/premises/offers': { operationId: 'getPublishedVerifiedPremisesOffers' },
   'GET /v1/company/premises/leases/:id': { operationId: 'getOwnPaidCommercialOccupancy' },

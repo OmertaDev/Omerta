@@ -12,11 +12,29 @@ import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, assertCompanyOperatorSourceTransf
 import { GAME_EMPLOYMENT_SOURCE_CURRENT_PINS, assertGameEmploymentSourceTransfer } from './rc1-game-employment-source-compatibility.js';
 import { COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, assertCompanyWorkflowSourceTransfer } from './rc1-company-workflow-source-compatibility.js';
 import { COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, assertCommercialPremisesSourceTransfer } from './rc1-commercial-premises-source-compatibility.js';
+import { COMPANY_BANK_SOURCE_CURRENT_PINS, assertCompanyBankSourceTransfer } from './rc1-company-bank-source-compatibility.js';
+import { COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS, assertCompanyLogisticsHubSourceTransfer } from './rc1-company-logistics-hub-source-compatibility.js';
+import { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';
+import { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';
+import { COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, assertCommercialReputationSourceTransfer } from './rc1-commercial-reputation-source-compatibility.js';
+import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 function operatorEnvelope(file, input, predecessorGuard) {
  const text = input.replaceAll('\r\n', '\n');
- const premises = Object.hasOwn(COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, file) && hash(text) === COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file] ? assertCommercialPremisesSourceTransfer(file, text) : null;
- const workflowText = premises?.baselineText || text;
+ const season = Object.hasOwn(BUSINESS_SEASON_SOURCE_CURRENT_PINS, file) && hash(text) === BUSINESS_SEASON_SOURCE_CURRENT_PINS[file] ? assertBusinessSeasonSourceTransfer(file, text) : null;
+ const reputationText = season?.baselineText || text;
+ const reputation = Object.hasOwn(COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, file) && hash(reputationText) === COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS[file] ? assertCommercialReputationSourceTransfer(file, reputationText) : null;
+ const opportunityText = reputation?.baselineText || reputationText;
+ const opportunity = Object.hasOwn(COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, file) && hash(opportunityText) === COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS[file] ? assertCompanyOpportunitySourceTransfer(file, opportunityText) : null;
+ const cooperativeText = opportunity?.baselineText || opportunityText;
+ const cooperative = Object.hasOwn(BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, file) && hash(cooperativeText) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file] ? assertBuyerCooperativeSourceTransfer(file, cooperativeText) : null;
+ const hubText = cooperative?.baselineText || cooperativeText;
+ const hub = Object.hasOwn(COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS, file) && hash(hubText) === COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS[file] ? assertCompanyLogisticsHubSourceTransfer(file, hubText) : null;
+ const bankText = hub?.baselineText || hubText;
+ const bank = Object.hasOwn(COMPANY_BANK_SOURCE_CURRENT_PINS, file) && hash(bankText) === COMPANY_BANK_SOURCE_CURRENT_PINS[file] ? assertCompanyBankSourceTransfer(file, bankText) : null;
+ const premisesText = bank?.baselineText || bankText;
+ const premises = Object.hasOwn(COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS, file) && hash(premisesText) === COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file] ? assertCommercialPremisesSourceTransfer(file, premisesText) : null;
+ const workflowText = premises?.baselineText || premisesText;
  const workflow = Object.hasOwn(COMPANY_WORKFLOW_SOURCE_CURRENT_PINS, file) && hash(workflowText) === COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file] ? assertCompanyWorkflowSourceTransfer(file, workflowText) : null;
  const employmentText = workflow?.baselineText || workflowText;
  const employment = Object.hasOwn(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS, file) && hash(employmentText) === GAME_EMPLOYMENT_SOURCE_CURRENT_PINS[file] ? assertGameEmploymentSourceTransfer(file, employmentText) : null;
@@ -25,7 +43,7 @@ function operatorEnvelope(file, input, predecessorGuard) {
  const transfer = assertCompanyOperatorSourceTransfer(file, operatorText);
  const home = file === 'src/server.js' ? assertCityHomesLeagueServerTransfer(transfer.baselineText) : null;
  const predecessor = predecessorGuard(home?.baselineText || transfer.baselineText);
- return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
+ return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(season ? { businessSeasonSourceTransfer: season } : {}), ...(reputation ? { commercialReputationSourceTransfer: reputation } : {}), ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
 }
 export const CITY_HOMES_SERVER_PIN = 'f66e2f5a40394d3dc1ac92a779486fa0cb7b5a3d005eae2f4a99214e65105dd6';
 export const CITY_HOMES_SOURCE_BASE_REVISION = '9506c37e18bbc1be45ae8150951e42451eb909de';
@@ -173,6 +191,18 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, buyerCooperativeSourceTransfer: transfer };
+  }
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertCompanyLogisticsHubSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, companyLogisticsHubSourceTransfer: transfer };
+  }
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMPANY_BANK_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertCompanyBankSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, companyBankSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertCommercialPremisesSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: transfer.actualSha256, commercialPremisesSourceTransfer: transfer };
@@ -915,6 +945,18 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, buyerCooperativeSourceTransfer: transfer };
+  }
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertCompanyLogisticsHubSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, companyLogisticsHubSourceTransfer: transfer };
+  }
+  if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMPANY_BANK_SOURCE_CURRENT_PINS[file]) {
+    const transfer = assertCompanyBankSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: transfer.actualSha256, companyBankSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertCommercialPremisesSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: transfer.actualSha256, commercialPremisesSourceTransfer: transfer };

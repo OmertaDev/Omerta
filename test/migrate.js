@@ -629,6 +629,13 @@ const DISPOSITION = {
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value
   commercial_premises_offers: 'special', // canonical estate invalidates the dead original landlord's published offer
   commercial_premises_leases: 'special', // canonical estate closes occupancy for either original party; rent is already settled
+  buyer_cooperatives: 'escrow', // canonical estate settles the bound market order and preserves living members custody; organizer pocket is never backing
+  buyer_cooperative_members: 'escrow', // original member death burns/loots only unclaimed entitlement; immutable allocation/death history grants heirs no claim
+  commercial_reputation_proofs: 'metadata', // immutable original-performer proof bindings; no funds or fresh heir performance claim
+  business_season_entries: 'metadata', // historical original-depot observation; death produces unknown coverage and heirs gain no source ownership or prize
+  company_logistics_hubs: 'special', // canonical estate closes original supplier/landlord consent; all value stays in canonical warehouse and loan books
+  company_bank_portfolios: 'metadata', // canonical estate disables the original owner grant; no custody or new heir authority
+  company_bank_portfolio_loans: 'metadata', // immutable original lender provenance; canonical loans own all debt and inherited active claims
   logistics_coverage_policies: 'escrow', // accepted reserve obligations and immutable event allocations survive original parties; only authenticated original account successors receive claims/refunds
   business_depot_journal: 'ledger', // immutable custody and customer receipts retain original dead-character identities; no claim transfers to an heir
   depot_brand_licenses: 'ledger', // immutable signed brand terms and earned receipt counters retain original parties; closed/dead businesses receive no further royalty and heirs inherit no licence authority
@@ -670,7 +677,9 @@ const charTables = new Set();
     // in the established `_char` house style would have failed OPEN. Third occurrence of the class
     // this guard's own comment names, which is the argument for matching the family rather than
     // enumerating members: a suffix rule generalises, a list of five does not.
-    if (/^\s*(character_id|[a-z0-9_]+_(character|char|fighter)|hunter)\b/m.test(body)) charTables.add(mm[1]);
+    // Portfolio history retains an original_lender character FK. Its metadata
+    // disposition must remain checked even though it has no live claim authority.
+    if (/^\s*(character_id|[a-z0-9_]+_(character|char|fighter|lender)|hunter)\b/m.test(body)) charTables.add(mm[1]);
   }
 }
 // (a) every character_id table is classified; no stale classifications
