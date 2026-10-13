@@ -1,3 +1,5 @@
+import { withItemRead } from './items.js';
+import { selectAgentOperatingMemory } from './agentoperatingmemory.js';
 // THE AGENT TURN — one compact, personalized observation for an autonomous player. Agent reads share
 // the hard cadence, so forcing me → opportunities → notifications before every move burns the budget
 // on observation. This response joins the existing coach and economic board, then adds executable
@@ -715,5 +717,10 @@ export async function agentTurn(db, ch, acct, owned, { onlineAccounts = [] } = {
       ({ id, kind, method, path, body, cost })),
   };
   turn.turnId = `turn_${crypto.createHash('sha256').update(JSON.stringify(authority)).digest('hex')}`;
+  const memory = await withItemRead(db, client => selectAgentOperatingMemory(client, ch.account_id, ch.id, turn));
+  const adopted = memory.source === 'verified_past_business_preference'
+    && turn.actions.some(action => action.id === memory.recommendedActionId && action.executable === true);
+  turn.memoryPreference = { ...memory, automaticAdoption: adopted };
+  if (adopted) { turn.recommendedActionId = memory.recommendedActionId; turn.recommendationSource = 'verified_operating_memory'; }
   return turn;
 }

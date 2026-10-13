@@ -8772,3 +8772,45 @@ CREATE TABLE IF NOT EXISTS company_acquisitions (
 CREATE TABLE IF NOT EXISTS company_acquisition_requests (
  account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,identity TEXT NOT NULL,receipt JSONB NOT NULL,
  PRIMARY KEY(account_id,request_key));
+
+-- Late-five proposal: economicintelligence metadata.
+CREATE TABLE IF NOT EXISTS economic_intelligence_publications (
+ id TEXT PRIMARY KEY,depot_id TEXT NOT NULL REFERENCES business_depots(id),seller_account TEXT NOT NULL REFERENCES accounts(id),seller_character TEXT NOT NULL REFERENCES characters(id),
+ window_hours INT NOT NULL,horizon_hours INT NOT NULL,evaluation_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,report_hash TEXT NOT NULL,terms_hash TEXT NOT NULL,report JSONB NOT NULL,
+ price INT NOT NULL CHECK(price BETWEEN 1 AND 100000),state TEXT NOT NULL CHECK(state IN ('published','withdrawn','retired')),
+ created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS economic_intelligence_purchases (
+ id TEXT PRIMARY KEY,publication_id TEXT NOT NULL REFERENCES economic_intelligence_publications(id),buyer_account TEXT NOT NULL REFERENCES accounts(id),buyer_character TEXT NOT NULL REFERENCES characters(id),seller_account TEXT NOT NULL REFERENCES accounts(id),seller_character TEXT NOT NULL REFERENCES characters(id),
+ price INT NOT NULL CHECK(price BETWEEN 1 AND 100000),report_hash TEXT NOT NULL,report JSONB NOT NULL,purchased_at TIMESTAMPTZ NOT NULL,
+ pay_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),receive_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ UNIQUE(publication_id,buyer_account));
+CREATE TABLE IF NOT EXISTS economic_intelligence_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,identity TEXT NOT NULL,receipt JSONB NOT NULL,PRIMARY KEY(account_id,request_key));
+
+-- Late-five proposal: agentoperatingmemory metadata.
+CREATE TABLE IF NOT EXISTS agent_operating_memory_policies (
+ account_id TEXT PRIMARY KEY REFERENCES accounts(id), revision INT NOT NULL CHECK(revision BETWEEN 1 AND 2147483647), enabled BOOLEAN NOT NULL);
+CREATE TABLE IF NOT EXISTS agent_operating_memory_facts (
+ id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id), original_character TEXT NOT NULL REFERENCES characters(id), business_id TEXT NOT NULL REFERENCES business_depots(id),
+ source_kind TEXT NOT NULL CHECK(source_kind IN ('production','forecast')), source_key_hash TEXT NOT NULL CHECK(char_length(source_key_hash)=64),
+ source_proof_hash TEXT NOT NULL CHECK(char_length(source_proof_hash)=64), source_at TIMESTAMPTZ NOT NULL, captured_at TIMESTAMPTZ NOT NULL,
+ expires_at TIMESTAMPTZ NOT NULL CHECK(expires_at>source_at AND expires_at<=source_at+interval '30 days'), summary JSONB NOT NULL,
+ baseline_ids JSONB NOT NULL, baseline_truncated BOOLEAN NOT NULL, outcome JSONB NOT NULL,
+ UNIQUE(account_id,source_kind,source_key_hash));
+CREATE TABLE IF NOT EXISTS agent_operating_memory_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), run_id TEXT NOT NULL UNIQUE,
+ receipt JSONB, account_ref TEXT REFERENCES accounts(id), actor_ref TEXT REFERENCES characters(id), created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
+ PRIMARY KEY(account_id,key_hash), CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL) OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)));
+
+-- Late-five proposal: fundedexternalwork metadata.
+CREATE TABLE IF NOT EXISTS funded_external_work_jobs (
+ id TEXT PRIMARY KEY,source_identity TEXT NOT NULL UNIQUE,depot_id TEXT NOT NULL REFERENCES business_depots(id),course_id TEXT NOT NULL REFERENCES worker_training_courses(id),ordinal INT NOT NULL CHECK(ordinal BETWEEN 1 AND 8),stat TEXT NOT NULL,
+ owner_account TEXT NOT NULL REFERENCES accounts(id),owner_character TEXT NOT NULL REFERENCES characters(id),worker_account TEXT REFERENCES accounts(id),worker_character TEXT REFERENCES characters(id),
+ terms JSONB NOT NULL,work_hash TEXT NOT NULL,funding_hash TEXT NOT NULL,funding_proof JSONB NOT NULL,worker_proof JSONB,
+ phase TEXT NOT NULL CHECK(phase='synthetic_control_only'),state TEXT NOT NULL CHECK(state IN ('offered','accepted','allocated','recoverable','recovered')),
+ created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,accepted_at TIMESTAMPTZ,UNIQUE(course_id,ordinal));
+CREATE TABLE IF NOT EXISTS funded_external_work_events (
+ id TEXT PRIMARY KEY,job_id TEXT NOT NULL UNIQUE REFERENCES funded_external_work_jobs(id),kind TEXT NOT NULL CHECK(kind IN ('allocation','recovery')),
+ receipt_hash TEXT NOT NULL UNIQUE,receipt JSONB NOT NULL,outcome_hash TEXT UNIQUE,recorded_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS funded_external_work_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,identity TEXT NOT NULL,receipt JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
