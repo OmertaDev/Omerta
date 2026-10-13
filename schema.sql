@@ -8943,3 +8943,6 @@ CREATE TABLE IF NOT EXISTS company_restructuring_requests (
  account_id TEXT NOT NULL,key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),run_id TEXT NOT NULL UNIQUE,
  receipt JSONB,account_ref TEXT REFERENCES accounts(id),actor_ref TEXT REFERENCES characters(id),PRIMARY KEY(account_id,key_hash),
  CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL) OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)));
+
+-- F24 bounded retry metadata only; no consent or budget change.
+ALTER TABLE management_team_autonomy_grants ADD COLUMN IF NOT EXISTS next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();
