@@ -42,8 +42,9 @@ export function companyProductionRecipes() {
 async function runProduction(client, accountId, body, requestKey, options) {
   assertItemTransaction(client);
   if (!text(accountId) || !text(requestKey)) fail('identifier');
-  if (!exact(options, ['beforeCraft', 'agentCredential']) || typeof options.agentCredential !== 'boolean'
-      || (options.beforeCraft !== undefined && typeof options.beforeCraft !== 'function')) fail('internal_context');
+  if ((!exact(options, ['beforeCraft', 'agentCredential']) && !exact(options, ['beforeCraft', 'agentCredential', 'sourceScope'])) || typeof options.agentCredential !== 'boolean'
+      || (options.beforeCraft !== undefined && typeof options.beforeCraft !== 'function')
+      || (options.sourceScope !== undefined && typeof options.sourceScope !== 'function')) fail('internal_context');
   const normalized = batch(body), bodyHash = digest([accountId, normalized.businessId, normalized.steps]);
   const prior = (await client.query('SELECT body_hash,receipt FROM company_production_receipts WHERE account_id=$1 AND request_key=$2', [accountId, requestKey])).rows[0];
   if (prior) {
@@ -52,6 +53,7 @@ async function runProduction(client, accountId, body, requestKey, options) {
     return prior.receipt;
   }
   if (typeof options.beforeCraft !== 'function') fail('admission_unavailable');
+  const execute = async () => {
   const actors = (await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2', [accountId])).rows;
   if (actors.length !== 1 || actors[0].is_npc) fail('living_character');
   const declared = new Map(companyProductionRecipes().map(recipe => [recipe.id, recipe]));
@@ -88,11 +90,14 @@ async function runProduction(client, accountId, body, requestKey, options) {
     }
     const expiry = options.agentCredential ? admission.agentGrantExpiresAt : null;
     if (options.agentCredential && expiry !== null && (typeof expiry !== 'string' || !Number.isFinite(Date.parse(expiry)))) fail('internal_context');
+    const sourceExpiry = admission?.productionSourceExpiresAt ?? null;
+    if (sourceExpiry !== null && (typeof sourceExpiry !== 'string' || !Number.isFinite(Date.parse(sourceExpiry)))) fail('internal_context');
     const receipt = await craftWorldGraphRecipe(client, { accountId, expectedCharacterId: originalCharacter }, step.recipeId, key);
     if (receipt.cashCost !== recipeCashCost) fail('source_changed');
-    if (expiry !== null) {
+    if (expiry !== null || sourceExpiry !== null) {
       const observed = (await client.query('SELECT clock_timestamp() AS observed')).rows[0].observed;
-      if (+new Date(observed) >= Date.parse(expiry)) fail('production_grant_expired');
+      if (expiry !== null && +new Date(observed) >= Date.parse(expiry)) fail('production_grant_expired');
+      if (sourceExpiry !== null && +new Date(observed) >= Date.parse(sourceExpiry)) fail('production_source_expired');
     }
     crafts.push({ ordinal, key, receipt, ...(admission === undefined ? {} : { admission }) }); ordinal++;
   }
@@ -101,6 +106,18 @@ async function runProduction(client, accountId, body, requestKey, options) {
   const saved = await client.query('UPDATE company_production_receipts SET receipt=$4,original_character=$5,business_id=$6,account_ref=$1 WHERE account_id=$1 AND request_key=$2 AND run_id=$3 AND receipt IS NULL', [accountId, requestKey, runId, JSON.stringify(receipt), originalCharacter, business.id]);
   if (saved.rowCount !== 1) fail('source_conflict');
   return receipt;
+  };
+  if (!options.sourceScope) return execute();
+  let called = false, completed = false, failure = null, ownedResult;
+  const result = await options.sourceScope(client, Object.freeze({ accountId, businessId: normalized.businessId }), async () => {
+    if (called) { failure = new GameError('company_production', 'source_scope'); throw failure; }
+    called = true;
+    try { ownedResult = await execute(); completed = true; return ownedResult; }
+    catch (error) { failure ||= error; throw error; }
+  });
+  if (failure) throw failure;
+  if (!called || !completed || result !== ownedResult) fail('source_scope');
+  return result;
 }
 
 export async function runCompanyProduction(client, accountId, body, requestKey, options = {}) {

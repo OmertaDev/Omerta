@@ -54,6 +54,7 @@ import { sweepDispatch } from './dispatch.js';
 import { spawnNpcConvoys, despawnArrivedNpc, sweepConvoyHauls } from './convoy.js';
 import { runPopulation, runResidentBehaviour } from './population.js';
 import { runCompanyOperators } from './companyoperatorrunner.js';
+import { runTerritoryEconomics } from './territoryeconomics.js';
 import { runCompanyWorkflows } from './companyworkflowrunner.js';
 import { runServiceSubscriptions } from './servicesubscriptions.js';
 import { runCompanyOpportunities } from './companyopportunityrunner.js';
@@ -823,6 +824,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     companyTicking = true;
     try {
       await safe('company operators', () => runCompanyOperators(pool, 20));
+      await safe('territory economics', () => runTerritoryEconomics(pool, 20));
       await safe('company workflows', () => runCompanyWorkflows(pool, 20));
       await safe('service subscriptions', () => runServiceSubscriptions(pool, 20));
       await safe('company bank portfolios', () => runCompanyBankPortfolios(pool, 20));

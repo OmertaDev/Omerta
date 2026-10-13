@@ -18,6 +18,8 @@ import { collectEquipmentRentalIssues } from './equipmentrentals.js';
 import { collectServiceSubscriptionIssues } from './servicesubscriptions.js';
 import { collectWorkerTrainingIssues } from './workertraining.js';
 import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
+import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
+import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -56,6 +58,8 @@ const KNOWN_REASONS = {
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
+    'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
+    'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
@@ -716,6 +720,16 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const rentalIssues = await collectEquipmentRentalIssues(pool);
   push('equipment rental physical title', rentalIssues.length, 0, 0, { issues: rentalIssues });
   push('equipment maintenance transfers', 0, await sum(pool, "currency='cash' AND reason IN ('maintenance:pay','maintenance:receive')"), 0);
+  const equipmentInsuranceEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM equipment_insurance_policies');
+  const equipmentInsuranceReserve = -(await sum(pool, "currency='cash' AND reason='equipment_insurance:reserve'"));
+  const equipmentInsurancePaid = await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:claim','equipment_insurance:refund')");
+  const equipmentInsuranceBurned = await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:burn','death:equipment_insurance')");
+  push('equipment insurance reserved cash', equipmentInsuranceEscrow, equipmentInsuranceReserve - equipmentInsurancePaid + equipmentInsuranceBurned, 0);
+  push('equipment insurance premium transfers', 0, await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:premium_pay','equipment_insurance:premium_receive')"), 0);
+  const equipmentInsuranceIssues = await collectEquipmentInsuranceIssues(pool);
+  push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
+  const territoryIssues = await collectTerritoryEconomicsIssues(pool);
+  push('territory economics source and tribute bindings', territoryIssues.length, 0, 0, { issues: territoryIssues });
   const subscriptionEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM service_subscriptions');
   const subscriptionFunding = -(await sum(pool, "currency='cash' AND reason IN ('subscription:reserve','subscription:release','subscription:refund')"));
   const subscriptionBurn = await sum(pool, "currency='cash' AND reason='death:subscription'");
