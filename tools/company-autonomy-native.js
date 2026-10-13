@@ -64,6 +64,9 @@ async function run(){
  const source=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
  assert.equal(execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim(),'','Qualification requires a clean exact source');
  const root=path.join('output','company-autonomy-native-'+source.slice(0,8)+'-'+crypto.randomBytes(4).toString('hex'));fs.mkdirSync(root,{recursive:true});
+ const fixtureFiles=[...new Set(AUTONOMY_NATIVE_PROOFS.map(([file])=>'test/'+file+'.js').concat(['test/economicintelligence-fixture.js','test/managementteams-fixture.js','test/fundedexternalwork-fixture.js']))];
+ const fixtureSources=fixtureFiles.map(file=>({file,sha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')}));
+ fs.writeFileSync(path.join(root,'sources.json'),JSON.stringify({source,fixtureSources,proofs:AUTONOMY_NATIVE_PROOFS,financialActivation:'off'},null,2)+'\n');
  const admin=new pg.Client({connectionString:u.href});await admin.connect();const results=[];
  try{
   const version=(await admin.query('SHOW server_version')).rows[0].server_version;assert.match(version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);
