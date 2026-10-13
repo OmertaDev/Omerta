@@ -36,7 +36,7 @@ const { SECOND_BATCH_ADDITIVE_PAIR: secondPin,qualifySecondBatchAdditiveBootstra
 const { EQUIPMENT_ECONOMY_MIGRATION_TABLES }=await import('./lib/equipment-economy-migration-catalog.js');
 assert.deepEqual(secondPin.tables,[...EQUIPMENT_ECONOMY_MIGRATION_TABLES].sort());
 assert.equal(secondPin.predecessor,'ed903348ee59e354bfae72bfbc2aed8273229bb2');
-assert.equal(secondPin.reviewedCandidate,'98004e7f6838ee34445437868154dcc361784c85');
+assert.equal(secondPin.reviewedCandidate,'075e48015ee6f8435ed8a2e9a729020e773ac292');
 const secondPredecessor={source:secondPin.predecessor,secondBatchAdditiveSource:{tree:secondPin.predecessorTree,schema:secondPin.predecessorSchema,catalog:secondPin.predecessorCatalog}},secondCandidate={source:secondPin.reviewedCandidate,secondBatchAdditiveSource:{tree:secondPin.candidateTree,schema:secondPin.candidateSchema,catalog:secondPin.candidateCatalog,catalogTables:Object.fromEntries(secondPin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
 const secondOld={tables:{...old.tables,unknown_existing_custody:['{"owner":"original","reserved":3}']},sequences:structuredClone(old.sequences)},secondFresh={tables:{...secondOld.tables,...Object.fromEntries(secondPin.tables.map(name=>[name,[]]))},sequences:structuredClone(secondOld.sequences)};
 const secondQualified=qualifySecondBatchAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate);
