@@ -13,10 +13,10 @@ Census refreshed from the current repository; these counts do not identify a dep
 | | |
 |---|---|
 | Backend modules | **420** files, **121051** lines (recursive source inventory) |
-| Test suites | **598** files, **167912** lines (recursive source inventory) |
+| Test suites | **599** files, **168240** lines (recursive source inventory) |
 | HTTP routes | **1040** registrations (**1040** unique; 987 under `/v1`) |
 | Database tables | **450** (`schema.sql`, 8596 lines) |
-| Client | **15069** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
+| Client | **15155** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **40** top-level Solidity files, **11524** lines, **1099** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
