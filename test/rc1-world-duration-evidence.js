@@ -7,6 +7,7 @@ import { measureWorldWorkerDuration } from '../tools/rc1-world-duration-evidence
 import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } from '../tools/rc1-company-operator-source-compatibility.js';
 import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
   COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
@@ -16,7 +17,16 @@ const end = start + 90 * DAY, hash = value => sha256(canonicalJson(value));
 let now = start;
 const controller = createWorkerSchedule({ start, setClock(value) { now = value; } });
 for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
-  const originalSource = (await fs.readFile(new URL('../' + file, import.meta.url), 'utf8')).replaceAll('\r\n', '\n');
+  const currentSource = await fs.readFile(new URL('../' + file, import.meta.url), 'utf8');
+  const authoredSource = cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,currentSource));
+  const originalSource = (file==='src/worker.js'?companyWorkflowSourceBaseline(file,authoredSource):authoredSource).replaceAll('\r\n', '\n');
+  if(file==='src/worker.js'){
+    const currentLf=currentSource.replaceAll('\r\n','\n');
+    for(const changed of [currentLf+'\n// unknown current worker\n',currentLf.slice(1),currentLf.replace('runManagementTeams(pool, 20)','runManagementTeams(pool, 21)')]){
+      assert.notEqual(changed,currentLf);
+      assert.equal(companyWorkflowSourceBaseline(file,cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,changed))),changed,'Unknown current worker cannot inherit historical trace source');
+    }
+  }
   controller.transformations.push({ file, pinnedLfSha256, originalSource,
     transformedSource: originalSource, transformedSourceSha256: sha256(originalSource) });
 }
