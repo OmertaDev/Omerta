@@ -44,7 +44,7 @@ jobs:
     # Hosted run 38199373348 completed npm test in 55m11s, then hit the enclosing 60m
     # bound before simulations. Run 38194172207 measured another 5m41s after npm test.
     # Allow a finite 75m envelope for all commands; retain every assertion and lane.
-    # Browser checks remain separately bounded at 20m and native PostgreSQL at 45m.
+    # Browser checks remain separately bounded at 20m and native PostgreSQL at 75m.
     timeout-minutes: 75
     steps:
       # The knowledge-plane gate inventories the full Git lineage (800+ commits) and
@@ -191,9 +191,9 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    # Expanded native coverage exhausted the former 20m lane after loadtest's
-    # success report, before process exit and concurrency. Keep a 30m bound.
-    timeout-minutes: 60
+    # The measured PostgreSQL 16 baseline takes 56m24s; THIRD adds the eight-proof
+    # workforce chain (about 6m locally). Retain every step with a finite 75m bound.
+    timeout-minutes: 75
     strategy:
       fail-fast: false
       matrix:
