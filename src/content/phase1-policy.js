@@ -15,6 +15,7 @@ export const PHASE1_HARDENING_CASH_REASON =
   `${PHASE1_CRAFT_REASON_PREFIX}hardened_steel`;
 export const PHASE1_PACKAGE_IDS = Object.freeze([
   'core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',
+  'company-production-quality',
 ]);
 
 export function phase1CraftReason(recipeId) {

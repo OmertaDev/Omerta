@@ -1103,11 +1103,12 @@ const phase1Second = validatePhase1WorldGraph();
 assert.deepEqual(phase1Second, phase1First, 'the Phase 1 graph report is deterministic');
 assert.deepEqual(phase1First.packageIds, [
   'core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',
+  'company-production-quality',
 ]);
-assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 4);
-assert.equal(phase1First.packages, 4);
-assert.equal(phase1First.nodes, 30);
-assert.equal(phase1First.recipes, 3);
+assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 5);
+assert.equal(phase1First.packages, 5);
+assert.equal(phase1First.nodes, 31);
+assert.equal(phase1First.recipes, 4);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
 assert.deepEqual(phase1First.executableDefinitions, {
   crafting: true,
@@ -1852,7 +1853,7 @@ const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
     fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),
   )).sort();
 assert.deepEqual(packageSources, [
-  'automotive-salvage.js', 'belladonna.js', 'core-materials.js', 'neighborhood-initiation.js',
+  'automotive-salvage.js', 'belladonna.js', 'company-production-quality.js', 'core-materials.js', 'neighborhood-initiation.js',
 ], 'every production world-graph package module must be present in the canonical Phase 1 manifest');
 const phase1RuntimeFiles = [
   'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
@@ -1860,7 +1861,7 @@ const phase1RuntimeFiles = [
   'src/content/core-materials.js', 'src/content/automotive-salvage.js',
   'src/content/belladonna.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
   'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',
-  'src/content/phase1-validation.js',
+  'src/content/phase1-validation.js', 'src/content/company-production-quality.js',
   'tools/worldgraph-content.js',
 ];
 for (const file of phase1RuntimeFiles) {

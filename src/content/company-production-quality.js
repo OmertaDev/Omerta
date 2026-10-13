@@ -2,7 +2,7 @@
 const freeze = Object.freeze;
 export const COMPANY_PRODUCTION_QUALITY_PACKAGE = freeze({
   id: 'company-production-quality', version: 1, season: 'core',
-  dependsOn: freeze(['core-materials']),
+  dependsOn: freeze(['core-materials', 'automotive-salvage']),
   nodes: freeze([freeze({
     id: 'recipe:tempered_precision_lock_tool', type: 'recipe', version: 1,
     visibility: 'public', repeatability: 'repeatable',
@@ -16,6 +16,6 @@ export const COMPANY_PRODUCTION_QUALITY_PACKAGE = freeze({
       freeze({ adapter: 'level', minimumLevel: 12 }),
       freeze({ adapter: 'skill', skillId: 'fence_network' }),
     ]),
-    metadata: freeze({ title: 'Temper a Precision Lock Tool', cashCost: 300, manufacturingGrade: 'tempered' }),
+    metadata: freeze({ title: 'Temper a Precision Lock Tool' }),
   })]),
 });
