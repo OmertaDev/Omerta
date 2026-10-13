@@ -8,11 +8,13 @@ if (native) {
   const u = new URL(process.env.EQUIPMENT_RENTAL_INTEGRATION_TEST_DATABASE_URL);
   assert.equal(u.hostname, '127.0.0.1'); assert(['postgres:', 'postgresql:'].includes(u.protocol));
   assert.match(u.pathname, /^\/equipment_rental_integration_test_[a-z0-9_]+$/); assert(!u.search && !u.hash);
-  assert(['35439', '35449'].includes(u.port) && u.username === 'pilot_runner' && !u.password);
+  const local = ['35439', '35449'].includes(u.port) && u.username === 'pilot_runner' && !u.password;
+  const ci = u.port === '5432' && u.username === 'postgres' && u.password === 'pgcheck';
+  assert(local || ci, 'Owned fresh native fixture endpoint only');
   const { default: pg } = await import('pg'), p = new pg.Pool({ connectionString: u.href });
-  try { assert.match((await p.query('SHOW server_version')).rows[0].server_version, /^18\.4\b/);
+  try { assert.match((await p.query('SHOW server_version')).rows[0].server_version, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
     assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length, 0);
-    assert.equal((await p.query('SELECT current_user AS role')).rows[0].role, 'pilot_runner');
+    assert.equal((await p.query('SELECT current_user AS role')).rows[0].role, local ? 'pilot_runner' : 'postgres');
   } finally { await p.end(); }
   process.env.DATABASE_URL = u.href;
 }
