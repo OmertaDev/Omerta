@@ -186,6 +186,8 @@
   .wallet-sidebar h3 { margin-bottom: 8px; color: var(--om-text-primary); font: 650 16px/1.35 var(--om-font-data); }
   .wallet-sidebar p { color: var(--om-text-muted); font-size: 13px; }
   .wallet-sidebar .control { width: 100%; }
+  .wallet-controls { display: grid; gap: 8px; }
+  .wallet-controls [hidden] { display: none; }
   .wallet-identity { margin: 16px 0; padding: 12px 0; border-top: 1px solid var(--om-border-subtle); border-bottom: 1px solid var(--om-border-subtle); }
   .wallet-identity span { display: block; color: var(--om-text-muted); font: 10px/1.4 var(--om-font-data); letter-spacing: .07em; text-transform: uppercase; }
   .wallet-identity code { display: block; margin-top: 5px; color: var(--om-color-machine-400); font-size: 12px; overflow-wrap: anywhere; }
@@ -232,8 +234,33 @@
   .dialog-body { padding: 20px; overflow-y: auto; }
   .dialog-body > p { color: var(--om-text-muted); font-size: 13px; }
   .dialog-actions { display: flex; justify-content: flex-end; gap: 9px; padding: 14px 20px; border-top: 1px solid var(--om-border-strong); }
+  #wallet-dialog { width: min(420px, calc(100% - 28px)); border-color: var(--om-border-subtle); border-radius: 24px; }
+  #wallet-dialog .dialog-head { align-items: center; padding: 24px 24px 0; border: 0; }
+  #wallet-dialog .dialog-head h2 { color: var(--om-text-primary); font: 650 23px/1.25 var(--om-font-public); letter-spacing: -.025em; }
+  #wallet-dialog .dialog-body { padding: 12px 24px 20px; }
+  #wallet-dialog .dialog-body > p { margin: 0 0 20px; line-height: 1.5; }
+  #wallet-dialog .dialog-actions { align-items: center; justify-content: space-between; padding: 16px 24px; border-color: var(--om-border-subtle); }
   .wallet-options { display: grid; gap: 8px; }
-  .wallet-option { width: 100%; justify-content: flex-start; text-align: left; text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .wallet-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 72px; padding: 12px; border: 1px solid var(--om-border-subtle); border-radius: 14px; background: var(--om-surface-panel); color: var(--om-text-primary); text-align: left; cursor: pointer; }
+  .wallet-option:hover:not(:disabled) { border-color: var(--om-action-primary); background: var(--om-surface-raised); }
+  .wallet-option:focus-visible, #wallet-dialog summary:focus-visible { outline: 2px solid var(--om-action-primary); outline-offset: 3px; }
+  .wallet-option:disabled { cursor: wait; opacity: .65; }
+  .wallet-option-icon { display: grid; place-items: center; flex: 0 0 48px; width: 48px; height: 48px; overflow: hidden; border-radius: 12px; background: var(--om-surface-raised); color: var(--om-action-primary); font: 650 16px/1 var(--om-font-public); }
+  .wallet-option-icon img { width: 100%; height: 100%; object-fit: contain; }
+  .wallet-option-icon svg { width: 32px; height: 32px; }
+  .wallet-option-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+  .wallet-option-name small { display: block; margin-top: 3px; color: var(--om-text-muted); font-size: 11px; font-weight: 400; }
+  .wallet-option-badge { padding: 4px 6px; border-radius: 5px; background: var(--om-surface-raised); color: var(--om-text-muted); font-size: 9px; }
+  .wallet-option-arrow { color: var(--om-text-muted); font-size: 20px; }
+  .wallet-dialog-feedback { margin-top: 14px; color: var(--om-text-muted); font-size: 12px; line-height: 1.5; }
+  .wallet-dialog-feedback.bad { color: var(--om-status-danger); }
+  .wallet-dialog-feedback:empty { display: none; }
+  #wallet-retry { margin-top: 10px; }
+  #wallet-retry[hidden] { display: none; }
+  .wallet-get { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--om-border-subtle); color: var(--om-text-muted); font-size: 12px; }
+  .wallet-get summary { cursor: pointer; color: var(--om-text-secondary); }
+  .wallet-install-links { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 12px; }
+  .wallet-dialog-footnote { max-width: 210px; margin: 0; color: var(--om-text-faint); font-size: 10px; line-height: 1.5; }
   .tx-review { display: grid; gap: 10px; margin: 14px 0 0; }
   .tx-review div { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--om-border-subtle); }
   .tx-review dt { color: var(--om-text-muted); font: 650 10px/1.4 var(--om-font-data); text-transform: uppercase; }
@@ -381,15 +408,15 @@
   </section>
 
   <section class="section" aria-labelledby="wallet-title">
-    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect an injected EVM wallet. The site prepares no calldata of its own; only a server-issued transaction can reach your wallet.</p></div>
+    <div class="section-head"><h2 id="wallet-title">YOUR WALLET</h2><p>Connect your wallet to review transactions prepared by the server.</p></div>
     <div class="panel wallet-panel">
       <aside class="wallet-sidebar">
         <div class="wallet-mark" aria-hidden="true">0x</div>
         <h3 id="wallet-heading">Wallet not connected</h3>
-        <p id="wallet-copy">Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.</p>
+        <p id="wallet-copy">Connect to check which actions are available for your account.</p>
         <div class="wallet-identity" id="wallet-identity" hidden><span>Active account</span><code id="wallet-address"></code></div>
-        <button class="control primary" type="button" id="connect-wallet">Connect wallet</button>
-        <p class="wallet-caveat">Injected wallets are discovered through EIP-6963, with a browser-wallet fallback. No WalletConnect session is created here.</p>
+        <div class="wallet-controls"><button class="control primary" type="button" id="connect-wallet">Connect wallet</button><button class="control" type="button" id="disconnect-wallet" hidden>Disconnect</button></div>
+        <p class="wallet-caveat">Choose your browser wallet, or connect a mobile wallet when available. You review each transaction before signing.</p>
       </aside>
       <div class="wallet-main">
         <div class="account-strip" id="account-strip" aria-label="Wallet position">
@@ -411,10 +438,16 @@
   <footer class="page-foot">OMERTÀ · a server-authoritative noir economy. <a href="/">Enter the city</a> · <a href="/wiki">Read the Codex</a> · <a href="/arena">Watch the Arena</a></footer>
 </main>
 
-<dialog id="wallet-dialog" aria-labelledby="wallet-dialog-title">
-  <div class="dialog-head"><div><p class="eyebrow">Injected wallets</p><h2 id="wallet-dialog-title">CHOOSE A WALLET</h2></div><button class="icon-btn" type="button" data-close="wallet-dialog" aria-label="Close wallet picker">×</button></div>
-  <div class="dialog-body"><p id="wallet-dialog-copy">Select one of the wallets announced by this browser.</p><div class="wallet-options" id="wallet-options"></div></div>
-  <div class="dialog-actions"><button class="control" type="button" data-close="wallet-dialog">Cancel</button></div>
+<dialog id="wallet-dialog" aria-labelledby="wallet-dialog-title" aria-describedby="wallet-dialog-copy">
+  <div class="dialog-head"><h2 id="wallet-dialog-title">Connect a wallet</h2><button class="icon-btn" type="button" data-close="wallet-dialog" aria-label="Close wallet picker">×</button></div>
+  <div class="dialog-body">
+    <p id="wallet-dialog-copy">Choose how you want to connect.</p>
+    <div class="wallet-options" id="wallet-options"></div>
+    <div class="wallet-dialog-feedback" id="wallet-dialog-status" role="status" aria-live="polite"></div>
+    <button class="control" type="button" id="wallet-retry" hidden>Try again</button>
+    <details class="wallet-get" id="wallet-get"><summary>Get a wallet</summary><div class="wallet-install-links"><a href="https://metamask.io/download" target="_blank" rel="noopener noreferrer">MetaMask ↗</a><a href="https://www.coinbase.com/wallet/downloads" target="_blank" rel="noopener noreferrer">Coinbase Wallet ↗</a><a href="https://rabby.io/" target="_blank" rel="noopener noreferrer">Rabby ↗</a><a href="https://rainbow.me/download" target="_blank" rel="noopener noreferrer">Rainbow ↗</a></div></details>
+  </div>
+  <div class="dialog-actions"><p class="wallet-dialog-footnote">Connection does not send a transaction.</p><button class="control" type="button" data-close="wallet-dialog">Cancel</button></div>
 </dialog>
 
 <dialog id="tx-dialog" aria-labelledby="tx-dialog-title">
@@ -448,6 +481,12 @@
   let pendingTx = null;
   let pendingActionId = null;
   let lastFocus = null;
+  let walletConnectConfig = null;
+  let walletConnectProvider = null;
+  let walletConfigPromise = null;
+  let walletConnectionAttempt = 0;
+  let walletConnectionPending = false;
+  let walletRetryOption = null;
   const announcedWallets = new Map();
   const boundProviders = new WeakSet();
 
@@ -468,6 +507,7 @@
     if (!detail?.provider || !detail?.info) return;
     const key = detail.info.uuid || detail.info.rdns || detail.info.name;
     if (key) announcedWallets.set(String(key), detail);
+    if ($('wallet-dialog').open) renderWalletOptions();
   });
   requestWalletAnnouncements();
 
@@ -670,6 +710,7 @@
   }
 
   function renderActivity(data) {
+    if (!$('activity')) return;
     const events = array(data.activity);
     if (!events.length) {
       $('activity').innerHTML = '<div class="panel-empty"><b>No finalized activity published</b>Pending wallet transactions are never shown here.</div>';
@@ -713,6 +754,7 @@
   async function loadDefi(options = {}) {
     if (loading) return;
     loading = true;
+    const requestedAddress = activeAddress;
     $('refresh').disabled = true;
     $('refresh').setAttribute('aria-busy', 'true');
     $('load-error').classList.remove('show');
@@ -724,7 +766,7 @@
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const query = activeAddress ? '?address=' + encodeURIComponent(activeAddress) : '';
+      const query = requestedAddress ? '?address=' + encodeURIComponent(requestedAddress) : '';
       const headers = { accept: 'application/json' };
       const token = authToken();
       if (token) headers.authorization = 'Bearer ' + token;
@@ -733,6 +775,7 @@
       try { body = await response.json(); } catch {}
       if (!response.ok) throw new Error(body?.message || body?.error || 'HTTP ' + response.status);
       if (!body || typeof body !== 'object' || Array.isArray(body)) throw new Error('The server returned an invalid DeFi projection.');
+      if (requestedAddress !== activeAddress) return;
       projection = body;
       lastSuccessfulAt = new Date();
       render(body);
@@ -750,6 +793,7 @@
       loading = false;
       $('refresh').disabled = false;
       $('refresh').removeAttribute('aria-busy');
+      if (requestedAddress !== activeAddress) loadDefi({ quiet: true });
     }
   }
 
@@ -759,7 +803,7 @@
       metric('Oracle rate', '—', 'snapshot unavailable'), metric('On-chain claim balance', '—', 'snapshot unavailable'),
     ].join('');
     $('metrics').removeAttribute('aria-busy');
-    ['contracts', 'activity'].forEach((id) => { $(id).innerHTML = '<div class="panel-empty"><b>Snapshot unavailable</b>No data can be shown until the public endpoint responds.</div>'; $(id).removeAttribute('aria-busy'); });
+    ['contracts', 'activity'].filter((id) => $(id)).forEach((id) => { $(id).innerHTML = '<div class="panel-empty"><b>Snapshot unavailable</b>No data can be shown until the public endpoint responds.</div>'; $(id).removeAttribute('aria-busy'); });
     $('fees').innerHTML = '<div class="panel fee-summary"><span class="eyebrow">Published routes</span><strong>—</strong><p>Snapshot unavailable.</p></div><div class="panel"><div class="panel-empty">No routing table is available.</div></div>';
     $('fees').removeAttribute('aria-busy');
     renderActions();
@@ -794,67 +838,184 @@
   }
 
   function providerOptions() {
-    requestWalletAnnouncements();
-    const options = [...announcedWallets.values()].map((entry) => ({ name: entry.info?.name || 'Injected wallet', detail: entry.info?.rdns || 'EIP-6963', provider: entry.provider }));
-    if (!options.length && window.ethereum) options.push({ name: 'Browser wallet', detail: 'Injected browser provider', provider: window.ethereum });
+    const options = [];
+    const seen = new Set();
+    for (const entry of announcedWallets.values()) {
+      if (typeof entry.provider?.request !== 'function' || seen.has(entry.provider)) continue;
+      seen.add(entry.provider);
+      options.push({ name: entry.info?.name || 'Browser wallet', icon: entry.info?.icon, provider: entry.provider });
+    }
+    if (typeof window.ethereum?.request === 'function' && !seen.has(window.ethereum)) options.push({ name: 'Browser wallet', provider: window.ethereum });
+    if (walletConnectConfig?.projectId) options.push({ name: 'WalletConnect', mobile: true });
     return options;
   }
 
   function openDialog(dialog) {
+    if (dialog.open) return;
     lastFocus = document.activeElement;
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
   }
 
   function closeDialog(dialog) {
+    if (dialog.id === 'wallet-dialog') cancelWalletConnection();
     if (dialog.open && typeof dialog.close === 'function') dialog.close(); else dialog.removeAttribute('open');
     if (lastFocus?.isConnected) lastFocus.focus();
   }
 
-  async function chooseWallet() {
+  function walletIcon(option) {
+    if (option.mobile) return '<svg viewBox="0 0 32 24" fill="none" aria-hidden="true"><path d="M3 8c7-7 19-7 26 0M7 12c5-5 13-5 18 0M4 13l8 8 4-4 4 4 8-8" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    if (/^data:image\/(?:svg\+xml|png|jpeg|webp|gif)[;,]/i.test(String(option.icon || ''))) return '<img src="' + esc(option.icon) + '" alt="">';
+    return esc(option.name.split(/\s+/).map((word) => word[0]).join('').slice(0, 2).toUpperCase());
+  }
+
+  function renderWalletOptions() {
     const options = providerOptions();
-    if (!options.length) {
-      $('wallet-dialog-copy').textContent = 'No injected EVM wallet announced itself. Install or open an EIP-1193 wallet in this browser, then reload the page.';
-      $('wallet-options').innerHTML = '<div class="panel-empty"><b>No wallet detected</b>This page does not create WalletConnect sessions.</div>';
-      openDialog($('wallet-dialog'));
-      return;
-    }
-    $('wallet-dialog-copy').textContent = options.length === 1 ? 'One injected wallet is available.' : 'Choose which injected wallet may request your account.';
+    const focusedName = document.activeElement.closest?.('#wallet-options .wallet-option')?.dataset.walletName;
     $('wallet-options').innerHTML = '';
+    if (!options.length) $('wallet-options').innerHTML = '<p class="wallet-dialog-feedback">No wallet detected. Open your wallet browser, or get a wallet below.</p>';
     options.forEach((option) => {
       const button = document.createElement('button');
       button.type = 'button';
-      button.className = 'control wallet-option';
-      button.innerHTML = '<span><b>' + esc(option.name) + '</b><br><small>' + esc(option.detail) + '</small></span>';
-      button.addEventListener('click', () => { closeDialog($('wallet-dialog')); connectProvider(option.provider, option.name); });
+      button.className = 'wallet-option';
+      button.dataset.walletName = option.name;
+      button.disabled = walletConnectionPending;
+      button.innerHTML = '<span class="wallet-option-icon" aria-hidden="true">' + walletIcon(option) + '</span><span class="wallet-option-name">' + esc(option.name) + (option.mobile ? '<small>Scan with your phone</small>' : '') + '</span>' + (option.mobile ? '' : '<span class="wallet-option-badge">Installed</span>') + '<span class="wallet-option-arrow" aria-hidden="true">›</span>';
+      button.addEventListener('click', () => connectProvider(option));
       $('wallet-options').append(button);
+      if (focusedName === option.name && !button.disabled) button.focus();
     });
-    openDialog($('wallet-dialog'));
   }
 
-  async function connectProvider(provider, name) {
+  async function loadWalletConfig() {
+    if (walletConfigPromise) return walletConfigPromise;
+    walletConfigPromise = (async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 6000);
+      try {
+        const response = await fetch('/v1/rules', { headers: { accept: 'application/json' }, credentials: 'same-origin', signal: controller.signal });
+        if (!response.ok) throw new Error('Wallet settings unavailable.');
+        const body = await response.json();
+        walletConnectConfig = body?.walletConnect?.projectId ? body.walletConnect : null;
+      } catch { walletConfigPromise = null; }
+      finally { clearTimeout(timeout); }
+    })();
+    return walletConfigPromise;
+  }
+
+  async function chooseWallet() {
+    cancelWalletConnection();
+    renderWalletOptions();
+    openDialog($('wallet-dialog'));
+    requestWalletAnnouncements();
+    await loadWalletConfig();
+    if ($('wallet-dialog').open) renderWalletOptions();
+  }
+
+  function cancelWalletConnection() {
+    walletConnectionAttempt++;
+    walletConnectionPending = false;
+    walletRetryOption = null;
+    $('wallet-dialog-status').textContent = '';
+    $('wallet-dialog-status').classList.remove('bad');
+    $('wallet-retry').hidden = true;
+    $('connect-wallet').disabled = false;
+    $('connect-wallet').removeAttribute('aria-busy');
+    $('wallet-options').removeAttribute('aria-busy');
+  }
+
+  async function getWalletConnect(attempt) {
+    if (walletConnectProvider) return walletConnectProvider;
+    const { EthereumProvider } = await import('https://esm.sh/@walletconnect/ethereum-provider@2.21.5');
+    if (attempt !== walletConnectionAttempt) return null;
+    const config = walletConnectConfig;
+    if (!config?.projectId) throw new Error('Mobile wallet connection is unavailable.');
+    const provider = await EthereumProvider.init({
+      projectId: config.projectId,
+      optionalChains: [...new Set([1, Number(config.chainId) || 1])],
+      showQrModal: true,
+      telemetryEnabled: false,
+      qrModalOptions: { themeMode: 'dark', themeVariables: { '--wcm-accent-color': '#c9a227', '--wcm-accent-fill-color': '#0b0b0c', '--wcm-background-border-radius': '24px', '--wcm-z-index': '2147483647' } },
+      metadata: { name: 'OMERTÀ', description: 'A noir mob RPG', url: location.origin, icons: [] },
+    });
+    provider.__omertaWalletConnect = true;
+    if (attempt !== walletConnectionAttempt) return null;
+    // A native modal occupies the browser's top layer. Let the QR modal take focus,
+    // then restore this picker for account confirmation or an inline retry.
+    const dialog = $('wallet-dialog');
+    if (dialog.open && typeof dialog.close === 'function') dialog.close();
+    try { await provider.connect(); }
+    finally {
+      if (attempt === walletConnectionAttempt && !dialog.open) {
+        if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
+      }
+    }
+    return provider;
+  }
+
+  async function connectProvider(option) {
+    if (walletConnectionPending) return;
+    const attempt = ++walletConnectionAttempt;
+    walletConnectionPending = true;
+    walletRetryOption = option;
     const button = $('connect-wallet');
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
+    $('wallet-options').setAttribute('aria-busy', 'true');
+    $('wallet-dialog-status').classList.remove('bad');
+    $('wallet-dialog-status').textContent = option.mobile ? 'Open your mobile wallet to connect.' : 'Confirm the connection in ' + option.name + '.';
+    $('wallet-retry').hidden = true;
+    renderWalletOptions();
+    let provider = null;
     try {
+      provider = option.provider || await getWalletConnect(attempt);
+      if (!provider) return;
+      if (attempt !== walletConnectionAttempt) {
+        if (provider.__omertaWalletConnect && provider !== activeProvider) provider.disconnect().catch(() => {});
+        return;
+      }
       const accounts = await provider.request({ method: 'eth_requestAccounts' });
+      if (attempt !== walletConnectionAttempt) {
+        if (provider.__omertaWalletConnect && provider !== activeProvider) provider.disconnect().catch(() => {});
+        return;
+      }
       if (!Array.isArray(accounts) || !/^0x[0-9a-f]{40}$/i.test(String(accounts[0] || ''))) throw new Error('No EVM account was selected.');
+      const previousProvider = activeProvider;
+      clearPendingTransaction();
       activeProvider = provider;
       activeAddress = String(accounts[0]);
+      if (provider.__omertaWalletConnect) walletConnectProvider = provider;
+      else if (previousProvider?.__omertaWalletConnect) { walletConnectProvider = null; previousProvider.disconnect().catch(() => {}); }
       bindProvider(provider);
-      $('wallet-heading').textContent = name || 'Wallet connected';
+      $('wallet-heading').textContent = option.name || 'Wallet connected';
       $('wallet-copy').textContent = 'Transactions will open in this wallet for final review and signature.';
       $('wallet-identity').hidden = false;
       $('wallet-address').textContent = activeAddress;
       button.textContent = 'Change wallet';
+      $('disconnect-wallet').hidden = false;
+      closeDialog($('wallet-dialog'));
       renderActions();
       await loadDefi({ quiet: true });
       toast('Wallet connected. No transaction was sent.');
     } catch (error) {
-      toast(error?.code === 4001 ? 'Wallet connection cancelled.' : (error?.message || 'Wallet connection failed.'), true);
+      if (attempt !== walletConnectionAttempt) return;
+      $('wallet-dialog-status').classList.add('bad');
+      $('wallet-dialog-status').textContent = error?.code === 4001 ? 'Connection declined. Try again when you are ready.' : (error?.message || 'Wallet connection failed. Try again.');
+      $('wallet-retry').hidden = false;
     } finally {
-      button.disabled = false;
-      button.removeAttribute('aria-busy');
+      if (attempt === walletConnectionAttempt) {
+        walletConnectionPending = false;
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+        $('wallet-options').removeAttribute('aria-busy');
+        renderWalletOptions();
+      }
     }
+  }
+
+  function clearPendingTransaction() {
+    pendingTx = null;
+    pendingActionId = null;
+    if ($('tx-dialog').open) closeDialog($('tx-dialog'));
   }
 
   function bindProvider(provider) {
@@ -862,24 +1023,34 @@
     boundProviders.add(provider);
     provider.on('accountsChanged', (accounts) => {
       if (provider !== activeProvider) return;
-      if (!Array.isArray(accounts) || !accounts[0]) return disconnectWallet();
+      if (!Array.isArray(accounts) || !/^0x[0-9a-f]{40}$/i.test(String(accounts[0] || ''))) return disconnectWallet();
+      clearPendingTransaction();
       activeAddress = String(accounts[0]);
       $('wallet-address').textContent = activeAddress;
       renderActions();
       loadDefi({ quiet: true });
     });
     provider.on('chainChanged', () => { if (provider === activeProvider) renderActions(); });
-    provider.on('disconnect', () => { if (provider === activeProvider) disconnectWallet(); });
+    provider.on('disconnect', () => {
+      if (provider === walletConnectProvider) walletConnectProvider = null;
+      if (provider === activeProvider) disconnectWallet();
+    });
   }
 
-  function disconnectWallet() {
+  function disconnectWallet(endSession = false) {
+    const provider = activeProvider;
+    cancelWalletConnection();
+    clearPendingTransaction();
     activeProvider = null;
     activeAddress = null;
+    if (provider === walletConnectProvider) walletConnectProvider = null;
+    if (endSession && provider?.__omertaWalletConnect) provider.disconnect().catch(() => {});
     $('wallet-heading').textContent = 'Wallet not connected';
-    $('wallet-copy').textContent = 'Connect to inspect account-specific eligibility and review any transaction the server currently authorizes.';
+    $('wallet-copy').textContent = 'Connect to check which actions are available for your account.';
     $('wallet-identity').hidden = true;
     $('wallet-address').textContent = '';
     $('connect-wallet').textContent = 'Connect wallet';
+    $('disconnect-wallet').hidden = true;
     renderAccount();
     renderActions();
   }
@@ -916,6 +1087,8 @@
     const spec = ACTIONS.find((entry) => entry.id === id);
     const action = actionDescriptor(id);
     if (!spec || !isWalletDescriptor(action) || !activeProvider || !activeAddress) return;
+    const provider = activeProvider;
+    const address = activeAddress;
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
     const state = $('state-' + id);
@@ -939,6 +1112,7 @@
         if (descriptor?.id !== id) throw new Error('The server returned a different action than requested.');
       }
       const tx = validateTransaction(spec, descriptor);
+      if (provider !== activeProvider || address !== activeAddress) return;
       pendingTx = tx;
       pendingActionId = id;
       showTransactionReview(spec, descriptor, tx);
@@ -993,11 +1167,11 @@
     openDialog($('tx-dialog'));
   }
 
-  async function switchChain(chainId) {
+  async function switchChain(chainId, provider = activeProvider) {
     const hex = '0x' + Number(chainId).toString(16);
-    const current = await activeProvider.request({ method: 'eth_chainId' });
+    const current = await provider.request({ method: 'eth_chainId' });
     if (Number.parseInt(String(current), 16) === Number(chainId)) return;
-    try { await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hex }] }); }
+    try { await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: hex }] }); }
     catch (error) {
       if (error?.code === 4902) throw new Error('Add ' + (projection?.network?.name || 'chain ' + chainId) + ' to your wallet, then try again.');
       throw error;
@@ -1006,16 +1180,21 @@
 
   async function sendPendingTransaction() {
     if (!pendingTx || !pendingActionId || !activeProvider || !activeAddress) return;
+    const tx = pendingTx;
+    const actionId = pendingActionId;
+    const provider = activeProvider;
+    const address = activeAddress;
     const button = $('send-transaction');
     button.disabled = true;
     button.setAttribute('aria-busy', 'true');
     try {
-      if (pendingTx.validUntil && new Date(pendingTx.validUntil).getTime() <= Date.now()) throw new Error('This transaction authorization expired. Prepare it again.');
-      await switchChain(pendingTx.chainId);
-      const hash = await activeProvider.request({ method: 'eth_sendTransaction', params: [{ from: activeAddress, to: pendingTx.to, data: pendingTx.data, value: pendingTx.value }] });
+      if (tx.validUntil && new Date(tx.validUntil).getTime() <= Date.now()) throw new Error('This transaction authorization expired. Prepare it again.');
+      await switchChain(tx.chainId, provider);
+      if (pendingTx !== tx || provider !== activeProvider || address !== activeAddress) throw new Error('Your wallet changed. Prepare the transaction again.');
+      const hash = await provider.request({ method: 'eth_sendTransaction', params: [{ from: address, to: tx.to, data: tx.data, value: tx.value }] });
       if (!/^0x[0-9a-f]+$/i.test(String(hash || ''))) throw new Error('The wallet did not return a transaction hash.');
       const explorer = explorerTx(projection || {}, hash);
-      const state = $('state-' + pendingActionId);
+      const state = $('state-' + actionId);
       if (state) { state.className = 'action-state good'; state.textContent = 'Submitted to your wallet network: ' + shortHash(hash) + '. Refresh after it finalizes.'; }
       closeDialog($('tx-dialog'));
       toast('Transaction submitted: ' + shortHash(hash), false, explorer ? { href: explorer, label: 'View on explorer ↗' } : null);
@@ -1032,6 +1211,9 @@
 
   $('refresh').addEventListener('click', () => loadDefi());
   $('connect-wallet').addEventListener('click', chooseWallet);
+  $('disconnect-wallet').addEventListener('click', () => disconnectWallet(true));
+  $('wallet-retry').addEventListener('click', () => { if (walletRetryOption) connectProvider(walletRetryOption); });
+  $('wallet-dialog').addEventListener('cancel', (event) => { event.preventDefault(); closeDialog($('wallet-dialog')); });
   $('send-transaction').addEventListener('click', sendPendingTransaction);
   document.querySelectorAll('[data-close]').forEach((button) => button.addEventListener('click', () => closeDialog($(button.dataset.close))));
   document.querySelectorAll('dialog').forEach((dialog) => dialog.addEventListener('click', (event) => { if (event.target === dialog) closeDialog(dialog); }));
