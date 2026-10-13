@@ -328,6 +328,7 @@
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
 | [docs/agent-economy-final-prefix-native-review.md](../../docs/agent-economy-final-prefix-native-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/agent-economy-integration-boundary-review.md](../../docs/agent-economy-integration-boundary-review.md) | documentation | 46 | 2026-10-12 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
@@ -363,6 +364,7 @@
 | [docs/company-bank-portfolio-integration-review.md](../../docs/company-bank-portfolio-integration-review.md) | documentation | 47 | 2026-10-12 |
 | [docs/company-bank-portfolios-security-review.md](../../docs/company-bank-portfolios-security-review.md) | documentation | 141 | 2026-10-12 |
 | [docs/company-bank-source-transfer-review.md](../../docs/company-bank-source-transfer-review.md) | documentation | 25 | 2026-10-12 |
+| [docs/company-demand-forecast-security-review.md](../../docs/company-demand-forecast-security-review.md) | documentation | 28 | 2026-10-13 |
 | [docs/company-logistics-hub-source-transfer-review.md](../../docs/company-logistics-hub-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/company-logistics-hubs-integration-review.md](../../docs/company-logistics-hubs-integration-review.md) | documentation | 58 | 2026-10-12 |
 | [docs/company-logistics-hubs-security-review.md](../../docs/company-logistics-hubs-security-review.md) | documentation | 39 | 2026-10-12 |
@@ -373,6 +375,8 @@
 | [docs/company-opportunity-integration-review.md](../../docs/company-opportunity-integration-review.md) | documentation | 37 | 2026-10-12 |
 | [docs/company-opportunity-migration-review.md](../../docs/company-opportunity-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/company-opportunity-source-transfer-review.md](../../docs/company-opportunity-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/company-production-integration-review.md](../../docs/company-production-integration-review.md) | documentation | 20 | 2026-10-13 |
+| [docs/company-production-security-review.md](../../docs/company-production-security-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/company-workflow-integration-review.md](../../docs/company-workflow-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/company-workflow-migration-review.md](../../docs/company-workflow-migration-review.md) | documentation | 10 | 2026-10-12 |
@@ -428,6 +432,7 @@
 | [docs/economy-recovery-fixture-review.md](../../docs/economy-recovery-fixture-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/economy-recovery-hosted-triage.md](../../docs/economy-recovery-hosted-triage.md) | documentation | 29 | 2026-10-12 |
 | [docs/employment-accounting-graph-fix-review.md](../../docs/employment-accounting-graph-fix-review.md) | documentation | 16 | 2026-10-12 |
+| [docs/first-batch-source-transfer-review.md](../../docs/first-batch-source-transfer-review.md) | documentation | 36 | 2026-10-13 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
 | [docs/game-employment-integration-review.md](../../docs/game-employment-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/game-employment-migration-review.md](../../docs/game-employment-migration-review.md) | documentation | 12 | 2026-10-12 |
@@ -438,6 +443,7 @@
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
+| [docs/item-durability-integrated-review.md](../../docs/item-durability-integrated-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-09-25 |
 | [docs/living-world-director/evidence/README.md](../../docs/living-world-director/evidence/README.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/HANDOFF.md](../../docs/living-world-director/HANDOFF.md) | documentation | 118 | 2026-09-18 |
