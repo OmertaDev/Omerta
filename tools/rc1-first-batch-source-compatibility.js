@@ -1,3 +1,4 @@
+import { secondBatchSourceBaseline } from './rc1-second-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
@@ -246,11 +247,11 @@ export const FIRST_BATCH_SOURCE_DOMAINS=Object.freeze({
   }
 });
 export function assertFirstBatchSourceTransfer(file,input){
- assert(Object.hasOwn(FIRST_BATCH_SOURCE_DOMAINS,file),'Unknown first-batch source domain');const d=FIRST_BATCH_SOURCE_DOMAINS[file],text=lf(input);
+ assert(Object.hasOwn(FIRST_BATCH_SOURCE_DOMAINS,file),'Unknown first-batch source domain');const d=FIRST_BATCH_SOURCE_DOMAINS[file],text=secondBatchSourceBaseline(file,lf(input));
  assert.equal(hash(text),d.currentSha256,'First-batch complete current source drift: '+file);assert.equal(blob(text),d.currentBlob,'First-batch complete current blob drift: '+file);
  let baselineText=text;for(const h of d.inverses){assert(h.current.length,'Empty inverse context');assert.equal(baselineText.split(h.current).length-1,1,'Missing/duplicate/reordered first-batch inverse context: '+file);baselineText=baselineText.replace(h.current,()=>h.baseline);}
  if(d.predecessorAbsent)baselineText=null;else{assert.equal(hash(baselineText),d.baselineSha256,'First-batch complete predecessor source mismatch: '+file);assert.equal(blob(baselineText),d.baselineBlob,'First-batch complete predecessor blob mismatch: '+file);}
  return{file,baselineText,predecessorAbsent:d.predecessorAbsent,sourceRevision:d.currentRevision??FIRST_BATCH_SOURCE_REVISION,predecessorRevision:FIRST_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:FIRST_BATCH_SOURCE_PHASE};
 }
 // Unknown bytes survive unchanged for their original rejecting guard. No pattern grants authority.
-export function firstBatchSourceBaseline(file,input){const text=lf(input),d=FIRST_BATCH_SOURCE_DOMAINS[file];return d&&!d.predecessorAbsent&&hash(text)===d.currentSha256?assertFirstBatchSourceTransfer(file,text).baselineText:text;}
+export function firstBatchSourceBaseline(file,input){const text=secondBatchSourceBaseline(file,lf(input)),d=FIRST_BATCH_SOURCE_DOMAINS[file];return d&&!d.predecessorAbsent&&hash(text)===d.currentSha256?assertFirstBatchSourceTransfer(file,text).baselineText:text;}
