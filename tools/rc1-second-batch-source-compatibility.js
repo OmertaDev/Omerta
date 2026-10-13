@@ -1,3 +1,4 @@
+import { thirdBatchSourceBaseline } from './rc1-third-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
@@ -343,11 +344,11 @@ export const SECOND_BATCH_SOURCE_DOMAINS=Object.freeze({
   }
 });
 export function assertSecondBatchSourceTransfer(file,input){
- assert(Object.hasOwn(SECOND_BATCH_SOURCE_DOMAINS,file),'Unknown second-batch source domain');const d=SECOND_BATCH_SOURCE_DOMAINS[file],text=lf(input);
+ assert(Object.hasOwn(SECOND_BATCH_SOURCE_DOMAINS,file),'Unknown second-batch source domain');const d=SECOND_BATCH_SOURCE_DOMAINS[file],text=thirdBatchSourceBaseline(file,lf(input));
  assert.equal(hash(text),d.currentSha256,'Second-batch complete current source drift: '+file);assert.equal(blob(text),d.currentBlob,'Second-batch complete current blob drift: '+file);
  let baselineText=text;for(const h of d.inverses){assert(h.current.length,'Empty inverse context');assert.equal(baselineText.split(h.current).length-1,1,'Missing/duplicate/reordered second-batch inverse context: '+file);baselineText=baselineText.replace(h.current,()=>h.baseline);}
  assert.equal(hash(baselineText),d.baselineSha256,'Second-batch complete predecessor source mismatch: '+file);assert.equal(blob(baselineText),d.baselineBlob,'Second-batch complete predecessor blob mismatch: '+file);
  return{file,baselineText,sourceRevision:SECOND_BATCH_SOURCE_REVISION,predecessorRevision:SECOND_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:SECOND_BATCH_SOURCE_PHASE};
 }
 // Unknown bytes survive unchanged for the original rejecting guard. No prefix, generated or catalog exception.
-export function secondBatchSourceBaseline(file,input){const text=lf(input),d=SECOND_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256?assertSecondBatchSourceTransfer(file,text).baselineText:text;}
+export function secondBatchSourceBaseline(file,input){const text=thirdBatchSourceBaseline(file,lf(input)),d=SECOND_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256?assertSecondBatchSourceTransfer(file,text).baselineText:text;}

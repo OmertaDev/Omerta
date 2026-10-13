@@ -1,3 +1,4 @@
+import { thirdBatchMigrationSchema } from '../../tools/rc1-third-batch-source-compatibility.js';
 // Test-only, exact equipment predicate projection before the unchanged City oracle.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -43,6 +44,7 @@ export function equipmentEconomyMigrationSources() {
   return verifiedSources;
 }
 export function equipmentEconomyMigrationProjection(source, metadata) {
+  source = thirdBatchMigrationSchema(source);
   const reviewed = equipmentEconomyMigrationSources();
   assert.equal(typeof source, 'string');
   const windows = reviewed.current.replaceAll('\n', '\r\n');
