@@ -44,7 +44,7 @@
 
   function mount(host, initialOptions) {
     let options = { ...initialOptions }, destroyed = false, busy = false, loading = false, revision = 0, sessionUnavailable = false, recoveryRequired = false;
-    let view = 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
+    let view = VIEWS.some(([id]) => id === options.initialView) ? options.initialView : 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
     let notice = '', noticeBad = false, retry = null, cancelConfirmation = null;
     let characterId = options.character && options.character.id;
     const boards = {}, actions = new Map();
@@ -170,7 +170,7 @@
         + '<div class="fieldwork-body" aria-busy="' + String(busy || pane.loading) + '">'
         + (sessionUnavailable ? '<div class="fieldwork-empty" role="status">Restore your session to read your records.</div>' : paneNotice
           + (boards[view] ? content : pane.loading ? '<div class="fieldwork-empty" role="status">Opening ' + escape(label) + '…</div>' : '')) + '</div>';
-      root.querySelectorAll('[data-fieldwork-view]').forEach(button => { button.onclick = () => { view = button.dataset.fieldworkView; draw(); }; });
+      root.querySelectorAll('[data-fieldwork-view]').forEach(button => { button.onclick = () => selectView(button.dataset.fieldworkView); });
       root.querySelector('[data-fieldwork-city]').onclick = () => { if (options.onNavigate) options.onNavigate('map'); };
       root.querySelector('[data-fieldwork-refresh]').onclick = () => { recoveryRequired = false; load(); };
       root.querySelector('[data-fieldwork-pane-retry]')?.addEventListener('click', async event => {
@@ -185,6 +185,12 @@
       root.querySelectorAll('[data-fieldwork-action]').forEach(button => { button.onclick = () => { const entry = actions.get(button.dataset.fieldworkAction); if (entry) run(entry); }; });
       root.querySelectorAll('[data-fieldwork-mystery]').forEach(button => { button.onclick = () => { selectedMystery = button.dataset.fieldworkMystery; mysteryDetail = null; load(['mysteries']); }; });
       root.querySelectorAll('[data-fieldwork-operation]').forEach(button => { button.onclick = () => { selectedOperation = button.dataset.fieldworkOperation; operationDetail = roleDetail = null; load(['operations']); }; });
+    }
+
+    function selectView(nextView) {
+      // Explicit navigation shares the section buttons' guard; refreshes retain the reader's view.
+      if (!active() || busy || !VIEWS.some(([id]) => id === nextView)) return false;
+      view = nextView; draw(); return true;
     }
 
     function readError(response) {
@@ -349,6 +355,7 @@
 
     draw(); load();
     return {
+      selectView,
       update(nextOptions) {
         const nextId = nextOptions?.character && nextOptions.character.id;
         options = { ...options, ...nextOptions };

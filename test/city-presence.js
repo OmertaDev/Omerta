@@ -5,7 +5,7 @@ import { cityPresence, cityIntel, recordCityEncounter, CITY_JOURNAL_LIMIT } from
 import { withTwoCharacters } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { retireResident } from '../src/population.js';
-import { readPlayerIntel } from '../src/playerintel.js';
+import { readPlayerIntel, recordPlayerIntel } from '../src/playerintel.js';
 import { M3 } from '../src/rules.js';
 
 const db = await commandDatabase('city_presence'), pool = db.pool;
@@ -75,10 +75,16 @@ try {
   while (page.hasMore) { page = await cityPresence(pool, me.account, [machine.account], { limit: '1', cursor: page.nextCursor }); cards.push(...page.actors); }
   assert.equal(cards.length, 3); assert.equal(new Set(cards.map(c => c.id)).size, 3);
   assert.deepEqual(new Set(cards.map(c => c.kind)), new Set(['npc', 'agent', 'player']));
-  assert.equal(cards.find(c => c.id === machine.id).online, true);
+  for (const privateActor of [machine, human]) {
+    const card = cards.find(c => c.id === privateActor.id);
+    for (const field of ['name', 'level', 'gangTag', 'online', 'lastSeenDistrict', 'observedAt', 'source', 'sourceName']) assert.equal(card[field], null, 'An unintroduced person supplies no live private facts: ' + field);
+    assert.equal(await readPlayerIntel(pool, me.account, privateActor.id), null, 'Reading the roster is not an introduction.');
+  }
+  assert.equal(cards.find(c => c.id === npc.id).name, npc.name);
+  assert.equal(cards.find(c => c.id === npc.id).level, 1);
   assert.equal(cards.find(c => c.id === npc.id).kind, 'npc');
   for (const row of cards) {
-    assert.deepEqual(Object.keys(row).sort(), ['actions','district','gangTag','generation','id','kind','level','name','online']);
+    assert.deepEqual(Object.keys(row).sort(), ['actions','district','gangTag','generation','id','kind','lastSeenDistrict','level','name','observedAt','online','source','sourceName']);
     for (const secret of [me.account, npc.account, machine.account, human.account, 'cash', 'bank', 'omr', 'health', 'account_id']) assert(!JSON.stringify(row).includes(secret));
     assert.deepEqual(row.actions[0].body, request(me, { generation: row.generation }));
   }
@@ -120,6 +126,56 @@ try {
   assert.deepEqual(await knowledgeRows(), knowledgeBefore, 'Receipt failure restores exact notebook snapshots and phone contacts.');
   assert.equal((await encounter(me, npc, failureKey)).progress.totalEncounters, 40);
   assert.deepEqual(await neutral(), before, 'Encounters do not change resources, ledgers or contacts.');
+  // A real past observation is not refreshed by a current district projection. The
+  // canonical row still issues the district/generation preconditions for an encounter.
+  const observer = await actor('Private notebook owner'), stranger = await actor('Old human name'), bot = await actor('Old agent name', 'agent');
+  const observationTime = new Date('2020-01-01T00:00:00.000Z');
+  for (const target of [stranger, bot]) {
+    await pool.query("UPDATE characters SET loc='canal',respect=10000 WHERE id=$1", [target.id]);
+    const observed = (await pool.query('SELECT * FROM characters WHERE id=$1', [target.id])).rows[0];
+    await recordPlayerIntel(pool, observer.account, observed, { observedAt: observationTime, source: 'gossip', sourceName: 'Old witness' });
+    await pool.query("UPDATE characters SET loc='docks',respect=200000,name=$2 WHERE id=$1", [target.id, 'Current ' + target.kind]);
+  }
+  const beforeRead = await knowledgeRows(), observerBoard = await cityPresence(pool, observer.account, [stranger.account, bot.account], { limit: 40 });
+  for (const target of [stranger, bot]) {
+    const card = observerBoard.actors.find(row => row.id === target.id);
+    assert.equal(card.name, target.name); assert.equal(card.level, 32);
+    assert.equal(card.district, 'docks'); assert.equal(card.lastSeenDistrict, 'canal');
+    assert.equal(card.observedAt, observationTime.toISOString()); assert.equal(card.source, 'gossip'); assert.equal(card.sourceName, 'Old witness');
+    assert.equal(card.gangTag, null); assert.equal(card.online, null);
+    assert.deepEqual(card.actions[0].body, request(observer, target));
+    const privateCard = (await cityPresence(pool, human.account, [target.account], { limit: 40 })).actors.find(row => row.id === target.id);
+    assert.equal(privateCard.name, null); assert.equal(privateCard.level, null); assert.equal(privateCard.observedAt, null);
+  }
+  assert.deepEqual(await knowledgeRows(), beforeRead, 'Reading dated facts never updates either owner\'s notebook or phone book.');
+  const learnedKey = uuid(), learned = await encounter(observer, stranger, learnedKey);
+  const learnedSnapshot = await readPlayerIntel(pool, observer.account, stranger.id);
+  assert.equal(learned.encounteredActor.name, 'Current player');
+  assert.equal(learned.encounteredActor.level, learnedSnapshot.level);
+  assert.equal(learned.encounteredActor.observedAt, learned.intel.collectedAt);
+  assert.equal(learned.encounteredActor.lastSeenDistrict, 'docks'); assert.equal(learned.encounteredActor.source, 'city_encounter');
+  assert.deepEqual(learned.intel.source, learned.encounteredActor, 'The new journal source is projected from the earned notebook snapshot.');
+  assert.equal(await readPlayerIntel(pool, stranger.account, observer.id), null, 'An encounter is not a reciprocal introduction.');
+  const learnedJournal = await cityIntel(pool, observer.account);
+  await pool.query('UPDATE characters SET name=$2,respect=400000 WHERE id=$1', [stranger.id, 'Newer live name']);
+  const datedCard = (await cityPresence(pool, observer.account, [stranger.account], { limit: 40 })).actors.find(row => row.id === stranger.id);
+  assert.equal(datedCard.name, learned.encounteredActor.name); assert.equal(datedCard.level, learned.encounteredActor.level);
+  assert.deepEqual(await encounter(observer, stranger, learnedKey), learned, 'The original encounter receipt remains immutable after live facts change.');
+  assert.deepEqual(await readPlayerIntel(pool, observer.account, stranger.id), learnedSnapshot, 'Old-key replay is not a new sighting.');
+  assert.deepEqual(await cityIntel(pool, observer.account), learnedJournal);
+  await new Promise(resolve => setTimeout(resolve, 2));
+  const newer = await encounter(observer, stranger), newerSnapshot = await readPlayerIntel(pool, observer.account, stranger.id);
+  assert.equal(newer.encounteredActor.name, 'Newer live name');
+  assert.equal(newerSnapshot.name, 'Newer live name');
+  assert.deepEqual(await encounter(observer, stranger, learnedKey), learned);
+  assert.deepEqual(await readPlayerIntel(pool, observer.account, stranger.id), newerSnapshot, 'Historical replay cannot regress a newer earned snapshot.');
+  const failedKnowledge = await knowledgeRows(), failedJournal = await cityIntel(pool, observer.account);
+  const privateFailureKey = uuid();
+  await assert.rejects(recordCityEncounter(interruptedPool, observer.account, bot.id, request(observer, bot), privateFailureKey));
+  assert.deepEqual(await knowledgeRows(), failedKnowledge); assert.deepEqual(await cityIntel(pool, observer.account), failedJournal);
+  const recovered = await encounter(observer, bot, privateFailureKey);
+  assert.equal(recovered.encounteredActor.name, 'Current agent'); assert.equal(recovered.encounteredActor.source, 'city_encounter');
+  assert.equal(recovered.progress.totalEncounters, failedJournal.progress.totalEncounters + 1, 'A rolled-back encounter retries once under its original key.');
   await pool.query("UPDATE characters SET loc='docks',jail_until=$2 WHERE id=$1", [away.id, new Date(Date.now() + 60000)]);
   await encounter(me, away);
   const nonphysical = await readPlayerIntel(pool, me.account, away.id);

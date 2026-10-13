@@ -997,8 +997,10 @@ export async function requestDeedWithdraw(pool, accountId, toAddress, { attest }
 
     // state 1 → 2: INERT (onchain_token_id set), account_id unchanged so the account can't claim a new
     // street until this resolves; control cleared (a rival's grip lapses — the deed is leaving the game).
+    await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+      WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc, deed.home_authority_token]);
     await client.query(
-      'UPDATE street_deeds SET onchain_token_id=$2, controller_account=NULL, control_until=NULL, attested_at=now() WHERE account_id=$1', [accountId, token]);
+      'UPDATE street_deeds SET onchain_token_id=$2, controller_account=NULL, control_until=NULL, attested_at=now(), home_authority_token=$3 WHERE account_id=$1', [accountId, token, uid()]);
     const id = uid();
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
@@ -1021,15 +1023,17 @@ export async function markDeedExtracted(pool, { nonce, tokenId }) {
   try {
     await client.query('BEGIN');
     const deed = (await client.query(
-      "SELECT account_id FROM street_deeds WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%' FOR UPDATE", [String(tokenId)])).rows[0];
+      "SELECT account_id,name_lc,home_authority_token FROM street_deeds WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%' FOR UPDATE", [String(tokenId)])).rows[0];
     if (deed) {
+      await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+        WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc,deed.home_authority_token]);
       await client.query('UPDATE street_deed_history SET account_id=$2 WHERE account_id=$1', [deed.account_id, owner]);
       // Re-key to the inert on-chain owner AND stamp who extracted it — the stock-delivery keeper
       // (brokers §3.4) reads `extracted_by_account` to find this account's on-chain deed after the
       // account_id link is gone, and pushes its stock allocation into the deed's ERC-6551 TBA.
       await client.query(
-        'UPDATE street_deeds SET account_id=$2, extracted_by_account=$3, extracted_at=now() WHERE account_id=$1',
-        [deed.account_id, owner, deed.account_id]);
+        'UPDATE street_deeds SET account_id=$2, extracted_by_account=$3, extracted_at=now(), home_authority_token=$4 WHERE account_id=$1',
+        [deed.account_id, owner, deed.account_id, uid()]);
     }
     if (nonce != null)
       await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE nonce=$1 AND kind='deed' AND status='signed'", [Number(nonce)]);
@@ -1059,10 +1063,14 @@ export async function recordDeedTransfer(pool, { tokenId, to, from }) {
     // the JS comparison give the same replay-safety: a re-delivered event finds the owner already
     // recorded and changes nothing.
     const cur = (await client.query(
-      'SELECT account_id, extracted_by_account, name, onchain_owner FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE',
+      'SELECT account_id, extracted_by_account, name, name_lc, home_authority_token, onchain_owner FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE',
       [String(tokenId)])).rows[0];
     const row = (cur && String(cur.onchain_owner || '').toLowerCase() !== owner) ? cur : null;
-    if (row) await client.query('UPDATE street_deeds SET onchain_owner=$2, ownership_since_day=$3 WHERE onchain_token_id=$1', [String(tokenId), owner, dayOf() + 1]);
+    if (row) {
+      await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+        WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [row.name_lc,row.home_authority_token]);
+      await client.query('UPDATE street_deeds SET onchain_owner=$2, ownership_since_day=$3, home_authority_token=$4 WHERE onchain_token_id=$1', [String(tokenId), owner, dayOf() + 1, uid()]);
+    }
     // a genuine SECONDARY move (not the mint — the mint has no prior owner recorded) goes on the
     // public record: provenance is the deed's value, and a sale is part of its story
     const isMint = !from || String(from).toLowerCase() === '0x0000000000000000000000000000000000000000';
@@ -1211,7 +1219,7 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   if (!r || r.status !== 'pending') return null; // already applied / gone
   const onchainOwner = 'onchain:' + String(tokenId);
   const deed = (await client.query(
-    'SELECT account_id, name FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+    'SELECT account_id, name, name_lc, home_authority_token FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
   if (!deed) { // no outstanding extraction (already re-imported, or never extracted) — settle
     await client.query("UPDATE deed_reimports SET status='applied', applied_at=now() WHERE ref=$1", [ref]);
     return null;
@@ -1225,6 +1233,8 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   if ((await client.query("SELECT 1 FROM street_deeds WHERE account_id=$1 AND (onchain_token_id IS NULL OR account_id NOT LIKE 'onchain:%')", [acct.account_id])).rowCount)
     return null; // they already hold a street in-game — must offload it first (wait)
   // re-key the deed + its legend to the burner, clear the on-chain flag, RESET control (they earn the corner)
+  await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+    WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc,deed.home_authority_token]);
   await client.query('UPDATE street_deed_history SET account_id=$2 WHERE account_id=$1', [onchainOwner, acct.account_id]);
   // The deed's ON-CHAIN LIFE IS OVER, so every field that describes it goes with the token id —
   // `extracted_by_account`, `extracted_at` and `onchain_owner` too (red-team C4). Leaving them set is
@@ -1236,7 +1246,7 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
   await client.query(
     `UPDATE street_deeds SET account_id=$2, onchain_token_id=NULL, extracted_by_account=NULL,
        extracted_at=NULL, onchain_owner=NULL, controller_account=NULL, control_until=NULL,
-       corner_at=now(), shakedown_at=NULL, sale_price=NULL, ownership_since_day=$3 WHERE account_id=$1`, [onchainOwner, acct.account_id, dayOf() + 1]);
+       corner_at=now(), shakedown_at=NULL, sale_price=NULL, ownership_since_day=$3, home_authority_token=$4 WHERE account_id=$1`, [onchainOwner, acct.account_id, dayOf() + 1, uid()]);
   // append a lineage line to the legend (fixed string, no user input → a plain insert, no cleanText/SAVEPOINT)
   await client.query("INSERT INTO street_deed_history (account_id, kind, detail) VALUES ($1,'sold','brought back into the city from on-chain')", [acct.account_id]);
   await client.query("UPDATE deed_reimports SET status='applied', applied_account=$2, applied_at=now() WHERE ref=$1", [ref, acct.account_id]);
@@ -1354,6 +1364,9 @@ export async function recoverStrandedDeed(pool, { street, tokenId } = {}) {
     const signature = await signer.signTypedData({ domain, types: DEED_VOUCHER_TYPES, primaryType: 'DeedVoucher', message });
     const voucher = Object.fromEntries(Object.entries(message).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]));
     const id = uid();
+    await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+      WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc,deed.home_authority_token]);
+    await client.query('UPDATE street_deeds SET home_authority_token=$3 WHERE account_id=$1 AND onchain_token_id=$2', [onchainOwner,token,uid()]);
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
       [id, onchainOwner, 'deed', 1, token, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
@@ -1421,12 +1434,15 @@ export async function sweepDeedVouchers(pool, reader = undefined) {
       await client.query('BEGIN');
       const cur = (await client.query("SELECT status FROM vouchers WHERE id=$1 FOR UPDATE", [v.id])).rows[0];
       if (cur && cur.status === 'signed') {
+        await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+          WHERE status='open' AND home_key IN (SELECT name_lc FROM street_deeds
+            WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%')`, [String(v.gear_id)]);
         // the same full reset as a re-import (red-team C4): this deed is back in the game, so every
         // field describing an on-chain life goes with the token id or the NEXT extraction inherits a
         // previous owner and mis-routes its stock deliveries.
         await client.query(
           `UPDATE street_deeds SET onchain_token_id=NULL, extracted_by_account=NULL, extracted_at=NULL,
-             onchain_owner=NULL WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%'`, [String(v.gear_id)]);
+              onchain_owner=NULL, home_authority_token=$2 WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%'`, [String(v.gear_id), uid()]);
         await client.query("UPDATE vouchers SET status='expired' WHERE id=$1", [v.id]);
         cleared++;
       }

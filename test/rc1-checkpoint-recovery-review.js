@@ -1,20 +1,44 @@
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
-import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog, preProductionRecoveryCatalog,
-  reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER } from '../tools/rc1-checkpoint-recovery-review.js';
+import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
+  reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER, CHECKPOINT_RPG_CATALOG_TRANSFER,
+  cityGameplayRecoveryCatalog, preProductionRecoveryCatalog } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
 
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
   COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE' };
 const previous = Object.fromEntries(Object.keys(flags).map(key => [key, process.env[key]]));
-Object.assign(process.env, flags); const catalog = recoveryCatalog(coreProgressionContent());
+Object.assign(process.env, flags); const productionCatalog = recoveryCatalog(coreProgressionContent());
+const rpgCatalog = preProductionRecoveryCatalog(productionCatalog);
+const catalog = cityGameplayRecoveryCatalog(rpgCatalog);
 for (const [key, value] of Object.entries(previous)) if (value === undefined) delete process.env[key]; else process.env[key] = value;
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value);
+const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 }).replaceAll('\r\n', '\n');
+for (const [file, blob] of Object.entries(CHECKPOINT_RPG_CATALOG_TRANSFER.sourceBlobs)) {
+  const reference = `${CHECKPOINT_RPG_CATALOG_TRANSFER.sourceRevision}:${file}`;
+  assert.equal(git('rev-parse', reference).trim(), blob, 'Complete immutable RPG catalog producer Git blob');
+  assert.equal(firstBatchSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')), git('show', reference),
+    'The exact full RPG catalog producer is preserved, not only its package labels');
+}
+assert.equal(CHECKPOINT_RECOVERY_REVIEW.rpgCatalogTransfer, CHECKPOINT_RPG_CATALOG_TRANSFER);
+assert.equal(hash(productionCatalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256);
+assert.equal(hash(productionCatalog.nodes.filter(node => node.packageId === 'company-production-quality')), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.addedNodesSha256);
+assert.equal(productionCatalog.nodes.length - rpgCatalog.nodes.length, 1);
+assert.match(CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.scope, /No manufacturing.*qualification is inherited/);
+assert.match(CHECKPOINT_RPG_CATALOG_TRANSFER.scope, /ALL new RPG authority, reachability, recovery, native, worker, activation and deployment qualification remain outside/);
+assert.equal(hash(rpgCatalog), CHECKPOINT_RPG_CATALOG_TRANSFER.actualSha256);
+assert.equal(hash(catalog), CHECKPOINT_RPG_CATALOG_TRANSFER.predecessorSha256);
+assert.equal(rpgCatalog.nodes.length - catalog.nodes.length, CHECKPOINT_RPG_CATALOG_TRANSFER.addedNodes);
+assert.equal(hash(rpgCatalog.nodes.filter(node => CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.includes(node.packageId))),
+  CHECKPOINT_RPG_CATALOG_TRANSFER.addedNodesSha256);
+assert.equal(cityGameplayRecoveryCatalog(catalog), catalog);
 const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
@@ -73,19 +97,15 @@ for (const file of extensionFiles) {
   assert.throws(() => assertCitySourceTransfer(file, text.replace(block, block + block)), /source changed/);
 }
 const historicalCatalog = historicalRecoveryCatalog(catalog);
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256);
-assert.equal(hash(preProductionRecoveryCatalog(catalog)), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
-assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'company-production-quality')),
-  CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.addedNodesSha256);
-assert.match(CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.scope, /No new manufacturing.*qualification is inherited/);
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
 assert.equal(hash(historicalCatalog), CHECKPOINT_RECOVERY_REVIEW.catalogSha256,
   'Exact additive City catalog inverse retains the complete independently reviewed historical catalog hash.');
-assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 10);
+assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 9);
 assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'neighborhood-initiation')),
   CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.addedNodesSha256);
 assert.equal(historicalRecoveryCatalog(historicalCatalog), historicalCatalog);
 assert(!historicalCatalog.nodes.some(node => node.packageId === 'neighborhood-initiation'));
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256,
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256,
   'The catalog inverse must not mutate the current content catalog.');
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 const logicalAt = Date.parse('2026-09-24T00:00:00Z'), configurationSha256 = hash('effective isolated configuration');
@@ -129,6 +149,50 @@ assert.equal(reviewed.joined.permanentDeadlocks, null);
 assert.equal(reviewed.matrixQualifying, false);
 assert(reviewed.details.some(row => row.id === 'resource:a0:item:furnace_archive_key' && row.status === 'REACHABLE'));
 assert(reviewed.details.some(row => row.id === 'shared-canal-path' && row.ok));
+{
+  const current = fixture(data); current.catalog = rpgCatalog;
+  assert.deepEqual(reviewCanonicalCheckpoint(current).joined, reviewed.joined,
+    'Only the exact complete RPG catalog preserves every original sufficient-path subject through both closed inverses.');
+  for (const graphId of CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds) {
+    const changed = clone(data), id = 'new-rpg-' + graphId;
+    changed.mystery_instances.push({ id, graph_id: graphId, graph_version: 1,
+      owner_scope: 'character', owner_id: 'c0', authority_account_id: 'a0', status: 'active' });
+    const input = fixture(changed); input.catalog = rpgCatalog;
+    const result = reviewCanonicalCheckpoint(input);
+    assert.equal(result.witnesses.find(row => row.id === 'mystery:' + id).status, 'UNKNOWN',
+      'Every new RPG package is outside inherited objective/recovery qualification: ' + graphId);
+    assert.match(result.details.find(row => row.id === 'mystery:' + id).reason, /outside the historical sufficient-path review/);
+    for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN',
+      'Every new RPG package requires its own current-source ' + scope + ' evidence: ' + graphId);
+    assert.equal(result.witnesses.find(row => row.id === 'mystery:m1').status, 'REACHABLE');
+  }
+}
+const rpgMutations = [];
+for (const packageId of CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds) {
+  rpgMutations.push(
+    changed => { const index = changed.nodes.findIndex(node => node.packageId === packageId); assert(index >= 0); changed.nodes.splice(index, 1); },
+    changed => { const node = changed.nodes.find(node => node.packageId === packageId); assert(node); changed.nodes.push(clone(node)); },
+    changed => { const node = changed.nodes.find(node => node.packageId === packageId); assert(node); node.metadata.description = 'unreviewed RPG dialogue'; },
+  );
+}
+rpgMutations.push(
+  changed => changed.nodes.push({ ...clone(changed.nodes[0]), id: 'unreviewed:rpg-node', packageId: 'unreviewed-rpg-package' }),
+  changed => changed.nodes[0].version++,
+  changed => changed.operations.push({ id: 'unreviewed-rpg-operation' }),
+  changed => changed.graphs[0].version++,
+  changed => changed.objects.push({ id: 'unreviewed-rpg-object' }),
+  changed => { changed.unreviewed = true; },
+);
+for (const mutate of rpgMutations) {
+  const changed = clone(rpgCatalog); mutate(changed);
+  assert.notEqual(hash(changed), hash(rpgCatalog), 'Each RPG inverse negative changes the complete actual catalog');
+  assert.equal(cityGameplayRecoveryCatalog(changed), changed, 'No partial package-ID allowlist may admit unfamiliar RPG catalog bytes');
+  assert.equal(historicalRecoveryCatalog(changed), changed, 'Unknown complete RPG catalogs retain all rejecting bytes');
+  const input = fixture(data); input.catalog = changed;
+  const result = reviewCanonicalCheckpoint(input);
+  assert.equal(result.catalogApplicable, false);
+  assert.equal(result.joined.scopes.knowledge.status, 'UNKNOWN', 'Unreviewed RPG content cannot inherit sufficient-path coverage');
+}
 {
   const historical = fixture(data); historical.catalog = historicalCatalog;
   assert.deepEqual(reviewCanonicalCheckpoint(historical).joined, reviewed.joined,
@@ -229,3 +293,4 @@ for (const population of [25, 50, 100, 250, 1000]) {
   assert.equal(reviewCanonicalCheckpoint(fixture(full)).joined.scopes.knowledge.status, 'UNKNOWN', 'Actual owned issuance bound is not waived');
 }
 console.log('PASS rc1-checkpoint-recovery-review: exact source and catalog inverses; owner/choice/exploration/recipe/route tamper rejection; new RPG UNKNOWN boundary; native checkpoint/configuration joins; original material/Knowledge prerequisites; all5 populations; no native world run');
+console.log(`PASS RPG catalog source-only inverse: ${CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.length} exact packages/${CHECKPOINT_RPG_CATALOG_TRANSFER.addedNodes} nodes, ${rpgMutations.length} complete-catalog rejection controls and all new packages UNKNOWN; original nine-node inverse unchanged; no new authority/native/worker qualification`);

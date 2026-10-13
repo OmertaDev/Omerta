@@ -1,4 +1,5 @@
 import { upgradeBoard } from './deed-upgrades.js';
+import crypto from 'node:crypto';
 // STREET DEEDS — the map as property (omerta-street-deeds-design.md). A named, mapped plot of the
 // world a player OWNS and builds a legend on — the Monopoly layer. Phase 1 is PURE STATUS: the deed,
 // its name, its map plot and its provenance are all status, so NO `transactions` row is ever written,
@@ -84,8 +85,8 @@ export async function claimDeed(ch, body, client, h) {
     throw new GameError('taken', 'That street is already on the map. Pick another name.');
   try {
     // corner_at starts the corner-take clock at claim (Phase 2 — the owner controls their own corner)
-    await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at) VALUES ($1,$2,$3,$4,now())',
-      [ch.account_id, name, nameLc, district]);
+    await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token) VALUES ($1,$2,$3,$4,now(),$5)',
+      [ch.account_id, name, nameLc, district, crypto.randomUUID()]);
   } catch (err) {
     // a concurrent claim of the same name races on the unique index → a clean 400, not a 500
     if (String(err?.code) === '23505') throw new GameError('taken', 'That street was just claimed. Pick another name.');
@@ -455,10 +456,12 @@ export async function buyDeed(buyer, seller, client, h) {
   await h.ledger(client, { characterId: buyer.id, currency: 'cash', amount: -price, reason: 'deed:sale', counterparty: seller.id });
   await h.ledger(client, { characterId: seller.id, currency: 'cash', amount: net, reason: 'deed:sale', counterparty: buyer.id });
   await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]);
+  await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+    WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc, deed.home_authority_token]);
   // TRANSFER the deed + re-key its provenance to the buyer; control RESETS (the buyer earns the corner).
   await client.query(
-    `UPDATE street_deeds SET account_id=$2, sale_price=NULL, controller_account=NULL, control_until=NULL, corner_at=now(), ownership_since_day=$3
-       WHERE account_id=$1`, [seller.account_id, buyer.account_id, dayOf() + 1]);
+    `UPDATE street_deeds SET account_id=$2, sale_price=NULL, controller_account=NULL, control_until=NULL, corner_at=now(), ownership_since_day=$3,
+       home_authority_token=$4 WHERE account_id=$1`, [seller.account_id, buyer.account_id, dayOf() + 1, crypto.randomUUID()]);
   await client.query('UPDATE street_deed_history SET account_id=$2 WHERE account_id=$1', [seller.account_id, buyer.account_id]);
   await recordDeedEvent(client, buyer.account_id, 'sold', `${seller.name} sold the street to ${buyer.name} for $${price.toLocaleString()}`);
   await h.notify(client, seller.id, 'deed_sold', { street: deed.name, to: buyer.name, price });

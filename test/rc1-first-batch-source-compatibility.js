@@ -6,6 +6,8 @@ import * as O from '../tools/rc1-first-batch-source-compatibility.js';
 const lf=t=>t.replaceAll('\r\n','\n'),git=(...a)=>lf(execFileSync('git',a,{encoding:'utf8',maxBuffer:8*1024*1024,stdio:['ignore','pipe','pipe']}));
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
 let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;const entire=(a,b)=>{assert.equal(a,b);texts++;},reject=(f,t)=>{assert.throws(()=>O.assertFirstBatchSourceTransfer(f,t));negatives++;};
+assert.equal(O.FIRST_BATCH_SOURCE_PREDECESSOR,'f254c64a54a019665d7a516d382d56b46f2dcd82','The combined envelope reconstructs the complete authored main, not the older economy baseline');
+assert.equal(O.FIRST_BATCH_SOURCE_REVISION,'066808b48500c2132207e851f1a998e788f4e7a2','Current metadata pins the frozen combined runtime');
 assert.deepEqual(Object.keys(O.FIRST_BATCH_SOURCE_DOMAINS),['schema.sql','src/server.js','src/invariants.js','src/items.js','src/mysteries.js','src/crafting.js','src/content/phase1.js','src/content/phase1-policy.js','package.json','src/market.js','src/worker.js','src/social/estate.js','src/content/company-production-quality.js','src/agentgateway.js','src/company-economy-contracts.js']);
 for(const[file,d]of Object.entries(O.FIRST_BATCH_SOURCE_DOMAINS)){
  const current=lf(fs.readFileSync(file,'utf8')),pinned=git('show',O.FIRST_BATCH_SOURCE_REVISION+':'+file);entire(current,pinned);entire(current,git('show',d.currentBlob));assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;

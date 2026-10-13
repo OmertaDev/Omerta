@@ -424,7 +424,7 @@ try {
       homes: Array.from({ length: count }, (_, index) => ({ key: 'street ' + String(start + index).padStart(3, '0'), street: 'Street ' + (start + index), districtId,
         owner: { name: ['Public Player', '<img src=x onerror=window.__atlasXss=1>', 'NPC Steward'][index % 3], kind: ['player', 'agent', 'npc'][index % 3] }, mine: false, ownership: 'city' })), myHome, nextCursor, total: 100 });
     const ownHome = { key: 'zz own street', street: 'Your recorded street', districtId: 'docks', owner: { name: 'Viewer', kind: 'player' }, mine: true, ownership: 'city' };
-    await click('#atlas-launch'); assert.equal(await page.locator('[data-city-world-panel]').count(), 6);
+    await click('#atlas-launch'); assert.equal(await page.locator('[data-city-world-panel]').count(), 7);
     assert.deepEqual(await page.locator('[data-city-map-view]').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().height)), [44, 44],
       'Both map mode controls get their touch size from the actual WorldUI stylesheet.');
     const firstAtlas = await atlasRead('atlas'), firstCollection = await atlasRead('collection');

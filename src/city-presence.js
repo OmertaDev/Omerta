@@ -2,7 +2,7 @@
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
 import { DISTRICTS, levelOf, jailed, hospitalized } from './rules.js';
-import { recordPlayerIntel } from './playerintel.js';
+import { recordPlayerIntel, playerIntelMap } from './playerintel.js';
 import { withItemRead, withItemTransaction, withItemMutation, registerItemTransactionUndo } from './items.js';
 
 export const CITY_JOURNAL_LIMIT = 32;
@@ -24,9 +24,19 @@ const fail = (code, message) => { throw new GameError(code, message); };
 const districtName = id => DISTRICTS.find(d => d.id === id)?.name || id;
 const viewerOf = row => ({ characterId: row.id, generation: Number(row.generation), district: row.loc });
 const kindOf = row => row.is_npc ? 'npc' : row.agent_flag ? 'agent' : 'player';
-const actorOf = (row, online) => ({ id: row.id, name: row.name, generation: Number(row.generation),
-  kind: kindOf(row), district: row.loc, level: levelOf(Number(row.respect)), gangTag: row.tag || null,
-  ...(online ? { online: online.has(row.account_id) } : {}) });
+function actorOf(row, online, intel) {
+  const observed = intel?.observedAt == null ? null : new Date(intel.observedAt);
+  const observedAt = observed && Number.isFinite(observed.getTime()) ? observed.toISOString() : null;
+  const seen = observedAt && typeof intel.source === 'string' && intel.source ? intel : null;
+  // Current placement/generation issue the encounter handle; they are not a new notebook sighting.
+  return { id: row.id, name: row.is_npc ? row.name : seen?.name ?? null, generation: Number(row.generation),
+    kind: kindOf(row), district: row.loc, level: row.is_npc ? levelOf(Number(row.respect)) : seen?.level ?? null,
+    gangTag: row.is_npc ? row.tag || null : null, online: row.is_npc && online ? online.has(row.account_id) : null,
+    lastSeenDistrict: !row.is_npc ? seen?.loc ?? null : null,
+    observedAt: !row.is_npc && seen ? observedAt : null,
+    source: !row.is_npc ? seen?.source ?? null : null,
+    sourceName: !row.is_npc && typeof seen?.sourceName === 'string' ? seen.sourceName : null };
+}
 const parseJson = value => typeof value === 'string' ? JSON.parse(value) : value;
 const clone = value => JSON.parse(JSON.stringify(value));
 
@@ -85,7 +95,8 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
   const limit = query.limit === undefined ? 24 : Number(query.limit);
   if (!Number.isInteger(limit) || limit < 1 || limit > 40) fail('bad_city_presence', 'Presence limit must be between 1 and 40.');
   return withItemRead(pool, async client => {
-    const viewer = viewerOf(await currentActor(client, accountId));
+    const owner = await currentActor(client, accountId), viewer = viewerOf(owner);
+    const known = await playerIntelMap(client, owner.account_id);
     let after = '';
     if (query.cursor !== undefined) {
       if (typeof query.cursor !== 'string' || query.cursor.length > 512 || !/^[A-Za-z0-9_-]+$/.test(query.cursor)) fail('bad_city_presence', 'Invalid presence cursor.');
@@ -107,7 +118,7 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
       WHERE c.alive AND c.loc=$1 AND c.account_id<>$2 ORDER BY c.id LIMIT $3`,
         [viewer.district, accountId, limit + 1])).rows;
     const online = new Set(onlineIds), more = rows.length > limit;
-    const actors = rows.slice(0, limit).map(row => ({ ...actorOf(row, online), actions: [{
+    const actors = rows.slice(0, limit).map(row => ({ ...actorOf(row, online, known.get(row.id)), actions: [{
       id: 'encounter:' + row.id, label: 'Collect intel', method: 'POST',
       path: '/v1/city/encounters/' + encodeURIComponent(row.id),
       body: { ...viewer, targetGeneration: Number(row.generation) }, available: true, blockedBy: [], consequence: '',
@@ -139,7 +150,22 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
           || Number(target.generation) !== body.targetGeneration) fail('city_actor_unavailable', 'That public encounter is unavailable.');
         const flag = (await client.query('SELECT agent_flag FROM account_persistent WHERE account_id=$1', [target.account_id])).rows[0];
         const gang = (await client.query('SELECT g.tag FROM gang_members m JOIN gangs g ON g.id=m.gang_id WHERE m.character_id=$1', [target.id])).rows[0];
-        const source = actorOf({ ...target, agent_flag: flag?.agent_flag, tag: gang?.tag });
+        // Collecting a local source's intel updates only the observer's notebook. Keep the write
+        // inside the replay callback, so an old receipt never refreshes a past sighting.
+        const collectedAt = new Date().toISOString(), intelPair = [me.account_id, target.id];
+        const priorIntel = (await client.query(`SELECT * FROM player_intel
+          WHERE owner_account=$1 AND target_character=$2`, intelPair)).rows;
+        registerItemTransactionUndo(client, async () => {
+          await client.query(`DELETE FROM player_intel
+            WHERE owner_account=$1 AND target_character=$2`, intelPair);
+          for (const row of priorIntel) await client.query(`INSERT INTO player_intel
+            (owner_account,target_character,facts,source,source_name,observed_at,learned_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
+            [row.owner_account,row.target_character,JSON.stringify(row.facts),row.source,row.source_name,row.observed_at,row.learned_at]);
+        });
+        const earned = await recordPlayerIntel(client, me.account_id, target, {
+          observedAt: new Date(collectedAt), source: 'city_encounter',
+          location: !jailed(me) && !hospitalized(me) && !jailed(target) && !hospitalized(target) });
+        const source = actorOf({ ...target, agent_flag: flag?.agent_flag, tag: gang?.tag }, null, earned);
         const viewer = viewerOf(me), prior = await progressRow(client, viewer, true);
         const sequence = prior ? Number(prior.sequence) + 1 : 1;
         if (!Number.isSafeInteger(sequence)) fail('city_intel_limit', 'This journal has reached its supported limit.');
@@ -152,7 +178,7 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
           && source.id !== state.crossSourceId && ![state.firstKind, state.crossKind].includes(source.kind)) state.thirdSequence = sequence;
         const [tipId, title, description] = TIPS[(sequence - 1) % TIPS.length];
         const intel = { id: 'city-intel:' + sequence, sequence, kind: source.kind, title, description,
-          tipId, source, collectedAt: new Date().toISOString() };
+          tipId, source, collectedAt };
         const journal = [intel, ...(prior ? clone(parseJson(prior.journal)) : [])].slice(0, CITY_JOURNAL_LIMIT);
         registerItemTransactionUndo(client, () => prior
           ? client.query('UPDATE city_intel_progress SET sequence=$3,journal=$4,objectives=$5 WHERE character_id=$1 AND generation=$2',
@@ -162,21 +188,6 @@ export async function recordCityEncounter(pool, accountId, actorId, body, key) {
           VALUES($1,$2,$3,$4,$5) ON CONFLICT(character_id,generation) DO UPDATE
           SET sequence=EXCLUDED.sequence,journal=EXCLUDED.journal,objectives=EXCLUDED.objectives`,
         [viewer.characterId, viewer.generation, sequence, JSON.stringify(journal), JSON.stringify(state)]);
-        // Collecting a local source's intel updates only the observer's notebook. Keep the write
-        // inside the replay callback, so an old receipt never refreshes a past sighting.
-        const intelPair = [me.account_id, target.id];
-        const priorIntel = (await client.query(`SELECT * FROM player_intel
-          WHERE owner_account=$1 AND target_character=$2`, intelPair)).rows;
-        registerItemTransactionUndo(client, async () => {
-          await client.query(`DELETE FROM player_intel
-            WHERE owner_account=$1 AND target_character=$2`, intelPair);
-          for (const row of priorIntel) await client.query(`INSERT INTO player_intel
-            (owner_account,target_character,facts,source,source_name,observed_at,learned_at) VALUES ($1,$2,$3,$4,$5,$6,$7)`,
-            [row.owner_account,row.target_character,JSON.stringify(row.facts),row.source,row.source_name,row.observed_at,row.learned_at]);
-        });
-        const observedAt = new Date(intel.collectedAt);
-        await recordPlayerIntel(client, me.account_id, target, { observedAt, source: 'city_encounter',
-          location: !jailed(me) && !hospitalized(me) && !jailed(target) && !hospitalized(target) });
         return { ok: true, encounteredActor: source, intel,
           ...projectBoard(viewer, { sequence, journal, objectives: state }) };
       });

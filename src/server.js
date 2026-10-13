@@ -184,6 +184,9 @@ import { opportunityBoard } from './opportunities.js';
 import { arenaBoard } from './arena.js';
 import { registerCity } from './routes/city.js';
 import { registerCityHomes } from './routes/cityhomes.js';
+import { registerCityHomeInteriors } from './routes/city-home-interiors.js';
+import { registerCityEncounters } from './routes/city-encounters.js';
+import { register as registerCityWorldOpportunities } from './routes/city-world-opportunities.js';
 import { registerCitySocial } from './city-social.js';
 import { agentTurn } from './agentturn.js';
 import { postCityWire } from './citywire.js';
@@ -564,6 +567,7 @@ export async function buildServer() {
   for (const [file, type] of [
     ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'],
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
+    ['city-home-ui.js', 'application/javascript'], ['city-adventure-ui.js', 'application/javascript'],
     ['world-fieldwork.js', 'application/javascript'], ['world-fieldwork.css', 'text/css'],
     ['vendor/phaser.js', 'application/javascript'], ['vendor/phaser.js.LICENSE.txt', 'text/plain'],
   ]) {
@@ -2263,6 +2267,9 @@ export async function buildServer() {
   registerWorldGraph(app, { pool, auth });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
   registerCityHomes(app, { pool, auth });
+  registerCityHomeInteriors(app, { pool, auth });
+  registerCityEncounters(app, { pool, auth });
+  registerCityWorldOpportunities(app, { pool, auth });
   registerWorldKernel(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerFamilyOperations(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
   registerProjections(app, { pool, auth,

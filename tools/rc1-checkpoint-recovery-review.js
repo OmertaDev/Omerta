@@ -15,6 +15,25 @@ export const CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevi
   evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
   scope: 'Exact full Crew inverse preserves unchanged checkpoint recovery eligibility; new Crew membership consent, private projections, death/replacement visibility and locks require separate current-source native proofs; no new runtime, native, deployment or financial qualification is inherited.' });
 const hash = value => sha256(canonicalJson(value));
+export const CHECKPOINT_RPG_CATALOG_TRANSFER = Object.freeze({
+  sourceRevision: 'c75eb6de12ad9816d4a48f1e614a099098144eec',
+  sourceBlobs: Object.freeze({
+    'src/content/phase1.js': 'aa2ffed2557910616472f5d517c405c89c929545',
+    'src/content/district-story-arcs.js': '9dd61b48a08cca127b7e49595a374451dae47991',
+    'src/content/staged-crew-missions.js': 'f5e195c021ea9ceb80a1e421234212e09670b789',
+    'src/content/city-world-opportunities.js': 'a6fb9c2f32a16d23ec36b54204aa49549f3bbafc',
+  }),
+  actualSha256: '3414895eac00bdec45efdd88ad7b0fce7274d86f903bee75a29cbc7b86f42268',
+  predecessorSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
+  packageIds: Object.freeze(['district-docks-story', 'district-neon-story', 'district-foundry-story',
+    'district-brick-story', 'district-canal-story', 'district-cathedral-story', 'staged-crew-missions',
+    'city-neighbor-favors', 'city-shutter-lock', 'city-loading-route', 'city-careful-negotiation',
+    'city-sealed-record', 'city-rotating-account-0', 'city-rotating-account-1', 'city-rotating-account-2',
+    'city-rotating-account-3']),
+  addedNodes: 121,
+  addedNodesSha256: '7717c06e66d53b856d12a3d43d1d5d8adc330ccff75a9e39b5c25e40b3124cc6',
+  scope: 'Only the complete exact frozen RPG catalog reconstructs the complete prior nine-node City catalog before its unchanged historical inverse. ALL new RPG authority, reachability, recovery, native, worker, activation and deployment qualification remain outside this source-only transfer.',
+});
 const EXTENSION_PINS = Object.freeze({
   'src/mysteries.js': CITY_SOURCE_CURRENT_PINS['src/mysteries.js'],
   'src/crafting.js': CITY_SOURCE_CURRENT_PINS['src/crafting.js'],
@@ -34,18 +53,19 @@ const EXTENSION_PINS = Object.freeze({
 });
 export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
   format: 1, sourcePins: EXTENSION_PINS, crewSourceReviewTransfer: CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER,
+  rpgCatalogTransfer: CHECKPOINT_RPG_CATALOG_TRANSFER,
   citySourceReviewTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION, predecessorRevision: CITY_SOURCE_PREDECESSOR_REVISION,
     sourcePins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_CURRENT_PINS[file]])),
     predecessorPins: Object.fromEntries(['src/mysteries.js', 'src/crafting.js', 'src/routes/worldgraph.js'].map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])),
     inverseChunks: { 'src/mysteries.js': 3, 'src/crafting.js': 2, 'src/routes/worldgraph.js': 9 },
     scope: 'Exact reviewed projection, recipe preview, exploration and route inverses reconstruct the complete prior approved source bytes. Only unchanged original mutation, owner, choice, recipe and cancellation guards transfer. New GUI, RPG and exploration authority or reachability requires separate evidence and is not inherited.' },
   catalogSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
-  productionCatalogTransfer: { sourceRevision: '9c7d7c7163d7b29ee732a790bb3297e91d779f2f',
-    actualSha256: '9a8436d6dc1229c88869ae96fa2e3682b908958191d475876ab32f7ca71b1ff8',
-    predecessorSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
+  productionCatalogTransfer: { sourceRevision: '066808b48500c2132207e851f1a998e788f4e7a2',
+    actualSha256: '30b8a1d7e4c734cec66404b4f8a61248fdfe1e0b2e79ceb20fc75c237df5f113',
+    predecessorSha256: '3414895eac00bdec45efdd88ad7b0fce7274d86f903bee75a29cbc7b86f42268',
     packageId: 'company-production-quality', addedNodes: 1,
     addedNodesSha256: '6a452793a58e6edbad080e29a010ea4cb30141119228f88be7131cd3f7c37655',
-    scope: 'Remove only the exact authored tempered-tool recipe to reconstruct the complete reviewed City catalog. No new manufacturing, agent production, quality or native qualification is inherited from historical recovery paths.' },
+    scope: 'Remove only the exact tempered-tool recipe to reconstruct the complete reviewed RPG catalog, before unchanged RPG and City inverses. No manufacturing, agent production, quality or native qualification is inherited.' },
   cityCatalogTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION,
     actualSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
     predecessorSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
@@ -80,11 +100,23 @@ export function preProductionRecoveryCatalog(catalog) {
   assert.equal(added.length, transfer.addedNodes, 'Production catalog additions changed');
   assert.equal(hash(added), transfer.addedNodesSha256, 'Production catalog addition source changed');
   const predecessor = { ...catalog, nodes: catalog.nodes.filter(node => node.packageId !== transfer.packageId) };
-  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Historical recovery catalog differs beyond exact production additions');
+  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Historical RPG catalog differs beyond exact production additions');
+  return predecessor;
+}
+export function cityGameplayRecoveryCatalog(catalog) {
+  const transfer = CHECKPOINT_RPG_CATALOG_TRANSFER;
+  if (hash(catalog) !== transfer.actualSha256) return catalog;
+  const packageIds = new Set(transfer.packageIds), added = catalog.nodes.filter(node => packageIds.has(node.packageId));
+  assert.equal(added.length, transfer.addedNodes, 'Frozen RPG catalog additions changed');
+  assert.equal(new Set(added.map(node => node.packageId)).size, transfer.packageIds.length, 'All exact RPG packages must be present');
+  assert.equal(hash(added), transfer.addedNodesSha256, 'Frozen RPG catalog addition source changed');
+  const predecessor = { ...catalog, nodes: catalog.nodes.filter(node => !packageIds.has(node.packageId)) };
+  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Historical City catalog differs beyond exact frozen RPG additions');
   return predecessor;
 }
 export function historicalRecoveryCatalog(catalog) {
   catalog = preProductionRecoveryCatalog(catalog);
+  catalog = cityGameplayRecoveryCatalog(catalog);
   const transfer = CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer;
   if (hash(catalog) !== transfer.actualSha256) return catalog;
   const added = catalog.nodes.filter(node => node.packageId === transfer.packageId);
@@ -167,7 +199,8 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       const ownerMatches = instance && account && (instance.owner_scope === 'account' ? instance.owner_id === accountId : ch?.account_id === accountId);
       // Custody-bearing recovery remains the existing escrow proof's responsibility.
       const emptyEscrow = !table('operation_escrow').some(row => row.operation_id === subject.id);
-      const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId;
+      const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId
+        || CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.includes(instance?.graph_id);
       const reachable = !newRpg && ownerMatches && instance.status === 'active' && emptyEscrow;
       emit('objectives', obligation, reachable ? 'REACHABLE' : 'UNKNOWN', reachable
         ? 'Original cancellation binds immutable stored owner/account/graph/version; no recipe, current definition or living-character completion gate; this instance has no escrow.'

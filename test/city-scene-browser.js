@@ -935,7 +935,8 @@ try {
   await page.locator('#map-mode-walk').click();
   await waitForCity(page);
 
-  // Destination doors reuse the corresponding gameplay screens and dispose the old scene.
+  // Contextual docks retain the world; their explicit full-screen secondary controls still
+  // reuse the corresponding gameplay screens and dispose the old scene.
   for (const [destination, tab] of Object.entries({
     fixer: 'streets', workshop: 'garage', training: 'life', clubhouse: 'crew', stories: 'desk',
   })) {
@@ -945,6 +946,13 @@ try {
     await page.locator('[data-city-open]').click();
     if (destination === 'fixer') await page.locator('[data-city-fixer-full]').click();
     if (destination === 'training') { await page.locator('[data-city-training-close]').click(); await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="life"]').click(); }
+    if (destination === 'clubhouse') {
+      await page.locator('[data-city-crew-board]').waitFor({ state: 'visible' });
+      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'The initial Clubhouse mission dock retains the world.');
+      assert(!(await page.evaluate(() => window.__cityHandles.at(-1).destroyed)), 'Opening Crew missions keeps the existing scene alive.');
+      await assertPosition(page, venuePose, 'The Clubhouse dock preserves arrival pose');
+      await page.getByRole('button', { name: 'Full Crew · membership & invitations →', exact: true }).click();
+    }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'attached' });
     assert(await page.evaluate(() => window.__cityHandles.at(-1).destroyed), `${destination} navigation destroys the old scene.`);
     assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'Tab switch removes the previous canvas.');
@@ -1169,6 +1177,11 @@ try {
     else await page.locator('[data-city-open]').click();
     if (tab === 'streets' && entry.venueId === 'fixer') await page.locator('[data-city-fixer-full]').click();
     if (tab === 'streets' && entry.venueId === 'training') await page.locator('[data-city-training-full]').click();
+    if (tab === 'crew' && await page.locator('[data-city-crew-board]').count()) {
+      assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 1, 'The Crew directory entry first retains the world.');
+      await assertPosition(page, directoryPose, 'The Crew directory dock preserves pose');
+      await page.getByRole('button', { name: 'Full Crew · membership & invitations →', exact: true }).click();
+    }
     await page.waitForSelector(`#tab-${tab}.on`, { state: 'visible' });
     await page.waitForFunction(tab => document.querySelector('#tab-' + tab)?.textContent.trim().length > 0, tab);
     assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, tab + ' disposes the exploration renderer.');
@@ -1268,14 +1281,26 @@ try {
   assert.equal(caseReply.statusCode, 200, caseReply.body);
   assert.equal(caseReply.json().status, 'completed', 'Door interactions complete the persisted quest.');
   assert(caseReply.json().choices.some(choice => choice.choiceId === 'listen'), 'The first approach is remembered by the server.');
-  await page.waitForFunction(() => document.querySelector('.omerta-city__next-move')?.dataset.cityGuidance === 'coach');
-  assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), null, 'A completed quest returns to coach guidance.');
+  const nextDistrictStory = (await app.inject({ method: 'GET', url: '/v1/worldgraph/mysteries', headers })).json().mysteries
+    .find(entry => entry.cityQuest === true && entry.districtId === 'docks' && !entry.started);
+  assert(nextDistrictStory, 'The server publishes an unstarted Docks story after the newcomer quest.');
+  await page.waitForFunction(title => document.querySelector('.omerta-city__next-move')?.dataset.cityGuidance === 'quest'
+    && document.querySelector('.omerta-city__next-move strong')?.textContent === title, nextDistrictStory.title);
+  assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), 'Visit The Fixer',
+    'Completing the newcomer quest surfaces the next real district story.');
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator('[data-city-journal]').click();
   await page.waitForSelector('#tab-fieldwork.on', { state: 'visible' });
+  await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
   await page.locator('[data-fieldwork-view="inventory"]').click();
   await page.locator('.fieldwork-item').filter({ hasText: 'Neighborhood Notebook' }).waitFor({ state: 'visible' });
-  await page.locator('[data-fieldwork-view="mysteries"]').click();
+  await page.evaluate(() => { window.__journalControllerRoot = document.querySelector('.world-fieldwork'); });
+  const repeatedJournalRequests = requests.length;
+  await page.locator('#city-journal').click();
+  await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor({ state: 'visible' });
+  assert.equal(await page.evaluate(() => window.__journalControllerRoot === document.querySelector('.world-fieldwork')), true,
+    'Session Journal navigation selects the existing controller rather than remounting the reader.');
+  assert.deepEqual(gameplayRequests(requests.slice(repeatedJournalRequests)), [], 'Opening Journal again from Inventory submits no gameplay POST.');
   await page.locator('[data-fieldwork-mystery="neighborhood-initiation"]').click();
   await page.waitForFunction(() => document.querySelector('.fieldwork-case')?.textContent.toLowerCase().includes('completed'));
   await returnToCity(page);
@@ -1812,7 +1837,7 @@ try {
   assert.deepEqual(retiredVisit, { guides: 0, selected: null }, 'A retired identity cannot reopen its old quest destination.');
   assert.deepEqual(pageErrors, [], 'No uncaught browser errors.');
   for (const context of contexts) await context.close();
-  console.log('city-scene-browser: generated art/fallbacks, movement/collision, live resource HUD, all gameplay destinations, real job receipt, saved return/reload poses, phone quest guidance/visits/coach fallback, NPC quest/choice/keepsake/journal, mobile touch/release/cancel, reduced motion, identity/district reset, auth cleanup, and asset recovery pass' +
+  console.log('city-scene-browser: generated art/fallbacks, movement/collision, live resource HUD, all gameplay destinations, real job receipt, saved return/reload poses, phone quest guidance/visits/district continuation, NPC quest/choice/keepsake/journal, mobile touch/release/cancel, reduced motion, identity/district reset, auth cleanup, and asset recovery pass' +
     (shots ? '\nScreenshots: ' + path.join(shots, 'city-desktop.png') + ' and ' + path.join(shots, 'city-mobile.png') : ''));
 } finally {
   if (browser) await browser.close();

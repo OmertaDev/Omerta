@@ -1,5 +1,8 @@
 // Presentation-only action descriptors. Domain mutations always re-read eligibility and authority.
-import { NEIGHBORHOOD_QUEST_VENUES, NEIGHBORHOOD_QUEST_PRESENTATION } from './content/neighborhood-initiation.js';
+import { cityQuestActionId, cityQuestActionLabel, cityQuestNodePresentation, cityQuestPresentation } from './content/city-quest-presentation.js';
+import { CITY_WORLD_OPPORTUNITY_PACKAGES } from './content/city-world-opportunities.js';
+
+const npcBoundGraphIds = new Set(CITY_WORLD_OPPORTUNITY_PACKAGES.map(pkg => pkg.id));
 
 export const segment = value => encodeURIComponent(String(value));
 export function issuedAction(id, label, path, body = {}, blockedBy = [], consequence = '') {
@@ -8,15 +11,18 @@ export function issuedAction(id, label, path, body = {}, blockedBy = [], consequ
 }
 export function mysteryStartActions(entry) {
   const path = '/v1/worldgraph/mysteries/' + segment(entry.graphId);
+  const presentation = cityQuestPresentation(entry.graphId), actionId = id => cityQuestActionId(entry.graphId, id);
   const started = entry.started;
-  const actions = started ? [] : [issuedAction('start', 'Accept the quest', path + '/start')];
-  if (entry.status === 'active' && entry.instanceId) actions.push(issuedAction('cancel', 'Abandon this quest',
+  const npcBound = npcBoundGraphIds.has(entry.graphId);
+  const actions = started || npcBound ? [] : [issuedAction(actionId('start'), presentation?.districtId ? 'Begin ' + presentation.title : 'Accept the quest', path + '/start')];
+  if (entry.status === 'active' && entry.instanceId) actions.push(issuedAction(actionId('cancel'), 'Abandon this quest',
     path + '/cancel', { instanceId: entry.instanceId }, [], 'This closes this quest. Held items return to their original owner.'));
-  return { ...entry, ...(entry.graphId === NEIGHBORHOOD_QUEST_PRESENTATION.graphId
-    ? NEIGHBORHOOD_QUEST_PRESENTATION : {}), actions };
+  return { ...entry, ...(presentation || {}), ...(npcBound && !started
+    ? { description: [entry.description, 'Meet a resident NPC in Adventure to choose this lead.'].filter(Boolean).join(' ') } : {}), actions };
 }
 export function mysteryUi(board, registry) {
   const graphId = board.graph.id, base = '/v1/worldgraph/mysteries/' + segment(graphId);
+  const presentation = cityQuestPresentation(graphId), actionId = id => cityQuestActionId(graphId, id);
   const hasAffordances = Array.isArray(board.actions) && board.actions.every(action => ['discover', 'complete', 'choice'].includes(action.kind));
   const nodes = board.nodes.map(projected => {
     const definition = registry.nodes.get(projected.id);
@@ -33,26 +39,28 @@ export function mysteryUi(board, registry) {
         ? 'This commits the step and may consume or hold the required item.' : '';
       const eligibility = hasAffordances && !board.actions.some(action => action.nodeId === projected.id && action.kind === 'complete')
         ? [...blockedBy, { code: 'step_unavailable' }] : blockedBy;
-      actions = [issuedAction('complete:' + projected.id, 'Complete this step',
+      actions = [issuedAction(actionId('complete:' + projected.id), cityQuestActionLabel(graphId, projected.id) || 'Complete this step',
         base + '/nodes/' + segment(projected.id) + '/complete', body, eligibility, consequence)];
     } else if (!closed && projected.type === 'choice') {
-      actions = (projected.options || []).map(option => issuedAction('choose:' + option.id, option.title,
+      actions = (projected.options || []).map(option => issuedAction(actionId(presentation?.districtId
+        ? 'choose:' + projected.id + ':' + option.id : 'choose:' + option.id), option.title,
         base + '/choices/' + segment(projected.id), { ...body, optionId: option.id },
         hasAffordances && !board.actions.some(action => action.nodeId === projected.id && action.kind === 'choice' && action.optionId === option.id)
           ? [...blockedBy, { code: 'choice_unavailable' }] : blockedBy,
         'This choice is permanent for this quest.'));
     }
-    return { ...projected, ...(NEIGHBORHOOD_QUEST_VENUES[projected.id]
-      ? { venueId: NEIGHBORHOOD_QUEST_VENUES[projected.id], description: definition?.metadata?.lore || '',
+    const nodePresentation = cityQuestNodePresentation(graphId, projected.id);
+    return { ...projected, ...(nodePresentation
+      ? { ...nodePresentation, description: definition?.metadata?.lore || '',
         dialogue: definition?.metadata?.description || '' } : {}),
       uiActions: actions, ...(!Object.hasOwn(projected, 'actions') ? { actions } : {}) };
   });
   const objectives = nodes.filter(node => ['mystery_step', 'world_gate', 'choice'].includes(node.type)
     && node.status !== 'excluded');
   const actions = [];
-  if (board.explorationAvailable) actions.push({ ...issuedAction('explore', 'Investigate the next lead', base + '/explore'),
-    ...(graphId === NEIGHBORHOOD_QUEST_PRESENTATION.graphId ? { venueId: NEIGHBORHOOD_QUEST_PRESENTATION.exploreVenueId } : {}) });
-  if (board.status === 'active') actions.push(issuedAction('cancel', 'Abandon this quest', base + '/cancel',
+  if (board.explorationAvailable) actions.push({ ...issuedAction(actionId('explore'), 'Investigate the next lead', base + '/explore'),
+    ...(presentation ? { venueId: presentation.exploreVenueId } : {}) });
+  if (board.status === 'active') actions.push(issuedAction(actionId('cancel'), 'Abandon this quest', base + '/cancel',
     { instanceId: board.instanceId }, [], 'This closes this quest. Held items return to their original owner.'));
   return { ...board, nodes, uiActions: actions, ...(!Object.hasOwn(board, 'actions') ? { actions } : {}),
     progress: { completed: objectives.filter(node => node.status === 'completed').length,

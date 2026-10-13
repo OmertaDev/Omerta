@@ -17,13 +17,13 @@ import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createDockWarDefinitions } from '../src/director/dock-war.js';
 import { createPlayerCommandEngine } from '../src/player-commands.js';
 import { addPlayer, issueAndExecute } from './lib/player-command-support.js';
+import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
+  cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES, CITY_GAMEPLAY_MIGRATION_REPLACED_KEYS } from './lib/city-gameplay-migration-catalog.js';
 
 const BASELINE = '44f48a743e549591bd125a1f678099b8382dd78f';
 const address = process.env.COORDINATION_TEST_DATABASE_URL || process.env.WORLD_KERNEL_TEST_DATABASE_URL;
 assert(address, 'An explicit isolated PostgreSQL database URL is required');
-const endpoint = new URL(address);
-assert(['postgres:', 'postgresql:'].includes(endpoint.protocol)
-  && ['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname), 'Only isolated loopback PostgreSQL is allowed');
+const endpoint = cityGameplayMigrationEndpoint(address);
 const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;
 const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
@@ -150,6 +150,7 @@ try {
   assert.equal(oldConstraints.filter((row) => row.table_name === 'player_intel').length, 0,
     'The pinned baseline predates account-owned player observations');
   for (const table of canonicalTables) assert(oldRows[table].length > 0, `${table} must be populated before migration`);
+  const gameplayCatalog = await createCityGameplayMigrationCatalog(admin, address);
   const migrate = async () => {
     const client = await pool.connect();
     try {
@@ -162,7 +163,12 @@ try {
   const upgradedConstraints = await constraints();
   const verifyPreservedConstraints = (rows) => assert.deepEqual(rows.filter((row) => !row.table_name.startsWith('director_') && row.table_name !== 'player_reset_migrations' && row.table_name !== 'deed_upgrades' && row.table_name !== 'city_intel_progress' && row.table_name !== 'city_social_preferences' && row.table_name !== 'player_intel' && !economyTables.includes(row.table_name) && !featureTables.includes(row.table_name) && !resourceTables.includes(row.table_name) && !goodsMarketTables.includes(row.table_name) && !companyTables.includes(row.table_name)), oldConstraints,
     'Director migration may not remove or alter any reviewed existing constraint');
-  verifyPreservedConstraints(upgradedConstraints);
+  // The original complete oracle is unchanged. Only independently verified, pinned
+  // gameplay additions/replacements are removed/restored before entering it.
+  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(rows, oldConstraints));
+  verifyCompletePreservedConstraints(upgradedConstraints);
+  const gameplayMetadata = await readCityGameplayMigrationMetadata(pool);
+  gameplayCatalog.verifyMetadata(gameplayMetadata);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
   assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');
   const verifyCityConstraints = (rows) => assert.deepEqual(rows.filter((row) => row.table_name === 'city_intel_progress'), cityConstraints,
@@ -195,11 +201,11 @@ try {
     assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
   };
   const rejected = (verify, label, candidate) => assert.throws(() => verify(candidate), (error) => error?.code === 'ERR_ASSERTION', label);
-  rejected(verifyPreservedConstraints, 'legacy character identity removed', mutateConstraint('characters', 'characters_pkey',
+  rejected(verifyCompletePreservedConstraints, 'legacy character identity removed', mutateConstraint('characters', 'characters_pkey',
     (rows, index) => rows.splice(index, 1)));
-  rejected(verifyPreservedConstraints, 'legacy character identity altered', mutateConstraint('characters', 'characters_pkey',
+  rejected(verifyCompletePreservedConstraints, 'legacy character identity altered', mutateConstraint('characters', 'characters_pkey',
     (rows, index) => { rows[index].definition = 'PRIMARY KEY (account_id)'; }));
-  rejected(verifyPreservedConstraints, 'unreviewed City table added', [...upgradedConstraints,
+  rejected(verifyCompletePreservedConstraints, 'unreviewed City table added', [...upgradedConstraints,
     { table_name: 'city_unreviewed', name: 'city_unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
   rejected(verifyCityConstraints, 'City character ownership removed', mutateConstraint('city_intel_progress', 'city_intel_progress_character_id_fkey',
     (rows, index) => rows.splice(index, 1)));
@@ -299,7 +305,7 @@ try {
     rejected(verifyFeatureNotNull, `${table} unexpected required column`, [...featureNotNull,
       { table_name: table, column_name: 'unexpected_required_column' }]);
   }
-  rejected(verifyPreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
+  rejected(verifyCompletePreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
     { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
   // Frozen operator catalog was reviewed once against source/native PG18.4.
   // First-five native catalog includes every causal provenance/condition/receipt
@@ -379,6 +385,45 @@ try {
     rejected(verifyEconomyConstraints, `${constraint.name} reviewed extension altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+  for (const key of gameplayCatalog.keys) {
+    const [table, name] = key.split('.');
+    rejected(verifyCompletePreservedConstraints, `${key} gameplay constraint removed`,
+      mutateConstraint(table, name, (rows, index) => rows.splice(index, 1)));
+    rejected(verifyCompletePreservedConstraints, `${key} gameplay constraint altered`,
+      mutateConstraint(table, name, (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
+  for (const table of [...CITY_GAMEPLAY_MIGRATION_TABLES, 'item_instances', 'unreviewed_gameplay_table']) {
+    rejected(verifyCompletePreservedConstraints, `${table} unknown gameplay constraint rejected`, [...upgradedConstraints,
+      { table_name: table, name: 'unreviewed_gameplay_constraint', definition: 'CHECK (true)' }]);
+  }
+  for (const key of CITY_GAMEPLAY_MIGRATION_REPLACED_KEYS) {
+    const [table, name] = key.split('.');
+    const original = oldConstraints.findIndex(row => row.table_name === table && row.name === name);
+    assert(original >= 0);
+    const unknown = structuredClone(oldConstraints); unknown[original].definition = 'CHECK (true)';
+    assert.throws(() => gameplayCatalog.normalize(upgradedConstraints, unknown), undefined, `${key} unknown predecessor cannot be restored`);
+  }
+  for (const column of gameplayMetadata.columns) {
+    const altered = structuredClone(gameplayMetadata), key = `${column.table_name}.${column.column_name}`;
+    const index = altered.columns.findIndex(row => row.table_name === column.table_name && row.column_name === column.column_name);
+    altered.columns[index].not_null = !column.not_null;
+    rejected(gameplayCatalog.verifyMetadata, `${key} gameplay nullability altered`, altered);
+    const type = structuredClone(gameplayMetadata); type.columns[index].type = column.type === 'text' ? 'character varying(10)' : 'text';
+    rejected(gameplayCatalog.verifyMetadata, `${key} gameplay type/typmod altered`, type);
+    const defaults = structuredClone(gameplayMetadata); defaults.columns[index].default_expression = 'NULL::text';
+    rejected(gameplayCatalog.verifyMetadata, `${key} gameplay default altered`, defaults);
+    const missing = structuredClone(gameplayMetadata); missing.columns.splice(index, 1);
+    rejected(gameplayCatalog.verifyMetadata, `${key} gameplay column removed`, missing);
+  }
+  for (const table of CITY_GAMEPLAY_MIGRATION_TABLES) {
+    rejected(gameplayCatalog.verifyMetadata, `${table} unknown gameplay column rejected`, { ...gameplayMetadata,
+      columns: [...gameplayMetadata.columns, { table_name: table, column_name: 'unreviewed_column', type: 'text', default_expression: null, not_null: false }] });
+  }
+  for (const constraint of gameplayMetadata.constraints) {
+    const altered = structuredClone(gameplayMetadata), index = altered.constraints.findIndex(row => row.table_name === constraint.table_name && row.name === constraint.name);
+    altered.constraints[index].validated = false;
+    rejected(gameplayCatalog.verifyMetadata, `${constraint.table_name}.${constraint.name} unvalidated gameplay constraint rejected`, altered);
+  }
   assert.deepEqual(upgradedConstraints.filter((row) => row.table_name.startsWith('director_')),
     inventory.added.filter((row) => row.table_name.startsWith('director_')),
     'Native Director constraints match the explicitly reviewed architecture inventory');
@@ -409,11 +454,14 @@ try {
   assert.deepEqual(await capture([...canonicalTables, ...directorTables]), currentRows,
     'Second migration preserves populated Director definitions, campaigns, lifecycle, selections, intents and domain receipts');
   assert.deepEqual(await constraints(), upgradedConstraints);
+  verifyCompletePreservedConstraints(await constraints());
+  gameplayCatalog.verifyMetadata(await readCityGameplayMigrationMetadata(pool));
   assert.equal((await director.tick()).replayed, true);
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });
   await assert.rejects(pool.query('INSERT INTO director_receipts SELECT * FROM director_receipts LIMIT 1'), { code: '23505' });
   console.log(`director-migration: populated ${BASELINE}, two production migrations, original/canonical/Director preservation, exact frozen ${featureTables.length} optional feature tables/${featureConstraints.length} constraints and required columns, missing/altered/unknown causal negatives PASS (PostgreSQL ${serverVersion})`);
+  console.log(`director-migration gameplay delta: immutable ${gameplayCatalog.source.revision}, ${gameplayCatalog.tableCount} tables/${gameplayCatalog.constraintCount} constraints, exact prior predicate restoration, type/default/nullable/unknown/unvalidated causal controls PASS`);
 } finally {
   if (pool) await pool.end();
   if (created) await admin.query(`DROP SCHEMA ${namespace} CASCADE`);

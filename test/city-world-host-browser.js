@@ -172,7 +172,7 @@ try {
         return dock.scrollTop > 0 && [...dock.querySelectorAll('[data-city-world-panel]')].every(node => node.getBoundingClientRect().bottom < box.top);
       });
       const scrolled = await choices();
-      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all six choices out of view.');
+      assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all seven choices out of view.');
       assert(scrolled.backHit && scrolled.backHeight >= 44, 'The sticky return control remains reachable: ' + JSON.stringify(scrolled));
       const at = requests.length, reads = await page.evaluate(() => window.__worldReads.length);
       if (keyboard) {
@@ -185,7 +185,7 @@ try {
       else await page.locator('[data-city-world-back]').click();
       await frames(page);
       const returned = await choices();
-      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 6, 'Returning exposes every real panel choice.');
+      assert.equal(returned.scroll, 0); assert.equal(returned.visible, 7, 'Returning exposes every real panel choice.');
       assert(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), 'Return focuses the first choice without selecting it.');
       assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
       assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
