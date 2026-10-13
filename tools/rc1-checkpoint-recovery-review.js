@@ -40,6 +40,12 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
     inverseChunks: { 'src/mysteries.js': 3, 'src/crafting.js': 2, 'src/routes/worldgraph.js': 9 },
     scope: 'Exact reviewed projection, recipe preview, exploration and route inverses reconstruct the complete prior approved source bytes. Only unchanged original mutation, owner, choice, recipe and cancellation guards transfer. New GUI, RPG and exploration authority or reachability requires separate evidence and is not inherited.' },
   catalogSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
+  productionCatalogTransfer: { sourceRevision: '9c7d7c7163d7b29ee732a790bb3297e91d779f2f',
+    actualSha256: '9a8436d6dc1229c88869ae96fa2e3682b908958191d475876ab32f7ca71b1ff8',
+    predecessorSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
+    packageId: 'company-production-quality', addedNodes: 1,
+    addedNodesSha256: '6a452793a58e6edbad080e29a010ea4cb30141119228f88be7131cd3f7c37655',
+    scope: 'Remove only the exact authored tempered-tool recipe to reconstruct the complete reviewed City catalog. No new manufacturing, agent production, quality or native qualification is inherited from historical recovery paths.' },
   cityCatalogTransfer: { sourceRevision: CITY_SOURCE_REVIEWED_REVISION,
     actualSha256: '146893304eb3fc3eebbe4569568d6c9df629245a910f5ac9f8ff864245200ff6',
     predecessorSha256: 'acadfb880100493a1bc5e8513c0c1d01395faeb8ca997535e9d807b53b69f139',
@@ -67,7 +73,18 @@ export function recoveryCatalog(content) {
   return { nodes: [...content.registry.nodes.values()], graphs: content.coordinationRegistry.graphs,
     operations: content.operations, objects: content.objects };
 }
+export function preProductionRecoveryCatalog(catalog) {
+  const transfer = CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer;
+  if (hash(catalog) !== transfer.actualSha256) return catalog;
+  const added = catalog.nodes.filter(node => node.packageId === transfer.packageId);
+  assert.equal(added.length, transfer.addedNodes, 'Production catalog additions changed');
+  assert.equal(hash(added), transfer.addedNodesSha256, 'Production catalog addition source changed');
+  const predecessor = { ...catalog, nodes: catalog.nodes.filter(node => node.packageId !== transfer.packageId) };
+  assert.equal(hash(predecessor), transfer.predecessorSha256, 'Historical recovery catalog differs beyond exact production additions');
+  return predecessor;
+}
 export function historicalRecoveryCatalog(catalog) {
+  catalog = preProductionRecoveryCatalog(catalog);
   const transfer = CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer;
   if (hash(catalog) !== transfer.actualSha256) return catalog;
   const added = catalog.nodes.filter(node => node.packageId === transfer.packageId);

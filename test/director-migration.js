@@ -48,7 +48,10 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   company_opportunity_subscriptions: [3, 5], company_opportunity_notices: [5, 7],
   commercial_reputation_publications: [3, 3], commercial_reputation_proofs: [5, 6],
   commercial_reputation_settlements: [4, 3],
-  business_seasons: [6, 9], business_season_entries: [8, 9] });
+  business_seasons: [6, 9], business_season_entries: [8, 9],
+  company_production_receipts: [8, 7], company_specializations: [10, 11],
+  company_specialization_requests: [2, 4], company_specialization_runs: [5, 6],
+  item_durability_states: [5, 4], item_durability_uses: [7, 7], item_durability_birth_quality: [10, 8] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
@@ -299,6 +302,16 @@ try {
   rejected(verifyPreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
     { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
   // Frozen operator catalog was reviewed once against source/native PG18.4.
+  // First-five native catalog includes every causal provenance/condition/receipt
+  // constraint. Each definition must reject removal and weakening independently.
+  const foundationTables = ['company_production_receipts', 'company_specializations', 'company_specialization_requests',
+    'company_specialization_runs', 'item_durability_states', 'item_durability_uses', 'item_durability_birth_quality'];
+  for (const constraint of featureConstraints.filter(row => foundationTables.includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, `${constraint.name} foundation constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, `${constraint.name} foundation constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  }
   // Every operator FK/PK/CHECK is causal; live rows never define expectations.
   for (const constraint of featureConstraints.filter(row => ['company_operators', 'company_operator_receipts'].includes(row.table_name))) {
     rejected(verifyFeatureConstraints, `${constraint.name} operator constraint removed`, mutateConstraint(constraint.table_name, constraint.name,

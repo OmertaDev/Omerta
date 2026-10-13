@@ -3215,6 +3215,241 @@
       "table_name": "business_seasons",
       "name": "business_seasons_pkey",
       "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND business_id IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND business_id IS NOT NULL AND (normalized_body ->> 'businessId'::text) IS NOT NULL AND (receipt ->> 'businessId'::text) IS NOT NULL AND (receipt ->> 'originalCharacter'::text) IS NOT NULL AND (normalized_body ->> 'businessId'::text) = business_id AND (receipt ->> 'businessId'::text) = business_id AND (receipt ->> 'originalCharacter'::text) = original_character)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "company_production_receipts",
+      "name": "company_production_receipts_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "company_specialization_requests",
+      "name": "company_specialization_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_specialization_requests",
+      "name": "company_specialization_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_specialization_runs",
+      "name": "company_specialization_runs_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_specialization_runs",
+      "name": "company_specialization_runs_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_specialization_runs",
+      "name": "company_specialization_runs_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_specialization_runs",
+      "name": "company_specialization_runs_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_specialization_runs",
+      "name": "company_specialization_runs_total_crafts_check",
+      "definition": "CHECK (total_crafts >= 1 AND total_crafts <= 6)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_grant_spent_check",
+      "definition": "CHECK (grant_spent >= 0 AND grant_spent <= 1800)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['volume'::text, 'quality'::text, 'speed'::text, 'niche'::text]))"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_max_batch_cash_check",
+      "definition": "CHECK (max_batch_cash >= 0 AND max_batch_cash <= 1800)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_max_grant_cash_check",
+      "definition": "CHECK (max_grant_cash >= 0 AND max_grant_cash <= 1800)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_pkey",
+      "definition": "PRIMARY KEY (business_id)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_specializations",
+      "name": "company_specializations_tool_item_id_fkey",
+      "definition": "FOREIGN KEY (tool_item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_authority_account_fkey",
+      "definition": "FOREIGN KEY (authority_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_craft_key_fkey",
+      "definition": "FOREIGN KEY (craft_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_craft_key_key",
+      "definition": "UNIQUE (craft_key)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_creation_event_fkey",
+      "definition": "FOREIGN KEY (creation_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_creation_event_key",
+      "definition": "UNIQUE (creation_event)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_grade_check",
+      "definition": "CHECK (grade = 'tempered'::text)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_maximum_check",
+      "definition": "CHECK (maximum = 150)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_pkey",
+      "definition": "PRIMARY KEY (item_id)"
+    },
+    {
+      "table_name": "item_durability_birth_quality",
+      "name": "item_durability_birth_quality_request_hash_check",
+      "definition": "CHECK (char_length(request_hash) = 64)"
+    },
+    {
+      "table_name": "item_durability_states",
+      "name": "item_durability_states_creation_event_fkey",
+      "definition": "FOREIGN KEY (creation_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "item_durability_states",
+      "name": "item_durability_states_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "item_durability_states",
+      "name": "item_durability_states_pkey",
+      "definition": "PRIMARY KEY (item_id)"
+    },
+    {
+      "table_name": "item_durability_states",
+      "name": "item_durability_states_remaining_check",
+      "definition": "CHECK (remaining >= 0 AND remaining <= 150)"
+    },
+    {
+      "table_name": "item_durability_states",
+      "name": "item_durability_states_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_before_condition_check",
+      "definition": "CHECK (before_condition >= 10 AND before_condition <= 150)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_check",
+      "definition": "CHECK (after_condition = (before_condition - 10))"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_event_id_fkey",
+      "definition": "FOREIGN KEY (event_id) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_instance_id_fkey",
+      "definition": "FOREIGN KEY (instance_id) REFERENCES mystery_instances(id)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_durability_states(item_id)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_item_id_instance_id_node_id_key",
+      "definition": "UNIQUE (item_id, instance_id, node_id)"
+    },
+    {
+      "table_name": "item_durability_uses",
+      "name": "item_durability_uses_pkey",
+      "definition": "PRIMARY KEY (event_id)"
     }
   ],
   "removed": [
@@ -4270,6 +4505,67 @@
       "published",
       "season_id",
       "visibility_revision"
+    ],
+    "company_production_receipts": [
+      "account_id",
+      "body_hash",
+      "created_at",
+      "normalized_body",
+      "request_key",
+      "run_id",
+      "source_pin"
+    ],
+    "company_specializations": [
+      "account_id",
+      "allow_agent_production",
+      "business_id",
+      "grant_spent",
+      "kind",
+      "max_batch_cash",
+      "max_grant_cash",
+      "next_run_at",
+      "original_character",
+      "recipe_ids",
+      "revision"
+    ],
+    "company_specialization_requests": [
+      "account_id",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "company_specialization_runs": [
+      "account_id",
+      "business_id",
+      "original_character",
+      "request_key",
+      "revision",
+      "total_crafts"
+    ],
+    "item_durability_states": [
+      "creation_event",
+      "item_id",
+      "remaining",
+      "revision"
+    ],
+    "item_durability_uses": [
+      "after_condition",
+      "before_condition",
+      "event_id",
+      "instance_id",
+      "item_id",
+      "mutation_key",
+      "node_id"
+    ],
+    "item_durability_birth_quality": [
+      "authority_account",
+      "craft_key",
+      "creation_event",
+      "grade",
+      "item_id",
+      "maximum",
+      "recipe_identity",
+      "request_hash"
     ]
   }
 }

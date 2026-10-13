@@ -6,6 +6,7 @@ import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contr
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
+import { COMPANY_ECONOMY_CONTRACTS, COMPANY_ECONOMY_SCHEMAS } from './company-economy-contracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
@@ -284,6 +285,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...COMPANY_ECONOMY_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...DEPOT_CONTRACTS,
   ...RESOURCE_CONTRACTS,
@@ -890,6 +892,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...COMPANY_ECONOMY_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...COORDINATION_SCHEMAS,
   ContentGateState: {

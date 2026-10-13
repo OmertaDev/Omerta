@@ -4,7 +4,7 @@ import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
-import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
+import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog, preProductionRecoveryCatalog,
   reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
@@ -73,15 +73,19 @@ for (const file of extensionFiles) {
   assert.throws(() => assertCitySourceTransfer(file, text.replace(block, block + block)), /source changed/);
 }
 const historicalCatalog = historicalRecoveryCatalog(catalog);
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256);
+assert.equal(hash(preProductionRecoveryCatalog(catalog)), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256);
+assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'company-production-quality')),
+  CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.addedNodesSha256);
+assert.match(CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.scope, /No new manufacturing.*qualification is inherited/);
 assert.equal(hash(historicalCatalog), CHECKPOINT_RECOVERY_REVIEW.catalogSha256,
   'Exact additive City catalog inverse retains the complete independently reviewed historical catalog hash.');
-assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 9);
+assert.equal(catalog.nodes.length - historicalCatalog.nodes.length, 10);
 assert.equal(hash(catalog.nodes.filter(node => node.packageId === 'neighborhood-initiation')),
   CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.addedNodesSha256);
 assert.equal(historicalRecoveryCatalog(historicalCatalog), historicalCatalog);
 assert(!historicalCatalog.nodes.some(node => node.packageId === 'neighborhood-initiation'));
-assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.actualSha256,
+assert.equal(hash(catalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256,
   'The catalog inverse must not mutate the current content catalog.');
 const manifest = JSON.parse(await fs.readFile('docs/release/readiness-work/scenario-manifest.json', 'utf8'));
 const logicalAt = Date.parse('2026-09-24T00:00:00Z'), configurationSha256 = hash('effective isolated configuration');
