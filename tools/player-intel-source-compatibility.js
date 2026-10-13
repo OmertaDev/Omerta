@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline } from './rc1-first-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 
@@ -200,7 +201,7 @@ export function assertPlayerIntelSourceTransfer(file, input) {
 
 // Unknown bytes remain intact for the original rejecting guard; no pattern grants authority.
 export function playerIntelSourceBaseline(file, input) {
-  const text = normalize(input), pins = PLAYER_INTEL_SOURCE_TRANSFER.currentPins;
+  const text = firstBatchSourceBaseline(file, input), pins = PLAYER_INTEL_SOURCE_TRANSFER.currentPins;
   return Object.hasOwn(pins, file) && hash(text) === pins[file]
     ? assertPlayerIntelSourceTransfer(file, text).baselineText : text;
 }

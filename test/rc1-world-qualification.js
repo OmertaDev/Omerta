@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from '../tools/rc1-business-season-source-compatibility.js';
 import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from '../tools/rc1-commercial-reputation-source-compatibility.js';
 import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from '../tools/rc1-company-opportunity-source-compatibility.js';
@@ -394,7 +395,7 @@ assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER
 const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
-  const actual = file === 'src/server.js' ? serverText : (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const actual = file === 'src/server.js' ? serverText : firstBatchSourceBaseline(file, await fs.readFile(file, 'utf8'));
   const text = Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file) ? assertGoodsSourceTransfer(file, actual).baselineText : actual;
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],

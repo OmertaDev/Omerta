@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline, assertFirstBatchSourceTransfer } from './rc1-first-batch-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, qualifyStrategyLeagueSource } from './rc1-strategy-league-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, qualifyCompanySuccessionSource } from './rc1-company-succession-source-compatibility.js';
@@ -191,6 +192,11 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: transfer.actualSha256, buyerCooperativeSourceTransfer: transfer };
@@ -945,6 +951,11 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
     return { ...predecessor, actualSha256: transfer.actualSha256, buyerCooperativeSourceTransfer: transfer };
@@ -1716,6 +1727,11 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };

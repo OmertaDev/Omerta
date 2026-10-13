@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
@@ -10,7 +11,7 @@ assert.deepEqual(Object.keys(transfer.currentPins), ['src/server.js', 'src/game.
   'src/secrets.js', 'src/contacts.js', 'src/wire.js']);
 let negatives = 0, hunks = 0;
 for (const file of Object.keys(transfer.currentPins)) {
-  const source = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const source = firstBatchSourceBaseline(file, fs.readFileSync(file, 'utf8'));
   const baseline = git('show', `${transfer.predecessorRevision}:${file}`);
   assert.equal(source, git('show', `${transfer.sourceRevision}:${file}`), 'complete frozen runtime');
   assert.equal(source, git('show', transfer.currentBlobs[file]));

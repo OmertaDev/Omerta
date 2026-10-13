@@ -1,0 +1,205 @@
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
+export const FIRST_BATCH_SOURCE_REVISION="9c7d7c7163d7b29ee732a790bb3297e91d779f2f";
+export const FIRST_BATCH_SOURCE_PREDECESSOR="30f61aeb3dbb6deac89591b0fcd57d3f6b51574c";
+export const FIRST_BATCH_SOURCE_PHASE='exact-source-transfer-only; no historical native/world/financial clearance';
+export const FIRST_BATCH_SOURCE_DOMAINS=Object.freeze({
+  "schema.sql": {
+    "currentSha256": "98c843f71ad840c0f285f29f2348ed04344ca6a5f9d0cb9cadad270f1238ba7a",
+    "currentBlob": "15090d4e3e328ca0a100cf557628d3a99a0df50d",
+    "baselineSha256": "a8b5b750c2c3b6f99396bc0c210a75bc93dfe56b2af553b549c1d57424ce39a3",
+    "baselineBlob": "dd6c8d919993ea9d69318dd1e249554cf87e8ff5",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "\nALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();\nCREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;\n\n-- Canonical business production, scoped game-only policies, and immutable physical equipment condition.\nCREATE TABLE IF NOT EXISTS company_production_receipts (\n  account_id TEXT NOT NULL,\n  account_ref TEXT REFERENCES accounts(id),\n  request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),\n  run_id TEXT NOT NULL UNIQUE,\n  original_character TEXT REFERENCES characters(id),\n  business_id TEXT REFERENCES business_depots(id),\n  body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),\n  source_pin JSONB NOT NULL,\n  normalized_body JSONB NOT NULL,\n  receipt JSONB,\n  created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),\n  PRIMARY KEY(account_id,request_key),\n  CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND business_id IS NULL)\n    OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND business_id IS NOT NULL\n      AND normalized_body->>'businessId' IS NOT NULL AND receipt->>'businessId' IS NOT NULL AND receipt->>'originalCharacter' IS NOT NULL\n      AND normalized_body->>'businessId'=business_id AND receipt->>'businessId'=business_id\n      AND receipt->>'originalCharacter'=original_character))\n);\nCREATE TABLE IF NOT EXISTS company_specializations (\n business_id TEXT PRIMARY KEY REFERENCES business_depots(id), account_id TEXT NOT NULL REFERENCES accounts(id),\n original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL CHECK(revision BETWEEN 1 AND 2147483647),\n kind TEXT NOT NULL CHECK(kind IN ('volume','quality','speed','niche')), recipe_ids JSONB NOT NULL,\n tool_item_id TEXT REFERENCES item_instances(id), next_run_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n allow_agent_production BOOLEAN NOT NULL DEFAULT false, grant_expires_at TIMESTAMPTZ,\n max_batch_cash INT NOT NULL DEFAULT 0 CHECK(max_batch_cash BETWEEN 0 AND 1800),\n max_grant_cash INT NOT NULL DEFAULT 0 CHECK(max_grant_cash BETWEEN 0 AND 1800),\n grant_spent INT NOT NULL DEFAULT 0 CHECK(grant_spent BETWEEN 0 AND 1800));\nCREATE TABLE IF NOT EXISTS company_specialization_requests (\n account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity JSONB NOT NULL, receipt JSONB NOT NULL,\n PRIMARY KEY(account_id,request_key));\nCREATE TABLE IF NOT EXISTS company_specialization_runs (\n account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, business_id TEXT NOT NULL REFERENCES business_depots(id),\n original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL, total_crafts INT NOT NULL CHECK(total_crafts BETWEEN 1 AND 6),\n PRIMARY KEY(account_id,request_key));\nCREATE TABLE IF NOT EXISTS item_durability_states (\n item_id TEXT PRIMARY KEY REFERENCES item_instances(id), creation_event TEXT NOT NULL REFERENCES item_events(id),\n remaining INT NOT NULL CHECK(remaining BETWEEN 0 AND 150), revision INT NOT NULL CHECK(revision>=1));\nCREATE TABLE IF NOT EXISTS item_durability_uses (\n event_id TEXT PRIMARY KEY REFERENCES item_events(id), item_id TEXT NOT NULL REFERENCES item_durability_states(item_id),\n instance_id TEXT NOT NULL REFERENCES mystery_instances(id), node_id TEXT NOT NULL,\n mutation_key TEXT NOT NULL, before_condition INT NOT NULL CHECK(before_condition BETWEEN 10 AND 150),\n after_condition INT NOT NULL CHECK(after_condition = before_condition - 10),\n UNIQUE(item_id,instance_id,node_id));\nCREATE TABLE IF NOT EXISTS item_durability_birth_quality (\n item_id TEXT PRIMARY KEY REFERENCES item_instances(id), craft_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),\n creation_event TEXT NOT NULL UNIQUE REFERENCES item_events(id), authority_account TEXT NOT NULL REFERENCES accounts(id),\n request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), recipe_identity JSONB NOT NULL,\n grade TEXT NOT NULL CHECK(grade='tempered'), maximum INT NOT NULL CHECK(maximum=150));\n",
+        "baseline": "\nALTER TABLE business_season_entries ADD COLUMN IF NOT EXISTS next_observation_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp();\nCREATE INDEX IF NOT EXISTS business_season_due ON business_season_entries(next_observation_at,season_id,account_id) WHERE final_result IS NULL;\n"
+      }
+    ]
+  },
+  "src/server.js": {
+    "currentSha256": "386f6f6bb1e19f49f62781d8978c31447832471e4e0d99a070ad6d0e5a9e6850",
+    "currentBlob": "38a5c8a80157b30c5192a6db17261f861fe7f843",
+    "baselineSha256": "d80acf5224ce62489cfcefd55d19dc5b3c6fc44912933b3f349b46cbbe46152c",
+    "baselineBlob": "02aefa2218757aac48a98583f713abacd720f57a",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "import { register as registerMarketFeed } from './routes/marketfeed.js';\nimport { register as registerStrategyLeagues } from './routes/strategyleagues.js';\nimport { register as registerCompanyOperators } from './routes/companyoperators.js';\nimport { register as registerCompanyProduction } from './routes/companyproduction.js';\nimport { register as registerCompanyDemand } from './routes/companydemand.js';\nimport { register as registerCompanyForecast } from './routes/companyforecast.js';\nimport { register as registerCompanySpecialization } from './routes/companyspecialization.js';\nimport { register as registerItemDurability } from './routes/itemdurability.js';\nimport { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';\nimport { register as registerGameEmployment } from './routes/gameemployment.js';\nimport { register as registerCompanyWorkflows } from './routes/companyworkflows.js';\nimport { register as registerCompanyOpportunities } from './routes/companyopportunities.js';\n",
+        "baseline": "import { register as registerMarketFeed } from './routes/marketfeed.js';\nimport { register as registerStrategyLeagues } from './routes/strategyleagues.js';\nimport { register as registerCompanyOperators } from './routes/companyoperators.js';\nimport { register as registerGameEmployment } from './routes/gameemployment.js';\nimport { register as registerCompanyWorkflows } from './routes/companyworkflows.js';\nimport { register as registerCompanyOpportunities } from './routes/companyopportunities.js';\n"
+      },
+      {
+        "current": "  registerMarketFeed(app, { pool });\n  registerStrategyLeagues(app, { pool, auth });\n  registerCompanyOperators(app, { pool, auth });\n  registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft });\n  registerCompanyDemand(app, { pool, auth });\n  registerCompanyForecast(app, { pool, auth });\n  registerCompanySpecialization(app, { pool, auth });\n  registerItemDurability(app, { pool, auth });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n  registerCompanyOpportunities(app, { pool, auth });\n",
+        "baseline": "  registerMarketFeed(app, { pool });\n  registerStrategyLeagues(app, { pool, auth });\n  registerCompanyOperators(app, { pool, auth });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n  registerCompanyOpportunities(app, { pool, auth });\n"
+      }
+    ]
+  },
+  "src/invariants.js": {
+    "currentSha256": "58a49ba2632f862e9db9c769d92eb7a48824612c05a73aa42ba84fe81e9d9ccc",
+    "currentBlob": "24562553111bcd543cfac38d942289bee2c98803",
+    "baselineSha256": "c2879af55021696e1bc358e34bb95794737b3846a54de22be393c29101c68743",
+    "baselineBlob": "26ec65e64aa0c76519c2995df377c9529713fef4",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';\nimport { logisticsHubInvariant } from './companylogisticshubsinvariants.js';\nimport { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';\nimport { collectItemConditionIssues } from './itemdurability.js';\nimport { dbCaps } from './db.js';\nimport { withPhase2Read } from './content/phase2-transactions.js';\nimport { withItemRead } from './items.js';\n",
+        "baseline": "import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';\nimport { logisticsHubInvariant } from './companylogisticshubsinvariants.js';\nimport { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';\nimport { dbCaps } from './db.js';\nimport { withPhase2Read } from './content/phase2-transactions.js';\nimport { withItemRead } from './items.js';\n"
+      },
+      {
+        "current": "  push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);\n  push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });\n  push('strategy license transfers', 0, await sum(pool, \"currency='cash' AND reason LIKE 'strategy:%'\"), 0);\n  const equipmentIssues = await collectItemConditionIssues(pool);\n  push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });\n  push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);\n  push('company succession bindings', await companySuccessionFaults(pool), 0, 0);\n  push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);\n",
+        "baseline": "  push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);\n  push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });\n  push('strategy license transfers', 0, await sum(pool, \"currency='cash' AND reason LIKE 'strategy:%'\"), 0);\n  push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);\n  push('company succession bindings', await companySuccessionFaults(pool), 0, 0);\n  push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);\n"
+      }
+    ]
+  },
+  "src/items.js": {
+    "currentSha256": "9ba4d590a8e03694ac5cf07a58c419d44b1e022e26b688e001c84d8c0c4c4f68",
+    "currentBlob": "d666acc4cdfb77f831a8297eca6458b8d14fd9d5",
+    "baselineSha256": "0172726d784cc9faa430280e91374b5f2296cb5294adfac19ae91f307c9f107a",
+    "baselineBlob": "2c9eb10021204d08b7489460be19d4a041577dd9",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "}\n\nexport function assertItemTransaction(client) { transactionClient(client); }\n/** True only for a mutation newly reserved by this branded transaction, not a historical replay. */\nexport async function ownsItemMutationReservation(client, key) {\n  const owned = transactionClient(client).guardReservations.find(([reservedKey]) => reservedKey === key);\n  if (!owned) return false;\n  const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];\n  return row?.reservation_id === owned[1];\n}\n\nfunction mutationState(client, token) {\n  const transaction = transactionClient(client);\n  const state = token && typeof token === 'object' ? MUTATION_CONTEXTS.get(token) : null;\n",
+        "baseline": "}\n\nexport function assertItemTransaction(client) { transactionClient(client); }\nfunction mutationState(client, token) {\n  const transaction = transactionClient(client);\n  const state = token && typeof token === 'object' ? MUTATION_CONTEXTS.get(token) : null;\n"
+      },
+      {
+        "current": "  // serialized module-wide below, so a transaction-local inverse log gives the same externally visible\n  // atomicity contract without overwriting a later successful item transaction. Events go first\n  // because they reference both guards and permanent item rows; guards go last.\n  // Dependent adapter rows must release their same-transaction event FKs first.\n  for (let i = transaction.beforeEventUndo.length - 1; i >= 0; i--) await transaction.beforeEventUndo[i]();\n  for (const [key, reservationId] of transaction.guardReservations) {\n    const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];\n    if (row?.reservation_id === reservationId) {\n",
+        "baseline": "  // serialized module-wide below, so a transaction-local inverse log gives the same externally visible\n  // atomicity contract without overwriting a later successful item transaction. Events go first\n  // because they reference both guards and permanent item rows; guards go last.\n  for (const [key, reservationId] of transaction.guardReservations) {\n    const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];\n    if (row?.reservation_id === reservationId) {\n"
+      },
+      {
+        "current": "  return TRANSACTION_SCOPE.run({ active: true }, async () => {\n    const scope = TRANSACTION_SCOPE.getStore();\n    let client = null, discard = false, begun = false, outcome, borrowed = false;\n    const transaction = { active: false, failed: null, guardReservations: [], beforeEventUndo: [], undo: [] };\n    // Keep all raw failures inside the item owner. The registry wrapper sees a private outcome,\n    // never a raw SQLSTATE that it could remap before rollback/commit disposition is known.\n    async function ownedAction() {\n",
+        "baseline": "  return TRANSACTION_SCOPE.run({ active: true }, async () => {\n    const scope = TRANSACTION_SCOPE.getStore();\n    let client = null, discard = false, begun = false, outcome, borrowed = false;\n    const transaction = { active: false, failed: null, guardReservations: [], undo: [] };\n    // Keep all raw failures inside the item owner. The registry wrapper sees a private outcome,\n    // never a raw SQLSTATE that it could remap before rollback/commit disposition is known.\n    async function ownedAction() {\n"
+      },
+      {
+        "current": "  registerUndo(client, undo);\n}\n\n/** Internal adapter inverse for rows referencing newly emitted canonical events.\n * Only a branded active transaction can register it; graph content receives no callback capability.\n * The pg-mem inverse runs before deleting events. Native PostgreSQL keeps its ordinary ROLLBACK.\n */\nexport function registerItemTransactionBeforeEventUndo(client, undo) {\n  const transaction = transactionClient(client);\n  if (typeof undo !== 'function') fail('bad_item_request', 'Item event compensation requires a callback.');\n  transaction.beforeEventUndo.push(undo);\n}\n\nasync function beginMutation(client, kind, owner, idempotencyKey, request) {\n  await activeTransaction(client);\n  const key = logicalKey(idempotencyKey);\n",
+        "baseline": "  registerUndo(client, undo);\n}\n\nasync function beginMutation(client, kind, owner, idempotencyKey, request) {\n  await activeTransaction(client);\n  const key = logicalKey(idempotencyKey);\n"
+      }
+    ]
+  },
+  "src/mysteries.js": {
+    "currentSha256": "38df07f9b303f59ed5549d6d666b95c0ab35bfcaaa87d756205ecc192fd3349b",
+    "currentBlob": "310406be90e79a5f5c1439d3d2d108d1e391ecd2",
+    "baselineSha256": "6fa63eb5239eb22a7a8fb7545a8310ed66dcc80506c893871d332d835c42ad49",
+    "baselineBlob": "447ecfd312dc452535c02d3573d938da915c27ec",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "// guard is reserved. Content supplies data only: no callback, SQL, cash, or OMR adapter exists.\nimport crypto from 'node:crypto';\nimport { GameError } from './game.js';\nimport { assertEquipmentUsable, recordEquipmentUse } from './itemdurability.js';\nimport {\n  consumeItem,\n  createItem,\n",
+        "baseline": "// guard is reserved. Content supplies data only: no callback, SQL, cash, or OMR adapter exists.\nimport crypto from 'node:crypto';\nimport { GameError } from './game.js';\nimport {\n  consumeItem,\n  createItem,\n"
+      },
+      {
+        "current": "      results.push({ kind: 'item_consume', item });\n    } else if (effect.adapter === 'item_escrow') {\n      const itemId = await selectOwnedItem(client, owner, effect.templateId);\n      if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1\n        && effect.templateId === 'item:precision_lock_tool') {\n        await assertEquipmentUsable(client, { itemId, owner, mutation });\n      }\n      const item = await escrowItem(\n        client, owner, instance.id, itemId,\n        `mystery ${instance.graph_id} escrow`, mutation, 'used_in_mystery',\n",
+        "baseline": "      results.push({ kind: 'item_consume', item });\n    } else if (effect.adapter === 'item_escrow') {\n      const itemId = await selectOwnedItem(client, owner, effect.templateId);\n      const item = await escrowItem(\n        client, owner, instance.id, itemId,\n        `mystery ${instance.graph_id} escrow`, mutation, 'used_in_mystery',\n"
+      },
+      {
+        "current": "    client, context, owner, actor, instance, states, node, interactionId, lock: true,\n  });\n  if (blockers.length) throwBlocker(blockers[0]);\n  const appliedEffects = await applyEffects({\n    client, context, owner, instance, effects: [...(node.effects || []), ...extraEffects], mutation,\n  });\n  const row = await setNodeState(client, instance.id, node.id, 'completed');\n  if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1\n    && node.id === 'mystery:belladonna-lock') {\n    for (const effect of appliedEffects) if (effect.kind === 'item_escrow'\n      && effect.item.templateId === 'item:precision_lock_tool') {\n      await recordEquipmentUse(client, { instanceId: instance.id, nodeId: node.id,\n        itemId: effect.item.id, mutation });\n    }\n  }\n  await closeExcludedBranches(client, context, instance, node.excludes || []);\n  const result = {\n    ok: true,\n",
+        "baseline": "    client, context, owner, actor, instance, states, node, interactionId, lock: true,\n  });\n  if (blockers.length) throwBlocker(blockers[0]);\n  await applyEffects({\n    client, context, owner, instance, effects: [...(node.effects || []), ...extraEffects], mutation,\n  });\n  const row = await setNodeState(client, instance.id, node.id, 'completed');\n  await closeExcludedBranches(client, context, instance, node.excludes || []);\n  const result = {\n    ok: true,\n"
+      }
+    ]
+  },
+  "src/crafting.js": {
+    "currentSha256": "f0ea4dd7bf1c3940daf7b511823c0c76792c0f0f6d7e0d0249ab132b5d854440",
+    "currentBlob": "3e0d55bbb76ab864861dea29a373cc4495b0dcea",
+    "baselineSha256": "a96d3117c5d03b47573eb4a2de7af769b29ade82e5e8a9e9f54300472073d5be",
+    "baselineBlob": "bb98383d9085375d038fc4a1e848d4687312a630",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "import crypto from 'node:crypto';\n// Data-defined Phase 1 crafting and salvage. Domain callers must enter through:\n//\n//   withItemTransaction(pool, (client) =>\n",
+        "baseline": "// Data-defined Phase 1 crafting and salvage. Domain callers must enter through:\n//\n//   withItemTransaction(pool, (client) =>\n"
+      },
+      {
+        "current": "  };\n}\n\n/** Read-only immutable canonical recipe witness for manufacturing provenance adapters. */\nexport function canonicalCraftAuthority(recipeId) {\n  const context = contextOf(DEFAULT_CRAFTING_CONTEXT);\n  const recipe = recipeOf(context, recipeId);\n  return Object.freeze({ recipe: Object.freeze(graphIdentity(context, recipe)),\n    authority: Object.freeze(graphMutationAuthority(context, recipe)),\n    consumes: inputsOf(recipe), produces: outputsOf(recipe), cashCost: cashCostOf(recipe) });\n}\n\nexport function canonicalCraftRequestHash(recipeId, accountId) {\n  const witness = canonicalCraftAuthority(recipeId);\n  return crypto.createHash('sha256').update(JSON.stringify({ kind: 'craft',\n    owner: { scope: 'account', id: canonicalString(accountId, 'Authenticated account id') },\n    request: witness.authority })).digest('hex');\n}\n\nconst normalizedKey = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');\n\nfunction numericDeclaration(recipe, keys) {\n",
+        "baseline": "  };\n}\n\nconst normalizedKey = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');\n\nfunction numericDeclaration(recipe, keys) {\n"
+      },
+      {
+        "current": "  if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {\n    fail('salvage_required', 'Vehicle recipes must use salvageCar.');\n  }\n  const result = await withItemMutation(\n    client,\n    owner,\n    'craft',\n",
+        "baseline": "  if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {\n    fail('salvage_required', 'Vehicle recipes must use salvageCar.');\n  }\n  return withItemMutation(\n    client,\n    owner,\n    'craft',\n"
+      },
+      {
+        "current": "    graphMutationAuthority(context, recipe),\n    async (mutation) => {\n      const actor = await actorContext(client, accountId);\n      if (recipe.id === 'recipe:tempered_precision_lock_tool') {\n        const account = (await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR UPDATE', [accountId])).rows[0];\n        if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');\n      }\n      if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');\n      const asOf = Date.now();\n      await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);\n",
+        "baseline": "    graphMutationAuthority(context, recipe),\n    async (mutation) => {\n      const actor = await actorContext(client, accountId);\n      if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');\n      const asOf = Date.now();\n      await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);\n"
+      },
+      {
+        "current": "      };\n    },\n  );\n  if (recipe.id === 'recipe:tempered_precision_lock_tool') {\n    const { recordManufacturedQuality } = await import('./itemdurability.js');\n    await recordManufacturedQuality(client, { requestKey: idempotencyKey, itemId: result.outputs[0].id });\n  }\n  return result;\n}\n\n/** Execute one exact-car salvage recipe inside an active `withItemTransaction` callback. */\n",
+        "baseline": "      };\n    },\n  );\n}\n\n/** Execute one exact-car salvage recipe inside an active `withItemTransaction` callback. */\n"
+      }
+    ]
+  },
+  "src/content/phase1.js": {
+    "currentSha256": "58917a72d88548428e8d91afc9a0a208183bf1dbf29786a1863f8a0753bacb2e",
+    "currentBlob": "ec30bd9da2af3d35375850143b6ab5466916b0c1",
+    "baselineSha256": "566e9d8e7da6b3218ffbf71df2883f208e9e842183a00f2a17729f2913936e5d",
+    "baselineBlob": "153faba1612fa5cf9a82ca999a416aa09961ad23",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "import { BELLADONNA_PACKAGE } from './belladonna.js';\nimport { CORE_MATERIALS_PACKAGE } from './core-materials.js';\nimport { NEIGHBORHOOD_INITIATION_PACKAGE } from './neighborhood-initiation.js';\nimport { COMPANY_PRODUCTION_QUALITY_PACKAGE } from './company-production-quality.js';\n\nexport const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([\n  CORE_MATERIALS_PACKAGE,\n  AUTOMOTIVE_SALVAGE_PACKAGE,\n  BELLADONNA_PACKAGE,\n  NEIGHBORHOOD_INITIATION_PACKAGE,\n  COMPANY_PRODUCTION_QUALITY_PACKAGE,\n]);\n",
+        "baseline": "import { BELLADONNA_PACKAGE } from './belladonna.js';\nimport { CORE_MATERIALS_PACKAGE } from './core-materials.js';\nimport { NEIGHBORHOOD_INITIATION_PACKAGE } from './neighborhood-initiation.js';\n\nexport const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([\n  CORE_MATERIALS_PACKAGE,\n  AUTOMOTIVE_SALVAGE_PACKAGE,\n  BELLADONNA_PACKAGE,\n  NEIGHBORHOOD_INITIATION_PACKAGE,\n]);\n"
+      }
+    ]
+  },
+  "src/content/phase1-policy.js": {
+    "currentSha256": "14f7e171a66e598e8bd9acb3cabc4e6b4c81a51a2465d1fe1ad064a23ac5fe03",
+    "currentBlob": "002ad3b3bd8e0d62b51361b53dc6b362aa155a5f",
+    "baselineSha256": "344c7ffb1a73ae3744d8cfb764c1dfb7ae3d6c5ed53eb515b5c057c44e1d03db",
+    "baselineBlob": "d33a31db0b6c73e5e02f55a71c1b3b9b4af2cbe0",
+    "predecessorAbsent": false,
+    "inverses": [
+      {
+        "current": "  `${PHASE1_CRAFT_REASON_PREFIX}hardened_steel`;\nexport const PHASE1_PACKAGE_IDS = Object.freeze([\n  'core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',\n  'company-production-quality',\n]);\n\nexport function phase1CraftReason(recipeId) {\n",
+        "baseline": "  `${PHASE1_CRAFT_REASON_PREFIX}hardened_steel`;\nexport const PHASE1_PACKAGE_IDS = Object.freeze([\n  'core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',\n]);\n\nexport function phase1CraftReason(recipeId) {\n"
+      }
+    ]
+  },
+  "package.json": {
+    "currentSha256": "4a46e533d476fa264053d69a3a19da4f1c32dd919d7a9dd651185ad127ca292d",
+    "currentBlob": "cc3649ddc16535be0daa5baf03f69979ad2cede6",
+    "baselineSha256": "4a46e533d476fa264053d69a3a19da4f1c32dd919d7a9dd651185ad127ca292d",
+    "baselineBlob": "cc3649ddc16535be0daa5baf03f69979ad2cede6",
+    "predecessorAbsent": false,
+    "inverses": []
+  },
+  "src/market.js": {
+    "currentSha256": "542653aab9034940a6624389f502c841908ebade121fe08b6975d6987349df7e",
+    "currentBlob": "34d9bb0dac36f554b26e97218d019372d529d1a8",
+    "baselineSha256": "542653aab9034940a6624389f502c841908ebade121fe08b6975d6987349df7e",
+    "baselineBlob": "34d9bb0dac36f554b26e97218d019372d529d1a8",
+    "predecessorAbsent": false,
+    "inverses": []
+  },
+  "src/worker.js": {
+    "currentSha256": "61ba29e1cd6fdf6391515a2be7e6031c85e5d76707012eb9d3248aca53e3ff3a",
+    "currentBlob": "7cb2ad75443d6fccc0ff93d5a594fa0b2e317775",
+    "baselineSha256": "61ba29e1cd6fdf6391515a2be7e6031c85e5d76707012eb9d3248aca53e3ff3a",
+    "baselineBlob": "7cb2ad75443d6fccc0ff93d5a594fa0b2e317775",
+    "predecessorAbsent": false,
+    "inverses": []
+  },
+  "src/social/estate.js": {
+    "currentSha256": "6db50d8cd63eb0341971c4447b2b2c4b7c4bc82b8c8a98abd6232ab361a92498",
+    "currentBlob": "3c1adee020c5804f871a9daffba3f01db185c12b",
+    "baselineSha256": "6db50d8cd63eb0341971c4447b2b2c4b7c4bc82b8c8a98abd6232ab361a92498",
+    "baselineBlob": "3c1adee020c5804f871a9daffba3f01db185c12b",
+    "predecessorAbsent": false,
+    "inverses": []
+  },
+  "src/content/company-production-quality.js": {
+    "currentSha256": "5c7f3fb98a49fec52307948bc8a4bf1070307910a68c098e8145ad470189ebe0",
+    "currentBlob": "142d38b7ce77509850b4afec7a0f570315fdc711",
+    "baselineSha256": null,
+    "baselineBlob": null,
+    "predecessorAbsent": true,
+    "inverses": []
+  }
+});
+export function assertFirstBatchSourceTransfer(file,input){
+ assert(Object.hasOwn(FIRST_BATCH_SOURCE_DOMAINS,file),'Unknown first-batch source domain');const d=FIRST_BATCH_SOURCE_DOMAINS[file],text=lf(input);
+ assert.equal(hash(text),d.currentSha256,'First-batch complete current source drift: '+file);assert.equal(blob(text),d.currentBlob,'First-batch complete current blob drift: '+file);
+ let baselineText=text;for(const h of d.inverses){assert(h.current.length,'Empty inverse context');assert.equal(baselineText.split(h.current).length-1,1,'Missing/duplicate/reordered first-batch inverse context: '+file);baselineText=baselineText.replace(h.current,()=>h.baseline);}
+ if(d.predecessorAbsent)baselineText=null;else{assert.equal(hash(baselineText),d.baselineSha256,'First-batch complete predecessor source mismatch: '+file);assert.equal(blob(baselineText),d.baselineBlob,'First-batch complete predecessor blob mismatch: '+file);}
+ return{file,baselineText,predecessorAbsent:d.predecessorAbsent,sourceRevision:FIRST_BATCH_SOURCE_REVISION,predecessorRevision:FIRST_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:FIRST_BATCH_SOURCE_PHASE};
+}
+// Unknown bytes survive unchanged for their original rejecting guard. No pattern grants authority.
+export function firstBatchSourceBaseline(file,input){const text=lf(input),d=FIRST_BATCH_SOURCE_DOMAINS[file];return d&&!d.predecessorAbsent&&hash(text)===d.currentSha256?assertFirstBatchSourceTransfer(file,text).baselineText:text;}
