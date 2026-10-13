@@ -4,7 +4,7 @@ import { assertEquipmentUsable } from './itemdurability.js';
 import { latestPolicy } from './operatingpolicy.js';
 
 export const COMPANY_SPECIALIZATION=Object.freeze({volume:Object.freeze({maxCrafts:6,cadence:300}),quality:Object.freeze({maxCrafts:2,cadence:180}),speed:Object.freeze({maxCrafts:1,cadence:60}),niche:Object.freeze({maxCrafts:3,cadence:300})});
-const RECIPES=['recipe:hardened_steel','recipe:precision_lock_tool'];
+const RECIPES=['recipe:hardened_steel','recipe:precision_lock_tool','recipe:tempered_precision_lock_tool'];
 const fail=reason=>{throw new GameError('company_specialization',reason);};
 const id=value=>{if(typeof value!=='string'||!value.length||value.length>200)fail('identity');return value;};
 const key=value=>{if(typeof value!=='string'||!/^[!-~]{1,128}$/.test(value))fail('key');return value;};
@@ -36,7 +36,7 @@ export function companySpecializationTerms(body) {
 async function actor(client,accountId,expected) {
   const row=(await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE account_id=$1 AND alive FOR UPDATE',[id(accountId)])).rows[0];
   if(!row||row.is_npc||(expected&&row.id!==expected))fail('actor');
-  if(!(await client.query('SELECT id FROM accounts WHERE id=$1 FOR UPDATE',[accountId])).rows[0])fail('actor');return row;
+  if((await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR UPDATE',[accountId])).rows[0]?.status!=='active')fail('actor');return row;
 }
 async function business(client,character,businessId) {
   const row=(await client.query('SELECT id,owner_character,status FROM business_depots WHERE id=$1 FOR UPDATE',[id(businessId)])).rows[0];
@@ -70,7 +70,7 @@ async function assertCompanySpecializationBeforeCraftImpl(client,ctx) {
   if(!Number.isSafeInteger(ctx.ordinal)||ctx.ordinal<0||ctx.ordinal>=ctx.totalCrafts||!Number.isSafeInteger(ctx.totalCrafts)||ctx.totalCrafts<1||ctx.totalCrafts>6)fail('batch');key(ctx.requestKey);
   if(typeof ctx.agent!=='boolean'||!Number.isSafeInteger(ctx.totalCashCost)||ctx.totalCashCost<0||ctx.totalCashCost>1800||!Number.isSafeInteger(ctx.recipeCashCost)||ctx.recipeCashCost<0||ctx.recipeCashCost>ctx.totalCashCost)fail('cost_authority');
   const restrictive=ctx.agent?await latestPolicy(client,ctx.businessId,true):null;
-  const policy=(await client.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[ctx.businessId])).rows[0];if(!policy){if(restrictive)fail('production_consent');return {kind:'unselected',productionAuthorized:true,grant:'canonical_baseline'};}
+  const policy=(await client.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[ctx.businessId])).rows[0];if(!policy){if(restrictive)fail('production_consent');return {kind:'unselected',productionAuthorized:true,grant:'canonical_baseline',agentGrantExpiresAt:null};}
   if(policy.account_id!==ctx.accountId||policy.original_character!==ch.id)fail('original_actor');
   const limits=COMPANY_SPECIALIZATION[policy.kind];if(ctx.totalCrafts>limits.maxCrafts||(policy.kind==='niche'&&!policy.recipe_ids.includes(ctx.recipeId)))fail('profile_limit');await healthy(client,policy,ch);
   const now=(await client.query('SELECT clock_timestamp() AS now')).rows[0].now;
