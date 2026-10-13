@@ -528,6 +528,14 @@ try {
   }
 
   const activateNeighborhood = async (page, selector) => {
+    // A viewport change can return before the scene reparents its phone Overview.
+    await page.waitForFunction(selector => {
+      const control = document.querySelector(selector), root = control?.closest('.omerta-city');
+      const overview = root?.querySelector('.omerta-city__overview');
+      const compact = innerWidth <= 680 && document.body.classList.contains('city-player-view') && !root?.classList.contains('omerta-city--unavailable');
+      return !!root && !!overview && root.classList.contains('is-play-shell') === compact
+        && overview.hidden === !compact && !!control.closest('.omerta-city__overview') === compact;
+    }, selector);
     const control = page.locator(selector), touch = await page.evaluate(() => navigator.maxTouchPoints > 0);
     if (await control.evaluate(node => { const overview = node.closest('.omerta-city__overview'); return overview && !overview.hidden && !overview.open; })) {
       const summary = page.locator('.omerta-city__overview > summary');
