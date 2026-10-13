@@ -16,6 +16,8 @@
 // → market_listings (pot class) → street_tax singleton. Acyclic vs the global order; residual
 // races fall back to the 40P01→contention mapping.
 import crypto from 'node:crypto';
+import { assertCommercialDisputeAccess } from './commercialdisputes.js';
+import { assertEstateResolutionScope } from './social/estate.js';
 import { assertDeliveryFinanceDelivery } from './deliveryfinance.js';
 import { closeDepotsAtDeath, refundDepotOrder } from './depotbook.js';
 import { reservedQuantity, closeDeliveriesAtDeath } from './deliverybook.js';
@@ -236,6 +238,7 @@ export async function fillOrder(ch, listingId, qty, client, h, { commitmentId = 
   }
   const available = commitment ? Number(commitment.remaining) : Number(l.qty) - await reservedQuantity(client, l.id);
   if (commitment) await assertDeliveryFinanceDelivery(client, ch, commitment.id);
+  await assertCommercialDisputeAccess(client, { orderId: l.id, commitmentId: commitment?.id || null, action: 'fill' });
   const have = h.owned.cargo[l.good_id] || 0;
   const n = Math.min(Math.max(1, Math.floor(Number(qty) || have)), Number(l.qty), available, have);
   if (n <= 0) throw new GameError('qty', 'Nothing to deliver.');
@@ -368,6 +371,7 @@ export async function cancelListing(ch, listingId, client, h) {
     "SELECT * FROM market_listings WHERE id=$1 AND status IN ('live','expired') FOR UPDATE", [listingId])).rows[0];
   if (l?.depot_id) throw new GameError('business_order', 'Cancel this procurement through its depot.');
   if (l && await buyerCooperativeOrderBinding(client, l.id)) throw new GameError('cooperative_order', 'Settle shared procurement through its buyer cooperative.');
+  if (l?.kind === 'order') await assertCommercialDisputeAccess(client, { orderId: l.id, action: 'cancel_order' });
   if (l && await reservedQuantity(client, l.id)) throw new GameError('committed_order', 'Accepted supplier quantities cannot be cancelled.');
   if (!l || l.seller_character !== ch.id) throw new GameError('no_listing', 'Not your listing.');
   // audit #5 (reserve-lock grief): a standing bid holds the hammer — EXCEPT a bid that can never
@@ -570,6 +574,7 @@ export async function sweepMarket(pool) {
         if (!l) { await client.query('COMMIT'); continue; } // raced a buy/cancel — nothing to do
         const h = { ledger, notify };
         if (l.kind === 'order') {
+          await assertCommercialDisputeAccess(client, { orderId: l.id, action: 'cancel_order' });
           if (await buyerCooperativeOrderBinding(client, l.id)) {
             await settleBuyerCooperativeOrder(client, l.id, ledger, { cancel: true });
             await client.query('COMMIT');
@@ -646,15 +651,17 @@ export async function sweepMarket(pool) {
 // runEstate hooks (called with the estate's client, chars already locked):
 // the dead man's LISTINGS die — standing bids refunded (killer-as-bidder threads in-memory via
 // killerCh, the refundPot discipline); goods scatter, cars fall with the fleet wipe anyway.
-export async function voidListingsAtDeath(client, victimId, killerCh, lootRate = 0) {
+export async function voidListingsAtDeath(client, victimId, killerCh, lootRate = 0, estateScope = null) {
+  await assertEstateResolutionScope(client, victimId, estateScope);
   await closeDepotsAtDeath(client, victimId, ledger);
   await client.query('SELECT id FROM market_listings WHERE seller_character=$1 ORDER BY id FOR UPDATE', [victimId]);
-  await closeDeliveriesAtDeath(client, victimId);
+  await closeDeliveriesAtDeath(client, victimId, estateScope);
   let selfRefund = 0, looted = 0;
   const rows = (await client.query(
     "SELECT * FROM market_listings WHERE seller_character=$1 AND status IN ('live','expired') AND id NOT IN (SELECT order_id FROM buyer_cooperative_orders) FOR UPDATE", [victimId])).rows;
   for (const l of rows) {
     if (l.kind === 'order') {
+      await assertCommercialDisputeAccess(client, { orderId: l.id, action: 'estate' }, { victimId, scope: estateScope });
       // the dead poster's un-filled escrow leaves the market. On a PLAYER fire-kill (lootRate > 0)
       // the killer takes CASH_LOOT_RATE of it — liquid parked in a WTB is lootable like pocket
       // cash (audit #1: else it was a loot-proof vault). The rest BURNS (the dead-funder
