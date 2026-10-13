@@ -3450,6 +3450,616 @@
       "table_name": "item_durability_uses",
       "name": "item_durability_uses_pkey",
       "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "table_name": "commercial_negotiation_requests",
+      "name": "commercial_negotiation_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_negotiation_requests",
+      "name": "commercial_negotiation_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_commitment_id_key",
+      "definition": "UNIQUE (commitment_id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_last_offer_character_fkey",
+      "definition": "FOREIGN KEY (last_offer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_order_id_key",
+      "definition": "UNIQUE (order_id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 3)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'withdrawn'::text, 'expired'::text]))"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_supplier_account_fkey",
+      "definition": "FOREIGN KEY (supplier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commercial_negotiations",
+      "name": "commercial_negotiations_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_auction_id_fkey",
+      "definition": "FOREIGN KEY (auction_id) REFERENCES contract_auctions(id)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_auction_id_supplier_account_key",
+      "definition": "UNIQUE (auction_id, supplier_account)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_consent_check",
+      "definition": "CHECK (consent = true)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_deadline_seconds_check",
+      "definition": "CHECK (deadline_seconds >= 60 AND deadline_seconds <= 21600)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_max_procurement_cash_check",
+      "definition": "CHECK (max_procurement_cash >= 1 AND max_procurement_cash <= 100000)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_quote_hash_check",
+      "definition": "CHECK (char_length(quote_hash) = 64)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_supplier_account_fkey",
+      "definition": "FOREIGN KEY (supplier_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "contract_auction_bids",
+      "name": "contract_auction_bids_supplier_character_fkey",
+      "definition": "FOREIGN KEY (supplier_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "contract_auction_requests",
+      "name": "contract_auction_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "contract_auction_requests",
+      "name": "contract_auction_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['create'::text, 'bid'::text, 'award'::text, 'cancel'::text]))"
+    },
+    {
+      "table_name": "contract_auction_requests",
+      "name": "contract_auction_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "contract_auction_requests",
+      "name": "contract_auction_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "contract_auction_requests",
+      "name": "contract_auction_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_check",
+      "definition": "CHECK (award_until > closes_at)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_check1",
+      "definition": "CHECK (state = 'awarded'::text AND winning_bid_id IS NOT NULL AND commitment_id IS NOT NULL AND award_receipt IS NOT NULL OR state <> 'awarded'::text AND winning_bid_id IS NULL AND commitment_id IS NULL AND award_receipt IS NULL)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_commitment_id_key",
+      "definition": "UNIQUE (commitment_id)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 40)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_quote_hash_check",
+      "definition": "CHECK (char_length(quote_hash) = 64)"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'awarded'::text, 'cancelled'::text, 'buyer_dead'::text]))"
+    },
+    {
+      "table_name": "contract_auctions",
+      "name": "contract_auctions_unit_price_check",
+      "definition": "CHECK (unit_price > 0)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_id_fkey",
+      "definition": "FOREIGN KEY (id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_original_account_fkey",
+      "definition": "FOREIGN KEY (original_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "equipment_maintenance_offers",
+      "name": "equipment_maintenance_offers_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_check",
+      "definition": "CHECK (condition_after > condition_before AND (condition_after - condition_before) <= 10)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_credit_id_fkey",
+      "definition": "FOREIGN KEY (credit_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_credit_id_key",
+      "definition": "UNIQUE (credit_id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_debit_id_fkey",
+      "definition": "FOREIGN KEY (debit_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_debit_id_key",
+      "definition": "UNIQUE (debit_id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_material_key_fkey",
+      "definition": "FOREIGN KEY (material_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_material_key_key",
+      "definition": "UNIQUE (material_key)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_offer_id_fkey",
+      "definition": "FOREIGN KEY (offer_id) REFERENCES equipment_maintenance_offers(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_payer_account_fkey",
+      "definition": "FOREIGN KEY (payer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_payer_account_request_key_key",
+      "definition": "UNIQUE (payer_account, request_key)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_payer_character_fkey",
+      "definition": "FOREIGN KEY (payer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_provider_account_fkey",
+      "definition": "FOREIGN KEY (provider_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_repairs",
+      "name": "equipment_maintenance_repairs_provider_character_fkey",
+      "definition": "FOREIGN KEY (provider_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_requests",
+      "name": "equipment_maintenance_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_maintenance_requests",
+      "name": "equipment_maintenance_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['offer'::text, 'repair'::text]))"
+    },
+    {
+      "table_name": "equipment_maintenance_requests",
+      "name": "equipment_maintenance_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_borrower_account_fkey",
+      "definition": "FOREIGN KEY (borrower_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_borrower_character_fkey",
+      "definition": "FOREIGN KEY (borrower_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_check",
+      "definition": "CHECK (deposit_remaining >= 0 AND deposit_remaining <= deposit_cash)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_check1",
+      "definition": "CHECK (ends_at > starts_at)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_check2",
+      "definition": "CHECK (landlord_account <> borrower_account AND landlord_character <> borrower_character)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_check3",
+      "definition": "CHECK (status = 'active'::text AND ended_at IS NULL OR status <> 'active'::text AND ended_at IS NOT NULL AND deposit_remaining = 0)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_deposit_cash_check",
+      "definition": "CHECK (deposit_cash >= 0 AND deposit_cash <= 100000)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_offer_id_fkey",
+      "definition": "FOREIGN KEY (offer_id) REFERENCES equipment_rental_offers(id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_offer_id_key",
+      "definition": "UNIQUE (offer_id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_rent_cash_check",
+      "definition": "CHECK (rent_cash >= 1 AND rent_cash <= 100000)"
+    },
+    {
+      "table_name": "equipment_rental_leases",
+      "name": "equipment_rental_leases_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'returned'::text, 'death_ended'::text]))"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_deposit_cash_check",
+      "definition": "CHECK (deposit_cash >= 0 AND deposit_cash <= 100000)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_duration_seconds_check",
+      "definition": "CHECK (duration_seconds >= 60 AND duration_seconds <= 3600)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_landlord_account_fkey",
+      "definition": "FOREIGN KEY (landlord_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_landlord_character_fkey",
+      "definition": "FOREIGN KEY (landlord_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_rent_cash_check",
+      "definition": "CHECK (rent_cash >= 1 AND rent_cash <= 100000)"
+    },
+    {
+      "table_name": "equipment_rental_offers",
+      "name": "equipment_rental_offers_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['open'::text, 'leased'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "equipment_rental_requests",
+      "name": "equipment_rental_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_maintenance_key_key",
+      "definition": "UNIQUE (maintenance_key)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_ordinal_check",
+      "definition": "CHECK (ordinal >= 1 AND ordinal <= 12)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_release_id_fkey",
+      "definition": "FOREIGN KEY (release_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_release_id_key",
+      "definition": "UNIQUE (release_id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_repair_id_fkey",
+      "definition": "FOREIGN KEY (repair_id) REFERENCES equipment_maintenance_repairs(id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_repair_id_key",
+      "definition": "UNIQUE (repair_id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_subscription_id_fkey",
+      "definition": "FOREIGN KEY (subscription_id) REFERENCES service_subscriptions(id)"
+    },
+    {
+      "table_name": "service_subscription_cycles",
+      "name": "service_subscription_cycles_subscription_id_ordinal_key",
+      "definition": "UNIQUE (subscription_id, ordinal)"
+    },
+    {
+      "table_name": "service_subscription_requests",
+      "name": "service_subscription_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "service_subscription_requests",
+      "name": "service_subscription_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_burned_cash_check",
+      "definition": "CHECK (burned_cash >= 0)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_check",
+      "definition": "CHECK (cycles_completed >= 0 AND cycles_completed <= max_cycles)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_check1",
+      "definition": "CHECK (initial_cash = (escrow_cash + spent_cash + refunded_cash + burned_cash))"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_check2",
+      "definition": "CHECK (state = 'active'::text OR escrow_cash = 0)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_fee_ceiling_check",
+      "definition": "CHECK (fee_ceiling >= 1 AND fee_ceiling <= 1000)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_initial_cash_check",
+      "definition": "CHECK (initial_cash >= 1 AND initial_cash <= 12000)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_interval_seconds_check",
+      "definition": "CHECK (interval_seconds >= 300 AND interval_seconds <= 86400)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_max_cycles_check",
+      "definition": "CHECK (max_cycles >= 1 AND max_cycles <= 12)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_offer_id_fkey",
+      "definition": "FOREIGN KEY (offer_id) REFERENCES equipment_maintenance_offers(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_payer_account_fkey",
+      "definition": "FOREIGN KEY (payer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_payer_character_fkey",
+      "definition": "FOREIGN KEY (payer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_provider_account_fkey",
+      "definition": "FOREIGN KEY (provider_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_provider_character_fkey",
+      "definition": "FOREIGN KEY (provider_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_spent_cash_check",
+      "definition": "CHECK (spent_cash >= 0)"
+    },
+    {
+      "table_name": "service_subscriptions",
+      "name": "service_subscriptions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'closed'::text]))"
     }
   ],
   "removed": [
@@ -4566,6 +5176,166 @@
       "maximum",
       "recipe_identity",
       "request_hash"
+    ],
+    "equipment_rental_requests": [
+      "account_id",
+      "identity",
+      "request_key",
+      "run_id"
+    ],
+    "equipment_rental_offers": [
+      "deposit_cash",
+      "duration_seconds",
+      "expires_at",
+      "id",
+      "item_id",
+      "landlord_account",
+      "landlord_character",
+      "published",
+      "rent_cash",
+      "status"
+    ],
+    "equipment_rental_leases": [
+      "borrower_account",
+      "borrower_character",
+      "deposit_cash",
+      "deposit_remaining",
+      "ends_at",
+      "id",
+      "item_id",
+      "landlord_account",
+      "landlord_character",
+      "offer_id",
+      "rent_cash",
+      "starts_at",
+      "status"
+    ],
+    "equipment_maintenance_offers": [
+      "enabled",
+      "expires_at",
+      "fee_cash",
+      "id",
+      "original_account",
+      "original_character",
+      "revision"
+    ],
+    "equipment_maintenance_requests": [
+      "account_id",
+      "action",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "equipment_maintenance_repairs": [
+      "condition_after",
+      "condition_before",
+      "credit_id",
+      "debit_id",
+      "fee_cash",
+      "id",
+      "item_id",
+      "material_key",
+      "offer_id",
+      "offer_revision",
+      "payer_account",
+      "payer_character",
+      "provider_account",
+      "provider_character",
+      "request_key"
+    ],
+    "commercial_negotiations": [
+      "buyer_account",
+      "buyer_character",
+      "created_at",
+      "delivery_deadline",
+      "depot_id",
+      "expires_at",
+      "id",
+      "last_offer_character",
+      "order_id",
+      "revision",
+      "source_hash",
+      "state",
+      "supplier_account",
+      "supplier_character",
+      "terms",
+      "terms_hash"
+    ],
+    "commercial_negotiation_requests": [
+      "account_id",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "service_subscriptions": [
+      "burned_cash",
+      "cycles_completed",
+      "escrow_cash",
+      "expires_at",
+      "fee_ceiling",
+      "id",
+      "initial_cash",
+      "interval_seconds",
+      "item_id",
+      "max_cycles",
+      "next_run_at",
+      "offer_id",
+      "payer_account",
+      "payer_character",
+      "provider_account",
+      "provider_character",
+      "refunded_cash",
+      "revision",
+      "spent_cash",
+      "state"
+    ],
+    "service_subscription_requests": [
+      "account_id",
+      "action",
+      "identity",
+      "receipt",
+      "request_key"
+    ],
+    "service_subscription_cycles": [
+      "fee_cash",
+      "id",
+      "maintenance_key",
+      "ordinal",
+      "release_id",
+      "repair_id",
+      "subscription_id"
+    ],
+    "contract_auctions": [
+      "award_until",
+      "buyer_account",
+      "buyer_character",
+      "closes_at",
+      "depot_id",
+      "id",
+      "order_id",
+      "quantity",
+      "quote_hash",
+      "source_quote",
+      "state",
+      "unit_price"
+    ],
+    "contract_auction_bids": [
+      "auction_id",
+      "consent",
+      "deadline_seconds",
+      "id",
+      "max_procurement_cash",
+      "quote_hash",
+      "supplier_account",
+      "supplier_character"
+    ],
+    "contract_auction_requests": [
+      "account_id",
+      "action",
+      "original_character",
+      "receipt",
+      "request_key",
+      "terms"
     ]
   }
 }

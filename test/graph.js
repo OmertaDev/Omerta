@@ -71,6 +71,7 @@ assert.deepEqual(inv.mute.sort(), [
   'company workflow provenance',
   'delivery finance bindings',
   'desk inventory backed',
+  'equipment rental physical title',
   'family operation capital',
   'family operation custody',
   'family operation history',
@@ -79,6 +80,7 @@ assert.deepEqual(inv.mute.sort(), [
   'logistics coverage bindings',
   'physical equipment condition provenance',
   'reason vocabulary',
+  'service subscription repair bindings',
   'strategy league bindings',
   'strategy license bindings',
   'warehouse journal ownership',
@@ -93,6 +95,8 @@ for (const [check, reasons] of [
   ['buyer cooperative GIN custody', ['buyer_cooperative:claim', 'buyer_cooperative:death_gin']],
 ]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['equipment rental physical title', 'exact physical custody/title and original paid lease bindings'],
+  ['service subscription repair bindings', 'original consent, actual repair and exact cycle payment bindings'],
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
