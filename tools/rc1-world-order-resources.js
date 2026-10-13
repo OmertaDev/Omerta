@@ -26,12 +26,15 @@ export function reconcileOrderResources(before, after, { identity = null, receip
   if (changes.length === 1 && !old.has(changes[0]) && context.method === 'POST' && (context.path || context.url) === '/v1/market/order') {
     const order = next.get(changes[0]), person = people.get(order.seller_character), final = finalPeople.get(order.seller_character);
     if (order.kind !== 'order' || !person || person.is_npc || receipts.length !== 2) return result;
+    // This witness governs direct player orders. A Depot-backed order has its
+    // own cash/source authority and must never inherit this receipt proof.
+    if (order.depot_id != null) return result;
     assert(person.alive && final?.alive && final.account_id === person.account_id);
     if (context.accountId) assert.equal(context.accountId, person.account_id);
     assert.equal(order.status, 'live'); assert.equal(order.filled_qty, 0); assert.equal(order.district, person.loc);
     assert(GOODS.some(row => row.id === order.good_id));
     for (const field of ['car_id', 'bidder', 'bid', 'buy_now', 'reserve']) assert.equal(order[field], null);
-    assert.deepEqual(Object.keys(order).sort(), ['id','seller_character','kind','car_id','good_id','qty','district','price','buy_now','bid','bidder','status','created_at','expires_at','reserve','filled_qty'].sort());
+    assert.deepEqual(Object.keys(order).sort(), ['id','seller_character','kind','car_id','good_id','qty','district','price','buy_now','bid','bidder','status','created_at','expires_at','reserve','filled_qty', ...(Object.hasOwn(order, 'depot_id') ? ['depot_id'] : [])].sort());
     const qty = integer(order.qty), unit = integer(order.price), held = qty * unit;
     assert(qty > 0n && qty <= BigInt(BLACK_MARKET.ORDER_MAX_QTY) && unit > 0n && held <= BigInt(Number.MAX_SAFE_INTEGER) && held >= BigInt(BLACK_MARKET.MIN_PRICE));
     assert.equal(Date.parse(order.created_at), context.logicalAt); assert(Date.parse(order.expires_at) > context.logicalAt);
@@ -56,7 +59,7 @@ export function reconcileOrderResources(before, after, { identity = null, receip
   const victims = [...people.values()].filter(row => row.alive && finalPeople.get(row.id)?.alive === false);
   if (victims.length === 1 && changes.length === 1 && old.has(changes[0]) && !next.has(changes[0])) {
     const [victim] = victims, order = old.get(changes[0]);
-    if (order.kind !== 'order' || order.status !== 'live' || order.seller_character !== victim.id || order.filled_qty !== 0
+    if (order.kind !== 'order' || order.status !== 'live' || order.seller_character !== victim.id || order.filled_qty !== 0 || order.depot_id != null
       || value(victim.bank) !== '0' || value(victim.bank_intransit || 0) !== '0') return result;
     const debits = receipts.filter(row => row.currency === 'cash' && row.reason === 'whack:loot' && row.character_id === victim.id);
     if (debits.length !== 1) return result;

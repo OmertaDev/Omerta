@@ -11,7 +11,7 @@ export const AGGRESSION_POLICY_CONTRACT = Object.freeze({ version: 2, scenarioId
   inputs: 'Authorized /v1/commands, /v1/me, /v1/streets and /v1/rivals responses. No target stats, accounts, diagnostics or hidden protections.',
   publicRuleConstants: { energy: 25, ammo: 5, minimumHealth: 20, intent: 'standard', fireEnergy: 40, minimumFire: 50, maximumChosenRounds: 2000,
     source: 'Published source src/rules.tail.js M3.JUMP_*; native test checks these constants against the canonical definitions.' },
-  eligibility: 'Publicly plausible same-district targets only. Hidden protection/crew gates and changed state remain canonical revalidation; only admitted fresh completions enter the denominator.',
+  eligibility: 'Permitted attempts against authenticated known same-district identities with current public nearby evidence or same-logical-time recorded location. Unknown private jail/hospital/protection statuses stay UNKNOWN, never false; explicit known blocks reject. This is attemptability, not issued combat authority or confirmed eligibility. Canonical POST revalidates all target gates; only admitted fresh completions enter the denominator.',
   quota: 'For n fresh completed choices whose observed candidates included conflict and nonconflict, conflict=floor(7*n/10). Exactly 70% at complete multiples of ten; incomplete blocks round down. Single-class choices are forced and reported separately.',
   denominator: 'Fresh completed selections from jump, search preparation, fire, heal and reviewed nonviolent PlayerCommands. Search is an actual conflict commitment, not a shot; counters distinguish them. Reads, waits, denials and replays excluded.',
   nonviolentTypes,
@@ -115,11 +115,25 @@ export function createAggressionPolicy(configuration) {
       const rivalIds = new Set(view.rivals.rivals.map((rival) => rival.street?.id).filter(Boolean));
       for (const target of view.streets.streets) {
         assert(typeof target.id === 'string' && /^[a-zA-Z0-9_-]+$/.test(target.id), 'Invalid public street identity');
-        if (target.id === own.id || target.loc !== own.loc || target.jailed !== false || target.hospitalized !== false
+        const knownIdentity = typeof target.name === 'string' && target.name.trim().length > 0
+          && typeof target.source === 'string' && target.source.length > 0;
+        const observedAt = Date.parse(target.observedAt);
+        const currentNearby = target.nearby === true && Number.isFinite(observedAt) && observedAt <= logicalAt;
+        const currentLocation = Number.isFinite(observedAt) && observedAt === logicalAt;
+        const status = (value) => value === true ? 'known_blocked' : value === false ? 'known_clear'
+          : value === null || value === undefined ? 'unknown' : 'invalid';
+        const targetStatus = { jailed: status(target.jailed), hospitalized: status(target.hospitalized),
+          protected: status(target.protected) };
+        if (target.id === own.id || !knownIdentity || target.loc !== own.loc || !(currentNearby || currentLocation)
+          || Object.values(targetStatus).some((value) => ['known_blocked', 'invalid'].includes(value))
+          || target.safehoused === true || target.witpro === true || target.safeSeconds > 0 || target.witproSeconds > 0
           || (own.gang?.tag && target.gangTag === own.gang.tag)) continue;
         const targetKey = `target:${target.id}`; assert(!seen.has(targetKey), 'Duplicate street target'); seen.add(targetKey);
         const conflict = (verb, body) => candidates.push({ category: 'conflict', type: `legacy.${verb}`, stableId: `${verb}:${target.id}`,
-          retaliation: rivalIds.has(target.id), request: { authority: 'legacy-http', method: 'POST', path: `/v1/streets/${target.id}/${verb}`, body } });
+          retaliation: rivalIds.has(target.id), targetEvidence: { interpretation: 'attemptability_only',
+            source: currentNearby ? 'current_public_nearby' : 'current_recorded_location',
+            statuses: targetStatus, canonicalTargetRevalidation: true },
+          request: { authority: 'legacy-http', method: 'POST', path: `/v1/streets/${target.id}/${verb}`, body } });
         if (ready) conflict('jump', { intent: 'standard' });
         const armed = streetReady && typeof own.gun === 'string' && own.gun.length > 0 && own.ammo >= 50;
         if (armed && own.hunt === null && own.shootCdSeconds === 0) conflict('search', {});

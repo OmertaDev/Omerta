@@ -20,7 +20,8 @@ const makeView = (sequence) => {
       executionIdentity: { executionId }, parameters: {} }] },
   me: { character: { id: 'own-street', generation: 1, gun: null, hunt: null, shootCdSeconds: 0, loc: 'docks', health: 100, energy: 50, ammo: 25, cash: 500,
     jailSeconds: 0, hospSeconds: 0, safeSeconds: 0, law: { witproSeconds: 0 }, healCost: null } },
-  streets: { streets: [{ id: 'target', loc: 'docks', hospitalized: false, jailed: false, gangTag: null }] },
+  streets: { streets: [{ id: 'target', name: 'Known target', source: 'encounter', observedAt: new Date(at).toISOString(),
+    nearby: true, loc: 'docks', hospitalized: false, jailed: false, gangTag: null }] },
   rivals: { rivals: [] } };
 };
 const choose = (policy, view) => policy.choose(view, { logicalAt: at });
@@ -65,6 +66,32 @@ const forced = createAggressionPolicy(configuration), conflictOnly = makeView(0)
 const forceChoice = choose(forced, conflictOnly); assert.equal(forceChoice.category, 'conflict'); settle(forced, forceChoice, false);
 assert.equal(forced.summary().actualConflictFraction, 1); assert.equal(forced.summary().mixedConflictFraction, null);
 assert.equal(forced.summary().forcedConflict, 1);
+
+// Current PlayerIntel deliberately leaves private target statuses unknown. Physical presence
+// supports a permitted attempt; it is not an issued action or confirmed private eligibility.
+const unknownView = makeView('private-status-unknown'); unknownView.commands.commands = [];
+unknownView.streets.streets[0].jailed = null; unknownView.streets.streets[0].hospitalized = null;
+const unknownPolicy = createAggressionPolicy(configuration), permittedAttempt = choose(unknownPolicy, unknownView);
+assert.equal(permittedAttempt.category, 'conflict'); assert.equal(permittedAttempt.mixed, false);
+assert.deepEqual(permittedAttempt.targetEvidence.statuses, { jailed: 'unknown', hospitalized: 'unknown', protected: 'unknown' });
+assert.equal(permittedAttempt.targetEvidence.interpretation, 'attemptability_only');
+assert.equal(unknownView.streets.streets[0].jailed, null); assert.equal(unknownView.streets.streets[0].hospitalized, null);
+unknownPolicy.settle({ idempotencyKey: permittedAttempt.request.idempotencyKey, status: 'DENIED', replayed: false,
+  response: { error: 'hosp' } });
+assert.equal(unknownPolicy.summary().denials, 1); assert.equal(unknownPolicy.summary().fresh, 0);
+assert.equal(unknownPolicy.summary().mixedFresh, 0); assert.equal(unknownPolicy.summary().forcedConflict, 0);
+for (const change of [{ name: null }, { source: null }, { loc: null }, { loc: 'canal' },
+  { nearby: false, observedAt: new Date(at - 1).toISOString() }, { observedAt: new Date(at + 1).toISOString() },
+  { observedAt: 'invalid' }, { jailed: true }, { hospitalized: true }, { protected: true },
+  { safehoused: true }, { witpro: true }, { safeSeconds: 1 }, { jailed: 0 }]) {
+  const unavailable = structuredClone(unknownView); Object.assign(unavailable.streets.streets[0], change);
+  assert.equal(choose(createAggressionPolicy(configuration), unavailable).observedCandidates.conflict, 0, JSON.stringify(change));
+}
+const freshLocation = structuredClone(unknownView); freshLocation.streets.streets[0].nearby = false;
+assert.equal(choose(createAggressionPolicy(configuration), freshLocation).observedCandidates.conflict, 1,
+  'Same-logical-time authorized recorded location permits an attempt without inventing private status');
+const foreignProjection = structuredClone(unknownView); foreignProjection.commands.player.id = 'foreign-account';
+assert.throws(() => choose(createAggressionPolicy(configuration), foreignProjection), /Foreign command projection/);
 
 for (const [field, value] of [['health', 19], ['energy', 24], ['ammo', 4], ['jailSeconds', 1], ['hospSeconds', 1], ['safeSeconds', 1]]) {
   const projection = makeView(1); projection.me.character[field] = value;

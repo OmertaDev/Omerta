@@ -628,6 +628,9 @@ const DISPOSITION = {
   company_succession_receipts: 'metadata', // original-account canonical opening receipts survive later heirs
   company_operators: 'metadata', // original-account owner consent is historical; death removes live depot authority
   company_operator_receipts: 'metadata', // immutable original-account canonical execution receipts survive heirs
+  company_production_receipts: 'metadata', // original producer receipts retain identity; exact historical replay grants no fresh heir production
+  company_specializations: 'metadata', // policy stays bound to the original character and Depot; canonical estate closes that Depot and an heir cannot reuse the grant
+  company_specialization_runs: 'metadata', // original producer cadence and spending history remain bound to the retired character and business
   game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
   game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value

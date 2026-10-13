@@ -328,9 +328,11 @@
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
 | [docs/agent-economy-final-prefix-native-review.md](../../docs/agent-economy-final-prefix-native-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 24 | 2026-10-13 |
 | [docs/agent-economy-integration-boundary-review.md](../../docs/agent-economy-integration-boundary-review.md) | documentation | 46 | 2026-10-12 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
+| [docs/aggression-public-attemptability-review.md](../../docs/aggression-public-attemptability-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
 | [docs/AUDITS.md](../../docs/AUDITS.md) | audit | 120 | 2026-09-25 |
 | [docs/BULLETPROOF.md](../../docs/BULLETPROOF.md) | documentation | 272 | 2026-09-04 |
@@ -364,6 +366,7 @@
 | [docs/company-bank-portfolio-integration-review.md](../../docs/company-bank-portfolio-integration-review.md) | documentation | 47 | 2026-10-12 |
 | [docs/company-bank-portfolios-security-review.md](../../docs/company-bank-portfolios-security-review.md) | documentation | 141 | 2026-10-12 |
 | [docs/company-bank-source-transfer-review.md](../../docs/company-bank-source-transfer-review.md) | documentation | 25 | 2026-10-12 |
+| [docs/company-demand-forecast-security-review.md](../../docs/company-demand-forecast-security-review.md) | documentation | 28 | 2026-10-13 |
 | [docs/company-logistics-hub-source-transfer-review.md](../../docs/company-logistics-hub-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/company-logistics-hubs-integration-review.md](../../docs/company-logistics-hubs-integration-review.md) | documentation | 58 | 2026-10-12 |
 | [docs/company-logistics-hubs-security-review.md](../../docs/company-logistics-hubs-security-review.md) | documentation | 39 | 2026-10-12 |
@@ -374,6 +377,8 @@
 | [docs/company-opportunity-integration-review.md](../../docs/company-opportunity-integration-review.md) | documentation | 37 | 2026-10-12 |
 | [docs/company-opportunity-migration-review.md](../../docs/company-opportunity-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/company-opportunity-source-transfer-review.md](../../docs/company-opportunity-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
+| [docs/company-production-integration-review.md](../../docs/company-production-integration-review.md) | documentation | 20 | 2026-10-13 |
+| [docs/company-production-security-review.md](../../docs/company-production-security-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/company-succession-security-review.md](../../docs/company-succession-security-review.md) | documentation | 16 | 2026-10-11 |
 | [docs/company-workflow-integration-review.md](../../docs/company-workflow-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/company-workflow-migration-review.md](../../docs/company-workflow-migration-review.md) | documentation | 10 | 2026-10-12 |
@@ -429,6 +434,8 @@
 | [docs/economy-recovery-fixture-review.md](../../docs/economy-recovery-fixture-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/economy-recovery-hosted-triage.md](../../docs/economy-recovery-hosted-triage.md) | documentation | 29 | 2026-10-12 |
 | [docs/employment-accounting-graph-fix-review.md](../../docs/employment-accounting-graph-fix-review.md) | documentation | 16 | 2026-10-12 |
+| [docs/first-batch-source-transfer-review.md](../../docs/first-batch-source-transfer-review.md) | documentation | 36 | 2026-10-13 |
+| [docs/first-five-city-combined-source-transfer-review.md](../../docs/first-five-city-combined-source-transfer-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
 | [docs/game-employment-integration-review.md](../../docs/game-employment-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/game-employment-migration-review.md](../../docs/game-employment-migration-review.md) | documentation | 12 | 2026-10-12 |
@@ -439,6 +446,7 @@
 | [docs/intel-forecasts-security-review.md](../../docs/intel-forecasts-security-review.md) | documentation | 70 | 2026-10-11 |
 | [docs/investors/01-plain-language.md](../../docs/investors/01-plain-language.md) | documentation | 162 | 2026-10-06 |
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
+| [docs/item-durability-integrated-review.md](../../docs/item-durability-integrated-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-09-25 |
 | [docs/living-world-director/evidence/README.md](../../docs/living-world-director/evidence/README.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/HANDOFF.md](../../docs/living-world-director/HANDOFF.md) | documentation | 118 | 2026-09-18 |
@@ -462,6 +470,7 @@
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 42 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
@@ -617,7 +626,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-12 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-13 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -695,5 +704,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-12 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-13 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

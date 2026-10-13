@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline, FIRST_BATCH_SOURCE_PREDECESSOR } from '../tools/rc1-first-batch-source-compatibility.js';
 import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from '../tools/player-intel-source-compatibility.js';
 import { companyBankSourceBaseline } from '../tools/rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -38,7 +39,7 @@ assert.deepEqual(CITY_GAMEPLAY_SOURCE_TRANSFER.latestMainPredecessorBlobs, CITY_
 assert.match(CITY_GAMEPLAY_SOURCE_TRANSFER.scope, /ALL new gameplay\/RPG\/Home\/NPC\/PvE\/token authority, current PostgreSQL, worker, migration, activation and deployment qualification remain outside/);
 let negatives = 0;
 for (const file of files) {
-  const raw = fs.readFileSync(file, 'utf8'), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);
+  const raw = firstBatchSourceBaseline(file,fs.readFileSync(file, 'utf8')), current = normalize(raw), parent = git('cat-file', 'blob', CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);
   assert.equal(hash(current), CITY_GAMEPLAY_SOURCE_CURRENT_PINS[file], 'Exact current source: ' + file);
   assert.equal(blob(current), CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]);
   assert.equal(hash(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_PINS[file]); assert.equal(blob(parent), CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_BLOBS[file]);
@@ -58,7 +59,7 @@ for (const file of files) {
   }
   // Mutate each actual complete gameplay diff hunk. Full-file admission must reject removed, duplicated and altered hunks alike.
   for (const revision of [CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0]]) {
-    const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', revision, '--', file));
+    const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', revision, FIRST_BATCH_SOURCE_PREDECESSOR, '--', file));
     const hunks = []; let hunk;
     for (const line of diff.split('\n')) {
       if (line.startsWith('@@ ')) { hunk = ''; hunks.push({ current: '' }); continue; }
@@ -95,7 +96,7 @@ for (const [pins, blobs, revisions] of [
   }
 }
 for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
-  const current = normalize(fs.readFileSync(file, 'utf8')), combinedParent = companyBankSourceBaseline(file, cityGameplaySourceBaseline(file, current));
+  const current = normalize(firstBatchSourceBaseline(file,fs.readFileSync(file, 'utf8'))), combinedParent = companyBankSourceBaseline(file, cityGameplaySourceBaseline(file, current));
   assert.equal(hash(combinedParent), COMMERCIAL_PREMISES_SOURCE_CURRENT_PINS[file], 'Gameplay preserves the complete premises parent: ' + file);
   const workflow = commercialPremisesSourceBaseline(file, combinedParent);
   assert.equal(hash(workflow), COMPANY_WORKFLOW_SOURCE_CURRENT_PINS[file]);
@@ -138,7 +139,7 @@ for (const layer of [
     baseline: (input,file) => commercialPremisesSourceBaseline(file,input), assertTransfer: assertCompanyWorkflowSourceTransfer },
 ]) {
   for (const file of Object.keys(GAME_EMPLOYMENT_SOURCE_CURRENT_PINS)) {
-    const current = normalize(fs.readFileSync(file,'utf8')), parent = layer.baseline(companyBankSourceBaseline(file,cityGameplaySourceBaseline(file,current)),file);
+    const current = normalize(firstBatchSourceBaseline(file,fs.readFileSync(file,'utf8'))), parent = layer.baseline(companyBankSourceBaseline(file,cityGameplaySourceBaseline(file,current)),file);
     assert.equal(hash(parent),layer.pins[file]);
     for (const chunk of layer.inverses[file]) {
       assert.equal(parent.split(chunk.current).length,2,'Each premises/workflow predecessor hunk is exact and unique: ' + file);
@@ -162,7 +163,7 @@ for (const layer of [
     }
   }
 }
-const server = normalize(fs.readFileSync('src/server.js', 'utf8')), latestParentServer = cityGameplaySourceBaseline('src/server.js', server);
+const server = normalize(firstBatchSourceBaseline('src/server.js',fs.readFileSync('src/server.js', 'utf8'))), latestParentServer = cityGameplaySourceBaseline('src/server.js', server);
 const intel = assertPlayerIntelSourceTransfer('src/server.js', latestParentServer);
 assert.equal(intel.baselineText, git('show', CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0] + ':src/server.js'));
 assert.equal(intel.baselinePins['src/server.js'], PLAYER_INTEL_SOURCE_TRANSFER.baselinePins['src/server.js']);
@@ -189,7 +190,7 @@ for (const file of ['src/city-encounters.js','src/city-home-interiors.js','src/c
   'src/gameemployment.js','src/gameemploymentinvariants.js','src/routes/gameemployment.js','src/commercialpremises.js',
   'src/commercialpremisesinvariants.js','src/routes/commercialpremises.js','src/companyworkflows.js','src/companyworkflowrunner.js',
   'src/companyworkflowinvariants.js','src/routes/companyworkflows.js','src/worker.js']) {
-  const text = fs.readFileSync(file, 'utf8'); assert.equal(cityGameplaySourceBaseline(file, text), text, 'Files outside the closed17 map have no gameplay predecessor alias.');
+  const text = firstBatchSourceBaseline(file,fs.readFileSync(file, 'utf8')); assert.equal(cityGameplaySourceBaseline(file, text), text, 'Files outside the closed17 map have no gameplay predecessor alias.');
   assert.throws(() => qualifyCityGameplaySource(file, text), /Unknown gameplay source/); negatives++;
 }
 for (const file of ['toString','constructor','./src/server.js']) {

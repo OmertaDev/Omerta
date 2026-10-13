@@ -325,7 +325,7 @@ const recipeFrom = (response, id) => response.body.recipes.find((entry) => entry
 const recipes = await call('GET', '/v1/worldgraph/recipes', { token: players[0].token });
 assert.equal(recipes.code, 200, JSON.stringify(recipes.body));
 assert.deepEqual(recipes.body.recipes.map(({ id }) => id), [
-  'recipe:car_salvage_basic', 'recipe:hardened_steel', 'recipe:precision_lock_tool',
+  'recipe:car_salvage_basic', 'recipe:hardened_steel', 'recipe:precision_lock_tool', 'recipe:tempered_precision_lock_tool',
 ]);
 assert.equal(recipeFrom(recipes, 'recipe:car_salvage_basic').available, true);
 assert.equal(recipeFrom(recipes, 'recipe:hardened_steel').available, false);
