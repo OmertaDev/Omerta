@@ -10,6 +10,8 @@ const call=async(p,method,url,body,key='workforce-'+(++serial),agent=false)=>{co
 const ok=async(...args)=>{const r=await call(...args);assert.equal(r.code,200,JSON.stringify(r.body));return r.body;};
 try{
  assert.equal(Object.keys(contracts).length,30);assert.equal(new Set(Object.values(contracts).map(c=>c.operationId)).size,30);
+ const spec=(await f.app.inject({method:'GET',url:'/openapi.json'})).json();
+ for(const route of Object.keys(contracts)){const [method,path]=route.split(' ');assert.deepEqual(spec.paths[path.replace(/:([A-Za-z]+)/g,'{$1}')][method.toLowerCase()].security,[{bearerAuth:[]}],route+' actual OpenAPI auth');}
  for(const [route,c]of Object.entries(contracts)){const [method,url]=route.split(' ');assert(f.app.hasRoute({method,url}),route);assert.equal((await f.call(null,method,url.replace(':id','unavailable'),{})).code,401);if(c.requestSchema){for(const bad of [null,[],7,'scalar',{}, {externalOwnerAuthority:true}])assert(!requests[route](bad),route+' closed request');if(route!=='POST /v1/company/acquisitions/quote')assert(c.requestParameters?.some(p=>p.name==='Idempotency-Key'&&p.required));else assert(!c.requestParameters);}}
  const owner=f.owner,partner=f.partner,worker=f.supplier,crewWorker=f.stranger;
  await f.app.pool.query('UPDATE characters SET respect=10000,energy=100 WHERE id=$1 OR id=$2',[owner.id,crewWorker.id]);
