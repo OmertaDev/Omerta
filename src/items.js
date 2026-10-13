@@ -74,6 +74,11 @@ function transactionClient(client) {
 }
 
 export function assertItemTransaction(client) { transactionClient(client); }
+/** True only for a mutation newly reserved by this branded transaction, not a historical replay. */
+export function ownsItemMutationReservation(client, key) {
+  return transactionClient(client).guardReservations.some(([reservedKey]) => reservedKey === key);
+}
+
 function mutationState(client, token) {
   const transaction = transactionClient(client);
   const state = token && typeof token === 'object' ? MUTATION_CONTEXTS.get(token) : null;
