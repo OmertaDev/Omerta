@@ -9,7 +9,12 @@ import { LIQUIDITY_EVENTS } from '../src/liquidityaccounting.js';
 
 const url = new URL(process.env.DATABASE_URL || 'http://invalid');
 assert.ok(['localhost', '127.0.0.1'].includes(url.hostname), 'local audit database is required');
-assert.equal(url.pathname, '/omerta_liquidity_indexer_test', 'use only the dedicated disposable indexer database');
+const legacyDatabase = url.pathname === '/omerta_liquidity_indexer_test';
+const ownedDatabase = /^\/omerta_liquidity_indexer_test_[0-9a-f]{12}$/.test(url.pathname)
+  && ['postgres:', 'postgresql:'].includes(url.protocol) && url.hostname === '127.0.0.1'
+  && ['35449', '35459'].includes(url.port) && url.username === 'pilot_runner'
+  && !url.password && !url.search && !url.hash;
+assert.ok(legacyDatabase || ownedDatabase, 'use only the dedicated disposable indexer database');
 const a = (n) => `0x${n.toString(16).padStart(40, '0')}`;
 const h = (n) => `0x${n.toString(16).padStart(64, '0')}`;
 const CODE = '0x60006000', RUNTIME = keccak256(CODE), ETH = 10n ** 18n, TIME = 1_750_000_000n;
@@ -124,12 +129,16 @@ if (process.argv.includes('--concurrency-worker')) {
   const reset = async () => {
     // These unrelated gameplay books must remain empty in this dedicated indexer fixture.
     // Name their ledger dependencies explicitly; never hide unknown dependencies with CASCADE.
+    assert.equal(await count('equipment_insurance_claims'), 0);
+    assert.equal(await count('equipment_insurance_policies'), 0);
+    assert.equal(await count('territory_economics_payments'), 0);
+    assert.equal(await count('territory_economics_sources'), 0);
     assert.equal(await count('equipment_maintenance_repairs'), 0);
     assert.equal(await count('service_subscription_cycles'), 0);
     assert.equal(await count('worker_training_courses'), 0);
     assert.equal(await count('worker_training_sessions'), 0);
     assert.equal(await count('employment_organization_courses'), 0);
-    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,equipment_maintenance_repairs,service_subscription_cycles,worker_training_courses,worker_training_sessions,employment_organization_courses,transactions');
+    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,equipment_insurance_claims,equipment_insurance_policies,territory_economics_payments,territory_economics_sources,equipment_maintenance_repairs,service_subscription_cycles,worker_training_courses,worker_training_sessions,employment_organization_courses,transactions');
     await pool.query('UPDATE chain_reserve SET funded_omr=0 WHERE id=1');
     await pool.query('UPDATE vig_prize_pool SET balance=0 WHERE id=1');
     await pool.query('UPDATE desk_inventory SET balance=0,lifetime_bought=0 WHERE id=1');
