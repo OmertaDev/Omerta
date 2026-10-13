@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline, assertFirstBatchSourceTransfer } from './rc1-first-batch-source-compatibility.js';
 import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from './player-intel-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, qualifyStrategyLeagueSource } from './rc1-strategy-league-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
@@ -22,6 +23,11 @@ import { COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, assertCommercialReputationSo
 import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 function operatorEnvelope(file, input, predecessorGuard) {
+ const outer = firstBatchSourceBaseline(file, input);
+ if (outer !== input.replaceAll('\r\n', '\n')) {
+   const transfer = assertFirstBatchSourceTransfer(file, input), predecessor = operatorEnvelope(file, transfer.baselineText, predecessorGuard);
+   return { ...predecessor, actualSha256: hash(input.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+ }
  const actualText = input.replaceAll('\r\n', '\n'), gameplayText = cityGameplaySourceBaseline(file, actualText);
  const gameplay = gameplayText !== actualText ? qualifyCityGameplaySource(file, actualText) : null;
  const playerIntel = Object.hasOwn(PLAYER_INTEL_SOURCE_TRANSFER.currentPins, file) && hash(gameplayText) === PLAYER_INTEL_SOURCE_TRANSFER.currentPins[file]
@@ -112,7 +118,7 @@ export function assertCityHomesLeagueServerTransfer(input) {
   predecessorServerBlob: CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
 }
 export function cityHomesLeagueSourceBaseline(file, input) {
- const text = companyOperatorSourceBaseline(file, cityGameplaySourceBaseline(file, input));
+ const text = companyOperatorSourceBaseline(file, cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, input)));
  return file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN ? assertCityHomesLeagueServerTransfer(text).baselineText : text;
 }
 // Franchise additions transfer only unchanged historical assertions by full-file reconstruction.
@@ -197,6 +203,11 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   const gameplayBaseline = cityGameplaySourceBaseline(file, text);
   if (gameplayBaseline !== text) {
     const gameplay = qualifyCityGameplaySource(file, text), predecessor = assertFranchiseSourceTransfer(file, gameplay.baselineText);
@@ -956,6 +967,11 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   const gameplayBaseline = cityGameplaySourceBaseline(file, text);
   if (gameplayBaseline !== text) {
     const gameplay = qualifyCityGameplaySource(file, text), predecessor = assertDeedBacklogCompatibility(file, gameplay.baselineText);
@@ -1732,6 +1748,11 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
+  const outer = firstBatchSourceBaseline(file, text);
+  if (outer !== text.replaceAll('\r\n', '\n')) {
+    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
+    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  }
   if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };
