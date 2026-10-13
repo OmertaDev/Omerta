@@ -122,3 +122,16 @@ RC1, simulation, browser and native backup/chaos/load/concurrency tails were not
 The incoming 18 economic tables, lifecycle and worker loops remain separate authority, with
 their full source and current-source tests preserved. Fresh combined six-gate qualification and
 API plus functional-worker rollout remain required.
+
+The `9f592d62` native run passed the strict Phase2 definition/upgrade and dormant-item steps
+on both database versions. Its later Director migration oracle failed because the test-only
+gameplay projection re-sorted native two-column SQL catalog order using a concatenated JavaScript
+locale key. The visible signed diff pairs and first 100 rows retain identical definitions; the
+remaining 1,195 rows were omitted by Node and are not claimed verified. Removing only that final
+reordering preserves input order before the byte-unchanged complete Director oracle. Independent
+captured-prefix controls reproduce the old failure and retain removal, duplication, alteration
+and unknown-row rejection. Phase2 still independently orders its complete catalog. No runtime,
+pinned expectation, predicate, limit or oracle is weakened; fresh complete native qualification
+and all other final-head release gates remain required. The obsolete normal workflow is actually
+cancelled; its incomplete full npm, skipped RC1/simulation/browser and native tails do not qualify
+the repaired source. Forge and recovery passed only that obsolete head.

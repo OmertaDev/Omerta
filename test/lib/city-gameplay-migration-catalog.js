@@ -200,8 +200,9 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
         assert.equal(prior.length, 1, `Original ${key} exists exactly once`);
         assert.equal(prior[0].definition, oldDefinitions.get(prior[0].name), `Original ${key} has its exact reviewed incoming predicate`);
       }
-      return sortBy(actual.filter(row => !tables.has(row.table_name) && !added.has(constraintKey(row)))
-        .map(row => replaced.has(constraintKey(row)) ? { ...row, definition: oldDefinitions.get(row.name) } : row), constraintKey);
+      // Preserve the caller's SQL catalog order for its original complete oracle.
+      return actual.filter(row => !tables.has(row.table_name) && !added.has(constraintKey(row)))
+        .map(row => replaced.has(constraintKey(row)) ? { ...row, definition: oldDefinitions.get(row.name) } : row);
     };
     return Object.freeze({ normalize, verifyMetadata, keys: Object.freeze([...expectedKeys]), referenceColumns: metadata.columns,
       tableCount: tables.size, constraintCount: rows.length, source: CITY_GAMEPLAY_MIGRATION_SOURCE });
