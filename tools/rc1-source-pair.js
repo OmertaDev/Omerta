@@ -13,6 +13,19 @@ import { sourceInventory } from './rc1-qualification.mjs';
 
 const option = (name, fallback) => process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? process.env[fallback];
 const accounts = ['rc1-pair-predecessor', 'rc1-pair-candidate'];
+const additiveOwnedFiles = new Set(['tools/rc1-source-pair.js', 'test/rc1-source-pair-additive.js', 'docs/rc1-source-pair-additive-review.md']);
+export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
+  predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: '1377a4483289705ec5f26047240cee0a17042023',
+  predecessorTree: 'e61a5d7d3438d17079009e3e93c0b3f0ebc891b0d92156a103a9c25900ae199e',
+  candidateTree: 'ada9dcac98d11835fa0e46ec844219ecd5f84826775aa91988a959c61ffc4513',
+  predecessorSchema: 'd45c84e1b364d82f0834975f08a58675c8e3930dc35f0dd47534c5bed4741c9f',
+  candidateSchema: '220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390',
+  predecessorCatalog: '2b809acfc18a556e42ef0a144523ff3e69253623e7c5a24895f3743dd8d120e8',
+  candidateCatalog: '028af7ab65761f08dfd10e3cb6ef0f213fe8db723796d0b41df9652733e12cb7',
+  candidateTableCatalog: '78354a849868506028c69d05681ded8f3721c86b3e017241f9b546b348c633b4',
+  tables: Object.freeze(['company_production_receipts', 'company_specialization_requests', 'company_specialization_runs',
+    'company_specializations', 'item_durability_birth_quality', 'item_durability_states', 'item_durability_uses']),
+});
 const load = (file) => import(pathToFileURL(path.resolve(file)).href);
 const git = (root, ...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
 const outside = (root, target) => { const relative = path.relative(root, target); return relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative); };
@@ -36,8 +49,63 @@ export async function sourcePairIdentity(root) {
   const inventory = [];
   for (const file of git(root, 'ls-files', '-z').split('\0').filter(Boolean))
     inventory.push([file, sha256(await fs.readFile(path.join(root, file)))]);
-  return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles,
+  const reviewedTree = git(root, 'ls-tree', '-r', '-z', 'HEAD').split('\0').filter(Boolean)
+    .filter(line => !additiveOwnedFiles.has(line.slice(line.indexOf('\t') + 1))).sort();
+  const tracked = new Set(inventory.map(([file]) => file));
+  const schemaBlob = tracked.has('schema.sql') ? execFileSync('git', ['-C', root, 'show', 'HEAD:schema.sql']) : null;
+  const catalogBlob = tracked.has('test/lib/phase2-architecture-upgrade-catalog.json')
+    ? execFileSync('git', ['-C', root, 'show', 'HEAD:test/lib/phase2-architecture-upgrade-catalog.json']) : null;
+  const catalog = catalogBlob ? JSON.parse(catalogBlob) : null;
+  const additiveSource = { tree: sha256(JSON.stringify(reviewedTree)), schema: schemaBlob ? sha256(schemaBlob) : null,
+    catalog: catalogBlob ? sha256(catalogBlob) : null,
+    catalogTables: catalog ? Object.fromEntries(FIRST_FIVE_ADDITIVE_PAIR.tables.map(name => [name, {
+      constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null,
+    }])) : {} };
+  return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles, additiveSource,
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
+}
+
+export function sourcePairStateDifference(a, b) {
+  const left = Object.keys(a.tables), right = Object.keys(b.tables);
+  const added = right.filter(name => !Object.hasOwn(a.tables, name)).sort();
+  const removed = left.filter(name => !Object.hasOwn(b.tables, name)).sort();
+  const changed = left.filter(name => Object.hasOwn(b.tables, name) && canonicalJson(a.tables[name]) !== canonicalJson(b.tables[name])).sort();
+  const names = [...new Set([...a.sequences, ...b.sequences].map(row => row.sequencename))].sort();
+  const sequences = names.filter(name => canonicalJson(a.sequences.filter(row => row.sequencename === name)) !== canonicalJson(b.sequences.filter(row => row.sequencename === name)));
+  return { added, removed, changed, sequences, sequenceStateEqual: canonicalJson(a.sequences) === canonicalJson(b.sequences) };
+}
+
+// A source-pinned migration relation, not snapshot normalization. Raw snapshots and
+// their unequal hashes remain evidence; this grants no validity to new authority.
+export function qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = FIRST_FIVE_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.additiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files');
+    assert.equal(identity.additiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.additiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.additiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Seven-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.additiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_SEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
 }
 
 // Only source-declared bootstrap differences are normalized. In particular a
@@ -191,6 +259,11 @@ export async function runSourcePair() {
       reason: 'stampSchema updates timestamp and source schema hash on bootstrap. Validate the source stamp before comparing data; retain both raw snapshots and source descriptors.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
     receiptComparison: 'Validate completed command schema and database instance/owner/graph/mutation receipt, then compare durable result, identity and immediate feedback. Fresh projection/asOf and differential feedback are retained but not byte-compared.',
+    additiveBootstrapPolicy: { predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate,
+      stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
+      sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test and scoped review document',
+      dataRule: 'Every predecessor row/table and all sequences remain exact; seven reviewed added tables must be empty; raw unequal hashes retained',
+      excludedClaim: 'Empty added tables do not establish new authority or native schema validity' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
       'No backup restore or recovery-point claim', 'Installed dependencies must independently match their lockfile'] };
@@ -337,9 +410,14 @@ export async function runSourcePair() {
     const value = normalized(raw), hash = sha256(canonicalJson(value));
     report.assertions.push({ id: label, stateSha256: hash, rawStateSha256: raw.stateSha256 }); update('result.json', report); return value;
   }
-  const equal = (a, b, label) => {
-    const changed = Object.keys(a.tables).filter((name) => canonicalJson(a.tables[name]) !== canonicalJson(b.tables[name]));
-    assert(canonicalJson(a) === canonicalJson(b), `${label}; changed tables: ${changed.join(', ')}`);
+  const equal = (a, b, label, additive = false) => {
+    const delta = sourcePairStateDifference(a, b);
+    if (additive && canonicalJson(a) !== canonicalJson(b)) {
+      assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
+      const qualified = qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate);
+      report.assertions.push({ id: label, status: 'PASS_ADDITIVE_BOOTSTRAP_ONLY', ...qualified }); update('result.json', report); return;
+    }
+    assert(canonicalJson(a) === canonicalJson(b), `${label}; added tables: ${delta.added.join(', ')}; removed tables: ${delta.removed.join(', ')}; changed tables: ${delta.changed.join(', ')}; changed sequences: ${delta.sequences.join(', ')}; sequence state equal: ${delta.sequenceStateEqual}`);
     report.assertions.push({ id: label, status: 'PASS' }); update('result.json', report);
   };
   try {
@@ -386,8 +464,8 @@ export async function runSourcePair() {
       candidate: { source: candidate.source, schemaSha256: sha256(candidateSchema), appVersion: schemas.get(cwd).appVersion }, normalization: report.normalization });
     await start(previous, true); await snapshot('fixture'); await execute(accounts[0]);
     const oldCommitted = await snapshot('predecessor-committed'); await stop();
-    await start(cwd); equal(oldCommitted, await snapshot('upgraded'), 'upgrade preserves acknowledged state');
-    await replayAll('predecessor receipt after upgrade'); equal(oldCommitted, await snapshot('upgrade-replayed'), 'upgrade replay creates no new effect');
+    await start(cwd); equal(oldCommitted, await snapshot('upgraded'), 'upgrade preserves acknowledged state', true);
+    await replayAll('predecessor receipt after upgrade'); equal(oldCommitted, await snapshot('upgrade-replayed'), 'upgrade replay creates no new effect', true);
     await execute(accounts[1]); const newCommitted = await snapshot('candidate-committed'); await stop();
     await start(previous); equal(newCommitted, await snapshot('rolled-back'), 'rollback preserves acknowledged state');
     await replayAll('both receipts after rollback'); equal(newCommitted, await snapshot('rollback-replayed'), 'rollback replay creates no new effect'); await stop();
