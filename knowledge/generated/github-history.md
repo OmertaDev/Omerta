@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a54b4e05cec9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `17c1c21b38b8`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3414 |
+| Commits in clone | 3417 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Pin integrated recovery source with closed derivative evidence scope |
+| Latest commit | 2026-10-13 — Freeze final source after exact graph census retest |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2457 |
+| OmertaDev | 2460 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 112 |
@@ -30,17 +30,17 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 606 | historical |
-| knowledge/generated/graph-summary.md | 606 | historical |
-| knowledge/generated/graph.json | 606 | historical |
-| knowledge/generated/inventory.md | 606 | historical |
+| knowledge/generated/github-history.md | 607 | historical |
+| knowledge/generated/graph-summary.md | 607 | historical |
+| knowledge/generated/graph.json | 607 | historical |
+| knowledge/generated/inventory.md | 607 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 493 | yes |
 | [public/index.html](../../public/index.html) | 458 | yes |
 | [src/server.js](../../src/server.js) | 412 | yes |
 | [schema.sql](../../schema.sql) | 343 | yes |
+| knowledge/generated/documents.md | 299 | historical |
 | [package.json](../../package.json) | 299 | yes |
-| knowledge/generated/documents.md | 298 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 219 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
