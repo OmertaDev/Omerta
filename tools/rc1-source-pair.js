@@ -8,11 +8,32 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { execFileSync, fork } from 'node:child_process';
 import { Pool } from 'pg';
+import { setTimeout as delay } from 'node:timers/promises';
 import { canonicalDatabaseSnapshot, canonicalJson, sha256 } from './rc1-native-proof.js';
 import { sourceInventory } from './rc1-qualification.mjs';
 
 const option = (name, fallback) => process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? process.env[fallback];
 const accounts = ['rc1-pair-predecessor', 'rc1-pair-candidate'];
+export const SOURCE_PAIR_COMMAND_WINDOW = Object.freeze({ periodMs: 600000, minimumCampaignMs: 240000, schedulingHeadroomMs: 30000, waitSliceMs: 30000 });
+export function sourcePairCommandWindow(at) {
+  assert(Number.isSafeInteger(at) && at >= 0, 'Invalid source-pair wall clock');
+  const expires = (Math.floor(at / SOURCE_PAIR_COMMAND_WINDOW.periodMs) + 1) * SOURCE_PAIR_COMMAND_WINDOW.periodMs;
+  return { scheduledAt: new Date(at).toISOString(), scheduledExpiresAt: new Date(expires).toISOString(), remainingMs: expires - at,
+    ready: expires - at >= SOURCE_PAIR_COMMAND_WINDOW.minimumCampaignMs + SOURCE_PAIR_COMMAND_WINDOW.schedulingHeadroomMs };
+}
+export async function waitForSourcePairCommandWindow({ now = Date.now, sleep = delay, onWait = () => {} } = {}) {
+  for (;;) {
+    const window = sourcePairCommandWindow(now());
+    if (window.ready) return window;
+    const waitMs = Math.min(SOURCE_PAIR_COMMAND_WINDOW.waitSliceMs, window.remainingMs);
+    onWait({ ...window, waitMs }); await sleep(waitMs);
+  }
+}
+export function assertSourcePairCommandWindow(expiresAt, at, label) {
+  assert(Number.isSafeInteger(at) && at >= 0 && Number.isFinite(Date.parse(expiresAt)), 'Invalid source-pair command deadline');
+  assert(at < Date.parse(expiresAt), `${label}: actual issued command-board window expired; strict no-cache-write rehearsal failed`);
+  return { label, at: new Date(at).toISOString(), expiresAt, remainingMs: Date.parse(expiresAt) - at };
+}
 const additiveOwnedFiles = new Set(['tools/rc1-source-pair.js', 'test/rc1-source-pair-additive.js', 'docs/rc1-source-pair-additive-review.md']);
 // Derivative review outputs, not runtime, fixture or schema authority. Keep this literal closed
 // list; full checkout inventories retain their bytes and repository knowledge checks qualify them.
@@ -42,12 +63,12 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
     'company_specializations', 'item_durability_birth_quality', 'item_durability_states', 'item_durability_uses']),
 });
 export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "ed903348ee59e354bfae72bfbc2aed8273229bb2",
-  "reviewedCandidate": "752c472269bd10076c0bf869bece5c1d5e8af9cb",
-  "predecessorTree": "fe4913ffa8b9d7fe6f4bdebb5ccaee91721c9a65af92651279c15d0705ddeeda",
+  "predecessor": "18e28bda62759c4d18aaefea461a407b43c0b62f",
+  "reviewedCandidate": "fdfd83148401e8e1cebc9b3246b552eb8eaf0a87",
+  "predecessorTree": "ed274fc227b2353ec54e77c057f8bc8464abaff429c0edb8b9cb869c1268acad",
   "predecessorSchema": "220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390",
   "predecessorCatalog": "028af7ab65761f08dfd10e3cb6ef0f213fe8db723796d0b41df9652733e12cb7",
-  "candidateTree": "cb427af129630ee6bb7736a4d57e292ed04a1deebd5e03c3155b40a464ea7799",
+  "candidateTree": "ca282f8265f5d33625526a2b857173c9c9aec7373bfce692f27d3c4bd69895e5",
   "candidateSchema": "0f84bd62550030d065621637241e62e21d8f51820a57bd6cfb1e0bc4182e609a",
   "candidateCatalog": "e60fc7a581bb21276c5176a2851e96fbc1d6a6bf429485a4510f36819e3a44b2",
   "candidateTableCatalog": "d87064c8762a49597826647a46474541f9581790063a488bbba28581a7c08f20",
@@ -99,6 +120,34 @@ export const THIRD_BATCH_ADDITIVE_PAIR = Object.freeze({
     "worker_training_sessions"
   ])
 });
+export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
+  "predecessor": "6ce37f95b4b09b4e62be5ec9afd8b28d41e026e1",
+  "reviewedCandidate": "d5f066aa8f69d29f34af28b04dbd2ac5e5e20360",
+  "predecessorTree": "511b85ea77509f2de8bab4803692d69c90c3e5864e47ddfd5e94a01531750aa2",
+  "predecessorSchema": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd",
+  "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
+  "candidateTree": "9dd3da984f9f7c5a8be5e8ca0b0927e4ef4f365cdf5db8e093f6afccee83bf1e",
+  "candidateSchema": "c24abb3e7a3863dabeecbb683671a12e95c447918a2b385b38cc36691fbb9dc9",
+  "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
+  "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
+  "constraints": 132,
+  "notNull": 114,
+  "tables": Object.freeze([
+    "commercial_dispute_requests",
+    "commercial_disputes",
+    "company_restructuring_plans",
+    "company_restructuring_requests",
+    "equipment_insurance_claims",
+    "equipment_insurance_policies",
+    "equipment_insurance_requests",
+    "infrastructure_concession_requests",
+    "infrastructure_concessions",
+    "territory_economics_payments",
+    "territory_economics_profiles",
+    "territory_economics_requests",
+    "territory_economics_sources"
+  ])
+});
 const load = (file) => import(pathToFileURL(path.resolve(file)).href);
 const git = (root, ...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
 const outside = (root, target) => { const relative = path.relative(root, target); return relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative); };
@@ -135,6 +184,7 @@ export async function sourcePairIdentity(root) {
     }])) : {} };
   return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles, additiveSource, secondBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(SECOND_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     thirdBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(THIRD_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
+    fourthBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(FOURTH_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
 }
 
@@ -241,6 +291,40 @@ export function qualifyThirdBatchAdditiveBootstrap(a, b, predecessor, candidate)
   assert(delta.sequenceStateEqual, 'Sequence state changed');
   for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
   return { relation: 'REVIEWED_SIXTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
+}
+
+export function qualifyFourthBatchAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = FOURTH_BATCH_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.fourthBatchAdditiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
+    assert.equal(identity.fourthBatchAdditiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.fourthBatchAdditiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.fourthBatchAdditiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Thirteen-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.fourthBatchAdditiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  assert.equal(Object.values(candidate.fourthBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.constraints.length, 0), pin.constraints, 'Exact 132 native constraints required');
+  assert.equal(Object.values(candidate.fourthBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.notNullColumns.length, 0), pin.notNull, 'Exact 114 NOT NULL bindings required');
+  for (const name of pin.tables) assert(Array.isArray(b.tables[name]), `New table snapshot type invalid: ${name}`);
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_THIRTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
     addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
     beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
@@ -397,6 +481,8 @@ export async function runSourcePair() {
       reason: 'stampSchema updates timestamp and source schema hash on bootstrap. Validate the source stamp before comparing data; retain both raw snapshots and source descriptors.',
       retained: 'All other rows, values, sequences, generated IDs, deadlines, balances, state and receipts.' },
     receiptComparison: 'Validate completed command schema and database instance/owner/graph/mutation receipt, then compare durable result, identity and immediate feedback. Fresh projection/asOf and differential feedback are retained but not byte-compared.',
+    commandWindowPolicy: { ...SOURCE_PAIR_COMMAND_WINDOW, rule: 'FIRST board issuance waits for a real-clock scheduling window; actual stored board expiry bounds every subsequent replay and measured snapshot. No clock/TTL override or refreshed original board.',
+      scope: 'Strict no-cache-write comparison only inside the same actual ten-minute command-board window. Expired-board ACK legitimately issues a new projection on both versions and is not qualified by this rehearsal; all rows/sequences remain strict.' },
     additiveBootstrapPolicy: { predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate,
       stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
       sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test/scoped review and the ten literal derivative knowledge outputs; full checkout inventories retain all bytes',
@@ -405,6 +491,7 @@ export async function runSourcePair() {
       excludedClaim: 'Empty added tables do not establish new authority or native schema validity' },
     secondBatchAdditiveBootstrapPolicy: { predecessor: SECOND_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: SECOND_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: SECOND_BATCH_ADDITIVE_PAIR.tables, sourceRule: 'Exact three owned qualification files and ten literal derivative outputs only; catalog/schema/runtime/CI remain frozen', dataRule: 'Fourteen reviewed tables EMPTY; all prior and unknown rows/tables/sequences exact; rollback/replay/reupgrade full equality', excludedClaim: 'No populated authority, full-world, deployed recovery or backing validity' },
     thirdBatchAdditiveBootstrapPolicy: { predecessor: THIRD_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: THIRD_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: THIRD_BATCH_ADDITIVE_PAIR.tables, constraints: 104, notNull: 121, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; all other complete source/catalog/schema bytes pinned', dataRule: 'Sixteen declared tables EMPTY; every prior/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'No populated authority, financial backing, deployed predecessor or full-world recovery qualification' },
+    fourthBatchAdditiveBootstrapPolicy: { predecessor: FOURTH_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: FOURTH_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FOURTH_BATCH_ADDITIVE_PAIR.tables, constraints: 132, notNull: 114, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; whole RootIV runtime/schema/catalog/source frozen', dataRule: 'Thirteen declared tables EMPTY; every old/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'Provisional prerelease predecessor; no populated authority, backing, deployed predecessor or full-world recovery qualification' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
       'No backup restore or recovery-point claim', 'Installed dependencies must independently match their lockfile'] };
@@ -412,6 +499,11 @@ export async function runSourcePair() {
   const event = (value) => syncFs.appendFileSync(path.join(output, 'history.jsonl'),
     JSON.stringify({ at: new Date().toISOString(), ...value }) + '\n', { mode: 0o600 });
   const phase = (value) => { report.phase = value; event({ phase: value }); update('result.json', report); };
+  const checkCommandWindow = (label) => {
+    if (!report.commandWindow?.firstBoardExpiresAt) return;
+    const checked = assertSourcePairCommandWindow(report.commandWindow.firstBoardExpiresAt, Date.now(), label);
+    report.commandWindow.checks.push(checked); update('result.json', report);
+  };
   const receipts = [], replays = [], children = [];
   update('receipts.json', receipts); update('replays.json', replays);
   let candidate, predecessor, admin, pool, env, running, count = 0, requests = 0, hardStopTimer;
@@ -499,14 +591,25 @@ export async function runSourcePair() {
   };
   async function execute(account) {
     phase(`execute-${account}`);
+    checkCommandWindow(`before issuance ${account}`);
     const board = await request(account, 'GET', '/v1/commands');
     const command = board.commands.find((row) => row.commandType === 'mystery.start' && row.availability === 'AVAILABLE');
     assert(command, 'Expected ordinary issued mystery.start command');
     const key = command.executionIdentity.executionId, payload = { executionId: key, confirmed: true };
+    const issued = (await interrupted(pool.query('SELECT expires_at FROM player_command_boards WHERE id=$1 AND account_id=$2', [key.split('.')[0], account]))).rows[0];
+    assert(issued, 'Actual issued command board missing');
+    const expiresAt = new Date(issued.expires_at).toISOString();
+    if (!report.commandWindow.firstBoardExpiresAt) {
+      assert.equal(expiresAt, report.commandWindow.scheduledExpiresAt, 'First issuance crossed the scheduled real window');
+      assert(Date.parse(expiresAt) - Date.now() >= SOURCE_PAIR_COMMAND_WINDOW.minimumCampaignMs, 'Actual board has insufficient measured campaign margin');
+      report.commandWindow.firstBoardExpiresAt = expiresAt; report.commandWindow.firstExecutionId = key;
+    } else assert.equal(expiresAt, report.commandWindow.firstBoardExpiresAt, 'Later issuance crossed the actual original window');
+    checkCommandWindow(`issued ${account}`);
     const graphId = command.parameters.graphId;
     const preCommandInstances = await interrupted(assertFreshMysteryStart(pool, account, graphId));
     put(`before-command-${receipts.length + 1}.json`, { account, graphId, preCommandInstances, key });
     const result = await request(account, 'POST', '/v1/commands/execute', payload, key);
+    checkCommandWindow(`executed ${account}`);
     validateMysteryResult(result, key, false);
     const receipt = { account, graphId, preCommandInstances, key, payload, result };
     receipt.durable = await interrupted(assertDurableMystery(pool, receipt));
@@ -516,8 +619,10 @@ export async function runSourcePair() {
   async function replayAll(label) {
     phase(label);
     for (const receipt of receipts) {
+      checkCommandWindow(`before ${label}: ${receipt.account}`);
       const result = await request(receipt.account, 'POST', '/v1/commands/execute', receipt.payload, receipt.key);
       replays.push({ label, account: receipt.account, result }); update('replays.json', replays);
+      checkCommandWindow(`after ${label}: ${receipt.account}`);
       validateMysteryResult(result, receipt.key, true);
       const durable = await interrupted(assertDurableMystery(pool, { ...receipt, result }));
       assert.deepEqual(durable, receipt.durable, `${label}: durable database receipt changed`);
@@ -548,6 +653,7 @@ export async function runSourcePair() {
       abort.signal.addEventListener('abort', clear, { once: true });
     }));
     const raw = await interrupted(canonicalDatabaseSnapshot(pool)); put(`${label}.json`, raw);
+    checkCommandWindow(`measured ${label}`);
     const value = normalized(raw), hash = sha256(canonicalJson(value));
     report.assertions.push({ id: label, stateSha256: hash, rawStateSha256: raw.stateSha256 }); update('result.json', report); return value;
   }
@@ -555,7 +661,9 @@ export async function runSourcePair() {
     const delta = sourcePairStateDifference(a, b);
     if (additive && canonicalJson(a) !== canonicalJson(b)) {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
-      const qualified = predecessor.source === THIRD_BATCH_ADDITIVE_PAIR.predecessor
+      const qualified = predecessor.source === FOURTH_BATCH_ADDITIVE_PAIR.predecessor
+        ? qualifyFourthBatchAdditiveBootstrap(a, b, predecessor, candidate)
+        : predecessor.source === THIRD_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifyThirdBatchAdditiveBootstrap(a, b, predecessor, candidate)
         : predecessor.source === SECOND_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate)
@@ -603,11 +711,20 @@ export async function runSourcePair() {
       assert.equal(sha256(schema), identity.inventory.find(([file]) => file === 'schema.sql')?.[1], 'Schema source bytes changed');
       assert.equal(sha256(packageBytes), identity.inventory.find(([file]) => file === 'package.json')?.[1], 'Package source bytes changed');
       schemas.set(root, { schema, appVersion: JSON.parse(packageBytes).version || '0.0.0' });
+      const commandBytes = await fs.readFile(path.join(root, 'src/player-commands.js'));
+      assert.equal(sha256(commandBytes), identity.inventory.find(([file]) => file === 'src/player-commands.js')?.[1], 'Command source bytes changed');
+      assert(commandBytes.toString('utf8').replaceAll('\r\n', '\n').split('\n').includes('const LIFETIME_MS = 10 * 60 * 1000;'), 'Unsupported command-board lifetime source');
     }
     predecessorSchema = schemas.get(previous).schema; candidateSchema = schemas.get(cwd).schema;
     put('schema-comparison.json', { predecessor: { source: predecessor.source, schemaSha256: sha256(predecessorSchema), appVersion: schemas.get(previous).appVersion },
       candidate: { source: candidate.source, schemaSha256: sha256(candidateSchema), appVersion: schemas.get(cwd).appVersion }, normalization: report.normalization });
-    await start(previous, true); await snapshot('fixture'); await execute(accounts[0]);
+    await start(previous, true); await snapshot('fixture');
+    phase('schedule-first-command-real-window');
+    report.commandWindow = { ...await waitForSourcePairCommandWindow({
+      sleep: (ms) => delay(ms, undefined, { signal: abort.signal }),
+      onWait: (value) => { event({ kind: 'command-window-wait', ...value }); console.log(JSON.stringify({ phase: 'command-window-wait', waitMs: value.waitMs, remainingMs: value.remainingMs })); },
+    }), checks: [] };
+    update('result.json', report); await execute(accounts[0]);
     const oldCommitted = await snapshot('predecessor-committed'); await stop();
     await start(cwd); equal(oldCommitted, await snapshot('upgraded'), 'upgrade preserves acknowledged state', true);
     await replayAll('predecessor receipt after upgrade'); equal(oldCommitted, await snapshot('upgrade-replayed'), 'upgrade replay creates no new effect', true);
@@ -619,7 +736,11 @@ export async function runSourcePair() {
     assert.deepEqual(await interrupted(sourcePairIdentity(cwd)), candidate, 'Candidate bytes changed');
     assert.deepEqual(await interrupted(sourcePairIdentity(previous)), predecessor, 'Predecessor bytes changed');
     abort.signal.throwIfAborted(); report.status = 'PASS_SCOPED';
-  } catch (error) { failure(error); }
+  } catch (error) {
+    failure(error);
+    if (pool && !abort.signal.aborted) try { put('failure-state.json', await canonicalDatabaseSnapshot(pool)); }
+    catch (captureError) { report.failureStateCaptureError = captureError.message; update('result.json', report); }
+  }
   finally {
     for (const child of children) {
       try { await stopSourcePairChild(child); }
