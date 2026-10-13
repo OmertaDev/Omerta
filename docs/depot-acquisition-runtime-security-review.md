@@ -1,0 +1,63 @@
+# Canonical Depot acquisition: qualified empty-authority slice
+
+Reviewed source `0d77a9cb8fa9ac66a66fbc4d24d715069d985216`. Owned code/test are `src/depotacquisitionruntime.js` and `test/depotacquisitionruntime.js`; this document is the owned review/integration manifest. Base `029312db26cf9e71058ce2512592c1f1cd734561`; unchanged dependencies: F13 `4f549ab6c453d79f0055bf6179f52baf6eef7aea`, F14 `5353622258573601a1efdc8f454e3a11c08c2b73`, F15 `9061554c3c2363c989451c1fe8ae98ac5195f220`, `866e2cdbc0454d1cba23bfb7c2392d4deed7a2b3`, `9dc102892f226af491f27a811a22b99aca5bfbbc`; coordinator lifecycle seams `ecdc96b895040d717328657097aa70b33b590923`, `94ae773af3d1d36024b953ba7a05f916940aa768`. Dependency imports are unchanged, not shared edits authored here. Exact hashes are retained.
+
+Phase: **actual component ownership/cash transfer qualified for standalone, zero-authority, zero-unsettled-obligation Depots; shared registrar/vocabulary/release qualification pending**. This is not an acquisition of an account, company profile, property, personal item inventory, external asset or spending authority.
+
+## Real effect and closed authority
+
+`canonicalDepotAcquisitionRuntime` is the actual trusted `canonical_depot_acquisition_v1` capability with `withParties`, `assertEligible`, `settle`. It accepts no configurable retirement function and cannot believe a fake `retired:true` acknowledgment. Its retirement proof is concrete absence of current supported authority scopes: existing grants zero, retired grants zero.
+
+The existing F15 original seller/buyer, exact price, source/terms hash, explicit bilateral consent, accepted state and server deadline are independently revalidated. The buyer's actual gameplay cash pays the seller through imported canonical `G.ledger`, producing two distinct original-character cash legs keyed by the acquisition ID. Helpers cannot substitute a fake ledger. Buyer funds are not sourced from Depot treasury or another account. The only title mutation is conditional `UPDATE business_depots SET owner_character=buyer WHERE id=exact_depot AND owner_character=original_seller AND status='open'`.
+
+Every other Depot column must remain identical: ID, treasury, stock, stock cost, configuration, warehouse fields, creation time and other asset metadata. Canonical journal sums must match cash/stock/cost before eligibility. Original journals, fulfilled order histories, production receipts and other supported terminal history remain in place. No close/reopen, grant reset, debt forgiveness, synthetic principal recovery, fee refund or inventory mint exists. New owner actions use the ordinary canonical owner gate; old seller actions fail that gate.
+
+## Complete supported Depot reference review
+
+The frozen `DEPOT_ACQUISITION_REFERENCES` maps every `depot_id`, `operator_depot_id`, `recipient_depot_id`, `business_id` column in the reviewed global schema plus imported F13/F15. Runtime compares actual information-schema pairs with this exact registry; missing or unknown references refuse acquisition, including an empty new unreviewed scope. Indirect liabilities are followed explicitly rather than assuming a lack of direct FK means no obligation.
+
+| Scope | Eligibility treatment |
+| --- | --- |
+| Market listings, delivered/expired commitments, Delivery loan requests | Only terminal empty canonical order rows; no live/unknown listing, quantity or awaiting goods. Accepted/unknown commitments refuse. Any linked delivery-loan history refuses conservatively. |
+| Warehouse leases, supply tenders, brand licenses | No active/unretrieved warehouse claim; warehouse service disabled. Any tender history is outside this slice. Offered/active or unknown brand roles refuse on either operator/recipient Depot. |
+| Operating policies, supply cadence, operators, F03 specialization | Any row, including disabled/dormant, refuses until a genuine archive/read bridge exists. Current getters/PKs cannot safely assign these historical grants to a buyer. Spent/cadence fields are never reset or deleted. |
+| F13 partnerships, F14 governance | Any partnership/governance row refuses. No investor/principal/profit-share permission is silently retired or transferred. Living seller cannot use a death-only retirement helper. |
+| Employment jobs and indirect assignments | Open/unknown jobs, escrow and unpaid worker assignments refuse. Closed zero-escrow/paid history remains. |
+| Workflows, premises offers/paid occupancy, logistics hubs | Incomplete workflow history refuses. Offered premises and nonterminal paid occupancy refuse. Draft/active hubs refuse. Supported completed/closed history remains original-party history. |
+| Coverage, business seasons, negotiations, auctions, succession | Unresolved/escrowed coverage, unfinished season, live/accepted negotiation, open/awarded auction and any succession receipt refuse. Supported explicitly terminal metadata does not grant new authority. |
+| Depot journals/external costs, operator/production/specialization run receipts | Historical evidence only, preserved unchanged; it cannot establish buyer permission. Canonical asset books still reconcile. |
+
+Other-person/account assets and personal borrowing are not conveyed; this helper does not invent a Depot lien where the canonical loan model has none. F06 standalone account-title equipment rentals stay bound to their original parties. New linked concession/training/dispute metadata is not covered by the frozen registry: root must review and extend the scope before enabling acquisition in such a schema. The conservative restrictions intentionally exclude some settled service histories until genuine source-approved retirement/archive rules exist.
+
+All restriction queries are static literals and bounded to one witness. No variable SQL, caller DSL, SQL lock suffix, array-ANY authority selection or arbitrary recipient/controller is introduced. Existing writers must share original character/Depot parent locks. Runtime checks original living non-NPC identities and active accounts, locks the sorted original actors/accounts first and refuses buyers already owning an open Depot; the canonical unique index also enforces that rule.
+
+## Root integration and archive manifest
+
+1. Register F15 with exactly this capability. Wire `G.withTwoCharacters(...,{withActionScope})` to `runtime.withParties(client,firstOriginalHint,secondOriginalHint,execute)` **before normal actor/account/Depot/policy work**. Capture original source-party IDs, then freshly revalidate them under this scope. Return `execute` exactly once; the private async scope ends in `finally`, verifies successful sale asset/record/price state after gameplay and before G persistence, and poisons every failure. Calling capability methods without the live party scope refuses `preflight_required`. Do not acquire the accounts mutex late from F15 `context`, which already holds Depot/policy locks.
+2. The fixture adapter calls unchanged actual F15 methods through the real coordinator G scope. It is not proof that the unmodified shared F15 registrar already supplies this hook. Root owns registration, gateway/census/CI/native source gates and generated publication.
+3. Add **exact cash** vocabulary entries `company_acquisition:pay` and `company_acquisition:receive` to the shared invariant collector. Existing currency buckets/character sums already account for both legs. No new bucket or monetary table is needed. At this reviewed source the exact two unknown reasons are an explicit expected finding, not a green full-vocabulary/release claim.
+4. No runtime-owned new schema is required. Existing F13/F14/F15 component DDL must be in the actual shared schema and frozen catalog before registration. The runtime refuses missing/unknown Depot-reference scope rather than silently accepting partial setup.
+5. Broader transfer needs genuine reviewed archive bridges for original operating policies, cadence/operators, F03 and F13/F14/service roles. Preserve exact original actor/account, revision, expiry, max spend/spent/reserve, grant lifetime spend, dispatch count/next cadence, votes, contributions/distributions, recovery and receipt history. Current policies lack an owner/retirement epoch and some tables have single-Depot PKs: getters, setters, unique revision/epoch rules, workers and original recovery must change together. Do not just disable, overwrite, delete or reset records and call that an archive. No such callback or acknowledgment is accepted by this runtime.
+6. Historical acknowledgments grant no title or spending permission. Shared routes should resolve immutable request replay before requiring a live original peer when supporting heir history; fresh transfers must use original living parties. This proof covers exact replay while originals live and late-expiry closure, not a newly wired shared heir/estate sale route.
+
+## Atomicity and executed evidence
+
+Native rollback is the actual branded PostgreSQL transaction. Memory rollback uses existing Items compensation: restore the exact original owner, both original cash fields/cached actors, original accepted acquisition execution fields, and delete only the two newly generated ledger IDs. The only failed execute ACK cleanup is a bounded lookup for the original seller/acquisition ID **and both unique newly generated leg IDs**, then exact key deletion; more than one candidate refuses recovery. No historical ACK or journal can match those fresh IDs. This was tested after actual F15 executed-state/ACK insertion, not merely before money moved.
+
+At source pin, syntax checks and `node test/depotacquisitionruntime.js` PASS. Native command:
+
+```text
+DEPOT_ACQUISITION_RUNTIME_TEST_DATABASE_URL=postgresql://pilot_runner@127.0.0.1:35449/depot_acquisition_runtime_test_20261013_b node test/depotacquisitionruntime.js --postgres
+```
+
+Fresh owned PostgreSQL **18.4** PASS. The harness rejects ambient DATABASE_URL, remote/unowned endpoints and nonempty public schemas before global initialization. No local PostgreSQL16 or hosted CI claim is made. Local opening cash/skill baselines are explicit fixtures; the transferred GIN stock/cost/treasury is obtained through actual canonical funding, paid market procurement and receive. F13/F14/F15 are unchanged component dependencies. Ordinary post-transfer configure uses the actual server route and agent token.
+
+Proofs: exact price consent; buyer-funded real paired price legs; same Depot/all assets/history; full post-execute rollback/ACK cleanup; immutable replay; native concurrent same-key execution and competing buyers with one winner; old seller and foreign configure denial; actual new buyer configure; disabled policy requiring archive; outstanding paid procurement refusal; unknown schema refusal; default eight-second native lock contention with no money/title change; and a separate genuine original 60-second consent expiry after native Depot wait, with no timestamp mutation. The latter uses LOCAL90s statement/lock/idle limits only in its bounded negative test transaction to observe expiry; production/CI/global limits stay unchanged. Every accounting/cash/GIN check passes. The sole global failure is exact `reason vocabulary` for the two pending registration entries, asserted explicitly.
+
+Initial diagnostic findings and retests are retained: expected vocabulary label initially differed (`known ledger reasons` vs actual `reason vocabulary`); the genuine-deadline waiter initially correctly hit the default eight-second contention before expiry, invalidating its narrower expected error. The final fixture observes all failure promises and distinguishes the two real outcomes. Neither runtime behavior nor a financial guard was weakened.
+
+## Security methods and conclusions
+
+Applied manual relevant passes from Pashov `c577eb7799c349de0acb187ba00ca98e14e436fd` (access/economic execution), Plamen `795962b96e254f2e423a2635fe7f8cb8ea1e6d69` (authority/custody/settlement transitions), Trail of Bits `d3323cefbcf645678b8dc481de204b02ad3d02dc` (source/dependency mapping, specification/invariants and static triage). No upstream pipeline, external audit or fuzz-tool execution is claimed. Static evidence retains all reference/lock/update/delete/clock/ledger matches and file hashes outside the checkout.
+
+The supported empty-authority acquisition is a real ownership and buyer-funded cash transfer. Shared early scope/vocabulary registration and actual root qualification remain release blockers. Active or dormant authority/collateral businesses remain refused until their archive bridges are source-qualified. No company account transfer, external finance activation, infrastructure, outside message, new owner spending grant or real-value transaction was introduced.
