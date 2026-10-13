@@ -72,3 +72,6 @@ const guarded=fn=>async(ch,b,...args)=>{const c=args.find(x=>x&&typeof x.query==
 export const quoteCompanyRestructuring=guarded(quote),createCompanyRestructuring=guarded(create),runCompanyRestructuring=guarded(run),cancelCompanyRestructuring=guarded(cancel);
 
 export async function voidCompanyRestructuringAtDeath(c,victim){assertItemTransaction(c);try{return await atDeath(c,victim);}catch(e){poisonItemTransaction(c,e);throw e;}}
+
+// Read-only normalization for independent historical receipt checks.
+export const validateCompanyRestructuringPlan=planTerms;

@@ -1,3 +1,4 @@
+import { installCommercialContractProof } from './lib/company-commercial-dto.js';
 import assert from 'node:assert/strict';
 const native = process.argv.includes('--postgres'); let version = 'memory';
 assert(!process.env.DATABASE_URL, 'Production integration refuses ambient database endpoints');
@@ -22,9 +23,10 @@ const { buildServer } = await import('../src/server.js'), G = await import('../s
 const I = await import('../src/items.js'), { runEstate } = await import('../src/social/estate.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 const app=await buildServer(),{default:Fastify}=await import('fastify'),Concessions=await import('../src/infrastructureconcessions.js'),ConcessionRoutes=await import('../src/routes/infrastructureconcessions.js'),S=await import('../src/companyspecialization.js'),Rentals=await import('../src/equipmentrentals.js');const component=Fastify();component.setErrorHandler((e,_r,p)=>p.code(e.statusCode||400).send({error:e.code,message:e.message}));ConcessionRoutes.register(component,{pool:app.pool,auth:async req=>{try{req.user=app.jwt.verify(String(req.headers.authorization||'').replace(/^Bearer /,''));}catch{throw Object.assign(Error('Authentication required'),{statusCode:401});}}});let sequence=0;
-// Existing global schema/actual root leases+rentals; only F19 component routes+owned DDL installed.
+installCommercialContractProof(app);
+// Existing global schema/actual root leases+rentals; actual F19 registered routes with global DDL.
 async function call(p, method, url, body, key = `combined-${++sequence}`, agent = false) {
-  const r = await (url.startsWith('/v1/company/concessions')?component:app).inject({ method, url, payload: body, headers: { ...(p ? { authorization: `Bearer ${agent ? p.agent : p.token}` } : {}), 'idempotency-key': key } });
+  const r = await app.inject({ method, url, payload: body, headers: { ...(p ? { authorization: `Bearer ${agent ? p.agent : p.token}` } : {}), 'idempotency-key': key } });
   return { code: r.statusCode, body: r.json(), headers: r.headers };
 }
 async function ok(...args) { const r = await call(...args); assert.equal(r.code, 200, JSON.stringify(r)); return r.body; }
@@ -66,7 +68,7 @@ const made=await ok(landlord,'POST','/v1/company/production/run',{businessId:lan
 const premises=(await ok(landlord,'POST','/v1/company/premises/offers',{expectedRevision:0,expectedCompanyRevision:2,depotId:landlord.business,slots:1,rentCash:300,durationSeconds:600,offerExpiresAt:new Date(Date.now()+3600000).toISOString(),published:true},'premises-offer',true)).offer;
 const rental=await ok(landlord,'POST','/v1/equipment/rentals/offers',{itemId,rentCash:100,depositCash:250,durationSeconds:600,offerSeconds:600,published:true},'rental-offer',true);
 assert.equal((await call(null,'GET',base)).code,401);
-const body={premisesOfferId:premises.id,rentalOfferId:rental.offerId,expiresInSeconds:600,published:true},offered=await ok(landlord,'POST',base+'/publish',body,'publish',true);assert.deepEqual(await ok(landlord,'POST',base+'/publish',body,'publish'),offered);assert.equal((await call(landlord,'POST',base+'/publish',{...body,expiresInSeconds:700},'publish')).body.message,'request_conflict');
+const body={premisesOfferId:premises.id,rentalOfferId:rental.offerId,expiresInSeconds:600,published:true},offered=await ok(landlord,'POST',base+'/publish',body,'publish',true);assert.deepEqual(await ok(landlord,'POST',base+'/publish',body,'publish'),offered);assert.equal((await call(landlord,'POST',base+'/publish',{...body,expiresInSeconds:700},'publish')).body.error,'idempotency_key_reuse');
 const publicBoard=await ok(foreign,'GET',base+'/offers');assert.equal(publicBoard.offers.length,1);for(const secret of [itemId,landlord.account,landlord.id,'Private fixture workshop'])assert.equal(JSON.stringify(publicBoard).includes(secret),false);assert.deepEqual((await ok(foreign,'GET',base)).concessions,[]);
 const before=[await cash(operator),await cash(landlord)],premisesLease=(await ok(operator,'POST',`/v1/company/premises/offers/${premises.id}/lease`,{expectedRevision:premises.revision,slot:1,maxRentCash:300,consent:true},'paid-premises',true)).lease;
 const rentalLease=await ok(operator,'POST','/v1/equipment/rentals/accept',{offerId:rental.offerId,maxRentCash:100,maxDepositCash:250,consent:true},'paid-tool',true);assert.deepEqual([await cash(operator),await cash(landlord)],[before[0]-650,before[1]+400]);
