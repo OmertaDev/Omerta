@@ -4060,6 +4060,526 @@
       "table_name": "service_subscriptions",
       "name": "service_subscriptions_state_check",
       "definition": "CHECK (state = ANY (ARRAY['active'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contribu_partnership_id_actor_characte_key",
+      "definition": "UNIQUE (partnership_id, actor_character)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_actor_character_fkey",
+      "definition": "FOREIGN KEY (actor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_amount_check",
+      "definition": "CHECK (amount >= 1 AND amount <= 100000)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_fund_journal_id_fkey",
+      "definition": "FOREIGN KEY (fund_journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_fund_journal_id_key",
+      "definition": "UNIQUE (fund_journal_id)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES business_partnerships(id)"
+    },
+    {
+      "table_name": "business_partnership_contributions",
+      "name": "business_partnership_contributions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_amount_check",
+      "definition": "CHECK (amount >= 1 AND amount <= 100000)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_check",
+      "definition": "CHECK (partner_cash >= 0 AND partner_cash <= amount)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES business_partnerships(id)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_withdraw_journal_id_fkey",
+      "definition": "FOREIGN KEY (withdraw_journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "business_partnership_distributions",
+      "name": "business_partnership_distributions_withdraw_journal_id_key",
+      "definition": "UNIQUE (withdraw_journal_id)"
+    },
+    {
+      "table_name": "business_partnership_requests",
+      "name": "business_partnership_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_partnership_requests",
+      "name": "business_partnership_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_check",
+      "definition": "CHECK (partner_paid >= 0 AND partner_paid <= paid_total)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_owner_funded_check",
+      "definition": "CHECK (owner_funded >= 0 AND owner_funded <= 100000)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_paid_total_check",
+      "definition": "CHECK (paid_total >= 0 AND paid_total <= 100000)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_partner_account_fkey",
+      "definition": "FOREIGN KEY (partner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_partner_character_fkey",
+      "definition": "FOREIGN KEY (partner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_partner_funded_check",
+      "definition": "CHECK (partner_funded >= 0 AND partner_funded <= 100000)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_partnerships",
+      "name": "business_partnerships_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['invited'::text, 'funding'::text, 'active'::text, 'closed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "company_acquisition_requests",
+      "name": "company_acquisition_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_acquisition_requests",
+      "name": "company_acquisition_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_pay_journal_key",
+      "definition": "UNIQUE (pay_journal)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_price_check",
+      "definition": "CHECK (price >= 1 AND price <= 100000000)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_receive_journal_key",
+      "definition": "UNIQUE (receive_journal)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_acquisitions",
+      "name": "company_acquisitions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'cancelled'::text, 'executed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "company_governance",
+      "name": "company_governance_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES business_partnerships(id)"
+    },
+    {
+      "table_name": "company_governance",
+      "name": "company_governance_pkey",
+      "definition": "PRIMARY KEY (partnership_id)"
+    },
+    {
+      "table_name": "company_governance",
+      "name": "company_governance_revision_check",
+      "definition": "CHECK (revision >= 0 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "company_governance_proposals",
+      "name": "company_governance_proposals_creator_character_fkey",
+      "definition": "FOREIGN KEY (creator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_governance_proposals",
+      "name": "company_governance_proposals_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES company_governance(partnership_id)"
+    },
+    {
+      "table_name": "company_governance_proposals",
+      "name": "company_governance_proposals_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "company_governance_proposals",
+      "name": "company_governance_proposals_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['pending'::text, 'rejected'::text, 'executed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "company_governance_requests",
+      "name": "company_governance_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_governance_requests",
+      "name": "company_governance_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "company_governance_votes",
+      "name": "company_governance_votes_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "company_governance_votes",
+      "name": "company_governance_votes_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "company_governance_votes",
+      "name": "company_governance_votes_pkey",
+      "definition": "PRIMARY KEY (proposal_id, account_id)"
+    },
+    {
+      "table_name": "company_governance_votes",
+      "name": "company_governance_votes_proposal_id_fkey",
+      "definition": "FOREIGN KEY (proposal_id) REFERENCES company_governance_proposals(id)"
+    },
+    {
+      "table_name": "employment_organization_courses",
+      "name": "employment_organization_courses_course_id_fkey",
+      "definition": "FOREIGN KEY (course_id) REFERENCES worker_training_courses(id)"
+    },
+    {
+      "table_name": "employment_organization_courses",
+      "name": "employment_organization_courses_organization_id_fkey",
+      "definition": "FOREIGN KEY (organization_id) REFERENCES employment_organizations(id)"
+    },
+    {
+      "table_name": "employment_organization_courses",
+      "name": "employment_organization_courses_organization_revision_check",
+      "definition": "CHECK (organization_revision >= 1)"
+    },
+    {
+      "table_name": "employment_organization_courses",
+      "name": "employment_organization_courses_pkey",
+      "definition": "PRIMARY KEY (course_id)"
+    },
+    {
+      "table_name": "employment_organization_requests",
+      "name": "employment_organization_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "employment_organization_requests",
+      "name": "employment_organization_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['create'::text, 'publish'::text, 'accept'::text, 'train'::text, 'revoke'::text]))"
+    },
+    {
+      "table_name": "employment_organization_requests",
+      "name": "employment_organization_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "employment_organization_requests",
+      "name": "employment_organization_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "employment_organization_requests",
+      "name": "employment_organization_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_founder_account_fkey",
+      "definition": "FOREIGN KEY (founder_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_founder_character_fkey",
+      "definition": "FOREIGN KEY (founder_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "employment_organizations",
+      "name": "employment_organizations_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'revoked'::text, 'founder_dead'::text]))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_apprentice_account_fkey",
+      "definition": "FOREIGN KEY (apprentice_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_apprentice_character_fkey",
+      "definition": "FOREIGN KEY (apprentice_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_burned_cash_check",
+      "definition": "CHECK (burned_cash >= 0)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check",
+      "definition": "CHECK (total_cash = (sessions * wage_cash))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check1",
+      "definition": "CHECK (completed_sessions >= 0 AND completed_sessions <= sessions)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check2",
+      "definition": "CHECK (total_cash = (escrow_cash + paid_cash + refunded_cash + burned_cash))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check3",
+      "definition": "CHECK (paid_cash = (completed_sessions * wage_cash))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check4",
+      "definition": "CHECK (apprentice_account IS NULL AND apprentice_character IS NULL OR apprentice_account IS NOT NULL AND apprentice_character IS NOT NULL AND apprentice_account <> employer_account)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check5",
+      "definition": "CHECK (state = 'offered'::text AND apprentice_character IS NULL OR state <> 'offered'::text)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check6",
+      "definition": "CHECK (state <> 'active'::text OR apprentice_character IS NOT NULL)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_check7",
+      "definition": "CHECK ((state <> ALL (ARRAY['completed'::text, 'closed'::text])) OR escrow_cash = 0)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_employer_account_fkey",
+      "definition": "FOREIGN KEY (employer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_employer_character_fkey",
+      "definition": "FOREIGN KEY (employer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_sessions_check",
+      "definition": "CHECK (sessions >= 1 AND sessions <= 8)"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_stat_check",
+      "definition": "CHECK (stat = ANY (ARRAY['muscle'::text, 'cunning'::text, 'speed'::text]))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'active'::text, 'completed'::text, 'recoverable'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "worker_training_courses",
+      "name": "worker_training_courses_wage_cash_check",
+      "definition": "CHECK (wage_cash >= 1 AND wage_cash <= 10000)"
+    },
+    {
+      "table_name": "worker_training_requests",
+      "name": "worker_training_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "worker_training_requests",
+      "name": "worker_training_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['create'::text, 'accept'::text, 'train'::text, 'close'::text]))"
+    },
+    {
+      "table_name": "worker_training_requests",
+      "name": "worker_training_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "worker_training_requests",
+      "name": "worker_training_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, action, request_key)"
+    },
+    {
+      "table_name": "worker_training_requests",
+      "name": "worker_training_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_apprentice_character_fkey",
+      "definition": "FOREIGN KEY (apprentice_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_check",
+      "definition": "CHECK (stat_after > stat_before)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_check1",
+      "definition": "CHECK (energy_after < energy_before)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_course_id_fkey",
+      "definition": "FOREIGN KEY (course_id) REFERENCES worker_training_courses(id)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_ordinal_check",
+      "definition": "CHECK (ordinal >= 1 AND ordinal <= 8)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_pkey",
+      "definition": "PRIMARY KEY (course_id, ordinal)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_stat_check",
+      "definition": "CHECK (stat = ANY (ARRAY['muscle'::text, 'cunning'::text, 'speed'::text]))"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_wage_transaction_fkey",
+      "definition": "FOREIGN KEY (wage_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "worker_training_sessions",
+      "name": "worker_training_sessions_wage_transaction_key",
+      "definition": "UNIQUE (wage_transaction)"
     }
   ],
   "removed": [
@@ -5336,6 +5856,159 @@
       "receipt",
       "request_key",
       "terms"
+    ],
+    "worker_training_courses": [
+      "id",
+      "depot_id",
+      "employer_account",
+      "employer_character",
+      "stat",
+      "sessions",
+      "wage_cash",
+      "total_cash",
+      "escrow_cash",
+      "paid_cash",
+      "refunded_cash",
+      "burned_cash",
+      "completed_sessions",
+      "expires_at",
+      "state",
+      "reserve_transaction"
+    ],
+    "worker_training_requests": [
+      "account_id",
+      "action",
+      "request_key",
+      "original_character",
+      "terms",
+      "receipt"
+    ],
+    "worker_training_sessions": [
+      "course_id",
+      "ordinal",
+      "apprentice_character",
+      "stat",
+      "stat_before",
+      "stat_after",
+      "energy_before",
+      "energy_after",
+      "trained_at",
+      "next_train_at",
+      "wage_transaction",
+      "canonical_result"
+    ],
+    "employment_organizations": [
+      "id",
+      "crew_id",
+      "depot_id",
+      "founder_account",
+      "founder_character",
+      "revision",
+      "state"
+    ],
+    "employment_organization_courses": [
+      "course_id",
+      "organization_id",
+      "organization_revision"
+    ],
+    "employment_organization_requests": [
+      "account_id",
+      "action",
+      "request_key",
+      "original_character",
+      "terms",
+      "receipt"
+    ],
+    "business_partnerships": [
+      "id",
+      "depot_id",
+      "owner_account",
+      "partner_account",
+      "owner_character",
+      "partner_character",
+      "terms",
+      "terms_hash",
+      "state",
+      "owner_funded",
+      "partner_funded",
+      "paid_total",
+      "partner_paid",
+      "created_at",
+      "expires_at"
+    ],
+    "business_partnership_requests": [
+      "account_id",
+      "request_key",
+      "identity",
+      "receipt"
+    ],
+    "business_partnership_distributions": [
+      "id",
+      "partnership_id",
+      "amount",
+      "partner_cash",
+      "withdraw_journal_id"
+    ],
+    "business_partnership_contributions": [
+      "id",
+      "partnership_id",
+      "actor_character",
+      "amount",
+      "fund_journal_id"
+    ],
+    "company_governance": [
+      "partnership_id",
+      "relationship_hash",
+      "owner_opted",
+      "partner_opted",
+      "revision",
+      "retired"
+    ],
+    "company_governance_proposals": [
+      "id",
+      "partnership_id",
+      "creator_character",
+      "revision",
+      "snapshot_hash",
+      "config",
+      "proposal_hash",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "company_governance_votes": [
+      "proposal_id",
+      "account_id",
+      "character_id",
+      "proposal_hash",
+      "approve",
+      "voted_at"
+    ],
+    "company_governance_requests": [
+      "account_id",
+      "request_key",
+      "identity",
+      "receipt"
+    ],
+    "company_acquisitions": [
+      "id",
+      "depot_id",
+      "seller_account",
+      "buyer_account",
+      "seller_character",
+      "buyer_character",
+      "price",
+      "source_hash",
+      "terms_hash",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "company_acquisition_requests": [
+      "account_id",
+      "request_key",
+      "identity",
+      "receipt"
     ]
   }
 }
