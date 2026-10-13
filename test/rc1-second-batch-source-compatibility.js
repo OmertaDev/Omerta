@@ -5,8 +5,8 @@ import { execFileSync } from 'node:child_process';
 import * as O from '../tools/rc1-second-batch-source-compatibility.js';
 const lf=t=>t.replaceAll('\r\n','\n'),git=(...a)=>lf(execFileSync('git',a,{encoding:'utf8',maxBuffer:16*1024*1024,stdio:['ignore','pipe','pipe']}));
 const hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
-const files=['schema.sql','src/server.js','src/invariants.js','src/items.js','src/mysteries.js','src/game.js','src/itemdurability.js','src/social/estate.js','src/social/combat.js','src/worker.js','src/routes/modtools.js','src/agentgateway.js','src/company-economy-contracts.js'];
-assert.equal(O.SECOND_BATCH_SOURCE_REVISION,'a4c2a63c86431862772beceec214ae22d441b6be');
+const files=['schema.sql','src/server.js','src/invariants.js','src/items.js','src/mysteries.js','src/game.js','src/itemdurability.js','src/social/estate.js','src/social/combat.js','src/worker.js','src/routes/modtools.js','src/agentgateway.js','src/company-economy-contracts.js','package.json'];
+assert.equal(O.SECOND_BATCH_SOURCE_REVISION,'f9767e4eda3c0863d740c0b557c3e2d6a4606f04');
 assert.equal(O.SECOND_BATCH_SOURCE_PREDECESSOR,'9adc01bea4963b89f12419126bd91bb5e7d57a55');
 assert.deepEqual(Object.keys(O.SECOND_BATCH_SOURCE_DOMAINS),files);
 let texts=0,hashes=0,blobs=0,hunks=0,negatives=0;
@@ -31,7 +31,7 @@ for(const [file,d] of Object.entries(O.SECOND_BATCH_SOURCE_DOMAINS)){
  }
  if(d.inverses.length>1){const a=d.inverses[0].current,b=d.inverses[1].current;reject(file,current.replace(a,'@@second-batch-test@@').replace(b,a).replace('@@second-batch-test@@',b));}
 }
-for(const file of ['src/unknown.js','src/equipment-economy-contracts.js','src/equipmentrentals.js','package.json','test/lib/phase2-architecture-upgrade-catalog.json','src/generated.js','src/server.js.extra']){
+for(const file of ['src/unknown.js','src/equipment-economy-contracts.js','src/equipmentrentals.js','package.json.unreviewed','test/lib/phase2-architecture-upgrade-catalog.json','src/generated.js','src/server.js.extra']){
  const text=fs.existsSync(file)?lf(fs.readFileSync(file,'utf8')):'unknown';reject(file,text);
 }
 console.log(`Second-batch source compatibility PASS: ${files.length} literal domains, ${texts} full-text/${hashes} SHA256/${blobs} Gitblob comparisons, ${hunks} actual inverse hunks, ${negatives} negative controls; source transfer only`);
