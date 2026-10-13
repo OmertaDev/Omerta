@@ -33,13 +33,11 @@ on:
 
 env:
   RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
+  RC1_ROLLBACK_PROFILE: ${{ inputs.rollback_profile || 'legacy_observed468' }}
+  RC1_ROLLBACK_SOURCE: ${{ inputs.rollback_profile == 'actual_deployed_f254' && 'f254c64a54a019665d7a516d382d56b46f2dcd82' || '468516d8d6f3729514711ad5a0b83e440c5c46f9' }}
 
 permissions:
   contents: read
-
-env:
-  RC1_ROLLBACK_PROFILE: ${{ inputs.rollback_profile || 'legacy_observed468' }}
-  RC1_ROLLBACK_SOURCE: ${{ inputs.rollback_profile == 'actual_deployed_f254' && 'f254c64a54a019665d7a516d382d56b46f2dcd82' || '468516d8d6f3729514711ad5a0b83e440c5c46f9' }}
 
 jobs:
   retention-controls:
