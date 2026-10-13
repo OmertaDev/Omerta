@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "37c8dada0f0635775f450df6bf160f20e16be5a2",
+  "sourceRevision": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12576,
-    "edges": 51029,
+    "nodes": 12579,
+    "edges": 51040,
     "byNodeType": {
       "Artifact": 4752,
       "Command": 261,
-      "Commit": 3480,
+      "Commit": 3483,
       "Contract": 126,
       "Document": 791,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3894,
-      "CHANGED": 20133,
+      "CHANGED": 20141,
       "CONTAINS": 4773,
       "DECLARES": 261,
       "DEFINED_IN": 1551,
       "DEPENDS_ON": 67,
       "EXECUTES": 922,
       "HANDLED_BY": 869,
-      "HAS_COMMIT": 3480,
+      "HAS_COMMIT": 3483,
       "IMPLEMENTS": 124,
       "IMPORTS": 5363,
       "INHERITS": 42,
@@ -29831,20 +29831,20 @@
       "path": "docs/rc1-source-pair-additive-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 14586,
+      "bytes": 14813,
       "lines": 52,
-      "version": "58af0698f84f5558",
+      "version": "4eda7e09ab351ace",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "58af0698f84f5558"
+          "version": "4eda7e09ab351ace"
         }
       ],
-      "lastChangedAt": "2026-10-13T21:34:04.000Z",
+      "lastChangedAt": "2026-10-13T23:07:34.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "37c8dada0f0635775f450df6bf160f20e16be5a2"
+      "lastChangedCommit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
     },
     {
       "key": "Artifact:docs/rc1-world-car-melt-witness.md",
@@ -80243,18 +80243,18 @@
       "extension": ".md",
       "bytes": 57047,
       "lines": 760,
-      "version": "d45da5742adb373b",
+      "version": "e06b3e4643c6c43f",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d45da5742adb373b"
+          "version": "e06b3e4643c6c43f"
         }
       ],
-      "lastChangedAt": "2026-10-13T21:32:43.000Z",
+      "lastChangedAt": "2026-10-13T23:06:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "68c6a43e4571264da9a332dfad92d6926cc2cded"
+      "lastChangedCommit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
     },
     {
       "key": "Artifact:src/access.js",
@@ -91002,20 +91002,20 @@
       "path": "test/city-scene-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 173563,
-      "lines": 2253,
-      "version": "7a081abde67e1096",
+      "bytes": 174960,
+      "lines": 2269,
+      "version": "f4b4a3a6c935bccc",
       "text": true,
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "7a081abde67e1096"
+          "version": "f4b4a3a6c935bccc"
         }
       ],
-      "lastChangedAt": "2026-10-13T21:32:43.000Z",
+      "lastChangedAt": "2026-10-13T23:06:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "68c6a43e4571264da9a332dfad92d6926cc2cded"
+      "lastChangedCommit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
     },
     {
       "key": "Artifact:test/city-social-api.js",
@@ -108337,18 +108337,18 @@
       "extension": ".js",
       "bytes": 40944,
       "lines": 552,
-      "version": "8643f63ff6e6e840",
+      "version": "82da126fc5fd71e0",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "8643f63ff6e6e840"
+          "version": "82da126fc5fd71e0"
         }
       ],
-      "lastChangedAt": "2026-10-13T21:34:04.000Z",
+      "lastChangedAt": "2026-10-13T23:07:34.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "37c8dada0f0635775f450df6bf160f20e16be5a2"
+      "lastChangedCommit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -129012,6 +129012,22 @@
       ]
     },
     {
+      "key": "Commit:492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "type": "Commit",
+      "id": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "label": "Fix pressure HUD browser fixture across font fallbacks",
+      "title": "Fix pressure HUD browser fixture across font fallbacks",
+      "date": "2026-10-13T23:06:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "provenance": [
+        {
+          "commit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
+        }
+      ]
+    },
+    {
       "key": "Commit:492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53",
       "type": "Commit",
       "id": "492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53",
@@ -145616,6 +145632,22 @@
         {
           "commit": "95542572ccf1a02a415addd2013b9bb4ec89ad60",
           "url": "https://github.com/OmertaDev/Omerta/commit/95542572ccf1a02a415addd2013b9bb4ec89ad60"
+        }
+      ]
+    },
+    {
+      "key": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "type": "Commit",
+      "id": "95765e3248fc0f24a161beb6e39473624bc57093",
+      "label": "Refresh knowledge for overhead City release",
+      "title": "Refresh knowledge for overhead City release",
+      "date": "2026-10-13T21:36:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/95765e3248fc0f24a161beb6e39473624bc57093",
+      "provenance": [
+        {
+          "commit": "95765e3248fc0f24a161beb6e39473624bc57093",
+          "url": "https://github.com/OmertaDev/Omerta/commit/95765e3248fc0f24a161beb6e39473624bc57093"
         }
       ]
     },
@@ -164052,6 +164084,22 @@
       ]
     },
     {
+      "key": "Commit:eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "type": "Commit",
+      "id": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "label": "Pin pressure fixture source for additive rehearsal",
+      "title": "Pin pressure fixture source for additive rehearsal",
+      "date": "2026-10-13T23:07:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "provenance": [
+        {
+          "commit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
+        }
+      ]
+    },
+    {
       "key": "Commit:ebbd5a5ea4634bda27fe98c970ccd42735783156",
       "type": "Commit",
       "id": "ebbd5a5ea4634bda27fe98c970ccd42735783156",
@@ -178402,12 +178450,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 52,
-      "version": "58af0698f84f5558",
+      "version": "4eda7e09ab351ace",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "58af0698f84f5558"
+          "version": "4eda7e09ab351ace"
         }
       ]
     },
@@ -183138,12 +183186,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "d45da5742adb373b",
+      "version": "e06b3e4643c6c43f",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "d45da5742adb373b"
+          "version": "e06b3e4643c6c43f"
         }
       ]
     },
@@ -192285,6 +192333,9 @@
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
         },
         {
+          "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
+        },
+        {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
@@ -194172,6 +194223,9 @@
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
         },
         {
+          "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
+        },
+        {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
         },
         {
@@ -196057,6 +196111,9 @@
         },
         {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
+        },
+        {
+          "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
         },
         {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
@@ -198472,6 +198529,9 @@
         },
         {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
+        },
+        {
+          "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
         },
         {
           "commit": "958d4ac9b9db523560a78b400ab7060c459fc1db"
@@ -210786,7 +210846,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "37c8dada0f0635775f450df6bf160f20e16be5a2",
+      "revision": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
       "currentBranch": "codex/city-open-world-shell",
       "defaultBranch": "main",
       "visibility": "public",
@@ -244763,13 +244823,13 @@
       "type": "TestSuite",
       "id": "test/city-scene-browser.js",
       "label": "test/city-scene-browser.js",
-      "lines": 2253,
-      "version": "7a081abde67e1096",
+      "lines": 2269,
+      "version": "f4b4a3a6c935bccc",
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "7a081abde67e1096"
+          "version": "f4b4a3a6c935bccc"
         }
       ]
     },
@@ -332857,6 +332917,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "to": "Artifact:test/city-scene-browser.js",
+      "provenance": {
+        "commit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -380165,6 +380241,38 @@
       "to": "HistoricalArtifact:omerta-value-creation-design.md",
       "provenance": {
         "commit": "95542572ccf1a02a415addd2013b9bb4ec89ad60"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
       }
     },
     {
@@ -433861,6 +433969,22 @@
       "to": "Artifact:test/rc1-world-car-melt-witness.js",
       "provenance": {
         "commit": "eb9de5a6651d812f33731f3d40be1013fac657f4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
       }
     },
     {
@@ -533957,6 +534081,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:492a7c0efaf0a123cf1c2fe6b2167654d3af80c4",
+      "provenance": {
+        "commit": "492a7c0efaf0a123cf1c2fe6b2167654d3af80c4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53",
       "provenance": {
         "commit": "492ec8b2f62c7dc0aaecf7c5bbc32ce7cb7f5c53"
@@ -542256,6 +542388,14 @@
       "to": "Commit:95542572ccf1a02a415addd2013b9bb4ec89ad60",
       "provenance": {
         "commit": "95542572ccf1a02a415addd2013b9bb4ec89ad60"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:95765e3248fc0f24a161beb6e39473624bc57093",
+      "provenance": {
+        "commit": "95765e3248fc0f24a161beb6e39473624bc57093"
       }
     },
     {
@@ -551472,6 +551612,14 @@
       "to": "Commit:eb9de5a6651d812f33731f3d40be1013fac657f4",
       "provenance": {
         "commit": "eb9de5a6651d812f33731f3d40be1013fac657f4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eba1dcc2a9e82467d76bdeb2db6ef41387e39121",
+      "provenance": {
+        "commit": "eba1dcc2a9e82467d76bdeb2db6ef41387e39121"
       }
     },
     {
@@ -572070,7 +572218,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 1169
+        "line": 1185
       }
     },
     {
@@ -652170,7 +652318,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 1169
+        "line": 1185
       }
     },
     {
