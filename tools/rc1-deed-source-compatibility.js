@@ -1,4 +1,4 @@
-import { firstBatchSourceBaseline, assertFirstBatchSourceTransfer } from './rc1-first-batch-source-compatibility.js';
+import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from './player-intel-source-compatibility.js';
 import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS, qualifyStrategyLeagueSource } from './rc1-strategy-league-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS, qualifyMarketFeedSource } from './rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, qualifyCompanySuccessionSource } from './rc1-company-succession-source-compatibility.js';
@@ -6,6 +6,7 @@ import { STRATEGY_SOURCE_CURRENT_PINS, qualifyStrategySource } from './rc1-strat
 import { COVERAGE_SOURCE_CURRENT_PINS, qualifyCoverageSource } from './rc1-logistics-coverage-source-compatibility.js';
 import { INVOICE_SOURCE_CURRENT_PINS, INVOICE_SOURCE_TRANSFER, qualifyInvoiceSource } from './rc1-invoice-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
+import { cityGameplaySourceBaseline, qualifyCityGameplaySource } from './rc1-city-gameplay-source-compatibility.js';
 // Pure test-only source transfer guards; no product modules or runtime effects.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -21,7 +22,11 @@ import { COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, assertCommercialReputationSo
 import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 function operatorEnvelope(file, input, predecessorGuard) {
- const text = input.replaceAll('\r\n', '\n');
+ const actualText = input.replaceAll('\r\n', '\n'), gameplayText = cityGameplaySourceBaseline(file, actualText);
+ const gameplay = gameplayText !== actualText ? qualifyCityGameplaySource(file, actualText) : null;
+ const playerIntel = Object.hasOwn(PLAYER_INTEL_SOURCE_TRANSFER.currentPins, file) && hash(gameplayText) === PLAYER_INTEL_SOURCE_TRANSFER.currentPins[file]
+   ? assertPlayerIntelSourceTransfer(file, gameplayText) : null;
+ const text = playerIntel?.baselineText || gameplayText;
  const season = Object.hasOwn(BUSINESS_SEASON_SOURCE_CURRENT_PINS, file) && hash(text) === BUSINESS_SEASON_SOURCE_CURRENT_PINS[file] ? assertBusinessSeasonSourceTransfer(file, text) : null;
  const reputationText = season?.baselineText || text;
  const reputation = Object.hasOwn(COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS, file) && hash(reputationText) === COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS[file] ? assertCommercialReputationSourceTransfer(file, reputationText) : null;
@@ -44,7 +49,7 @@ function operatorEnvelope(file, input, predecessorGuard) {
  const transfer = assertCompanyOperatorSourceTransfer(file, operatorText);
  const home = file === 'src/server.js' ? assertCityHomesLeagueServerTransfer(transfer.baselineText) : null;
  const predecessor = predecessorGuard(home?.baselineText || transfer.baselineText);
- return { ...predecessor, actualSha256: hash(text), companyOperatorSourceTransfer: transfer, ...(season ? { businessSeasonSourceTransfer: season } : {}), ...(reputation ? { commercialReputationSourceTransfer: reputation } : {}), ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
+ return { ...predecessor, actualSha256: hash(actualText), companyOperatorSourceTransfer: transfer, ...(gameplay ? { gameplaySourceTransfer: gameplay } : {}), ...(playerIntel ? { playerIntelSourceTransfer: playerIntel } : {}), ...(season ? { businessSeasonSourceTransfer: season } : {}), ...(reputation ? { commercialReputationSourceTransfer: reputation } : {}), ...(opportunity ? { companyOpportunitySourceTransfer: opportunity } : {}), ...(cooperative ? { buyerCooperativeSourceTransfer: cooperative } : {}), ...(hub ? { companyLogisticsHubSourceTransfer: hub } : {}), ...(bank ? { companyBankSourceTransfer: bank } : {}), ...(premises ? { commercialPremisesSourceTransfer: premises } : {}), ...(workflow ? { companyWorkflowSourceTransfer: workflow } : {}), ...(employment ? { gameEmploymentSourceTransfer: employment } : {}), ...(home ? { cityHomesLeagueSourceTransfer: home } : {}) };
 }
 export const CITY_HOMES_SERVER_PIN = 'f66e2f5a40394d3dc1ac92a779486fa0cb7b5a3d005eae2f4a99214e65105dd6';
 export const CITY_HOMES_SOURCE_BASE_REVISION = '9506c37e18bbc1be45ae8150951e42451eb909de';
@@ -107,7 +112,7 @@ export function assertCityHomesLeagueServerTransfer(input) {
   predecessorServerBlob: CITY_HOMES_LEAGUE_PREDECESSOR_SERVER_BLOB, inverseChunks: 2 };
 }
 export function cityHomesLeagueSourceBaseline(file, input) {
- const text = companyOperatorSourceBaseline(file, input);
+ const text = companyOperatorSourceBaseline(file, cityGameplaySourceBaseline(file, input));
  return file === 'src/server.js' && hash(text) === CITY_HOMES_LEAGUE_SERVER_PIN ? assertCityHomesLeagueServerTransfer(text).baselineText : text;
 }
 // Franchise additions transfer only unchanged historical assertions by full-file reconstruction.
@@ -192,10 +197,10 @@ export const FRANCHISE_SOURCE_INVERSES = Object.freeze({
   ]
 });
 export function assertFranchiseSourceTransfer(file, text) {
-  const outer = firstBatchSourceBaseline(file, text);
-  if (outer !== text.replaceAll('\r\n', '\n')) {
-    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
-    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  const gameplayBaseline = cityGameplaySourceBaseline(file, text);
+  if (gameplayBaseline !== text) {
+    const gameplay = qualifyCityGameplaySource(file, text), predecessor = assertFranchiseSourceTransfer(file, gameplay.baselineText);
+    return { ...predecessor, actualSha256: gameplay.actualSha256, gameplaySourceTransfer: gameplay };
   }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertFranchiseSourceTransfer(file, transfer.baselineText);
@@ -951,10 +956,10 @@ const economyInvariantChanges = [
   ]
 ];
 export function assertDeedBacklogCompatibility(file, text) {
-  const outer = firstBatchSourceBaseline(file, text);
-  if (outer !== text.replaceAll('\r\n', '\n')) {
-    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
-    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
+  const gameplayBaseline = cityGameplaySourceBaseline(file, text);
+  if (gameplayBaseline !== text) {
+    const gameplay = qualifyCityGameplaySource(file, text), predecessor = assertDeedBacklogCompatibility(file, gameplay.baselineText);
+    return { ...predecessor, actualSha256: gameplay.actualSha256, gameplaySourceTransfer: gameplay };
   }
   if (file === 'src/invariants.js' && hash(text.replaceAll('\r\n', '\n')) === BUYER_COOPERATIVE_SOURCE_CURRENT_PINS[file]) {
     const transfer = assertBuyerCooperativeSourceTransfer(file, text), predecessor = assertDeedBacklogCompatibility(file, transfer.baselineText);
@@ -1727,11 +1732,6 @@ const cityExtensionInverse = {
   ]
 };
 export function assertCitySourceTransfer(file, text) {
-  const outer = firstBatchSourceBaseline(file, text);
-  if (outer !== text.replaceAll('\r\n', '\n')) {
-    const transfer = assertFirstBatchSourceTransfer(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
-    return { ...predecessor, actualSha256: hash(text.replaceAll('\r\n', '\n')), firstBatchSourceTransfer: transfer };
-  }
   if (hash(text) === STRATEGY_LEAGUE_SOURCE_CURRENT_PINS[file]) {
     const transfer = qualifyStrategyLeagueSource(file, text), predecessor = assertCitySourceTransfer(file, transfer.baselineText);
     return { ...predecessor, actualSha256: hash(text), strategyLeagueSourceTransfer: transfer };

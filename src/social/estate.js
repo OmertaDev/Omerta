@@ -85,6 +85,16 @@ export async function clearInboundPointers(client, charId, accountId) {
   await client.query('DELETE FROM city_intel_progress WHERE character_id=$1', [charId]);
   // Free room/look preferences and chat consent never pass to another generation.
   await client.query('DELETE FROM city_social_preferences WHERE character_id=$1', [charId]);
+  // A durable account home survives; its old host/guest generations never retain consent.
+  await client.query(`UPDATE city_home_visitors SET status='revoked',revoked_at=now()
+    WHERE (host_character_id=$1 OR guest_character_id=$1) AND status IN ('invited','active')`, [charId]);
+  // Owner-generation favors end with their owner; other owners retain historical target trust.
+  await client.query('DELETE FROM city_npc_favors WHERE owner_character_id=$1', [charId]);
+  await client.query('DELETE FROM city_encounters WHERE owner_character_id=$1', [charId]);
+  await client.query(`UPDATE city_home_activities SET status='closed',close_reason='host_departed',closed_at=now()
+    WHERE host_character_id=$1 AND status='open'`, [charId]);
+  await client.query(`UPDATE city_home_activity_members SET status='left',left_at=now()
+    WHERE character_id=$1 AND status IN ('active','solved')`, [charId]);
   // a paid bodyguard whose principal is this character: released — and the stale pointer no longer
   // BLOCKS the principal hiring a replacement for the rest of the window (paid, unprotected, locked
   // out — the audit-F8 class). A killer who hired their own victim as guard is mirrored in memory by
