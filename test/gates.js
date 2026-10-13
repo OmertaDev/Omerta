@@ -3263,8 +3263,6 @@ scopedSocialContext = async function(db) {
   // ── DECLARED. Each of these was read at its call sites; the reason is the PROPERTY that makes a
   // user string unreachable, never "it looked fine". Keyed on file + expression text.
   const DECLARED = {
-    'test/companydemand-fixture.js': 'Import-only authenticated gameplay fixture used by the executed demand, forecast and discovery-contract suites; exports no standalone test runner.',
-    'test/companyproduction-schema.js': 'Import-only frozen production DDL fixture; actual schema, constraints and canonical production execute in the memory/native production and migration suites.',
     // A SQL-fragment PARAMETER of a module-local helper whose every call site passes a literal.
     'src/honor.js|col': 'board(col,dir,cond) — both call sites pass literal column/direction/predicate',
     'src/honor.js|dir': 'board(col,dir,cond) — both call sites pass literals',
@@ -3423,6 +3421,8 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/companydemand-fixture.js': 'Import-only authenticated gameplay fixture used by the executed demand, forecast and discovery-contract suites; exports no standalone test runner.',
+    'test/companyproduction-schema.js': 'Import-only frozen production DDL fixture; actual schema, constraints and canonical production execute in the memory/native production and migration suites.',
     'test/rc1-resident-restart.js':
       'Requires the retained private alliance hour-24 dump, policy and RNG tape selected with --retained. '
       + 'A newly seeded CI database cannot reproduce the recorded interruption. The bounded native '
