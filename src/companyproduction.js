@@ -86,8 +86,14 @@ async function runProduction(client, accountId, body, requestKey, options) {
       await guardDelegatedControl(client, business.id, true);
       fail('production_consent');
     }
+    const expiry = options.agentCredential ? admission.agentGrantExpiresAt : null;
+    if (options.agentCredential && expiry !== null && (typeof expiry !== 'string' || !Number.isFinite(Date.parse(expiry)))) fail('internal_context');
     const receipt = await craftWorldGraphRecipe(client, { accountId, expectedCharacterId: originalCharacter }, step.recipeId, key);
     if (receipt.cashCost !== recipeCashCost) fail('source_changed');
+    if (expiry !== null) {
+      const observed = (await client.query('SELECT clock_timestamp() AS observed')).rows[0].observed;
+      if (+new Date(observed) >= Date.parse(expiry)) fail('production_grant_expired');
+    }
     crafts.push({ ordinal, key, receipt, ...(admission === undefined ? {} : { admission }) }); ordinal++;
   }
   const receipt = { ok: true, runId, originalCharacter, businessId: business.id, sourcePin, steps: normalized.steps, totalCrafts: normalized.totalCrafts, totalCashCost,

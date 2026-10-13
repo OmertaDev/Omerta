@@ -25,7 +25,7 @@ const Production = await import('../src/companyproduction.js'), Routes = await i
 const { runLedgerInvariants } = await import('../src/invariants.js'), { runEstate } = await import('../src/social/estate.js');
 const app = await buildServer(); await app.pool.query(PRODUCTION_DDL);
 // Owned route registration fixture: shared main registration remains coordinator work.
-Routes.register(app, { pool: app.pool, auth: req => req.jwtVerify(), beforeCraft: async () => ({ productionAuthorized: true }) });
+Routes.register(app, { pool: app.pool, auth: req => req.jwtVerify(), beforeCraft: async () => ({ productionAuthorized: true, agentGrantExpiresAt: null }) });
 let serial = 0;
 const call = (p, method, url, body, key = `production-http-${++serial}`, agent = false) => app.inject({ method, url, payload: body,
   headers: { ...(p ? { authorization: `Bearer ${agent ? p.agent : p.token}` } : {}), 'idempotency-key': key } });
@@ -115,7 +115,8 @@ try {
   await assert.rejects(run(delegated, chain(delegated), 'old-policy-no-new-grant', { agentCredential: true }), e => e.code === 'owner_authority');
   assert.deepEqual(await state(delegated), delegatedBefore);
   const approved = await run(delegated, chain(delegated), 'trusted-production-action-grant', { agentCredential: true,
-    beforeCraft: async (_client, ctx) => { assert.equal(ctx.totalCashCost, 300); assert.equal(ctx.businessId, delegated.business); return { productionAuthorized: true, fixtureAdmission: 'trusted-action-specific-hook' }; } });
+    beforeCraft: async (_client, ctx) => { assert.equal(ctx.totalCashCost, 300); assert.equal(ctx.businessId, delegated.business); return { productionAuthorized: true,
+      agentGrantExpiresAt: new Date(Date.now() + 60000).toISOString(), fixtureAdmission: 'trusted-action-specific-hook' }; } });
   assert.equal(approved.totalCashCost, 300);
   assert.equal(Number((await app.pool.query('SELECT spent FROM business_operating_policies WHERE depot_id=$1', [delegated.business])).rows[0].spent), 0,
     'A trusted action-specific grant never borrows the old restock budget');
@@ -135,6 +136,22 @@ try {
       }
       assert.fail('The genuine canonical source lock wait must be observed');
     }
+    const expired = await player(); await materials(expired); const expiryBefore = await state(expired), inputHolder = await app.pool.connect();
+    let inputReached, inputPid, grantExpiry; const atInput = new Promise(resolve => { inputReached = resolve; });
+    try {
+      await inputHolder.query('BEGIN');
+      await inputHolder.query('SELECT quantity FROM item_stacks WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND quality=$4 FOR UPDATE', ['account', expired.account, 'mat:scrap_steel', 'standard']);
+      const pending = tx(async client => { const query = client.query; client.query = function(sql, ...args) {
+        if (typeof sql === 'string' && sql.startsWith('SELECT quantity, created_at, updated_at FROM item_stacks')) { inputPid = client.processID; inputReached(); }
+        return query.call(this, sql, ...args);
+      }; try { return await Production.runCompanyProduction(client, expired.account, chain(expired), 'grant-ended-during-input-wait', { agentCredential: true,
+        beforeCraft: async () => { grantExpiry ||= new Date(Date.now() + 500).toISOString(); return { productionAuthorized: true, agentGrantExpiresAt: grantExpiry }; } }); }
+      finally { client.query = query; } });
+      const refused = assert.rejects(pending, /production_grant_expired/); await atInput; await waiting(inputPid);
+      await new Promise(resolve => setTimeout(resolve, Math.max(0, Date.parse(grantExpiry) - Date.now() + 50)));
+      await inputHolder.query('COMMIT'); await refused;
+      assert.deepEqual(await state(expired), expiryBefore, 'Expiry after canonical input wait rolls back fee, items, child guards and metadata');
+    } finally { await inputHolder.query('ROLLBACK'); inputHolder.release(); }
     const drift = await player(); await materials(drift); const driftBefore = await state(drift), holder = await app.pool.connect();
     let reached, pid; const atBusiness = new Promise(resolve => { reached = resolve; });
     try {
