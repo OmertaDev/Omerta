@@ -15,9 +15,9 @@ const option = (name, fallback) => process.argv.find((value) => value.startsWith
 const accounts = ['rc1-pair-predecessor', 'rc1-pair-candidate'];
 const additiveOwnedFiles = new Set(['tools/rc1-source-pair.js', 'test/rc1-source-pair-additive.js', 'docs/rc1-source-pair-additive-review.md']);
 export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
-  predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: '1377a4483289705ec5f26047240cee0a17042023',
+  predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: 'b0cf6767a7cd74a06dfdd8a1afbd0ccb7b6414f1',
   predecessorTree: 'e61a5d7d3438d17079009e3e93c0b3f0ebc891b0d92156a103a9c25900ae199e',
-  candidateTree: 'ada9dcac98d11835fa0e46ec844219ecd5f84826775aa91988a959c61ffc4513',
+  candidateTree: 'aabbc347c901c5e4ea4d51d1a2349ced008e6adf6a66a95eb70c620a9e2766cc',
   predecessorSchema: 'd45c84e1b364d82f0834975f08a58675c8e3930dc35f0dd47534c5bed4741c9f',
   candidateSchema: '220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390',
   predecessorCatalog: '2b809acfc18a556e42ef0a144523ff3e69253623e7c5a24895f3743dd8d120e8',
