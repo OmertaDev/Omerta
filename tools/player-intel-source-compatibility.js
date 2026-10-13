@@ -6,10 +6,10 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 
 export const PLAYER_INTEL_SOURCE_TRANSFER = Object.freeze({
-  "sourceRevision": "8df37be1cdafaf54b25a6eb484342457d3d34983",
-  "predecessorRevision": "b49d11ca704dd192f46b3e3d549be10aae58a97d",
+  "sourceRevision": "b7113d43815df1e1fdc17198bafa4c0835624c19",
+  "predecessorRevision": "fb695d002198a67c68ff49df48469e033684e99c",
   "currentPins": {
-    "src/server.js": "10f79af1d18b14b2b5ae6d4511e1d9c07916e5c4014e2ca853048c1b0bb9d979",
+    "src/server.js": "d80acf5224ce62489cfcefd55d19dc5b3c6fc44912933b3f349b46cbbe46152c",
     "src/game.js": "5ac19682d0515ca72706c6106b948bd9fec6e454eb491d051ddf260673038bb7",
     "src/crew.js": "6f315141290395fa2c3bcc71668fa34ab784d9d5b7648da166e77dc280831226",
     "src/secrets.js": "e2f2b61dd9b32b0f6ffc6a4959479d9aacba42a92fa57daa04de307199e6a5eb",
@@ -17,7 +17,7 @@ export const PLAYER_INTEL_SOURCE_TRANSFER = Object.freeze({
     "src/wire.js": "6386915217ca06fed9755f8e3c7d4a9cd1adcadd28c39a7ef24c811f68011cc4"
   },
   "baselinePins": {
-    "src/server.js": "35134b856e2b7a62efe63c8334c2684f1813e93469d42f0e456b71e4c6928b1d",
+    "src/server.js": "e0090465696793006f50496af54e7cea6146456b85d3c63a37de3844792a5536",
     "src/game.js": "8c299023ed047d5ff97125044e4e45e1052289bc82b470a08709b33d0402266c",
     "src/crew.js": "28f8646f59cc6e21c69055092d2b5c9ca4766df73a06f636f26dd31dfc063c09",
     "src/secrets.js": "4cd2e10e2980912669c1ff6b59fdb0f6b6bfb38cf619377329fedc0baa25307f",
@@ -25,7 +25,7 @@ export const PLAYER_INTEL_SOURCE_TRANSFER = Object.freeze({
     "src/wire.js": "3886c5a64f5c8594fe7e93194c8e282fa372076ccbec88dd2abf06b5d2da321c"
   },
   "currentBlobs": {
-    "src/server.js": "bbac39f44427889af6f62d71803985eb0492189e",
+    "src/server.js": "02aefa2218757aac48a98583f713abacd720f57a",
     "src/game.js": "2595fc56840ca84cf433966c37c0374d8e088b95",
     "src/crew.js": "84d55de26ed9943560c7c07c551790539e2e55ac",
     "src/secrets.js": "02064da17348165215587d1ee2fd1df02bb90731",
@@ -33,7 +33,7 @@ export const PLAYER_INTEL_SOURCE_TRANSFER = Object.freeze({
     "src/wire.js": "4c903effb49b55509f9d5e0b2dcd5372fd5a5d08"
   },
   "baselineBlobs": {
-    "src/server.js": "68b4f7c94cb3710e6eff5debb6ef26f01c279613",
+    "src/server.js": "4a33da610db9260f191c22ed678b4f9f2b68afdb",
     "src/game.js": "48e9c5ab0df52d00ab27b2077cf38dbde2fc1d2f",
     "src/crew.js": "1f3121bd1ea60f54575d47522a48fbf76d1296ce",
     "src/secrets.js": "23a79635219bb111d07191a22b21f70ba871b8d5",
