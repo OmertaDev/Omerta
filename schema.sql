@@ -8665,3 +8665,28 @@ CREATE TABLE IF NOT EXISTS equipment_rental_leases (
  CHECK(landlord_account<>borrower_account AND landlord_character<>borrower_character),
  CHECK((status='active' AND ended_at IS NULL) OR (status<>'active' AND ended_at IS NOT NULL AND deposit_remaining=0)));
 CREATE UNIQUE INDEX IF NOT EXISTS equipment_rental_one_live_tool ON equipment_rental_leases(item_id) WHERE status='active';
+
+
+-- Original-payer prepaid canonical equipment maintenance subscriptions.
+CREATE TABLE IF NOT EXISTS service_subscriptions (
+ id TEXT PRIMARY KEY, payer_account TEXT NOT NULL REFERENCES accounts(id), payer_character TEXT NOT NULL REFERENCES characters(id),
+ provider_account TEXT NOT NULL REFERENCES accounts(id), provider_character TEXT NOT NULL REFERENCES characters(id),
+ offer_id TEXT NOT NULL REFERENCES equipment_maintenance_offers(id), item_id TEXT NOT NULL REFERENCES item_instances(id),
+ fee_ceiling INT NOT NULL CHECK(fee_ceiling BETWEEN 1 AND 1000), max_cycles INT NOT NULL CHECK(max_cycles BETWEEN 1 AND 12),
+ interval_seconds INT NOT NULL CHECK(interval_seconds BETWEEN 300 AND 86400), cycles_completed INT NOT NULL DEFAULT 0,
+ expires_at TIMESTAMPTZ NOT NULL, next_run_at TIMESTAMPTZ NOT NULL, revision INT NOT NULL DEFAULT 1,
+ state TEXT NOT NULL CHECK(state IN ('active','closed')), close_reason TEXT,
+ initial_cash INT NOT NULL CHECK(initial_cash BETWEEN 1 AND 12000), escrow_cash INT NOT NULL CHECK(escrow_cash>=0),
+ spent_cash INT NOT NULL DEFAULT 0 CHECK(spent_cash>=0), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ burned_cash INT NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+ CHECK(cycles_completed BETWEEN 0 AND max_cycles), CHECK(initial_cash=escrow_cash+spent_cash+refunded_cash+burned_cash),
+ CHECK(state='active' OR escrow_cash=0));
+CREATE INDEX IF NOT EXISTS ix_service_subscriptions_due ON service_subscriptions(state,next_run_at);
+CREATE TABLE IF NOT EXISTS service_subscription_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL,
+ identity JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS service_subscription_cycles (
+ id TEXT PRIMARY KEY, subscription_id TEXT NOT NULL REFERENCES service_subscriptions(id), ordinal INT NOT NULL CHECK(ordinal BETWEEN 1 AND 12),
+ release_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), maintenance_key TEXT NOT NULL UNIQUE,
+ UNIQUE(subscription_id,ordinal));

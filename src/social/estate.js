@@ -17,6 +17,7 @@ import { voidLoansAtDeath } from '../loans.js';
 import { voidFavorsAtDeath } from '../favors.js';
 import { voidIntelForecastJobsAtDeath } from '../intelforecastjobs.js';
 import { voidEmploymentAtDeath } from '../gameemployment.js';
+import { voidServiceSubscriptionsAtDeath } from '../servicesubscriptions.js';
 import { closeCompanyWorkflowsAtDeath } from '../companyworkflows.js';
 import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { closeCompanyBankPortfoliosAtDeath } from '../companybankportfolios.js';
@@ -425,6 +426,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
 
   victim.alive = false;
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
+  await voidServiceSubscriptionsAtDeath(client, h, victim);
 
   // the heir — same name (the bloodline), next generation, legacy stake (heirId generated above)
   const stake = 500 + 100 * Number(acct.prestige);
