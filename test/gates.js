@@ -3592,7 +3592,7 @@ scopedSocialContext = async function(db) {
 // ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
 // The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
 // HANG bound cannot contain the expanded property coverage. Browser and real-Postgres checks have
-// separate 20-minute bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
+// separate 20-minute browser and 75-minute THIRD native bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
 // places, or let an untracked job inherit one, while still finding both numbers somewhere.
 {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -3635,9 +3635,16 @@ scopedSocialContext = async function(db) {
     'the `suites` job must have exactly one 75-minute HANG bound for the measured full lifecycle');
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [60],
-    'the `pgcheck` job must retain exactly one finite 60-minute HANG bound for the measured complete native chain');
-  for (const invalid of [0, 45, 90]) assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 60', 'timeout-minutes: ' + invalid)), [60]), 'native wall bound must remain finite and exactly the measured release budget');
+  assert.deepEqual(timeouts(pgcheck), [75],
+    'the THIRD `pgcheck` job must retain exactly one finite 75-minute HANG bound for the measured baseline plus workforce chain');
+  for (const invalid of ['0', '45', '60', '90', '${{ inputs.native_timeout }}', 'unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 75', 'timeout-minutes: ' + invalid)), [75]),
+      'native wall bound must remain finite and exactly the measured THIRD release budget');
+  }
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 75\r?\n/m, '')), [75]),
+    'an unset native wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 75', 'timeout-minutes: 75\n    timeout-minutes: 75')), [75]),
+    'duplicate native wall bounds must reject');
 
 
   const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
@@ -3877,7 +3884,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at 75m, browser at 20m and pgcheck at 45m, with every lane intact');
+  console.log('  ✓ CI keeps suites at 75m, browser at 20m and THIRD pgcheck at 75m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
