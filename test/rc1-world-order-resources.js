@@ -27,6 +27,11 @@ const birthBefore = state(), birthAfter = structuredClone(birthBefore);
 birthAfter.tables.characters[0].cash = '1980'; birthAfter.tables.market_listings = [order];
 birthAfter.tables.transactions = [receipt('fee', 'one', '-20', 'market:list'), receipt('principal', 'one', '-2000', 'market:order')];
 const placement = verify('player-order', birthBefore, birthAfter, { identity: { method: 'POST', path: '/v1/market/order', accountId: 'account-one', logicalAt, body: { goodId: 'gin', qty: 1, price: 2000 } } }, 'orderResources', 1);
+const currentPlacement = structuredClone(birthAfter);
+currentPlacement.tables.market_listings[0].depot_id = null;
+const withDepotColumn = verify('player-order-current-null-depot-column', birthBefore, currentPlacement, placement.options, 'orderResources', 1);
+reject(withDepotColumn, 'depot-order-cannot-inherit-player-order-proof', (_, b) => { b.tables.market_listings[0].depot_id = 'owned-depot'; });
+reject(withDepotColumn, 'current-order-unlisted-column', (_, b) => { b.tables.market_listings[0].depot_authority = true; });
 reject(placement, 'order-wrong-owner', (_, b) => { b.tables.market_listings[0].seller_character = 'two'; });
 reject(placement, 'order-wrong-principal', (_, b) => { b.tables.market_listings[0].price = '2001'; });
 reject(placement, 'order-wrong-recipient', (_, b) => { b.tables.transactions[1].character_id = 'two'; });
@@ -49,6 +54,10 @@ deathAfter.tables.transactions = [receipt('pocket-out', 'one', '-220', 'whack:lo
   receipt('order-out', null, '-500', 'market:loot', 'one'), receipt('order-in', 'two', '500', 'whack:loot', 'one'), receipt('order-burn', null, '-1500', 'market:death', 'one'),
   receipt('estate', 'one', '-660', 'death:estate'), receipt('rounds', 'one', '-25', 'death:estate', null, 'ammo'), receipt('shot', 'two', '-20', 'fire', null, 'ammo')];
 const death = verify('order-pocket-death', deathBefore, deathAfter, {}, 'orderResources', 1);
+const currentDeath = structuredClone(deathBefore);
+currentDeath.tables.market_listings[0].depot_id = null;
+const withDeathDepotColumn = verify('player-death-current-null-depot-column', currentDeath, deathAfter, {}, 'orderResources', 1);
+reject(withDeathDepotColumn, 'depot-death-order-cannot-inherit-personal-escrow-proof', (b) => { b.tables.market_listings[0].depot_id = 'owned-depot'; });
 reject(death, 'death-reallocated-credit', (_, b) => { b.tables.transactions[1].amount = '221'; b.tables.transactions[3].amount = '499'; });
 reject(death, 'death-escrow-not-burned', (_, b) => { b.tables.transactions[4].amount = '-1499'; });
 reject(death, 'death-wrong-market-owner', (_, b) => { b.tables.transactions[2].counterparty = 'two'; });
