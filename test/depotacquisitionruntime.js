@@ -61,12 +61,13 @@ if(native){
  const executeUrl=base+'/'+sourceDeal.id+'/execute',executeBody={termsHash:sourceDeal.termsHash};
  for(const mode of ['missing','extra']){
   let witnessed=0;const originalConnect=app.pool.connect.bind(app.pool);
-  app.pool.connect=async(...args)=>{const client=await originalConnect(...args),query=client.query.bind(client),release=client.release.bind(client);
+  const wrapClient=client=>{const query=client.query.bind(client),release=client.release.bind(client);
    client.query=async(sql,...rest)=>{const result=await query(sql,...rest),text=typeof sql==='string'?sql:sql?.text,parameters=Array.isArray(rest[0])?rest[0]:sql?.values;
-    if(text==="SELECT * FROM transactions WHERE counterparty=$1 AND currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive') ORDER BY id LIMIT 3"&&parameters?.[0]===sourceDeal.id&&result.rows.length===2&&++witnessed===2)
+    if(text==="SELECT * FROM transactions WHERE counterparty=$1 AND currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive') ORDER BY id LIMIT 3"&&parameters?.[0]===sourceDeal.id&&result?.rows?.length===2&&++witnessed===2)
      return {...result,rows:mode==='missing'?result.rows.slice(0,1):[...result.rows,{...result.rows[0],id:'inconsistent_read_view'}]};
     return result;};
    client.release=(...values)=>{client.query=query;client.release=release;return release(...values);};return client;};
+  app.pool.connect=(...args)=>{const callback=args.at(-1);if(typeof callback==='function'){args.pop();return originalConnect(...args,(error,client)=>{if(error)return callback(error);const wrapped=wrapClient(client);return callback(null,wrapped,wrapped.release);});}return originalConnect(...args).then(wrapClient);};
   try{const failed=await call(sourceSeller,'POST',executeUrl,executeBody,'source-view-'+mode,true);assert.equal(failed.code,400,JSON.stringify(failed));assert.equal(failed.body.message,'late_source_changed');assert.equal(witnessed,2,'The actual final source reread must observe the inconsistent view');}
   finally{app.pool.connect=originalConnect;}
   assert.deepEqual(await snapshot(sourceSeller.business),originalState);assert.deepEqual([await cash(sourceSeller),await cash(sourceBuyer)],originalCash);
