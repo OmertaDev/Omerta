@@ -3887,6 +3887,8 @@ scopedSocialContext = async function(db) {
     'mysteries.js:MYSTERY_NPC_AUTHORITY': 'cache: immutable locally branded NPC binding keyed by one mystery context; every mutation rechecks the authenticated living actor pair under sorted database locks',
     'mysteries.js:NPC_GRAPH_REGISTRIES': 'cache: deterministic set of NPC-bound graph identifiers keyed by an immutable validated registry; no actor state or durable authorization is stored here',
     'city-world-opportunities-contract.js:NPC_AUTHORITIES': 'cache: request-local authenticity marker for a frozen server-derived NPC binding; each process derives its own read snapshot and mutations recheck durable actor authority under database locks',
+    'equipmentrentals.js:deathScopes': 'cache: opaque proof bound to exact active client/transaction identity and prelocked original actor union; canonical SQL locks and fresh original sources provide cross-process authority, not this local marker',
+    'items.js:TRANSACTION_IDENTITIES': 'cache: opaque equality identity keyed by one active item transaction object; grants no mutation authority and fresh transactions cannot reuse prior scope identities',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',
@@ -4372,9 +4374,12 @@ scopedSocialContext = async function(db) {
   // not wall-clock counters. Mask only their exact local error calls; a real
   // SQL column or variable with the same name must still fail closed.
   const bucketSource = (file, source) => file === 'src/companyworkflows.js'
-    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '') : source;
+    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
+    : file === 'src/commercialnegotiation.js' ? source.replace(/\bfail\('source_used'\)/g, '') : source;
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
+  assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
+  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
     'Actual counter columns cannot hide behind same-named workflow refusal reasons');
   assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
