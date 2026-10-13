@@ -10,10 +10,11 @@ import { assertCitySourceTransfer, assertDeedBacklogCompatibility, assertFranchi
 import { equipmentEconomyMigrationProjection, EQUIPMENT_EVENT_KIND_CURRENT } from './lib/equipment-economy-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:16*1024*1024,stdio:['ignore','pipe','pipe']});
 const files=['package.json','schema.sql','src/agentgateway.js','src/invariants.js','src/market.js','src/server.js','src/social/estate.js','src/worker.js'];
-assert.deepEqual(Object.keys(O.FOURTH_BATCH_SOURCE_DOMAINS),files);
+assert.deepEqual(Object.keys(O.FOURTH_BATCH_SOURCE_DOMAINS).filter(f=>f!=='src/delivery.js'),files);
+assert.deepEqual(Object.keys(O.FOURTH_BATCH_SOURCE_DOMAINS),[...files,'src/delivery.js']);
 assert.equal(O.FOURTH_BATCH_SOURCE_REVISION,'565a0ccdcdc8c68a7df4af1a396ed99921682ec9');assert.equal(O.FOURTH_BATCH_SOURCE_PREDECESSOR,'90fed962b73a6e20717af4c89f4691d42fb70a1b');
 let negatives=0,hunks=0;
-for(const [file,d] of Object.entries(O.FOURTH_BATCH_SOURCE_DOMAINS)){
+for(const [file,d] of Object.entries(O.FOURTH_BATCH_SOURCE_DOMAINS).filter(([f])=>f!=='src/delivery.js')){
  const current=git('show',O.FOURTH_BATCH_SOURCE_REVISION+':'+file),prior=git('show',O.FOURTH_BATCH_SOURCE_PREDECESSOR+':'+file);
  for(const text of [current,current.replaceAll('\n','\r\n')]){
   assert.equal(O.assertFourthBatchSourceTransfer(file,text).baselineText,prior);
@@ -49,3 +50,19 @@ console.log('Actual world recovery substantive rejection PASS: '+worldNegatives+
 const packageSource=git('show',O.FOURTH_BATCH_SOURCE_REVISION+':package.json');
 for(const altered of [packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js && ',''),packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js','node test/unknown-command.js'),packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js','node test/rc1-fourth-batch-source-compatibility.js --bypass'),packageSource+'\n// unknown package command\n']){assert.notEqual(altered,packageSource);assert.throws(()=>O.assertFourthBatchSourceTransfer('package.json',altered));assert.equal(O.fourthBatchSourceBaseline('package.json',altered),altered);}
 console.log('FOURTH package repin PASS: removed mandatory prefix, unknown command, unsupported argument and appended drift refuse.');
+
+// Independently added Delivery envelope; the original eight-domain controls above retain their exact counts.
+{
+ const file='src/delivery.js',d=O.FOURTH_BATCH_SOURCE_DOMAINS[file],current=git('show',O.FOURTH_BATCH_SOURCE_REVISION+':'+file),prior=git('show',O.FOURTH_BATCH_SOURCE_PREDECESSOR+':'+file);
+ for(const text of [current,current.replaceAll('\n','\r\n')]){assert.equal(O.assertFourthBatchSourceTransfer(file,text).baselineText,prior);assert.equal(O.fourthBatchSourceBaseline(file,text),prior);for(const baseline of [firstBatchSourceBaseline,secondBatchSourceBaseline,thirdBatchSourceBaseline])assert.equal(baseline(file,text),prior);}
+ const actual=[];let chunk=null;for(const line of git('diff','--no-ext-diff','--unified=3',O.FOURTH_BATCH_SOURCE_PREDECESSOR,O.FOURTH_BATCH_SOURCE_REVISION,'--',file).split('\n')){if(line.startsWith('@@')){chunk={current:'',baseline:''};actual.push(chunk);}else if(chunk){if(line[0]==='+')chunk.current+=line.slice(1)+'\n';else if(line[0]==='-')chunk.baseline+=line.slice(1)+'\n';else if(line[0]===' '){chunk.current+=line.slice(1)+'\n';chunk.baseline+=line.slice(1)+'\n';}}}
+ assert.deepEqual(d.inverses,actual);assert.equal(d.inverses.length,6);
+ const {invoiceSourceBaseline,qualifyInvoiceSource,INVOICE_SOURCE_BASELINE_BLOBS}=await import('../tools/rc1-invoice-source-compatibility.js');
+ assert.equal(invoiceSourceBaseline(file,current),git('cat-file','blob',INVOICE_SOURCE_BASELINE_BLOBS[file]),'Actual complete Invoice caller preserves its original frozen predecessor');
+ let deliveryNegatives=0;const reject=text=>{assert.throws(()=>O.assertFourthBatchSourceTransfer(file,text));assert.equal(O.fourthBatchSourceBaseline(file,text),text);for(const baseline of [firstBatchSourceBaseline,secondBatchSourceBaseline,thirdBatchSourceBaseline])assert.equal(baseline(file,text),text);assert.throws(()=>qualifyInvoiceSource(file,invoiceSourceBaseline(file,text)));deliveryNegatives++;};
+ for(const bad of [current+'\n// unknown Delivery suffix\n',current.slice(1),current.replace(/\S/,'?'),'\ufeff'+current])reject(bad);
+ const mixed=current.replace('\n','\r\n');assert.throws(()=>O.assertFourthBatchSourceTransfer(file,mixed));assert.equal(O.fourthBatchSourceBaseline(file,mixed),mixed);for(const baseline of [firstBatchSourceBaseline,secondBatchSourceBaseline,thirdBatchSourceBaseline])assert.equal(baseline(file,mixed),mixed);deliveryNegatives++;
+ for(const h of d.inverses){reject(current.replace(h.current,''));reject(current.replace(h.current,()=>h.current+h.current));reject(current.replace(h.current,()=>h.current.replace(/\S/,'?')));const lines=h.current.trimEnd().split('\n');reject(current.replace(h.current,()=>lines.reverse().join('\n')+'\n'));}
+ const a=d.inverses[0].current,b=d.inverses[1].current;reject(current.replace(a,'@@delivery-envelope-test@@').replace(b,a).replace('@@delivery-envelope-test@@',b));
+ console.log('FOURTH additional Delivery envelope PASS: full LF/CRLF bytes,6 actual inverse hunks,'+deliveryNegatives+' separate negatives and actual unchanged Invoice caller; legacy EOL caller limit retained.');
+}
