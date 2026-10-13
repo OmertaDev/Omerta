@@ -58,13 +58,41 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   equipment_maintenance_offers: [6, 7], equipment_maintenance_requests: [3, 5], equipment_maintenance_repairs: [16, 15],
   commercial_negotiations: [10, 16], commercial_negotiation_requests: [2, 4],
   service_subscriptions: [19, 20], service_subscription_requests: [2, 5], service_subscription_cycles: [10, 7],
-  contract_auctions: [11, 12], contract_auction_bids: [9, 8], contract_auction_requests: [5, 6] });
+  contract_auctions: [11, 12], contract_auction_bids: [9, 8], contract_auction_requests: [5, 6],
+  // Independently frozen THIRD workforce catalog; no backend-learned table identities.
+  business_partnership_contributions: [7, 5],
+  business_partnership_distributions: [6, 5],
+  business_partnership_requests: [2, 4],
+  business_partnerships: [11, 15],
+  company_acquisition_requests: [2, 4],
+  company_acquisitions: [10, 12],
+  company_governance: [3, 6],
+  company_governance_proposals: [4, 10],
+  company_governance_requests: [2, 4],
+  company_governance_votes: [4, 6],
+  employment_organization_courses: [4, 3],
+  employment_organization_requests: [5, 6],
+  employment_organizations: [6, 7],
+  worker_training_courses: [24, 16],
+  worker_training_requests: [5, 6],
+  worker_training_sessions: [9, 12] });
+
+// Whole reviewed source catalog remains literal; current SQL cannot teach this fixture expectations.
+const workforceCatalogBlob = execFileSync('git', ['show', 'ed9284f8838576dd63ff31269ace754ea9c307d2:test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.equal(crypto.createHash('sha256').update(workforceCatalogBlob).digest('hex'), '2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa', 'Reviewed workforce catalog source bytes changed');
+assert.deepEqual(inventory, JSON.parse(workforceCatalogBlob), 'Current full catalog differs from independently reviewed workforce source');
+const workforceTables = Object.freeze(["business_partnership_contributions","business_partnership_distributions","business_partnership_requests","business_partnerships","company_acquisition_requests","company_acquisitions","company_governance","company_governance_proposals","company_governance_requests","company_governance_votes","employment_organization_courses","employment_organization_requests","employment_organizations","worker_training_courses","worker_training_requests","worker_training_sessions"]);
+assert.equal(workforceTables.length, 16);
+assert.equal(inventory.added.filter(row => workforceTables.includes(row.table_name)).length, 104);
+assert.equal(workforceTables.reduce((n, table) => n + inventory.notNullColumns[table].length, 0), 121);
+assert.equal(inventory.added.length, 916, 'Every earlier catalog constraint and all104 workforce constraints remain visible');
+
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 assert.equal(EQUIPMENT_ECONOMY_MIGRATION_TABLES.length, 14);
 assert.deepEqual(EQUIPMENT_ECONOMY_MIGRATION_TABLES.filter(table => featureTables.includes(table)),
   EQUIPMENT_ECONOMY_MIGRATION_TABLES, 'All fourteen reviewed equipment tables have explicit frozen bindings');
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
-  .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
+  .sort((a, b) => a.table_name < b.table_name ? -1 : a.table_name > b.table_name ? 1 : a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 for (const table of featureTables) {
   assert.equal(featureConstraints.filter(row => row.table_name === table).length, featureManifest[table][0], `${table} has its reviewed frozen constraint count`);
   assert.equal(inventory.notNullColumns[table].length, featureManifest[table][1], `${table} has its reviewed required-column count`);
@@ -315,7 +343,8 @@ try {
     AND is_nullable='NO' ORDER BY table_name,column_name`, featureTables)).rows : [];
   const verifyFeatureNotNull = columns => assert.deepEqual(
     Object.fromEntries(featureTables.map(table => [table, columns.filter(row => row.table_name === table).map(row => row.column_name)])),
-    Object.fromEntries(featureTables.map(table => [table, inventory.notNullColumns[table]])),
+    Object.fromEntries(featureTables.map(table => [table, workforceTables.includes(table)
+      ? [...inventory.notNullColumns[table]].sort() : inventory.notNullColumns[table]])),
     'Named feature required columns match exact frozen nullability');
   verifyFeatureNotNull(featureNotNull);
   for (const table of featureTables) {
@@ -358,6 +387,23 @@ try {
     rejected(verifyFeatureConstraints, `${constraint.name} operator constraint altered`, mutateConstraint(constraint.table_name, constraint.name,
       (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
   }
+
+  // Every reviewed workforce definition and required binding is independently causal.
+  for (const constraint of featureConstraints.filter(row => workforceTables.includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, constraint.name + ' workforce constraint removed', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, constraint.name + ' workforce constraint altered', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+    rejected(verifyFeatureConstraints, constraint.name + ' workforce constraint duplicated', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.push(rows[index])));
+  }
+  for (const binding of featureNotNull.filter(row => workforceTables.includes(row.table_name))) {
+    rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' workforce NN removed',
+      featureNotNull.filter(row => row.table_name !== binding.table_name || row.column_name !== binding.column_name));
+    rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' workforce NN duplicated',
+      [...featureNotNull, binding]);
+  }
+
   // Each bank identity, authority and cap constraint is independently causal.
   for (const constraint of featureConstraints.filter(row => row.table_name.startsWith('company_bank_'))) {
     rejected(verifyFeatureConstraints, `${constraint.name} bank constraint removed`, mutateConstraint(constraint.table_name, constraint.name,
