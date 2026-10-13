@@ -1,0 +1,11 @@
+# Prepaid repair subscription integration
+
+Scope: backend gameplay integration after component source `6e31f14024d30e32a2fca37f7d8e73ec43a06a08`, integrated at `28837920bfd7fe1e444f558c300197cc37c7b12d`. No payment, compute, token or external spending activation.
+
+The literal schema and authenticated registrar are installed in the canonical server. The existing bounded company worker processes at most20 due subscriptions per run. A cycle releases the exact consented fee from prepaid escrow and invokes canonical maintenance in the same item transaction: the original payer's real tool, two real scrap units, actual provider payment and physical condition change. Healthy, foreign-custody, expired, over-budget and invalid-provider cases do not charge. Completed or cancelled subscriptions refund only the original living payer. The estate hook burns the dead original payer's residual reserve after SQL death and before heir creation.
+
+Global checks scan every subscription, cycle and relevant journal. Escrow reconciles character reserve/release/refund legs separately from the negative estate sink. During integration, combining the death sink inside the negated funding sum produced the wrong sign; the implemented check separates these flows. The actual registered API test exercises death and then requires all global books to pass, retaining the regression witness.
+
+Memory core and registered API pass. Fresh owned PostgreSQL18.4 core and registered API pass at the exact integrated source; records are retained in `output/subscriptions-native-28837920/results.json` and the two accompanying logs. The core native proof includes same-key contention and expiry after material lock wait. The API proof covers actual JWT agent access, private original-account boards, finite maintenance worker, replay, refund, actual moderator estate and all global books. Its wear setup is explicitly a leaf fixture; actual Belladonna wear is covered by the separate first-five and rental integration scopes.
+
+Shared discovery, estate census, migration/native source catalogs, test/CI wiring, generated knowledge and exact release checks remain pending for the second batch. This report does not qualify arbitrary whole-estate memory rollback, borrowed-tool maintenance, a full-world resource matrix, deployment or financial activation.
