@@ -24,7 +24,7 @@ const configuration = { scenario: 'scoped-aggression-twenty-mixed-lifecycle-choi
   database: database.descriptor, epoch: new Date(epoch).toISOString(), expectedDormant,
   initialization: { actors: 2, shooterLevel: 600, victimLevel: 10, stats: 'Default5/5/5',
     resources: 'Schema-default cash500/ammo25/cb0. Shooter owns one declared legal Rusty .25 fixture. No earned acquisition history is claimed for fixture respect or weapon.',
-    funding: 'One ordinary check-in each; shooter buys100 original $2,000/50-round boxes. Victim posts a $2,000 order with original4h TTL.',
+    funding: 'One ordinary check-in each; shooter buys100 original $2,000/50-round boxes. Victim posts a $2,000 order with original4h TTL. Original actors meet through authenticated gameplay outside the mixed quota; replacements require a fresh meeting.',
     exclusions: 'No account privilege, paid mint, revive insurance, family membership, status/deadline or resource-balance fixtures.' },
   clocks: 'Shared application and SQL logical clocks; execute every due original local worker callback across original3h search. No wall-time equivalence or timer compression.',
   workload: 'Twenty actual policy selections at15-minute intervals. Require all20 genuinely mixed and14 actual conflict choices, with search/shot counts separate. A separate victim policy acts before death and after its canonical heir appears. Pending policy restores and exact fire retry retain identity. No fabricated denominator.',
@@ -114,6 +114,9 @@ try {
   for (let box = 0; box < 100; box++) await invoke(shooter, 'POST', '/v1/armory/ammo', {}, `buy-ammo-${box}`);
   const order = await invoke(victim, 'POST', '/v1/market/order', { goodId: 'gin', qty: 1, price: 2000, hours: 4 }, 'victim-custody-order');
   assert.equal(order.body.escrow, 2000); assert.equal(order.body.expiresSeconds, 14400);
+  await invoke(shooter, 'POST', `/v1/streets/${oldId}/meet`, {}, 'meet-original-fixture');
+  await proof.record({ kind: 'fixture-meeting', stage: 'original', ordinaryAuthenticatedGameplay: true,
+    outsideMixedQuota: true, learnedRowsManipulated: false });
   const policies = Object.fromEntries([shooter, victim].map((accountId) =>
     [accountId, createAggressionPolicy({ accountId, seed: configuration.seed })]));
   const options = { [shooter]: {}, [victim]: {} }, decisions = [];
@@ -182,6 +185,9 @@ try {
         firstHeir = response.body.estate.heirId; assert(firstHeir && firstHeir !== oldId);
         assert.equal((await pool.query('SELECT alive FROM characters WHERE id=$1', [oldId])).rows[0].alive, false);
         assert.equal((await pool.query('SELECT 1 FROM market_listings WHERE id=$1', [order.body.id])).rowCount, 0);
+        await invoke(shooter, 'POST', `/v1/streets/${firstHeir}/meet`, {}, 'meet-canonical-heir');
+        await proof.record({ kind: 'fixture-meeting', stage: 'heir', ordinaryAuthenticatedGameplay: true,
+          outsideMixedQuota: true, learnedRowsManipulated: false });
         const replacement = await act(victim, 'victim-after-death');
         assert.equal(replacement.decision.actor.characterId, firstHeir);
         assert.equal(replacement.decision.actor.generation, 2);
