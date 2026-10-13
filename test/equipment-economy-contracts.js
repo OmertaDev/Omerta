@@ -87,9 +87,27 @@ try {
     else assert(!responses[route]({...body,externalOwnerAuthority:true}),route+' must reject unknown receipt authority');}
   assert.equal(witnessed.size,21,JSON.stringify(Object.keys(contracts).filter(route=>!witnessed.has(route))));
   const rental=compile({$ref:'#/components/schemas/EquipmentRentalAcceptReceipt'});
-  assert(!rental({...acceptance,rentDebit:'forged-partial'}));
+  const {rentDebit,rentCredit,depositDebit,...historicalAcceptance}=acceptance;
+  assert(!rental({...historicalAcceptance,rentDebit:'partial-group'}));
   const delivery=compile({$ref:'#/components/schemas/ContractAuctionAwardReceipt'});
   assert(!delivery({...replay,delivery:{...replay.delivery,cryptoBacking:true}}));
   assert(!delivery({...replay,fulfillment:'delivered'}));
-  console.log('Equipment economy contracts PASS: 21 actual registered authenticated routes, closed requests/history/receipts, actual replay variants, sealed bid projections and canonical award delivery; component memory contract proof only.');
+  console.log(`Equipment economy contracts positive PASS: 21 actual registered authenticated routes, closed requests/history/receipts, actual replay variants, sealed bid projections and canonical award delivery; component ${f.native?'native18.4':'memory'} contract proof only.`);
+  // These exact negatives require the coordinator's registrar tightening. They
+  // intentionally fail against the earlier40479023 dependency; no assertion waiver.
+  const negativeResults=[];
+  for(const path of ['/v1/company/maintenance','/v1/company/maintenance/offers','/v1/company/negotiations','/v1/company/service-subscriptions']){
+    const response=await f.call(supplier,'GET',path+'?undeclaredFilter=true');
+    negativeResults.push({kind:'unknown_query',path,status:response.code});
+  }
+  for(const invalid of [true,false,0,[]]){
+    const fresh=await ok(supplier,'POST','/v1/company/service-subscriptions',subscriptionTerms);
+    const response=await app.inject({method:'POST',url:'/v1/company/service-subscriptions/'+fresh.subscriptionId+'/close',
+      payload:JSON.stringify(invalid),headers:{authorization:'Bearer '+supplier.token,'idempotency-key':'dto-invalid-close-'+(++serial),'content-type':'application/json'}});
+    negativeResults.push({kind:'invalid_close_body',type:Array.isArray(invalid)?'array':typeof invalid,status:response.statusCode});
+    if(response.statusCode!==200)await ok(supplier,'POST','/v1/company/service-subscriptions/'+fresh.subscriptionId+'/close',{});
+  }
+  console.log('Equipment economy registrar negative witness:',JSON.stringify(negativeResults));
+  assert.deepEqual(negativeResults.filter(result=>result.status!==400),[], 'Require actual unknown-query and scalar/array-close refusal; coordinator registrar patch is mandatory');
+  console.log('Equipment economy contracts complete PASS: all valid/replay and actual registrar negative controls.');
 } finally { await f.close(); }
