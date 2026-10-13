@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn, execFileSync } from 'node:child_process';
 import pg from 'pg';
 export const AUTONOMY_NATIVE_PROOFS=Object.freeze([
+ ["fundedworkescrowadapter","FUNDED_WORK_ADAPTER_TEST_DATABASE_URL","funded_work_adapter_test_"],
  ["company-late-five-integration","COMPANY_LATE_FIVE_TEST_DATABASE_URL","company_late_five_test_"],
  [
   "economicintelligence",
@@ -57,6 +58,8 @@ export const AUTONOMY_NATIVE_PROOFS=Object.freeze([
 ].map(row=>Object.freeze(row)));
 import { equipmentNativeEndpoint } from './equipment-economy-native.js';
 export const autonomyNativeEndpoint=equipmentNativeEndpoint;
+// Offline observation vectors only; package wiring is owned by the coordinator.
+export const AUTONOMY_REQUIRED_MEMORY_PROOFS=Object.freeze(['fundedworkchainobservations']);
 
 async function run(){
  assert.equal(process.argv.length,2,'No partial or tail-only qualification');assert(!process.env.DATABASE_URL,'No ambient database endpoint');
@@ -64,9 +67,9 @@ async function run(){
  const source=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
  assert.equal(execFileSync('git',['status','--porcelain'],{encoding:'utf8'}).trim(),'','Qualification requires a clean exact source');
  const root=path.join('output','company-autonomy-native-'+source.slice(0,8)+'-'+crypto.randomBytes(4).toString('hex'));fs.mkdirSync(root,{recursive:true});
- const fixtureFiles=[...new Set(AUTONOMY_NATIVE_PROOFS.map(([file])=>'test/'+file+'.js').concat(['test/economicintelligence-fixture.js','test/managementteams-fixture.js','test/fundedexternalwork-fixture.js']))];
+ const fixtureFiles=[...new Set(AUTONOMY_NATIVE_PROOFS.map(([file])=>'test/'+file+'.js').concat(AUTONOMY_REQUIRED_MEMORY_PROOFS.map(file=>'test/'+file+'.js'),['test/economicintelligence-fixture.js','test/managementteams-fixture.js','test/fundedexternalwork-fixture.js']))];
  const fixtureSources=fixtureFiles.map(file=>({file,sha256:crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')}));
- fs.writeFileSync(path.join(root,'sources.json'),JSON.stringify({source,fixtureSources,proofs:AUTONOMY_NATIVE_PROOFS,financialActivation:'off'},null,2)+'\n');
+ fs.writeFileSync(path.join(root,'sources.json'),JSON.stringify({source,fixtureSources,proofs:AUTONOMY_NATIVE_PROOFS,requiredMemoryProofs:AUTONOMY_REQUIRED_MEMORY_PROOFS,fundingEvidence:'offline vectors and canonical gameplay only; no deployed backing',financialActivation:'off'},null,2)+'\n');
  const admin=new pg.Client({connectionString:u.href});await admin.connect();const results=[];
  try{
   const version=(await admin.query('SHOW server_version')).rows[0].server_version;assert.match(version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);
@@ -83,7 +86,7 @@ async function run(){
    if(status.code!==0||status.signal){console.error(stderr);throw new Error(file+' native qualification failed');}
    console.log(JSON.stringify({file,state:'passed'}));
   }
-  console.log('Company autonomy native: all10 fresh proofs passed; no partial qualification.');
+  console.log('Company autonomy native: all11 fresh proofs passed; no partial qualification. Offline F25 vectors do not establish deployed backing; public financial activation remains off.');
  }finally{await admin.end();}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await run();
