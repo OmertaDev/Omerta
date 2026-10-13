@@ -75,8 +75,11 @@ function transactionClient(client) {
 
 export function assertItemTransaction(client) { transactionClient(client); }
 /** True only for a mutation newly reserved by this branded transaction, not a historical replay. */
-export function ownsItemMutationReservation(client, key) {
-  return transactionClient(client).guardReservations.some(([reservedKey]) => reservedKey === key);
+export async function ownsItemMutationReservation(client, key) {
+  const owned = transactionClient(client).guardReservations.find(([reservedKey]) => reservedKey === key);
+  if (!owned) return false;
+  const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
+  return row?.reservation_id === owned[1];
 }
 
 function mutationState(client, token) {
