@@ -6,11 +6,11 @@ if(native){const url=new URL(process.env.STRATEGY_LABORATORY_TEST_DATABASE_URL);
 Object.assign(process.env,{RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',DEPOT_PILOT:'on',INVITE_MODE:'off',JWT_SECRET:'territory-economics-fake-fixture-private-secret',MARKET_SEED:'territory-economics-fake-fixture-market-seed-long',MOD_KEY:'territory-economics-fake-moderator'});
 const {buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),I=await import('../src/items.js'),C=await import('../src/infrastructureconcessions.js'),T=await import('../src/territoryeconomics.js');
 const {runLedgerInvariants}=await import('../src/invariants.js');
-const app=await buildServer(),{default:Fastify}=await import('fastify'),component=Fastify();await app.pool.query(C.infrastructureConcessionDDL);await app.pool.query(T.territoryEconomicsDDL);
+const app=await buildServer(),{default:Fastify}=await import('fastify'),component=Fastify();await app.pool.query('SELECT id FROM infrastructure_concessions LIMIT 0');await app.pool.query('SELECT id FROM territory_economics_profiles LIMIT 0');
 component.setErrorHandler((e,_req,p)=>p.code(e.statusCode||400).send({error:e.code,message:e.message}));
 const deps={pool:app.pool,auth:async req=>{try{req.user=app.jwt.verify(String(req.headers.authorization||'').replace(/^Bearer /,''));}catch{throw Object.assign(Error('Authentication required'),{statusCode:401});}}};
 (await import('../src/routes/infrastructureconcessions.js')).register(component,deps);(await import('../src/routes/territoryeconomics.js')).register(component,deps);
-const L=await import('../src/strategylaboratories.js');await app.pool.query(L.strategyLaboratoriesDDL);(await import('../src/routes/strategylaboratories.js')).register(component,deps);
+const L=await import('../src/strategylaboratories.js');await app.pool.query('SELECT id FROM strategy_laboratories LIMIT 0');(await import('../src/routes/strategylaboratories.js')).register(component,deps);
 let serial=0;const base='/v1/company/territory-economics',sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function call(p,method,url,body,key=`territory-${++serial}`,agent=false){const target=url.startsWith(base)||url.startsWith('/v1/company/concessions')||url.startsWith('/v1/company/strategy-laboratories')?component:app;const r=await target.inject({method,url,payload:body,headers:{...(p?{authorization:`Bearer ${agent?p.agent:p.token}`}:{ }),'idempotency-key':key}});return {code:r.statusCode,body:r.json()};}
 async function ok(...args){const r=await call(...args);assert.equal(r.code,200,JSON.stringify(r));return r.body;}
