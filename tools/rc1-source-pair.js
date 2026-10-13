@@ -122,11 +122,11 @@ export const THIRD_BATCH_ADDITIVE_PAIR = Object.freeze({
 });
 export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "3b4a222f7ead96c86b0eaa2d4d71a62c65fa709c",
-  "reviewedCandidate": "9ff8d10883200dadbaec35c520414861d7ddaa5e",
+  "reviewedCandidate": "47da6e5153dc769c7ceb91a41e94ac115c7863dc",
   "predecessorTree": "c91c2e3748f4adc23413ef073cb0f38c09e2ac95b3072cff7d8e9aef37ec2953",
   "predecessorSchema": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd",
   "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
-  "candidateTree": "cbbc33be3c449a9ee673ac326b241a006c1550cea48c31a93dac6b895c97ed77",
+  "candidateTree": "8f1163b71b88516b0532a713007dee4b99fbfcbbfa630b57d226ea2ad5ab508a",
   "candidateSchema": "c24abb3e7a3863dabeecbb683671a12e95c447918a2b385b38cc36691fbb9dc9",
   "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
   "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
