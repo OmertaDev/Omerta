@@ -324,7 +324,7 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
-| [docs/agent-economy-equipment-contracts-security-review.md](../../docs/agent-economy-equipment-contracts-security-review.md) | documentation | 31 | 2026-10-13 |
+| [docs/agent-economy-equipment-contracts-security-review.md](../../docs/agent-economy-equipment-contracts-security-review.md) | documentation | 34 | 2026-10-13 |
 | [docs/agent-economy-final-integrated-native-review.md](../../docs/agent-economy-final-integrated-native-review.md) | documentation | 23 | 2026-10-12 |
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
@@ -353,6 +353,7 @@
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/commercial-negotiation-hosted-replay-review.md](../../docs/commercial-negotiation-hosted-replay-review.md) | documentation | 14 | 2026-10-13 |
 | [docs/commercial-negotiation-security-review.md](../../docs/commercial-negotiation-security-review.md) | documentation | 32 | 2026-10-13 |
 | [docs/commercial-premises-integration-review.md](../../docs/commercial-premises-integration-review.md) | documentation | 54 | 2026-10-12 |
 | [docs/commercial-premises-literal-sql-review.md](../../docs/commercial-premises-literal-sql-review.md) | documentation | 14 | 2026-10-12 |
@@ -481,7 +482,8 @@
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 82 | 2026-10-13 |
+| [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 84 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
