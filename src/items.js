@@ -475,6 +475,14 @@ function compositeAuthority(request) {
 }
 
 function assertCompositeAuthority(composite, kind, owner, request) {
+  if (kind === 'relay_escrow') {
+    if (!['mystery_action', 'operation_action'].includes(composite.mutationKind)
+      || owner.scope !== 'operation' || !composite.authority.operations.has(owner.id)
+      || !composite.authority.operations.has(request.to.id) || owner.id === request.to.id) {
+      fail('item_mutation_authority', 'The compound mutation did not bind both custody operations.');
+    }
+    return;
+  }
   if (composite.mutationKind === 'operation_action') {
     const operation = owner.scope === 'operation' && composite.authority.operations.has(owner.id);
     if (operation && ['consume_item', 'consume_stack'].includes(kind)) return;
@@ -1258,6 +1266,39 @@ async function releaseEscrowImpl(
     });
 }
 
+/** Relay existing operation custody without releasing or changing the recorded depositor. */
+async function relayEscrowCustodyImpl(client, fromOperationId, toOperationId, itemIdValue, reasonValue, mutation) {
+  // A string key or fabricated token can never create standalone relay authority.
+  mutationState(client, mutation);
+  const from = itemOwner({ scope: 'operation', id: fromOperationId });
+  const to = itemOwner({ scope: 'operation', id: toOperationId });
+  const itemId = boundedText(itemIdValue, 'Item id', 200), reason = mutationReason(reasonValue);
+  return executeMutation(client, 'relay_escrow', from, mutation, { to, itemId, reason }, async (guard, eventKey) => {
+    const current = await lockedItem(client, itemId);
+    if (!current || current.owner_scope !== 'operation' || current.owner_id !== from.id || current.state !== 'escrowed') {
+      fail('item_not_escrowed', 'The source operation does not hold this item.');
+    }
+    const custody = (await client.query(`SELECT item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id,created_at
+      FROM operation_escrow WHERE item_id=$1 FOR UPDATE`, [itemId])).rows[0];
+    if (!custody || custody.operation_id !== from.id) fail('item_not_escrowed', 'The source custody changed.');
+    registerItemRestore(client, current, custody);
+    // The existing foreign key is immediate. Replace the exact locked custody tuple inside this
+    // transaction, retaining its physical key, depositor and timestamp throughout the relay.
+    const removed = await client.query('DELETE FROM operation_escrow WHERE item_id=$1 AND operation_id=$2', [itemId, from.id]);
+    if (removed.rowCount !== 1) fail('contention', 'The source custody changed.');
+    const changed = await client.query(`UPDATE item_instances SET owner_id=$2,updated_at=now()
+      WHERE id=$1 AND owner_scope='operation' AND owner_id=$3 AND state='escrowed'
+      RETURNING id,template_id,owner_scope,owner_id,state,created_at,updated_at,consumed_at`, [itemId, to.id, from.id]);
+    if (changed.rowCount !== 1) fail('contention', 'The source item changed.');
+    await client.query(`INSERT INTO operation_escrow(item_id,owner_scope,operation_id,item_state,depositor_scope,depositor_id,created_at)
+      VALUES($1,$2,$3,$4,$5,$6,$7)`, [itemId, custody.owner_scope, to.id, custody.item_state,
+      custody.depositor_scope, custody.depositor_id, custody.created_at]);
+    await appendEvent(client, guard, { eventKey, eventKind: 'escrow_relayed', provenanceKind: 'used_in_mystery',
+      itemId, templateId: current.template_id, from, to, reason });
+    return itemProjection(changed.rows[0]);
+  });
+}
+
 // Validation is part of the leaf, too: a caller cannot catch malformed quantities/owners and
 // commit earlier writes. Keep this outside the implementations so their historical digest order stays intact.
 function itemLeaf(implementation) {
@@ -1275,6 +1316,7 @@ export const transferItem = itemLeaf(transferItemImpl);
 export const consumeItem = itemLeaf(consumeItemImpl);
 export const escrowItem = itemLeaf(escrowItemImpl);
 export const releaseEscrow = itemLeaf(releaseEscrowImpl);
+export const relayEscrowCustody = itemLeaf(relayEscrowCustodyImpl);
 export const storeItem = itemLeaf(storeItemImpl);
 export const retrieveStoredItem = itemLeaf(retrieveStoredItemImpl);
 

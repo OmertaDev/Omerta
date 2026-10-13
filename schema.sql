@@ -4649,7 +4649,7 @@ CREATE TABLE IF NOT EXISTS item_events (
   UNIQUE (idempotency_key, event_key),
   CONSTRAINT item_event_key CHECK (char_length(event_key) BETWEEN 1 AND 200),
   CONSTRAINT item_event_kind CHECK (event_kind IN (
-    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'
+    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved','escrow_relayed'
   )),
   CONSTRAINT item_event_provenance_kind CHECK (
     provenance_kind IS NULL OR provenance_kind IN (
@@ -7020,7 +7020,7 @@ ALTER TABLE item_events ADD CONSTRAINT item_event_template_id CHECK (
   OR (event_branch<>'legacy' AND char_length(template_id) BETWEEN 1 AND 258));
 ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_kind;
 ALTER TABLE item_events ADD CONSTRAINT item_event_kind CHECK (
-  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'))
+  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved','escrow_relayed'))
   OR (event_branch='lot' AND event_kind IN ('lot_granted','lot_consumed','lot_split_debit','lot_split_output','lot_escrowed','lot_released','lot_escrow_consumed'))
   OR (event_branch='unique' AND event_kind IN ('unique_granted','unique_escrowed','unique_released','unique_transferred','unique_consumed'))
   OR (event_branch='observation' AND event_kind='migration_origin'));
@@ -8641,3 +8641,27 @@ CREATE TABLE IF NOT EXISTS contract_auction_requests (
  account_id TEXT NOT NULL REFERENCES accounts(id), action TEXT NOT NULL CHECK(action IN ('create','bid','award','cancel')),
  request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128), original_character TEXT NOT NULL REFERENCES characters(id),
  terms JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,action,request_key));
+
+-- Equipment rentals retain original landlord title and real borrower deposits.
+CREATE TABLE IF NOT EXISTS equipment_rental_requests (
+ account_id TEXT NOT NULL, request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+ run_id TEXT NOT NULL UNIQUE, identity JSONB NOT NULL, receipt JSONB, account_ref TEXT REFERENCES accounts(id),
+ original_character TEXT REFERENCES characters(id), PRIMARY KEY(account_id,request_key),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL) OR
+ (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS equipment_rental_offers (
+ id TEXT PRIMARY KEY, item_id TEXT NOT NULL REFERENCES item_instances(id), landlord_account TEXT NOT NULL REFERENCES accounts(id),
+ landlord_character TEXT NOT NULL REFERENCES characters(id), rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000),
+ deposit_cash INT NOT NULL CHECK(deposit_cash BETWEEN 0 AND 100000), duration_seconds INT NOT NULL CHECK(duration_seconds BETWEEN 60 AND 3600),
+ published BOOLEAN NOT NULL, expires_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL CHECK(status IN ('open','leased','cancelled')));
+CREATE UNIQUE INDEX IF NOT EXISTS equipment_rental_one_open_offer ON equipment_rental_offers(item_id) WHERE status='open';
+CREATE TABLE IF NOT EXISTS equipment_rental_leases (
+ id TEXT PRIMARY KEY, offer_id TEXT NOT NULL UNIQUE REFERENCES equipment_rental_offers(id), item_id TEXT NOT NULL REFERENCES item_instances(id),
+ landlord_account TEXT NOT NULL REFERENCES accounts(id), landlord_character TEXT NOT NULL REFERENCES characters(id),
+ borrower_account TEXT NOT NULL REFERENCES accounts(id), borrower_character TEXT NOT NULL REFERENCES characters(id),
+ rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000), deposit_cash INT NOT NULL CHECK(deposit_cash BETWEEN 0 AND 100000),
+ deposit_remaining INT NOT NULL CHECK(deposit_remaining BETWEEN 0 AND deposit_cash), starts_at TIMESTAMPTZ NOT NULL, ends_at TIMESTAMPTZ NOT NULL CHECK(ends_at>starts_at),
+ status TEXT NOT NULL CHECK(status IN ('active','returned','death_ended')), ended_at TIMESTAMPTZ,
+ CHECK(landlord_account<>borrower_account AND landlord_character<>borrower_character),
+ CHECK((status='active' AND ended_at IS NULL) OR (status<>'active' AND ended_at IS NOT NULL AND deposit_remaining=0)));
+CREATE UNIQUE INDEX IF NOT EXISTS equipment_rental_one_live_tool ON equipment_rental_leases(item_id) WHERE status='active';

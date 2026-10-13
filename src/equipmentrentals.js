@@ -216,9 +216,8 @@ export async function collectEquipmentRentalIssues(client) {
   const values = Object.fromEntries(rows.map(row => [row.reason, Number(row.n)])); const issues = [];
   if (held !== -(values['equipment_rental:deposit'] || 0) - (values['equipment_rental:deposit_refund'] || 0) + (values['equipment_rental:deposit_burn'] || 0)) issues.push({ reason: 'deposit_conservation', held });
   if ((values['equipment_rental:rent_pay'] || 0) + (values['equipment_rental:rent_receive'] || 0) !== 0) issues.push({ reason: 'rent_transfer' });
-  const leases = (await client.query("SELECT id,item_id,landlord_account,borrower_account,borrower_character FROM equipment_rental_leases WHERE status='active' ORDER BY id LIMIT 1001")).rows;
-  if (leases.length > 1000) issues.push({ reason: 'check_limit' });
-  for (const lease of leases.slice(0, 1000)) {
+  const leases = (await client.query("SELECT id,item_id,landlord_account,borrower_account,borrower_character FROM equipment_rental_leases WHERE status='active' ORDER BY id")).rows;
+  for (const lease of leases) {
     const custody = (await client.query('SELECT operation_id,depositor_scope,depositor_id FROM operation_escrow WHERE item_id=$1', [lease.item_id])).rows[0];
     if (!custody || custody.depositor_scope !== 'account' || custody.depositor_id !== lease.landlord_account) issues.push({ reason: 'landlord_title', leaseId: lease.id });
     const item = (await client.query('SELECT owner_scope,owner_id,state,template_id FROM item_instances WHERE id=$1', [lease.item_id])).rows[0];
