@@ -41,6 +41,33 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
   tables: Object.freeze(['company_production_receipts', 'company_specialization_requests', 'company_specialization_runs',
     'company_specializations', 'item_durability_birth_quality', 'item_durability_states', 'item_durability_uses']),
 });
+export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
+  "predecessor": "ed903348ee59e354bfae72bfbc2aed8273229bb2",
+  "reviewedCandidate": "7b029e7a2e087e41a2d6f8e1ad69728650bba025",
+  "predecessorTree": "fe4913ffa8b9d7fe6f4bdebb5ccaee91721c9a65af92651279c15d0705ddeeda",
+  "predecessorSchema": "220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390",
+  "predecessorCatalog": "028af7ab65761f08dfd10e3cb6ef0f213fe8db723796d0b41df9652733e12cb7",
+  "candidateTree": "fe7a643eebf3b802b28401729424ef600d92dcdd0fc51feda3fa5f719ce42512",
+  "candidateSchema": "0f84bd62550030d065621637241e62e21d8f51820a57bd6cfb1e0bc4182e609a",
+  "candidateCatalog": "e60fc7a581bb21276c5176a2851e96fbc1d6a6bf429485a4510f36819e3a44b2",
+  "candidateTableCatalog": "d87064c8762a49597826647a46474541f9581790063a488bbba28581a7c08f20",
+  "tables": Object.freeze([
+    "commercial_negotiation_requests",
+    "commercial_negotiations",
+    "contract_auction_bids",
+    "contract_auction_requests",
+    "contract_auctions",
+    "equipment_maintenance_offers",
+    "equipment_maintenance_repairs",
+    "equipment_maintenance_requests",
+    "equipment_rental_leases",
+    "equipment_rental_offers",
+    "equipment_rental_requests",
+    "service_subscription_cycles",
+    "service_subscription_requests",
+    "service_subscriptions"
+  ])
+});
 const load = (file) => import(pathToFileURL(path.resolve(file)).href);
 const git = (root, ...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
 const outside = (root, target) => { const relative = path.relative(root, target); return relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative); };
@@ -75,7 +102,7 @@ export async function sourcePairIdentity(root) {
     catalogTables: catalog ? Object.fromEntries(FIRST_FIVE_ADDITIVE_PAIR.tables.map(name => [name, {
       constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null,
     }])) : {} };
-  return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles, additiveSource,
+  return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles, additiveSource, secondBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(SECOND_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
 }
 
@@ -117,6 +144,37 @@ export function qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) 
   assert(delta.sequenceStateEqual, 'Sequence state changed');
   for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
   return { relation: 'REVIEWED_SEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
+}
+
+export function qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = SECOND_BATCH_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.secondBatchAdditiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
+    assert.equal(identity.secondBatchAdditiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.secondBatchAdditiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.secondBatchAdditiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Fourteen-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.secondBatchAdditiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_FOURTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
     addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
     beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
@@ -279,6 +337,7 @@ export async function runSourcePair() {
       derivativeEvidenceOutputs: ADDITIVE_KNOWLEDGE_OUTPUTS,
       dataRule: 'Every predecessor row/table and all sequences remain exact; seven reviewed added tables must be empty; raw unequal hashes retained',
       excludedClaim: 'Empty added tables do not establish new authority or native schema validity' },
+    secondBatchAdditiveBootstrapPolicy: { predecessor: SECOND_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: SECOND_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: SECOND_BATCH_ADDITIVE_PAIR.tables, sourceRule: 'Exact three owned qualification files and ten literal derivative outputs only; catalog/schema/runtime/CI remain frozen', dataRule: 'Fourteen reviewed tables EMPTY; all prior and unknown rows/tables/sequences exact; rollback/replay/reupgrade full equality', excludedClaim: 'No populated authority, full-world, deployed recovery or backing validity' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
       'No backup restore or recovery-point claim', 'Installed dependencies must independently match their lockfile'] };
@@ -429,7 +488,9 @@ export async function runSourcePair() {
     const delta = sourcePairStateDifference(a, b);
     if (additive && canonicalJson(a) !== canonicalJson(b)) {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
-      const qualified = qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate);
+      const qualified = predecessor.source === SECOND_BATCH_ADDITIVE_PAIR.predecessor
+        ? qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate)
+        : qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate);
       report.assertions.push({ id: label, status: 'PASS_ADDITIVE_BOOTSTRAP_ONLY', ...qualified }); update('result.json', report); return;
     }
     assert(canonicalJson(a) === canonicalJson(b), `${label}; added tables: ${delta.added.join(', ')}; removed tables: ${delta.removed.join(', ')}; changed tables: ${delta.changed.join(', ')}; changed sequences: ${delta.sequences.join(', ')}; sequence state equal: ${delta.sequenceStateEqual}`);

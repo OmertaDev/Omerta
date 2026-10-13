@@ -30,3 +30,38 @@ for (const file of ['tools/knowledge.js', 'package.json', 'test/migrate.js', 'te
   assert.notEqual(sourcePairReviewedTreeHash(sourceRecords.map(line => line.endsWith('\t' + file) ? record(file, '2'.repeat(40)) : line)), sourceHash, 'Generator, package, census and native catalog remain source authority');
 }
 console.log('rc1-source-pair-additive PASS: exact reviewed seven-empty-table relation; unknown/missing/nonempty/removed/old-row/sequence/unrelated-source/schema/catalog/NN negatives; full raw state remains unequal');
+
+// A separate exact relation: original seven-table identity and negatives above remain unchanged.
+const { SECOND_BATCH_ADDITIVE_PAIR: secondPin,qualifySecondBatchAdditiveBootstrap }=await import('../tools/rc1-source-pair.js');
+const { EQUIPMENT_ECONOMY_MIGRATION_TABLES }=await import('./lib/equipment-economy-migration-catalog.js');
+assert.deepEqual(secondPin.tables,[...EQUIPMENT_ECONOMY_MIGRATION_TABLES].sort());
+assert.equal(secondPin.predecessor,'ed903348ee59e354bfae72bfbc2aed8273229bb2');
+assert.equal(secondPin.reviewedCandidate,'7b029e7a2e087e41a2d6f8e1ad69728650bba025');
+const secondPredecessor={source:secondPin.predecessor,secondBatchAdditiveSource:{tree:secondPin.predecessorTree,schema:secondPin.predecessorSchema,catalog:secondPin.predecessorCatalog}},secondCandidate={source:secondPin.reviewedCandidate,secondBatchAdditiveSource:{tree:secondPin.candidateTree,schema:secondPin.candidateSchema,catalog:secondPin.candidateCatalog,catalogTables:Object.fromEntries(secondPin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
+const secondOld={tables:{...old.tables,unknown_existing_custody:['{"owner":"original","reserved":3}']},sequences:structuredClone(old.sequences)},secondFresh={tables:{...secondOld.tables,...Object.fromEntries(secondPin.tables.map(name=>[name,[]]))},sequences:structuredClone(secondOld.sequences)};
+const secondQualified=qualifySecondBatchAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate);
+assert.equal(secondQualified.relation,'REVIEWED_FOURTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');assert.notEqual(secondQualified.beforeNormalizedSha256,secondQualified.afterNormalizedSha256);assert.deepEqual(secondQualified.addedEmptyTables,secondPin.tables);
+let secondNegatives=0;
+const secondNegative=(label,mutate,pattern)=>{const a=structuredClone(secondOld),b=structuredClone(secondFresh),p=structuredClone(secondPredecessor),c=structuredClone(secondCandidate);mutate(a,b,p,c);assert.throws(()=>qualifySecondBatchAdditiveBootstrap(a,b,p,c),pattern,label);secondNegatives++;};
+secondNegative('unknown addition',(_a,b)=>{b.tables.unknown_new_authority=[];},/unlisted/);
+for(const table of secondPin.tables){secondNegative('each required table missing '+table,(_a,b)=>{delete b.tables[table];},/Missing expected/);secondNegative('each new table populated '+table,(_a,b)=>{b.tables[table]=['{"id":"new-authority"}'];},/not empty/);}
+secondNegative('unknown old row changed',(_a,b)=>{b.tables.unknown_existing_custody=['{"owner":"replacement","reserved":3}'];},/row\/table changed/);
+secondNegative('unknown old table removed',(_a,b)=>{delete b.tables.unknown_existing_custody;},/removed/);
+secondNegative('old row changed',(_a,b)=>{b.tables.accounts=['{"id":"replacement"}'];},/row\/table changed/);
+secondNegative('old sequence changed',(_a,b)=>{b.sequences[0].last_value='11';},/Sequence state changed/);
+secondNegative('new sequence',(_a,b)=>{b.sequences.push({sequencename:'unreviewed_seq',last_value:null});},/Sequence state changed/);
+secondNegative('unrelated candidate source',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.tree='0'.repeat(64);},/Unrelated source changed/);
+secondNegative('wrong predecessor',(_a,_b,p)=>{p.source=pin.predecessor;},/predecessor/);
+secondNegative('predecessor schema drift',(_a,_b,p)=>{p.secondBatchAdditiveSource.schema='0'.repeat(64);},/schema definitions/);
+secondNegative('candidate schema drift including predicate',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.schema='0'.repeat(64);},/schema definitions/);
+secondNegative('full native catalog drift',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalog='0'.repeat(64);},/catalog differs/);
+secondNegative('actual definition drift',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables.contract_auctions.constraints[0].definition='CHECK (true)';},/catalog evidence differs/);
+secondNegative('required clock NN missing',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables.service_subscription_cycles.notNullColumns=[];},/catalog evidence differs/);
+secondNegative('seven table catalog substituted',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables=structuredClone(candidate.additiveSource.catalogTables);},/catalog evidence differs/);
+secondNegative('first identity cannot qualify second',(_a,_b,_p,c)=>{c.additiveSource=c.secondBatchAdditiveSource;delete c.secondBatchAdditiveSource;},/Unrelated source changed/);
+assert.throws(()=>qualifyFirstFiveAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate),/predecessor/);
+assert.throws(()=>qualifySecondBatchAdditiveBootstrap(old,fresh,predecessor,candidate),/predecessor/);
+// New qualification cannot mutate or broaden the historical identity/catalog.
+assert.deepEqual(qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate),qualified);
+for(const file of ['src/equipmentrentals.js','src/social/estate.js','.github/workflows/ci.yml','test/lib/equipment-economy-migration-catalog.js','knowledge/generated/not-listed.md'])assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords,record(file)]),sourceHash,'Second batch grants no new source exclusion');
+console.log(`rc1-source-pair-additive SECOND PASS: separate14-empty-table relation, ${secondNegatives} negatives, cross-relation refusal, exact unknown/old rows/sequences/catalog/source and unchanged original7 identity; no populated authority or backing claim`);
