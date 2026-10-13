@@ -3752,8 +3752,15 @@ scopedSocialContext = async function(db) {
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [90],
-    'the `pgcheck` job must retain exactly one finite proposed90-minute HANG bound for the expanded native chain');
-  for (const invalid of [0, 45, 60, 120]) assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]), 'native wall bound must remain finite and exactly the measured release budget');
+    'the FIFTH `pgcheck` job must retain exactly one finite 90-minute HANG bound for the measured baseline plus workforce and commercial chains');
+  for (const invalid of ['0', '45', '60', '75', '120', '${{ inputs.native_timeout }}', 'unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]),
+      'native wall bound must remain finite and exactly the finite FIFTH release budget');
+  }
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 90\r?\n/m, '')), [90]),
+    'an unset native wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: 90\n    timeout-minutes: 90')), [90]),
+    'duplicate native wall bounds must reject');
 
 
   const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
