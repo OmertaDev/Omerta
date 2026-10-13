@@ -328,7 +328,7 @@
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
 | [docs/agent-economy-final-prefix-native-review.md](../../docs/agent-economy-final-prefix-native-review.md) | documentation | 24 | 2026-10-12 |
-| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 22 | 2026-10-13 |
+| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 24 | 2026-10-13 |
 | [docs/agent-economy-integration-boundary-review.md](../../docs/agent-economy-integration-boundary-review.md) | documentation | 46 | 2026-10-12 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
@@ -469,6 +469,7 @@
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 32 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |

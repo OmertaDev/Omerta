@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `5fc91d5183d0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a54b4e05cec9`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3407 |
+| Commits in clone | 3414 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Retain hosted census cleanup and recovery findings without guard waivers |
+| Latest commit | 2026-10-13 — Pin integrated recovery source with closed derivative evidence scope |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2450 |
+| OmertaDev | 2457 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 112 |
@@ -30,17 +30,17 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 605 | historical |
-| knowledge/generated/graph-summary.md | 605 | historical |
-| knowledge/generated/graph.json | 605 | historical |
-| knowledge/generated/inventory.md | 605 | historical |
+| knowledge/generated/github-history.md | 606 | historical |
+| knowledge/generated/graph-summary.md | 606 | historical |
+| knowledge/generated/graph.json | 606 | historical |
+| knowledge/generated/inventory.md | 606 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 493 | yes |
 | [public/index.html](../../public/index.html) | 458 | yes |
 | [src/server.js](../../src/server.js) | 412 | yes |
 | [schema.sql](../../schema.sql) | 343 | yes |
-| [package.json](../../package.json) | 298 | yes |
-| knowledge/generated/documents.md | 297 | historical |
+| [package.json](../../package.json) | 299 | yes |
+| knowledge/generated/documents.md | 298 | historical |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 219 | historical |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
@@ -61,8 +61,8 @@
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 85 | yes |
 | [test/growth.js](../../test/growth.js) | 81 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 79 | yes |
+| [test/migrate.js](../../test/migrate.js) | 72 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 72 | yes |
-| [test/migrate.js](../../test/migrate.js) | 71 | yes |
 | [test/hardening.js](../../test/hardening.js) | 67 | yes |
 | [src/preflight.js](../../src/preflight.js) | 65 | yes |
 | [tools/sim.js](../../tools/sim.js) | 60 | yes |
