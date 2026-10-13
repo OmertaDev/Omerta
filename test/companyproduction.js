@@ -23,6 +23,7 @@ const { buildServer } = await import('../src/server.js'), G = await import('../s
 const Items = await import('../src/items.js'), Crafting = await import('../src/crafting.js');
 const Production = await import('../src/companyproduction.js'), Routes = await import('../src/routes/companyproduction.js');
 const { runLedgerInvariants } = await import('../src/invariants.js'), { runEstate } = await import('../src/social/estate.js');
+assert.throws(() => Routes.register({}, { pool: {} }), /authenticated canonical item transactions/);
 const app = await buildServer(); await app.pool.query(PRODUCTION_DDL);
 // Owned route registration fixture: shared main registration remains coordinator work.
 Routes.register(app, { pool: app.pool, auth: req => req.jwtVerify(), beforeCraft: async () => ({ productionAuthorized: true, agentGrantExpiresAt: null }) });
