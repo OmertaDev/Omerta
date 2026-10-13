@@ -271,7 +271,7 @@
     "test:equipment-economy:postgres": "node tools/equipment-economy-native.js",
     "test:company-workforce": "node test/rc1-third-batch-source-compatibility.js && node test/company-workforce-native-guards.js && node test/workertraining.js && node test/employmentorganizations.js && node test/businesspartnerships.js && node test/companygovernance.js && node test/companyacquisitions.js && node test/depotacquisitionruntime.js && node test/company-middle-five-integration.js && node test/company-workforce-contracts.js",
     "test:company-workforce:postgres": "node tools/company-workforce-native.js",
-    "test:company-commercial": "node test/companyrestructuring.js && node test/commercialdisputes.js && node test/commercialdisputes-estate-scope.js && node test/equipmentinsurance.js && node test/equipmentinsurance-death.js && node test/equipmentinsurance-api.js && node test/infrastructureconcessions.js && node test/infrastructureconcessions-integration.js && node test/territoryeconomics.js && node test/company-commercial-contracts.js",
+    "test:company-commercial": "node test/rc1-fourth-batch-source-compatibility.js && node test/companyrestructuring.js && node test/commercialdisputes.js && node test/commercialdisputes-estate-scope.js && node test/equipmentinsurance.js && node test/equipmentinsurance-death.js && node test/equipmentinsurance-api.js && node test/infrastructureconcessions.js && node test/infrastructureconcessions-integration.js && node test/territoryeconomics.js && node test/company-commercial-contracts.js",
     "test:company-commercial:postgres": "node tools/company-commercial-native.js"
   },
   "dependencies": {
