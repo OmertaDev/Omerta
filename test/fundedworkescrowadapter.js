@@ -43,7 +43,8 @@ function rpcReader(state,asset,change=(_q,v)=>v){const calls=[];const workHash=t
  else throw Error('Unexpected RPC '+q.method);return change(q,v,calls.length);}};
 }
 const events={allocation:{transactionHash:earnedHash,logIndex:0},funding:{transactionHash:h,logIndex:0},current:{transactionHash:allocationHash,logIndex:0}};
-try{await pool.query(T.workerTrainingDDL);const employer=await player(signers[0]),worker=await player(signers[1]);
+// buildServer installs the canonical training schema; require it instead of replaying component DDL.
+try{await pool.query('SELECT id FROM worker_training_courses LIMIT 0');const employer=await player(signers[0]),worker=await player(signers[1]);
  const course=await G.withCharacter(pool,employer.account,(ch,c,helpers)=>T.createWorkerTraining(ch,{depotId:employer.depot,stat:'cunning',sessions:1,wageCash:100,durationSeconds:600},'source-course',c,helpers));
  await G.withTwoCharacters(pool,worker.account,employer.id,(ch,e,c,helpers)=>T.acceptWorkerTraining(ch,e,{courseId:course.courseId,consent:true},'source-accept',c,helpers),{meet:false});
  t={amountAtoms:'100',asset:'ETH',businessId:employer.depot,courseId:course.courseId,deadline:Math.floor(Date.now()/1000)+120,funderWallet:signers[0].address.toLowerCase(),nonce:'1',ordinal:1,ownerAccount:employer.account,ownerCharacter:employer.id,payeeWallet:signers[1].address.toLowerCase(),stat:'cunning',workerAccount:worker.account,workerCharacter:worker.id};
