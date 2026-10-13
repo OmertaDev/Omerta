@@ -2249,10 +2249,30 @@ const SCENERY_WAIVED = {
       && source.includes('account_ref=$1,actor_ref=$5')
       && source.includes('return value.receipt;');
   };
+  // Closed memory receipt discriminators are not authored catalog handles. Team
+  // actor objects below are private context, consumed internally before any DTO.
+  // Complete module seals retain validators/callers/return boundaries; only these
+  // exact literal fields inherit the classification, never a generic kind/actor.
+  const exactAutonomyField = (base, source, lit, match) => {
+    const normalized=source.replaceAll('\r\n','\n');
+    const seals={
+      'agentoperatingmemory.js':'050e9ca4eb908b61b16a30361b6ea82eca305c610d21b2ebf58fe8e203b77b24',
+      'managementteams.js':'6e4eafdc12fbb4717c739888af6cf30c3c28b5b5265f2c683f37f5b4c5b956d1',
+    };
+    if(!seals[base]||createHash('sha256').update(normalized).digest('hex')!==seals[base]||source.split(lit).length!==2)return false;
+    const [,key,variable,member]=match;
+    if(base==='agentoperatingmemory.js')return key==='kind'&&variable==='t'&&member==='kind'&&[
+      '{actorId:ch.id,receipt:{ok:true,factId:prior.id,kind:t.kind,expiresAt:new Date(prior.expires_at).toISOString(),duplicate:true}}',
+      '{actorId:ch.id,receipt:{ok:true,factId,kind:t.kind,expiresAt:expires.toISOString(),sourceVerified:true}}',
+    ].includes(lit);
+    return ['owner','planner'].includes(key)&&variable==='ch'&&member==='id'
+      &&lit==='{relationship:r,governance,team,owner:ch.id===r.owner_character?ch:other,planner:ch.id===r.partner_character?ch:other}';
+  };
   let logisticsClassified = 0;
   let acquisitionHashClassified = 0;
   let restructuringClassified = 0;
   let concessionActorClassified = 0;
+  let autonomyMemoryClassified=0,autonomyActorClassified=0;
   const cityClassified = [];
   const cityRawProblems = source => {
     const problems = [];
@@ -2276,6 +2296,7 @@ const SCENERY_WAIVED = {
         if (exactAcquisitionHashField(base, s, lit, m)) { acquisitionHashClassified++; continue; }
         if (exactRestructuringDiscriminator(base, s, lit, m)) { restructuringClassified++; continue; }
         if (exactConcessionActorCapsule(base, s, lit, m)) { concessionActorClassified++; continue; }
+        if(exactAutonomyField(base,s,lit,m)){if(base==='agentoperatingmemory.js')autonomyMemoryClassified++;else autonomyActorClassified++;continue;}
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2306,6 +2327,29 @@ const SCENERY_WAIVED = {
   assert.equal(acquisitionHashClassified, 2, 'Only both actual private acquisition hash fields are classified.');
   assert.equal(restructuringClassified, 3, 'Exactly three closed canonical restructuring step discriminators are classified.');
   assert.equal(concessionActorClassified, 1, 'Only the private concession actor/receipt persistence capsule is classified.');
+  assert.equal(autonomyMemoryClassified,2,'Only two closed production/forecast capture receipt kinds are classified');
+  assert.equal(autonomyActorClassified,2,'Only the two private original-owner/planner context fields are classified');
+  for(const base of ['agentoperatingmemory.js','managementteams.js']){
+    const source=fs.readFileSync('src/'+base,'utf8');
+    const changed=base==='agentoperatingmemory.js'?[
+      source.replace("body?.kind==='production'","body?.kind==='unbounded'"),
+      source.replace('kind:t.kind','kind:t.kind,externalOwnerAuthority:true'),
+      source.replace('const t=captureTerms(account,body)','const t={kind:body.kind}'),
+      source+'\nfunction publicNarrative(t){return {kind:t.kind};}\n',
+    ]:[
+      source.replace('owner:ch.id===r.owner_character?ch:other','owner:other'),
+      source.replace('owner:ch.id===r.owner_character?ch:other','owner:ch.id===r.owner_character?ch:other,capability:true'),
+      source.replace('const governance=await V.companyGovernanceSnapshot','const governance=await queryPublicContext'),
+      source+'\nexport function publicNarrative(ch){return {owner:ch.id,planner:ch.id};}\n',
+    ];
+    for(const mutation of changed){assert.notEqual(mutation,source,'The autonomy negative must alter actual source');for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactAutonomyField(base,source,lit,match))assert(!exactAutonomyField(base,mutation,lit,match),'Changed validator/preimage/query/authority/public narrative cannot inherit private classification');}
+    for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactAutonomyField(base,source,lit,match)){
+      assert(exactAutonomyField(base,source.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),lit,match));
+      assert(!exactAutonomyField('other.js',source,lit,match));
+      const publicLiteral=base==='agentoperatingmemory.js'?'{kind:t.kind}':'{owner:ch.id,planner:ch.id}';
+      for(const publicMatch of rawKeyFields(publicLiteral))assert(!exactAutonomyField(base,source,publicLiteral,publicMatch));
+    }
+  }
   const restructuringSource = fs.readFileSync('src/companyrestructuring.js', 'utf8');
   for (const lit of literals(restructuringSource)) for (const match of rawKeyFields(lit)) {
     if (!exactRestructuringDiscriminator('companyrestructuring.js', restructuringSource, lit, match)) continue;
