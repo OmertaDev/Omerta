@@ -25,7 +25,7 @@ import { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';
 import { businessesOf } from './business.js';
 import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
-import { withItemTransaction } from './items.js';
+import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -1168,6 +1168,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     // against itself. Use `client` for everything that belongs to the action.
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId, pool };
     const result = await fn(ch, client, h);
+    assertItemTransactionHealthy(client);
 
     if (ch.alive !== false) await persistCharacter(client, ch); // a killed row is finalized by the estate
     await persistKitchen(client, ch, owned);
@@ -1438,6 +1439,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId,
                 victimAcct, victimOwned };
     const result = await fn(ch, victim, client, h);
+    assertItemTransactionHealthy(client);
 
     // STREET LIFE (the black book): a COMPLETED two-party action is a MEETING — both sides walk
     // away with the other's number (the founder's discoverability rule: numbers come from meeting

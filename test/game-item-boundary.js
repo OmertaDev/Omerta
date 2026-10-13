@@ -56,6 +56,13 @@ try {
     return { shouldNotCommit: true };
   }), /positive whole number/);
   assert.deepEqual(await rows(), committed, 'Caught leaf poison cannot commit through a game wrapper');
+  const beforeCash = (await pool.query('SELECT cash FROM characters WHERE id=$1', ['one-actor'])).rows[0].cash;
+  await assert.rejects(G.withCharacter(pool, 'one', async (ch, client) => {
+    ch.cash = Number(ch.cash) + 123;
+    try { await I.grantStack(client, owner, 'mat:salvage_parts', 0, 'standard', 'caught before actor persist', 'game-item-caught-actor'); } catch { /* cannot persist the in-memory actor */ }
+    return { shouldNotCommit: true };
+  }), /positive whole number/);
+  assert.equal((await pool.query('SELECT cash FROM characters WHERE id=$1', ['one-actor'])).rows[0].cash, beforeCash);
   const raw = await pool.connect();
   try { assert.throws(() => I.assertItemTransaction(raw), /active withItemTransaction/); } finally { raw.release(); }
   console.log(JSON.stringify({ status: 'PASS', native, checks: ['canonical single and pair brand', 'released and raw clients refused', 'late item rollback', 'caught leaf poison rolls back', 'phase-one settlement remains separate'] }));

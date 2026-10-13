@@ -74,6 +74,11 @@ function transactionClient(client) {
 }
 
 export function assertItemTransaction(client) { transactionClient(client); }
+/** A caller composing other state must refuse persistence after a caught item-leaf failure. */
+export function assertItemTransactionHealthy(client) {
+  const transaction = transactionClient(client);
+  if (transaction.failed) throw transaction.failed;
+}
 /** True only for a mutation newly reserved by this branded transaction, not a historical replay. */
 export async function ownsItemMutationReservation(client, key) {
   const owned = transactionClient(client).guardReservations.find(([reservedKey]) => reservedKey === key);
