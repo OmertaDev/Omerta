@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+  "sourceRevision": "4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12338,
-    "edges": 50079,
+    "nodes": 12342,
+    "edges": 50099,
     "byNodeType": {
       "Artifact": 4702,
       "Command": 259,
-      "Commit": 3358,
+      "Commit": 3362,
       "Contract": 126,
       "Document": 780,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3845,
-      "CHANGED": 19729,
+      "CHANGED": 19745,
       "CONTAINS": 4723,
       "DECLARES": 259,
       "DEFINED_IN": 1534,
       "DEPENDS_ON": 67,
       "EXECUTES": 892,
       "HANDLED_BY": 859,
-      "HAS_COMMIT": 3358,
+      "HAS_COMMIT": 3362,
       "IMPLEMENTS": 124,
       "IMPORTS": 5223,
       "INHERITS": 42,
@@ -79114,20 +79114,20 @@
       "path": "public/city-adventure-ui.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 4734,
-      "lines": 53,
-      "version": "8290c57bc2eb6ce3",
+      "bytes": 8205,
+      "lines": 93,
+      "version": "cbce88ee994f07d1",
       "text": true,
       "provenance": [
         {
           "file": "public/city-adventure-ui.js",
           "line": 1,
-          "version": "8290c57bc2eb6ce3"
+          "version": "cbce88ee994f07d1"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/city-home-ui.js",
@@ -79160,20 +79160,20 @@
       "path": "public/city-scene.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 23360,
-      "lines": 589,
-      "version": "7f0bfc03026457fd",
+      "bytes": 25910,
+      "lines": 613,
+      "version": "7ff8a86ae4b1b92c",
       "text": true,
       "provenance": [
         {
           "file": "public/city-scene.css",
           "line": 1,
-          "version": "7f0bfc03026457fd"
+          "version": "7ff8a86ae4b1b92c"
         }
       ],
-      "lastChangedAt": "2026-10-12T05:44:35.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/city-scene.js",
@@ -79183,20 +79183,20 @@
       "path": "public/city-scene.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 120846,
-      "lines": 1900,
-      "version": "5ca23e8fffd2192a",
+      "bytes": 125720,
+      "lines": 1971,
+      "version": "3a695fe2d31bbab5",
       "text": true,
       "provenance": [
         {
           "file": "public/city-scene.js",
           "line": 1,
-          "version": "5ca23e8fffd2192a"
+          "version": "3a695fe2d31bbab5"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/city-world-ui.css",
@@ -79206,20 +79206,20 @@
       "path": "public/city-world-ui.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 12988,
-      "lines": 107,
-      "version": "06b6b38f353ef1e7",
+      "bytes": 15491,
+      "lines": 135,
+      "version": "6012b1203f058f61",
       "text": true,
       "provenance": [
         {
           "file": "public/city-world-ui.css",
           "line": 1,
-          "version": "06b6b38f353ef1e7"
+          "version": "6012b1203f058f61"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/city-world-ui.js",
@@ -79229,20 +79229,20 @@
       "path": "public/city-world-ui.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 64338,
-      "lines": 770,
-      "version": "f42286cfb9c087a2",
+      "bytes": 65372,
+      "lines": 793,
+      "version": "aa52c91db2be4602",
       "text": true,
       "provenance": [
         {
           "file": "public/city-world-ui.js",
           "line": 1,
-          "version": "f42286cfb9c087a2"
+          "version": "aa52c91db2be4602"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/defi.html",
@@ -79597,20 +79597,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1432167,
+      "bytes": 1432161,
       "lines": 15018,
-      "version": "9977f2d57e78b463",
+      "version": "237faf3f11332246",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "9977f2d57e78b463"
+          "version": "237faf3f11332246"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -90105,20 +90105,20 @@
       "path": "test/city-district-arcs-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 30770,
-      "lines": 402,
-      "version": "9c0de19f56c83039",
+      "bytes": 31868,
+      "lines": 414,
+      "version": "e71da080c7ffc4d4",
       "text": true,
       "provenance": [
         {
           "file": "test/city-district-arcs-browser.js",
           "line": 1,
-          "version": "9c0de19f56c83039"
+          "version": "e71da080c7ffc4d4"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/city-district-arcs.js",
@@ -90197,20 +90197,20 @@
       "path": "test/city-gameplay-panels-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 56275,
-      "lines": 613,
-      "version": "08a041e324b5b73c",
+      "bytes": 60455,
+      "lines": 652,
+      "version": "058773df70d86bab",
       "text": true,
       "provenance": [
         {
           "file": "test/city-gameplay-panels-browser.js",
           "line": 1,
-          "version": "08a041e324b5b73c"
+          "version": "058773df70d86bab"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/city-home-interiors-api.js",
@@ -90312,20 +90312,20 @@
       "path": "test/city-presence-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 76020,
-      "lines": 917,
-      "version": "c5878b827a24b8c5",
+      "bytes": 77000,
+      "lines": 934,
+      "version": "fb95bad607c62ce5",
       "text": true,
       "provenance": [
         {
           "file": "test/city-presence-browser.js",
           "line": 1,
-          "version": "c5878b827a24b8c5"
+          "version": "fb95bad607c62ce5"
         }
       ],
-      "lastChangedAt": "2026-10-12T05:44:35.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/city-presence.js",
@@ -90381,20 +90381,20 @@
       "path": "test/city-scene-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 137333,
-      "lines": 1846,
-      "version": "2d3bc6f4fde1706d",
+      "bytes": 146138,
+      "lines": 1930,
+      "version": "06418ca74d95dd23",
       "text": true,
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "2d3bc6f4fde1706d"
+          "version": "06418ca74d95dd23"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/city-social-api.js",
@@ -90427,20 +90427,20 @@
       "path": "test/city-world-host-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 129700,
-      "lines": 1479,
-      "version": "c354bb3c484d99fa",
+      "bytes": 131915,
+      "lines": 1508,
+      "version": "5120052384ef2167",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "c354bb3c484d99fa"
+          "version": "5120052384ef2167"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/city-world-opportunities.js",
@@ -90473,20 +90473,20 @@
       "path": "test/city-world-ui-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 57117,
-      "lines": 566,
-      "version": "35c3c21fcbf58609",
+      "bytes": 60145,
+      "lines": 595,
+      "version": "5a800ddcfa55651d",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-ui-browser.js",
           "line": 1,
-          "version": "35c3c21fcbf58609"
+          "version": "5a800ddcfa55651d"
         }
       ],
-      "lastChangedAt": "2026-10-12T19:42:31.000Z",
+      "lastChangedAt": "2026-10-13T08:39:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c75eb6de12ad9816d4a48f1e614a099098144eec"
+      "lastChangedCommit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
     },
     {
       "key": "Artifact:test/citymap.js",
@@ -127058,6 +127058,22 @@
       ]
     },
     {
+      "key": "Commit:4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+      "type": "Commit",
+      "id": "4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+      "label": "Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell",
+      "title": "Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell",
+      "date": "2026-10-13T08:42:23.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+      "provenance": [
+        {
+          "commit": "4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4795fafa35f03e7dc786f3f1cb99167bb7cc72ab"
+        }
+      ]
+    },
+    {
       "key": "Commit:47a02f551f675bcc6ee197f38922b8d38cad344c",
       "type": "Commit",
       "id": "47a02f551f675bcc6ee197f38922b8d38cad344c",
@@ -154050,6 +154066,22 @@
       ]
     },
     {
+      "key": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "type": "Commit",
+      "id": "c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "label": "Keep mobile play visible and stage tactical drill feedback",
+      "title": "Keep mobile play visible and stage tactical drill feedback",
+      "date": "2026-10-13T08:39:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "provenance": [
+        {
+          "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+        }
+      ]
+    },
+    {
       "key": "Commit:c6fed1cc90f3869b3ce0564a81390c099d3adc7c",
       "type": "Commit",
       "id": "c6fed1cc90f3869b3ce0564a81390c099d3adc7c",
@@ -162322,6 +162354,22 @@
       ]
     },
     {
+      "key": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "type": "Commit",
+      "id": "f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "label": "chore(knowledge): refresh generated artifacts for a06f5c3f",
+      "title": "chore(knowledge): refresh generated artifacts for a06f5c3f",
+      "date": "2026-10-13T08:40:48.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "provenance": [
+        {
+          "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f254c64a54a019665d7a516d382d56b46f2dcd82"
+        }
+      ]
+    },
+    {
       "key": "Commit:f265abb3fdb46552c651aede7a7ff41aa48c47ae",
       "type": "Commit",
       "id": "f265abb3fdb46552c651aede7a7ff41aa48c47ae",
@@ -163070,6 +163118,22 @@
         {
           "commit": "f58d6e1f7e9672585ca4bf1b7d14032cf3a9747b",
           "url": "https://github.com/OmertaDev/Omerta/commit/f58d6e1f7e9672585ca4bf1b7d14032cf3a9747b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1",
+      "type": "Commit",
+      "id": "f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1",
+      "label": "Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell",
+      "title": "Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell",
+      "date": "2026-10-13T08:39:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1",
+      "provenance": [
+        {
+          "commit": "f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1"
         }
       ]
     },
@@ -189484,6 +189548,9 @@
           "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
         },
         {
+          "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+        },
+        {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
         },
         {
@@ -191299,6 +191366,9 @@
           "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
         },
         {
+          "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+        },
+        {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
         },
         {
@@ -193112,6 +193182,9 @@
         },
         {
           "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+        },
+        {
+          "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
@@ -195437,6 +195510,9 @@
         },
         {
           "commit": "f1e51ae2b8de3767fd8673ebd2e29209d799cf96"
+        },
+        {
+          "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
         },
         {
           "commit": "f28acbe2218222ccac1c17f58a44b07df482e269"
@@ -206833,8 +206909,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
-      "currentBranch": "main",
+      "revision": "4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+      "currentBranch": "codex/city-mobile-play-shell",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -240249,13 +240325,13 @@
       "type": "TestSuite",
       "id": "test/city-district-arcs-browser.js",
       "label": "test/city-district-arcs-browser.js",
-      "lines": 402,
-      "version": "9c0de19f56c83039",
+      "lines": 414,
+      "version": "e71da080c7ffc4d4",
       "provenance": [
         {
           "file": "test/city-district-arcs-browser.js",
           "line": 1,
-          "version": "9c0de19f56c83039"
+          "version": "e71da080c7ffc4d4"
         }
       ]
     },
@@ -240309,13 +240385,13 @@
       "type": "TestSuite",
       "id": "test/city-gameplay-panels-browser.js",
       "label": "test/city-gameplay-panels-browser.js",
-      "lines": 613,
-      "version": "08a041e324b5b73c",
+      "lines": 652,
+      "version": "058773df70d86bab",
       "provenance": [
         {
           "file": "test/city-gameplay-panels-browser.js",
           "line": 1,
-          "version": "08a041e324b5b73c"
+          "version": "058773df70d86bab"
         }
       ]
     },
@@ -240384,13 +240460,13 @@
       "type": "TestSuite",
       "id": "test/city-presence-browser.js",
       "label": "test/city-presence-browser.js",
-      "lines": 917,
-      "version": "c5878b827a24b8c5",
+      "lines": 934,
+      "version": "fb95bad607c62ce5",
       "provenance": [
         {
           "file": "test/city-presence-browser.js",
           "line": 1,
-          "version": "c5878b827a24b8c5"
+          "version": "fb95bad607c62ce5"
         }
       ]
     },
@@ -240429,13 +240505,13 @@
       "type": "TestSuite",
       "id": "test/city-scene-browser.js",
       "label": "test/city-scene-browser.js",
-      "lines": 1846,
-      "version": "2d3bc6f4fde1706d",
+      "lines": 1930,
+      "version": "06418ca74d95dd23",
       "provenance": [
         {
           "file": "test/city-scene-browser.js",
           "line": 1,
-          "version": "2d3bc6f4fde1706d"
+          "version": "06418ca74d95dd23"
         }
       ]
     },
@@ -240459,13 +240535,13 @@
       "type": "TestSuite",
       "id": "test/city-world-host-browser.js",
       "label": "test/city-world-host-browser.js",
-      "lines": 1479,
-      "version": "c354bb3c484d99fa",
+      "lines": 1508,
+      "version": "5120052384ef2167",
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "c354bb3c484d99fa"
+          "version": "5120052384ef2167"
         }
       ]
     },
@@ -240489,13 +240565,13 @@
       "type": "TestSuite",
       "id": "test/city-world-ui-browser.js",
       "label": "test/city-world-ui-browser.js",
-      "lines": 566,
-      "version": "35c3c21fcbf58609",
+      "lines": 595,
+      "version": "5a800ddcfa55651d",
       "provenance": [
         {
           "file": "test/city-world-ui-browser.js",
           "line": 1,
-          "version": "35c3c21fcbf58609"
+          "version": "5a800ddcfa55651d"
         }
       ]
     },
@@ -403797,6 +403873,102 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/city-adventure-ui.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/city-scene.css",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/city-scene.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/city-world-ui.css",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/city-world-ui.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-district-arcs-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-gameplay-panels-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-presence-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-scene-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "to": "Artifact:test/city-world-ui-browser.js",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:c6fed1cc90f3869b3ce0564a81390c099d3adc7c",
       "to": "Artifact:test/population.js",
       "provenance": {
@@ -429617,6 +429789,38 @@
       "to": "Artifact:test/discovery.js",
       "provenance": {
         "commit": "f24d36b5874b130489a301b4a95f28d7d0d0c77e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
       }
     },
     {
@@ -524282,6 +524486,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4795fafa35f03e7dc786f3f1cb99167bb7cc72ab",
+      "provenance": {
+        "commit": "4795fafa35f03e7dc786f3f1cb99167bb7cc72ab"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:47a02f551f675bcc6ee197f38922b8d38cad344c",
       "provenance": {
         "commit": "47a02f551f675bcc6ee197f38922b8d38cad344c"
@@ -537778,6 +537990,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:c6fc92fe3792a89c21bde667a40edc551bafe5d3",
+      "provenance": {
+        "commit": "c6fc92fe3792a89c21bde667a40edc551bafe5d3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:c6fed1cc90f3869b3ce0564a81390c099d3adc7c",
       "provenance": {
         "commit": "c6fed1cc90f3869b3ce0564a81390c099d3adc7c"
@@ -541914,6 +542134,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:f254c64a54a019665d7a516d382d56b46f2dcd82",
+      "provenance": {
+        "commit": "f254c64a54a019665d7a516d382d56b46f2dcd82"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:f265abb3fdb46552c651aede7a7ff41aa48c47ae",
       "provenance": {
         "commit": "f265abb3fdb46552c651aede7a7ff41aa48c47ae"
@@ -542285,6 +542513,14 @@
       "to": "Commit:f58d6e1f7e9672585ca4bf1b7d14032cf3a9747b",
       "provenance": {
         "commit": "f58d6e1f7e9672585ca4bf1b7d14032cf3a9747b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1",
+      "provenance": {
+        "commit": "f593fbbdd65b6bfb70e29aaca87800fbd72ba2c1"
       }
     },
     {
@@ -561307,7 +561543,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 911
+        "line": 994
       }
     },
     {
@@ -640228,7 +640464,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/city-scene-browser.js",
-        "line": 911
+        "line": 994
       }
     },
     {

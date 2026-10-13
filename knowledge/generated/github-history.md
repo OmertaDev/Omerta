@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a06f5c3f34b5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4795fafa35f0`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3358 |
+| Commits in clone | 3362 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Merge pull request #260 from OmertaDev/codex/city-gameplay-expansion |
+| Latest commit | 2026-10-13 — Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2402 |
+| OmertaDev | 2405 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 111 |
+| github-actions[bot] | 112 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
 
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 602 | historical |
-| knowledge/generated/graph-summary.md | 602 | historical |
-| knowledge/generated/graph.json | 602 | historical |
-| knowledge/generated/inventory.md | 602 | historical |
+| knowledge/generated/github-history.md | 603 | historical |
+| knowledge/generated/graph-summary.md | 603 | historical |
+| knowledge/generated/graph.json | 603 | historical |
+| knowledge/generated/inventory.md | 603 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 493 | yes |
-| [public/index.html](../../public/index.html) | 458 | yes |
+| [public/index.html](../../public/index.html) | 459 | yes |
 | [src/server.js](../../src/server.js) | 411 | yes |
 | [schema.sql](../../schema.sql) | 342 | yes |
 | [package.json](../../package.json) | 296 | yes |

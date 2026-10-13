@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `a06f5c3f34b5`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `4795fafa35f0`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
 | Current artifacts | 4,702 |
-| Text lines | 1,606,268 |
-| Repository bytes inventoried | 819,116,674 |
+| Text lines | 1,606,664 |
+| Repository bytes inventoried | 819,151,406 |
 | Backend/route modules | 405 |
 | HTTP route registrations / unique routes | 965 / 965 |
 | Database tables | 443 |
 | Solidity declarations | 126 |
-| Git commits | 3,358 |
+| Git commits | 3,362 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 12,338 / 50,079 |
+| Graph nodes / edges | 12,342 / 50,099 |
 
 ## Artifact kinds
 
@@ -60,7 +60,7 @@
 | [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
 | [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
 | [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
-| [public/index.html](../../public/index.html) | 15,018 | web-surface | 2026-10-12 |
+| [public/index.html](../../public/index.html) | 15,018 | web-surface | 2026-10-13 |
 | [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
 | [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
 | [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
