@@ -28,7 +28,7 @@ const manifest = {
   },
   city_home_storage_items: {
     constraints: ['pkey', 'owner_scope_check', 'item_state_check', 'owner_id_fkey',
-      'home_key_authority_token_fkey', 'item_id_owner_scope_owner_id_item_s_fkey'],
+      'home_key_authority_token_fkey', 'item_id_owner_scope_owner_id_item__fkey'],
     columns: ['item_id', 'owner_scope', 'owner_id', 'item_state', 'home_key', 'authority_token', 'created_at'],
   },
   city_npc_favors: {
@@ -55,7 +55,11 @@ const manifest = {
       'consent_at', 'left_at', 'solved_at', 'outcome_json'],
   },
 };
-for (const value of Object.values(manifest)) {
+for (const [table, value] of Object.entries(manifest)) {
+  for (const suffix of value.constraints) {
+    const name = `${table}_${suffix}`;
+    assert(Buffer.byteLength(name, 'utf8') <= 63, `Declared gameplay constraint name exceeds PostgreSQL's 63-byte identifier limit: ${name}`);
+  }
   Object.freeze(value.constraints); Object.freeze(value.columns); Object.freeze(value);
 }
 export const CITY_GAMEPLAY_MIGRATION_TABLES = Object.freeze(Object.keys(manifest));
@@ -82,6 +86,17 @@ const expectedKeys = [...Object.entries(manifest).flatMap(([table, entry]) => en
 const expectedColumns = [...Object.entries(manifest).flatMap(([table, entry]) => entry.columns.map(name => `${table}.${name}`)), ...addedColumns].sort();
 const schemaTables = [...tables, 'item_instances', 'item_mutation_guards', 'item_events', 'mystery_instances', 'street_deeds'];
 const repo = fileURLToPath(new URL('../../', import.meta.url));
+
+function reportDeclaredNameMismatch(actual, expected, kind) {
+  if (actual.length === expected.length && actual.every((name, index) => name === expected[index])) return;
+  const actualNames = new Set(actual), expectedNames = new Set(expected);
+  const missing = expected.filter(name => !actualNames.has(name)), unexpected = actual.filter(name => !expectedNames.has(name));
+  const boundedNames = names => names.filter(name => typeof name === 'string' && Buffer.byteLength(name, 'utf8') <= 160
+    && /^[a-z_][a-z0-9_]*\.[a-z_][a-z0-9_]*$/.test(name)).slice(0, 8);
+  console.error('City gameplay migration catalog name mismatch: ' + JSON.stringify({ kind,
+    actualCount: actual.length, expectedCount: expected.length, missingCount: missing.length, unexpectedCount: unexpected.length,
+    missing: boundedNames(missing), unexpected: boundedNames(unexpected) }));
+}
 
 function reviewedSchema(pin) {
   const target = `${pin.revision}:schema.sql`;
@@ -153,8 +168,10 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
       pg_get_constraintdef(c.oid,true) AS definition FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid
       JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname=current_schema() AND c.contype<>'n'
       ORDER BY t.relname,c.conname`)).rows.filter(constraintScope);
+    reportDeclaredNameMismatch(rows.map(constraintKey).sort(), expectedKeys, 'constraints');
     assert.deepEqual(rows.map(constraintKey).sort(), expectedKeys, 'Pinned gameplay source has exactly its declared constraint keys');
     const metadata = await readCityGameplayMigrationMetadata(client);
+    reportDeclaredNameMismatch(metadata.columns.map(columnKey).sort(), expectedColumns, 'columns');
     assert.deepEqual(metadata.columns.map(columnKey).sort(), expectedColumns, 'Pinned gameplay source has exactly its declared columns');
     assert(metadata.constraints.every(row => row.validated === true), 'Pinned reference constraints are validated');
     const clauses = [['item_instance_state', 1], ['item_instance_escrow_owner', 1], ['item_guard_kind', 2], ['item_event_kind', 2]];
