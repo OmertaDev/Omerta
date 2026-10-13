@@ -40,3 +40,46 @@ This pass establishes no new runtime defect. Material limitations are the pendin
 Final eleven native proofs, current DTO/accounting/source guards/catalogs/census, exact deployed-predecessor SourcePair, generated knowledge and mandatory hosted suites/simulation/browser/PostgreSQL16/PostgreSQL18.4/Forge/recovery checks remain coordinator requirements. Actual API/worker deployment verification is separate. Current source is unreleased; historical component evidence does not qualify repaired lock order, broader archival/recovery, full-world economy histories, scheduler soak, external backing or financial activation.
 
 Durable verification script, initial failed lookup, successful retest, source/artifact/log hashes and this proposal are retained under `agent-economy-state/team-evidence/company-operators/autonomy-fifth-review-20261013`.
+
+## Current release-preparation supplement
+
+This supplement reviews coordinator source `2d072e0c668e0d67d81c93bf7c1e3b8efa1617ad`. The provisional review and component histories above retain their original pins and limits. No runtime, schema, test, package, source adapter, CI, generated inventory or shared SPEC file was changed by this document-only pass. Production external funding, paid compute and financial activation remain OFF.
+
+### Complete current native campaign
+
+The complete, clean eleven-proof runner at `ce717fa30b35395eb38bbca9ea5dc06dd4aeb8a4` passed on owned local PostgreSQL18.4. Independent verification matched all11 entry/mode pairs to the frozen runner inventory, all11 distinct approved prefix-plus12hex database names, every zero exit/no-signal result, every full raw-log SHA256, and all entry/fixture source hashes to the exact GitLF or pureCRLF representation. Both ordinary DTO and actual laboratory DTO modes are included; no partial/tail selection was credited. Aggregate log SHA256 is `7ebf1f5f7240bc1ffc5bd31b44ce41d5ed2ef88a4a4b9370eb10fac33951cba2`.
+
+The inventory is the canonical offline funded-work adapter; final combined late-five integration; intelligence; operating memory; teams; full21-team scheduling/retry integration; laboratory core and actual integration; explicitly synthetic external-work lifecycle; default25-route DTO proof; and actual4-route laboratory DTO proof. Real paired game-cash report transfers, original-party consent, issued AgentAct admission, once-configuration, estate/heir negative rights, SQL rollback/contention and independent books remain scoped to those tests. Labs retain two genuine elapsed60-second arms and real paid customer journals. The21-team proof retains genuine30-second retry cooldown, real policy refusals, one-CAS consumption and real21st configuration; it is not scheduler-soak or performance evidence. Offline RPC/public deterministic signatures plus canonical F11 wage/stat/energy outcomes are not a deployed escrow, actual crypto backing or payment. Public F25 still returns503 unavailable before provider/game effects.
+
+Every tracked file under src, schema.sql, package.json, package-lock.json and the WorkEscrow contract/test/Foundry configuration is byte-identical between ce717 and2d072. Later executable differences are only fourth/fifth source-transfer tests/helpers and the historical duration test. Thus the complete native campaign covers the unchanged current runtime, while the separate source composition is tested at its own final pins. No PG16 or hosted result is inferred from local18.4.
+
+### Repairs and historical source controls
+
+Two component order changes were integrated and are included in ce717: managementteamautonomy explicitly follows Depot/policy→relationship/team/plan→grant and freshly validates the private grant before and after canonical configuration; synthetic fundedexternalwork allocation/recovery follows its already-held course→session→job source order. Earlier actor/course serialization means the static pairs did not themselves prove a reachable deadlock. No deadlock exploit, broader lock-framework audit or canonical escrow-adapter mutation is claimed. Ordinary memory plus fresh18.4 team,21-case retry and synthetic lifecycle proofs passed at `e69afc057a81c0ff64b0095268c039adf837ef20`, review `e7e5a79d93709c163f57ff0f7e36251219512a2c`.
+
+Retained failures include missing ignored compiler vendors, stale memory duplicate-DDL setup, the unbranded duplicate rental recovery after an already-completed estate, exact display/import-fixture/source-conflict census refusals, and missing Depot/raw-worker historical source composition. Repairs preserve their original logs. The laboratory test now uses the actual moderator estate prelock/opaque scope/pre-heir path and verifies original landlord title, zero held deposit and one -250 game-cash burn; all elapsed horizons, original books, grants, replay and no-heir assertions remain. It requires the actual shared prerequisite tables instead of reapplying fixture DDL. Full memory then fresh18.4 native proof passed at `977291d95b489b5ee9171a4cdb8b97fdd6979594` after `7f22f41cbe6f38150e1ffce53aaded88fe5c46ac`; both are included in ce717.
+
+All30 historical composition checks passed:25 actual source-compatibility suites plus world qualification, duration evidence, backlog, checkpoint and equipment migration catalog. Package transfer pins ce717→reviewed pendingIVbc7 with two actual unique Git inverse hunks/fullSHA/blob, preserving original6maps/16hunks/124 negatives/world18 plus16 package-corpus and10 command/compiler/refill-bypass negatives. Missing Depot coverage belongs to the separate FOURTH envelope (10th domain/3actualF17 hunks), not a cross-stage FIFTH exception. Duration input uses exact outer-first composition with old10schedule/8Intel/7DB controls and3unknown-current negatives. No historical full-world/native/finance clearance is transferred. Package commits1d86d407/2607bdcf, reviewcc7574b3; caller3b062237; peerFOURTHbedee887. All are integrated in2d072.
+
+Complete `node test/gates.js` executed at clean2d072 and exited0. Exact collector, closed DTO and import-only fixture classifications retain unknown/stale/caller/authority negatives. Laboratory source_used is a permanent one-journal/one-arm400 conflict, not refill throttling; all39 cooldown and11 rolling-bucket controls remain. The finite90-minute native CI bound is an accepted hang envelope based on retained56m24s plus29 mandatory fresh groups; expanded hosted duration is still unmeasured.
+
+### Measured current census
+
+Measured using the established refresh-release-census helper's exact inventory/live-boot/fresh-invariant method, adapted read-only to omit both SPEC writes. No ambient database is used and resource economy is off. These are structural counts, not completeness/security/soak evidence. Test files include recursive helpers; they are not657 standalone suites. The invariant count is the fresh independent schema sweep, not the higher populated-native dynamic registry check count.
+
+| Inventory | Measured current value |
+| --- | --- |
+| Backend source |469 files;124492 lines |
+| Recursive test source |657 files;169825 lines |
+| Shared schema |510 CREATE TABLE declarations;8948 lines |
+| Actual booted HTTP routes |1145 registrations/unique method-path pairs;1092 under /v1 |
+| Fresh-schema ledger sweep |106 checks:100 named+6 currency conservation;zero drift |
+| Markdown |855 files;143172 lines after this supplement |
+
+The shared SPEC still reports older454/639/493/1116/103 values at2d072. Updating shared SPEC/QA/generated knowledge remains coordinator-owned; this pass records measured evidence without silently editing them. No new census document was created because the existing convention is a single release review.
+
+### Remaining exact release requirements
+
+Director migration-test proposal `95708d663cb5fc0bd6ddb28c45928163ecda96e7` has a coordinator-reported independent native PASS for17 templates, but is not integrated at2d072 and is not part of this native11/gates/census qualification. Its integration and required current-source retest remain separate. Current exact deployed-predecessor SourcePair/recovery, shared census/QA/knowledge refresh, all mandatory hosted suites/simulation/browser/PG16/PG18.4/Forge/recovery and actual deployment verification remain coordinator requirements until explicitly evidenced. bc7 is a reviewed pending predecessor, not a deployed-source assertion. No code or evidence here authorizes external escrow deployment, real funding/provider execution, financial/paid-compute activation or HOOD support.
+
+Verification scripts, full hashes, census, native-source/log comparisons and gates are retained under team-evidence/company-workflows/autonomy-release-review-current. Original complete native files are retained under company-workflows/autonomy-current-native-ce717fa3/company-autonomy-native-ce717fa3-211996f8. Adapted repository-pinned Pashov authority/transition review, Plamen source/accounting/caller traces and Trail of Bits specification/evidence comparison apply only to these stated pins/phases; no upstream orchestration or blanket audit is claimed.
