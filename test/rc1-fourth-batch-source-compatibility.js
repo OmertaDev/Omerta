@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import * as O from '../tools/rc1-fourth-batch-source-compatibility.js';
+import { verifyWorldRecoverySources } from '../tools/rc1-world-qualification.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { secondBatchSourceBaseline } from '../tools/rc1-second-batch-source-compatibility.js';
 import { thirdBatchSourceBaseline } from '../tools/rc1-third-batch-source-compatibility.js';
@@ -36,3 +37,11 @@ for(const bad of [schema+'\n','\ufeff'+schema,schema.replace('\n','\r\n'),schema
 const catalog=JSON.parse(fs.readFileSync('test/lib/phase2-architecture-upgrade-catalog.json'));const tables=['commercial_dispute_requests','commercial_disputes','company_restructuring_plans','company_restructuring_requests','equipment_insurance_claims','equipment_insurance_policies','equipment_insurance_requests','infrastructure_concession_requests','infrastructure_concessions','territory_economics_payments','territory_economics_profiles','territory_economics_requests','territory_economics_sources'];
 assert.equal(catalog.added.filter(r=>tables.includes(r.table_name)).length,132);assert.equal(tables.reduce((n,t)=>n+catalog.notNullColumns[t].length,0),114);assert.equal(catalog.added.length,1048);
 console.log('FOURTH source transfer PASS: 8 literal domains, '+hunks+' actual Git inverse hunks, '+negatives+' negative controls; complete FIRST/SECOND/THIRD composition and actual City/Deed/Franchise rejection; 13/132/114 native bindings retained, source-only');
+
+// Legacy EOL normalization is intentionally unchanged; substantive full-caller drift must still refuse.
+const worldFiles=['src/server.js','src/worker.js'];
+const worldRead=file=>fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
+await verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:worldRead});
+let worldNegatives=0;
+for(const file of worldFiles){const text=worldRead(file),d=O.FOURTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}
+console.log('Actual world recovery substantive rejection PASS: '+worldNegatives+' changed/unknown/missing/duplicate-context controls; pre-existing mixed-EOL normalization limit retained.');
