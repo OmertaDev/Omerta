@@ -68,6 +68,37 @@ export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
     "service_subscriptions"
   ])
 });
+export const THIRD_BATCH_ADDITIVE_PAIR = Object.freeze({
+  "predecessor": "62954ecd2f64899641af41f1d2d047d0ed07efa4",
+  "reviewedCandidate": "39cfe22a4557d75c1a5ed937ef8bee66e3bfeaea",
+  "predecessorTree": "262ee6317912c4b833f5ee8c020e8ab7711db9448a9c44a931eba1751c4ccee2",
+  "predecessorSchema": "0f84bd62550030d065621637241e62e21d8f51820a57bd6cfb1e0bc4182e609a",
+  "predecessorCatalog": "e60fc7a581bb21276c5176a2851e96fbc1d6a6bf429485a4510f36819e3a44b2",
+  "candidateTree": "c8ef151e69d6530a6b922fd96a413891638fb731e55e6d2d1bcd017f31a9f2f3",
+  "candidateSchema": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd",
+  "candidateCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
+  "candidateTableCatalog": "9f282d4df739f9baeb5eca7e92ec17f148136d5a37b2bb2d3794d2831e43acdd",
+  "constraints": 104,
+  "notNull": 121,
+  "tables": Object.freeze([
+    "business_partnership_contributions",
+    "business_partnership_distributions",
+    "business_partnership_requests",
+    "business_partnerships",
+    "company_acquisition_requests",
+    "company_acquisitions",
+    "company_governance",
+    "company_governance_proposals",
+    "company_governance_requests",
+    "company_governance_votes",
+    "employment_organization_courses",
+    "employment_organization_requests",
+    "employment_organizations",
+    "worker_training_courses",
+    "worker_training_requests",
+    "worker_training_sessions"
+  ])
+});
 const load = (file) => import(pathToFileURL(path.resolve(file)).href);
 const git = (root, ...args) => execFileSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
 const outside = (root, target) => { const relative = path.relative(root, target); return relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative); };
@@ -103,6 +134,7 @@ export async function sourcePairIdentity(root) {
       constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null,
     }])) : {} };
   return { source, gitTree: expected.tree, checkoutSha256: sha256(canonicalJson(inventory)), inventory, sourceFiles, additiveSource, secondBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(SECOND_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
+    thirdBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(THIRD_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
 }
 
@@ -175,6 +207,40 @@ export function qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate
   assert(delta.sequenceStateEqual, 'Sequence state changed');
   for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
   return { relation: 'REVIEWED_FOURTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
+}
+
+export function qualifyThirdBatchAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = THIRD_BATCH_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.thirdBatchAdditiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
+    assert.equal(identity.thirdBatchAdditiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.thirdBatchAdditiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.thirdBatchAdditiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Sixteen-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.thirdBatchAdditiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  assert.equal(Object.values(candidate.thirdBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.constraints.length, 0), pin.constraints, 'Exact 104 native constraints required');
+  assert.equal(Object.values(candidate.thirdBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.notNullColumns.length, 0), pin.notNull, 'Exact 121 NOT NULL bindings required');
+  for (const name of pin.tables) assert(Array.isArray(b.tables[name]), `New table snapshot type invalid: ${name}`);
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_SIXTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
     addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
     beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
@@ -338,6 +404,7 @@ export async function runSourcePair() {
       dataRule: 'Every predecessor row/table and all sequences remain exact; seven reviewed added tables must be empty; raw unequal hashes retained',
       excludedClaim: 'Empty added tables do not establish new authority or native schema validity' },
     secondBatchAdditiveBootstrapPolicy: { predecessor: SECOND_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: SECOND_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: SECOND_BATCH_ADDITIVE_PAIR.tables, sourceRule: 'Exact three owned qualification files and ten literal derivative outputs only; catalog/schema/runtime/CI remain frozen', dataRule: 'Fourteen reviewed tables EMPTY; all prior and unknown rows/tables/sequences exact; rollback/replay/reupgrade full equality', excludedClaim: 'No populated authority, full-world, deployed recovery or backing validity' },
+    thirdBatchAdditiveBootstrapPolicy: { predecessor: THIRD_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: THIRD_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: THIRD_BATCH_ADDITIVE_PAIR.tables, constraints: 104, notNull: 121, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; all other complete source/catalog/schema bytes pinned', dataRule: 'Sixteen declared tables EMPTY; every prior/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'No populated authority, financial backing, deployed predecessor or full-world recovery qualification' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
       'No backup restore or recovery-point claim', 'Installed dependencies must independently match their lockfile'] };
@@ -488,7 +555,9 @@ export async function runSourcePair() {
     const delta = sourcePairStateDifference(a, b);
     if (additive && canonicalJson(a) !== canonicalJson(b)) {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
-      const qualified = predecessor.source === SECOND_BATCH_ADDITIVE_PAIR.predecessor
+      const qualified = predecessor.source === THIRD_BATCH_ADDITIVE_PAIR.predecessor
+        ? qualifyThirdBatchAdditiveBootstrap(a, b, predecessor, candidate)
+        : predecessor.source === SECOND_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate)
         : qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate);
       report.assertions.push({ id: label, status: 'PASS_ADDITIVE_BOOTSTRAP_ONLY', ...qualified }); update('result.json', report); return;
