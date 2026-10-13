@@ -17,6 +17,7 @@ Integrated public discovery closes21 route request/response contracts, including
 - QUAL-CENSUS01: the old line-start census missed packed named-character declarations. The expanded column boundary/type scan classifies all139 original-character tables, including ten new tables, without suppressing unknown/stale dispositions. Structural physical-title and cycle-payment checks remain active and are separately identified in the graph.
 - QUAL-ROUTE01: a packed local auction helper declaration was invisible to the binding scanner. Individual declarations preserve runtime behavior and the1061-route auth/binding census now passes.
 - QUAL-BOOTSTRAP02: the second batch adds14 empty metadata tables. Its separate exact-source bootstrap relation preserves the historical seven-table relation and all original controls; old rows, all sequences, unknown relations and every rollback/replay/reupgrade remain strict. Empty-table qualification does not grant populated new authority or financial backing.
+- QUAL-RECOVERY01: hosted recovery run `38436914711` rejected the old indexer fixture reset because canonical maintenance receipts and subscription cycles now reference the transaction ledger. The dedicated test explicitly includes both relations and first asserts they are empty; no CASCADE or unknown-table projection is introduced. The retained failure requires a fresh hosted recovery retest and repinned source-pair rehearsal before release.
 
 ## Verification and remaining gates
 
