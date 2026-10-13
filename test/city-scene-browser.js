@@ -632,7 +632,11 @@ try {
       // Reserve the same tall sticky-header space on platforms with different fonts.
       const top = document.getElementById('top');
       top.style.height = top.style.minHeight = top.style.maxHeight = '215px'; top.style.overflow = 'hidden';
+      // Give the actual warning detail its own line: font fallbacks can otherwise
+      // wrap both LOW HEALTH and SAFEHOUSE to the same height in this fixture.
+      document.querySelector('.omerta-city__readiness > span').style.display = 'block';
     });
+    else await entry.evaluate(() => document.querySelector('.omerta-city__readiness > span').style.removeProperty('display'));
     await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
     if (width === 320) assert.deepEqual(await entry.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height, text: node.textContent, inert: node.inert })),
       { height: 56, text: 'Updated. Your current street view is ready. Check your next move before spending resources.', inert: false }, 'The short-frame fixture reaches the actual bounded toast and retains all its text.');
@@ -640,6 +644,7 @@ try {
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
     if (width === 320) {
       const initialHeight = (await state(entry)).camera.height;
+      const initialHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
       assert(initialHeight < 160, 'Short phone space with tall chrome and a visible toast can shrink below the former minimum: ' + JSON.stringify(await entry.evaluate(() => ({
         canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON(),
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
@@ -657,6 +662,8 @@ try {
       await assertHud(entry, warningPlayer?.character || warningPlayer);
       await waitForFrames(entry, 3);
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
+      const warningHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
+      assert(warningHudHeight > initialHudHeight + 3, 'The real winning warning must grow the measured pressure-fixture HUD before checking camera response: ' + JSON.stringify({ initialHudHeight, warningHudHeight }));
       assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
         initial, camera: window.__cityHandles.at(-1).handle.getState().camera, classes: document.querySelector('.omerta-city').className,
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(), hudText: document.querySelector('.omerta-city__world-hud').textContent,
