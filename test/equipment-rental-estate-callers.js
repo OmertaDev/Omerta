@@ -75,6 +75,27 @@ try {
       await pool.query('UPDATE characters SET jail_until=$2 WHERE id=$1', [actor.id, new Date(Date.now() + 1800000)]);
       await pool.query('UPDATE characters SET jail_until=$2 WHERE id=$1', [victim.id, new Date(Date.now() + 1800000)]);
       await ok(actor, 'POST', '/v1/pen/buy/shiv');
+      if (native && role === 'borrower') {
+        const snapshot = async () => ({
+          actors: (await pool.query('SELECT * FROM characters WHERE account_id IN ($1,$2,$3) ORDER BY id', [actor.account, landlord.account, borrower.account])).rows,
+          accounts: (await pool.query('SELECT * FROM account_persistent WHERE account_id IN ($1,$2,$3) ORDER BY account_id', [actor.account, landlord.account, borrower.account])).rows,
+          lease: (await pool.query('SELECT * FROM equipment_rental_leases WHERE id=$1', [lease.receipt.leaseId])).rows,
+          item: (await pool.query('SELECT * FROM item_instances WHERE id=$1', [lease.tool])).rows,
+          custody: (await pool.query('SELECT * FROM operation_escrow WHERE item_id=$1', [lease.tool])).rows,
+          events: (await pool.query('SELECT * FROM item_events WHERE item_id=$1 ORDER BY sequence', [lease.tool])).rows,
+          legs: (await pool.query('SELECT * FROM transactions ORDER BY id')).rows,
+          shiv: (await pool.query('SELECT * FROM pen_contraband WHERE character_id=$1', [actor.id])).rows,
+        });
+        const original = await snapshot();
+        await pool.query("CREATE FUNCTION rental_estate_late_fault() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'rental estate late heir fault'; END $$");
+        await pool.query('CREATE TRIGGER rental_estate_late_fault BEFORE INSERT ON characters FOR EACH ROW EXECUTE FUNCTION rental_estate_late_fault()');
+        const failure = await call(actor, 'POST', '/v1/pen/shank/' + victim.id, undefined, 'rental-estate-fault-retry');
+        assert.equal(failure.statusCode, 500, failure.body);
+        assert.deepEqual(await snapshot(), original, 'Real late heir failure rolls back cash, custody, return events, deposit burn, actor/estate and shiv');
+        await pool.query('DROP TRIGGER rental_estate_late_fault ON characters');
+        await pool.query('DROP FUNCTION rental_estate_late_fault()');
+        console.log('native actual Pen late-heir failure: complete source/book rollback PASS');
+      }
       outcome = await ok(actor, 'POST', '/v1/pen/shank/' + victim.id);
       assert.equal(outcome.kill, true); assert(outcome.estate.heirId);
     } else if (path === 'npc') {
