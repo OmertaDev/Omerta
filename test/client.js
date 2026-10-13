@@ -6488,6 +6488,22 @@ const ACTFNS = new Map();   // route path → the handler names its registration
 
   const files = [...readdirSync('src').filter((f) => f.endsWith('.js')).map((f) => `src/${f}`),
     ...readdirSync('src/social').map((f) => `src/social/${f}`)];
+  // A transaction-local state carrier is consumed before persistence and public rendering.
+  // Match only this exact current data flow; every public return stays in the response corpus.
+  const privateCharacterActionState = (base, text, fn, position, literal) => {
+    if (base !== 'game.js' || fn !== 'withCharacter' || literal.replace(/\s/g, '') !== '{ch,acct,owned,result}') return false;
+    const begin = text.indexOf('export async function withCharacter('), next = text.indexOf('\nexport ', begin + 1);
+    const scope = text.indexOf('const action = await runCharacterActionScope(client, accountId, async () => {', begin);
+    const action = text.indexOf('const result = await fn(ch, client, h);', scope);
+    const state = text.indexOf('return { ch, acct, owned, result };', action);
+    const close = text.indexOf('}, lockHooks?.withActionScope);', state);
+    const rendered = text.indexOf('return { character, ...result };', close);
+    return begin >= 0 && scope > begin && action > scope && state > action && close > state
+      && rendered > close && next > rendered && position === state + 'return '.length
+      && /assertItemTransactionHealthy\(client\);\s*$/.test(text.slice(action, state))
+      && text.slice(close, rendered).includes('await persistCharacter(client, action.ch)');
+  };
+  let privateStateCount = 0;
   const claims = new Map();   // branch line → module → { at, line }
   const SILENT = new Map();   // act()-reachable reply → the catch-all it fell to
   const SPOKE = new Set();    // …and the ones that read as SOMETHING under any substitution
@@ -6505,6 +6521,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
       if (!lit) continue;
       const fn = (sp.filter((x) => i >= x.start && i <= x.end)[0] || {}).name;
       if (!fn || !MUT.has(fn)) continue;
+      if (privateCharacterActionState(base, t, fn, i, lit)) { privateStateCount++; continue; }
       corpus++;
       const shape = shapeOf(lit); if (!shape) continue;
       const keys = Object.keys(shape); if (keys.length < 2) continue;
@@ -6532,6 +6549,21 @@ const ACTFNS = new Map();   // route path → the handler names its registration
       }
     }
   }
+  assert.equal(privateStateCount, 1, 'Exactly one private transaction state carrier is classified');
+  const gameActionSource = readFileSync('src/game.js', 'utf8');
+  const privateReturn = 'return { ch, acct, owned, result };', privatePosition = gameActionSource.indexOf(privateReturn) + 'return '.length;
+  assert(privateCharacterActionState('game.js', gameActionSource, 'withCharacter', privatePosition, '{ ch, acct, owned, result }'));
+  for (const changed of [
+    gameActionSource.replace('const action = await runCharacterActionScope(client, accountId, async () => {', 'const action = await unreviewedScope(client, accountId, async () => {'),
+    gameActionSource.replace('assertItemTransactionHealthy(client);\r\n    return { ch, acct, owned, result };', 'return { ch, acct, owned, result };').replace('assertItemTransactionHealthy(client);\n    return { ch, acct, owned, result };', 'return { ch, acct, owned, result };'),
+    gameActionSource.replace('return { character, ...result };', privateReturn),
+  ]) {
+    assert.notEqual(changed, gameActionSource, 'The negative must alter the actual data flow');
+    const position = changed.indexOf(privateReturn) + 'return '.length;
+    assert(!privateCharacterActionState('game.js', changed, 'withCharacter', position, '{ ch, acct, owned, result }'));
+  }
+  assert(!privateCharacterActionState('game.js', gameActionSource, 'craft', privatePosition, '{ ch, acct, owned, result }'));
+  assert(!privateCharacterActionState('other.js', gameActionSource, 'withCharacter', privatePosition, '{ ch, acct, owned, result }'));
   assert(corpus > 300, `the collision corpus fell to ${corpus} replies — the route-reachability bound `
     + 'is over-tight and the sweep is measuring almost nothing, which reads exactly like a clean tree');
   assert(claims.size > 200, `only ${claims.size} describe() branches ever fired — the instrumentation `

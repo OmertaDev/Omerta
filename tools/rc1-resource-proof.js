@@ -30,10 +30,14 @@ const assertPinnedSource = () => {
     assert(file.accepted.includes(crypto.createHash('sha256').update(fs.readFileSync(file.path)).digest('hex')), `Checkout differs from pinned source: ${file.path}`);
 };
 assertPinnedSource();
+assert(!process.env.DATABASE_URL, 'Refuse an ambient database endpoint; this harness creates its own fixture database');
 assert(process.env.RC1_RESOURCE_DATABASE_URL, 'Set RC1_RESOURCE_DATABASE_URL to an isolated loopback PostgreSQL administrative database');
 const endpoint = new URL(process.env.RC1_RESOURCE_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol));
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname), 'Only loopback PostgreSQL is allowed');
+const localFixture = ['35439', '35449'].includes(endpoint.port) && endpoint.username === 'pilot_runner' && !endpoint.password;
+const ciFixture = (endpoint.port || '5432') === '5432' && endpoint.username === 'postgres' && endpoint.password === 'pgcheck';
+assert(localFixture || ciFixture, 'Use only the approved local/CI loopback fixture role');
 const runId = `resource-${source.commit.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
 const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 assert(!fs.existsSync(path.join(output, 'result.json')), 'Never overwrite an evidence run');
@@ -137,6 +141,10 @@ function cashMovement(proof, actor, amount, reason) {
 }
 
 try {
+  const probe = await admin.connect();
+  try { await probe.query('BEGIN READ ONLY'); const version = (await probe.query('SHOW server_version')).rows[0].server_version;
+    assert.match(version, localFixture ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/); await probe.query('ROLLBACK');
+  } finally { probe.release(); }
   await admin.query(`CREATE DATABASE ${database}`);
   endpoint.pathname = `/${database}`;
   process.env.DATABASE_URL = endpoint.toString();
@@ -511,25 +519,23 @@ try {
   const oldClaim = campaignClaims.find((claim) => claim.actor === actors[4]);
   let heirId;
   await observed('campaign:canonical-death-and-replacement', async () => {
-    const { ledger, notify, loadOwned, persistAccountFields, ESTATE_ACCOUNT_FIELDS } = await import('../src/game.js');
+    const { withTwoCharacters } = await import('../src/game.js');
     const { runEstate } = await import('../src/social/estate.js');
-    const client = await app.pool.connect();
-    try {
-      await client.query('BEGIN');
-      const victim = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [oldClaim.actor.character])).rows[0];
+    const existingObserver = actors.find(actor => actor.id !== oldClaim.actor.id);
+    assert(existingObserver);
+    return withTwoCharacters(app.pool, existingObserver.id, oldClaim.actor.character, async (observer, victim, client, helpers) => {
+      assert.equal(observer.id, existingObserver.character); assert.equal(observer.account_id, existingObserver.id);
+      assert.equal(observer.is_npc, false); assert(observer.alive); assert.notEqual(observer.account_id, oldClaim.actor.id);
+      assert.equal(victim.id, oldClaim.actor.character); assert.equal(victim.account_id, oldClaim.actor.id);
       assert(victim); assert.equal(Number(victim.cb), 0);
       const ammoBefore = String(victim.ammo);
-      const victimAcct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [oldClaim.actor.id])).rows[0];
-      const victimOwned = await loadOwned(client, victim);
-      const estate = await runEstate(client, { ledger, notify, victimAcct, victimOwned }, victim, 'RC1 campaign claim proof');
-      await persistAccountFields(client, oldClaim.actor.id, victimAcct, ESTATE_ACCOUNT_FIELDS);
+      const estate = await runEstate(client, helpers, victim, 'RC1 campaign claim proof');
       heirId = estate.heirId;
       const ammoAfter = (await client.query('SELECT id,ammo::text FROM characters WHERE id IN ($1,$2) ORDER BY id', [victim.id, heirId])).rows;
       const ammoDefault = (await client.query("SELECT column_default FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='characters' AND column_name='ammo'")).rows[0].column_default;
       assert.match(ammoDefault, /^\d+$/);
-      await client.query('COMMIT');
-      return { canonicalDomain: 'runEstate', heirId, naturalCombatDeath: false, ammoBefore, ammoAfter, ammoDefault };
-    } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
+      return { canonicalDomain: 'runEstate', heirId, naturalCombatDeath: false, observerId: observer.id, observerAccount: observer.account_id, ammoBefore, ammoAfter, ammoDefault };
+    }, { meet: false });
   }, (proof) => {
     const dead = proof.after.characters.find((row) => row.id === oldClaim.actor.character);
     const heir = proof.after.characters.find((row) => row.id === heirId);
@@ -537,6 +543,9 @@ try {
     assert(!proof.after.campaigns.some((row) => [dead.id, heirId].includes(row.character_id)));
     assert.deepEqual(proof.after.accounts, proof.before.accounts, 'Account-level OMR must not change during this estate');
     assert.deepEqual(proof.after.pieces, proof.before.pieces, 'Account-level bespoke items survive this estate');
+      assert.deepEqual(proof.after.characters.find(row => row.id === proof.result.observerId), proof.before.characters.find(row => row.id === proof.result.observerId));
+      assert.deepEqual(proof.after.accounts.find(row => row.account_id === proof.result.observerAccount), proof.before.accounts.find(row => row.account_id === proof.result.observerAccount));
+      assert(!proof.receipts.transactions.some(row => row.character_id === proof.result.observerId || row.account_id === proof.result.observerAccount), 'Existing observer receives no estate credit or charge');
     const receipts = proof.receipts.transactions;
     assert(receipts.every((row) => ['cash', 'ammo'].includes(row.currency) && ['death:estate', 'death:legacy'].includes(row.reason)));
     const cashReceipts = receipts.filter((row) => row.currency === 'cash');
