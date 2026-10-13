@@ -344,7 +344,9 @@
 | [docs/buyer-cooperative-migration-review.md](../../docs/buyer-cooperative-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
+| [docs/city-critique-gameplay-review.md](../../docs/city-critique-gameplay-review.md) | documentation | 89 | 2026-10-13 |
 | [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 164 | 2026-10-13 |
+| [docs/city-home-interactions-security-review.md](../../docs/city-home-interactions-security-review.md) | documentation | 53 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
@@ -617,7 +619,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-12 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 129 | 2026-10-13 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -695,5 +697,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-12 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-13 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
