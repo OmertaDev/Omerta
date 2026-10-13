@@ -89,7 +89,25 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   territory_economics_payments: [15, 15],
   territory_economics_profiles: [14, 18],
   territory_economics_requests: [7, 4],
-  territory_economics_sources: [4, 3] });
+  territory_economics_sources: [4, 3],
+  // Independently frozen FIFTH autonomy tables; earlier92 entries remain unchanged.
+  agent_operating_memory_facts: [9, 14],
+  agent_operating_memory_policies: [3, 3],
+  agent_operating_memory_requests: [7, 5],
+  economic_intelligence_publications: [6, 15],
+  economic_intelligence_purchases: [12, 12],
+  economic_intelligence_requests: [2, 4],
+  funded_external_work_events: [6, 6],
+  funded_external_work_jobs: [12, 16],
+  funded_external_work_requests: [2, 4],
+  management_team_autonomy_grants: [7, 17],
+  management_team_plans: [6, 13],
+  management_team_requests: [3, 4],
+  management_teams: [3, 8],
+  strategy_laboratories: [12, 16],
+  strategy_laboratory_arms: [5, 9],
+  strategy_laboratory_requests: [7, 4],
+  strategy_laboratory_sources: [3, 2] });
 
 // Whole reviewed source catalog remains literal; current SQL cannot teach this fixture expectations.
 const workforceCatalogBlob = execFileSync('git', ['show', 'ed9284f8838576dd63ff31269ace754ea9c307d2:test/lib/phase2-architecture-upgrade-catalog.json']);
@@ -97,12 +115,23 @@ assert.equal(crypto.createHash('sha256').update(workforceCatalogBlob).digest('he
 const commercialTables = Object.freeze(["commercial_dispute_requests","commercial_disputes","company_restructuring_plans","company_restructuring_requests","equipment_insurance_claims","equipment_insurance_policies","equipment_insurance_requests","infrastructure_concession_requests","infrastructure_concessions","territory_economics_payments","territory_economics_profiles","territory_economics_requests","territory_economics_sources"]);
 const commercialCatalogBlob = execFileSync('git', ['show', 'bc7a40f3fe56d980724f695a52ef3b559911e4a4:test/lib/phase2-architecture-upgrade-catalog.json']);
 assert.equal(crypto.createHash('sha256').update(commercialCatalogBlob).digest('hex'), '15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3', 'Reviewed commercial catalog source bytes changed');
-assert.deepEqual(inventory, JSON.parse(commercialCatalogBlob), 'Current full catalog differs from independently reviewed commercial source');
+const autonomyTables = Object.freeze(["agent_operating_memory_facts","agent_operating_memory_policies","agent_operating_memory_requests","economic_intelligence_publications","economic_intelligence_purchases","economic_intelligence_requests","funded_external_work_events","funded_external_work_jobs","funded_external_work_requests","management_team_autonomy_grants","management_team_plans","management_team_requests","management_teams","strategy_laboratories","strategy_laboratory_arms","strategy_laboratory_requests","strategy_laboratory_sources"]);
+const autonomyCatalogBlob = execFileSync('git', ['show', 'ce717fa30b35395eb38bbca9ea5dc06dd4aeb8a4:test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.equal(crypto.createHash('sha256').update(autonomyCatalogBlob).digest('hex'), 'bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e', 'Reviewed autonomy catalog source bytes changed');
+assert.deepEqual(inventory, JSON.parse(autonomyCatalogBlob), 'Current full catalog differs from independently reviewed autonomy source');
+// Only these17 literal new source-catalog tables may compose the1048-row ancestor.
+const commercialCatalogAncestor = { ...inventory,
+  added: inventory.added.filter(row => !autonomyTables.includes(row.table_name)),
+  notNullColumns: Object.fromEntries(Object.entries(inventory.notNullColumns).filter(([table]) => !autonomyTables.includes(table))) };
+assert.deepEqual(commercialCatalogAncestor, JSON.parse(commercialCatalogBlob), 'Autonomy additions must preserve every reviewed commercial/earlier catalog record');
+assert.equal(autonomyTables.length, 17);
+assert.equal(inventory.added.filter(row => autonomyTables.includes(row.table_name)).length, 105);
+assert.equal(autonomyTables.reduce((n, table) => n + inventory.notNullColumns[table].length, 0), 152);
 // Only these13 literal new table bindings may be projected out of the source catalog.
 // Every other field/definition/NN binding must equal the full reviewed916-row ancestor.
-const workforceCatalogAncestor = { ...inventory,
-  added: inventory.added.filter(row => !commercialTables.includes(row.table_name)),
-  notNullColumns: Object.fromEntries(Object.entries(inventory.notNullColumns).filter(([table]) => !commercialTables.includes(table))) };
+const workforceCatalogAncestor = { ...commercialCatalogAncestor,
+  added: commercialCatalogAncestor.added.filter(row => !commercialTables.includes(row.table_name)),
+  notNullColumns: Object.fromEntries(Object.entries(commercialCatalogAncestor.notNullColumns).filter(([table]) => !commercialTables.includes(table))) };
 assert.deepEqual(workforceCatalogAncestor, JSON.parse(workforceCatalogBlob), 'Commercial additions must preserve every reviewed workforce/earlier catalog record');
 assert.equal(commercialTables.length, 13);
 assert.equal(inventory.added.filter(row => commercialTables.includes(row.table_name)).length, 132);
@@ -112,7 +141,8 @@ assert.equal(workforceTables.length, 16);
 assert.equal(inventory.added.filter(row => workforceTables.includes(row.table_name)).length, 104);
 assert.equal(workforceTables.reduce((n, table) => n + inventory.notNullColumns[table].length, 0), 121);
 assert.equal(workforceCatalogAncestor.added.length, 916, 'Full workforce ancestor remains visible');
-assert.equal(inventory.added.length, 1048, 'Every earlier catalog constraint and all132 commercial constraints remain visible');
+assert.equal(commercialCatalogAncestor.added.length, 1048, 'Full commercial ancestor remains visible');
+assert.equal(inventory.added.length, 1153, 'Every earlier catalog constraint and all105 autonomy constraints remain visible');
 
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
 assert.equal(EQUIPMENT_ECONOMY_MIGRATION_TABLES.length, 14);
@@ -370,7 +400,7 @@ try {
     AND is_nullable='NO' ORDER BY table_name,column_name`, featureTables)).rows : [];
   const verifyFeatureNotNull = columns => assert.deepEqual(
     Object.fromEntries(featureTables.map(table => [table, columns.filter(row => row.table_name === table).map(row => row.column_name)])),
-    Object.fromEntries(featureTables.map(table => [table, (workforceTables.includes(table) || commercialTables.includes(table))
+    Object.fromEntries(featureTables.map(table => [table, (workforceTables.includes(table) || commercialTables.includes(table) || autonomyTables.includes(table))
       ? [...inventory.notNullColumns[table]].sort() : inventory.notNullColumns[table]])),
     'Named feature required columns match exact frozen nullability');
   verifyFeatureNotNull(featureNotNull);
@@ -444,6 +474,22 @@ try {
     rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' commercial NN removed',
       featureNotNull.filter(row => row.table_name !== binding.table_name || row.column_name !== binding.column_name));
     rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' commercial NN duplicated',
+      [...featureNotNull, binding]);
+  }
+
+  // Every autonomy definition and required binding remains independently causal.
+  for (const constraint of featureConstraints.filter(row => autonomyTables.includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, constraint.name + ' autonomy constraint removed', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, constraint.name + ' autonomy constraint altered', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+    rejected(verifyFeatureConstraints, constraint.name + ' autonomy constraint duplicated', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.push(rows[index])));
+  }
+  for (const binding of featureNotNull.filter(row => autonomyTables.includes(row.table_name))) {
+    rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' autonomy NN removed',
+      featureNotNull.filter(row => row.table_name !== binding.table_name || row.column_name !== binding.column_name));
+    rejected(verifyFeatureNotNull, binding.table_name + '.' + binding.column_name + ' autonomy NN duplicated',
       [...featureNotNull, binding]);
   }
 
