@@ -78,3 +78,36 @@ export async function migrateCityHomeStorage(q, { compatibility = 'postgres' } =
     throw error;
   }
 }
+
+// Admit one separately versioned cooperative definition; the original three IDs and rows
+// retain their original semantics. Unknown predicates never become an implicit migration.
+export async function migrateCityHomePuzzles(q, { compatibility = 'postgres' } = {}) {
+  if (compatibility === 'pg-mem') return Object.freeze({ compatibility, verified: false, replaced: 0 });
+  if (compatibility !== 'postgres') throw invalid('unknown compatibility mode');
+  await q.query('BEGIN');
+  try {
+    await q.query('LOCK TABLE city_home_activities IN ACCESS EXCLUSIVE MODE');
+    await q.query(`CREATE TEMP TABLE city_home_puzzle_reference (puzzle_id TEXT,
+      CONSTRAINT puzzle_old CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome')),
+      CONSTRAINT puzzle_current CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome','two-voices-v1'))
+    ) ON COMMIT DROP`);
+    const reference = (await q.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
+      WHERE conrelid='pg_temp.city_home_puzzle_reference'::regclass`)).rows;
+    const expected = new Map(reference.map(row => [row.conname,row.definition]));
+    const actual = (await q.query(`SELECT contype::text,convalidated,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
+      WHERE conrelid='city_home_activities'::regclass AND conname='city_home_activities_puzzle_id_check'`)).rows;
+    if (actual.length !== 1 || actual[0].contype !== 'c' || actual[0].convalidated !== true || !expected.get('puzzle_current')) throw invalid('invalid puzzle gate');
+    let replaced = 0;
+    if (actual[0].definition !== expected.get('puzzle_current')) {
+      if (actual[0].definition !== expected.get('puzzle_old')) throw invalid('unknown puzzle gate');
+      await q.query('ALTER TABLE city_home_activities DROP CONSTRAINT city_home_activities_puzzle_id_check');
+      await q.query("ALTER TABLE city_home_activities ADD CONSTRAINT city_home_activities_puzzle_id_check CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome','two-voices-v1')) NOT VALID");
+      await q.query('ALTER TABLE city_home_activities VALIDATE CONSTRAINT city_home_activities_puzzle_id_check');
+      replaced = 1;
+    }
+    const installed = (await q.query(`SELECT convalidated,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
+      WHERE conrelid='city_home_activities'::regclass AND conname='city_home_activities_puzzle_id_check'`)).rows;
+    if (installed.length !== 1 || installed[0].convalidated !== true || installed[0].definition !== expected.get('puzzle_current')) throw invalid('failed puzzle validation');
+    await q.query('COMMIT'); return Object.freeze({ compatibility, verified: true, replaced });
+  } catch (error) { await q.query('ROLLBACK').catch(() => {}); throw error; }
+}

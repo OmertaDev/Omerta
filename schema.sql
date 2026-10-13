@@ -8159,7 +8159,7 @@ CREATE TABLE IF NOT EXISTS city_home_activities (
   host_account_id TEXT NOT NULL REFERENCES accounts(id),
   host_character_id TEXT NOT NULL REFERENCES characters(id),
   host_generation INT NOT NULL CHECK (host_generation>=1),
-  puzzle_id TEXT NOT NULL CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome')),
+  puzzle_id TEXT NOT NULL CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome','two-voices-v1')),
   layout_revision INT NOT NULL CHECK (layout_revision>=1),
   layout_json TEXT NOT NULL CHECK (char_length(layout_json) BETWEEN 1 AND 10000),
   status TEXT NOT NULL CHECK (status IN ('open','closed')),

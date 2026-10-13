@@ -341,6 +341,47 @@ try {
     await entry.dispose(); await fixture.context.close();
     console.log('NPC Adventures passed:', viewport.width, 'real resident; zero gameplay POST opening; native start/step/discovery/first favor; durable 1/3 with no money effects; exact receipt replay; current-body target/generation refusals; private detail retirement before held player GET; same scene/pose until identity publication');
   };
+  const cooperativeHomeJourney = async () => {
+    const host = await create('Room Pair Host'), guest = await create('Room Pair Guest');
+    await success(post(host,'/v1/deeds/claim',{name:'Two Voices Browser',district:'docks'}));
+    const key=(await get(host,'/v1/city/homes?district=docks')).myHome.key;
+    const interior=actor=>get(actor,'/v1/city/home/interior?homeKey='+encodeURIComponent(key));
+    const activateHome=(await interior(host)).actions.find(action=>action.id==='activate'); await success(post(host,activateHome.path,activateHome.body));
+    let board=await interior(host);const layout=board.actions.find(action=>action.id==='layout');
+    await success(post(host,layout.path,{...layout.body,room:{furniture:[{id:'chair',x:0,y:0},{id:'table',x:1,y:0},{id:'lamp',x:2,y:0}]}}));
+    const invite=(await interior(host)).actions.find(action=>action.id==='invite');
+    const invited=await success(post(host,invite.path,{...invite.body,targetCharacterId:guest.id}));
+    const permission=(await get(guest,'/v1/city/home/invitations')).invitations.find(row=>row.id===invited.effect.grantId).action;
+    await success(post(guest,permission.path,permission.body));
+    const a=await newPage(host,{width:1440,height:1000}),b=await newPage(guest,{width:375,height:812});
+    const snapshots=[];const writes=[];
+    for(const fixture of [a,b]){fixture.page.on('request',request=>{if(request.method()==='POST')writes.push(new URL(request.url()).pathname);});
+      snapshots.push({entry:await fixture.page.evaluateHandle(()=>window.__panelHandles.at(-1)),pose:(await state(fixture)).position});await panel(fixture,'room');}
+    await activate(a,a.page.getByRole('button',{name:'Enter Two Voices Browser',exact:true}));await settled(a);
+    await activate(b,b.page.getByRole('button',{name:'Enter home',exact:true}));await settled(b);
+    for(const fixture of [a,b])await activate(fixture,fixture.page.getByRole('button',{name:'Hosting',exact:true}));
+    assert.deepEqual(writes,[],'Entering a granted home and selecting Hosting do not imply puzzle consent.');
+    const send=async(fixture,control,path)=>{const reply=fixture.page.waitForResponse(response=>response.request().method()==='POST'&&new URL(response.url()).pathname===path);
+      await activate(fixture,control);assert.equal((await reply).status(),200);await settled(fixture);};
+    const refresh=async fixture=>{await activate(fixture,fixture.page.getByRole('button',{name:'Refresh this room',exact:true}));await settled(fixture);};
+    await send(a,a.page.locator('.city-world__card').filter({has:a.page.getByText('Two voices, one room',{exact:true})}).getByRole('button',{name:'Open puzzle',exact:true}),'/v1/city/home/activity/open');
+    for(const fixture of [a,b]){await refresh(fixture);await activate(fixture,fixture.page.getByLabel('Share my name and join this home puzzle',{exact:true}));
+      await send(fixture,fixture.page.getByRole('button',{name:'Join puzzle',exact:true}),'/v1/city/home/activity/join');}
+    await refresh(a);await refresh(b);
+    assert(!(await a.page.locator('[data-city-home-activity]').textContent()).includes('where a visitor sits'));
+    assert((await b.page.locator('[data-city-home-activity]').textContent()).includes('where a visitor sits'));
+    for(const [actor,fixture,furnishing]of [[host,a,'chair'],[guest,b,'table'],[host,a,'lamp']]){
+      await refresh(fixture);const cell=(await interior(actor)).activity.active.cells.find(cell=>cell.furnishingId===furnishing);
+      await send(fixture,fixture.page.getByRole('button',{name:cell.label,exact:true}),cell.action.path);
+    }
+    await refresh(b);assert((await b.page.locator('[data-city-home-activity]').textContent()).includes('Confirmed solved:'));
+    assert.equal((await get(host,'/v1/city/home/activity-history')).outcomes[0].outcome.puzzleId,'two-voices-v1');
+    assert.equal((await get(guest,'/v1/city/home/activity-history')).outcomes[0].outcome.puzzleId,'two-voices-v1');
+    for(const [index,fixture]of [a,b].entries()){await same(fixture,snapshots[index].entry,snapshots[index].pose);await snapshots[index].entry.dispose();await fixture.context.close();}
+    assert.deepEqual(writes,['/v1/city/home/activity/open','/v1/city/home/activity/join','/v1/city/home/activity/join',...Array(3).fill('/v1/city/home/activity/answer')]);
+    console.log('Home cooperative browser PASS: real desktop host/phone guest, explicit dual consent, private complementary clue, alternating issued actions, both confirmed histories and unchanged scene/pose');
+  };
+  await cooperativeHomeJourney();
   for (const viewport of [{ width: 375, height: 812 }, { width: 1440, height: 1000 }]) {
     await adventureRevisionJourney(viewport);
     await npcJourney(viewport);
@@ -360,11 +401,50 @@ try {
     await activate(fixture, fixture.page.getByRole('button', { name: activation.label, exact: true }));
     const activationReply = await activated; assert.equal(activationReply.status(), 200); await settled(fixture);
     await fixture.page.locator('[data-city-deed-room]').waitFor({ state: 'visible' });
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Workbench', exact: true }));
     const salvage = fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText('Strip a Wreck', { exact: true }) });
+    assert(await salvage.isVisible(), 'The workbench station exposes the real recipe controls.');
     assert((await salvage.textContent()).includes('1 × Car'), 'The real asset ingredient has a readable label.');
     assert((await salvage.textContent()).includes('Use Crafting for car salvage.'), 'The real salvage refusal explains where to continue.');
     assert(!(await fixture.page.locator('.city-world__content').textContent()).match(/undefined|recipe_location|recipe_owns_car|salvage_required/),
       'Home recipe presentation does not print missing fields or internal blocker codes.');
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Room & furniture', exact: true }));
+    const initialRoom = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
+    const draftEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), draftPose = (await state(fixture)).position;
+    const draftPosts = [], trackDraft = request => { if (request.method() === 'POST') draftPosts.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', trackDraft);
+    const previewCell = fixture.page.getByRole('button', { name: 'Preview column 2, row 2', exact: true });
+    const previewBounds = await previewCell.boundingBox(); assert(previewBounds.width >= 44 && previewBounds.height >= 44);
+    for (const label of ['Rotate preview', 'Place in draft', 'Undo last placement', 'Reset to confirmed room', 'Save furnishing', 'Refresh this room']) {
+      const control = fixture.page.getByRole('button', { name: label, exact: true });
+      const bounds = await control.boundingBox(); assert(bounds.height >= 44, label + ' retains a 44px touch target.');
+    }
+    await activate(fixture, previewCell); await activate(fixture, fixture.page.getByRole('button', { name: 'Rotate preview', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 1);
+    if(process.env.CITY_HOME_SHOTS){fs.mkdirSync(process.env.CITY_HOME_SHOTS,{recursive:true});await fixture.page.screenshot({path:process.env.CITY_HOME_SHOTS+'/home-draft-'+viewport.width+'.png'});}
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Undo last placement', exact: true }));
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 0);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 1, 'Ordinary refresh preserves the unsent furnishing draft.');
+    assert.deepEqual(draftPosts, []); assert.deepEqual((await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey))).room.furniture, initialRoom.room.furniture);
+    const saveReply = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/home/layout');
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }));
+    const saved = await saveReply; assert.equal(saved.status(), 200); assert.equal(saved.request().postDataJSON().expectedLayoutRevision, initialRoom.home.layoutRevision); await settled(fixture);
+    assert.deepEqual(draftPosts, ['/v1/city/home/layout']);
+    await same(fixture, draftEntry, draftPose); fixture.page.off('request', trackDraft); await draftEntry.dispose();
+    const confirmed = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
+    assert.equal(confirmed.room.furniture[0].rotation, 1);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Preview column 3, row 2', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    const externalLayout = confirmed.actions.find(action => action.id === 'layout');
+    await success(post(actor, externalLayout.path, { ...externalLayout.body, room: { furniture: [{ id: 'chair', x: 4, y: 4, rotation: 2 }] } }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert(await fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }).isDisabled());
+    assert((await fixture.page.locator('[data-city-home-station="room"]').textContent()).includes('Your draft is kept'));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Reset to confirmed room', exact: true }));
+    assert(await fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }).isEnabled());
     const privateBefore = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
     const furnishing = privateBefore.room.catalog[0].id;
     const occupied = new Set(privateBefore.room.furniture.filter(item => item.id !== furnishing).map(item => item.x + ':' + item.y));
@@ -581,6 +661,7 @@ try {
     const visitControl = home => fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText(home.key, { exact: true }) })
       .getByRole('button', { name: 'Enter home', exact: true });
     await panel(fixture, 'room'); await activate(fixture, visitControl(homeA)); await settled(fixture);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Workbench', exact: true }));
     const visitA = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeA.key));
     const recipe = visitA.workbench.recipes.find(row => row.id === 'recipe:hardened_steel'); assert(recipe?.action.available, JSON.stringify(recipe?.blockedBy));
     const cashBeforeCraft = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [actor.id])).rows[0].cash);

@@ -11,7 +11,7 @@ export function registerCityHomeInteriors(app, { pool, auth, craftingContext }) 
     }
   };
   const safeError = (error, _req, reply) => {
-    const status = error?.statusCode === 401 ? 401 : ['contention','home_identity_changed','home_authority_changed','item_idempotency_conflict'].includes(error?.code) ? 409
+    const status = error?.statusCode === 401 ? 401 : ['contention','home_identity_changed','home_authority_changed','home_layout_changed','item_idempotency_conflict'].includes(error?.code) ? 409
       : ['item_commit_unknown','item_recovery_required','item_integrity_error'].includes(error?.code) ? 503 : error instanceof GameError ? 400 : 503;
     reply.header('Cache-Control', 'private, no-store'); reply.header('Vary', 'Authorization');
     return reply.code(status).send({ error: status === 401 ? 'unauthorized' : error instanceof GameError ? error.code : 'home_unavailable',

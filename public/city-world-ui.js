@@ -32,6 +32,7 @@
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1, choicesShown = false;
+    let homeView = {};
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -234,6 +235,7 @@
     function close(focus = true) {
       if (dock.hidden) return;
       clearSpeech();
+      homeView = {};
       stopPolling(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren(); paintReadState();
       tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
@@ -536,6 +538,16 @@
     }
     function socialPreferences() { return boards.social?.preferences || {}; }
     function renderRoom() {
+      if (window.CityHomeUi) {
+        const home = el('section', 'city-world__home-tools'); home.dataset.cityHomeTools = '';
+        window.CityHomeUi.render(home, { board: boards['home-interior'], invitations: boards['home-invitations'],
+          recovery: boards['home-recovery'], history: boards['home-history'], homes: boards['home-list'], actors: options.actors, pending: pending || options.recovery === true,
+          state: homeView, onBind: onRender, onRead: (kind, input) => read(kind, opening, input),
+          onProperties: () => { close(false); options.onNavigate?.('deeds', { venueId: 'clubhouse', focus: 'owned-deed' }); },
+          onAction: (issued, fields) => action('home-action', { id: issued?.id, path: issued?.path, body: issued?.body, fields }) });
+        content.append(home);
+        if (boards['home-interior']?.home) return;
+      }
       const preferences = socialPreferences(), furniture = list(preferences.room?.furniture || preferences.furniture, 12);
       heading('Your hideout', 'Make this corner of the city yours. Furniture is cosmetic; your protection still follows the normal safehouse rules.');
       const room = el('div', 'city-world__room'); room.dataset.cityHideout = ''; room.setAttribute('role', 'group'); room.setAttribute('aria-label', 'Six by six hideout floor');
@@ -575,14 +587,6 @@
       const safe = number(options.character?.safeSeconds);
       content.append(el('p', 'city-world__hint', safe > 0 ? 'Safehouse protection: ' + Math.ceil(safe / 60) + ' minutes remaining.' : 'Decorating does not activate protection.'));
       content.append(button('Safehouse options →', () => { close(false); options.onNavigate?.('streets', { venueId: 'directory' }); }));
-      if (window.CityHomeUi) {
-        const home = el('section', 'city-world__home-tools'); home.dataset.cityHomeTools = '';
-        window.CityHomeUi.render(home, { board: boards['home-interior'], invitations: boards['home-invitations'],
-          recovery: boards['home-recovery'], history: boards['home-history'], homes: boards['home-list'], actors: options.actors, pending: pending || options.recovery === true,
-          onBind: onRender, onRead: (kind, input) => read(kind, opening, input),
-          onAction: (issued, fields) => action('home-action', { id: issued?.id, path: issued?.path, body: issued?.body, fields }) });
-        content.append(home);
-      }
     }
     function renderStyle() {
       const preferences = socialPreferences();

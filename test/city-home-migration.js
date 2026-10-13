@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import pg from 'pg';
 import fs from 'node:fs';
-import { migrateCityHomeStorage } from '../src/city-home-migration.js';
+import { migrateCityHomeStorage, migrateCityHomePuzzles } from '../src/city-home-migration.js';
 import { migrateSchemaUnderLock } from '../src/db.js';
 
 const endpoint = new URL(process.env.CITY_HOME_TEST_DATABASE_URL);
@@ -105,6 +105,34 @@ try {
   await client.query('ALTER TABLE item_instances VALIDATE CONSTRAINT item_instance_storage_legacy');
   await migrateSchemaUnderLock(client, { schemaText });
   assert.equal((await client.query('SELECT app_version FROM schema_meta WHERE id=1')).rows[0].app_version, '1.5.0');
+  const puzzleDefinition = async () => (await client.query(`SELECT pg_get_constraintdef(oid,true) AS definition,convalidated
+    FROM pg_constraint WHERE conrelid='city_home_activities'::regclass AND conname='city_home_activities_puzzle_id_check'`)).rows[0];
+  const originalPuzzle = "CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome'))";
+  await client.query(`ALTER TABLE city_home_activities DROP CONSTRAINT city_home_activities_puzzle_id_check;
+    ALTER TABLE city_home_activities ADD CONSTRAINT city_home_activities_puzzle_id_check ${originalPuzzle}`);
+  const beforePuzzle = await puzzleDefinition(); let puzzleInterrupted = false;
+  const puzzleFault = { query: async (sql, values) => {
+    if (sql === 'ALTER TABLE city_home_activities VALIDATE CONSTRAINT city_home_activities_puzzle_id_check') {
+      puzzleInterrupted = true; throw new Error('Controlled late puzzle admission interruption');
+    }
+    return client.query(sql, values);
+  } };
+  await assert.rejects(migrateCityHomePuzzles(puzzleFault), /Controlled late puzzle/); assert(puzzleInterrupted);
+  assert.deepEqual(await puzzleDefinition(), beforePuzzle, 'Late puzzle migration failure restores the original predicate');
+  assert.equal((await migrateCityHomePuzzles(client)).replaced, 1);
+  assert.equal((await migrateCityHomePuzzles(client)).replaced, 0);
+  const currentPuzzle = await puzzleDefinition(); assert(currentPuzzle.convalidated);
+  await client.query("ALTER TABLE city_home_activities DROP CONSTRAINT city_home_activities_puzzle_id_check; ALTER TABLE city_home_activities ADD CONSTRAINT city_home_activities_puzzle_id_check CHECK (true)");
+  const puzzleStamp = (await client.query('SELECT * FROM schema_meta WHERE id=1')).rows[0];
+  await assert.rejects(migrateSchemaUnderLock(client, { schemaText }), error => error.code === 'city_home_storage_migration_invalid');
+  assert.deepEqual((await client.query('SELECT * FROM schema_meta WHERE id=1')).rows[0], puzzleStamp);
+  await client.query(`ALTER TABLE city_home_activities DROP CONSTRAINT city_home_activities_puzzle_id_check;
+    ALTER TABLE city_home_activities ADD CONSTRAINT city_home_activities_puzzle_id_check ${originalPuzzle} NOT VALID`);
+  await assert.rejects(migrateCityHomePuzzles(client), error => error.code === 'city_home_storage_migration_invalid');
+  assert.equal((await puzzleDefinition()).convalidated, false);
+  await client.query('ALTER TABLE city_home_activities VALIDATE CONSTRAINT city_home_activities_puzzle_id_check');
+  await migrateSchemaUnderLock(client, { schemaText }); assert.deepEqual(await puzzleDefinition(), currentPuzzle);
+  console.log('Home cooperative admission native: exact old/current gates, restart, late rollback/retry and unknown/unvalidated boot refusal passed');
   console.log('Home custody native migration: existing rows, closed custody gates, restart, late DDL rollback/retry and drift/unvalidated refusal passed');
 } finally {
   await client.query('SELECT pg_advisory_unlock(918273645)').catch(() => {});

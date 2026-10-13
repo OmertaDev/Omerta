@@ -181,6 +181,21 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
       ${clauses.map(([name, count]) => `CONSTRAINT original_${name} CHECK ${previousPredicate(previousSource, name, count)}`).join(',\n')}) ON COMMIT DROP`);
     const old = (await client.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
       WHERE conrelid='pg_temp.city_gameplay_previous_reference'::regclass`)).rows;
+    // This separate current-source envelope does not broaden the immutable gameplay pin.
+    // Exactly one named predicate admits the new cooperative puzzle, with no column delta.
+    await client.query(`CREATE TEMP TABLE city_home_cooperative_reference (puzzle_id TEXT,
+      CONSTRAINT puzzle_original CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome')),
+      CONSTRAINT puzzle_current CHECK (puzzle_id IN ('evening-notebook','lights-out','visitor-welcome','two-voices-v1'))
+    ) ON COMMIT DROP`);
+    const puzzleRows = (await client.query(`SELECT conname,pg_get_constraintdef(oid,true) AS definition FROM pg_constraint
+      WHERE conrelid='pg_temp.city_home_cooperative_reference'::regclass`)).rows;
+    const puzzleDefinitions = new Map(puzzleRows.map(row => [row.conname,row.definition]));
+    assert.equal(puzzleDefinitions.size, 2);
+    const puzzleKey = 'city_home_activities.city_home_activities_puzzle_id_check';
+    const originalPuzzle = rows.filter(row => constraintKey(row) === puzzleKey);
+    assert.equal(originalPuzzle.length, 1);
+    assert.equal(originalPuzzle[0].definition, puzzleDefinitions.get('puzzle_original'), 'The original pinned puzzle admission is exact');
+    const qualifiedRows = rows.map(row => constraintKey(row) === puzzleKey ? { ...row, definition: puzzleDefinitions.get('puzzle_current') } : row);
     await client.query('COMMIT');
     const oldDefinitions = new Map(old.map(row => [row.conname.slice('original_'.length), row.definition]));
     assert.equal(oldDefinitions.size, 4);
@@ -193,8 +208,8 @@ export async function createCityGameplayMigrationCatalog(admin, address) {
         'Gameplay columns retain exact reviewed types, typmods, defaults and nullability');
     };
     const normalize = (actual, original) => {
-      assert.deepEqual(sortBy(actual.filter(constraintScope), constraintKey), rows,
-        'Gameplay migration installs only its immutable reviewed constraint delta');
+      assert.deepEqual(sortBy(actual.filter(constraintScope), constraintKey), qualifiedRows,
+        'Gameplay migration preserves the immutable catalogue with only the separately declared cooperative puzzle replacement');
       for (const key of replaced) {
         const prior = original.filter(row => constraintKey(row) === key);
         assert.equal(prior.length, 1, `Original ${key} exists exactly once`);

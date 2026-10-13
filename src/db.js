@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { migrateCityHomeStorage } from './city-home-migration.js';
+import { migrateCityHomeStorage, migrateCityHomePuzzles } from './city-home-migration.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -566,6 +566,7 @@ export async function migrateSchemaUnderLock(
   await migrateTask5BallotV2(boot, { compatibility });
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
+  await migrateCityHomePuzzles(boot, { compatibility });
   await resetStartingLevels(boot);
   const stamp = await stampSchema(boot);
   return { migration, stamp };

@@ -57,6 +57,18 @@
 .city-world__furniture--lamp.is-used::before { background: #fff1a1; box-shadow: 0 0 20px #e6cf80; }
 .city-world__furniture--window::before { background: linear-gradient(90deg, transparent 42%, #785644 42% 57%, transparent 57%), linear-gradient(0deg, transparent 42%, #785644 42% 57%, transparent 57%), #7fabb2; border: 3px solid #a88d63; box-shadow: 2px 2px #3b3227; }
 .city-world__room-controls { display: flex; flex-wrap: wrap; gap: 6px; }
+.city-world__home-tools button:not(.city-home__cell) { appearance: none; min-height: 44px; padding: 6px 10px; color: #ecd2a1; background: #24221d; border: 1px solid #8c7655; border-radius: 3px; cursor: pointer; box-shadow: inset 0 1px 0 #514532; }
+.city-world__home-tools button:enabled:hover { background-color: #302b23; border-color: #c89d57; }
+.city-world__home-tools button:focus-visible { outline: 2px solid #e8b34b; outline-offset: -3px; }
+.city-world__home-tools button:disabled { color: #aaa38f; border-color: #514b3d; cursor: default; }
+.city-home__stations { display: flex; flex-wrap: wrap; gap: 6px; margin-block: 10px; }
+.city-home__stations button { min-height: 44px; flex: 1 1 110px; }
+.city-home__stations button[aria-pressed="true"] { border-color: #d5bd87; background: #35463b; }
+.city-home__station[hidden] { display: none; }
+.city-world__room[data-city-deed-room] { box-sizing: border-box; min-width: 276px; grid-template-rows: repeat(6, 44px); aspect-ratio: auto; }
+.city-world__room .city-home__cell { min-width: 44px; min-height: 44px; padding: 0; border-radius: 0; }
+.city-home__pieces { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-rows: repeat(6, 44px); pointer-events: none; }
+.city-home__ghost { opacity: .5; outline: 2px dashed #f7e6a3; outline-offset: -3px; }
 .city-world__map-modes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
 .city-world__map-modes button { flex: 1; min-width: 100px; min-height: 44px; }
 .city-world__map-modes button, .city-world__district, .city-world__home, .city-world__district-detail button, .city-world__home-detail button, .city-world__homes > button { appearance: none; color: #ecd2a1; background: #24221d; border: 1px solid #8c7655; border-radius: 3px; cursor: pointer; box-shadow: inset 0 1px 0 #514532; }
