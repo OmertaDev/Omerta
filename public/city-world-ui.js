@@ -390,6 +390,9 @@
         choose.setAttribute('aria-pressed', String(mapView === id)); modes.append(choose);
       }
       content.append(modes);
+      const resume = button('Your next move & accomplishments', () => read('continuity'));
+      resume.dataset.cityResume = ''; content.append(resume);
+      if (boards.continuity) renderContinuity(boards.continuity);
       if (mapView === 'world') { renderAtlas(); return; }
       heading(String(options.district?.name || 'Your neighborhood'), 'Choose a waypoint to walk there. People markers show approximate district presence.');
       const map = el('canvas', 'city-world__minimap'); map.width = 480; map.height = 320; map.dataset.cityMinimap = '';
@@ -412,6 +415,33 @@
         content.append(homes);
       }
       paintMap();
+    }
+    function renderContinuity(board) {
+      const recap = el('section', 'city-world__card'); recap.dataset.cityContinuity = '';
+      recap.append(el('h4', '', 'Pick up your thread'), el('p', 'city-world__hint', 'Your last checked private records. Use Your next move to check again. Continuing only opens the activity; joining, travel and spending still need your confirmation.'));
+      const cases = list(board.cases).filter(item => item.status === 'active');
+      const operations = list(board.operations).filter(item => ['forming', 'active'].includes(item.status));
+      for (const item of cases.slice(0, 3)) recap.append(button('Continue case · ' + String(item.title || 'Investigation'), async () => {
+        const owner = scope; close(false); const opened = await options.onContinueCase?.(item.graphId);
+        if (!destroyed && owner === scope && owner === identity() && opened !== true)
+          options.onNavigate?.('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
+      }));
+      if (operations.length) recap.append(button('Continue Crew · ' + String(operations[0].title || 'Your operation'), () => options.onCrew?.()));
+      for (const item of list(board.permissions).filter(item => item.status === 'active').slice(0, 3)) {
+        recap.append(button('Continue at ' + String(item.homeKey), () => { open('room'); read('home-interior', opening, { homeKey: item.homeKey }); }));
+      }
+      if (list(board.invitations).length) recap.append(button('Review ' + list(board.invitations).length + ' home invitation' + (list(board.invitations).length === 1 ? '' : 's'), () => open('room')));
+      if (!cases.length && !operations.length && !list(board.invitations).length && !list(board.permissions).some(item => item.status === 'active')) recap.append(el('p', '', 'No unfinished case, Crew run or accepted home invitation was found. Explore a venue to start your next story.'));
+      recap.append(el('h4', '', 'Saved accomplishments'));
+      const achievements = [
+        ...list(board.cases).filter(item => item.status === 'completed').map(item => ['Case closed', item.title]),
+        ...list(board.completedOperations).map(item => ['Crew run complete as ' + item.roleTitle, item.title]),
+        ...list(board.history).map(item => ['Puzzle solved', item.title]),
+        ...list(board.items).filter(item => item.state === 'active' && !item.escrowed).map(item => ['Owned item', String(item.title || item.templateId || 'Item').replace(/^[^:]+:/, '').replace(/[_-]+/g, ' ')]),
+      ].slice(0, 20);
+      for (const [kind, name] of achievements) recap.append(el('p', '', String(name || kind) + ' · ' + kind));
+      if (!achievements.length) recap.append(el('p', '', 'Your completed stories and owned keepsakes will appear here after confirmation.'));
+      content.append(recap);
     }
     function renderAtlas() {
       const districts = atlasDistricts(), category = list(boards.collection?.categories).find(item => item.id === 'districts');

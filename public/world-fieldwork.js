@@ -45,7 +45,7 @@
   function mount(host, initialOptions) {
     let options = { ...initialOptions }, destroyed = false, busy = false, loading = false, revision = 0, sessionUnavailable = false, recoveryRequired = false;
     let view = VIEWS.some(([id]) => id === options.initialView) ? options.initialView : 'inventory', selectedMystery = '', selectedOperation = '', mysteryDetail = null, operationDetail = null, roleDetail = null;
-    let notice = '', noticeBad = false, retry = null, cancelConfirmation = null;
+    let notice = '', noticeBad = false, retry = null, cancelConfirmation = null, pollTimer = null, backgroundLoading = false;
     let characterId = options.character && options.character.id;
     const boards = {}, actions = new Map();
     const panes = Object.fromEntries(VIEWS.map(([key]) => [key, { loading: false, error: '' }]));
@@ -55,6 +55,8 @@
     root.setAttribute('aria-label', 'Inventory and fieldwork');
     host.replaceChildren(root);
     const active = () => !destroyed && host.isConnected && (!options.isActive || options.isActive());
+    const identity = () => [options.character?.id, options.character?.generation, options.character?.loc].join(':');
+    let owner = identity();
     const blockers = value => list(value).length ? '<ul class="fieldwork-blockers">' + [...new Set(list(value).map(blockerText))].map(text => '<li>' + escape(text) + '</li>').join('') + '</ul>' : '';
     const stamp = value => '<span class="fieldwork-stamp">' + escape(words(value || 'available')) + '</span>';
     const empty = text => '<div class="fieldwork-empty">' + escape(text) + '</div>';
@@ -83,7 +85,17 @@
         + (assigned.length || carriedStacks.length ? '<h2 class="fieldwork-section-title">Carried by this character</h2><div class="fieldwork-grid">'
           + carriedStacks.map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◇</span><div><h3>' + escape(title(item)) + '</h3><p>' + count(item.qty ?? item.quantity) + ' held</p></div></article>').join('')
           + assigned.map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◆</span><div><h3>' + escape(title(item)) + '</h3><p>' + escape(words(item.state || 'active')) + '</p>' + actionButtons(item, title(item)) + '</div></article>').join('') + '</div>' : '')
-        + actionButtons(board, 'Inventory');
+        + actionButtons(board, 'Inventory') + accomplishments();
+    }
+
+    function accomplishments() {
+      const records = [
+        ...list(boards.operations?.completedOperations).map(item => ['Crew run completed as ' + item.roleTitle, item.title]),
+        ...list(boards.mysteries?.mysteries).filter(item => item.status === 'completed').map(item => ['Case closed', item.title]),
+        ...list(boards.inventory?.items).filter(item => item.state === 'active' && !item.escrowed).map(item => ['Owned keepsake or item', title(item)]),
+      ].slice(0, 20);
+      return '<section class="fieldwork-achievements" data-fieldwork-achievements><h2 class="fieldwork-section-title">Saved accomplishments</h2><p>Confirmed case, Crew and inventory records. These records do not create a reward.</p>'
+        + (records.length ? '<ul>' + records.map(([kind, name]) => '<li><strong>' + escape(name) + '</strong> · ' + escape(kind) + '</li>').join('') + '</ul>' : '<p>No completed records are loaded yet.</p>') + '</section>';
     }
 
     function ingredients(items, caption) {
@@ -142,17 +154,25 @@
         + '<p>' + count(item.minimumDistinctAccounts) + ' distinct Crew members required.</p>' + blockers(item.blockedBy)
         + (item.operationId ? '<button type="button" data-fieldwork-operation="' + escape(item.operationId) + '">Open operation board</button>' : '')
         + actionButtons(item, item.title || 'Crew operation', true) + '</article>').join('');
-      const detail = operationDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>Crew operation</h2>' + stamp(operationDetail.status) + '</div>'
+      const turnRoles = list(operationDetail?.roles).filter(role => role.turn);
+      const turn = operationDetail?.status === 'completed' ? 'Run complete. Every committed contribution is recorded.'
+        : operationDetail?.status === 'forming' ? 'Waiting for the remaining members to take their own roles.'
+        : turnRoles.length ? turnRoles.map(role => role.occupant?.self ? 'Your turn: ' + role.title : (role.occupant?.name || role.title) + ' is up next').join(' · ')
+        : operationDetail?.status === 'active' ? 'All contributions are in. The planner can close the run.' : '';
+      const detail = operationDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>' + escape(operations.find(item => item.operationId === selectedOperation)?.title || 'Crew operation') + '</h2>' + stamp(operationDetail.status) + '</div>'
+        + '<p class="fieldwork-handoff" data-fieldwork-handoff role="status">' + escape(turn) + '</p><p>Live while this panel is visible · updates every five seconds. No role is taken automatically.</p>'
         + '<p>' + count(operationDetail.filledRoleCount) + ' / ' + count(operationDetail.requiredRoleCount) + ' roles filled</p>'
-        + '<div class="fieldwork-grid">' + list(operationDetail.roles).map(role => '<article class="fieldwork-card" data-fieldwork-role="' + escape(role.roleId) + '"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + count(role.contributions) + ' contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'
+        + '<div class="fieldwork-grid">' + list(operationDetail.roles).map(role => '<article class="fieldwork-card" data-fieldwork-role="' + escape(role.roleId) + '"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + escape(role.occupant?.self ? 'You' : role.occupant?.name || (role.filled ? 'Crew member · name not learned' : 'Unclaimed')) + '</p>'
+          + (role.occupant?.name ? '<small>Name from your notebook' + (role.occupant.observedAt ? ' · ' + escape(new Date(role.occupant.observedAt).toLocaleDateString()) : '') + '</small>' : '')
+          + '<p>' + count(role.contributions) + ' confirmed contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'
         + progress(operationDetail) + list(operationDetail.nodes).map(node => nodeCard(node, false)).join('')
-        + (roleDetail ? '<div class="fieldwork-role"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => list(node.actions).length || node.privateEvidence).map(node => nodeCard(node)).join('') + '</div>' : '')
+        + (roleDetail ? '<div class="fieldwork-role"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => node.status !== 'excluded' && (list(node.actions).length || node.privateEvidence)).map(node => nodeCard(node)).join('') + '</div>' : '')
         + actionButtons(operationDetail, 'Crew operation') + '</section>' : '';
       const currentIds = new Set(operations.map(item => item.operationId).filter(Boolean));
       const recovery = list(board.recoverableOperations).filter(item => !currentIds.has(item.operationId))
         .map(item => '<article class="fieldwork-card"><header><h3>' + escape(item.title || 'Recorded Crew operation') + '</h3>' + stamp(item.status) + '</header><p>Work you opened with an earlier Crew. Closing it returns held items to their recorded depositors.</p>' + actionButtons(item, 'Recorded Crew operation') + '</article>').join('');
       return '<div class="fieldwork-intro"><h2>The shared job</h2><p>Take an issued role, follow its clues and contribute your part. Private evidence stays with the assigned player.</p></div><div class="fieldwork-grid">' + (index || empty('No shared operations are currently issued.')) + '</div>' + detail
-        + (recovery ? '<h2 class="fieldwork-section-title">Recover earlier work</h2><div class="fieldwork-grid">' + recovery + '</div>' : '');
+        + (recovery ? '<h2 class="fieldwork-section-title">Recover earlier work</h2><div class="fieldwork-grid">' + recovery + '</div>' : '') + accomplishments();
     }
 
     function draw() {
@@ -190,7 +210,14 @@
     function selectView(nextView) {
       // Explicit navigation shares the section buttons' guard; refreshes retain the reader's view.
       if (!active() || busy || !VIEWS.some(([id]) => id === nextView)) return false;
+      retireBackgroundRead();
       view = nextView; draw(); return true;
+    }
+
+    function retireBackgroundRead() {
+      if (!backgroundLoading) return;
+      revision++; backgroundLoading = false;
+      for (const pane of Object.values(panes)) pane.loading = false;
     }
 
     function readError(response) {
@@ -209,7 +236,7 @@
     }
 
     async function restoreSession(error) {
-      sessionUnavailable = true; revision++; loading = false;
+      sessionUnavailable = true; revision++; loading = false; backgroundLoading = false;
       for (const key of Object.keys(boards)) delete boards[key];
       for (const pane of Object.values(panes)) { pane.loading = false; pane.error = ''; }
       selectedMystery = selectedOperation = ''; mysteryDetail = operationDetail = roleDetail = null;
@@ -233,13 +260,14 @@
       } catch { /* records remain hidden until the session is restored */ }
     }
 
-    async function load(requested = Object.keys(READS)) {
+    async function load(requested = Object.keys(READS), { background = false } = {}) {
       if (!active() || sessionUnavailable) return;
-      const token = ++revision;
+      const token = ++revision, readView = view, readOwner = owner;
       const keys = [...new Set(requested)].filter(key => Object.hasOwn(READS, key));
+      const before = JSON.stringify([boards, mysteryDetail, operationDetail, roleDetail]);
       for (const pane of Object.values(panes)) pane.loading = false;
       for (const key of keys) { panes[key].loading = true; panes[key].error = ''; }
-      loading = true; draw();
+      backgroundLoading = background; loading = !background; if (!background) draw();
       try {
         for (const key of keys) {
           try {
@@ -258,7 +286,8 @@
               } else mysteryDetail = null;
             }
             if (key === 'operations') {
-              if (!selectedOperation) selectedOperation = board.operations.find(item => item.operationId)?.operationId || '';
+              if (!selectedOperation) selectedOperation = board.operations.find(item => item.operationId && ['forming', 'active'].includes(item.status))?.operationId
+                || board.operations.find(item => item.operationId)?.operationId || '';
               if (selectedOperation && board.operations.some(item => item.operationId === selectedOperation)) {
                 const detail = await read('/v1/worldgraph/operations/' + encodeURIComponent(selectedOperation), token);
                 if (!detail) return;
@@ -278,12 +307,38 @@
             if (sessionError(error)) { await restoreSession(error); return; }
             panes[key].error = error.message || 'The record could not be read.';
           } finally {
-            if (token === revision && !destroyed) { panes[key].loading = false; draw(); }
+            if (token === revision && !destroyed) { panes[key].loading = false; if (!background) draw(); }
           }
         }
       } finally {
-        if (token === revision && !destroyed) { loading = false; draw(); }
+        if (token === revision && !destroyed) {
+          loading = false; backgroundLoading = false;
+          if (!background || before !== JSON.stringify([boards, mysteryDetail, operationDetail, roleDetail]) || keys.some(key => panes[key].error)) {
+            const restore = background && active() && readView === view && readOwner === owner;
+            const focused = restore && root.contains(document.activeElement) ? document.activeElement : null;
+            const focusedAction = focused?.dataset.fieldworkAction ? actions.get(focused.dataset.fieldworkAction)?.action : null;
+            const scrollHost = restore ? host.closest('.omerta-city__gameplay') : null, scrollTop = scrollHost?.scrollTop;
+            draw();
+            if (restore && focusedAction) {
+              const entry = [...actions].find(([, item]) => item.action.path === focusedAction.path && JSON.stringify(item.action.body) === JSON.stringify(focusedAction.body));
+              if (entry) root.querySelector('[data-fieldwork-action="' + entry[0] + '"]')?.focus({ preventScroll: true });
+            }
+            if (restore && scrollHost) scrollHost.scrollTop = scrollTop;
+          }
+        }
       }
+    }
+
+    function schedulePoll() {
+      clearTimeout(pollTimer);
+      if (destroyed) return;
+      pollTimer = setTimeout(async () => {
+        const bounds = (host.closest('.omerta-city__gameplay') || root).getBoundingClientRect();
+        if (active() && document.visibilityState === 'visible' && view === 'operations' && !busy && !loading && !backgroundLoading
+          && bounds.width > 0 && bounds.bottom > 0 && bounds.top < window.innerHeight
+          && !sessionUnavailable && !recoveryRequired && !panes.operations.error) await load(['operations'], { background: true });
+        schedulePoll();
+      }, 5000);
     }
 
     function consequence(action, context) {
@@ -318,6 +373,7 @@
     async function run(entry, retainedKey, alreadyConfirmed = false) {
       if (!active() || sessionUnavailable || busy || loading || !entry || !validAction(entry.action) || entry.action.available === false
         || (!alreadyConfirmed && panes[view].error)) return;
+      retireBackgroundRead();
       const action = entry.action;
       const key = retainedKey || crypto.randomUUID();
       const attemptedCharacter = characterId;
@@ -334,7 +390,8 @@
           noticeBad = true;
           retry = !response || response.code >= 500 || ['offline', 'in_progress', 'idempotency_in_progress'].includes(response.body?.error) ? { entry, key } : null;
         } else {
-          notice = (action.label || entry.context) + ' completed.'; noticeBad = false; retry = null;
+          notice = (action.label || entry.context) + ' confirmed. Checking your updated record…'; noticeBad = false; retry = null;
+          const heldBefore = boards.inventory && !panes.inventory.error ? new Set(list(boards.inventory.items).map(item => item.id)) : null;
           const started = action.path.match(/^\/v1\/worldgraph\/mysteries\/([^/]+)\/start$/);
           if (started) { selectedMystery = decodeURIComponent(started[1]); mysteryDetail = null; }
           if (action.path.endsWith('/open') && response.body?.operationId) {
@@ -345,6 +402,12 @@
             if (refreshed?.code < 400 && refreshed.body) options.character = refreshed.body.character || refreshed.body;
           }
           await load();
+          if (active() && attemptedCharacter === characterId) {
+            const acquired = heldBefore && !panes.inventory.error ? list(boards.inventory?.items).filter(item => !heldBefore.has(item.id)).map(title) : [];
+            notice = Object.values(panes).some(pane => pane.error) ? 'Action confirmed; the updated record could not be fully read. Refresh before relying on its current state.'
+              : (action.label || entry.context) + ' recorded.' + (acquired.length ? ' Newly confirmed in your inventory: ' + acquired.join(', ') + '.' : '')
+                + (response.body?.status === 'completed' && operationDetail?.status === 'completed' ? ' The Crew’s completed run is saved in your accomplishments.' : '');
+          }
         }
       } catch (error) {
         if (!destroyed) { notice = 'The response could not be confirmed. Retry this same action to recover its result.'; noticeBad = true; retry = { entry, key }; }
@@ -353,23 +416,24 @@
       }
     }
 
-    draw(); load();
+    draw(); load(); schedulePoll();
     return {
       selectView,
       update(nextOptions) {
         const nextId = nextOptions?.character && nextOptions.character.id;
         options = { ...options, ...nextOptions };
-        if (nextId && nextId !== characterId) {
+        if (nextId && (nextId !== characterId || identity() !== owner)) {
+          owner = identity();
           characterId = nextId; revision++; selectedMystery = selectedOperation = ''; mysteryDetail = operationDetail = roleDetail = null;
           for (const key of Object.keys(boards)) delete boards[key];
           for (const pane of Object.values(panes)) { pane.loading = false; pane.error = ''; }
           sessionUnavailable = false; recoveryRequired = false;
-          retry = null; cancelConfirmation?.();
+          retry = null; notice = ''; cancelConfirmation?.();
           loading = false; load(); return;
         }
         if (!busy && !loading && !recoveryRequired) load();
       },
-      destroy() { destroyed = true; revision++; cancelConfirmation?.(); actions.clear(); root.remove(); },
+      destroy() { destroyed = true; revision++; clearTimeout(pollTimer); cancelConfirmation?.(); actions.clear(); root.remove(); },
     };
   }
 

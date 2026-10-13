@@ -8,6 +8,7 @@ import { DISTRICT_STORY_ARC_PACKAGES } from './district-story-arcs.js';
 import { STAGED_CREW_MISSIONS_PACKAGE } from './staged-crew-missions.js';
 import { FIRST_ERRAND_CASE_PACKAGE } from './first-errand-case.js';
 import { CITY_WORLD_OPPORTUNITY_PACKAGES } from './city-world-opportunities.js';
+import { CREW_CROSSCURRENT_PACKAGE } from './crew-crosscurrent.js';
 
 export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   CORE_MATERIALS_PACKAGE,
@@ -18,4 +19,5 @@ export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   STAGED_CREW_MISSIONS_PACKAGE,
   ...CITY_WORLD_OPPORTUNITY_PACKAGES,
   FIRST_ERRAND_CASE_PACKAGE,
+  CREW_CROSSCURRENT_PACKAGE,
 ]);

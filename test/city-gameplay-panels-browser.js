@@ -17,6 +17,8 @@ assert(executablePath);
 const app = await buildServer(), contexts = [], errors = [];
 const bindingInverse = process.argv.includes('--binding-inverse');
 const adventureBindingInverse = process.argv.includes('--adventure-binding-inverse');
+const crewPollingInverse = process.argv.includes('--crew-polling-inverse');
+const crewLoadingInverse = process.argv.includes('--crew-loading-inverse');
 let browser;
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const bounded = (promise, label) => new Promise((resolve, reject) => {
@@ -108,6 +110,18 @@ try {
         + '    encounterRevision: _cityWorldData?.encounters?.active?.revision || null,\n'
         + '    homeKey: _cityWorldData?.["home-interior"]?.home?.key || null,\n'
         + '    viewer: me ? { characterId: me.id, generation: me.generation, district: me.loc } : null });\n' + anchor) });
+    });
+    if (crewPollingInverse) await page.route('**/world-fieldwork.js*', async route => {
+      const response = await route.fetch(), source = await response.text();
+      const trigger = "await load(['operations'], { background: true });";
+      assert.equal(source.split(trigger).length, 2, 'The inverse removes only the new timed Crew read.');
+      await route.fulfill({ response, body: source.replace(trigger, 'void 0;') });
+    });
+    if (crewLoadingInverse) await page.route('**/world-fieldwork.js*', async route => {
+      const response = await route.fetch(), source = await response.text();
+      const gate = 'backgroundLoading = background; loading = !background;';
+      assert.equal(source.split(gate).length, 2, 'The inverse restores only the invisible background action lock.');
+      await route.fulfill({ response, body: source.replace(gate, 'backgroundLoading = background; loading = true;') });
     });
     await page.goto(base, { waitUntil: 'networkidle' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     if (await page.locator('.modal-bg[data-managed-dialog]').count()) await page.keyboard.press('Escape');
@@ -598,41 +612,83 @@ try {
     await crewOpen();
     const operationRoot = '/v1/worldgraph/operations/' + encodeURIComponent(opened.operationId);
     const roleAction = (await get(actor, operationRoot)).roles.find(role => role.roleId === 'planner').actions[0];
+    const pollGate = deferred(), pollObserved = deferred(); let pollOnce = false;
+    const heldPoll = async route => {
+      if (pollOnce) return route.continue(); pollOnce = true;
+      const response = await route.fetch(); assert.equal(response.status(), 200); pollObserved.resolve();
+      await pollGate.promise; await route.fulfill({ response });
+    };
+    await fixture.page.route(base + '/v1/worldgraph/operations', heldPoll);
+    await bounded(pollObserved.promise, 'the actual timed Crew catalogue read');
     const claimed = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === roleAction.path);
-    await activate(fixture, fixture.page.locator('[data-fieldwork-role="planner"]').getByRole('button', { name: roleAction.label, exact: true }));
+    claimed.catch(() => {});
+    try {
+      await activate(fixture, fixture.page.locator('[data-fieldwork-role="planner"]').getByRole('button', { name: roleAction.label, exact: true }));
+      await fixture.page.locator('#busy.on').waitFor();
+    } finally { pollGate.resolve(); }
+    await fixture.page.unroute(base + '/v1/worldgraph/operations', heldPoll);
     assert.equal((await claimed).status(), 200); await crewReady();
+    const switchGate = deferred(), switchObserved = deferred(); let switchOnce = false;
+    const heldSwitch = async route => {
+      if (switchOnce) return route.continue(); switchOnce = true;
+      const response = await route.fetch(); assert.equal(response.status(), 200); switchObserved.resolve();
+      await switchGate.promise; await route.fulfill({ response });
+    };
+    await fixture.page.route(base + '/v1/worldgraph/operations', heldSwitch);
     for (const [index, role] of ['lookout', 'driver'].entries()) {
       const member = members[index + 1], issued = (await get(member, operationRoot)).roles.find(entry => entry.roleId === role).actions[0];
       await success(post(member, issued.path, issued.body));
     }
+    await bounded(switchObserved.promise, 'the actual Crew handoff read before switching view');
+    await activate(fixture, fixture.page.locator('[data-fieldwork-view="inventory"]'));
+    const inventoryPane = await fixture.page.locator('.fieldwork-body').elementHandle();
+    const switchedRead = fixture.page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/worldgraph/operations');
+    switchGate.resolve(); await switchedRead;
+    await fixture.page.unroute(base + '/v1/worldgraph/operations', heldSwitch);
+    await fixture.page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+    assert(await inventoryPane.evaluate(node => node.isConnected), 'A retired Crew poll cannot redraw the new Inventory view or restore its old scroll/focus.');
+    await inventoryPane.dispose();
+    await activate(fixture, fixture.page.locator('[data-fieldwork-view="operations"]'));
+    await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'Your turn: Planner');
+    assert((await fixture.page.locator('[data-fieldwork-role="lookout"]').textContent()).includes('name not learned'));
+    await same(fixture, liveEntry, livePose);
     const steps = mission.nodes.filter(node => node.type === 'operation_step').sort((a, b) => a.metadata.order - b.metadata.order);
     for (const [index, step] of steps.entries()) {
       const participant = step.metadata.roleId === 'planner' ? actor : step.metadata.roleId === 'lookout' ? members[1] : members[2];
       const issued = (await get(participant, operationRoot + '/role')).nodes.find(node => node.id === step.id).actions[0]; assert(issued.available);
       if (participant === actor) {
-        await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+        await fixture.page.waitForFunction(label => [...document.querySelectorAll('.fieldwork-role button')].some(button => button.textContent === label && !button.disabled), issued.label);
+        await crewReady();
         const result = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === issued.path);
         await activate(fixture, fixture.page.locator('.fieldwork-role').getByRole('button', { name: issued.label, exact: true }));
         assert.equal((await result).status(), 200); await crewReady(); await same(fixture, liveEntry, livePose);
       } else await success(post(participant, issued.path, issued.body));
       if (index === 1) {
-        await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+        await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'Your turn: Planner');
+        await crewReady();
         const privateText = mission.nodes.find(node => node.id === 'evidence:quiet-pier-signal').metadata.privateEvidence;
         assert(!(await fixture.page.locator('[data-city-crew-board]').textContent()).includes(privateText), 'The planner never receives the lookout private clue.');
       }
     }
-    await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+    await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'All contributions are in. The planner can close the run.');
+    await crewReady();
     const closing = (await get(actor, operationRoot)).actions.find(action => action.path.endsWith('/complete')); assert(closing.available);
     const closedResponse = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === closing.path);
     await activate(fixture, fixture.page.getByRole('button', { name: closing.label, exact: true }));
     if (closing.consequence) await activate(fixture, fixture.page.locator('.modal-bg[data-managed-dialog] [data-yes]').last());
     const closed = await closedResponse; assert.equal(closed.status(), 200); await crewReady(); await same(fixture, liveEntry, livePose);
     assert.equal((await get(actor, operationRoot)).status, 'completed');
+    assert((await fixture.page.locator('[data-fieldwork-achievements]').textContent()).includes('The Quiet Pier Run'));
     const closeReplay = await success(post(actor, closing.path, closed.request().postDataJSON(), closed.request().headers()['idempotency-key']));
     assert.deepEqual(closeReplay, await closed.json());
     const artifact = (await get(members[2], '/v1/worldgraph/inventory')).items.filter(item => item.templateId === 'item:quiet_pier_manifest');
     assert.equal(artifact.length, 1); assert.deepEqual(artifact[0].actions, []);
     assert.equal((await get(actor, '/v1/worldgraph/inventory')).items.filter(item => item.templateId === 'item:quiet_pier_manifest').length, 0);
+    const crewReads = [], noteRead = request => { if (request.method() === 'GET' && new URL(request.url()).pathname.startsWith('/v1/worldgraph/operations')) crewReads.push(request.url()); };
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Close crew missions', exact: true }));
+    fixture.page.on('request', noteRead); await fixture.page.waitForTimeout(5500); fixture.page.off('request', noteRead);
+    assert.deepEqual(crewReads, [], 'Closing the scoped Crew dock stops its five-second polling without remounting the scene.');
+    await same(fixture, liveEntry, livePose);
 
     // A real workbench action at A may finish after a readonly opening at B. Neither target may rebind the other's common action ID.
     await liveEntry.dispose();
@@ -721,6 +777,29 @@ try {
     assert.equal((await app.pool.query('SELECT status FROM city_home_visitors WHERE id=$1', [homeB.grantId])).rows[0].status, 'revoked');
     assert.equal(await fixture.page.locator('[data-city-deed-room]').count(), 0, 'Confirmed withdrawal removes the old private B room.');
     await same(fixture, homeEntry, homePose);
+    await activate(fixture, fixture.page.locator('[data-city-world-close]'));
+    await activate(fixture, fixture.page.locator('#btn-dashboard-view'));
+    assert.equal(await fixture.page.evaluate(() => localStorage.getItem('omerta_game_view')), 'dashboard');
+    await activate(fixture, fixture.page.locator('#btn-player-view'));
+    assert.equal(await fixture.page.evaluate(() => localStorage.getItem('omerta_game_view')), 'player');
+    await fixture.page.reload();
+    await fixture.page.waitForFunction(() => document.querySelector('#btn-player-view')?.getAttribute('aria-pressed') === 'true'
+      && window.__panelHandles.at(-1)?.handle.getState().ready);
+    const resumed = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), resumedPose = (await state(fixture)).position;
+    const resumePosts = [], noteResume = request => { if (request.method() === 'POST' && !['/v1/screens','/v1/commands/observations'].includes(new URL(request.url()).pathname)) resumePosts.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', noteResume);
+    await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
+    await activate(fixture, fixture.page.locator('[data-city-resume]'));
+    await fixture.page.locator('[data-city-continuity]').waitFor(); await settled(fixture);
+    const recap = fixture.page.locator('[data-city-continuity]');
+    const recapText = await recap.textContent();
+    assert(recapText.includes('The Quiet Pier Run · Crew run complete as Planner'));
+    assert(!mission.nodes.filter(node => node.type === 'evidence' && node.metadata.roleId === 'lookout')
+      .some(node => recapText.includes(node.metadata.privateEvidence)), 'A fresh recap never reveals another role’s private clue.');
+    await activate(fixture, recap.getByRole('button', { name: 'Continue at ' + homeA.street.toLowerCase(), exact: true }));
+    await fixture.page.getByRole('heading', { name: homeA.street + ' · Visiting', exact: true }).waitFor(); await settled(fixture);
+    fixture.page.off('request', noteResume); assert.deepEqual(resumePosts, [], 'Returning view and continuing an accepted home perform only authorized reads.');
+    await same(fixture, resumed, resumedPose); await resumed.dispose();
     await homeEntry.dispose(); await fixture.context.close();
     console.log('gameplay panels passed:', viewport.width, 'real Home authority retirement; tactical prepare/turn/replay; Crew queued/sent close, consenting roles/stages/private evidence/driver custody; two-home late cache zero-rebind/actual B withdrawal/private-room retirement');
   }

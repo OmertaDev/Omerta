@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { STAGED_CREW_MISSIONS_PACKAGE as mission } from '../src/content/staged-crew-missions.js';
+import { CREW_CROSSCURRENT_PACKAGE as crosscurrent } from '../src/content/crew-crosscurrent.js';
 
 const postgres = process.argv.includes('--postgres');
 let app, admin, namespace, createdSchema = false;
@@ -108,6 +109,20 @@ try {
     assert(invitation.available); await success(call(players[index], 'POST', invitation.path, invitation.body));
   }
   assert.equal((await shared(players[0])).status, 'active');
+  await app.pool.query('DELETE FROM player_intel WHERE owner_account=$1', [players[0].account]);
+  const unknownRoles = await shared(players[0]);
+  assert.equal(unknownRoles.roles.find(role => role.roleId === 'planner').occupant.self, true);
+  assert.equal(unknownRoles.roles.find(role => role.roleId === 'lookout').occupant.name, null);
+  assert.deepEqual(unknownRoles.roles.filter(role => role.turn).map(role => role.roleId), ['planner']);
+  assert.equal(Number((await app.pool.query('SELECT COUNT(*) n FROM player_intel WHERE owner_account=$1', [players[0].account])).rows[0].n), 0,
+    'Polling role occupants is read-only and never grants notebook facts.');
+  await success(call(players[0], 'POST', '/v1/streets/' + players[1].character + '/meet', {}));
+  const learned = (await shared(players[0])).roles.find(role => role.roleId === 'lookout').occupant;
+  assert.equal(learned.name, players[1].name); assert(learned.observedAt);
+  await app.pool.query('UPDATE characters SET name=$2 WHERE id=$1', [players[1].character, 'Changed private name']);
+  assert.deepEqual((await shared(players[0])).roles.find(role => role.roleId === 'lookout').occupant, learned,
+    'A shared role uses the viewer-earned snapshot, not a new live name.');
+  assert.equal((await shared(players[2])).roles.find(role => role.roleId === 'lookout').occupant.name, null);
   const before = await Promise.all(players.map(async player => ({
     character: (await app.pool.query('SELECT cash,bank,heat,ammo,respect FROM characters WHERE id=$1', [player.character])).rows[0],
     omr: (await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [player.account])).rows[0],
@@ -198,6 +213,75 @@ try {
   const abandoned = await success(call(second.players[0], 'POST', otherBase + '/contributions/' + encodeURIComponent(steps[0].id), body(steps[0])));
   assert.equal(abandoned.status, 'abandoned');
   assert.equal((await app.pool.query('SELECT id FROM item_instances WHERE template_id=$1', ['item:quiet_pier_manifest'])).rows.length, 1);
+  // Four real route/signal combinations; every driver chooses between two distinct consequences.
+  // No global numeric ordering may make an unchosen branch a prerequisite.
+  assert(Object.isFrozen(crosscurrent));
+  assert(crosscurrent.nodes.filter(node => node.type === 'operation_step').every(node => node.metadata.order === undefined));
+  for (const [route, signal, escape, alternate] of [
+    ['quay', 'wait', 'barge', 'towpath'], ['quay', 'blue', 'mooring', 'gate'],
+    ['canal', 'wait', 'oars', 'drift'], ['canal', 'blue', 'towline', 'lockwall'],
+  ]) {
+    const group = await party('Cross ' + route + ' ' + signal), team = group.players;
+    await completeDocks(team[0]);
+    const openedCross = await success(call(team[0], 'POST', '/v1/worldgraph/operations/' + crosscurrent.id + '/operation%3Acrosscurrent-run/open', {}));
+    const path = '/v1/worldgraph/operations/' + openedCross.operationId;
+    for (const [index, roleId] of ['planner', 'lookout', 'driver'].entries()) await success(call(team[index], 'POST', path + '/roles/' + roleId, {}));
+    const unchanged = await Promise.all(team.map(async member => ({
+      cash: (await app.pool.query('SELECT cash,bank,heat,health,respect FROM characters WHERE id=$1', [member.character])).rows[0],
+      items: (await success(call(member, 'GET', '/v1/worldgraph/inventory'))).items,
+      moneyEntries: Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE account_id=$1 OR character_id=$2', [member.account, member.character])).rows[0].n),
+    })));
+    const perform = async (index, key) => {
+      const board = await success(call(team[index], 'GET', path + '/role'));
+      const action = board.nodes.find(node => node.id === 'operation:crosscurrent-' + key)?.actions[0];
+      assert(action?.available, key + ' must be issued by the current actual role board');
+      const receiptKey = crypto.randomUUID(), committed = await success(call(team[index], 'POST', action.path, action.body, receiptKey));
+      assert.deepEqual(await success(call(team[index], 'POST', action.path, action.body, receiptKey)), committed);
+      return committed;
+    };
+    await perform(0, route);
+    const otherRoute = route === 'quay' ? 'canal' : 'quay';
+    assert.equal((await denied(call(team[0], 'POST', path + '/contributions/operation%3Acrosscurrent-' + otherRoute,
+      { interactionId: 'crosscurrent:' + otherRoute }))).error, 'operation_branch_closed');
+    await perform(0, 'brief'); await perform(1, 'read-' + route);
+    const roleClue = crosscurrent.nodes.find(node => node.id === 'evidence:crosscurrent-' + route).metadata.privateEvidence;
+    assert(JSON.stringify(await success(call(team[1], 'GET', path + '/role'))).includes(roleClue));
+    assert(!JSON.stringify(await success(call(team[0], 'GET', path + '/role'))).includes(roleClue));
+    assert(!JSON.stringify(await success(call(team[2], 'GET', path))).includes(roleClue));
+    await perform(1, signal); await perform(1, 'signal'); await perform(2, 'read-escape');
+    const driverBoard = await success(call(team[2], 'GET', path + '/role'));
+    for (const key of [escape, alternate]) assert(driverBoard.nodes.find(node => node.id === 'operation:crosscurrent-' + key).actions[0].available);
+    assert.equal(driverBoard.nodes.filter(node => node.actions?.some(action => action.available)).length, 2);
+    await perform(2, escape);
+    assert.equal((await denied(call(team[2], 'POST', path + '/contributions/operation%3Acrosscurrent-' + alternate,
+      { interactionId: 'crosscurrent:' + alternate }))).error, 'operation_branch_closed');
+    await perform(2, 'finish');
+    const completionKey = crypto.randomUUID(), result = await success(call(team[0], 'POST', path + '/complete', {}, completionKey));
+    assert.equal(result.status, 'completed'); assert.deepEqual(result.effects, [{ kind: 'status_award' }]);
+    assert.deepEqual(await success(call(team[0], 'POST', path + '/complete', {}, completionKey)), result);
+    const final = await success(call(team[0], 'GET', path)); assert(validateShared(final), JSON.stringify(validateShared.errors));
+    assert.equal(final.nodes.find(node => node.id === 'operation:crosscurrent-' + escape).status, 'completed');
+    assert.equal(final.nodes.find(node => node.id === 'operation:crosscurrent-' + alternate).status, 'excluded');
+    assert.deepEqual(await Promise.all(team.map(async member => ({
+      cash: (await app.pool.query('SELECT cash,bank,heat,health,respect FROM characters WHERE id=$1', [member.character])).rows[0],
+      items: (await success(call(member, 'GET', '/v1/worldgraph/inventory'))).items,
+      moneyEntries: Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE account_id=$1 OR character_id=$2', [member.account, member.character])).rows[0].n),
+    }))), unchanged, 'Branching narrative outcomes create no cash, item or stat faucet.');
+  }
+  console.log('Crosscurrent PASS: all four route/signal combinations, eight issued driver alternatives, actual private complementary clues, three-role convergence, closed alternatives, immutable exact-key replay, no economic mutations; role notebook snapshots never live names or GET-earned intel');
+  const validateCatalogue = ajv.compile({ $ref: '#/components/schemas/WorldGraphOperationDiscovery', components: { schemas } });
+  const completedBoard = await success(call(players[2], 'GET', '/v1/worldgraph/operations'));
+  assert(validateCatalogue(completedBoard), JSON.stringify(validateCatalogue.errors));
+  const saved = completedBoard.completedOperations.find(item => item.operationId === opened.operationId);
+  assert.equal(saved.title, 'The Quiet Pier Run'); assert.equal(saved.roleTitle, 'Driver'); assert(saved.completedAt);
+  assert(saved.milestones.includes('Complete the Getaway'));
+  assert(privateTexts.every(text => !JSON.stringify(saved).includes(text)));
+  assert(![first.crewId, ...players.flatMap(player => [player.account, player.character])].some(id => JSON.stringify(saved).includes(id)));
+  await success(call(players[2], 'POST', '/v1/crew/leave', {}));
+  assert.deepEqual((await success(call(players[2], 'GET', '/v1/worldgraph/operations'))).completedOperations.find(item => item.operationId === opened.operationId), saved,
+    'A confirmed private accomplishment survives leaving the Crew; it does not grant access to its old live board.');
+  await denied(call(players[2], 'GET', base));
+  assert.deepEqual((await success(call(outsider, 'GET', '/v1/worldgraph/operations'))).completedOperations, []);
   console.log('staged-crew-missions-api PASS: actual Crew invite/accept and mystery bridge, consenting distinct roles, current-district refusal/canonical travel, role-private and ghost denial, issued stage order, same-key contributions, closing rollback/concurrent one-winner/exact replay, durable driver-only inert artifact, unchanged currencies and Crew-leave abandonment' +
     (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));
 } finally {

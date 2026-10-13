@@ -1822,6 +1822,12 @@ const AGENT_SCHEMAS = {
     properties: {
       operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } },
       recoverableOperations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecoverableOperation' } },
+      completedOperations: { type: 'array', maxItems: 20, items: { type: 'object', additionalProperties: false,
+        required: ['operationId', 'title', 'roleTitle', 'completedAt', 'milestones'], properties: {
+          operationId: { type: 'string' }, title: { type: 'string' }, roleTitle: { type: 'string' },
+          completedAt: { type: 'string', format: 'date-time' },
+          milestones: { type: 'array', maxItems: 16, items: { type: 'string' } },
+        } } },
     },
   },
   WorldGraphOperationNode: {
@@ -1829,6 +1835,7 @@ const AGENT_SCHEMAS = {
     required: ['id', 'type', 'title', 'status', 'completedAt'],
     properties: {
       id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },
+      description: { type: 'string' },
       status: { type: 'string' }, completedAt: { type: ['string', 'null'], format: 'date-time' },
       privateEvidence: { type: 'string' },
       actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
@@ -1859,6 +1866,12 @@ const AGENT_SCHEMAS = {
         required: ['roleId', 'title', 'filled', 'contributions'], properties: {
           roleId: { type: 'string' }, title: { type: 'string' }, filled: { type: 'boolean' },
           contributions: { type: 'integer', minimum: 0 },
+          turn: { type: 'boolean' },
+          occupant: { type: ['object', 'null'], additionalProperties: false,
+            required: ['self', 'name', 'observedAt'], properties: {
+              self: { type: 'boolean' }, name: { type: ['string', 'null'] },
+              observedAt: { type: ['string', 'null'], format: 'date-time' },
+            } },
           actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },
         } } },
       filledRoleCount: { type: 'integer', minimum: 0 },

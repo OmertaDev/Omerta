@@ -588,6 +588,37 @@ try {
       assert(close.height >= 44 && close.hits.every(Boolean), 'The atlas keeps the existing compact Close control reachable.');
     }
     await page.evaluate(() => { window.__atlasUI.destroy(); document.querySelector('#atlas-launch').remove(); });
+    // Component-only DTO fixture: identity teardown must also retire a delayed private recap.
+    await page.evaluate(() => {
+      window.__continuityReads = []; window.__continued = [];
+      window.__resumeUI = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        ...window.__fixture, scopeKey: 'resume-owner', character: window.__character,
+        onRead: kind => new Promise(resolve => window.__continuityReads.push({ kind, resolve })),
+        onContinueCase: id => { window.__continued.push(id); return true; },
+      }); window.__resumeUI.open('map');
+    });
+    await click('[data-city-resume]');
+    await page.waitForFunction(() => window.__continuityReads.length === 1);
+    await page.evaluate(() => window.__continuityReads[0].resolve({ code: 200, body: {
+      cases: [{ graphId: 'private-case', title: '<img src=x onerror=window.__resumeXss=1>', status: 'active' }],
+      completedOperations: [{ title: 'Recorded crew win', roleTitle: 'Planner' }],
+      operations: [], invitations: [], permissions: [], items: [], history: [],
+    } }));
+    await page.locator('[data-city-continuity]').waitFor();
+    assert((await page.locator('[data-city-continuity]').textContent()).includes('<img src=x onerror=window.__resumeXss=1>'));
+    assert.equal(await page.locator('[data-city-continuity] img').count(), 0);
+    await page.getByRole('button', { name: 'Continue case · <img src=x onerror=window.__resumeXss=1>', exact: true }).click();
+    assert.deepEqual(await page.evaluate(() => window.__continued), ['private-case']);
+    await page.evaluate(() => window.__resumeUI.open('map')); await click('[data-city-resume]');
+    await page.waitForFunction(() => window.__continuityReads.length === 2);
+    await page.evaluate(() => {
+      window.__resumeUI.update({ scopeKey: 'resume-successor', character: { id: 'successor', generation: 2 } });
+      window.__continuityReads[1].resolve({ code: 200, body: { cases: [{ graphId: 'old-private', title: 'Retired private case', status: 'active' }] } });
+    });
+    await page.waitForTimeout(0);
+    assert.equal(await page.locator('[data-city-continuity]').count(), 0);
+    assert.equal(await page.locator('.city-world__dock').isVisible(), false);
+    await page.evaluate(() => window.__resumeUI.destroy());
     assert.deepEqual(errors, []); await context.close();
   }
   console.log('City world UI PASS: map, equipment, queued/dispatched lifecycle, same-key receipt recovery, default-off chat/XSS, furniture targets, confirmed gains and owner teardown on phone/desktop.');

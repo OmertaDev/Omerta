@@ -184,7 +184,7 @@ branches. Four cases rotate on fixed six-hour server-clock windows. The Quiet Pi
 consenting Crew accounts for planning, lookout, execution and getaway. District PvE drills expose
 enemy intent and separate encounter health/stamina; they preserve core health and economic resources.
 Hosted furnishing puzzles require explicit guest participation and save private outcomes. The graph
-manifest contains 20 packages, 151 nodes and the same three recipes. New content introduces no cash
+manifest contains 21 packages, 174 nodes and the same three recipes. New content introduces no cash
 or $OMR reward source. API discovery begins at `/v1/worldgraph/ui`, `/v1/city/home/interior`,
 `/v1/city/opportunities` and `/v1/city/encounters`; callers execute issued direct actions with exact
 request bodies and idempotency keys. Integrated source `549fdfaf` combines gameplay `c75eb6de`

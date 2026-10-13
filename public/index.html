@@ -1249,7 +1249,7 @@
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
 <link rel="stylesheet" href="/city-scene.css?v=20261013-critique-1">
 <link rel="stylesheet" href="/city-world-ui.css?v=20261013-critique-1">
-<link rel="stylesheet" href="/world-fieldwork.css?v=20261009-game-1">
+<link rel="stylesheet" href="/world-fieldwork.css?v=20261013-critique-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -7426,7 +7426,9 @@
     // every other reason to land somewhere — being in a cell is the strongest thing the game can say
     // about what you should be doing next.
     const jailed = Number(me?.jailSeconds) > 0;
-    setTab(jailed ? 'pen' : 'streets');
+    const preferPlayer = preferredGameView() === 'player';
+    if (preferPlayer && !jailed) _mapMode = 'walk';
+    setTab(jailed ? 'pen' : preferPlayer ? 'map' : 'streets');
     // THE LOGIN HOOK — where a returning player lands. The Morning Paper (while-you-were-gone) and
     // THE SITUATION (your people/threats) are the returning-player hook, and they live on Home — so a
     // player with anything to see there should LAND there, not a tab away:
@@ -7436,7 +7438,7 @@
     //   • an active same-session player with nothing new → Streets (their bread and butter)
     // A jailed player is none of these — the digest keeps until they're out.
     const landingRevision = navigationRevision;
-    if (!jailed) Promise.all([api('GET', '/v1/onboard'), api('GET', '/v1/paper')]).then(([o, p]) => {
+    if (!jailed && !preferPlayer) Promise.all([api('GET', '/v1/onboard'), api('GET', '/v1/paper')]).then(([o, p]) => {
       if (navigationRevision === landingRevision && ((o.body && !o.body.allDone) || (p.body && p.body.fresh))) setTab('start');
     }).catch(() => { /* the current screen remains usable if optional landing data is unavailable */ });
   }
@@ -8872,6 +8874,14 @@
   }
   function performCityIntelAction() { return { code: 409, body: { error: 'city_objective_progresses_by_encounters' } }; }
   let _dashboardView = null;
+  function preferredGameView() {
+    try { const saved = localStorage.getItem('omerta_game_view'); return ['player', 'dashboard'].includes(saved) ? saved : null; }
+    catch { return null; }
+  }
+  function saveGameView(view) {
+    if (!['player', 'dashboard'].includes(view)) return;
+    try { localStorage.setItem('omerta_game_view', view); } catch { /* This nonprivate preference is optional. */ }
+  }
   const _playerRefreshHome = { parent: $('#btn-refresh').parentNode, next: $('#btn-refresh').nextSibling };
   function rememberDashboardView() {
     _dashboardView = { owner: me?.id, generation: me?.generation, tab: currentTab,
@@ -8893,6 +8903,7 @@
   }
   $('#btn-player-view').onclick = event => {
     if (!me?.id || $('#screen-main').classList.contains('hidden') || topModal()) return;
+    saveGameView('player');
     if (currentTab !== 'map' || _mapMode !== 'walk') rememberDashboardView();
     _mapMode = 'walk';
     if (currentTab !== 'map') setTab('map');
@@ -8901,6 +8912,7 @@
   };
   $('#btn-dashboard-view').onclick = () => {
     if (!document.body.classList.contains('city-player-view') || topModal()) return;
+    saveGameView('dashboard');
     const previous = _dashboardView?.owner === me?.id && _dashboardView?.generation === me?.generation
       && Object.hasOwn(TABS, _dashboardView.tab) ? _dashboardView : null;
     _mapMode = previous?.tab === 'map' && previous.territory ? 'territory' : 'walk';
@@ -9121,7 +9133,7 @@
     _cityScene?.update?.({ ...cityWorldOptions(), character: { ...me } });
   }
   async function readCityWorld(kind, context = {}) {
-    if (!['inventory', 'social', 'chat', 'atlas', 'collection', 'homes', 'home-list', 'home-interior', 'home-invitations', 'home-recovery', 'home-history', 'encounters', 'opportunities', 'opportunity-detail'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
+    if (!['continuity', 'inventory', 'social', 'chat', 'atlas', 'collection', 'homes', 'home-list', 'home-interior', 'home-invitations', 'home-recovery', 'home-history', 'encounters', 'opportunities', 'opportunity-detail'].includes(kind) || !_cityScene || currentTab !== 'map' || _mapMode !== 'walk') return { ignored: true, code: 499, body: {} };
     const stamp = projections.snapshot(), key = cityIdentity(), scene = _cityScene;
     const current = () => projections.current(stamp) && key === cityIdentity() && scene === _cityScene
       && currentTab === 'map' && _mapMode === 'walk' && (!context.isCurrent || context.isCurrent());
@@ -9149,7 +9161,24 @@
       const expected = '/v1/city/nearby-chat?' + chatQuery;
       if (social.chat.readPath !== expected) return { code: 409, body: { error: 'city_chat_unavailable' } };
     }
-    const result = kind === 'inventory' ? await api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current })
+    const readContinuity = async () => {
+      const responses = await Promise.all([
+        api('GET', '/v1/worldgraph/mysteries', undefined, { isCurrent: current }),
+        api('GET', '/v1/worldgraph/operations', undefined, { isCurrent: current }),
+        api('GET', '/v1/city/home/invitations', undefined, { isCurrent: current }),
+        api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current }),
+        api('GET', '/v1/city/home/activity-history', undefined, { isCurrent: current }),
+      ]);
+      if (!current()) return { ignored: true, code: 499, body: {} };
+      if (responses.some(response => !response || response.ignored || response.code >= 400))
+        return responses.find(response => response?.ignored || response?.code >= 400) || { code: 503, body: { error: 'continuity_unavailable' } };
+      if (!cityBoardCurrent(responses[2].body) || !cityBoardCurrent(responses[4].body)) return { code: 409, body: { error: 'home_identity_changed' } };
+      const [cases, crew, invitations, inventory, history] = responses.map(response => response.body);
+      return { code: 200, body: { cases: cases.mysteries, operations: crew.operations, completedOperations: crew.completedOperations, invitations: invitations.invitations,
+        permissions: invitations.permissions, items: inventory.items, history: history.outcomes } };
+    };
+    const result = kind === 'continuity' ? await readContinuity()
+      : kind === 'inventory' ? await api('GET', '/v1/worldgraph/inventory', undefined, { isCurrent: current })
       : kind === 'social' ? await api('GET', '/v1/city/social', undefined, { isCurrent: current })
       : kind === 'atlas' ? await api('GET', '/v1/map', undefined, { isCurrent: current })
       : kind === 'collection' ? await api('GET', '/v1/collection', undefined, { isCurrent: current })
@@ -9457,7 +9486,7 @@
     const epoch = ++_fieldworkEpoch, identity = cityIdentity();
     host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
     try {
-      await loadCityScript('/world-fieldwork.js?v=20261013-ui-1', () => !!window.OmertaFieldwork);
+      await loadCityScript('/world-fieldwork.js?v=20261013-crew-1', () => !!window.OmertaFieldwork);
       if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
       _fieldwork = window.OmertaFieldwork.mount(host, options);
     } catch {
@@ -9572,7 +9601,7 @@
         loadCityScript('/city-world-ui.js?v=20261013-critique-1', () => !!window.OmertaCityWorldUI),
         loadCityScript('/city-home-ui.js?v=20261013-critique-1', () => !!window.CityHomeUi),
         loadCityScript('/city-adventure-ui.js?v=20261013-critique-1', () => !!window.CityAdventureUi),
-        loadCityScript('/world-fieldwork.js?v=20261013-ui-1', () => !!window.OmertaFieldwork),
+        loadCityScript('/world-fieldwork.js?v=20261013-critique-1', () => !!window.OmertaFieldwork),
       ]).then(([scene, engine, world, home, adventure, fieldwork]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if ([engine,world,home,adventure,fieldwork].some(result => result.status === 'rejected')) _citySceneAssets = null;
