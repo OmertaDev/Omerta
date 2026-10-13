@@ -17,7 +17,10 @@ for(const[key,contract]of Object.entries(contracts)){const[method,route]=key.spl
 const routeFor = (method,url) => Object.keys(contracts).find(route => new RegExp('^' + route.replace(/:[A-Za-z]+/g,'[^/]+') + '$').test(method + ' ' + url));
 let serial = 0;
 const call = async (p,method,url,body,key='dto-'+(++serial)) => {
-  const route=routeFor(method,url); if(route && body!==undefined) assert(bodies[route]?.(body), route+': '+JSON.stringify(bodies[route]?.errors));
+  const route=routeFor(method,url); if(route && body!==undefined) {
+    assert(bodies[route]?.(body), route+': '+JSON.stringify(bodies[route]?.errors));
+    if(body&&typeof body==='object'&&!Array.isArray(body))assert(!bodies[route]({...body,externalOwnerAuthority:true}),route+' rejects extra authority on an otherwise valid body');
+  }
   const result=await f.call(p,method,url,body,key);
   if(route && result.code===200){assert(responses[route](result.body),route+': '+JSON.stringify(responses[route].errors));witnessed.add(route);receipts.push({route,body:result.body});}
   return result;
@@ -66,6 +69,9 @@ try {
   await ok(supplier,'POST','/v1/company/service-subscriptions/'+subscription.subscriptionId+'/close',{});
   await ok(supplier,'GET','/v1/company/service-subscriptions');
   const terms={qty:2,unitPrice:100,maxProcurementCash:1000,deadlineSeconds:1800};
+  const actionBody=bodies['POST /v1/company/negotiations/:id/act'];
+  assert(!actionBody({action:'counter',expectedRevision:1,termsHash:'a'.repeat(64)}));
+  assert(!actionBody({action:'accept',expectedRevision:1,terms}));
   const negotiation=await ok(buyer,'POST','/v1/company/negotiations',{orderId:f.orderId,supplierCharacter:supplier.id,expiresInSeconds:600,terms});
   await ok(supplier,'POST','/v1/company/negotiations/'+negotiation.negotiation.id+'/act',{action:'counter',expectedRevision:1,terms:{...terms,qty:1}});
   const board=await ok(buyer,'GET','/v1/company/negotiations');
