@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4795fafa35f0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1ed1a9c941fe`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3362 |
+| Commits in clone | 3364 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-13 — Merge remote-tracking branch 'origin/main' into codex/city-mobile-play-shell |
+| Latest commit | 2026-10-13 — Establish actual warning growth before camera resize assertion |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2405 |
+| OmertaDev | 2407 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 112 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 603 | historical |
-| knowledge/generated/graph-summary.md | 603 | historical |
-| knowledge/generated/graph.json | 603 | historical |
-| knowledge/generated/inventory.md | 603 | historical |
+| knowledge/generated/github-history.md | 604 | historical |
+| knowledge/generated/graph-summary.md | 604 | historical |
+| knowledge/generated/graph.json | 604 | historical |
+| knowledge/generated/inventory.md | 604 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 493 | yes |
 | [public/index.html](../../public/index.html) | 459 | yes |
