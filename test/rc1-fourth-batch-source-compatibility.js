@@ -11,7 +11,7 @@ import { equipmentEconomyMigrationProjection, EQUIPMENT_EVENT_KIND_CURRENT } fro
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:16*1024*1024,stdio:['ignore','pipe','pipe']});
 const files=['package.json','schema.sql','src/agentgateway.js','src/invariants.js','src/market.js','src/server.js','src/social/estate.js','src/worker.js'];
 assert.deepEqual(Object.keys(O.FOURTH_BATCH_SOURCE_DOMAINS),files);
-assert.equal(O.FOURTH_BATCH_SOURCE_REVISION,'a303fc98a8ea27e4071f326c7894422e48fad45b');assert.equal(O.FOURTH_BATCH_SOURCE_PREDECESSOR,'90fed962b73a6e20717af4c89f4691d42fb70a1b');
+assert.equal(O.FOURTH_BATCH_SOURCE_REVISION,'565a0ccdcdc8c68a7df4af1a396ed99921682ec9');assert.equal(O.FOURTH_BATCH_SOURCE_PREDECESSOR,'90fed962b73a6e20717af4c89f4691d42fb70a1b');
 let negatives=0,hunks=0;
 for(const [file,d] of Object.entries(O.FOURTH_BATCH_SOURCE_DOMAINS)){
  const current=git('show',O.FOURTH_BATCH_SOURCE_REVISION+':'+file),prior=git('show',O.FOURTH_BATCH_SOURCE_PREDECESSOR+':'+file);
@@ -45,3 +45,7 @@ await verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,
 let worldNegatives=0;
 for(const file of worldFiles){const text=worldRead(file),d=O.FOURTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}
 console.log('Actual world recovery substantive rejection PASS: '+worldNegatives+' changed/unknown/missing/duplicate-context controls; pre-existing mixed-EOL normalization limit retained.');
+
+const packageSource=git('show',O.FOURTH_BATCH_SOURCE_REVISION+':package.json');
+for(const altered of [packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js && ',''),packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js','node test/unknown-command.js'),packageSource.replace('node test/rc1-fourth-batch-source-compatibility.js','node test/rc1-fourth-batch-source-compatibility.js --bypass'),packageSource+'\n// unknown package command\n']){assert.notEqual(altered,packageSource);assert.throws(()=>O.assertFourthBatchSourceTransfer('package.json',altered));assert.equal(O.fourthBatchSourceBaseline('package.json',altered),altered);}
+console.log('FOURTH package repin PASS: removed mandatory prefix, unknown command, unsupported argument and appended drift refuse.');
