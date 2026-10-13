@@ -344,7 +344,7 @@
 | [docs/buyer-cooperative-migration-review.md](../../docs/buyer-cooperative-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
-| [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 125 | 2026-10-12 |
+| [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 138 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |

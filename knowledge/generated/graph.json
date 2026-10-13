@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "9f669fe6a6990b0938174e4e21550a683cb5beae",
+  "sourceRevision": "df3f621c03646b55b22938733d72e12579862f05",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12297,
-    "edges": 49759,
+    "nodes": 12299,
+    "edges": 49772,
     "byNodeType": {
       "Artifact": 4694,
       "Command": 256,
-      "Commit": 3337,
+      "Commit": 3339,
       "Contract": 126,
       "Document": 780,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3835,
-      "CHANGED": 19591,
+      "CHANGED": 19602,
       "CONTAINS": 4715,
       "DECLARES": 256,
       "DEFINED_IN": 1531,
       "DEPENDS_ON": 67,
       "EXECUTES": 883,
       "HANDLED_BY": 856,
-      "HAS_COMMIT": 3337,
+      "HAS_COMMIT": 3339,
       "IMPLEMENTS": 124,
       "IMPORTS": 5146,
       "INHERITS": 42,
@@ -24541,20 +24541,20 @@
       "path": "docs/city-gameplay-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 9986,
-      "lines": 125,
-      "version": "6aa387f814cd8064",
+      "bytes": 11113,
+      "lines": 138,
+      "version": "7dde0b7f58ad7b01",
       "text": true,
       "provenance": [
         {
           "file": "docs/city-gameplay-security-review.md",
           "line": 1,
-          "version": "6aa387f814cd8064"
+          "version": "7dde0b7f58ad7b01"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:35:08.000Z",
+      "lastChangedAt": "2026-10-13T01:35:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
+      "lastChangedCommit": "df3f621c03646b55b22938733d72e12579862f05"
     },
     {
       "key": "Artifact:docs/city-homes-security-review.md",
@@ -94360,20 +94360,20 @@
       "path": "test/lib/city-gameplay-migration-catalog.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 14866,
-      "lines": 217,
-      "version": "867d89b48e43ad58",
+      "bytes": 14926,
+      "lines": 218,
+      "version": "d7a40f688e3202ba",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/city-gameplay-migration-catalog.js",
           "line": 1,
-          "version": "867d89b48e43ad58"
+          "version": "d7a40f688e3202ba"
         }
       ],
-      "lastChangedAt": "2026-10-13T00:13:29.000Z",
+      "lastChangedAt": "2026-10-13T01:35:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e20aff59fce197634221739936ff320deaf669c4"
+      "lastChangedCommit": "df3f621c03646b55b22938733d72e12579862f05"
     },
     {
       "key": "Artifact:test/lib/city-world-opportunity-controls.js",
@@ -145206,6 +145206,22 @@
       ]
     },
     {
+      "key": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "type": "Commit",
+      "id": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "label": "Regenerate integrated City gameplay release knowledge",
+      "title": "Regenerate integrated City gameplay release knowledge",
+      "date": "2026-10-13T00:24:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "provenance": [
+        {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        }
+      ]
+    },
+    {
       "key": "Commit:9f669fe6a6990b0938174e4e21550a683cb5beae",
       "type": "Commit",
       "id": "9f669fe6a6990b0938174e4e21550a683cb5beae",
@@ -158002,6 +158018,22 @@
         {
           "commit": "df21c4695264be38f95db4b54de68a351fb55d9d",
           "url": "https://github.com/OmertaDev/Omerta/commit/df21c4695264be38f95db4b54de68a351fb55d9d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:df3f621c03646b55b22938733d72e12579862f05",
+      "type": "Commit",
+      "id": "df3f621c03646b55b22938733d72e12579862f05",
+      "label": "Preserve native catalog order before Director migration oracle",
+      "title": "Preserve native catalog order before Director migration oracle",
+      "date": "2026-10-13T01:35:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/df3f621c03646b55b22938733d72e12579862f05",
+      "provenance": [
+        {
+          "commit": "df3f621c03646b55b22938733d72e12579862f05",
+          "url": "https://github.com/OmertaDev/Omerta/commit/df3f621c03646b55b22938733d72e12579862f05"
         }
       ]
     },
@@ -172675,13 +172707,13 @@
       "id": "docs/city-gameplay-security-review.md",
       "label": "docs/city-gameplay-security-review.md",
       "documentType": "documentation",
-      "lines": 125,
-      "version": "6aa387f814cd8064",
+      "lines": 138,
+      "version": "7dde0b7f58ad7b01",
       "provenance": [
         {
           "file": "docs/city-gameplay-security-review.md",
           "line": 1,
-          "version": "6aa387f814cd8064"
+          "version": "7dde0b7f58ad7b01"
         }
       ]
     },
@@ -186868,6 +186900,9 @@
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -188363,6 +188398,9 @@
         },
         {
           "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
+        },
+        {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
         },
         {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
@@ -190159,6 +190197,9 @@
           "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -191953,6 +191994,9 @@
           "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -192875,6 +192919,9 @@
         },
         {
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
+        },
+        {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
         },
         {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
@@ -194242,6 +194289,9 @@
           "commit": "9ea52f4ca1cd579625b205d6c0cce9d319ed1eca"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -195256,6 +195306,9 @@
           "commit": "9e05bf089fff68ba6c65b805ac6b1c5c33c26c24"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -195733,6 +195786,9 @@
           "commit": "9df83f23de23558d19ebe38c7ef011e419ffd655"
         },
         {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+        },
+        {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
         },
         {
@@ -196049,6 +196105,9 @@
         },
         {
           "commit": "9db9b9a4d740c9faced0edece981145028f3f6c5"
+        },
+        {
+          "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
         },
         {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
@@ -206104,7 +206163,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "9f669fe6a6990b0938174e4e21550a683cb5beae",
+      "revision": "df3f621c03646b55b22938733d72e12579862f05",
       "currentBranch": "codex/city-gameplay-expansion",
       "defaultBranch": "main",
       "visibility": "public",
@@ -242094,13 +242153,13 @@
       "type": "TestSuite",
       "id": "test/lib/city-gameplay-migration-catalog.js",
       "label": "test/lib/city-gameplay-migration-catalog.js",
-      "lines": 217,
-      "version": "867d89b48e43ad58",
+      "lines": 218,
+      "version": "d7a40f688e3202ba",
       "provenance": [
         {
           "file": "test/lib/city-gameplay-migration-catalog.js",
           "line": 1,
-          "version": "867d89b48e43ad58"
+          "version": "d7a40f688e3202ba"
         }
       ]
     },
@@ -378261,6 +378320,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9f7f7225de79d0de42965805b6a77f3eeffbc852",
       "to": "Artifact:AUDIT-world-occupation.md",
       "provenance": {
@@ -417353,6 +417484,22 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "df21c4695264be38f95db4b54de68a351fb55d9d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df3f621c03646b55b22938733d72e12579862f05",
+      "to": "Artifact:docs/city-gameplay-security-review.md",
+      "provenance": {
+        "commit": "df3f621c03646b55b22938733d72e12579862f05"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df3f621c03646b55b22938733d72e12579862f05",
+      "to": "Artifact:test/lib/city-gameplay-migration-catalog.js",
+      "provenance": {
+        "commit": "df3f621c03646b55b22938733d72e12579862f05"
       }
     },
     {
@@ -531165,6 +531312,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
+      "provenance": {
+        "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9f669fe6a6990b0938174e4e21550a683cb5beae",
       "provenance": {
         "commit": "9f669fe6a6990b0938174e4e21550a683cb5beae"
@@ -537560,6 +537715,14 @@
       "to": "Commit:df21c4695264be38f95db4b54de68a351fb55d9d",
       "provenance": {
         "commit": "df21c4695264be38f95db4b54de68a351fb55d9d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:df3f621c03646b55b22938733d72e12579862f05",
+      "provenance": {
+        "commit": "df3f621c03646b55b22938733d72e12579862f05"
       }
     },
     {
