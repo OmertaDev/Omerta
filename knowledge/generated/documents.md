@@ -328,7 +328,7 @@
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
 | [docs/agent-economy-final-prefix-native-review.md](../../docs/agent-economy-final-prefix-native-review.md) | documentation | 24 | 2026-10-12 |
-| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 18 | 2026-10-13 |
+| [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 22 | 2026-10-13 |
 | [docs/agent-economy-integration-boundary-review.md](../../docs/agent-economy-integration-boundary-review.md) | documentation | 46 | 2026-10-12 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |

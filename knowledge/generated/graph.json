@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "36eeb0c6853df1ce84aff382cfb640b723f2519e",
+  "sourceRevision": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12461,
-    "edges": 50548,
+    "nodes": 12468,
+    "edges": 50572,
     "byNodeType": {
       "Artifact": 4733,
       "Command": 261,
-      "Commit": 3400,
+      "Commit": 3407,
       "Contract": 126,
       "Document": 787,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3879,
-      "CHANGED": 19838,
+      "CHANGED": 19855,
       "CONTAINS": 4754,
       "DECLARES": 261,
       "DEFINED_IN": 1551,
       "DEPENDS_ON": 67,
       "EXECUTES": 916,
       "HANDLED_BY": 869,
-      "HAS_COMMIT": 3400,
+      "HAS_COMMIT": 3407,
       "IMPLEMENTS": 124,
       "IMPORTS": 5324,
       "INHERITS": 42,
@@ -7636,20 +7636,20 @@
       "path": ".github/workflows/rc1-recovery.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 50583,
-      "lines": 1300,
-      "version": "afcc20287675b596",
+      "bytes": 52590,
+      "lines": 1350,
+      "version": "4ede05206ff26a36",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "afcc20287675b596"
+          "version": "4ede05206ff26a36"
         }
       ],
-      "lastChangedAt": "2026-09-24T19:23:14.000Z",
+      "lastChangedAt": "2026-10-13T10:24:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "359d92353623591c41208f3d4692558b5e7ea2ea"
+      "lastChangedCommit": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2"
     },
     {
       "key": "Artifact:.gitignore",
@@ -24150,20 +24150,20 @@
       "path": "docs/agent-economy-first-five-security-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 5916,
-      "lines": 18,
-      "version": "41bfd0c94b47146a",
+      "bytes": 7570,
+      "lines": 22,
+      "version": "2a4efb0aec1f36bf",
       "text": true,
       "provenance": [
         {
           "file": "docs/agent-economy-first-five-security-review.md",
           "line": 1,
-          "version": "41bfd0c94b47146a"
+          "version": "2a4efb0aec1f36bf"
         }
       ],
-      "lastChangedAt": "2026-10-13T09:11:35.000Z",
+      "lastChangedAt": "2026-10-13T10:35:59.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "36eeb0c6853df1ce84aff382cfb640b723f2519e"
+      "lastChangedCommit": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a"
     },
     {
       "key": "Artifact:docs/agent-economy-integration-boundary-review.md",
@@ -90797,18 +90797,18 @@
       "extension": ".js",
       "bytes": 17775,
       "lines": 270,
-      "version": "7e9626928ba1f6b6",
+      "version": "2ff5ac0f3983c326",
       "text": true,
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "7e9626928ba1f6b6"
+          "version": "2ff5ac0f3983c326"
         }
       ],
-      "lastChangedAt": "2026-10-12T21:07:55.000Z",
+      "lastChangedAt": "2026-10-13T09:48:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9634fca0e25d4c5a48e975be20234a5806516e3d"
+      "lastChangedCommit": "80fddba62be392ff1bbf35e9737ec2d12fa18871"
     },
     {
       "key": "Artifact:test/city-scene-browser.js",
@@ -92520,20 +92520,20 @@
       "path": "test/crafting.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 38473,
-      "lines": 788,
-      "version": "0b447f967c4241f7",
+      "bytes": 38518,
+      "lines": 789,
+      "version": "c46bf0d9c4575d8d",
       "text": true,
       "provenance": [
         {
           "file": "test/crafting.js",
           "line": 1,
-          "version": "0b447f967c4241f7"
+          "version": "c46bf0d9c4575d8d"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:00:22.000Z",
+      "lastChangedAt": "2026-10-13T09:48:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1dffc80ec702d2d75f9258e381d4b3affe555de8"
+      "lastChangedCommit": "80fddba62be392ff1bbf35e9737ec2d12fa18871"
     },
     {
       "key": "Artifact:test/crew.js",
@@ -103537,20 +103537,20 @@
       "path": "test/worldgraph-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 56094,
+      "bytes": 56133,
       "lines": 1102,
-      "version": "7c7d78cb251c6b32",
+      "version": "823843a554098c2d",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "7c7d78cb251c6b32"
+          "version": "823843a554098c2d"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:35:08.000Z",
+      "lastChangedAt": "2026-10-13T09:40:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e063aceb08db7f52e21cf7b9ea4135a4124efb7b"
+      "lastChangedCommit": "aa2777079149c4d061d77f249bf81aca3433f386"
     },
     {
       "key": "Artifact:test/worldgraph-validation.js",
@@ -105285,20 +105285,20 @@
       "path": "tools/pgcheck-belladonna.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 28165,
-      "lines": 611,
-      "version": "250096a9f4fa07ae",
+      "bytes": 28714,
+      "lines": 619,
+      "version": "f89bb2818303feed",
       "text": true,
       "provenance": [
         {
           "file": "tools/pgcheck-belladonna.js",
           "line": 1,
-          "version": "250096a9f4fa07ae"
+          "version": "f89bb2818303feed"
         }
       ],
-      "lastChangedAt": "2026-09-17T20:00:22.000Z",
+      "lastChangedAt": "2026-10-13T10:07:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1dffc80ec702d2d75f9258e381d4b3affe555de8"
+      "lastChangedCommit": "4641c478f93537385b51e04d68128ad9f6f93568"
     },
     {
       "key": "Artifact:tools/pgcheck-mysteries.js",
@@ -127637,6 +127637,22 @@
       ]
     },
     {
+      "key": "Commit:4641c478f93537385b51e04d68128ad9f6f93568",
+      "type": "Commit",
+      "id": "4641c478f93537385b51e04d68128ad9f6f93568",
+      "label": "Clean only owned Belladonna condition metadata before fixture events",
+      "title": "Clean only owned Belladonna condition metadata before fixture events",
+      "date": "2026-10-13T10:07:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4641c478f93537385b51e04d68128ad9f6f93568",
+      "provenance": [
+        {
+          "commit": "4641c478f93537385b51e04d68128ad9f6f93568",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4641c478f93537385b51e04d68128ad9f6f93568"
+        }
+      ]
+    },
+    {
       "key": "Commit:4661f2298ccc6f3524a451091c5085b89ec748fe",
       "type": "Commit",
       "id": "4661f2298ccc6f3524a451091c5085b89ec748fe",
@@ -132481,6 +132497,22 @@
         {
           "commit": "5fbc15c76327564640cfcc2499a31202b2ce1fad",
           "url": "https://github.com/OmertaDev/Omerta/commit/5fbc15c76327564640cfcc2499a31202b2ce1fad"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+      "type": "Commit",
+      "id": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+      "label": "Retain hosted census cleanup and recovery findings without guard waivers",
+      "title": "Retain hosted census cleanup and recovery findings without guard waivers",
+      "date": "2026-10-13T10:35:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+      "provenance": [
+        {
+          "commit": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5fc91d5183d0932a6b5a32b85c1e653d45ec339a"
         }
       ]
     },
@@ -139893,6 +139925,22 @@
       ]
     },
     {
+      "key": "Commit:80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "type": "Commit",
+      "id": "80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "label": "Extend strict gameplay recipe census and highest-level preview fixture",
+      "title": "Extend strict gameplay recipe census and highest-level preview fixture",
+      "date": "2026-10-13T09:48:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "provenance": [
+        {
+          "commit": "80fddba62be392ff1bbf35e9737ec2d12fa18871",
+          "url": "https://github.com/OmertaDev/Omerta/commit/80fddba62be392ff1bbf35e9737ec2d12fa18871"
+        }
+      ]
+    },
+    {
       "key": "Commit:80fee7d50da7f557184e9477d7842bf433e0d2d9",
       "type": "Commit",
       "id": "80fee7d50da7f557184e9477d7842bf433e0d2d9",
@@ -144209,6 +144257,22 @@
         {
           "commit": "94add2ec7cd0631c3752eb86fb4e38914cf7d79e",
           "url": "https://github.com/OmertaDev/Omerta/commit/94add2ec7cd0631c3752eb86fb4e38914cf7d79e"
+        }
+      ]
+    },
+    {
+      "key": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "type": "Commit",
+      "id": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "label": "chore(knowledge): refresh combined City economy release artifacts",
+      "title": "chore(knowledge): refresh combined City economy release artifacts",
+      "date": "2026-10-13T09:19:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "provenance": [
+        {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+          "url": "https://github.com/OmertaDev/Omerta/commit/94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
         }
       ]
     },
@@ -149089,6 +149153,22 @@
         {
           "commit": "aa06133d3f63ad22eaa53579997440c10f183645",
           "url": "https://github.com/OmertaDev/Omerta/commit/aa06133d3f63ad22eaa53579997440c10f183645"
+        }
+      ]
+    },
+    {
+      "key": "Commit:aa2777079149c4d061d77f249bf81aca3433f386",
+      "type": "Commit",
+      "id": "aa2777079149c4d061d77f249bf81aca3433f386",
+      "label": "Retain exact recipe catalog assertions for tempered tool production",
+      "title": "Retain exact recipe catalog assertions for tempered tool production",
+      "date": "2026-10-13T09:40:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/aa2777079149c4d061d77f249bf81aca3433f386",
+      "provenance": [
+        {
+          "commit": "aa2777079149c4d061d77f249bf81aca3433f386",
+          "url": "https://github.com/OmertaDev/Omerta/commit/aa2777079149c4d061d77f249bf81aca3433f386"
         }
       ]
     },
@@ -158613,6 +158693,22 @@
       ]
     },
     {
+      "key": "Commit:d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+      "type": "Commit",
+      "id": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+      "label": "Keep rollback profiles in the existing validated workflow environment",
+      "title": "Keep rollback profiles in the existing validated workflow environment",
+      "date": "2026-10-13T10:24:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+      "provenance": [
+        {
+          "commit": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d9063420bd29c846e5f51f7cd8ec80f12e9232f2"
+        }
+      ]
+    },
+    {
       "key": "Commit:d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
       "type": "Commit",
       "id": "d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
@@ -162705,6 +162801,22 @@
         {
           "commit": "ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
           "url": "https://github.com/OmertaDev/Omerta/commit/ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+      "type": "Commit",
+      "id": "ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+      "label": "Pin explicit rollback profiles and complete recovery source history",
+      "title": "Pin explicit rollback profiles and complete recovery source history",
+      "date": "2026-10-13T10:22:51.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+      "provenance": [
+        {
+          "commit": "ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ed493ae4bdcc2e73378bf08f337e12e1c08d404c"
         }
       ]
     },
@@ -174386,13 +174498,13 @@
       "id": "docs/agent-economy-first-five-security-review.md",
       "label": "docs/agent-economy-first-five-security-review.md",
       "documentType": "documentation",
-      "lines": 18,
-      "version": "41bfd0c94b47146a",
+      "lines": 22,
+      "version": "2a4efb0aec1f36bf",
       "provenance": [
         {
           "file": "docs/agent-economy-first-five-security-review.md",
           "line": 1,
-          "version": "41bfd0c94b47146a"
+          "version": "2a4efb0aec1f36bf"
         }
       ]
     },
@@ -188953,6 +189065,9 @@
           "commit": "92efdbef6f84c8b2b2b6ab652eee155cd9b49a23"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "96e373d7d7a9c213f406e014ad5444de64cca3d8"
         },
         {
@@ -190427,6 +190542,9 @@
         },
         {
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
+        },
+        {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
         },
         {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
@@ -192250,6 +192368,9 @@
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
         },
         {
@@ -194071,6 +194192,9 @@
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
         },
         {
@@ -195062,6 +195186,9 @@
         },
         {
           "commit": "92d09cf49ecf4d21fbf99e7c944e3dcc5d1bdd0a"
+        },
+        {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -196405,6 +196532,9 @@
           "commit": "941040497b187366baf25a5f32e14b420b62e438"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "94e67f822d1e5e8fdd79a30711bd36a0ada0e192"
         },
         {
@@ -197482,6 +197612,9 @@
           "commit": "92d09cf49ecf4d21fbf99e7c944e3dcc5d1bdd0a"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
         },
         {
@@ -197998,6 +198131,9 @@
           "commit": "92d09cf49ecf4d21fbf99e7c944e3dcc5d1bdd0a"
         },
         {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+        },
+        {
           "commit": "97736b2c2c2b058e4ad6b8da2db4a3776d82aab3"
         },
         {
@@ -198329,6 +198465,9 @@
         },
         {
           "commit": "92d09cf49ecf4d21fbf99e7c944e3dcc5d1bdd0a"
+        },
+        {
+          "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
         },
         {
           "commit": "96668503a6b926df81aca16eb748aba892b51ec6"
@@ -208615,7 +208754,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "36eeb0c6853df1ce84aff382cfb640b723f2519e",
+      "revision": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
       "currentBranch": "codex/economy-first-five-release",
       "defaultBranch": "main",
       "visibility": "public",
@@ -242563,12 +242702,12 @@
       "id": "test/city-rpg.js",
       "label": "test/city-rpg.js",
       "lines": 270,
-      "version": "7e9626928ba1f6b6",
+      "version": "2ff5ac0f3983c326",
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "7e9626928ba1f6b6"
+          "version": "2ff5ac0f3983c326"
         }
       ]
     },
@@ -243687,13 +243826,13 @@
       "type": "TestSuite",
       "id": "test/crafting.js",
       "label": "test/crafting.js",
-      "lines": 788,
-      "version": "0b447f967c4241f7",
+      "lines": 789,
+      "version": "c46bf0d9c4575d8d",
       "provenance": [
         {
           "file": "test/crafting.js",
           "line": 1,
-          "version": "0b447f967c4241f7"
+          "version": "c46bf0d9c4575d8d"
         }
       ]
     },
@@ -250708,12 +250847,12 @@
       "id": "test/worldgraph-api.js",
       "label": "test/worldgraph-api.js",
       "lines": 1102,
-      "version": "7c7d78cb251c6b32",
+      "version": "823843a554098c2d",
       "provenance": [
         {
           "file": "test/worldgraph-api.js",
           "line": 1,
-          "version": "7c7d78cb251c6b32"
+          "version": "823843a554098c2d"
         }
       ]
     },
@@ -250827,13 +250966,13 @@
       "type": "Workflow",
       "id": ".github/workflows/rc1-recovery.yml",
       "label": ".github/workflows/rc1-recovery.yml",
-      "lines": 1300,
-      "version": "afcc20287675b596",
+      "lines": 1350,
+      "version": "4ede05206ff26a36",
       "provenance": [
         {
           "file": ".github/workflows/rc1-recovery.yml",
           "line": 1,
-          "version": "afcc20287675b596"
+          "version": "4ede05206ff26a36"
         }
       ]
     }
@@ -328600,6 +328739,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4641c478f93537385b51e04d68128ad9f6f93568",
+      "to": "Artifact:tools/pgcheck-belladonna.js",
+      "provenance": {
+        "commit": "4641c478f93537385b51e04d68128ad9f6f93568"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4661f2298ccc6f3524a451091c5085b89ec748fe",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -341692,6 +341839,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "5fbc15c76327564640cfcc2499a31202b2ce1fad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+      "to": "Artifact:docs/agent-economy-first-five-security-review.md",
+      "provenance": {
+        "commit": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a"
       }
     },
     {
@@ -365144,6 +365299,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "to": "Artifact:test/city-rpg.js",
+      "provenance": {
+        "commit": "80fddba62be392ff1bbf35e9737ec2d12fa18871"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "to": "Artifact:test/crafting.js",
+      "provenance": {
+        "commit": "80fddba62be392ff1bbf35e9737ec2d12fa18871"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:80fee7d50da7f557184e9477d7842bf433e0d2d9",
       "to": "Artifact:SPEC.md",
       "provenance": {
@@ -375860,6 +376031,78 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "94add2ec7cd0631c3752eb86fb4e38914cf7d79e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
       }
     },
     {
@@ -388604,6 +388847,22 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "aa06133d3f63ad22eaa53579997440c10f183645"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa2777079149c4d061d77f249bf81aca3433f386",
+      "to": "Artifact:test/crafting.js",
+      "provenance": {
+        "commit": "aa2777079149c4d061d77f249bf81aca3433f386"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:aa2777079149c4d061d77f249bf81aca3433f386",
+      "to": "Artifact:test/worldgraph-api.js",
+      "provenance": {
+        "commit": "aa2777079149c4d061d77f249bf81aca3433f386"
       }
     },
     {
@@ -416640,6 +416899,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -431260,6 +431527,14 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+      "to": "Artifact:.github/workflows/rc1-recovery.yml",
+      "provenance": {
+        "commit": "ed493ae4bdcc2e73378bf08f337e12e1c08d404c"
       }
     },
     {
@@ -528459,6 +528734,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4641c478f93537385b51e04d68128ad9f6f93568",
+      "provenance": {
+        "commit": "4641c478f93537385b51e04d68128ad9f6f93568"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4661f2298ccc6f3524a451091c5085b89ec748fe",
       "provenance": {
         "commit": "4661f2298ccc6f3524a451091c5085b89ec748fe"
@@ -530878,6 +531161,14 @@
       "to": "Commit:5fbc15c76327564640cfcc2499a31202b2ce1fad",
       "provenance": {
         "commit": "5fbc15c76327564640cfcc2499a31202b2ce1fad"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5fc91d5183d0932a6b5a32b85c1e653d45ec339a",
+      "provenance": {
+        "commit": "5fc91d5183d0932a6b5a32b85c1e653d45ec339a"
       }
     },
     {
@@ -534587,6 +534878,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:80fddba62be392ff1bbf35e9737ec2d12fa18871",
+      "provenance": {
+        "commit": "80fddba62be392ff1bbf35e9737ec2d12fa18871"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:80fee7d50da7f557184e9477d7842bf433e0d2d9",
       "provenance": {
         "commit": "80fee7d50da7f557184e9477d7842bf433e0d2d9"
@@ -536742,6 +537041,14 @@
       "to": "Commit:94add2ec7cd0631c3752eb86fb4e38914cf7d79e",
       "provenance": {
         "commit": "94add2ec7cd0631c3752eb86fb4e38914cf7d79e"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:94b21e0a058e8fafa0d35bdcee9cb2b64f362681",
+      "provenance": {
+        "commit": "94b21e0a058e8fafa0d35bdcee9cb2b64f362681"
       }
     },
     {
@@ -539182,6 +539489,14 @@
       "to": "Commit:aa06133d3f63ad22eaa53579997440c10f183645",
       "provenance": {
         "commit": "aa06133d3f63ad22eaa53579997440c10f183645"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:aa2777079149c4d061d77f249bf81aca3433f386",
+      "provenance": {
+        "commit": "aa2777079149c4d061d77f249bf81aca3433f386"
       }
     },
     {
@@ -543947,6 +544262,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d9063420bd29c846e5f51f7cd8ec80f12e9232f2",
+      "provenance": {
+        "commit": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d",
       "provenance": {
         "commit": "d90b8ef1fcaa1641ea3fceb4d75b81f8c0a73b9d"
@@ -545990,6 +546313,14 @@
       "to": "Commit:ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a",
       "provenance": {
         "commit": "ecf6a1eed9ef5c5c4a18ca82eaa0a3d958c4930a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ed493ae4bdcc2e73378bf08f337e12e1c08d404c",
+      "provenance": {
+        "commit": "ed493ae4bdcc2e73378bf08f337e12e1c08d404c"
       }
     },
     {
@@ -592297,7 +592628,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "tools/pgcheck-belladonna.js",
-        "line": 585
+        "line": 593
       }
     },
     {
