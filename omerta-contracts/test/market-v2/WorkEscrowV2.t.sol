@@ -115,6 +115,18 @@ contract WorkEscrowV2Test is Test {
         vm.prank(worker);escrow.accept(id);vm.prank(funder);escrow.allocate(id,outcome);vm.prank(worker);escrow.settle(id);
         assertEq(worker.balance,amount);assertEq(funder.balance+worker.balance,100 ether);assertEq(escrow.liability(address(0)),0);
     }
+    function testFuzzUSDCConservation(uint96 amount) public {
+        amount=uint96(bound(amount,1,1000e6));bytes32 id=funded(USDC,amount,worker);
+        vm.prank(worker);escrow.accept(id);vm.prank(funder);escrow.allocate(id,outcome);vm.prank(worker);escrow.settle(id);
+        assertEq(WorkFixtureUSDC(USDC).balanceOf(worker),amount);assertEq(WorkFixtureUSDC(USDC).balanceOf(funder)+WorkFixtureUSDC(USDC).balanceOf(worker),1000e6);assertEq(escrow.liability(USDC),0);
+    }
+    function testNoAuthorityOverUnrelatedSurplusOrUnknownWork() public {
+        bytes32 id=funded(address(0),1 ether,worker);vm.deal(address(escrow),10 ether);
+        vm.prank(worker);escrow.accept(id);vm.prank(funder);escrow.allocate(id,outcome);vm.prank(worker);escrow.settle(id);
+        assertEq(worker.balance,1 ether);assertEq(address(escrow).balance,9 ether);
+        vm.prank(funder);vm.expectRevert(OmertaWorkEscrowV2.Unauthorized.selector);escrow.recover(keccak256("unrelated"));
+        vm.prank(funder);vm.expectRevert(OmertaWorkEscrowV2.Unauthorized.selector);escrow.settle(id);
+    }
 }
 
 
