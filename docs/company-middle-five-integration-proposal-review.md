@@ -14,7 +14,7 @@ Post-SQL-dead/pre-heir hooks preserve existing rental/subscription recovery. Emp
 
 ## Evidence
 
-`test/company-middle-five-integration.js` uses actual `buildServer` registrations, authenticated human and agent requests, canonical Crew/Depot/Market/training/estate effects, and 109 global checks. Final memory run passed. Memory transaction rollback and concurrency are not claimed.
+`test/company-middle-five-integration.js` uses actual `buildServer` registrations, authenticated human and agent requests, canonical Crew/Depot/Market/training/estate effects, and 117 global checks. Final memory run passed. Memory transaction rollback and concurrency are not claimed.
 
 Fresh native PostgreSQL 18.4 database `company_middle_five_test_34928163aa00` passed. Its runner rejected ambient endpoints, required approved loopback pilot port/role, verified version and empty public schema before setup. Native witnesses include two-key accept/train/governance/acquisition one-success races; Crew-before-actors wait, queued canonical kick, and fresh roster refusal; late SQL-trigger faults after real training wage/stat/session effects and after acquisition payment/title effects with complete rollback; exact winning-key receipt replay; apprentice recovery/employer burn; voluntary observed GIN-profit distribution; owner-death retirement; semantic maintenance alias refusal; original/private board controls; original seller/new owner authority after real sale. Injected expected 500 errors remain in raw logs.
 
