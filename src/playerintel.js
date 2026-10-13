@@ -12,6 +12,10 @@ function publicIntel(row) {
   if (Number.isFinite(facts.level)) intel.level = facts.level;
   if (typeof facts.loc === 'string') intel.loc = facts.loc;
   if (Number.isFinite(facts.guardPrice)) intel.guardPrice = facts.guardPrice;
+  if (facts.lfg === true && typeof facts.lfgAt === 'string' && Number.isFinite(new Date(facts.lfgAt).getTime())) {
+    intel.lfg = true;
+    intel.lfgAt = new Date(facts.lfgAt).toISOString();
+  }
   if (Array.isArray(facts.fronts)) intel.fronts = facts.fronts.map((front) => ({ id: front.id, kind: front.kind }));
   return { ...intel, source: row.source, sourceName: row.source_name || null,
     observedAt: row.observed_at, learnedAt: row.learned_at };
@@ -23,6 +27,11 @@ function observation(target, location = true) {
     facts.level = levelOf(Number(target.respect) || 0);
     facts.loc = target.loc;
     if (target.guard_price != null) facts.guardPrice = Math.floor(Number(target.guard_price));
+    const lfgAt = target.lfg_at == null ? NaN : new Date(target.lfg_at).getTime();
+    if (target.lfg === true && Number.isFinite(lfgAt)) {
+      facts.lfg = true;
+      facts.lfgAt = new Date(lfgAt).toISOString();
+    }
   }
   return facts;
 }
@@ -144,6 +153,7 @@ export async function sharePlayerIntel(ch, recipientId, targetId, q, h) {
   if (intel.loc !== undefined) facts.loc = intel.loc;
   if (intel.guardPrice !== undefined) facts.guardPrice = intel.guardPrice;
   if (intel.fronts !== undefined) facts.fronts = intel.fronts;
+  if (intel.lfg === true) { facts.lfg = true; facts.lfgAt = intel.lfgAt; }
   const previous = await readPlayerIntel(q, recipient.account_id, targetId);
   // Identity-only gossip must not erase a located sighting, even if the call was more recent.
   const improves = !previous || (new Date(previous.observedAt) < new Date(intel.observedAt)

@@ -17,18 +17,24 @@ export async function discoveryBoard(ch, client, onlineIds = [], filters = {}) {
     `SELECT c.id FROM characters c JOIN account_persistent a ON a.account_id=c.account_id
       WHERE c.alive AND NOT c.is_npc AND NOT a.agent_flag
         AND c.id IN (${ids.map((_, i) => `$${i + 1}`).join(',')})`, ids)).rows : [];
+  const now = Date.now();
   const cards = humans.map((r) => intel.get(r.id)).map((seen) => ({
     id: seen.id, name: seen.name, level: seen.level ?? null,
     district: seen.loc ?? null, districtName: seen.loc ? districtName(seen.loc) : null,
     observedAt: seen.observedAt, learnedAt: seen.learnedAt,
     source: seen.source, sourceName: seen.sourceName,
-    gangTag: null, lfg: null, hasCrew: null, online: null, seekingMentor: null, vouches: null,
+    gangTag: null,
+    lfg: seen.lfg === true && new Date(seen.lfgAt).getTime() + DISCOVERY.LFG_TTL_MS > now ? true : null,
+    ...(seen.lfgAt ? { lfgAt: seen.lfgAt } : {}),
+    hasCrew: null, online: null, seekingMentor: null, vouches: null,
   })).filter((r) => (!district || r.district === district) && !nofam && !onlineOnly);
   const peers = cards.filter((r) => r.level != null && Math.abs(r.level - myLevel) <= DISCOVERY.BAND)
     .sort((a, b) => Math.abs(a.level - myLevel) - Math.abs(b.level - myLevel))
     .slice(0, DISCOVERY.LIMIT);
   const newcomers = [...cards].sort((a, b) => new Date(b.learnedAt) - new Date(a.learnedAt))
     .slice(0, DISCOVERY.LIMIT);
+  const looking = cards.filter((r) => r.lfg && r.level != null && Math.abs(r.level - myLevel) <= DISCOVERY.BAND)
+    .sort((a, b) => new Date(b.lfgAt) - new Date(a.lfgAt)).slice(0, DISCOVERY.LIMIT);
 
   // A recruiting crew advertises its name and available room. Its members' live levels
   // are private; a single-member range would otherwise expose an unknown player's level.
@@ -47,7 +53,7 @@ export async function discoveryBoard(ch, client, onlineIds = [], filters = {}) {
   return {
     me: { level: myLevel, lfg: !!ch.lfg, inCrew: !!myCrew, band: DISCOVERY.BAND, crewMax: CREW.MAX_MEMBERS },
     filters: { district, nofam, online: onlineOnly },
-    looking: [], peers, newcomers, crews,
+    looking, peers, newcomers, crews,
   };
 }
 // ── LFG — advertise that you're open to a crew (or take the flag down). A boolean + a freshness stamp,

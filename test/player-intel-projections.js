@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
-import { recordPlayerIntel } from '../src/playerintel.js';
+import { recordPlayerIntel, readPlayerIntel, sharePlayerIntel } from '../src/playerintel.js';
+import { DISCOVERY } from '../src/rules.js';
 import { contactsBoard, recordMeeting } from '../src/contacts.js';
 import { peopleBoard, pairHistory } from '../src/people.js';
 import { circleBoard } from '../src/circle.js';
@@ -20,7 +21,7 @@ const make = async (name) => {
   const id = (await app.inject({ method: 'GET', url: '/v1/me',
     headers: { authorization: `Bearer ${token}` } })).json().character.id;
   await pool.query("UPDATE characters SET respect=500, loc='docks' WHERE id=$1", [id]);
-  return (await pool.query('SELECT * FROM characters WHERE id=$1', [id])).rows[0];
+  return { ...(await pool.query('SELECT * FROM characters WHERE id=$1', [id])).rows[0], token };
 };
 
 try {
@@ -91,6 +92,50 @@ try {
   assert.equal((await discoveryBoard(owner, pool)).peers.some((r) => r.id === stranger.id), false);
   assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), txBefore,
     'projections never write value');
+
+  const advertiser = await make('Intel Recruiter');
+  const listener = await make('Intel Hearer');
+  const adAt = new Date(Date.now() - DISCOVERY.LFG_TTL_MS + 60_000);
+  await pool.query('UPDATE characters SET lfg=true, lfg_at=$2 WHERE id=$1', [advertiser.id, adAt]);
+  const ad = (await pool.query('SELECT * FROM characters WHERE id=$1', [advertiser.id])).rows[0];
+  assert.equal((await discoveryBoard(owner, pool)).looking.some((row) => row.id === advertiser.id), false,
+    'an unfamiliar advertisement supplies no identity or recruiting intent');
+  const phoneNote = await recordPlayerIntel(pool, listener.account_id, ad,
+    { source: 'called', location: false, observedAt: new Date(adAt.getTime() - 1) });
+  assert.equal(phoneNote.lfg, undefined, 'a phone introduction invents no recruiting intent');
+  assert.equal(phoneNote.lfgAt, undefined);
+  const met = await app.inject({ method: 'POST', url: `/v1/streets/${advertiser.id}/meet`,
+    headers: { authorization: `Bearer ${owner.token}` } });
+  assert.equal(met.statusCode, 200, 'an actual encounter can learn the advertisement');
+  const adNote = await readPlayerIntel(pool, owner.account_id, advertiser.id);
+  assert.equal(adNote.lfg, true);
+  assert.equal(adNote.lfgAt, adAt.toISOString(), 'the observation keeps the original advertisement time');
+  assert.equal((await discoveryBoard(owner, pool)).looking.find((row) => row.id === advertiser.id).lfg, true);
+
+  await pool.query("UPDATE characters SET lfg=false, lfg_at=now(), respect=80000, loc='neon', active_at=now() WHERE id=$1", [advertiser.id]);
+  await recordMeeting(pool, owner.account_id, listener.account_id);
+  await sharePlayerIntel(owner, listener.id, advertiser.id, pool);
+  assert.equal((await readPlayerIntel(pool, listener.account_id, advertiser.id)).lfgAt, adAt.toISOString(),
+    'owned gossip preserves the advertisement time instead of renewing it');
+  const originalNow = Date.now;
+  try {
+    Date.now = () => adAt.getTime() + DISCOVERY.LFG_TTL_MS - 1;
+    for (const viewer of [owner, listener]) {
+      const notice = (await discoveryBoard(viewer, pool)).looking.find((row) => row.id === advertiser.id);
+      assert(notice, 'a learned advertisement remains visible until its original deadline');
+      assert.equal(notice.district, 'docks', 'later movement does not refresh an advertisement');
+      assert.equal(notice.level, adNote.level, 'later leveling does not change the learned recruiting band');
+      assert.equal(notice.lfgAt, adAt.toISOString());
+      assert.equal(new Date(notice.observedAt).getTime(), new Date(adNote.observedAt).getTime());
+    }
+    Date.now = () => adAt.getTime() + DISCOVERY.LFG_TTL_MS;
+    for (const viewer of [owner, listener]) {
+      const expired = await discoveryBoard(viewer, pool);
+      assert.equal(expired.looking.some((row) => row.id === advertiser.id), false,
+        'the original advertisement stamp controls expiry, even after gossip');
+      assert.equal(expired.peers.find((row) => row.id === advertiser.id).lfg, null);
+    }
+  } finally { Date.now = originalNow; }
   console.log('Player intel projections preserve earned identities and dated observations.');
 } finally {
   await app.close();
