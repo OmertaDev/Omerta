@@ -84,6 +84,13 @@ try {
   await assert.rejects(G.withCharacter(pool, 'one', async () => ({ completed: true }), {
     withActionScope: async (_, __, execute) => { const result = await execute(); try { await execute(); } catch { /* cannot conceal a second invocation */ } return result; },
   }), /Couldn't complete/);
+  await assert.rejects(G.withTwoCharacters(pool, 'one', 'two-actor', async (ch, _, client) => {
+    ch.cash = Number(ch.cash) + 123;
+    await I.grantStack(client, owner, 'mat:salvage_parts', 1, 'standard', 'pair scoped rollback', 'game-item-pair-scoped');
+    return { completed: true };
+  }, { meet: false, withActionScope: hooks.withActionScope }), /source expired after action/);
+  assert.equal((await pool.query('SELECT cash FROM characters WHERE id=$1', ['one-actor'])).rows[0].cash, beforeCash);
+  assert.deepEqual(await rows(), scopedRows);
   const raw = await pool.connect();
   try { assert.throws(() => I.assertItemTransaction(raw), /active withItemTransaction/); } finally { raw.release(); }
   console.log(JSON.stringify({ status: 'PASS', native, checks: ['canonical single and pair brand', 'released and raw clients refused', 'late item rollback', 'caught leaf poison rolls back', 'phase-one settlement remains separate'] }));

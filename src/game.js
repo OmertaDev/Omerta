@@ -1425,7 +1425,7 @@ export async function persistAccountFields(client, accountId, a, fields) {
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
 // Player-targeting verbs opt into requireKnown; this sorted settlement helper also serves already-authorized commerce.
-export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false } = {}) {
+export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false, withActionScope = null } = {}) {
   // phase one for BOTH parties (the actor by account, the target by their street's account) — each
   // its own transaction, each holding one character, so no sorted-pair lock is needed here
   await settleIfDue(pool, accountId);
@@ -1434,6 +1434,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
   try {
     const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
     try {
+    const action = await runCharacterActionScope(client, accountId, async () => {
     const mine = await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId]);
     if (!mine.rows.length) throw new GameError('no_character', 'Create a character first.');
     const myId = mine.rows[0].id;
@@ -1464,6 +1465,9 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
                 victimAcct, victimOwned };
     const result = await fn(ch, victim, client, h);
     assertItemTransactionHealthy(client);
+    return { ch, victim, acct, owned, victimOwned, accts, result };
+    }, withActionScope);
+    const { ch, victim, acct, owned, victimOwned, accts, result } = action;
 
     // STREET LIFE (the black book): a COMPLETED two-party action is a MEETING — both sides walk
     // away with the other's number (the founder's discoverability rule: numbers come from meeting
