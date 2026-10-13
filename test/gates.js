@@ -2105,6 +2105,7 @@ const SCENERY_WAIVED = {
     'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',
     'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',
     'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',
+    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',
     'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',
     // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business
     // TAKEOVER shipped `kind: r.kind` and the wire read "took your nightclub" as "took your
