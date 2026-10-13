@@ -1,7 +1,7 @@
 /* In-world tools use confirmed player data and the host's guarded API callbacks. */
 (function () {
   'use strict';
-  const PANELS = [['map', 'Map'], ['bag', 'Bag'], ['skills', 'Skills'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
+  const PANELS = [['map', 'Map'], ['bag', 'Bag'], ['skills', 'Skills'], ['adventures', 'Adventures'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
   const VOICES = {
     fixer: ['THE FIXER', 'Every job carries a risk. Check your nerve before you step out.'],
     training: ['THE TRAINER', 'Pick a skill. Put in the work. Catch your breath between sessions.'],
@@ -43,7 +43,7 @@
     const dialogue = el('span', 'city-world__dialogue'); dialogue.hidden = true; dialogue.setAttribute('role', 'status');
     toolbar.append(tools, tracker, gains, dialogue);
     (options.toolbar || root).append(toolbar);
-    if (options.toolsHost) { options.toolsHost.append(tools); tools.textContent = String(options.toolsLabel || 'World tools'); tools.setAttribute('aria-label', 'Open world tools: map, bag, skills, hideout, style and nearby chat'); }
+    if (options.toolsHost) { options.toolsHost.append(tools); tools.textContent = String(options.toolsLabel || 'World tools'); tools.setAttribute('aria-label', 'Open world tools: map, bag, skills, adventures, hideout, style and nearby chat'); }
     if (options.trackerHost) options.trackerHost.append(tracker);
     const dock = el('section', 'city-world__dock'); dock.hidden = true; dock.setAttribute('aria-label', 'World tools');
     const bar = el('div', 'city-world__dock-bar');
@@ -105,6 +105,9 @@
         if (!current(token, owner) || ticket !== readTickets[kind] || result?.ignored
           || kind === 'homes' && (mapView !== 'world' || selectedDistrict !== input.districtId)) return null;
         if (!result || result.code >= 400) {
+          if (kind === 'opportunity-detail' && ['city_npc_unavailable','city_npc_binding_changed','city_opportunity_unavailable'].includes(result?.body?.error)) {
+            delete boards['opportunity-detail']; setNotice('This person or lead changed. Choose a current district opportunity.'); render(); read('opportunities',token); return null;
+          }
           if (kind === 'chat' && result?.code === 403 && result.body?.error === 'city_chat_opt_in_required') {
             if (boards.social === socialAtStart) {
               boards.social = { ...boards.social, preferences: { ...socialPreferences(), chatEnabled: false } };
@@ -119,6 +122,7 @@
         if (kind === 'homes') {
           if (resultBody(result).districtId !== input.districtId || !acceptHomes(resultBody(result), input.cursor)) return null;
         } else boards[kind] = resultBody(result);
+        if(kind==='opportunities'&&boards['opportunity-detail']&&!list(boards.opportunities.npcs,12).some(npc=>npc.id===boards['opportunity-detail'].npc.id&&npc.generation===boards['opportunity-detail'].npc.generation))delete boards['opportunity-detail'];
         if (kind === 'atlas' && panel === 'map' && mapView === 'world') {
           if (!atlasDistricts().some(district => district.id === selectedDistrict)) selectedDistrict = actualDistrict();
           if (atlasDistricts().some(district => district.id === selectedDistrict) && !readPending.homes) readHomes();
@@ -144,16 +148,36 @@
       if (pending || destroyed || !panel || typeof options.onAction !== 'function') return;
       if (options.recovery === true) { setNotice('Resolve your pending action receipt before making another choice.'); return; }
       const owner = scope, token = opening;
+      const opportunityAtStart=boards['opportunity-detail'], homeAtStart=boards['home-interior'];
       pending = true; setNotice('Confirming your choice…'); render();
       try {
         const result = await options.onAction(kind, payload, {
           beforeDispatch: () => current(token, owner) && !!panel,
           isCurrent: () => !destroyed && owner === scope && owner === identity()
+          ,onResult: result => {
+            if(destroyed||owner!==scope||owner!==identity())return;
+            if(kind==='home-action'&&result?.code<400&&result.body?.kind==='home_leave') {
+              const currentHome=boards['home-interior'], grantId=result.body.effect?.grantId;
+              if(currentHome?.home?.key===result.body.homeKey&&(currentHome.actions||[]).some(action=>action.path==='/v1/city/home/visitors/leave'&&action.body?.grantId===grantId)) {
+                delete boards['home-interior'];setNotice('Your visitor consent is withdrawn.');if(panel)render();
+              }
+            }
+            if(kind==='adventure-action'&&boards['opportunity-detail']===opportunityAtStart&&['city_npc_unavailable','city_npc_binding_changed','city_opportunity_unavailable'].includes(result?.body?.error)) {
+              delete boards['opportunity-detail'];setNotice('This person or lead changed. Choose a current district opportunity.');if(panel)render();
+            }
+            if(kind==='home-action'&&boards['home-interior']===homeAtStart&&result?.body?.error==='home_authority_changed') {
+              delete boards['home-interior'];setNotice('The deed changed. Refresh before entering this home.');if(panel)render();
+            }
+          }
         });
         if (destroyed || owner !== scope || owner !== identity() || result?.ignored) return;
         if (result?.code >= 400) {
+          if(kind==='adventure-action'&&['city_npc_unavailable','city_npc_binding_changed','city_opportunity_unavailable'].includes(resultBody(result).error)) {
+            if(boards['opportunity-detail']===opportunityAtStart)delete boards['opportunity-detail']; if(current(token,owner))await read('opportunities',token);
+          }
           if (current(token, owner)) setNotice(result.code === 499 ? 'That opening was closed before the choice was sent.'
             : result.code >= 500 ? 'Confirmation is unavailable. Check the action receipt before trying a new choice.'
+            : resultBody(result).error === 'city_adventure_refresh_required' ? 'This adventure changed. Refresh it before making your choice.'
             : caption(resultBody(result).error || 'Your choice could not be applied.'));
           return;
         }
@@ -161,7 +185,17 @@
           if (kind === 'send-chat') { const field = content.querySelector('[data-city-nearby-input]'); if (field) field.value = ''; }
           setNotice(kind === 'send-chat' ? 'Message delivered to this district.' : kind === 'emote' ? 'Emote shared with your nearby room.' : 'Your choice is saved.');
           if (kind === 'send-chat' || kind === 'emote') showChatMessage(resultBody(result).message, true);
-          await read(kind === 'equip' ? 'inventory' : kind === 'send-chat' || kind === 'emote' ? 'chat' : 'social', token);
+          if (kind === 'home-action') {
+            if (boards['home-interior']?.home?.key) await read('home-interior', token, { homeKey: boards['home-interior'].home.key });
+            if (current(token, owner)) await read('home-invitations', token);
+            if (current(token, owner)) await read('home-recovery', token);
+            if (current(token, owner)) await read('home-history', token);
+          } else if (kind === 'adventure-action') {
+            await read('encounters',token);
+            if(current(token,owner))await read('opportunities',token);
+            if(current(token,owner)&&boards['opportunity-detail']?.graph?.id)await read('opportunity-detail',token,
+              {npcId:boards['opportunity-detail'].npc.id,graphRef:boards['opportunity-detail'].graph.id});
+          } else await read(kind === 'equip' ? 'inventory' : kind === 'send-chat' || kind === 'emote' ? 'chat' : 'social', token);
         }
       } catch { if (current(token, owner)) setNotice('Confirmation is unavailable. Check the action receipt before trying a new choice.'); }
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
@@ -173,7 +207,10 @@
       if (id === 'map') mapView = world ? 'world' : 'neighborhood';
       setNotice(''); render(); changed(); content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
+      if (id === 'adventures') { read('encounters'); read('opportunities'); }
       if (['room', 'style', 'chat'].includes(id)) read('social');
+      if (id === 'room') { read('home-list'); read('home-invitations'); read('home-recovery'); read('home-history'); }
+      if (id === 'room' && boards['home-interior']?.home?.key) read('home-interior', opening, { homeKey: boards['home-interior'].home.key });
       else if (socialPreferences().chatEnabled === true) startPolling();
       if (id === 'map' && world) {
         if (!selectedDistrict) selectedDistrict = actualDistrict();
@@ -516,6 +553,14 @@
       const safe = number(options.character?.safeSeconds);
       content.append(el('p', 'city-world__hint', safe > 0 ? 'Safehouse protection: ' + Math.ceil(safe / 60) + ' minutes remaining.' : 'Decorating does not activate protection.'));
       content.append(button('Safehouse options →', () => { close(false); options.onNavigate?.('streets', { venueId: 'directory' }); }));
+      if (window.CityHomeUi) {
+        const home = el('section', 'city-world__home-tools'); home.dataset.cityHomeTools = '';
+        window.CityHomeUi.render(home, { board: boards['home-interior'], invitations: boards['home-invitations'],
+          recovery: boards['home-recovery'], history: boards['home-history'], homes: boards['home-list'], actors: options.actors, pending: pending || options.recovery === true,
+          onBind: onRender, onRead: (kind, input) => read(kind, opening, input),
+          onAction: (issued, fields) => action('home-action', { id: issued?.id, path: issued?.path, body: issued?.body, fields }) });
+        content.append(home);
+      }
     }
     function renderStyle() {
       const preferences = socialPreferences();
@@ -562,13 +607,18 @@
       const focused = content.contains(active) || receiptBox.contains(active);
       const focusKey = active?.dataset?.worldControl || active?.getAttribute('aria-label');
       const preserveDraft = renderedOpening === opening;
-      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), field.value]) : []);
+      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
       if (panel === 'map') renderMap(); else if (panel === 'bag') renderBag(); else if (panel === 'skills') renderSkills();
+      else if(panel==='adventures'&&window.CityAdventureUi)window.CityAdventureUi.render(content,{encounters:boards.encounters,index:boards.opportunities,
+        detail:boards['opportunity-detail'],pending:pending||options.recovery===true,onBind:onRender,onRead:(kind,input)=>read(kind,opening,input),
+        onAction:issued=>action('adventure-action',{id:issued.id,path:issued.path,body:{...issued.body}}),onCrew:()=>options.onCrew?.()});
       else if (panel === 'room') renderRoom(); else if (panel === 'style') renderStyle(); else if (panel === 'chat') renderChat();
-      for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) field.value = drafts.get(field.getAttribute('aria-label'));
+      for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) {
+        const draft=drafts.get(field.getAttribute('aria-label'));field.value=draft.value;if(field.type==='checkbox')field.checked=draft.checked;
+      }
       renderedOpening = opening;
       paintReadState(); dock.scrollTop = scroll;
       if (options.receipt) {
@@ -576,8 +626,13 @@
         if (options.receipt.delta) receiptBox.append(el('p', '', options.receipt.delta));
         if (options.recovery === true && options.receipt.recovery?.sameKey === true && typeof options.onRetry === 'function') {
           const retry = button('Recover the same action', async () => {
-            if (pending) return; const owner = scope, recover = options.onRetry; pending = true; render();
-            try { await recover(); } finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
+            if (pending) return; const owner = scope, token = opening, recover = options.onRetry; pending = true; render();
+            try { const result=await recover(); if(current(token,owner)&&result?.code<400){
+              if(panel==='room') { if(boards['home-interior']?.home?.key)await read('home-interior',token,{homeKey:boards['home-interior'].home.key});
+                if(current(token,owner))await read('home-invitations',token);if(current(token,owner))await read('home-recovery',token); }
+              if(panel==='adventures') { await read('encounters',token);if(current(token,owner))await read('opportunities',token);
+                if(current(token,owner)&&boards['opportunity-detail']?.graph?.id)await read('opportunity-detail',token,{npcId:boards['opportunity-detail'].npc.id,graphRef:boards['opportunity-detail'].graph.id}); }
+            } } finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
           }); retry.disabled = pending; retry.dataset.cityWorldRetry = ''; receiptBox.append(retry);
         }
       }

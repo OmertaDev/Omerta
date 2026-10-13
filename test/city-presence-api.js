@@ -27,6 +27,11 @@ try {
   assert.equal(page.statusCode, 200, page.body); assert.equal(page.headers['cache-control'], 'private, no-store');
   const presence = page.json();
   for (const [target, kind] of [[npc,'npc'], [agent,'agent'], [human,'player']]) assert.equal(presence.actors.find(a => a.id === target.id).kind, kind);
+  for (const target of [agent, human]) {
+    const card = presence.actors.find(a => a.id === target.id);
+    for (const field of ['name', 'level', 'gangTag', 'online', 'lastSeenDistrict', 'observedAt', 'source', 'sourceName']) assert.equal(card[field], null);
+  }
+  assert.equal(presence.actors.find(a => a.id === npc.id).name, 'City Resident', 'Public resident lore remains visible.');
   const action = presence.actors.find(a => a.id === npc.id).actions[0];
   const headers = { ...me.headers, 'Idempotency-Key': crypto.randomUUID() };
   const fields = 'id,cash,bank,respect,health,energy,nerve,heat,muscle,cunning,speed,train_at';
@@ -83,6 +88,45 @@ try {
   assert.deepEqual((await app.inject({ url: '/v1/city/intel', headers: me.headers })).json(), originalBoard);
   assert.deepEqual((await app.inject({ url: '/v1/city/intel', headers: human.headers })).json().journal, []);
   assert.deepEqual((await app.pool.query(`SELECT ${fields} FROM characters ORDER BY id`)).rows, before);
+  const privateReader = await actor('Notebook HTTP Reader'), privateSource = await actor('Notebook Old Name');
+  const privateAccount = app.jwt.verify(privateReader.headers.authorization.slice(7)).sub;
+  const sourceAccount = app.jwt.verify(privateSource.headers.authorization.slice(7)).sub;
+  const readRoster = async owner => {
+    const reply = await app.inject({ url: '/v1/city/presence?limit=40', headers: owner.headers });
+    assert.equal(reply.statusCode, 200, reply.body); assert.equal(reply.headers['cache-control'], 'private, no-store');
+    return reply.json();
+  };
+  const unknown = (await readRoster(privateReader)).actors.find(row => row.id === privateSource.id);
+  assert.equal(unknown.name, null); assert.equal(unknown.level, null);
+  assert.equal(await readPlayerIntel(app.pool, privateAccount, privateSource.id), null, 'A presence GET creates no notebook knowledge.');
+  const privateAction = unknown.actions[0], privateHeaders = { ...privateReader.headers, 'Idempotency-Key': crypto.randomUUID() };
+  const privateReceipt = await app.inject({ method: privateAction.method, url: privateAction.path, headers: privateHeaders, payload: privateAction.body });
+  assert.equal(privateReceipt.statusCode, 200, privateReceipt.body);
+  const privateBody = privateReceipt.json(), learned = await readPlayerIntel(app.pool, privateAccount, privateSource.id);
+  assert.equal(privateBody.encounteredActor.name, 'Notebook Old Name');
+  assert.equal(privateBody.encounteredActor.observedAt, privateBody.intel.collectedAt);
+  assert.equal(privateBody.encounteredActor.source, 'city_encounter');
+  assert.deepEqual(privateBody.encounteredActor, privateBody.intel.source);
+  await app.pool.query('UPDATE characters SET name=$2,respect=200000 WHERE id=$1', [privateSource.id, 'Notebook New Name']);
+  const staleFacts = (await readRoster(privateReader)).actors.find(row => row.id === privateSource.id);
+  assert.equal(staleFacts.name, 'Notebook Old Name'); assert.equal(staleFacts.level, privateBody.encounteredActor.level);
+  assert.equal(staleFacts.observedAt, privateBody.intel.collectedAt); assert.equal(staleFacts.lastSeenDistrict, 'docks');
+  assert.equal(staleFacts.online, null); assert.equal(staleFacts.gangTag, null);
+  assert.deepEqual(await readPlayerIntel(app.pool, privateAccount, privateSource.id), learned);
+  const otherOwner = (await readRoster(agent)).actors.find(row => row.id === privateSource.id);
+  assert.equal(otherOwner.name, null); assert.equal(otherOwner.level, null); assert.equal(otherOwner.observedAt, null);
+  await new Promise(resolve => setTimeout(resolve, 2));
+  const updatedReceipt = await app.inject({ method: privateAction.method, url: privateAction.path,
+    headers: { ...privateReader.headers, 'Idempotency-Key': crypto.randomUUID() }, payload: privateAction.body });
+  assert.equal(updatedReceipt.statusCode, 200, updatedReceipt.body);
+  assert.equal(updatedReceipt.json().encounteredActor.name, 'Notebook New Name');
+  const updatedKnowledge = await readPlayerIntel(app.pool, privateAccount, privateSource.id);
+  const historicalPrivate = await app.inject({ method: privateAction.method, url: privateAction.path, headers: privateHeaders, payload: privateAction.body });
+  assert.equal(historicalPrivate.body, privateReceipt.body); assert.equal(historicalPrivate.headers['x-idempotent-replay'], 'true');
+  assert.deepEqual(await readPlayerIntel(app.pool, privateAccount, privateSource.id), updatedKnowledge, 'HTTP replay cannot regress newer learned facts.');
+  assert.equal(await readPlayerIntel(app.pool, sourceAccount, privateReader.id), null, 'The source learns no reciprocal identity.');
+  assert.equal(await hasContact(app.pool, privateAccount, sourceAccount), false);
+  assert.equal(await hasContact(app.pool, sourceAccount, privateAccount), false);
   const discovery = (await app.inject({ url: '/v1/discovery', headers: me.headers })).json();
   const discoveryIds = [...discovery.looking, ...discovery.peers, ...discovery.newcomers].map(a => a.id);
   assert(!discoveryIds.includes(npc.id) && !discoveryIds.includes(agent.id), 'Human-only Discovery remains unchanged.');

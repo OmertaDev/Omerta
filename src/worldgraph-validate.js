@@ -2,6 +2,7 @@ import { loadGraphPackages } from './worldgraph.js';
 
 import { normalizeKnowledgeRequirement, normalizeOperationOutcomeRequirement, normalizeWorldPrerequisite } from './world-knowledge.js';
 import { normalizeRecipePolicy } from './recipe-policy.js';
+import { normalizeCityOpportunityCondition, normalizeCityOpportunityEffect } from './city-world-opportunity-adapters.js';
 
 const CONDITION_ADAPTERS = new Set([
   'graph_dependency',
@@ -20,6 +21,10 @@ const CONDITION_ADAPTERS = new Set([
   'mystery_state',
   'social',
   'world_state',
+  'heat',
+  'recurring_window',
+  'npc_present',
+  'npc_favor',
 ]);
 
 const QUANTITY_FIELDS = [
@@ -306,7 +311,14 @@ function validateConditionList({
 
     let targetId = null;
     let targetType = null;
-    if (adapter === 'knowledge') {
+    if (['heat', 'recurring_window', 'npc_present', 'npc_favor'].includes(adapter)) {
+      if (roleId || !['mystery_step', 'world_gate', 'choice'].includes(registry.nodes.get(nodeId)?.type)) {
+        fail('unsupported_condition_adapter', `${owner} cannot use a neighborhood mystery condition`, { nodeId, roleId, adapter });
+      }
+      try { normalizeCityOpportunityCondition(condition); } catch {
+        fail('malformed_condition', `${owner} has an invalid closed neighborhood condition`, { nodeId, roleId, adapter });
+      }
+    } else if (adapter === 'knowledge') {
       try {
         if (Object.keys(condition).some((key) => !['adapter', 'requirement'].includes(key))
           || condition.adapter !== 'knowledge') throw new Error();
@@ -488,6 +500,16 @@ function validateNodeReferences(registry, packageEdges) {
       nodeId,
       conditions: node.conditions,
     });
+    for (const effect of [...(Array.isArray(node.effects) ? node.effects : []),
+      ...(Array.isArray(node.options) ? node.options.flatMap(option => Array.isArray(option.effects) ? option.effects : []) : [])]) {
+      if (!['heat_raise', 'npc_favor_award'].includes(effect?.adapter)) continue;
+      if (!['mystery_step', 'world_gate', 'choice'].includes(node.type)) {
+        fail('unsupported_mystery_effect', `Node ${nodeId} cannot use a neighborhood mystery effect`, { nodeId, adapter: effect.adapter });
+      }
+      try { normalizeCityOpportunityEffect(effect); } catch {
+        fail('bad_mystery_effect', `Node ${nodeId} has an invalid closed neighborhood effect`, { nodeId, adapter: effect.adapter });
+      }
+    }
 
     for (const dependencyId of references) {
       const dependency = registry.nodes.get(dependencyId);

@@ -795,6 +795,7 @@ function itemProjection(row) {
     owner: { scope: row.owner_scope, id: row.owner_id },
     state: row.state,
     escrowed: row.state === 'escrowed',
+    ...(row.state === 'stored' ? { stored: true } : {}),
     createdAt: dateString(row.created_at),
     updatedAt: dateString(row.updated_at),
     consumedAt: dateString(row.consumed_at),
@@ -812,9 +813,10 @@ async function lockedItem(client, itemId) {
   )).rows[0];
 }
 
-function registerItemRestore(client, row, custody = null) {
+function registerItemRestore(client, row, custody = null, homeStorage = null) {
   registerUndo(client, async () => {
     await client.query('DELETE FROM operation_escrow WHERE item_id=$1', [row.id]);
+    await client.query('DELETE FROM city_home_storage_items WHERE item_id=$1', [row.id]);
     await client.query(
       `UPDATE item_instances
           SET template_id=$2, owner_scope=$3, owner_id=$4, state=$5,
@@ -823,6 +825,10 @@ function registerItemRestore(client, row, custody = null) {
       [row.id, row.template_id, row.owner_scope, row.owner_id, row.state,
         row.created_at, row.updated_at, row.consumed_at],
     );
+    if (homeStorage) await client.query(`INSERT INTO city_home_storage_items
+      (item_id,owner_scope,owner_id,item_state,home_key,authority_token,created_at)
+      VALUES($1,$2,$3,$4,$5,$6,$7)`, [homeStorage.item_id, homeStorage.owner_scope,
+      homeStorage.owner_id, homeStorage.item_state, homeStorage.home_key, homeStorage.authority_token, homeStorage.created_at]);
     if (custody) {
       await client.query(
         `INSERT INTO operation_escrow
@@ -841,9 +847,71 @@ function registerItemRestore(client, row, custody = null) {
 
 function assertHeld(row, owner, { activeOnly = false } = {}) {
   if (!row || row.owner_scope !== owner.scope || row.owner_id !== owner.id
-    || row.state === 'consumed' || (activeOnly && row.state !== 'active')) {
+    || row.state === 'consumed' || row.state === 'stored' || (activeOnly && row.state !== 'active')) {
     fail('item_unavailable', 'That item is not spendable by this owner.');
   }
+}
+
+function homeLocation(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || Object.keys(value).length !== 2 || !Object.hasOwn(value, 'homeKey') || !Object.hasOwn(value, 'authorityToken')) {
+    fail('bad_item_request', 'Use the exact home storage location.');
+  }
+  if (typeof value.homeKey !== 'string' || !value.homeKey.length || value.homeKey.length > 128 || /[\x00-\x1f\x7f]/.test(value.homeKey)) {
+    fail('bad_item_request', 'Use the issued opaque home key.');
+  }
+  return { homeKey: value.homeKey,
+    authorityToken: boundedText(value.authorityToken, 'Home authority', 200) };
+}
+function homeStorageReason(location, detail) {
+  return JSON.stringify({ kind: 'home_storage', ...location, detail: boundedText(detail, 'Storage reason', 80) });
+}
+
+// Home placement changes spendability, never the canonical account owner or item identity.
+async function storeItemImpl(client, ownerValue, itemIdValue, locationValue, reasonValue, key) {
+  const owner = itemOwner(ownerValue, { allowOperation: false });
+  if (owner.scope !== 'account') fail('item_unavailable', 'Only durable account items can use home storage.');
+  const itemId = boundedText(itemIdValue, 'Item id', 200), location = homeLocation(locationValue);
+  const reason = homeStorageReason(location, reasonValue);
+  return executeMutation(client, 'store_item', owner, key, { itemId, location, reason }, async (guard, eventKey) => {
+    const current = await lockedItem(client, itemId); assertHeld(current, owner, { activeOnly: true });
+    registerItemRestore(client, current);
+    const changed = await client.query(`UPDATE item_instances SET state='stored',updated_at=now()
+      WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='active'
+      RETURNING id,template_id,owner_scope,owner_id,state,created_at,updated_at,consumed_at`, [itemId, owner.id]);
+    if (changed.rowCount !== 1) fail('contention', 'The item changed; retry the same request.');
+    await client.query(`INSERT INTO city_home_storage_items(item_id,owner_scope,owner_id,item_state,home_key,authority_token)
+      VALUES($1,'account',$2,'stored',$3,$4)`, [itemId, owner.id, location.homeKey, location.authorityToken]);
+    await appendEvent(client, guard, { eventKey, eventKind: 'stored', provenanceKind: 'modified',
+      itemId, templateId: current.template_id, from: owner, to: owner, reason });
+    return { ...itemProjection(changed.rows[0]), storage: location };
+  });
+}
+async function retrieveStoredItemImpl(client, ownerValue, itemIdValue, locationValue, reasonValue, key) {
+  const owner = itemOwner(ownerValue, { allowOperation: false });
+  if (owner.scope !== 'account') fail('item_unavailable', 'Only the original account can retrieve this item.');
+  const itemId = boundedText(itemIdValue, 'Item id', 200), location = homeLocation(locationValue);
+  const reason = homeStorageReason(location, reasonValue);
+  return executeMutation(client, 'retrieve_stored_item', owner, key, { itemId, location, reason }, async (guard, eventKey) => {
+    const current = await lockedItem(client, itemId);
+    if (!current || current.owner_scope !== 'account' || current.owner_id !== owner.id || current.state !== 'stored') {
+      fail('item_unavailable', 'That stored item is unavailable.');
+    }
+    const storage = (await client.query('SELECT * FROM city_home_storage_items WHERE item_id=$1 FOR UPDATE', [itemId])).rows[0];
+    if (!storage || storage.owner_scope !== 'account' || storage.owner_id !== owner.id || storage.item_state !== 'stored'
+      || storage.home_key !== location.homeKey || storage.authority_token !== location.authorityToken) {
+      fail('item_unavailable', 'That stored item is unavailable.');
+    }
+    registerItemRestore(client, current, null, storage);
+    await client.query('DELETE FROM city_home_storage_items WHERE item_id=$1', [itemId]);
+    const changed = await client.query(`UPDATE item_instances SET state='active',updated_at=now()
+      WHERE id=$1 AND owner_scope='account' AND owner_id=$2 AND state='stored'
+      RETURNING id,template_id,owner_scope,owner_id,state,created_at,updated_at,consumed_at`, [itemId, owner.id]);
+    if (changed.rowCount !== 1) fail('contention', 'The item changed; retry the same request.');
+    await appendEvent(client, guard, { eventKey, eventKind: 'retrieved', provenanceKind: 'modified',
+      itemId, templateId: current.template_id, from: owner, to: owner, reason });
+    return itemProjection(changed.rows[0]);
+  });
 }
 
 /** Grant a fungible stack quantity. Exact replay returns the first result. */
@@ -1187,6 +1255,8 @@ export const transferItem = itemLeaf(transferItemImpl);
 export const consumeItem = itemLeaf(consumeItemImpl);
 export const escrowItem = itemLeaf(escrowItemImpl);
 export const releaseEscrow = itemLeaf(releaseEscrowImpl);
+export const storeItem = itemLeaf(storeItemImpl);
+export const retrieveStoredItem = itemLeaf(retrieveStoredItemImpl);
 
 /** Read current spendable stacks and unique instances exactly once from their authoritative rows. */
 export async function inventoryBoard(client, ownerValue) {
@@ -1217,5 +1287,11 @@ async function collectInventory(client, ownerValue) {
       ORDER BY created_at, id`,
     [owner.scope, owner.id],
   )).rows.map(itemProjection);
+  if (items.some(item => item.state === 'stored')) {
+    const locations = (await client.query(`SELECT item_id,home_key,authority_token FROM city_home_storage_items
+      WHERE owner_scope=$1 AND owner_id=$2`, [owner.scope, owner.id])).rows;
+    const byId = new Map(locations.map(row => [row.item_id, { homeKey: row.home_key, authorityToken: row.authority_token }]));
+    for (const item of items) if (item.state === 'stored') item.storage = byId.get(item.id) || null;
+  }
   return { owner, stacks, items };
 }

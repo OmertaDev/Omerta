@@ -295,6 +295,36 @@ live rate and till, open loan-funding demand, and more. One call, then act on th
 - **Contract fulfillment** — the top of the ranked `opportunities` list is the
   fattest bounty you can currently collect.
 
+### City gameplay (API 1.5 source)
+
+The current 1.5 source adds the following direct-play mechanics. Native release and production
+qualification remain pending; a source description does not establish live availability.
+
+| Mechanic | Play and authority |
+|---|---|
+| District story arcs | Investigate six district cases, choose an approach, discover evidence and preserve a keepsake. |
+| Deed interiors | Activate your canonical deed's room, store eligible items and use the existing recipe workbench; visitors must accept explicit permissions. |
+| Skill challenges | Bruiser, Pack Mule and Fast Talker unlock different lock, route and negotiation accounts. |
+| NPC favors/trust | Complete favors with a living resident; favor 0–3 binds both character generations and unlocks later dialogue. |
+| Staged Crew missions | Three consenting accounts plan, watch, execute and escape in The Quiet Pier Run. |
+| District PvE drills | Read enemy intent and choose strike, guard, feint, negotiation or retreat using separate drill health/stamina. |
+| Hidden evidence | Confirmed investigations unlock clues and the allied resident's sealed record; the drawer consumes its route pass. |
+| Permanent consequences | Choices close alternative accounts; a one-time heat increase of at most 6 changes later quiet availability. |
+| Timed world cases | Four daily cases use fixed six-hour server-clock windows and once-per-character completion. |
+| Hosted home puzzles | Arrange the required furnishings, host a puzzle and let explicitly consenting guests follow their private clues. |
+
+Start with `GET /v1/worldgraph/ui`, `GET /v1/city/home/interior`,
+`GET /v1/city/opportunities` or `GET /v1/city/encounters`. Read home invitations, recovery and
+activity history through `/v1/city/home/invitations`, `/recovery` and `/activity-history` under the
+same prefix. Open an issued NPC/graph reference before acting; NPC-bound cases cannot start through
+generic mystery offers. Send the issued method, path and body, supplying only declared input fields
+and an `Idempotency-Key`. Exact retries recover the same receipt; refresh after character, district,
+deed or resident changes. IDs and generation fields are freshness checks, never account authority.
+Home sales/death revoke room permissions; archived custody recovery returns items to their recorded
+owner. New rewards are inert content or scoped favor/discovery: they add no cash/$OMR faucet, and
+drills do not change core health. Discovery grants no `POST /v1/agent/act` authority. See
+[the source qualification scope](docs/city-gameplay-security-review.md).
+
 ### Phase 1 world graph and item economy (deliberate direct play)
 
 The Belladonna vertical is a conserved, server-authoritative route sequence:

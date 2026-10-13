@@ -720,6 +720,21 @@ const SECTIONS = [
       content compiler and <code>content:check</code>.</p>
       ${R(`GET /v1/worldgraph/inventory · GET /v1/worldgraph/recipes · GET /v1/worldgraph/mysteries · GET /v1/worldgraph/operations`)}` },
 
+  { id: 'citygameplay', group: 'The City & the World', title: 'City Gameplay', tag: 'API 1.5 source · release qualification pending',
+    html: `<p>The current source adds six district story arcs; deed interiors with storage, the existing
+      recipe workbench and accepted visitors; learned skill challenges; resident favor and trust;
+      the three-account Quiet Pier Run; and tactical district PvE drills. Confirmed investigations
+      reveal private evidence and secret content. Permanent choices can raise heat once by at most 6
+      and close quiet alternatives. Four daily cases rotate on fixed six-hour server-clock windows.
+      Hosts can arrange furnishings and invite consenting guests to solve private home puzzles.</p>
+      <p>Read the boards below, then send the issued method, path and body with an
+      <code>Idempotency-Key</code>. Exact retries recover the same receipt. Refresh after character,
+      district, resident or deed changes. NPC trust is scoped to both character generations; home
+      sales and death revoke room access. New content adds no cash or $OMR reward source; drills
+      use separate health/stamina and preserve core health and resources. Final native, release and
+      production qualification remain separate from this working-tree source.</p>
+      ${R(`GET /v1/worldgraph/ui · GET /v1/city/home/interior · GET /v1/city/opportunities · GET /v1/city/encounters`)}` },
+
   { id: 'contentgraph', group: 'The City & the World', title: 'The Content Graph — Mysteries, Crafting & Seasonal Hunts', tag: 'playable stories · bounded expansion',
     html: `<p><b>The merged <code>content/</code> foundation is an authoring and verification plane, not a hidden
       faucet or execution backdoor.</b> It models individual mysteries, Crew and Extended Family dependencies,

@@ -59,6 +59,12 @@ for (const got of readable) {
 // ── 2. PREPARE ───────────────────────────────────────────────────────────────────────────────────
 const { makeDb } = await import('../src/db.js');
 const pool = await makeDb();           // applies schema.sql, so the tables exist to resolve against
+// The custody migration creates this temporary relation inside its own transaction.
+// Supply only its real native relation/type context for PREPARE's regclass lookup;
+// the separate current-source migration proof checks the actual predicates and lifecycle.
+// One checked-out client keeps this temporary context and prepared statements in one session.
+const prepareClient = await pool.connect();
+await prepareClient.query('CREATE TEMP TABLE city_home_storage_reference (state TEXT, owner_scope TEXT, definition_hash TEXT)');
 
 const failures = [];
 let n = 0;
@@ -68,8 +74,8 @@ for (const s of stmts) {
   // state via an explicit rollback-free path: no transaction is opened at all, so a failed PREPARE
   // leaves nothing to clean up.
   try {
-    await pool.query(`PREPARE ${name} AS ${s.sql}`);
-    await pool.query(`DEALLOCATE ${name}`);
+    await prepareClient.query(`PREPARE ${name} AS ${s.sql}`);
+    await prepareClient.query(`DEALLOCATE ${name}`);
   } catch (e) {
     failures.push({ ...s, error: e.message, hint: e.hint || '' });
   }
@@ -192,6 +198,8 @@ if (process.env.PGQUERY_LIST) {
   console.log('non-literal (unchecked):'); for (const u of unreadable) console.log(`  ${u}`);
 }
 
+await prepareClient.query('DROP TABLE pg_temp.city_home_storage_reference');
+prepareClient.release();
 await pool.end();
 if (failures.length || overflow.length) {
   for (const o of overflow) console.error(`✗ ${o}`);

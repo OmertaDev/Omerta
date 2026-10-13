@@ -1,5 +1,6 @@
 import { INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_TRANSFER, qualifyIntelSource } from './rc1-intel-source-compatibility.js';
 import { coverageSourceBaseline, qualifyCoverageSource } from './rc1-logistics-coverage-source-compatibility.js';
+import { cityGameplaySourceBaseline, qualifyCityGameplaySource } from './rc1-city-gameplay-source-compatibility.js';
 // Test-only loader instrumentation. The original worker remains the job authority.
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
@@ -164,11 +165,15 @@ export function installWorkerInstrumentation(controller, { namespace, queryOrder
     const file = paths.get(fileURLToPath(url).toLowerCase()); if (!file) return result;
     const raw = typeof result.source === 'string' ? result.source : Buffer.from(result.source).toString('utf8');
     const actual = raw.replaceAll('\r\n', '\n'), edits = [];
+    // Exact source-only DB reconstruction precedes the historical Coverage scope.
+    // The untouched raw trace attests the input; this does not qualify current Home migration or boot.
+    const gameplayBaseline = file === 'src/db.js' ? cityGameplaySourceBaseline(file,actual) : actual;
+    const gameplayTransfer = gameplayBaseline !== actual ? qualifyCityGameplaySource(file,actual) : null;
     // Historical worker fixtures retain their exact previous scope. The new
     // refund sweep is proved separately by current native domain/API suites.
     const transfer = file === 'src/worker.js' ? qualifyIntelSource(file, actual) : null;
-    const coverageBaseline = file === 'src/db.js' ? coverageSourceBaseline(file, actual) : actual;
-    const coverageTransfer = coverageBaseline !== actual ? qualifyCoverageSource(file, actual) : null;
+    const coverageBaseline = file === 'src/db.js' ? coverageSourceBaseline(file, gameplayBaseline) : actual;
+    const coverageTransfer = coverageBaseline !== gameplayBaseline ? qualifyCoverageSource(file, gameplayBaseline) : null;
     const original = transfer?.baselineText || coverageBaseline;
     assert.equal(sha256(original), WORKER_SOURCE_PINS[file], `Pinned production source changed: ${file}`);
     let source = original;
@@ -182,7 +187,7 @@ export function installWorkerInstrumentation(controller, { namespace, queryOrder
       source = replaceOnce(source, 'try { return await fn(); } catch (e) {', 'try { return await globalThis.__rc1Worker.job(label, fn); } catch (e) {', edits);
     }
     controller.transformations.push({ file, originalSourceSha256: sha256(raw), pinnedLfSha256: sha256(original), intelSourceTransfer: transfer,
-      coverageSourceTransfer: coverageTransfer,
+      coverageSourceTransfer: coverageTransfer, gameplaySourceTransfer: gameplayTransfer,
       transformedSourceSha256: sha256(source), originalSource: raw, transformedSource: source, edits });
     return { ...result, source };
   } });

@@ -55,6 +55,7 @@ const DECLARED = {
   '/v1/projections/world': 'World projections reuse the explicitly disabled kernel rollout and refuse with projection_unavailable',
   '/v1/commands': 'the command pilot reuses the explicitly disabled kernel rollout; its opaque command_unavailable refusal intentionally does not distinguish disabled rollout, excluded cohort or unavailable current state',
   '/v1/city/nearby-chat': 'nearby chat requires explicit consent; a first player who has not joined must receive city_chat_opt_in_required, even when the district has no messages',
+  '/v1/city/home/interior': 'a scoped interior requires a canonical owned deed or an accepted current invitation; a first player without either receives the opaque home_unavailable gate',
   '/v1/crew/logistics': 'private Crew logistics requires current membership; the first unaffiliated player must receive no_crew rather than a fabricated or foreign Crew view',
   // Not an endpoint: the websocket upgrade path. A plain GET is correctly not a thing it serves.
   '/v1/ws': 'the websocket upgrade path, not a GET endpoint',
@@ -108,6 +109,20 @@ assert.equal(missingDistrict.body?.error, 'city_homes_district');
 assert.throws(() => assertEmptyHomes(missingDistrict), { name: 'AssertionError' },
   'a malformed home query cannot pass as an empty directory');
 
+// Interior reads require an explicit address, even before the first player owns a deed.
+const interiorReadPath = '/v1/city/home/interior?' + new URLSearchParams({ homeKey: 'cold-start-home' });
+const assertInteriorRefusal = response => {
+  assert.equal(response.code, 400, 'a scoped unavailable interior must refuse access');
+  assert.equal(response.body?.error, 'home_unavailable', 'interiors must report only the opaque deed/consent gate');
+};
+const missingHome = await j('GET', '/v1/city/home/interior', token);
+assert.equal(missingHome.code, 400, 'omitting the mandatory home address is malformed');
+assert.equal(missingHome.body?.error, 'bad_home_request');
+assert.throws(() => assertInteriorRefusal(missingHome), { name: 'AssertionError' },
+  'a malformed interior query cannot inherit the deed/consent declaration');
+assert.throws(() => assertInteriorRefusal({ code: 400, body: { error: 'unrelated_refusal' } }),
+  { name: 'AssertionError' }, 'a different refusal cannot inherit the home declaration');
+
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
 const parameterlessGets = (app.routes || [])
@@ -133,6 +148,7 @@ for (const p of defaultOff.keys()) assert(paths.includes(p), `default-off route 
 assert(paths.includes('/v1/city/nearby-chat'), 'the nearby route remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/market/feed'), 'the public feed remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/city/homes'), 'the home directory remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -144,7 +160,8 @@ const declaredHit = new Set();
 for (const p of paths) {
   const readPath = p === '/v1/city/nearby-chat' ? nearbyReadPath
     : p === '/v1/market/feed' ? '/v1/market/feed?districtId=docks&goodId=gin'
-      : p === '/v1/city/homes' ? homesReadPath : p;
+      : p === '/v1/city/homes' ? homesReadPath
+        : p === '/v1/city/home/interior' ? interiorReadPath : p;
   const r = await j('GET', readPath, token);
   if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
   if (p === '/v1/city/homes') assertEmptyHomes(r);
@@ -163,6 +180,7 @@ for (const p of paths) {
       assert.equal(r.body?.error, defaultOff.get(p), `${p} must return its declared rollout refusal`);
     }
     if (p === '/v1/city/nearby-chat') assertNearbyRefusal(r);
+    if (p === '/v1/city/home/interior') assertInteriorRefusal(r);
     if (p === '/v1/crew/logistics') {
       assert.equal(r.code, 400, 'private logistics requires actual Crew membership');
       assert.equal(r.body?.error, 'no_crew', 'logistics must report its exact membership prerequisite');

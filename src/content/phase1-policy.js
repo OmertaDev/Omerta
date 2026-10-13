@@ -15,6 +15,11 @@ export const PHASE1_HARDENING_CASH_REASON =
   `${PHASE1_CRAFT_REASON_PREFIX}hardened_steel`;
 export const PHASE1_PACKAGE_IDS = Object.freeze([
   'core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',
+  'district-docks-story', 'district-neon-story', 'district-foundry-story',
+  'district-brick-story', 'district-canal-story', 'district-cathedral-story',
+  'staged-crew-missions', 'city-neighbor-favors', 'city-shutter-lock', 'city-loading-route',
+  'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',
+  'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',
 ]);
 
 export function phase1CraftReason(recipeId) {

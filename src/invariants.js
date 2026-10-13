@@ -1015,7 +1015,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   )).rows;
   const uniqueEvents = (await pool.query(
     `SELECT sequence,item_id,event_kind,provenance_kind,template_id,quality,
-            from_owner_scope,from_owner_id,to_owner_scope,to_owner_id
+             from_owner_scope,from_owner_id,to_owner_scope,to_owner_id,reason
        FROM item_events WHERE item_id IS NOT NULL AND event_branch='legacy' ORDER BY sequence`,
   )).rows;
   const custodyRows = (await pool.query(
@@ -1032,6 +1032,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const lotAudit = await collectLotChecks(pool, custodyRows);
   const custodyByItem = lotAudit.custodyByItem;
   const itemById = new Map(itemRows.map((row) => [row.id, row]));
+  const homeStorageRows = (await pool.query(`SELECT s.*,r.owner_account_id AS room_owner_account
+    FROM city_home_storage_items s LEFT JOIN city_home_rooms r
+      ON r.home_key=s.home_key AND r.authority_token=s.authority_token ORDER BY s.item_id`)).rows;
+  const homeStorageByItem = new Map(homeStorageRows.map(row => [row.item_id, row]));
   const itemIssues = [];
   const creationKinds = new Set(['crafted', 'salvaged', 'awarded', 'imported']);
   const escrowKinds = new Set(['used_in_mystery', 'used_in_operation']);
@@ -1065,6 +1069,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
     let derivedState = 'absent';
     let derivedOwner = null;
     let escrow = null;
+    let homeStorage = null;
     let terminal = false;
     for (let index = 0; index < history.length; index++) {
       const event = history[index];
@@ -1091,6 +1096,22 @@ async function collectLedgerChecks(pool, activationPolicy) {
           derivedState = 'active';
           derivedOwner = to;
           break;
+        case 'stored':
+        case 'retrieved': {
+          let location;
+          try { location = JSON.parse(event.reason); } catch { /* reported below */ }
+          const validLocation = location?.kind === 'home_storage' && typeof location.homeKey === 'string'
+            && location.homeKey.length > 0 && typeof location.authorityToken === 'string' && location.authorityToken.length > 0;
+          const storing = event.event_kind === 'stored';
+          if (!validLocation || derivedState !== (storing ? 'active' : 'stored') || derivedOwner?.scope !== 'account'
+            || !sameOwner(from, derivedOwner) || !sameOwner(to, derivedOwner) || event.provenance_kind !== 'modified'
+            || (!storing && (homeStorage?.homeKey !== location.homeKey || homeStorage?.authorityToken !== location.authorityToken))) {
+            issue('invalid_home_storage'); break;
+          }
+          derivedState = storing ? 'stored' : 'active';
+          homeStorage = storing ? { homeKey: location.homeKey, authorityToken: location.authorityToken } : null;
+          break;
+        }
         case 'transferred':
           if (derivedState !== 'active' || !sameOwner(from, derivedOwner)
             || !liveOwner(to) || sameOwner(from, to)
@@ -1160,6 +1181,14 @@ async function collectLedgerChecks(pool, activationPolicy) {
         itemIssues.push(`${item.id}:current_escrow`);
       }
     } else if (custody) itemIssues.push(`${item.id}:stale_escrow`);
+    const stored = homeStorageByItem.get(item.id);
+    if (derivedState === 'stored') {
+      if (!stored || stored.owner_scope !== 'account' || stored.owner_id !== derivedOwner?.id || stored.item_state !== 'stored'
+        || stored.room_owner_account !== derivedOwner?.id || stored.home_key !== homeStorage?.homeKey
+        || stored.authority_token !== homeStorage?.authorityToken || item.definition_hash !== null) {
+        itemIssues.push(`${item.id}:current_home_storage`);
+      }
+    } else if (stored) itemIssues.push(`${item.id}:stale_home_storage`);
   }
   for (const custody of custodyRows) {
     if (!itemById.has(custody.item_id)) itemIssues.push(`${custody.item_id}:orphan_escrow`);
@@ -1167,6 +1196,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [itemId] of eventsByItem) {
     if (!itemById.has(itemId)) itemIssues.push(`${itemId}:orphan_event`);
   }
+  for (const stored of homeStorageRows) if (!itemById.has(stored.item_id)) itemIssues.push(`${stored.item_id}:orphan_home_storage`);
   push('world graph unique custody and provenance', itemIssues.length, 0, 0,
     { issues: [...new Set(itemIssues)].sort() });
 
