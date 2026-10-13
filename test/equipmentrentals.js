@@ -5,7 +5,6 @@ if(native){const u=new URL(process.env.EQUIPMENT_RENTAL_TEST_DATABASE_URL);asser
 const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),C=await import('../src/crafting.js'),R=await import('../src/equipmentrentals.js'),G=await import('../src/game.js');
 const pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn);
 try{
-await pool.query(R.equipmentRentalDDL);
 for(const a of ['landlord','borrower','foreign']){await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)',[a,'test']);await pool.query("INSERT INTO characters(id,account_id,name,season,loc,respect,cash) VALUES($1,$2,$1,1,'foundry',10000,10000)",[a+'-actor',a]);await pool.query('INSERT INTO account_persistent(account_id) VALUES($1)',[a]);await pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network')",[a+'-actor']);await G.ledger(pool,{characterId:a+'-actor',currency:'cash',amount:10000,reason:'crime:rental-fixture'});}
 const owner={scope:'account',id:'landlord'};
 // Explicit resource fixture, actual authored canonical craft and physical creation evidence.

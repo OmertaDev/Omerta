@@ -89,6 +89,8 @@ import { register as registerCompanyForecast } from './routes/companyforecast.js
 import { register as registerCompanySpecialization } from './routes/companyspecialization.js';
 import { register as registerItemDurability } from './routes/itemdurability.js';
 import { register as registerEquipmentMaintenance } from './routes/equipmentmaintenance.js';
+import { register as registerEquipmentRentals } from './routes/equipmentrentals.js';
+import { relayEscrowCustody } from './items.js';
 import { register as registerCommercialNegotiation } from './routes/commercialnegotiation.js';
 import { register as registerContractAuctions } from './routes/contractauctions.js';
 import { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';
@@ -2438,6 +2440,7 @@ export async function buildServer() {
   registerCompanySpecialization(app, { pool, auth });
   registerItemDurability(app, { pool, auth });
   registerEquipmentMaintenance(app, { pool, auth });
+  registerEquipmentRentals(app, { pool, auth, relayEscrowCustody });
   registerCommercialNegotiation(app, { pool, auth });
   registerContractAuctions(app, { pool, auth });
   registerGameEmployment(app, { pool, auth });
