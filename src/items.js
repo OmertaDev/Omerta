@@ -74,6 +74,13 @@ function transactionClient(client) {
 }
 
 export function assertItemTransaction(client) { transactionClient(client); }
+const TRANSACTION_IDENTITIES = new WeakMap();
+/** Opaque equality witness only; it grants no item mutation authority. */
+export function itemTransactionIdentity(client) {
+  const transaction = transactionClient(client);
+  if (!TRANSACTION_IDENTITIES.has(transaction)) TRANSACTION_IDENTITIES.set(transaction, Object.freeze({}));
+  return TRANSACTION_IDENTITIES.get(transaction);
+}
 /** A caller composing other state must refuse persistence after a caught item-leaf failure. */
 export function assertItemTransactionHealthy(client) {
   const transaction = transactionClient(client);

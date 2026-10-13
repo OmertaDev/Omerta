@@ -23,6 +23,8 @@ import { voidCommercialPremisesAtDeath } from '../commercialpremises.js';
 import { closeCompanyBankPortfoliosAtDeath } from '../companybankportfolios.js';
 import { voidLogisticsHubsAtDeath } from '../companylogisticshubs.js';
 import { recoverBuyerCooperativesAtDeath } from '../buyercooperativecustody.js';
+import { assertItemTransaction, registerItemTransactionUndo } from '../items.js';
+import { assertEquipmentRentalDeathScope, recoverEquipmentRentalsAtDeath } from '../equipmentrentals.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
 import { wipeRingAtDeath } from '../ring.js';
 import { wipeFighterAtDeath, cancelMainEventsAtDeath } from '../boxing.js';
@@ -133,6 +135,8 @@ export async function clearInboundPointers(client, charId, accountId) {
 }
 
 export async function runEstate(client, h, victim, killerName, opts = {}) {
+  assertItemTransaction(client);
+  await assertEquipmentRentalDeathScope(client, victim.id, h.rentalDeathScope);
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
   await closeWarehouseClaimsAtDeath(client, victim.id);
@@ -427,6 +431,17 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   victim.alive = false;
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
   await voidServiceSubscriptionsAtDeath(client, h, victim);
+  const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
+  for (const receipt of rentalRecovery) {
+    // The canonical refund already updated SQL. G subsequently persists its
+    // original actor object, which may also hold unpersisted loot: merge DELTA.
+    for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {
+      if (actor.id !== receipt.borrowerCharacter || !actor.alive || !receipt.refunded) continue;
+      const before = Number(actor.cash);
+      registerItemTransactionUndo(client, () => { actor.cash = before; });
+      actor.cash = before + receipt.refunded;
+    }
+  }
 
   // the heir — same name (the bloodline), next generation, legacy stake (heirId generated above)
   const stake = 500 + 100 * Number(acct.prestige);

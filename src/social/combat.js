@@ -19,6 +19,8 @@ import { awardHitmanRep, claimBounty, postBounty, postFamilyContract, refundPot 
 import { bodyguardAbsorbs } from './defense.js';
 import { bearGrudges, runEstate } from './estate.js';
 import { resolveWarIfDue } from './gangs.js';
+import { withItemTransaction } from '../items.js';
+import { prelockEquipmentRentalDeathActors } from '../equipmentrentals.js';
 import { hospitalized, isWanted, jailed, now, rand, safeHoused, warActive } from './shared.js';
 
 // ═══════════════════ JUMPS (§7.6) ═══════════════════
@@ -728,28 +730,28 @@ export async function huntWanted(pool) {
   let killed = 0, absorbed = 0, revived = 0;
   for (const m of marks) {
     if (Math.random() >= p) continue; // no hunter came for them this tick
-    const client = await pool.connect();
     try {
-      await client.query('BEGIN');
-      const victim = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [m.id])).rows[0];
-      if (!victim || !isWanted(victim)) { await client.query('ROLLBACK'); continue; } // squared up / lapsed under the lock
+      const outcome = await withItemTransaction(pool, async client => {
+      const rentalDeath = await prelockEquipmentRentalDeathActors(client, [m.id]);
+      const victim = rentalDeath.characters.find(row => row.id === m.id && row.alive);
+      if (!victim || !isWanted(victim)) return null; // squared up / lapsed under the lock
       // the hunter can't reach a hidden mark this tick (the npcHit victim gates)
-      if (safeHoused(victim) || witproActive(victim) || penSafe(victim) || inHole(victim) || hospitalized(victim) || jailed(victim)) { await client.query('ROLLBACK'); continue; }
+      if (safeHoused(victim) || witproActive(victim) || penSafe(victim) || inHole(victim) || hospitalized(victim) || jailed(victim)) return null;
       const victimAcct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [victim.account_id])).rows[0];
       const victimOwned = await loadOwned(client, victim);
-      const h = { ledger, notify, track, victimAcct, victimOwned };
+      const h = { ledger, notify, track, victimAcct, victimOwned, rentalDeathScope: rentalDeath.scope };
       // a bodyguard steps in (no player attacker → id null is never the betrayal); persist the cleared
       // guard on the mark's row directly (headless — no withCharacter to write it back).
       const guard = await bodyguardAbsorbs(client, h, { id: null }, victim);
       if (guard) {
         await client.query('UPDATE characters SET guarded_by=NULL, guarded_until=NULL WHERE id=$1', [victim.id]);
-        await client.query('COMMIT'); absorbed++; continue;
+        return { kind: 'absorbed' };
       }
       if (Number(victimAcct.respawn_tokens || 0) > 0) { // pre-paid insurance absorbs it
         await client.query('UPDATE account_persistent SET respawn_tokens = respawn_tokens - 1 WHERE account_id=$1', [victim.account_id]);
         await client.query('UPDATE characters SET health=100 WHERE id=$1', [victim.id]);
         await notify(client, victim.id, 'revived', { from: 'a bounty hunter' });
-        await client.query('COMMIT'); revived++; continue;
+        return { kind: 'revived' };
       }
       // the hunter lands it — the estate runs (no killerCh: no chop/loot/rep; the pool bounty burns)
       await runEstate(client, h, victim, 'A BOUNTY HUNTER');
@@ -757,10 +759,12 @@ export async function huntWanted(pool) {
       // account field runEstate mutates, kept beside the persist columns in game.js and scanned by
       // test/persist.js — so the death-duty $OMR burn (liquid AND unbonding) can never drift §10.4 here.
       await persistAccountFields(client, victim.account_id, victimAcct, ESTATE_ACCOUNT_FIELDS);
-      bus.emit('streets', { type: 'kill', by: 'a bounty hunter', victim: victim.name });
-      await client.query('COMMIT'); killed++;
-    } catch (e) { await client.query('ROLLBACK'); console.error('huntWanted', m.id, e.message); }
-    finally { client.release(); }
+      return { kind: 'killed', name: victim.name };
+      });
+      if (outcome?.kind === 'absorbed') absorbed++;
+      if (outcome?.kind === 'revived') revived++;
+      if (outcome?.kind === 'killed') { killed++; bus.emit('streets', { type: 'kill', by: 'a bounty hunter', victim: outcome.name }); }
+    } catch (e) { console.error('huntWanted', m.id, e.message); }
   }
   return { killed, absorbed, revived, marks: marks.length };
 }

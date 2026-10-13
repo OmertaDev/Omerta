@@ -26,6 +26,7 @@ import { businessesOf } from './business.js';
 import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
 import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
+import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -1440,12 +1441,9 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     const myId = mine.rows[0].id;
     if (myId === targetCharacterId) throw new GameError('self', 'Not on yourself.');
 
-    const lockChar = async (id) =>
-      (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [id])).rows[0];
-    const [firstId, secondId] = [myId, targetCharacterId].sort();
-    const first = await lockChar(firstId), second = await lockChar(secondId);
-    const ch = firstId === myId ? first : second;
-    const victim = firstId === myId ? second : first;
+    const rentalDeath = await prelockEquipmentRentalDeathActors(client, [myId, targetCharacterId]);
+    const ch = rentalDeath.characters.find(row => row.id === myId && row.alive);
+    const victim = rentalDeath.characters.find(row => row.id === targetCharacterId && row.alive);
     if (!ch) throw new GameError('no_character', 'Create a character first.');
     if (!victim) throw new GameError('no_target', "They're gone — nobody by that name on the streets.");
     if (requireKnown && (victim.loc !== ch.loc || !meet)) await requireKnownPlayer(client, ch, victim.id);
@@ -1462,7 +1460,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     await accrueAndLedger(client, victim, victimAcct, victimOwned);
 
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId,
-                victimAcct, victimOwned };
+                victimAcct, victimOwned, actorCh: ch, rentalDeathScope: rentalDeath.scope };
     const result = await fn(ch, victim, client, h);
     assertItemTransactionHealthy(client);
     return { ch, victim, acct, owned, victimOwned, accts, result };

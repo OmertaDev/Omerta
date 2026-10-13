@@ -15,11 +15,13 @@
 // guard is reserved. Content supplies data only: no callback, SQL, cash, or OMR adapter exists.
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
-import { assertEquipmentUsable, recordEquipmentUse } from './itemdurability.js';
+import { assertEquipmentUsable, assertBorrowedEquipmentUsable, precisionToolConditionRead, recordEquipmentUse } from './itemdurability.js';
+import { borrowedPrecisionTool } from './equipmentrentals.js';
 import {
   consumeItem,
   createItem,
   escrowItem,
+  relayEscrowCustody,
   registerItemTransactionUndo,
   releaseEscrow,
   withItemMutation,
@@ -1224,7 +1226,14 @@ async function conditionBlocker({
         WHERE owner_scope=$1 AND owner_id=$2 AND template_id=$3 AND state='active' AND definition_hash IS NULL
         ORDER BY created_at,id LIMIT 1`, params,
     )).rows[0];
-    return row ? null : { adapter, templateId };
+    if (row) return null;
+    if (instance?.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
+        && node.id === 'mystery:belladonna-lock' && templateId === 'item:precision_lock_tool'
+        && owner.scope === 'character' && actor?.id === owner.id) {
+      const lease = await borrowedPrecisionTool(client, { accountId: actor.accountId, characterId: actor.id, lock });
+      if (lease && (await precisionToolConditionRead(client, lease.item_id)).usable) return null;
+    }
+    return { adapter, templateId };
   }
   if (adapter === 'material_quantity') {
     const templateId = normalized.target;
@@ -1512,7 +1521,7 @@ async function closeExcludedBranches(client, context, instance, initialIds) {
   }
 }
 
-async function applyEffects({ client, context, owner, actor, instance, effects, mutation }) {
+async function applyEffects({ client, context, owner, actor, instance, effects, mutation, borrowedLease = null }) {
   const results = [];
   for (const effect of effects || []) {
     if (effect.adapter === 'heat_raise') {
@@ -1566,6 +1575,14 @@ async function applyEffects({ client, context, owner, actor, instance, effects, 
       );
       results.push({ kind: 'item_consume', item });
     } else if (effect.adapter === 'item_escrow') {
+      if (borrowedLease && instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
+          && effect.templateId === 'item:precision_lock_tool') {
+        const usable = await assertBorrowedEquipmentUsable(client, { itemId: borrowedLease.item_id, accountId: actor.accountId, characterId: actor.id });
+        if (usable.authority.leaseId !== borrowedLease.id || usable.authority.operationId !== borrowedLease.id) fail('mystery_item_unavailable', 'Rental custody changed.');
+        const item = await relayEscrowCustody(client, borrowedLease.id, instance.id, borrowedLease.item_id, 'Belladonna borrowed precision tool', mutation);
+        results.push({ kind: 'item_escrow', item, rentalLeaseId: borrowedLease.id });
+        continue;
+      }
       const itemId = await selectOwnedItem(client, owner, effect.templateId);
       if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
         && effect.templateId === 'item:precision_lock_tool') {
@@ -1591,7 +1608,7 @@ async function applyEffects({ client, context, owner, actor, instance, effects, 
 }
 
 async function completeGraphNode({
-  client, context, owner, actor, instance, node, interactionId, mutation, extraEffects = [],
+  client, context, owner, actor, instance, node, interactionId, mutation, extraEffects = [], borrowedLease = null,
 }) {
   let states = stateMap(await stateRows(client, instance.id));
   const existing = states.get(node.id);
@@ -1615,7 +1632,7 @@ async function completeGraphNode({
   });
   if (blockers.length) throwBlocker(blockers[0]);
   const effects = await applyEffects({
-    client, context, owner, actor, instance, effects: [...(node.effects || []), ...extraEffects], mutation,
+    client, context, owner, actor, instance, effects: [...(node.effects || []), ...extraEffects], mutation, borrowedLease,
   });
   const row = await setNodeState(client, instance.id, node.id, 'completed');
   if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1
@@ -1624,6 +1641,7 @@ async function completeGraphNode({
       && effect.item.templateId === 'item:precision_lock_tool') {
       await recordEquipmentUse(client, { instanceId: instance.id, nodeId: node.id,
         itemId: effect.item.id, mutation });
+      if (effect.rentalLeaseId) await relayEscrowCustody(client, instance.id, effect.rentalLeaseId, effect.item.id, 'Belladonna immediate rental custody return', mutation);
     }
   }
   await closeExcludedBranches(client, context, instance, node.excludes || []);
@@ -1708,6 +1726,21 @@ export async function completeNode(
   const options = mutationOptions(optionsValue);
   const authority = await actionAuthority(client, context, owner, graphId);
   const node = actionNode(context, graphId, nodeIdValue);
+  let borrowedLease = null, replayLeaseId = null;
+  if (authority.instance.graph_id === 'belladonna-demo' && Number(authority.instance.graph_version) === 1
+      && node.id === 'mystery:belladonna-lock' && owner.scope === 'character') {
+    // Preserve the exact borrowed root on historical replay, even after return or expiry.
+    // Only an existing completed original-owner mutation can supply this operation ID.
+    const prior = (await client.query('SELECT mutation_kind,owner_scope,owner_id,result_json FROM item_mutation_guards WHERE idempotency_key=$1', [options.idempotencyKey])).rows[0];
+    if (prior?.result_json && prior.mutation_kind === 'mystery_action' && prior.owner_scope === owner.scope && prior.owner_id === owner.id) {
+      const relays = (await client.query("SELECT from_owner_id FROM item_events WHERE idempotency_key=$1 AND event_kind='escrow_relayed' AND from_owner_scope='operation' AND to_owner_scope='operation' AND to_owner_id=$2 ORDER BY sequence LIMIT 2", [options.idempotencyKey, authority.instance.id])).rows;
+      if (relays.length === 1) replayLeaseId = relays[0].from_owner_id;
+    } else {
+      const actor = await actorOf(client, context, owner);
+      const owned = (await client.query("SELECT id FROM item_instances WHERE owner_scope=$1 AND owner_id=$2 AND template_id='item:precision_lock_tool' AND state='active' AND definition_hash IS NULL ORDER BY created_at,id LIMIT 1", [owner.scope, owner.id])).rows[0];
+      if (!owned) borrowedLease = await borrowedPrecisionTool(client, { accountId: actor.accountId, characterId: actor.id, lock: true });
+    }
+  }
   return withItemMutation(
     client,
     owner,
@@ -1718,7 +1751,7 @@ export async function completeNode(
       ...npcActionIdentity(context),
       interactionId: options.interactionId,
       itemAuthority: {
-        operations: [authority.instance.id],
+        operations: [authority.instance.id, ...(borrowedLease || replayLeaseId ? [borrowedLease?.id || replayLeaseId] : [])],
         ...(node.metadata?.terminal === true ? { destinations: [owner] } : {}),
       },
     },
@@ -1729,7 +1762,7 @@ export async function completeNode(
       const instance = await lockedActionInstance(client, authority, context);
       return completeGraphNode({
         client, context, owner, actor, instance, node,
-        interactionId: options.interactionId, mutation,
+        interactionId: options.interactionId, mutation, borrowedLease,
       });
     },
   );
@@ -2113,11 +2146,22 @@ async function prepareMysteryBoard(client, contextValue, ownerValue, graphIdValu
       } else actions.push({ kind: 'complete', ...action });
     }
   }
+  let borrowedEquipment = null;
+  if (instance.graph_id === 'belladonna-demo' && Number(instance.graph_version) === 1 && owner.scope === 'character' && readActor?.id === owner.id) {
+    const lease = await borrowedPrecisionTool(client, { accountId: readActor.accountId, characterId: readActor.id });
+    if (lease) {
+      const condition = await precisionToolConditionRead(client, lease.item_id);
+      borrowedEquipment = { templateId: 'item:precision_lock_tool', leaseId: lease.id, itemId: lease.item_id,
+        endsAt: dateString(lease.ends_at), remaining: condition.remaining, maximum: condition.maximum, usable: condition.usable,
+        allowedNode: 'mystery:belladonna-lock', title: 'original_landlord_account' };
+    }
+  }
   return {
     ...instanceProjection(instance),
     graph: { ...graphIdentity(pkg), version: Number(instance.graph_version) },
     nodes,
     choices,
+    ...(borrowedEquipment ? { borrowedEquipment } : {}),
     ...(affordances ? { actions } : {}),
     explorationAvailable: (await readyDiscoveries({ client, context, owner, actor: readActor,
       instance, states, knowledgeResolved: true })).length > 0,

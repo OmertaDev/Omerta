@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
-import { assertItemTransaction, withItemMutation, escrowItem, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
+import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
@@ -66,9 +66,10 @@ async function cash(client, row, delta, reason, counterparty) {
   const before = Number(row.cash); if (!row.alive || !Number.isFinite(before) || before + delta < 0) fail('cash');
   registerItemTransactionUndo(client, () => client.query('UPDATE characters SET cash=$2 WHERE id=$1', [row.id, before]));
   const updated = await client.query('UPDATE characters SET cash=cash+$2 WHERE id=$1 AND alive AND cash+$2>=0 RETURNING cash', [row.id, delta]); if (updated.rowCount !== 1) fail('cash');
-  await ledger(client, { characterId: row.id, currency: 'cash', amount: delta, reason, counterparty }, {
+  const journalId = await ledger(client, { characterId: row.id, currency: 'cash', amount: delta, reason, counterparty }, {
     beforeInsert: transactionId => registerItemTransactionUndo(client, () => client.query('DELETE FROM transactions WHERE id=$1', [transactionId])) });
   row.cash = Number(updated.rows[0].cash);
+  return journalId;
 }
 async function burn(client, amount, leaseId) {
   if (!amount) return;
@@ -127,23 +128,35 @@ async function accept(client, accountId, body, key) {
     const receipt = await withItemMutation(client, owner, 'operation_action', `equipment-rental:${leaseId}:accept`, { leaseId, itemId: offer.item_id,
       borrowerAccount: accountId, borrowerCharacter: borrower.id, itemAuthority: { operations: [leaseId] } }, async mutation => {
       await escrowItem(client, owner, leaseId, offer.item_id, 'equipment rental original-owner custody', mutation, 'used_in_operation');
-      await cash(client, borrower, -Number(offer.rent_cash), 'equipment_rental:rent_pay', landlord.id);
-      await cash(client, landlord, Number(offer.rent_cash), 'equipment_rental:rent_receive', borrower.id);
-      if (offer.deposit_cash) await cash(client, borrower, -Number(offer.deposit_cash), 'equipment_rental:deposit', leaseId);
+      const rentDebit = await cash(client, borrower, -Number(offer.rent_cash), 'equipment_rental:rent_pay', landlord.id);
+      const rentCredit = await cash(client, landlord, Number(offer.rent_cash), 'equipment_rental:rent_receive', borrower.id);
+      const depositDebit = offer.deposit_cash ? await cash(client, borrower, -Number(offer.deposit_cash), 'equipment_rental:deposit', leaseId) : null;
       await client.query("INSERT INTO equipment_rental_leases(id,offer_id,item_id,landlord_account,landlord_character,borrower_account,borrower_character,rent_cash,deposit_cash,deposit_remaining,starts_at,ends_at,status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$9,$10,$11,'active')", [leaseId, offer.id, offer.item_id, landlord.account_id, landlord.id, accountId, borrower.id, offer.rent_cash, offer.deposit_cash, now, ends]);
       registerItemTransactionUndo(client, () => client.query('DELETE FROM equipment_rental_leases WHERE id=$1', [leaseId]));
       await client.query("UPDATE equipment_rental_offers SET status='leased' WHERE id=$1", [offer.id]);
       registerItemTransactionUndo(client, () => client.query("UPDATE equipment_rental_offers SET status='open' WHERE id=$1", [offer.id]));
       return { ok: true, leaseId, itemId: offer.item_id, landlordAccount: landlord.account_id, landlordCharacter: landlord.id,
-        borrowerCharacter: borrower.id, rentCash: Number(offer.rent_cash), depositCash: Number(offer.deposit_cash), endsAt: ends.toISOString(), title: 'original_landlord_account' };
+        borrowerCharacter: borrower.id, rentCash: Number(offer.rent_cash), depositCash: Number(offer.deposit_cash), rentDebit, rentCredit, depositDebit, endsAt: ends.toISOString(), title: 'original_landlord_account' };
     });
     return { actorId: borrower.id, receipt };
   });
 }
 async function finish(client, lease, locked, status, mutationKey) {
   const borrower = locked.find(row => row.id === lease.borrower_character), owner = { scope: 'account', id: lease.landlord_account };
+  const physical = (await client.query('SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1', [lease.item_id])).rows[0];
+  let heldMystery = null;
+  if (physical?.owner_scope === 'operation' && physical.owner_id !== lease.id) {
+    const instance = (await client.query('SELECT * FROM mystery_instances WHERE id=$1 FOR UPDATE', [physical.owner_id])).rows[0];
+    if (!instance || instance.graph_id !== 'belladonna-demo' || Number(instance.graph_version) !== 1
+        || instance.owner_scope !== 'character' || instance.owner_id !== lease.borrower_character || instance.authority_account_id !== lease.borrower_account) fail('custody');
+    await paidEquipmentRentalWitness(client, lease);
+    const events = (await client.query("SELECT e.id,g.owner_scope,g.owner_id,g.mutation_kind FROM item_events e JOIN item_mutation_guards g ON g.idempotency_key=e.idempotency_key WHERE e.item_id=$1 AND e.event_kind='escrow_relayed' AND e.from_owner_scope='operation' AND e.from_owner_id=$2 AND e.to_owner_scope='operation' AND e.to_owner_id=$3 ORDER BY e.sequence DESC LIMIT 1", [lease.item_id, lease.id, instance.id])).rows;
+    if (events.length !== 1 || events[0].owner_scope !== 'character' || events[0].owner_id !== lease.borrower_character || events[0].mutation_kind !== 'mystery_action') fail('custody');
+    heldMystery = instance.id;
+  }
   return withItemMutation(client, owner, 'operation_action', mutationKey, { leaseId: lease.id, status,
-    itemAuthority: { operations: [lease.id], destinations: [owner] } }, async mutation => {
+    itemAuthority: { operations: [lease.id, ...(heldMystery ? [heldMystery] : [])], destinations: [owner] } }, async mutation => {
+    if (heldMystery) await relayEscrowCustody(client, heldMystery, lease.id, lease.item_id, 'Rental recovery restores original lease custody', mutation);
     await releaseEscrow(client, lease.id, owner, lease.item_id, 'equipment rental return to original landlord', mutation);
     const deposit = Number(lease.deposit_remaining);
     if (borrower?.alive) { if (deposit) await cash(client, borrower, deposit, 'equipment_rental:deposit_refund', lease.id); }
@@ -152,7 +165,7 @@ async function finish(client, lease, locked, status, mutationKey) {
     const updated = await client.query('UPDATE equipment_rental_leases SET status=$2,deposit_remaining=0,ended_at=$3 WHERE id=$1 AND status=$4', [lease.id, status, now, 'active']);
     if (updated.rowCount !== 1) fail('lease_changed');
     registerItemTransactionUndo(client, () => client.query("UPDATE equipment_rental_leases SET status='active',deposit_remaining=$2,ended_at=NULL WHERE id=$1", [lease.id, deposit]));
-    return { ok: true, leaseId: lease.id, itemId: lease.item_id, status, refunded: borrower?.alive ? deposit : 0, burned: borrower?.alive ? 0 : deposit, title: 'original_landlord_account' };
+    return { ok: true, leaseId: lease.id, itemId: lease.item_id, borrowerCharacter: lease.borrower_character, status, refunded: borrower?.alive ? deposit : 0, burned: borrower?.alive ? 0 : deposit, title: 'original_landlord_account' };
   });
 }
 async function end(client, accountId, body, key) {
@@ -190,15 +203,58 @@ export async function equipmentRentalDeathCounterparts(client, characterId) {
   const rows = (await client.query("SELECT landlord_character,borrower_character FROM equipment_rental_leases WHERE status='active' AND (landlord_character=$1 OR borrower_character=$1) ORDER BY id LIMIT 4", [id(characterId)])).rows;
   if (rows.length > 3) fail('death_limit'); return [...new Set(rows.flatMap(row => [row.landlord_character, row.borrower_character]).filter(value => value !== characterId))].sort();
 }
-export async function recoverEquipmentRentalsAtDeath(client, characterId) {
+// A death action discovers the complete finite rental union BEFORE taking any
+// actor lock. The opaque scope belongs only to this transaction/client; recovery
+// cannot discover and acquire a new actor after another subsystem's row locks.
+const deathScopes = new WeakMap();
+export async function prelockEquipmentRentalDeathActors(client, characterIds) {
+  assertItemTransaction(client);
+  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');
+  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);
+  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);
+  const ordered = [...ids].sort(), locked = [];
+  for (const characterId of ordered) {
+    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
+    if (row) locked.push(row);
+  }
+  const accounts = [...new Set(locked.filter(row => !row.is_npc).map(row => row.account_id))].sort();
+  for (const accountId of accounts) await client.query('SELECT id FROM accounts WHERE id=$1 FOR UPDATE', [accountId]);
+  const scope = Object.freeze({});
+  deathScopes.set(scope, { client, transaction: itemTransactionIdentity(client), subjects, ids: new Set(ordered) });
+  await assertEquipmentRentalDeathScope(client, subjects[0], scope);
+  for (const subject of subjects.slice(1)) await assertEquipmentRentalDeathScope(client, subject, scope);
+  return { scope, characters: locked };
+}
+export async function assertEquipmentRentalDeathScope(client, characterId, scope) {
   assertItemTransaction(client);
   try {
+  const state = deathScopes.get(scope);
+  if (!state || state.client !== client || state.transaction !== itemTransactionIdentity(client) || !state.subjects.includes(characterId)) fail('death_scope');
+  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');
+  }
+  return state;
+  } catch (error) { poisonItemTransaction(client, error); throw error; }
+}
+export async function recoverEquipmentRentalsAtDeath(client, characterId, scope) {
+  assertItemTransaction(client);
+  try {
+    const state = await assertEquipmentRentalDeathScope(client, characterId, scope);
     const hints = (await client.query("SELECT id,landlord_character,borrower_character FROM equipment_rental_leases WHERE status='active' AND (landlord_character=$1 OR borrower_character=$1) ORDER BY id LIMIT 4", [id(characterId)])).rows;
-    if (hints.length > 3) fail('death_limit'); const locked = await actors(client, hints.flatMap(row => [row.landlord_character, row.borrower_character]));
+    if (hints.length > 3) fail('death_limit'); const locked = [];
+    for (const actorId of [...new Set(hints.flatMap(row => [row.landlord_character, row.borrower_character]))].sort()) {
+      if (!state.ids.has(actorId)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');
+      // Already locked in the pre-actor phase. Re-read death/cash, never lock late.
+      const row = (await client.query('SELECT * FROM characters WHERE id=$1', [actorId])).rows[0];
+      if (!row) fail('death_actor'); locked.push(row);
+    }
     const victim = locked.find(row => row.id === characterId);
     if (hints.length && (!victim || victim.alive)) fail('death_required');
     const results = [];
     for (const hint of hints) { const lease = (await client.query('SELECT * FROM equipment_rental_leases WHERE id=$1 FOR UPDATE', [hint.id])).rows[0];
+      if (lease.landlord_character !== hint.landlord_character || lease.borrower_character !== hint.borrower_character) fail('death_source_changed');
+      const landlord = locked.find(row => row.id === lease.landlord_character), borrower = locked.find(row => row.id === lease.borrower_character);
+      if (!landlord || !borrower || landlord.is_npc || borrower.is_npc || landlord.account_id !== lease.landlord_account || borrower.account_id !== lease.borrower_account) fail('death_source_changed');
       if (lease.status === 'active') results.push(await finish(client, lease, locked, 'death_ended', `equipment-rental:${lease.id}:death:${characterId}`)); }
     return results;
   } catch (error) { poisonItemTransaction(client, error); throw error; }
@@ -236,3 +292,62 @@ export const acceptEquipmentRental = guarded(accept);
 export const endEquipmentRental = guarded(end);
 
 export const rentalToolAuthority = guarded(toolAuthority);
+
+/** Exact original acceptance evidence; legacy receipts without IDs cannot authorize borrowing. */
+export async function paidEquipmentRentalWitness(client, lease) {
+  const request = (await client.query('SELECT account_id,original_character,receipt FROM equipment_rental_requests WHERE run_id=$1', [lease.id])).rows[0];
+  const receipt = request?.receipt;
+  if (!receipt || request.account_id !== lease.borrower_account || request.original_character !== lease.borrower_character
+      || receipt.leaseId !== lease.id || receipt.itemId !== lease.item_id || receipt.landlordAccount !== lease.landlord_account
+      || receipt.landlordCharacter !== lease.landlord_character || receipt.borrowerCharacter !== lease.borrower_character
+      || receipt.rentCash !== Number(lease.rent_cash) || receipt.depositCash !== Number(lease.deposit_cash)
+      || +new Date(receipt.endsAt) !== +new Date(lease.ends_at)) fail('paid_lease');
+  const offer = (await client.query('SELECT * FROM equipment_rental_offers WHERE id=$1', [lease.offer_id])).rows[0];
+  const guard = (await client.query('SELECT mutation_kind,owner_scope,owner_id,result_json FROM item_mutation_guards WHERE idempotency_key=$1', [`equipment-rental:${lease.id}:accept`])).rows[0];
+  if (!offer || offer.item_id !== lease.item_id || offer.landlord_account !== lease.landlord_account || offer.landlord_character !== lease.landlord_character
+      || Number(offer.rent_cash) !== Number(lease.rent_cash) || Number(offer.deposit_cash) !== Number(lease.deposit_cash)
+      || +new Date(lease.ends_at) - +new Date(lease.starts_at) !== Number(offer.duration_seconds) * 1000
+      || guard?.mutation_kind !== 'operation_action' || guard.owner_scope !== 'account' || guard.owner_id !== lease.landlord_account
+      || !guard.result_json || stable(JSON.parse(guard.result_json)) !== stable(receipt)) fail('paid_lease');
+  const expected = [[receipt.rentDebit, lease.borrower_character, lease.borrower_account, -Number(lease.rent_cash), 'equipment_rental:rent_pay', lease.landlord_character],
+    [receipt.rentCredit, lease.landlord_character, lease.landlord_account, Number(lease.rent_cash), 'equipment_rental:rent_receive', lease.borrower_character]];
+  if (Number(lease.deposit_cash)) expected.push([receipt.depositDebit, lease.borrower_character, lease.borrower_account, -Number(lease.deposit_cash), 'equipment_rental:deposit', lease.id]);
+  else if (receipt.depositDebit !== null) fail('paid_lease');
+  if (new Set(expected.map(row => row[0])).size !== expected.length) fail('paid_lease');
+  for (const [journalId, character, account, amount, reason, counterparty] of expected) {
+    const journal = (await client.query('SELECT * FROM transactions WHERE id=$1', [id(journalId)])).rows[0];
+    const original = (await client.query('SELECT account_id FROM characters WHERE id=$1', [character])).rows[0];
+    if (!journal || original?.account_id !== account || journal.character_id !== character || (journal.account_id !== null && journal.account_id !== account) || journal.currency !== 'cash'
+        || Number(journal.amount) !== amount || journal.reason !== reason || journal.counterparty !== counterparty) fail('paid_lease');
+  }
+  const events = (await client.query("SELECT * FROM item_events WHERE item_id=$1 AND idempotency_key=$2 AND event_kind='escrowed' ORDER BY sequence LIMIT 2", [lease.item_id, `equipment-rental:${lease.id}:accept`])).rows;
+  if (events.length !== 1 || events[0].from_owner_scope !== 'account' || events[0].from_owner_id !== lease.landlord_account
+      || events[0].to_owner_scope !== 'operation' || events[0].to_owner_id !== lease.id || events[0].provenance_kind !== 'used_in_operation') fail('paid_lease');
+  return lease;
+}
+
+export async function borrowedPrecisionTool(client, { accountId, characterId, lock = false }) {
+  id(accountId); id(characterId);
+  const rows = lock
+    ? (await client.query("SELECT * FROM equipment_rental_leases WHERE borrower_account=$1 AND borrower_character=$2 AND status='active' ORDER BY id LIMIT 4 FOR UPDATE", [accountId, characterId])).rows
+    : (await client.query("SELECT * FROM equipment_rental_leases WHERE borrower_account=$1 AND borrower_character=$2 AND status='active' ORDER BY id LIMIT 4", [accountId, characterId])).rows;
+  if (rows.length > 3) fail('lease_limit');
+  for (const lease of rows) {
+    const item = lock
+      ? (await client.query('SELECT * FROM item_instances WHERE id=$1 FOR UPDATE', [lease.item_id])).rows[0]
+      : (await client.query('SELECT * FROM item_instances WHERE id=$1', [lease.item_id])).rows[0];
+    const custody = (await client.query('SELECT * FROM operation_escrow WHERE item_id=$1', [lease.item_id])).rows[0];
+    const actor = (await client.query('SELECT account_id,alive,is_npc FROM characters WHERE id=$1', [characterId])).rows[0];
+    const landlord = (await client.query('SELECT account_id,alive,is_npc FROM characters WHERE id=$1', [lease.landlord_character])).rows[0];
+    const accounts = (await client.query('SELECT id,status FROM accounts WHERE id IN ($1,$2)', [accountId, lease.landlord_account])).rows;
+    const now = await clock(client);
+    if (!actor?.alive || actor.is_npc || actor.account_id !== accountId || !landlord?.alive || landlord.is_npc || landlord.account_id !== lease.landlord_account
+        || accounts.length !== 2 || accounts.some(row => row.status !== 'active') || +now >= +new Date(lease.ends_at)) continue;
+    if (!item || item.template_id !== EQUIPMENT_RENTALS.templateId || item.definition_hash !== null
+        || item.owner_scope !== 'operation' || item.owner_id !== lease.id || item.state !== 'escrowed'
+        || custody?.operation_id !== lease.id || custody.depositor_scope !== 'account' || custody.depositor_id !== lease.landlord_account) continue;
+    await paidEquipmentRentalWitness(client, lease);
+    return lease;
+  }
+  return null;
+}

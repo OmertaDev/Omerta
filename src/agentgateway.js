@@ -1767,6 +1767,14 @@ const AGENT_SCHEMAS = {
     type: 'object', additionalProperties: false,
     required: ['instanceId', 'graph', 'status', 'createdAt', 'nodes', 'choices'],
     properties: {
+      borrowedEquipment: { type: 'object', additionalProperties: false,
+        required: ['templateId', 'leaseId', 'itemId', 'endsAt', 'remaining', 'maximum', 'usable', 'allowedNode', 'title'],
+        properties: {
+          templateId: { const: 'item:precision_lock_tool' }, leaseId: { type: 'string' }, itemId: { type: 'string' },
+          endsAt: { type: 'string', format: 'date-time' }, remaining: { type: 'integer', minimum: 0, maximum: 150 },
+          maximum: { enum: [100, 150] }, usable: { type: 'boolean' }, allowedNode: { const: 'mystery:belladonna-lock' },
+          title: { const: 'original_landlord_account' },
+        } },
       instanceId: { type: 'string' },
       graph: { type: 'object', additionalProperties: false,
         required: ['id', 'version', 'season'], properties: {

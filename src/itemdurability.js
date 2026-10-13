@@ -1,6 +1,7 @@
 import { GameError } from './game.js';
 import crypto from 'node:crypto';
 import { assertItemTransaction, itemMutationContext, registerItemTransactionUndo,registerItemTransactionBeforeEventUndo,poisonItemTransaction,ownsItemMutationReservation } from './items.js';
+import { rentalToolAuthority, paidEquipmentRentalWitness } from './equipmentrentals.js';
 
 export const ITEM_DURABILITY = Object.freeze({ templateId:'item:precision_lock_tool', maximum:100, temperedMaximum:150, useCost:10 });
 const fail=reason=>{ throw new GameError('item_durability',reason); };
@@ -22,19 +23,40 @@ CREATE TABLE IF NOT EXISTS item_durability_birth_quality (
  request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), recipe_identity JSONB NOT NULL,
  grade TEXT NOT NULL CHECK(grade='tempered'), maximum INT NOT NULL CHECK(maximum=150));`;
 
-async function physical(client,itemId,owner) {
-  const item=(await client.query('SELECT * FROM item_instances WHERE id=$1 FOR UPDATE',[id(itemId)])).rows[0];
+async function physical(client,itemId,owner,lock=true) {
+  const item=(lock?await client.query('SELECT * FROM item_instances WHERE id=$1 FOR UPDATE',[id(itemId)]):await client.query('SELECT * FROM item_instances WHERE id=$1',[id(itemId)])).rows[0];
   if(!item||item.template_id!==ITEM_DURABILITY.templateId||item.definition_hash!==null) fail('unsupported');
   if(owner&&(item.owner_scope!==owner.scope||item.owner_id!==owner.id||item.state!=='active')) fail('custody');
   const created=(await client.query("SELECT id,template_id,quality FROM item_events WHERE item_id=$1 AND event_kind='created' AND provenance_kind IN ('crafted','salvaged','awarded','imported') ORDER BY sequence LIMIT 2",[item.id])).rows;
   if(created.length!==1||created[0].template_id!==item.template_id||created[0].quality!=='standard') fail('creation');
-  const state=(await client.query('SELECT * FROM item_durability_states WHERE item_id=$1 FOR UPDATE',[item.id])).rows[0];
+  const state=(lock?await client.query('SELECT * FROM item_durability_states WHERE item_id=$1 FOR UPDATE',[item.id]):await client.query('SELECT * FROM item_durability_states WHERE item_id=$1',[item.id])).rows[0];
   if(state&&state.creation_event!==created[0].id) fail('creation');
   const certificate=(await client.query('SELECT * FROM item_durability_birth_quality WHERE item_id=$1',[item.id])).rows[0],maximum=certificate?150:100;
   if(certificate&&certificate.creation_event!==created[0].id)fail('creation');
   if(certificate){const witness=await manufacturingWitness(client,certificate.craft_key,item.id,false);if(certificate.request_hash!==witness.guard.request_hash||certificate.authority_account!==witness.guard.owner_id||stable(certificate.recipe_identity)!==stable(witness.recipe))fail('birth_integrity');}
   if(state&&(!Number.isSafeInteger(Number(state.remaining))||Number(state.remaining)<0||Number(state.remaining)>maximum))fail('condition');
   return {item,creationEvent:created[0].id,maximum,remaining:Number(state?.remaining??maximum),revision:Number(state?.revision??0),state};
+}
+export async function precisionToolConditionRead(client,itemId) {
+  const value=await physical(client,itemId,null,false);
+  return {itemId:value.item.id,remaining:value.remaining,maximum:value.maximum,usable:value.remaining>=10};
+}
+export async function assertBorrowedEquipmentUsable(client,{itemId,accountId,characterId}) {
+  const authority=await rentalToolAuthority(client,{itemId,accountId,characterId});
+  const lease=(await client.query('SELECT * FROM equipment_rental_leases WHERE id=$1',[authority.leaseId])).rows[0];
+  await paidEquipmentRentalWitness(client,lease);
+  const value=await physical(client,itemId);
+  if(value.remaining<10)fail('broken');
+  return {authority,remaining:value.remaining,maximum:value.maximum};
+}
+async function rentalUseWitness(client,event,instance) {
+  const lease=(await client.query('SELECT * FROM equipment_rental_leases WHERE id=$1',[event.from_owner_id])).rows[0];
+  const guard=(await client.query('SELECT owner_scope,owner_id,mutation_kind FROM item_mutation_guards WHERE idempotency_key=$1',[event.idempotency_key])).rows[0];
+  if(!lease||event.event_kind!=='escrow_relayed'||event.from_owner_scope!=='operation'||lease.item_id!==event.item_id
+    ||instance?.owner_scope!=='character'||instance.owner_id!==lease.borrower_character||instance.authority_account_id!==lease.borrower_account
+    ||guard?.mutation_kind!=='mystery_action'||guard.owner_scope!=='character'||guard.owner_id!==lease.borrower_character
+    ||!event.created_at||+new Date(event.created_at)<+new Date(lease.starts_at)||+new Date(event.created_at)>=+new Date(lease.ends_at))fail('rental_use');
+  await paidEquipmentRentalWitness(client,lease);
 }
 async function assertEquipmentUsableImpl(client,{itemId,owner,mutation,minimum=10}) {
   assertItemTransaction(client);
@@ -88,10 +110,18 @@ async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,m
   if(!instance||instance.graph_id!=='belladonna-demo'||Number(instance.graph_version)!==1||instance.owner_scope!==root.owner.scope||instance.owner_id!==root.owner.id||node?.state!=='completed'||!node.completed_at) fail('completion');
   const account=root.owner.scope==='account'?root.owner.id:(await client.query('SELECT account_id FROM characters WHERE id=$1',[root.owner.id])).rows[0]?.account_id;
   if(!account||instance.authority_account_id!==account) fail('authority');
-  const events=(await client.query("SELECT * FROM item_events WHERE item_id=$1 AND idempotency_key=$2 AND event_kind='escrowed' AND provenance_kind='used_in_mystery' AND to_owner_scope='operation' AND to_owner_id=$3 ORDER BY sequence LIMIT 2",[id(itemId),root.key,instance.id])).rows;
-  if(events.length!==1||events[0].from_owner_scope!==root.owner.scope||events[0].from_owner_id!==root.owner.id||(eventId!==undefined&&events[0].id!==id(eventId))) fail('use_event');
+  const events=(await client.query("SELECT * FROM item_events WHERE item_id=$1 AND idempotency_key=$2 AND event_kind IN ('escrowed','escrow_relayed') AND provenance_kind='used_in_mystery' AND to_owner_scope='operation' AND to_owner_id=$3 ORDER BY sequence LIMIT 2",[id(itemId),root.key,instance.id])).rows;
+  if(events.length!==1||(eventId!==undefined&&events[0].id!==id(eventId))) fail('use_event');
   const event=events[0];
   const prior=(await client.query('SELECT * FROM item_durability_uses WHERE event_id=$1',[event.id])).rows[0];
+  if(event.event_kind==='escrowed') {
+    if(event.from_owner_scope!==root.owner.scope||event.from_owner_id!==root.owner.id)fail('use_event');
+  } else {
+    if(root.owner.scope!=='character'||event.from_owner_scope!=='operation')fail('use_event');
+    await rentalUseWitness(client,event,instance);
+    if(!prior){const borrowed=await assertBorrowedEquipmentUsable(client,{itemId,accountId:account,characterId:root.owner.id});
+      if(borrowed.authority.leaseId!==event.from_owner_id||borrowed.authority.operationId!==instance.id)fail('use_event');}
+  }
   if(prior) { if(prior.item_id!==itemId||prior.instance_id!==instanceId||prior.node_id!==nodeId) fail('replay');return {itemId,replayed:true,remaining:Number(prior.after_condition)}; }
   const equipment=await physical(client,itemId);
   if(equipment.item.owner_scope!=='operation'||equipment.item.owner_id!==instanceId||equipment.item.state!=='escrowed') fail('custody');
@@ -131,7 +161,8 @@ export async function collectItemConditionIssues(client) {
       const event=(await client.query('SELECT * FROM item_events WHERE id=$1',[use.event_id])).rows[0];
       const instance=(await client.query('SELECT * FROM mystery_instances WHERE id=$1',[use.instance_id])).rows[0];
       const node=(await client.query('SELECT state,completed_at FROM mystery_node_state WHERE instance_id=$1 AND node_id=$2',[use.instance_id,use.node_id])).rows[0];
-      if(!event||event.item_id!==state.item_id||event.idempotency_key!==use.mutation_key||event.event_kind!=='escrowed'||event.provenance_kind!=='used_in_mystery'||event.to_owner_scope!=='operation'||event.to_owner_id!==use.instance_id||instance?.graph_id!=='belladonna-demo'||Number(instance.graph_version)!==1||use.node_id!=='mystery:belladonna-lock'||node?.state!=='completed'||!node.completed_at) issues.push({itemId:state.item_id,reason:'canonical_use'});
+      if(!event||event.item_id!==state.item_id||event.idempotency_key!==use.mutation_key||!['escrowed','escrow_relayed'].includes(event.event_kind)||event.provenance_kind!=='used_in_mystery'||event.to_owner_scope!=='operation'||event.to_owner_id!==use.instance_id||instance?.graph_id!=='belladonna-demo'||Number(instance.graph_version)!==1||use.node_id!=='mystery:belladonna-lock'||node?.state!=='completed'||!node.completed_at) issues.push({itemId:state.item_id,reason:'canonical_use'});
+      else if(event.event_kind==='escrow_relayed'){try{await rentalUseWitness(client,event,instance);}catch{issues.push({itemId:state.item_id,reason:'rental_use'});}}
     }
     if(history.some(e=>!/^\d+$/.test(String(e.sequence))))issues.push({itemId:state.item_id,reason:'condition_sequence'});
     else {
