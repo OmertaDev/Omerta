@@ -1,6 +1,7 @@
 # F22 bounded Depot strategy laboratory
 
 Planning source `ddba3066df0722ec0afdaebc7304be86ee10c088` includes F20 reviewed executable `23b612ab737d676f107ad19bdf15a4a239207494` and established F04 `companyForecast`. No implementation qualification is claimed by this design.
+Historical proposal: the approved exact implementation and executed scope are recorded in [the component review](strategy-laboratories-security-review.md); the narrow F20 observation dependency is now implemented and separately reviewed.
 
 One original living GIN Depot owner explicitly consents to an ordered list of at most three exact canonical `configureDepot` terms. The experiment changes the actual live configuration, observes new real paid retail, and advances only this preconsented list. It never creates customers, inventory, forecasts-as-income, simulated profits, automatic procurement or an unconsented winning strategy.
 
@@ -14,6 +15,6 @@ Each arm freezes the complete exact UUID journal baseline under the Depot lock. 
 
 Advancement waits actual elapsed finite horizon/cadence, closes the observation arm, and applies the next consented configuration through canonical gameplay in the same branded transaction. Final configuration is the last consented arm, not an inferred winner. Cancellation/death retires metadata and stops autonomy; it does not grant an heir any old configuration authority or charge restoration costs. Exact original-account receipt recovery precedes new eligibility.
 
-Pending coordinator interface decision: use a trusted read-only F20 source observation export or a narrowly copied, source-pinned equivalent source validator in the new module. F20's existing sourceProfit is private. The shared transaction scope seam is already available; no further general transaction infrastructure is requested. Coordinator retains shared schema/server/worker/estate/invariant/catalog/gateway/CI ownership.
+Approved coordinator interface: the new trusted read-only F20 observation export reuses existing private sourceProfit without exposing it or copying its arithmetic. The shared transaction scope seam remains unchanged; no further general transaction infrastructure was introduced. Coordinator retains shared schema/server/worker/estate/invariant/catalog/gateway/CI ownership.
 
 Required component proofs: actual F04 fact admission, paid premises/rental/F19/F20 consent, real procurement/retail, actual live price change, observed paid customer purchase under both configurations, real elapsed native horizon, no synthetic completed-state qualification, exact/concurrent replay, post-wait expiry, source/policy/holder/owner drift, targeted memory/native SQL rollback, estate retirement and independent global cash/GIN/treasury checks. Larger/incomplete history is UNKNOWN, and comparison never claims a winner.
