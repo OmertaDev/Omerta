@@ -76,3 +76,11 @@ const packageMutations=[
 for(const bad of packageMutations){assert.notEqual(bad,packageCurrent);assert.throws(()=>O.assertFifthBatchSourceTransfer('package.json',bad));for(const normalize of [O.fifthBatchSourceBaseline,fourthBatchSourceBaseline,thirdBatchSourceBaseline,secondBatchSourceBaseline,firstBatchSourceBaseline])assert.equal(normalize('package.json',bad),bad,'Unknown or incomplete command/refill admission remains untouched');}
 for(const normalize of [fourthBatchSourceBaseline,thirdBatchSourceBaseline,secondBatchSourceBaseline,firstBatchSourceBaseline])assert.equal(normalize('package.json',packageCurrent),normalize('package.json',packagePrior));
 console.log('Exact package transfer PASS: two Git hunks, fulltext/SHA/blob current/pendingIV; preserved6/16/124/world18 plus16 package corpus and10 command/compiler/refill negatives, all old package compositions');
+
+for(const[normalize,predecessor]of [
+ [fourthBatchSourceBaseline,'90fed962b73a6e20717af4c89f4691d42fb70a1b'],
+ [thirdBatchSourceBaseline,'62954ecd2f64899641af41f1d2d047d0ed07efa4'],
+ [secondBatchSourceBaseline,'9adc01bea4963b89f12419126bd91bb5e7d57a55'],
+ [firstBatchSourceBaseline,'f254c64a54a019665d7a516d382d56b46f2dcd82'],
+])assert.equal(normalize('package.json',packageCurrent),git('show',predecessor+':package.json'),'Complete immutable predecessor package at every historical hop');
+console.log('Package full predecessor reconstruction PASS at every immutable FOURTH/THIRD/SECOND/FIRST hop.');
