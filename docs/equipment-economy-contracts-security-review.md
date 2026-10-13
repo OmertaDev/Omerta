@@ -2,12 +2,14 @@
 
 Owned source: `src/equipment-economy-contracts.js` and
 `test/equipment-economy-contracts.js`. Qualified component revision:
-`8b0ad8c0b8943381ea6d61494105a93e8b60b56a`, based on coordinator caller revision
+`13b57e7a5213a10cabb75c3ab1881b302b92bd5e`, based on coordinator caller revision
 `989ad03162a3844a764571e7ce8475fc2ef96a88`. Original component commit
 `a3b432b28b3571b762e4df052e4d3a2b930292ea` was already integrated by root as
 23baed54. The surgical follow-up is
 `ae7dff5db9aea89998b435fc4a2dce8abea1d41c`; preserve root's separate actual
 OpenAPI import/spread and live-spec assertions when integrating it.
+The additional complete-valid-body authority and wrong action-variant controls
+are in13b57e7a; source module bytes are unchanged from8b0ad8c0.
 
 This is DTO/registered producer compatibility evidence, not a fresh monetary,
 estate, private-world, PG16 or whole-release qualification. No shared runtime,
@@ -57,12 +59,13 @@ The maintenance wear prerequisite is the explicitly declared existing canonical
 leaf fixture; no new full Mystery outcome qualification is claimed here.
 
 Memory and a distinct fresh owned PostgreSQL18.4 database
-`commercial_negotiation_test_fb84ee6b6cdb` on127.0.0.1:35449/pilot_runner passed
+`commercial_negotiation_test_96f158eeee11` on127.0.0.1:35449/pilot_runner passed
 all21 positive route/response/replay witnesses and all8 actual negative requests:
 four undeclared GET query filters and true/false/0/[] subscription-close bodies.
 The native fixture rejected ambient endpoints, checked its closed owned prefix,
 loopback/password-free role,18.4 version and empty public tables before creation.
 Raw source/log hashes and guard witnesses are retained outside the checkout.
+Node24.19.0, AJV8.20.0 and pg8.22.0 were used with existing dependencies.
 This proves native serialization and component contract compatibility; it is not
 a new concurrency, rollback or complete accounting claim.
 
@@ -82,8 +85,10 @@ journal-group control accidentally retained the full new group on updated root
 acceptance. It now removes all three fields before adding a lone field and makes
 no authentication claim. Failures and successful retests remain retained.
 
-Applied the policy's pinned Pashov c577eb7 access/replay/periphery passes, Plamen
-795962b producer/state/accounting-boundary comparison and Trail of Bits d3323ce
+Applied the policy's pinned Pashov
+c577eb7799c349de0acb187ba00ca98e14e436fd access/replay/periphery passes, Plamen
+795962b96e254f2e423a2635fe7f8cb8ea1e6d69 producer/state/accounting-boundary comparison and Trail of Bits
+d3323cefbcf645678b8dc481de204b02ad3d02dc
 trust-boundary/schema/invariant/static triage methods as manual JavaScript
 adaptations. No upstream orchestration or broad audit is claimed.
 
