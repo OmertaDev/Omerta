@@ -172,6 +172,8 @@ async function compensateItemTransaction(client, transaction) {
   // serialized module-wide below, so a transaction-local inverse log gives the same externally visible
   // atomicity contract without overwriting a later successful item transaction. Events go first
   // because they reference both guards and permanent item rows; guards go last.
+  // Dependent adapter rows must release their same-transaction event FKs first.
+  for (let i = transaction.beforeEventUndo.length - 1; i >= 0; i--) await transaction.beforeEventUndo[i]();
   for (const [key, reservationId] of transaction.guardReservations) {
     const row = (await client.query('SELECT reservation_id FROM item_mutation_guards WHERE idempotency_key=$1', [key])).rows[0];
     if (row?.reservation_id === reservationId) {
@@ -293,7 +295,7 @@ export async function withItemTransaction(pool, action) {
   return TRANSACTION_SCOPE.run({ active: true }, async () => {
     const scope = TRANSACTION_SCOPE.getStore();
     let client = null, discard = false, begun = false, outcome, borrowed = false;
-    const transaction = { active: false, failed: null, guardReservations: [], undo: [] };
+    const transaction = { active: false, failed: null, guardReservations: [], beforeEventUndo: [], undo: [] };
     // Keep all raw failures inside the item owner. The registry wrapper sees a private outcome,
     // never a raw SQLSTATE that it could remap before rollback/commit disposition is known.
     async function ownedAction() {
@@ -380,6 +382,16 @@ export function registerItemTransactionUndo(client, undo) {
     fail('bad_item_request', 'Item transaction compensation requires a callback.');
   }
   registerUndo(client, undo);
+}
+
+/** Internal adapter inverse for rows referencing newly emitted canonical events.
+ * Only a branded active transaction can register it; graph content receives no callback capability.
+ * The pg-mem inverse runs before deleting events. Native PostgreSQL keeps its ordinary ROLLBACK.
+ */
+export function registerItemTransactionBeforeEventUndo(client, undo) {
+  const transaction = transactionClient(client);
+  if (typeof undo !== 'function') fail('bad_item_request', 'Item event compensation requires a callback.');
+  transaction.beforeEventUndo.push(undo);
 }
 
 async function beginMutation(client, kind, owner, idempotencyKey, request) {
