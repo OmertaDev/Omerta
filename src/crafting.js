@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 // Data-defined Phase 1 crafting and salvage. Domain callers must enter through:
 //
 //   withItemTransaction(pool, (client) =>
@@ -242,7 +243,15 @@ export function canonicalCraftAuthority(recipeId) {
   const context = contextOf(DEFAULT_CRAFTING_CONTEXT);
   const recipe = recipeOf(context, recipeId);
   return Object.freeze({ recipe: Object.freeze(graphIdentity(context, recipe)),
+    authority: Object.freeze(graphMutationAuthority(context, recipe)),
     consumes: inputsOf(recipe), produces: outputsOf(recipe), cashCost: cashCostOf(recipe) });
+}
+
+export function canonicalCraftRequestHash(recipeId, accountId) {
+  const witness = canonicalCraftAuthority(recipeId);
+  return crypto.createHash('sha256').update(JSON.stringify({ kind: 'craft',
+    owner: { scope: 'account', id: canonicalString(accountId, 'Authenticated account id') },
+    request: witness.authority })).digest('hex');
 }
 
 const normalizedKey = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');
