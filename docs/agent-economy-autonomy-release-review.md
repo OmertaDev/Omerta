@@ -55,11 +55,15 @@ Every tracked file under src, schema.sql, package.json, package-lock.json and th
 
 ### Repairs and historical source controls
 
+Fresh targeted WorkEscrow Forge proof also records10 passed tests with512 ETH and512 USDC conservation fuzz cases, original Solidity0.8.26/viaIR/optimizer800/Cancun settings and all9 reviewed source/vendor keccaks. Runtime/creation/ABI bindings match those above. This contract-only run used the earlier78d4 rootV with coordinator tracked edits in progress; current contract/config bytes are equal, but no current whole-Forge or deployed-backing qualification follows. Genuine artifact, missing-vendor failure and successful retest remain under company-workflows/autonomy-final-escrow-forge.
+
 Two component order changes were integrated and are included in ce717: managementteamautonomy explicitly follows Depot/policy→relationship/team/plan→grant and freshly validates the private grant before and after canonical configuration; synthetic fundedexternalwork allocation/recovery follows its already-held course→session→job source order. Earlier actor/course serialization means the static pairs did not themselves prove a reachable deadlock. No deadlock exploit, broader lock-framework audit or canonical escrow-adapter mutation is claimed. Ordinary memory plus fresh18.4 team,21-case retry and synthetic lifecycle proofs passed at `e69afc057a81c0ff64b0095268c039adf837ef20`, review `e7e5a79d93709c163f57ff0f7e36251219512a2c`.
 
 Retained failures include missing ignored compiler vendors, stale memory duplicate-DDL setup, the unbranded duplicate rental recovery after an already-completed estate, exact display/import-fixture/source-conflict census refusals, and missing Depot/raw-worker historical source composition. Repairs preserve their original logs. The laboratory test now uses the actual moderator estate prelock/opaque scope/pre-heir path and verifies original landlord title, zero held deposit and one -250 game-cash burn; all elapsed horizons, original books, grants, replay and no-heir assertions remain. It requires the actual shared prerequisite tables instead of reapplying fixture DDL. Full memory then fresh18.4 native proof passed at `977291d95b489b5ee9171a4cdb8b97fdd6979594` after `7f22f41cbe6f38150e1ffce53aaded88fe5c46ac`; both are included in ce717.
 
 All30 historical composition checks passed:25 actual source-compatibility suites plus world qualification, duration evidence, backlog, checkpoint and equipment migration catalog. Package transfer pins ce717→reviewed pendingIVbc7 with two actual unique Git inverse hunks/fullSHA/blob, preserving original6maps/16hunks/124 negatives/world18 plus16 package-corpus and10 command/compiler/refill-bypass negatives. Missing Depot coverage belongs to the separate FOURTH envelope (10th domain/3actualF17 hunks), not a cross-stage FIFTH exception. Duration input uses exact outer-first composition with old10schedule/8Intel/7DB controls and3unknown-current negatives. No historical full-world/native/finance clearance is transferred. Package commits1d86d407/2607bdcf, reviewcc7574b3; caller3b062237; peerFOURTHbedee887. All are integrated in2d072.
+
+Independent verification matched all30 historical raw-log hashes and zero-exit results. All tool/test inputs are unchanged at2d072 except the coordinator's duration mutation target, which now requires one unique bounded runCompanyOperators callback; that current test was freshly rerun and passes. This records29 unchanged checks plus the current duration retest, not an unexecuted full native-world campaign.
 
 Complete `node test/gates.js` executed at clean2d072 and exited0. Exact collector, closed DTO and import-only fixture classifications retain unknown/stale/caller/authority negatives. Laboratory source_used is a permanent one-journal/one-arm400 conflict, not refill throttling; all39 cooldown and11 rolling-bucket controls remain. The finite90-minute native CI bound is an accepted hang envelope based on retained56m24s plus29 mandatory fresh groups; expanded hosted duration is still unmeasured.
 
@@ -74,7 +78,7 @@ Measured using the established refresh-release-census helper's exact inventory/l
 | Shared schema |510 CREATE TABLE declarations;8948 lines |
 | Actual booted HTTP routes |1145 registrations/unique method-path pairs;1092 under /v1 |
 | Fresh-schema ledger sweep |106 checks:100 named+6 currency conservation;zero drift |
-| Markdown |855 files;143172 lines after this supplement |
+| Markdown |855 files;143176 lines after this supplement |
 
 The shared SPEC still reports older454/639/493/1116/103 values at2d072. Updating shared SPEC/QA/generated knowledge remains coordinator-owned; this pass records measured evidence without silently editing them. No new census document was created because the existing convention is a single release review.
 
