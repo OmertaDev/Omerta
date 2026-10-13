@@ -108,7 +108,7 @@ async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,m
 }
 export async function ownItemDurability(client,accountId,characterId) {
   const rows=(await client.query("SELECT DISTINCT i.id,s.remaining,s.revision,b.maximum,b.grade FROM item_instances i LEFT JOIN item_durability_states s ON s.item_id=i.id LEFT JOIN item_durability_birth_quality b ON b.item_id=i.id JOIN item_events e ON e.item_id=i.id AND e.event_kind='created' AND e.provenance_kind IN ('crafted','salvaged','awarded','imported') WHERE i.template_id=$1 AND i.definition_hash IS NULL AND ((i.owner_scope='account' AND i.owner_id=$2) OR (i.owner_scope='character' AND i.owner_id=$3)) ORDER BY i.id LIMIT 50",[ITEM_DURABILITY.templateId,id(accountId),id(characterId)])).rows;
-  return {items:rows.map(r=>({itemId:r.id,remaining:Number(r.remaining??r.maximum??100),maximum:Number(r.maximum??100),manufacturingGrade:r.grade??'standard',revision:Number(r.revision??0),creationQualityUnchanged:true})),repairAvailable:false};
+  return {items:rows.map(r=>({itemId:r.id,remaining:Number(r.remaining??r.maximum??100),maximum:Number(r.maximum??100),manufacturingGrade:r.grade??'standard',revision:Number(r.revision??0),creationQualityUnchanged:true})),repairAvailable:true};
 }
 export async function collectItemConditionIssues(client) {
   const states=(await client.query('SELECT * FROM item_durability_states ORDER BY item_id')).rows,issues=[];
