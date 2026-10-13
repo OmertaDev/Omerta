@@ -1,5 +1,6 @@
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -7,14 +8,15 @@ import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCatalog, historicalRecoveryCatalog,
   reviewCanonicalCheckpoint, CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER, CHECKPOINT_RPG_CATALOG_TRANSFER,
-  cityGameplayRecoveryCatalog } from '../tools/rc1-checkpoint-recovery-review.js';
+  cityGameplayRecoveryCatalog, preProductionRecoveryCatalog } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
 
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
   COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE' };
 const previous = Object.fromEntries(Object.keys(flags).map(key => [key, process.env[key]]));
-Object.assign(process.env, flags); const rpgCatalog = recoveryCatalog(coreProgressionContent());
+Object.assign(process.env, flags); const productionCatalog = recoveryCatalog(coreProgressionContent());
+const rpgCatalog = preProductionRecoveryCatalog(productionCatalog);
 const catalog = cityGameplayRecoveryCatalog(rpgCatalog);
 for (const [key, value] of Object.entries(previous)) if (value === undefined) delete process.env[key]; else process.env[key] = value;
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value);
@@ -22,10 +24,14 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer
 for (const [file, blob] of Object.entries(CHECKPOINT_RPG_CATALOG_TRANSFER.sourceBlobs)) {
   const reference = `${CHECKPOINT_RPG_CATALOG_TRANSFER.sourceRevision}:${file}`;
   assert.equal(git('rev-parse', reference).trim(), blob, 'Complete immutable RPG catalog producer Git blob');
-  assert.equal((await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'), git('show', reference),
+  assert.equal(firstBatchSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')), git('show', reference),
     'The exact full RPG catalog producer is preserved, not only its package labels');
 }
 assert.equal(CHECKPOINT_RECOVERY_REVIEW.rpgCatalogTransfer, CHECKPOINT_RPG_CATALOG_TRANSFER);
+assert.equal(hash(productionCatalog), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256);
+assert.equal(hash(productionCatalog.nodes.filter(node => node.packageId === 'company-production-quality')), CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.addedNodesSha256);
+assert.equal(productionCatalog.nodes.length - rpgCatalog.nodes.length, 1);
+assert.match(CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.scope, /No manufacturing.*qualification is inherited/);
 assert.match(CHECKPOINT_RPG_CATALOG_TRANSFER.scope, /ALL new RPG authority, reachability, recovery, native, worker, activation and deployment qualification remain outside/);
 assert.equal(hash(rpgCatalog), CHECKPOINT_RPG_CATALOG_TRANSFER.actualSha256);
 assert.equal(hash(catalog), CHECKPOINT_RPG_CATALOG_TRANSFER.predecessorSha256);
