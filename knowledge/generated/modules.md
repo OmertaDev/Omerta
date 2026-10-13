@@ -373,7 +373,7 @@
 | [src/rwastockkeeper.js](../../src/rwastockkeeper.js) | 125 | platform-core | 0 / 1 | 0 | 5 | 0 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 6 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 3813 | platform-core | 195 / 272 | 442 | 45 | 249 |
+| [src/server.js](../../src/server.js) | 3813 | platform-core | 195 / 273 | 442 | 45 | 250 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/skills.js](../../src/skills.js) | 171 | world-progression | 4 / 3 | 5 | 4 | 0 |
