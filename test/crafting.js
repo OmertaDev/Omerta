@@ -159,13 +159,14 @@ try {
 
   assert.deepEqual(validateCraftingDefinitions(EXTENDED_REGISTRY), {
     ok: true,
-    recipes: 5,
+    recipes: 6,
     recipeIds: [
       'recipe:car_salvage_basic',
       'recipe:fixture_salvage',
       'recipe:fixture_tool',
       'recipe:hardened_steel',
       'recipe:precision_lock_tool',
+      'recipe:tempered_precision_lock_tool',
     ],
   }, 'the runtime accepts an authentic validated extension without editing crafting code');
   assert.throws(
