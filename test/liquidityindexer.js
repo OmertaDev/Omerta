@@ -126,7 +126,10 @@ if (process.argv.includes('--concurrency-worker')) {
     // Name their ledger dependencies explicitly; never hide unknown dependencies with CASCADE.
     assert.equal(await count('equipment_maintenance_repairs'), 0);
     assert.equal(await count('service_subscription_cycles'), 0);
-    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,equipment_maintenance_repairs,service_subscription_cycles,transactions');
+    assert.equal(await count('worker_training_courses'), 0);
+    assert.equal(await count('worker_training_sessions'), 0);
+    assert.equal(await count('employment_organization_courses'), 0);
+    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,equipment_maintenance_repairs,service_subscription_cycles,worker_training_courses,worker_training_sessions,employment_organization_courses,transactions');
     await pool.query('UPDATE chain_reserve SET funded_omr=0 WHERE id=1');
     await pool.query('UPDATE vig_prize_pool SET balance=0 WHERE id=1');
     await pool.query('UPDATE desk_inventory SET balance=0,lifetime_bought=0 WHERE id=1');

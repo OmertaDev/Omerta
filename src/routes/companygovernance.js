@@ -1,4 +1,5 @@
-import * as G from '../game.js';import * as C from '../companygovernance.js';
+import * as G from '../game.js';
+import * as C from '../companygovernance.js';
 export function register(app,{pool,auth}){
  const pair=async(req,entityId,proposal,fn)=>G.withTwoCharacters(pool,req.user.sub,await C.companyGovernanceParty(pool,req.user.sub,entityId,proposal),fn,{meet:false});
  app.get('/v1/company/governance',{preHandler:auth},req=>{if(Object.keys(req.query||{}).length)throw new G.GameError('company_governance','filters');return C.companyGovernanceBoard(pool,req.user.sub);});
