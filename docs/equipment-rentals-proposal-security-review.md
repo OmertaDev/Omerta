@@ -117,7 +117,13 @@ Apply/review the exact base→proposal patch in the coordinator's current source
 preserving F09's extra estate import and `voidServiceSubscriptionsAtDeath` hook
 between SQL death and heir. If F09 recovery requires more character counterpart
 locks, compose their finite discovery before actors; this proposal does not
-modify F09. Reconcile the optional gateway DTO and mandatory test wiring,
+modify F09. The coordinator confirmed F09 touches only the already locked dead
+payer/metadata and a null-character sink, so it needs no additional living
+counterpart here. Preserve root recovery dependency
+`859a590c3bead7a5cd223a2bacaccd5ba63d6b12` and root `40479023` real F07
+repairAvailable:true projections in durability and the first-five DTO. Apply
+the diff/commits rather than replacing current files with baseline copies.
+Reconcile the optional gateway DTO and mandatory test wiring,
 source-transfer pins, catalog and whole integrated gates/SQL qualification under
 coordinator ownership. Retest current-source estate hooks and all affected
 components after composition. Pen/NPC/hunter lethal execution, a real queued
