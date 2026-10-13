@@ -1738,7 +1738,7 @@ export async function completeNode(
     } else {
       const actor = await actorOf(client, context, owner);
       const owned = (await client.query("SELECT id FROM item_instances WHERE owner_scope=$1 AND owner_id=$2 AND template_id='item:precision_lock_tool' AND state='active' AND definition_hash IS NULL ORDER BY created_at,id LIMIT 1", [owner.scope, owner.id])).rows[0];
-      if (!owned) borrowedLease = await borrowedPrecisionTool(client, { accountId: actor.accountId, characterId: actor.id, lock: true });
+      if (!owned || !(await precisionToolConditionRead(client, owned.id)).usable) borrowedLease = await borrowedPrecisionTool(client, { accountId: actor.accountId, characterId: actor.id, lock: true });
     }
   }
   return withItemMutation(

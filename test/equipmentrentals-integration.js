@@ -58,6 +58,11 @@ try {
     const offer = await ok(landlord, 'POST', '/v1/equipment/rentals/offers', { itemId: tool, rentCash: 100, depositCash: 250, durationSeconds: 3600, offerSeconds: 3600, published: true });
     const lease = await ok(p, 'POST', '/v1/equipment/rentals/accept', { offerId: offer.offerId, maxRentCash: 100, maxDepositCash: 250, consent: true });
     assert(lease.rentDebit && lease.rentCredit && lease.depositDebit);
+    const sourceLease = (await pool.query('SELECT * FROM equipment_rental_leases WHERE id=$1', [lease.leaseId])).rows[0];
+    await assert.rejects(R.paidEquipmentRentalWitness(pool, { ...sourceLease, rent_cash: 101 }), /paid_lease/);
+    await assert.rejects(R.paidEquipmentRentalWitness(pool, { ...sourceLease, borrower_account: foreign.account }), /paid_lease/);
+    await assert.rejects(R.paidEquipmentRentalWitness(pool, { ...sourceLease, ends_at: new Date(Date.now() + 86400000) }), /paid_lease/);
+    assert.equal(await R.borrowedPrecisionTool(pool, { accountId: foreign.account, characterId: foreign.id }), null);
     await ok(p, 'POST', root + '/start');
     await ok(p, 'POST', root + '/nodes/mystery:belladonna-trace/complete', { interactionId: 'inspect_belladonna_stamp' });
     await ok(p, 'POST', root + '/nodes/mystery:belladonna-lock/discover');
@@ -71,6 +76,7 @@ try {
     const beforeCustody = await custody(tool);
     const wrong = await call(p, 'POST', root + '/nodes/mystery:belladonna-lock/complete', { interactionId: 'forged' });
     assert.equal(wrong.statusCode, 400); assert.deepEqual(await custody(tool), beforeCustody);
+    assert.equal((await call(p, 'POST', root + '/nodes/mystery:belladonna-lock/complete', { interactionId: 'set_precision_tumblers', leaseId: lease.leaseId })).statusCode, 400, 'Caller cannot select rental custody authority');
     const key = 'rental-integration-lock-' + maximum;
     const completeBody = { interactionId: 'set_precision_tumblers' }, completeUrl = root + '/nodes/mystery:belladonna-lock/complete';
     if (native && maximum === 100) {
