@@ -20,6 +20,7 @@ import * as Hustle from './hustle.js';
 import * as Career from './career.js';
 import * as Corner from './corner.js';
 import * as Contacts from './contacts.js';
+import * as PlayerIntel from './playerintel.js';
 import * as Favors from './favors.js';
 import * as Crew from './crew.js';
 import * as Invites from './invites.js';
@@ -2141,14 +2142,14 @@ export async function buildServer() {
     const owner = (await pool.query('SELECT character_id FROM businesses WHERE id=$1', [req.params.id])).rows[0];
     if (!owner) throw new G.GameError('bad_business', 'No such front.');
     return G.withTwoCharacters(pool, req.user.sub, owner.character_id, (ch, victim, client, h) =>
-      Business.shakedownBusiness(ch, victim, req.params.id, client, h));
+      Business.shakedownBusiness(ch, victim, req.params.id, client, h), { requireKnown: true });
   });
   // rob a front — "hit the register" (the shakedown's stealth sibling on the SAME per-venue window)
   app.post('/v1/business/:id/rob', { preHandler: auth }, async (req) => {
     const owner = (await pool.query('SELECT character_id FROM businesses WHERE id=$1', [req.params.id])).rows[0];
     if (!owner) throw new G.GameError('bad_business', 'No such front.');
     return G.withTwoCharacters(pool, req.user.sub, owner.character_id, (ch, victim, client, h) =>
-      Business.robBusiness(ch, victim, req.params.id, client, h));
+      Business.robBusiness(ch, victim, req.params.id, client, h), { requireKnown: true });
   });
   // Tier-4: FRONT SPECIALIZATION (a max-tier $OMR-sink build choice) + THE HOSTILE TAKEOVER (two-party PvP)
   app.post('/v1/business/:id/specialize', { preHandler: auth }, async (req) =>
@@ -2157,7 +2158,7 @@ export async function buildServer() {
     const owner = (await pool.query('SELECT character_id FROM businesses WHERE id=$1', [req.params.id])).rows[0];
     if (!owner) throw new G.GameError('bad_business', 'No such front.');
     return G.withTwoCharacters(pool, req.user.sub, owner.character_id, (ch, victim, client, h) =>
-      Business.takeoverBusiness(ch, victim, req.params.id, client, h));
+      Business.takeoverBusiness(ch, victim, req.params.id, client, h), { requireKnown: true });
   });
   app.get('/v1/business', { preHandler: auth }, async (req) => {
     const cid = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0]?.id;
@@ -2585,51 +2586,26 @@ export async function buildServer() {
       Drop.claimColors(ch, client, h, { communities: req.body?.communities, pick: req.body?.pick })));
 
   // ── M3: the streets (§5.2) ──
-  app.get('/v1/streets', { preHandler: auth }, async () => {
-    const r = await pool.query(`SELECT c.id, c.name, c.respect, c.loc, c.jail_until, c.hosp_until, c.guard_price, c.is_npc, g.tag
-      FROM characters c LEFT JOIN gang_members m ON m.character_id = c.id LEFT JOIN gangs g ON g.id = m.gang_id
-      WHERE c.alive ORDER BY c.respect DESC LIMIT 100`);
-    // THE STREET WAR discovery: each mark's fronts as {id, kind} — EXISTENCE, never the books
-    // (pending/scrutiny stay the owner's; the anti-precise-kill-EV info rule). perf: restricted to the
-    // 100 characters on THIS board via a parameterized IN-list (pg-mem-safe, unlike `= ANY`), so the
-    // scan does not grow unbounded with the front economy; grouped in JS (the /v1/gangs posture).
-    const frontsBy = new Map();
-    const ids = r.rows.map((c) => c.id);
-    if (ids.length) {
-      const fr = await pool.query(
-        `SELECT id, character_id, kind FROM businesses WHERE character_id IN (${ids.map((_, i) => `$${i + 1}`).join(',')})`, ids);
-      for (const b of fr.rows) {
-        if (!frontsBy.has(b.character_id)) frontsBy.set(b.character_id, []);
-        frontsBy.get(b.character_id).push({ id: b.id, kind: b.kind });
-      }
-    }
-    return { streets: r.rows.map((c) => ({ id: c.id, name: c.name, level: levelOf(Number(c.respect)),
-      respect: Number(c.respect), loc: c.loc, gangTag: c.tag || null,
-      // THE POPULATION: residents are mechanically indistinguishable — every interaction runs the
-      // same audited code — but the flag is EXPOSED rather than hidden. In a game with real-money
-      // extraction, quietly passing scenery off as people is not a call to make silently; the client
-      // shows a subtle marker. Founder can override the presentation; the API stays honest.
-      npc: !!c.is_npc,
-      // surface the bodyguard offer so the hire market is discoverable (a guard lists a price,
-      // consent-by-listing; without this the whole earnable-defense feature is unreachable)
-      guardPrice: c.guard_price != null ? Math.floor(Number(c.guard_price)) : null,
-      fronts: frontsBy.get(c.id) || [],
-      jailed: jailed(c),
-      hospitalized: hospitalized(c) })) };
-  });
+  app.get('/v1/streets', { preHandler: auth }, async (req) =>
+    G.readCharacter(pool, req.user.sub, (ch, client) => PlayerIntel.playerIntelBoard(client, ch)));
+  app.post('/v1/streets/:targetId/meet', { preHandler: auth }, async (req) =>
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, PlayerIntel.meetPlayer, { requireKnown: true }));
+  app.post('/v1/intel/share/:recipientId', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      PlayerIntel.sharePlayerIntel(ch, req.params.recipientId, req.body?.targetId, client, h)));
   app.post('/v1/streets/:targetId/jump', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.jump(ch, victim, client, h, req.body?.intent)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.jump(ch, victim, client, h, req.body?.intent), { requireKnown: true }));
   // THE STREET WAR (omerta-street-rivals-design.md): grand theft PvP — the server draws a random
   // eligible car (no fleet leak) — and the rivals ledger (who has shown you malice; account-keyed)
   app.post('/v1/streets/:targetId/steal', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.stealCar(ch, victim, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.stealCar(ch, victim, client, h), { requireKnown: true }));
   // STREET WAR step two — trunk robbery, boat theft (at the docks), stable sabotage
   app.post('/v1/streets/:targetId/trunk', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.robTrunk(ch, victim, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.robTrunk(ch, victim, client, h), { requireKnown: true }));
   app.post('/v1/streets/:targetId/boat', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.stealBoat(ch, victim, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.stealBoat(ch, victim, client, h), { requireKnown: true }));
   app.post('/v1/streets/:targetId/sabotage', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.sabotage(ch, victim, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.sabotage(ch, victim, client, h), { requireKnown: true }));
   app.get('/v1/rivals', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Rivals.rivalsBoard(client, ch.account_id)));
   // THE CAST & THE STORY — the interpersonal cohesion layer (src/people.js): every relationship
@@ -2863,7 +2839,7 @@ export async function buildServer() {
   app.post('/v1/streets/:targetId/npchit', { preHandler: auth }, async (req) => {
     // COVERT (meet:false) — the victim only ever meets "a hired gun"; the payer's number must not
     // land in their black book (AUDIT-street-life HIGH-1)
-    const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.npcHit(ch, victim, client, h, req.body?.tier), { meet: false });
+    const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.npcHit(ch, victim, client, h, req.body?.tier), { meet: false, requireKnown: true });
     await closeSocketsOnKill(r, req.params.targetId);
     return r;
   });
@@ -2880,7 +2856,7 @@ export async function buildServer() {
   app.post('/v1/bodyguard/offer', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => S.offerBodyguard(ch, req.body?.price, client, h)));
   app.post('/v1/bodyguard/hire/:guardId', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.guardId, (ch, guard, client, h) => S.hireBodyguard(ch, guard, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.guardId, (ch, guard, client, h) => S.hireBodyguard(ch, guard, client, h), { requireKnown: true }));
   // M8: the Tailor & Engraver — vanity/identity $OMR sinks (display-only; every burn ledgered 'vanity:*').
   app.post('/v1/vanity/name', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => V.changeName(ch, req.body?.name, client, h)));
@@ -2903,12 +2879,12 @@ export async function buildServer() {
   app.delete('/v1/streets/search', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => S.callOffSearch(ch, client, h)));
   app.post('/v1/streets/:targetId/fire', { preHandler: auth }, async (req) => {
-    const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.fire(ch, victim, client, h, req.body?.rounds));
+    const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.fire(ch, victim, client, h, req.body?.rounds), { requireKnown: true });
     await closeSocketsOnKill(r, req.params.targetId); // a kill left the victim's account gangless — cut its stale gang: feed
     return r;
   });
   app.post('/v1/streets/:targetId/bust', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.bust(ch, victim, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => S.bust(ch, victim, client, h), { requireKnown: true }));
 
   // ── M3: the exchange (§5.4, escrowed order book) ──
   app.get('/v1/exchange', async () => {
@@ -3299,7 +3275,7 @@ export async function buildServer() {
   app.post('/v1/mentor/claim', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Mentor.claimMentor(ch, client, h)));
   app.post('/v1/mentor/gift/:protegeCharId', { preHandler: auth }, async (req) =>
-    G.withTwoCharacters(pool, req.user.sub, req.params.protegeCharId, (ch, protege, client, h) => Mentor.mentorGift(ch, protege, client, h)));
+    G.withTwoCharacters(pool, req.user.sub, req.params.protegeCharId, (ch, protege, client, h) => Mentor.mentorGift(ch, protege, client, h), { requireKnown: true }));
   app.get('/v1/leaderboard/mentors', { preHandler: auth }, async () => Mentor.mentorLeaderboard(pool));
 
   // ── THE STREAK — the daily-login habit loop. Claim once a day; the cash escalates with the run. ──
@@ -3469,7 +3445,7 @@ export async function buildServer() {
     // book, or the mark can identify and retaliate against a source whose anonymity was the whole
     // mechanic. The sibling exposeSecret already carries this flag (AUDIT-street-war-street-life D1).
     return G.withTwoCharacters(pool, req.user.sub, s.holder_character,
-      (ch, holder, client, h) => Secrets.payHush(ch, holder, req.params.id, client, h), { meet: false });
+      (ch, holder, client, h) => Secrets.payHush(ch, holder, req.params.id, client, h), { meet: false, requireKnown: false });
   });
   // expose — two-party (the holder + the mark's living street; both rows held so the meter bump
   // rides the mark's positional persist)
@@ -3481,7 +3457,7 @@ export async function buildServer() {
     // COVERT (meet:false) — the exposure is blamed on "the wire"; the mark must not learn the
     // holder's number from the act itself (AUDIT-street-life HIGH-1)
     return G.withTwoCharacters(pool, req.user.sub, mark.id,
-      (ch, markCh, client, h) => Secrets.exposeSecret(ch, markCh, req.params.id, client, h), { meet: false });
+      (ch, markCh, client, h) => Secrets.exposeSecret(ch, markCh, req.params.id, client, h), { meet: false, requireKnown: true });
   });
   // THE COLLECTION — the account-level completion ledger (pure status)
   app.get('/v1/collection', { preHandler: auth }, async (req) => Collection.collectionBoard(pool, req.user.sub));

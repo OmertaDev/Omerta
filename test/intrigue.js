@@ -13,6 +13,7 @@ import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { SECRETS } from '../src/rules.js';
 import { sweepSecrets } from '../src/secrets.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -34,6 +35,10 @@ const mk = async (base) => {
   return { token, id: ch.id, name };
 };
 const acctOf = async (chId) => (await pool.query(`SELECT account_id FROM characters WHERE id='${chId}'`)).rows[0].account_id;
+const know = async (spy, mark) => {
+  const target = (await pool.query('SELECT * FROM characters WHERE id=$1', [mark.id])).rows[0];
+  await recordPlayerIntel(pool, await acctOf(spy.id), target, { source: 'gossip', location: false });
+};
 const grantOmr = async (chId, n) => pool.query(
   `UPDATE account_persistent SET omr=${n} WHERE account_id='${await acctOf(chId)}'`);
 const setCash = (id, n) => pool.query(`UPDATE characters SET cash=${n} WHERE id='${id}'`);
@@ -42,6 +47,7 @@ const setCash = (id, n) => pool.query(`UPDATE characters SET cash=${n} WHERE id=
 let spy, mark, secretId;
 {
   spy = await mk('Spy'); mark = await mk('Mrk');
+  await know(spy, mark);
   await grantOmr(spy.id, 600);
   // self refused
   let r = await call('POST', `/v1/wire/dig/${spy.id}`, { token: spy.token });
@@ -71,6 +77,7 @@ let spy, mark, secretId;
   assert.equal(r.body?.error, 'already', 'one secret per house at a time');
   // DISINFORMATION cooks the books: a launder-dirty mark under disinfo digs clean
   const shadow = await mk('Shd');
+  await know(spy, shadow);
   await pool.query(`UPDATE characters SET wash_used=50000, disinfo_until=now()+interval '1 hour' WHERE id='${shadow.id}'`);
   r = await call('POST', `/v1/wire/dig/${shadow.id}`, { token: spy.token });
   assert.equal(r.body.found, false, 'cooked books beat the shovel');
@@ -179,6 +186,7 @@ let spy, mark, secretId;
 {
   const spy2 = await mk('DeadSpy');
   const mark2 = await mk('Mark2');
+  await know(spy2, mark2);
   await pool.query(`UPDATE characters SET season_kills=2 WHERE id='${mark2.id}'`);
   await grantOmr(spy2.id, 600);
   const r = await call('POST', `/v1/wire/dig/${mark2.id}`, { token: spy2.token });

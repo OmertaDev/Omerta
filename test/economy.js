@@ -10,6 +10,7 @@ import { runBuyback, mergeLegacyPools } from '../src/worker.js';
 import { CARS, carVal, carMelt, CONSTANTS, BUSINESS_EMPIRE, BUSINESSES, RIVALS, frontTitles, launderRankOf, businessMaxTier, POPULATION, CRIMES,
          RACKETS, ASSETS, OPERATIONS, opSlotsOf } from '../src/rules.js';
 import { spawnResident } from '../src/population.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 // ── car catalog integrity (content expansion guard: no dupe ids, well-formed, on-curve) ──
 {
@@ -545,6 +546,10 @@ delete process.env.BUSINESS_RAID_P;
 await seed("cash=2000000"); // restore the pocket for the gang-founding + shakedown blocks below
 
 // ── shakedown: a rival extorts a front for 30% of its PENDING income (PvP, two-party) ──
+// The rival heard the owner's identity before choosing this mark; gossip reveals no whereabouts.
+const rivalAccount = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [c2])).rows[0].account_id;
+await recordPlayerIntel(pool, rivalAccount, (await pool.query('SELECT * FROM characters WHERE id=$1', [cid])).rows[0],
+  { source: 'gossip', location: false });
 await pool.query(`UPDATE businesses SET scrutiny=0, scrutiny_at=now(), last_collect_at = now() - interval '10 hours', shakedown_at=NULL WHERE id='${bizId}'`);
 // gates: no extortion from a safehouse; a hospitalized owner is off-limits; family is omertà
 await seed2("energy=200, jail_until=NULL, hosp_until=NULL, safe_until = now() + interval '1 hour'");
@@ -1139,6 +1144,8 @@ assert(Number((await pool.query("SELECT COALESCE(SUM(amount),0) s FROM transacti
 const { body: { token: t3 } } = await call('POST', '/v1/auth/guest');
 await call('POST', '/v1/character', { token: t3, body: { name: 'Third Owner' } });
 const c3 = (await meOf(t3)).id;
+await recordPlayerIntel(pool, rivalAccount, (await pool.query('SELECT * FROM characters WHERE id=$1', [c3])).rows[0],
+  { source: 'gossip', location: false });
 await pool.query(`UPDATE characters SET respect=625000, cash=2000000, loc='docks' WHERE id='${c3}'`);
 const buy3 = await call('POST', '/v1/business/laundromat/buy', { token: t3 });
 const biz3 = buy3.body.id;

@@ -1,13 +1,13 @@
 // THE CIRCLE — the ambient stream of the people you know (crew / mentor / protégés / spouse).
 //
-// Two halves, both PURE READS: RIGHT NOW (a live snapshot of each circle member — name/level/district +
-// online + trouble flags) and LATELY (recent kills involving the circle, derived from kill_log). The
-// centre of the test: the circle resolves the right people (and not strangers), the online set drives the
-// chip, trouble surfaces, the blood feed frames around the circle member, NO account UUID ever leaks, and
+// Two halves, both PURE READS: learned observations and recent kills involving the circle. The
+// centre of the test: the circle resolves the right people (and not strangers), relationships supply
+// no live tracking or trouble report, the blood feed frames around the circle member, NO account UUID ever leaks, and
 // the whole thing moves no value.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { circleBoard } from '../src/circle.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -31,6 +31,8 @@ const stranger = await mk('Nobody'); const strA = await acctOf(stranger.id);
 // build the circle by seeding the relationship rows (pure status — no §10.4 surface): a crew mate + a mentor
 await pool.query("INSERT INTO crew_members (crew_id, account_id, name) VALUES ('crew-x',$1,'Boss'),('crew-x',$2,'Crew Mate')", [meA, mateA]);
 await pool.query('INSERT INTO mentorships (protege_account, mentor_account) VALUES ($1,$2)', [meA, mentA]);
+for (const target of [mate, ment]) await recordPlayerIntel(pool, meA,
+  (await pool.query('SELECT * FROM characters WHERE id=$1', [target.id])).rows[0]);
 
 const meCh = (await pool.query('SELECT * FROM characters WHERE id=$1', [me.id])).rows[0];
 const strCh = (await pool.query('SELECT * FROM characters WHERE id=$1', [stranger.id])).rows[0];
@@ -43,21 +45,29 @@ try {
   assert.equal(b.people.find((p) => p.name === 'Crew Mate').relation, 'crew', 'the crew mate is labeled crew');
   assert.equal(b.people.find((p) => p.name === 'The Vet').relation, 'mentor', 'the mentor is labeled mentor');
   assert.equal(b.people.some((p) => p.name === 'Nobody'), false, 'a stranger is not in the circle');
-  assert.equal(b.people.every((p) => !p.online), true, 'nobody is online (empty set)');
+  assert.equal(b.people.every((p) => p.online === null), true, 'online status is unknown');
+  assert.equal(b.people.every((p) => p.observedAt), true, 'observed members carry a timestamp');
 
   // ════════════ no account UUID ever leaks ════════════
   const blob = JSON.stringify(b);
   assert.equal(blob.includes(meA) || blob.includes(mateA) || blob.includes(mentA), false, 'no account UUID in the board — keyed by the living character');
 
-  // ════════════ the online set drives the chip ════════════
+  // ════════════ the online set grants no intel ════════════
   b = await circleBoard(client, meCh, [mateA]);
-  assert.equal(b.people.find((p) => p.name === 'Crew Mate').online, true, 'a connected member reads online');
-  assert.equal(b.people.find((p) => p.name === 'The Vet').online, false, 'and one who is not, does not');
+  assert.equal(b.people.find((p) => p.name === 'Crew Mate').online, null, 'connection is not an observation');
+  assert.equal(b.people.find((p) => p.name === 'The Vet').online, null, 'disconnection is not an observation either');
 
-  // ════════════ trouble surfaces (the vet gets jailed) ════════════
+  // ════════════ a relationship grants no live trouble report ════════════
   await pool.query("UPDATE characters SET jail_until=now()+interval '1 hour' WHERE id=$1", [ment.id]);
   b = await circleBoard(client, meCh, []);
-  assert.equal(b.people.find((p) => p.name === 'The Vet').jailed, true, 'a jailed circle member shows in trouble');
+  assert.equal(b.people.find((p) => p.name === 'The Vet').jailed, null, 'a jail change is not silently disclosed');
+  const vetBefore = b.people.find((p) => p.name === 'The Vet');
+  await pool.query("UPDATE characters SET loc='neon', respect=500000 WHERE id=$1", [ment.id]);
+  b = await circleBoard(client, meCh, []);
+  const vetAfter = b.people.find((p) => p.name === 'The Vet');
+  assert.equal(vetAfter.district, vetBefore.district, 'the district remains last known');
+  assert.equal(vetAfter.level, vetBefore.level, 'the level remains last known');
+  assert.equal(new Date(vetAfter.observedAt).getTime(), new Date(vetBefore.observedAt).getTime(), 'the observation age is preserved');
 
   // ════════════ LATELY — the crew mate whacks someone → the blood feed ════════════
   await pool.query("INSERT INTO kill_log (id, killer_account, victim_account, victim_name, at) VALUES ('kl-1',$1,$2,'Some Rat', now())", [mateA, strA]);

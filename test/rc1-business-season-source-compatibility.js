@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process';
 import * as O from '../tools/rc1-business-season-source-compatibility.js';
 import * as C from '../tools/rc1-commercial-reputation-source-compatibility.js';
 import * as D from '../tools/rc1-deed-source-compatibility.js';
+import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import { invoiceSourceBaseline } from '../tools/rc1-invoice-source-compatibility.js';
 import { WORLD_RECOVERY_REVIEW, verifyWorldRecoverySources } from '../tools/rc1-world-qualification.js';
@@ -15,7 +16,7 @@ const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const files=['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js'];
 assert.deepEqual(Object.keys(O.BUSINESS_SEASON_SOURCE_CURRENT_PINS),files);
 for(const file of files){
- const current=lf(fs.readFileSync(file,'utf8')),prior=git('show',`${O.BUSINESS_SEASON_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=playerIntelSourceBaseline(file,fs.readFileSync(file,'utf8')),prior=git('show',`${O.BUSINESS_SEASON_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${O.BUSINESS_SEASON_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',O.BUSINESS_SEASON_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',O.BUSINESS_SEASON_SOURCE_BASELINE_BLOBS[file]));entire(prior,git('show',`bcd22b9176186713749908aae5bd334d0362f040:${file}`));
  for(const [text,pins,bs]of [[current,O.BUSINESS_SEASON_SOURCE_CURRENT_PINS,O.BUSINESS_SEASON_SOURCE_CURRENT_BLOBS],[prior,O.BUSINESS_SEASON_SOURCE_BASELINE_PINS,O.BUSINESS_SEASON_SOURCE_BASELINE_BLOBS]]){assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
  assert.equal(hash(prior),C.COMMERCIAL_REPUTATION_SOURCE_CURRENT_PINS[file]);hashes++;assert.equal(blob(prior),C.COMMERCIAL_REPUTATION_SOURCE_CURRENT_BLOBS[file]);blobs++;

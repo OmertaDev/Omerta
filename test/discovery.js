@@ -1,13 +1,13 @@
 // THE ROLODEX (omerta-discovery-design.md) — player discovery.
 //
 // A §10.4-free read layer + one LFG toggle, so the centre of this file is: the three lists surface the
-// right HUMANS (near-level peers, a fresh "looking for a crew" recruit list, and newcomers), the
-// exclusions hold (self / NPC residents / agents / out-of-band whales), the LFG flag drives the recruit
-// list and goes stale, and the whole thing moves no value.
+// right KNOWN HUMANS, the exclusions hold (self / NPC residents / agents / out-of-band whales),
+// filtering uses stored observations, live status stays private, and the whole thing moves no value.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { DISCOVERY } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -22,6 +22,8 @@ const mk = async (name) => {
   return { token, id: me.id, name };
 };
 const acctOf = async (id) => (await pool.query('SELECT account_id a FROM characters WHERE id=$1', [id])).rows[0].a;
+const readCh = async (id) => (await pool.query('SELECT * FROM characters WHERE id=$1', [id])).rows[0];
+const learn = async (target) => recordPlayerIntel(pool, await acctOf(me.id), await readCh(target.id));
 const seed = (id, sql) => pool.query(`UPDATE characters SET ${sql} WHERE id='${id}'`);
 const board = async (t) => (await call('GET', '/v1/discovery', { token: t })).body;
 const driftOf = async (name) => {
@@ -50,6 +52,10 @@ await seed(whale.id, 'respect=62410');
 
 // ════════════ PEERS — near-level humans, exclusions held ════════════
 let b = await board(me.token);
+assert.equal(has(b.peers, 'Sally Near'), false, 'a nearby stranger is unknown until learned');
+assert.deepEqual(b.newcomers, [], 'joining the game supplies no stranger identities');
+for (const target of [peer, agent, resident, whale]) await learn(target);
+b = await board(me.token);
 assert.equal(b.me.level >= 20, true, 'the viewer carries a live level');
 assert.equal(b.me.band, DISCOVERY.BAND, 'the band is surfaced');
 assert.equal(has(b.peers, 'Sally Near'), true, 'a near-level human is a peer');
@@ -64,8 +70,9 @@ assert.equal(b.me.lfg, false, 'the viewer is not looking');
 // the peer flags LFG
 assert.equal((await call('POST', '/v1/discovery/lfg', { token: peer.token, body: { on: true } })).body.discovery, 'looking', 'the peer puts the word out');
 b = await board(me.token);
-assert.equal(has(b.looking, 'Sally Near'), true, 'a looking, crewless, near-level human is on the recruit list');
-assert.equal(has(b.peers, 'Sally Near'), false, 'and is de-duped OUT of the general peers list');
+assert.equal(has(b.looking, 'Sally Near'), false, 'a private board supplies no live recruiting status');
+assert.equal(has(b.peers, 'Sally Near'), true, 'the learned peer remains in the peers list');
+assert.equal(b.peers.find((r) => r.name === 'Sally Near').lfg, null, 'a sighting does not reveal LFG status');
 // the viewer's own flag round-trips
 assert.equal((await call('POST', '/v1/discovery/lfg', { token: me.token, body: { on: true } })).body.lfg, true, 'the viewer can flag too');
 assert.equal((await board(me.token)).me.lfg, true, 'and it surfaces on their own board');
@@ -76,7 +83,7 @@ await seed(peer.id, 'respect=5000');
 await call('POST', '/v1/crew', { token: peer.token, body: { name: 'Sallys Crew' } });
 assert.equal(has((await board(me.token)).looking, 'Sally Near'), false, 'a peer who now runs a crew drops off the recruit list');
 await call('POST', '/v1/crew/leave', { token: peer.token });   // back to solo + still LFG
-assert.equal(has((await board(me.token)).looking, 'Sally Near'), true, 'and is back on it once solo again');
+assert.equal(has((await board(me.token)).looking, 'Sally Near'), false, 'leaving a crew supplies no new intel');
 
 // a STALE flag (older than the TTL) drops from the recruit list but the peer stays discoverable
 await pool.query(`UPDATE characters SET lfg_at = now() - interval '10 days' WHERE id='${peer.id}'`);
@@ -91,67 +98,58 @@ assert.equal(has(b.newcomers, 'Johnny Front'), false, 'never yourself');
 assert.equal(has(b.newcomers, 'Bot Nine'), false, 'agents excluded here too');
 assert.equal(has(b.newcomers, 'Ghost Res'), false, 'residents excluded here too');
 
-// ════════════ STILL AROUND — the SECOND kind of scenery ════════════
-// The exclusions above know about NPCs and agents. An ABANDONED account is scenery too, and on a live
-// box it is the majority. Driven from BOTH ends: a filter that hid everyone would pass a one-sided
-// test. Dedicated characters, because the peer above is a fixture the later blocks depend on.
+// ════════════ OBSERVATIONS — activity and arrivals are not discovery ════════════
 {
   const gone = await mk('Long Gone');                 // a near-level human who stopped playing
   await seed(gone.id, 'respect=5000');
   let s = await board(me.token);
+  assert.equal(has(s.peers, 'Long Gone'), false, 'a fresh stranger is still unknown');
+  await learn(gone);
+  s = await board(me.token);
   assert.equal(has(s.peers, 'Long Gone'), true,
-    'PRECONDITION: a near-level human touched just now IS a peer — otherwise the gate below proves nothing');
+    'an explicitly learned near-level human is a peer');
   assert.equal(has(s.newcomers, 'Long Gone'), true, 'PRECONDITION: and fresh blood');
 
-  // GROUND TRUTH IS THE DATABASE — the gate reads last_accrued_at, so the fixture moves
-  // last_accrued_at, not some proxy the board might not consult.
+  // Activity is private: the board keeps the observation instead of silently aging out a person.
   const past = new Date(Date.now() - (DISCOVERY.SEEN_DAYS + 5) * 86400000);
   await pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [gone.id, past]);
   s = await board(me.token);
-  assert.equal(has(s.peers, 'Long Gone'), false,
-    `nobody has touched them in ${DISCOVERY.SEEN_DAYS + 5} days — "reach out to anyone" is only useful ` +
-    'advice about somebody who might answer');
-  assert.equal(has(s.newcomers, 'Long Gone'), false,
-    'and somebody who signed up long ago and never came back is neither fresh nor blood');
+  assert.equal(has(s.peers, 'Long Gone'), true, 'private inactivity cannot erase a known person');
+  assert.equal(has(s.newcomers, 'Long Gone'), true, 'newcomers means newly learned people');
   assert.equal(has(s.peers, 'Sally Near'), true, 'the live peer beside them is untouched by the gate');
 
-  // THE LAUNCH-NIGHT CASE, which is the whole reason the discriminator is recency and not activity:
-  // ten people arrive together, all level 1, none of whom has done anything yet. FRESH BLOOD is the
-  // list they meet each other on, so it must show them on their first second — where a filter on
-  // level, job count or online-ness would have hidden the entire cohort from itself.
+  // Arriving never broadcasts an identity; an explicit introduction makes them discoverable.
   const arrival = await mk('Just Landed');            // level 1, zero respect, has done nothing at all
-  assert.equal(has((await board(me.token)).newcomers, 'Just Landed'), true,
-    'a brand-new arrival who has done NOTHING is fresh blood immediately — the gate is recency, not activity');
+  assert.equal(has((await board(me.token)).newcomers, 'Just Landed'), false,
+    'a brand-new arrival is unknown before learning about them');
+  await learn(arrival);
+  assert.equal(has((await board(me.token)).newcomers, 'Just Landed'), true, 'an introduction adds the newcomer');
 
-  // LOOKING is deliberately UNGATED, and that is a decision rather than an oversight: an LFG flag set
-  // inside LFG_TTL_MS is an affirmative "I am here and want a crew", a stronger statement of being
-  // around than any timestamp. Sweeping the gate onto all three lists would silently drop it.
+  // Advertising a preference cannot reveal an unknown person through this private intel board.
   const flagged = await mk('Still Looking');
   await seed(flagged.id, 'respect=5000');
   await call('POST', '/v1/discovery/lfg', { token: flagged.token, body: { on: true } });
   await pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [flagged.id, past]);
-  assert.equal(has((await board(me.token)).looking, 'Still Looking'), true,
-    'a fresh LFG flag keeps you on the RECRUIT list regardless of the seen-window — the flag is the stronger signal');
+  assert.equal(has((await board(me.token)).looking, 'Still Looking'), false, 'an LFG flag supplies no identity');
 }
 
 // ════════════ STEP TWO — online presence + recruiting crews ════════════
 // `discoveryBoard` takes an onlineIds set from the route (the WS registry). The suite drives the
 // board directly through the module to exercise presence + the crews list.
 import { discoveryBoard } from '../src/discovery.js';
-const readCh = async (id) => (await pool.query('SELECT * FROM characters WHERE id=$1', [id])).rows[0];
 const acctOfId = async (id) => (await pool.query('SELECT account_id a FROM characters WHERE id=$1', [id])).rows[0].a;
 
-// presence: with the peer's account marked online, their card reads online; nobody online → all false
+// Socket presence supplies no intel, even for a known player.
 {
   const meCh = await readCh(me.id);
   const peerAcct = await acctOfId(peer.id);
   const on = await discoveryBoard(meCh, pool, [peerAcct]);
   const pc = [...on.looking, ...on.peers, ...on.newcomers].find((r) => r.name === 'Sally Near');
-  assert.equal(pc && pc.online, true, 'a connected account reads ONLINE on the board');
+  assert.equal(pc && pc.online, null, 'a connected account grants no live presence');
   const off = await discoveryBoard(meCh, pool, []);
-  assert.equal([...off.looking, ...off.peers, ...off.newcomers].every((r) => r.online === false), true, 'nobody online → every card offline');
+  assert.equal([...off.looking, ...off.peers, ...off.newcomers].every((r) => r.online === null), true, 'every presence stays unknown');
   assert.equal([...off.looking, ...off.peers, ...off.newcomers].every((r) => r.accountId === undefined && r.account_id === undefined), true,
-    'the account id never leaks even though online is derived from it');
+    'account ids never leave the board');
 }
 
 // recruiting crews: the peer opens a crew to new blood → it shows on the viewer's board near their level
@@ -166,7 +164,8 @@ const acctOfId = async (id) => (await pool.query('SELECT account_id a FROM chara
   const openCrew = (mc.crews || []).find((c) => c.name === 'The Open Door');
   assert(openCrew, 'a RECRUITING crew near your level is advertised on the board');
   assert.equal(openCrew.members, 1, 'with its size');
-  assert.equal(openCrew.maxLevel >= 20, true, 'and a level hint');
+  assert.equal(openCrew.maxLevel, null, 'recruiting does not reveal a member level');
+  assert.equal(openCrew.minLevel, null, 'no range reveals the sole member level indirectly');
 }
 
 // ════════════ STEP THREE — filters (district / no-family / online) ════════════
@@ -176,6 +175,8 @@ const acctOfId = async (id) => (await pool.query('SELECT account_id a FROM chara
   await pool.query(`UPDATE characters SET respect=5000, loc='docks', cash=100000 WHERE id='${fa.id}'`);
   await pool.query(`UPDATE characters SET respect=5000, loc='neon' WHERE id='${fb.id}'`);
   await call('POST', '/v1/gangs', { token: fa.token, body: { name: 'Filter Mob', tag: 'FLT' } });   // fa joins a family
+  await learn(fa);
+  await learn(fb);
   const meCh = await readCh(me.id);
   const names = (bd) => [...bd.looking, ...bd.peers, ...bd.newcomers].map((r) => r.name);
 
@@ -185,15 +186,16 @@ const acctOfId = async (id) => (await pool.query('SELECT account_id a FROM chara
   assert.deepEqual(dk.filters, { district: 'docks', nofam: false, online: false }, 'the applied filters are echoed back');
 
   const nf = await discoveryBoard(meCh, pool, [], { nofam: true });
-  assert.equal(names(nf).includes('Filter Neon'), true, 'the no-family filter keeps the unaffiliated');
-  assert.equal(names(nf).includes('Filter Docks'), false, 'and drops a family man');
+  assert.deepEqual(names(nf), [], 'unknown affiliation cannot satisfy an unaffiliated filter');
 
   const onl = await discoveryBoard(meCh, pool, [await acctOfId(fb.id)], { online: true });
-  assert.equal(names(onl).includes('Filter Neon'), true, 'the online filter keeps the connected');
-  assert.equal(names(onl).includes('Filter Docks'), false, 'and drops the offline');
+  assert.deepEqual(names(onl), [], 'the online filter cannot reveal socket presence');
 
   const none = await discoveryBoard(meCh, pool, [], {});
   assert.equal(names(none).includes('Filter Docks') && names(none).includes('Filter Neon'), true, 'no filter → both present');
+  await seed(fa.id, "loc='neon', respect=62410");
+  const afterMove = await discoveryBoard(meCh, pool, [], { district: 'docks' });
+  assert.equal(names(afterMove).includes('Filter Docks'), true, 'location and peer filters use last-known observations');
 }
 
 // ════════════ §10.4 — the whole thing moves no value ════════════

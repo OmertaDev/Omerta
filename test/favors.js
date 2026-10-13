@@ -17,6 +17,7 @@ import { buildServer } from '../src/server.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepFavors } from '../src/favors.js';
 import { FAVOR } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -207,6 +208,8 @@ assert.equal(await cashDrift(), cash0,
   await seed(killer.id, "energy=200, ammo=8000, nerve=50, jail_until=NULL, shoot_cd_until=NULL, hosp_until=NULL, loc='docks'");
   await seed(mark.id, "hosp_until=NULL, jail_until=NULL, safe_until=NULL, loc='docks', respect=1000");
   const cashK0 = await cashDrift();   // the kill's own flows (loot, the estate burn) are all ledgered
+  const target = (await pool.query('SELECT * FROM characters WHERE id=$1', [mark.id])).rows[0];
+  await recordPlayerIntel(pool, await acctOf(killer.id), target, { source: 'gossip', location: false });
   await call('POST', `/v1/streets/${mark.id}/search`, { token: killer.token });
   const k = (await call('POST', `/v1/streets/${mark.id}/fire`, { token: killer.token, body: { rounds: 8000 } })).body;
   assert.ok(k.kill, `the mark is dead (${JSON.stringify(k)})`);

@@ -9,6 +9,7 @@ import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REV
   CITY_SOURCE_PREDECESSOR_REVISION, assertCitySourceTransfer } from './rc1-deed-source-compatibility.js';
 
 import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
+import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
 export const CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/crew.js',
   actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/crew.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/crew.js'], inverseChunks: 2,
   evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
@@ -54,7 +55,7 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
   for (const [file, expected] of Object.entries(EXTENSION_PINS)) {
-    const text = String(await input.readFile(file)).replace(/\r\n/g, '\n');
+    const text = playerIntelSourceBaseline(file, String(await input.readFile(file)).replace(/\r\n/g, '\n'));
     const baseline = file === 'src/crew.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
       ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
     assert.equal(sha256(baseline), expected, 'Checkpoint review source changed: ' + file);

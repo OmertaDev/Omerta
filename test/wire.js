@@ -12,6 +12,7 @@ import { buildServer } from '../src/server.js';
 import { WIRE, RIVALS, intelCost, wireSubTier } from '../src/rules.js';
 import { sweepWire, sweepWireAlerts, sweepStandingWatches } from '../src/wire.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -21,10 +22,20 @@ const call = async (method, url, { token, body } = {}) => {
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;
+const introduced = [];
 const mk = async (name) => {
   const { body: { token } } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', { token, body: { name } });
-  return { token, id: (await meOf(token)).id };
+  const id = (await meOf(token)).id;
+  const ch = (await pool.query('SELECT * FROM characters WHERE id=$1', [id])).rows[0];
+  // This suite isolates paid surveillance: its participants already know each other's identity.
+  // Introductions supply no phone number or live district, preserving the one-way intel checks.
+  for (const other of introduced) {
+    await recordPlayerIntel(pool, other.account_id, ch, { source: 'gossip', location: false });
+    await recordPlayerIntel(pool, ch.account_id, other, { source: 'gossip', location: false });
+  }
+  introduced.push(ch);
+  return { token, id };
 };
 const acctOmr = (id, n) => pool.query(
   `UPDATE account_persistent SET omr = omr + ${n} WHERE account_id = (SELECT account_id FROM characters WHERE id='${id}')`);
@@ -52,7 +63,7 @@ assert(!r.body.premium, 'no premium block without a subscription');
 
 // ── the wiretap sink: self + gone gates ──
 assert.equal((await call('POST', `/v1/wire/tap/${watcher.id}`, { token: watcher.token })).body.error, 'self', "can't wire yourself");
-assert.equal((await call('POST', '/v1/wire/tap/nobody', { token: watcher.token })).body.error, 'gone', 'no such mark');
+assert.equal((await call('POST', '/v1/wire/tap/nobody', { token: watcher.token })).body.error, 'unknown_player', 'no investigation of an unknown mark');
 
 // ── place a tap: exact intel:wiretap burn ──
 const omrBefore = (await meOf(watcher.token)).omr;
@@ -264,7 +275,7 @@ assert.equal(tapView.law.indicted, false, 'the cooked read never flags an indict
 
 // (B) THE INFORMANT — a human source PIERCES the disinfo: the truth, and who they’re hunting
 assert.equal((await call('POST', `/v1/wire/informant/${spy.id}`, { token: spy.token })).body.error, 'self', 'no informant on yourself');
-assert.equal((await call('POST', '/v1/wire/informant/nobody', { token: spy.token })).body.error, 'gone', 'no informant on a ghost');
+assert.equal((await call('POST', '/v1/wire/informant/nobody', { token: spy.token })).body.error, 'unknown_player', 'no informant on an unknown mark');
 r = await call('POST', `/v1/wire/informant/${quarry.id}`, { token: spy.token });
 assert.equal(r.code, 200, 'the spy puts a standing informant on the quarry');
 assert.equal(r.body.spent, WIRE.INFORMANT_OMR, 'the informant is an intel:informant retainer sink');

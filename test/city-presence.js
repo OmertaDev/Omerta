@@ -5,6 +5,7 @@ import { cityPresence, cityIntel, recordCityEncounter, CITY_JOURNAL_LIMIT } from
 import { withTwoCharacters } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { retireResident } from '../src/population.js';
+import { readPlayerIntel } from '../src/playerintel.js';
 import { M3 } from '../src/rules.js';
 
 const db = await commandDatabase('city_presence'), pool = db.pool;
@@ -107,12 +108,29 @@ try {
   assert.equal(bounded.journal.length, 32); assert.equal(bounded.progress.totalEncounters, 39);
   assert.equal(bounded.journal[0].sequence, 39); assert.equal(bounded.journal.at(-1).sequence, 8);
   const rollbackBefore = await cityIntel(pool, me.account), failureKey = uuid();
+  const knowledgeRows = async () => ({
+    intel: (await pool.query('SELECT * FROM player_intel ORDER BY owner_account,target_character')).rows,
+    contacts: (await pool.query('SELECT * FROM contacts ORDER BY owner_account,contact_account')).rows,
+  });
+  const knowledgeBefore = await knowledgeRows();
   const interruptedPool = wrappedPool(async sql => { if (/UPDATE item_mutation_guards/i.test(sql) && /result_json/i.test(sql)) throw new Error('injected city receipt interruption'); });
   // Fail after the private row writes, before the replay guard completes.
   await assert.rejects(recordCityEncounter(interruptedPool, me.account, npc.id, request(me, npc), failureKey));
   assert.deepEqual(await cityIntel(pool, me.account), rollbackBefore);
+  assert.deepEqual(await knowledgeRows(), knowledgeBefore, 'Receipt failure restores exact notebook snapshots and phone contacts.');
   assert.equal((await encounter(me, npc, failureKey)).progress.totalEncounters, 40);
   assert.deepEqual(await neutral(), before, 'Encounters do not change resources, ledgers or contacts.');
+  await pool.query("UPDATE characters SET loc='docks',jail_until=$2 WHERE id=$1", [away.id, new Date(Date.now() + 60000)]);
+  await encounter(me, away);
+  const nonphysical = await readPlayerIntel(pool, me.account, away.id);
+  assert.equal(nonphysical.source, 'city_encounter'); assert.equal(nonphysical.loc, undefined); assert.equal(nonphysical.level, undefined);
+  assert.equal(await readPlayerIntel(pool, away.account, me.id), null, 'Collecting intel never identifies the observer to the source.');
+  await pool.query('UPDATE characters SET jail_until=NULL WHERE id=$1', [away.id]);
+  await pool.query('UPDATE characters SET hosp_until=$2 WHERE id=$1', [me.id, new Date(Date.now() + 60000)]);
+  await encounter(me, away);
+  assert.equal((await readPlayerIntel(pool, me.account, away.id)).loc, undefined, 'A hospitalized observer gains no physical sighting.');
+  await pool.query('UPDATE characters SET hosp_until=NULL WHERE id=$1', [me.id]);
+  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [away.id, away.loc]);
   if (postgres) {
     const a = await actor('Native A'), b = await actor('Native B');
     const nativeBefore = await neutral();

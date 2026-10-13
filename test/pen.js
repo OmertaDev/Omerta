@@ -12,6 +12,7 @@ import { buildServer } from '../src/server.js';
 import { PEN, NPC_HITMEN, yardEventOf, yardCharacterOf, dayOf, MASTERY, penSafe } from '../src/rules.js';
 import { sweepStaleBreaks } from '../src/pen.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { recordPlayerIntel, readPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -27,6 +28,10 @@ const mk = async (name) => {
 };
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
 const rawCh = async (id) => (await pool.query(`SELECT * FROM characters WHERE id='${id}'`)).rows[0];
+const know = async (hunter, mark) => {
+  const owner = await rawCh(hunter.id);
+  await recordPlayerIntel(pool, owner.account_id, await rawCh(mark.id), { source: 'gossip', location: false });
+};
 const ledgerOf = async (chId, reason) => Number((await pool.query(
   `SELECT COALESCE(SUM(amount),0) s FROM transactions WHERE character_id='${chId}' AND reason='${reason}'`)).rows[0].s);
 const poolCash = async () => Number((await pool.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool);
@@ -92,8 +97,8 @@ assert.equal((await call('POST', '/v1/pen/bribe', { token: cal.token, body: { se
 const killer = await mk('Shiv Sam');
 const mark = await mk('Marked Marv');
 const free = await mk('Free Fred');
-await seedCh(killer.id, `${jailFuture}, energy=200, cash=200000, muscle=400`);
-await seedCh(mark.id, `${jailFuture}, muscle=5, respect=1250`);
+await seedCh(killer.id, `${jailFuture}, energy=200, cash=200000, muscle=400, loc='docks'`);
+await seedCh(mark.id, `${jailFuture}, muscle=5, respect=1250, loc='canal'`);
 
 // gates: a free target is out of reach; you need a shiv
 assert.equal((await call('POST', `/v1/pen/shank/${free.id}`, { token: killer.token })).body.error, 'target_free', 'no reaching a free man');
@@ -121,8 +126,14 @@ await seedCh(killer.id, 'hosp_until=NULL');
 await seedCh(mark.id, `${jailFuture}`);
 await pool.query(`UPDATE account_persistent SET respawn_tokens=1 WHERE account_id=(SELECT account_id FROM characters WHERE id='${mark.id}')`);
 process.env.SHANK_P = '1';
+assert.equal(await readPlayerIntel(pool, (await rawCh(killer.id)).account_id, mark.id), null,
+  'the inmate is unfamiliar before the first landed shank');
 r = await call('POST', `/v1/pen/shank/${mark.id}`, { token: killer.token });
+assert.equal(r.code, 200, 'inmates can meet in the same prison despite different outside districts');
 assert.equal(r.body.revived, true, 'the mark’s revive insurance pulls them off the brink');
+const yardIntel = await readPlayerIntel(pool, (await rawCh(killer.id)).account_id, mark.id);
+assert.equal(yardIntel.name, 'Marked Marv', 'a landed shank introduces the unfamiliar inmate');
+assert.equal(yardIntel.loc, undefined, 'the prison encounter reveals no stored outside location');
 assert(!!(await rawCh(mark.id)).alive, 'the mark lives');
 assert.equal(Number((await pool.query(`SELECT respawn_tokens FROM account_persistent WHERE account_id=(SELECT account_id FROM characters WHERE id='${mark.id}')`)).rows[0].respawn_tokens), 0, 'the token was spent');
 assert.equal((await pool.query(`SELECT COALESCE(SUM(qty),0) q FROM pen_contraband WHERE character_id='${killer.id}' AND item='shiv'`)).rows[0].q, 0, 'the shiv is gone win or lose');
@@ -273,6 +284,7 @@ const caller = await mk('Caller Cass');
 const hitMark = await mk('Hit Mark');
 await seedCh(caller.id, `${jailFuture}, cash=1000000`);
 await seedCh(hitMark.id, 'respect=2000');   // over the NPC-hit level floor, on the outside
+await know(caller, hitMark);
 // a normal NPC hit from lockup is refused…
 assert.equal((await call('POST', `/v1/streets/${hitMark.id}/npchit`, { token: caller.token, body: { tier: 'legbreaker' } })).body.error, 'jailed', 'no arranging wet work from lockup — without a burner');
 // …but a burner reaches out. No burner yet → refused.
@@ -282,6 +294,11 @@ const feeBurn0 = await ledgerOf(caller.id, 'npchit:hire');
 r = await call('POST', `/v1/pen/burner/${hitMark.id}`, { token: caller.token, body: { tier: 'legbreaker' } });
 assert.equal(r.code, 200, 'the call goes through from the cell');
 assert.equal(r.body.burner, true, 'the burner was used');
+assert.equal((await pool.query(
+  `SELECT 1 FROM contacts WHERE
+     (owner_account=$1 AND contact_account=$2) OR (owner_account=$2 AND contact_account=$1)`,
+  [(await rawCh(caller.id)).account_id, (await rawCh(hitMark.id)).account_id])).rows.length, 0,
+  'an anonymous burner hire hands out no phone numbers');
 assert.equal(await ledgerOf(caller.id, 'npchit:hire'), feeBurn0 - NPC_HITMEN[0].cost, 'the NPC-hit fee burned, win or lose (the street npchit sink)');
 assert.equal((await pool.query(`SELECT COALESCE(SUM(qty),0) q FROM pen_contraband WHERE character_id='${caller.id}' AND item='burner'`)).rows[0].q, 0, 'the burner is spent — one call, then you eat the SIM');
 
@@ -291,6 +308,7 @@ const burnKiller = await mk('Burner Bane');
 const segTarget = await mk('Seg Target');
 await seedCh(burnKiller.id, `${jailFuture}, cash=2000000`);
 await seedCh(segTarget.id, `${jailFuture}, respect=1250`);   // jailed + over the NPC-hit level floor
+await know(burnKiller, segTarget);
 await call('POST', '/v1/pen/buy/burner', { token: burnKiller.token });
 await seedCh(segTarget.id, "hole_until = now() + interval '20 minutes'");
 assert.equal((await call('POST', `/v1/pen/burner/${segTarget.id}`, { token: burnKiller.token, body: { tier: 'legbreaker' } })).body.error, 'segregated', 'no burner-hit reaches a man in the hole');
@@ -305,6 +323,7 @@ await seedCh(burnKiller.id, 'pen_safe_until=NULL');
 // AUDIT REGRESSION: a LOCKDOWN freezes an INSIDE burner-kill, but an OUTSIDE call still goes through
 const outsideMark = await mk('Outside Otto');
 await seedCh(outsideMark.id, 'respect=2000');   // free, over the floor
+await know(burnKiller, outsideMark);
 process.env.PEN_YARD_EVENT = 'lockdown';
 assert.equal((await call('POST', `/v1/pen/burner/${segTarget.id}`, { token: burnKiller.token, body: { tier: 'legbreaker' } })).body.error, 'lockdown', 'lockdown freezes an inside burner-kill');
 r = await call('POST', `/v1/pen/burner/${outsideMark.id}`, { token: burnKiller.token, body: { tier: 'legbreaker' } });

@@ -34,14 +34,14 @@ export function register(app, { pool, auth, closeSocketsOnKill }) {
     app.post('/v1/pen/break/:id/go', { preHandler: auth }, async (req) =>
       G.withCharacter(pool, req.user.sub, (ch, client, h) => Pen.executeBreak(ch, req.params.id, client, h)));
     app.post('/v1/pen/shank/:targetId', { preHandler: auth }, async (req) => {
-      const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.shank(ch, victim, client, h));
+      const r = await G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.shank(ch, victim, client, h), { requireKnown: false });
       await closeSocketsOnKill(r, req.params.targetId);
       return r;
     });
     // step two: the burner phone — call in an NPC hit from inside (two-party, consumes a burner)
     // COVERT (meet:false) — a hit arranged from a cell is maximally anonymous (AUDIT-street-life HIGH-1)
     app.post('/v1/pen/burner/:targetId', { preHandler: auth }, async (req) =>
-      G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.burnerHit(ch, victim, client, h, req.body?.tier), { meet: false }));
+      G.withTwoCharacters(pool, req.user.sub, req.params.targetId, (ch, victim, client, h) => Pen.burnerHit(ch, victim, client, h, req.body?.tier), { meet: false, requireKnown: true }));
     // step five: prison factions (join/leave for cover) + the break RAT
     app.post('/v1/pen/faction/:id', { preHandler: auth }, async (req) =>
       G.withCharacter(pool, req.user.sub, (ch, client, h) => Pen.joinFaction(ch, req.params.id, client, h)));

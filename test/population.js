@@ -25,6 +25,7 @@ import { funnelStats } from '../src/growth.js';
 import { joinGang, removeMember } from '../src/social/gangs.js';
 import { opsOverview } from '../src/ops.js';
 import { POPULATION, levelOf, npcBandOf, M3, DUELS, CASINO, BOXING, STABLE, RACES } from '../src/rules.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
 // expensive polled reads in the game). This suite reads boards it has just written, so it pins the
@@ -45,6 +46,10 @@ const mk = async (name) => {
   return { token, id };
 };
 const one = async (q, p = []) => Number((await pool.query(q, p)).rows[0].n);
+const hearAbout = async (observerId, targetId) => recordPlayerIntel(pool,
+  (await pool.query('SELECT account_id FROM characters WHERE id=$1', [observerId])).rows[0].account_id,
+  (await pool.query('SELECT id, account_id, name, is_npc FROM characters WHERE id=$1', [targetId])).rows[0],
+  { source: 'gossip', sourceName: 'A witness', location: false });
 const driftOf = async (name) => {
   const r = await runLedgerInvariants(pool, { alert: false });
   const c = r.checks.find((x) => x.name === name);
@@ -84,12 +89,23 @@ assert.equal(await driftOf('character cash'), cashDrift0, 'the per-character cas
 const seeds = await one("SELECT COUNT(*) n FROM transactions WHERE reason='npc:seed'");
 assert.equal(seeds, 1, 'exactly one seed row');
 
-// ════════════ THE STREETS — present, and honestly flagged ════════════
+// ════════════ THE STREETS — a local introduction earns identity, with the resident flag honest ══
+await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, row.loc]);
+const nearby = (await call('GET', '/v1/streets', { token: player.token })).body.streets.find((s) => s.id === born.id);
+assert(nearby?.nearby, 'a local resident can be approached');
+assert.equal(nearby.name, null, 'a resident identity is not automatically known');
+assert.equal(nearby.level, null, 'a resident level is not automatically known');
+assert.equal(nearby.npc, true, 'the unfamiliar person is honestly marked as a resident');
+assert.equal((await call('POST', `/v1/streets/${born.id}/meet`, { token: player.token })).code, 200,
+  'introducing yourself reveals the resident identity');
 const streets = (await call('GET', '/v1/streets', { token: player.token })).body.streets;
 const onStreet = streets.find((s) => s.id === born.id);
-assert(onStreet, 'the resident is on the streets roster — the empty-board problem is the whole point');
+assert(onStreet, 'the encountered resident appears in the notebook');
+assert.equal(onStreet.name, row.name, 'the introduction supplies the name');
+assert.equal(onStreet.loc, row.loc, 'the introduction supplies a dated sighting');
+assert(onStreet.observedAt, 'the sighting carries its time');
 assert.equal(onStreet.npc, true, 'and the flag is EXPOSED, not hidden (real-money game: no passing scenery off as people)');
-assert.equal(streets.find((s) => s.id === player.id).npc, false, 'a real player is not flagged');
+assert(!streets.some((s) => s.id === player.id), 'your own identity is not an intel target');
 
 // ════════════ THE EXCLUSIONS — the human-only surfaces ════════════
 // (1) $OMR — a resident must never hold any. The Street Wage used to be the sharp edge of this
@@ -559,6 +575,7 @@ assert.equal(npcBandOf(0.999).id, 'boss', 'the high roll is the boss band');
   const bird = (await pool.query(
     'SELECT id, name FROM characters WHERE alive AND is_npc AND jail_until > now() LIMIT 1')).rows[0];
   const buster = await mk('Springer Sal');
+  await hearAbout(buster.id, bird.id);
   let sprung = null; let refused = null;
   for (let i = 0; i < 40 && !sprung; i++) {
     // Clear the buster's fail-jail AND the D15 rolling attempt bucket between tries. The bucket is
@@ -613,6 +630,7 @@ assert.equal(npcBandOf(0.999).id, 'boss', 'the high roll is the boss band');
   // Dropping the scale pays ~$33,000 — an order of magnitude, so the band below catches the mutation.
   await pool.query("UPDATE businesses SET last_collect_at = now() - interval '10 hours' WHERE id=$1", [mFront.id]);
   await pool.query('UPDATE characters SET cunning=2000, speed=2000, energy=200, heat=0, jail_until=NULL, hosp_until=NULL WHERE id=$1', [player.id]);
+  await hearAbout(player.id, marked.id);
   let robWin = null;
   for (let i = 0; i < 40 && !robWin; i++) {
     await pool.query('UPDATE characters SET energy=200, jail_until=NULL WHERE id=$1', [player.id]);
@@ -686,14 +704,17 @@ assert.equal(npcBandOf(0.999).id, 'boss', 'the high roll is the boss band');
     'the freight budget keeps the resident clear of the picked-clean line (no self-inflicted turnover)');
   // …and the player can mug it
   await pool.query("UPDATE characters SET energy=200, jail_until=NULL, gta_at=NULL, loc=(SELECT loc FROM characters WHERE id='" + hauler.id + "') WHERE id=$1", [player.id]);
+  await hearAbout(player.id, hauler.id);
   let mug = null;
+  let mugRefused = null;
   for (let i = 0; i < 40 && !mug; i++) {
     await pool.query('UPDATE characters SET energy=200, jail_until=NULL WHERE id=$1', [player.id]);
     await pool.query('UPDATE characters SET trunk_robbed_at=NULL WHERE id=$1', [hauler.id]);
     const rb = await call('POST', `/v1/streets/${hauler.id}/trunk`, { token: player.token });
     if (rb.code === 200 && rb.body.win) mug = rb.body;
+    else if (rb.body.error) mugRefused = rb.body.error;
   }
-  assert(mug && mug.qty >= 1, `the resident's freight is muggable (${JSON.stringify(mug)})`);
+  assert(mug && mug.qty >= 1, `the resident's freight is muggable (${JSON.stringify(mug)}${mugRefused ? `; refused: ${mugRefused}` : ''})`);
 }
 
 // ══════════ STREET WAR step three — the resident's STABLE ══════════

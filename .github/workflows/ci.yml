@@ -169,6 +169,9 @@ jobs:
       - name: Invite gate and Crew invitation controls in the browser
         run: npm run test:invites:browser
 
+      - name: Discovery-based player intel in the browser
+        run: node test/player-intel-browser.js
+
       - name: City Mode and RPG desktop/mobile journeys
         run: npm run test:city:browser
 

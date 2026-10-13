@@ -10,6 +10,7 @@ import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
 import { UNDERWORLD, BLACK_MARKET, CONVOY, CASINO, ACCESS_STAKE, GUNS, CONSUMABLES, NPC_HITMEN, leadTaskOf, taskLabelOf, dayOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 
 const app = await buildServer();
 const pool = app.pool;
@@ -25,6 +26,12 @@ const mk = async (name) => {
   return { token, id: (await meOf(token)).id };
 };
 const seedCh = (id, cols) => pool.query(`UPDATE characters SET ${cols} WHERE id='${id}'`);
+// Directed-search and anonymous-hire fixtures know their mark's identity, without phone numbers.
+const know = async (hunter, mark) => {
+  const owner = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [hunter.id])).rows[0];
+  const target = (await pool.query('SELECT * FROM characters WHERE id=$1', [mark.id])).rows[0];
+  await recordPlayerIntel(pool, owner.account_id, target, { source: 'gossip', location: false });
+};
 const seedNpc = async (chId, npcId, standing) => {
   const upd = await pool.query(`UPDATE npc_standing SET standing=${standing} WHERE character_id='${chId}' AND npc_id='${npcId}'`);
   if (!upd.rowCount) await pool.query(`INSERT INTO npc_standing (character_id, npc_id, standing) VALUES ('${chId}','${npcId}',${standing})`);
@@ -105,6 +112,7 @@ assert.equal(await ledgerOf(ted.id, 'underworld:discharge'), -2 * 10 * UNDERWORL
 
 // ── VINNIE THE MATCH: T1 NPC hitmen ×0.9, T2 post-fee waived, T3 searches ×0.9 ──
 await seedNpc(ted.id, 'fixer', 25);
+await know(ted, mark);
 r = await call('POST', `/v1/streets/${mark.id}/npchit`, { token: ted.token, body: { tier: 'legbreaker' } });
 assert.equal(r.code, 200, 'the contractor takes the job');
 const legCost = Math.floor(NPC_HITMEN.find((t) => t.id === 'legbreaker').cost * UNDERWORLD.FX.NPCHIT_MULT);
@@ -118,6 +126,7 @@ assert.equal(r.code, 200, 'contract posted');
 assert.equal((await meOf(ted.token)).cash, tedCash - 505, 'T2 pays amount + street tax only — the post fee is waived');
 assert.equal(await ledgerOf(ted.id, 'bounty:take'), -5, 'the take row is the tax alone');
 await seedNpc(ted.id, 'fixer', 90);
+await know(ted, rob);
 r = await call('POST', `/v1/streets/${rob.id}/search`, { token: ted.token });
 assert.equal(r.code, 200, 'the search is out');
 const eta = new Date(r.body.placedAt).getTime() - Date.now();
@@ -196,6 +205,7 @@ await seedNpc(mia.id, 'madame', 90);
 r = await call('GET', '/v1/underworld', { token: mia.token });
 assert.deepEqual(r.body.whispers, { asking: 0 }, 'T3: pillow talk — quiet streets read zero');
 const hank = await mk('Hunter Hank');
+await know(hank, mia);
 assert.equal((await call('POST', `/v1/streets/${mia.id}/search`, { token: hank.token })).code, 200, 'a hunter starts asking around');
 r = await call('GET', '/v1/underworld', { token: mia.token });
 assert.deepEqual(r.body.whispers, { asking: 1 }, 'the girls hear the question — a count, never a name');
@@ -252,6 +262,7 @@ await seedCh(ray.id, 'cash=100000');
 await seedNpc(ray.id, 'doc', 30);
 const vic2 = await mk('Poor Vic');
 await seedCh(vic2.id, 'respect=250');
+await know(ray, vic2);
 assert.equal((await call('POST', `/v1/streets/${vic2.id}/npchit`, { token: ray.token, body: { tier: 'legbreaker' } })).code, 200, 'ray sends the man with the bag');
 assert.equal((await standingOf(ray.token, 'fixer')).standing, 4, 'Vinnie approves (+4)');
 assert.equal((await standingOf(ray.token, 'doc')).standing, 28, 'the Doc does not (−2)');
@@ -281,6 +292,7 @@ await seedNpc(vip.id, 'doc', 70);     // a real friend of the Doc (≥ GRUDGE_MI
 await seedNpc(vip.id, 'madame', 60);  // and of the Madame (exactly at the line)
 await seedNpc(vip.id, 'harbor', 10);  // an acquaintance of Big Tuna — no grudge for those
 await seedNpc(vip.id, 'fixer', 90);   // audit L3: even a MADE friend of Vinnie earns no grudge — he brokers hits
+await know(gus, vip);
 let attempts = 0, gRes = null;
 for (let i = 0; i < 80 && !gRes?.killed; i++) {
   await seedCh(gus.id, 'cash=5000000, npchit_at=NULL');
