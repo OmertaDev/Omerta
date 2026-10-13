@@ -63,6 +63,18 @@ try{
  const priceBefore=[await cash(owner),await cash(memoryOwner)],purchase=await ok(owner,'POST',`/v1/company/intelligence/${publication.publication.id}/purchase`,{consent:true,maxPrice:50,reportHash:publication.publication.reportHash},'late-intelligence-paid',true);
  assert.equal(purchase.paid,50);assert.deepEqual([await cash(owner),await cash(memoryOwner)],[priceBefore[0]-50,priceBefore[1]+50]);
  assert.equal((await ok(foreign,'GET','/v1/company/intelligence/mine')).entitlements.length,0);
+ const acquisitionQuote=(p)=>call(p,'POST','/v1/company/acquisitions/quote',{depotId:p.depot,buyerCharacter:foreign.id});
+ assert.equal((await acquisitionQuote(memoryOwner)).json().message,'operating_memory_archive_required');
+ // Administrative negative provenance drift: any linked history must refuse;
+ // this never creates a publication, payment, entitlement, or transfer success.
+ await pool.query('UPDATE economic_intelligence_publications SET depot_id=$2 WHERE id=$1',[publication.publication.id,owner.depot]);
+ for(const state of['published','retired']){await pool.query('UPDATE economic_intelligence_publications SET state=$2 WHERE id=$1',[publication.publication.id,state]);assert.equal((await acquisitionQuote(owner)).json().message,'intelligence_archive_required');}
+ await pool.query("UPDATE economic_intelligence_publications SET depot_id=$2,state='published' WHERE id=$1",[publication.publication.id,memoryOwner.depot]);
+ const course=await ok(owner,'POST','/v1/company/training',{depotId:owner.depot,stat:'muscle',sessions:1,wageCash:1,durationSeconds:600}),jobId='negative-late-acquisition-job';
+ // Explicit synthetic negative metadata, not crypto backing or real work.
+ await pool.query("INSERT INTO funded_external_work_jobs(id,source_identity,depot_id,course_id,ordinal,stat,owner_account,owner_character,terms,work_hash,funding_hash,funding_proof,phase,state,created_at,expires_at) VALUES($1,$1,$2,$3,1,'muscle',$4,$5,$6,$7,$7,$6,'synthetic_control_only','offered',clock_timestamp(),clock_timestamp())",[jobId,owner.depot,course.courseId,owner.account,owner.id,{},'1'.repeat(64)]);
+ for(const state of['offered','recovered']){await pool.query('UPDATE funded_external_work_jobs SET state=$2 WHERE id=$1',[jobId,state]);assert.equal((await acquisitionQuote(owner)).json().message,'external_work_archive_required');}
+ await pool.query('DELETE FROM funded_external_work_jobs WHERE id=$1',[jobId]);await ok(owner,'POST','/v1/company/training/close',{courseId:course.courseId});
  async function jointPlan(price){const s=await ok(owner,'GET',`/v1/company/partnerships/${rid}/team/snapshot`),made=await ok(planner,'POST',`/v1/company/partnerships/${rid}/team/plans`,{kind:'governance_config',config:{...cfg,salePrice:price},expectedRevision:s.revision,expiresInSeconds:600,snapshotHash:s.snapshotHash,teamRevision:s.teamRevision,turnId:s.turnId,selectionHash:s.selectionHash});for(const p of[owner,planner])await ok(p,'POST',`/v1/company/governance/${made.plan.proposalId}/vote`,{approve:true,proposalHash:made.plan.proposalHash});return made.plan;}
  const stale=await jointPlan(360);await ok(owner,'POST',`/v1/company/management-teams/plans/${stale.id}/autonomy`,{consent:true,enabled:true,planHash:stale.planHash,expiresInSeconds:60});
  await ok(owner,'POST',`/v1/depot/${owner.depot}/policy`,{expectedRevision:1,enabled:true,allowRestock:true,allowReceive:true,businessPriority:false,maxSpend:5000,reserveCash:1000,expiresInSeconds:600});

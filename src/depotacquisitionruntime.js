@@ -23,8 +23,13 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'company_specializations:business_id','company_specialization_runs:business_id','commercial_negotiations:depot_id',
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
- 'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id']);
+ 'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
+ 'agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 async function assertNoObligations(c,depotId){
+ if((await c.query('SELECT id FROM agent_operating_memory_facts WHERE business_id=$1 LIMIT 1',[depotId])).rows.length)fail('operating_memory_archive_required');
+ if((await c.query('SELECT id FROM economic_intelligence_publications WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('intelligence_archive_required');
+ if((await c.query('SELECT id FROM funded_external_work_jobs WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('external_work_archive_required');
+ if((await c.query('SELECT id FROM strategy_laboratories WHERE business_id=$1 LIMIT 1',[depotId])).rows.length)fail('strategy_laboratory_archive_required');
  if((await c.query("SELECT id FROM company_restructuring_plans WHERE depot_id=$1 AND state='ready' LIMIT 1",[depotId])).rows.length)fail('restructuring_pending');
  if((await c.query("SELECT id FROM commercial_disputes WHERE depot_id=$1 AND state IN ('proposed','agreed') LIMIT 1",[depotId])).rows.length)fail('commercial_dispute_pending');
  if((await c.query("SELECT id FROM infrastructure_concessions WHERE business_id=$1 AND state='accepted' LIMIT 1",[depotId])).rows.length)fail('concession_active');
