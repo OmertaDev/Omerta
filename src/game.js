@@ -1116,6 +1116,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
   await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
   try {
     const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
+    try {
     const prelockState = lockHooks?.beforeCharacterLock
       ? await lockHooks.beforeCharacterLock(client, accountId) : null;
     // THE DEATH RACE. Found by playing: get killed with the tab open and the very next request
@@ -1172,6 +1173,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     await persistKitchen(client, ch, owned);
     await persistAccount(client, accountId, acct);
     return { ch, acct, owned, result };
+    } catch (error) { throw deadlockToRetry(error); }
     });
     // Hooks below use the pool themselves. Return this connection first: a saturated pool must
     // not wait for a second checkout while every committed action still holds its first one.
@@ -1406,6 +1408,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
   if (tgt.rows.length && tgt.rows[0].account_id !== accountId) await settleIfDue(pool, tgt.rows[0].account_id);
   try {
     const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
+    try {
     const mine = await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId]);
     if (!mine.rows.length) throw new GameError('no_character', 'Create a character first.');
     const myId = mine.rows[0].id;
@@ -1458,6 +1461,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     }
     for (const [accId, a] of Object.entries(accts)) await persistAccount(client, accId, a);
     return { ch, acct, owned, result };
+    } catch (error) { throw deadlockToRetry(error); }
     });
     // Same ownership boundary as withCharacter: post-commit hooks acquire their own connections.
     if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
