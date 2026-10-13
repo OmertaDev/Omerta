@@ -30,9 +30,9 @@ export function sourcePairReviewedTreeHash(records) {
   return sha256(JSON.stringify(reviewed));
 }
 export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
-  predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: 'a264b8b0e07fa02853fcaee62fe72a042b8b7576',
+  predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: '0270f3aeb139c4ce5204c63bb5e6a25b7cea7746',
   predecessorTree: '1a5b5c2f649bc025b9a5bd22b0fb73e5636aab3e7f4f3cfb77a3422b7385a4fd',
-  candidateTree: '3f8ff96b2474bcefbdd8c10b5137781af379b49e51bab04d29d1dcc4e4892721',
+  candidateTree: 'fe4913ffa8b9d7fe6f4bdebb5ccaee91721c9a65af92651279c15d0705ddeeda',
   predecessorSchema: 'd45c84e1b364d82f0834975f08a58675c8e3930dc35f0dd47534c5bed4741c9f',
   candidateSchema: '220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390',
   predecessorCatalog: '2b809acfc18a556e42ef0a144523ff3e69253623e7c5a24895f3743dd8d120e8',
