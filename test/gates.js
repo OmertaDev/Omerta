@@ -266,6 +266,7 @@ assert.equal(undeclared.length, 0,
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectItemConditionIssues: 'read-only physical-condition and manufacturing-witness ledger oracle; no player collection, income or mutation authority',
   collectDefinitionChecks: 'read-only offline Phase 2 registry audit inside the ledger snapshot; no player collection, income or mutation authority',
   collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
     + 'validator admits trade only through the separate cashless, same-hash barter manifest, while the '
