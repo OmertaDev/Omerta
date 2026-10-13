@@ -641,6 +641,16 @@ const DISPOSITION = {
   contract_auctions: 'metadata', // historical original buyer consent cannot authorize an heir award
   contract_auction_bids: 'metadata', // original supplier bids and sealed history grant no fresh heir fulfillment authority
   contract_auction_requests: 'metadata', // original actor request/ACK identity remains historical and never authorizes a fresh heir award
+  worker_training_courses: 'escrow', // original employer death burns reserve; surviving original employer recovers after apprentice death, without heir training rights
+  worker_training_requests: 'ledger', // immutable original-account and actor request acknowledgements grant no fresh training authority
+  worker_training_sessions: 'ledger', // original apprentice stat, energy and canonical wage journal history retains source identity
+  employment_organizations: 'special', // original founder death retires consent; actual Crew roster, leader and Depot checks govern fresh publication
+  employment_organization_requests: 'ledger', // original actor request receipts retain historical Crew consent and budgets
+  business_partnerships: 'special', // original-party death retires relationship; at-risk capital remains in canonical Depot estate, without a principal guarantee
+  business_partnership_contributions: 'ledger', // original contributor and canonical Depot funding provenance grants no inherited principal claim
+  company_governance_proposals: 'special', // original-party death retires pending config proposals; fresh execution requires both original votes and current source policy
+  company_governance_votes: 'ledger', // immutable original account, actor, hash and consent history grants no inherited votes
+  company_acquisitions: 'special', // original-party death retires pending offers; executed title and paired payments remain immutable history
   game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
   game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value

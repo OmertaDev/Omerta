@@ -267,6 +267,8 @@ assert.equal(undeclared.length, 0,
 // pass as one.
 const COLLECT_EXEMPT = {
   collectContractAuctionIssues: 'read-only canonical award/source binding oracle; no player collection, income or mutation authority',
+  collectMiddleFiveIssues: 'read-only original contribution, payout, vote and acquisition source binding oracle; no player collection, income or mutation authority',
+  collectWorkerTrainingIssues: 'read-only canonical reserve, wage, refund, burn and session binding oracle; no player collection, income or mutation authority',
   collectEquipmentRentalIssues: 'read-only paid deposit/custody/title ledger oracle; no player collection, income or mutation authority',
   collectServiceSubscriptionIssues: 'read-only prepaid cycle/repair/payment binding oracle; no player collection, income or mutation authority',
   collectItemConditionIssues: 'read-only physical-condition and manufacturing-witness ledger oracle; no player collection, income or mutation authority',
@@ -2176,6 +2178,13 @@ const SCENERY_WAIVED = {
     }
     return null;
   };
+  const exactAcquisitionHashField = (base, source, lit, match) => {
+    const preimage = "hash({depot:d,seller:seller.id,buyer:buyer.id,references,slice:'no_authority_or_unsettled_obligations'})";
+    const [, key, variable, member] = match;
+    if (base !== 'depotacquisitionruntime.js' || !['seller', 'buyer'].includes(key) || variable !== key || member !== 'id') return false;
+    return source.split(preimage).length === 2 && lit.includes(preimage)
+      && match.index === lit.indexOf(preimage) + preimage.indexOf(key + ':' + variable + '.id');
+  };
   const exactLogisticsField = (base, source, lit, match) => {
     if (base !== 'crewlogistics.js' || match[1] !== 'kind' || match[2] !== 'body' || match[3] !== 'kind') return false;
     const start = source.indexOf('export function validateCrewLogisticsTarget(body) {');
@@ -2188,6 +2197,7 @@ const SCENERY_WAIVED = {
       && !/\bbody\.kind\s*=(?!=)|\bkinds\.(?:push|pop|shift|unshift|splice)\s*\(/.test(source);
   };
   let logisticsClassified = 0;
+  let acquisitionHashClassified = 0;
   const cityClassified = [];
   const cityRawProblems = source => {
     const problems = [];
@@ -2207,6 +2217,8 @@ const SCENERY_WAIVED = {
         // a HANDLE says so in its own name — `carId`, `heistId`, `character_id`, or the bare `id`
         if (k === 'id' || /Id$/.test(k) || /_id$/.test(k)) continue;
         corpus++;
+        // Only these exact hash-preimage identities are private provenance, not narrative fields.
+        if (exactAcquisitionHashField(base, s, lit, m)) { acquisitionHashClassified++; continue; }
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2234,6 +2246,17 @@ const SCENERY_WAIVED = {
   assert.deepEqual(cityClassified.sort(), ['closed text/emote discriminator', 'issued outfit selector'],
     'The exact City selector/discriminator classifications must each govern one current site.');
   assert.equal(logisticsClassified, 1, 'Exactly one closed Crew source discriminator must be classified.');
+  assert.equal(acquisitionHashClassified, 2, 'Only both actual private acquisition hash fields are classified.');
+  const acquisitionSource = fs.readFileSync('src/depotacquisitionruntime.js', 'utf8');
+  const acquisitionPreimage = "hash({depot:d,seller:seller.id,buyer:buyer.id,references,slice:'no_authority_or_unsettled_obligations'})";
+  for (const match of rawKeyFields(acquisitionPreimage)) {
+    assert(exactAcquisitionHashField('depotacquisitionruntime.js', acquisitionSource, acquisitionPreimage, match));
+    for (const changed of [acquisitionSource + acquisitionPreimage, acquisitionSource.replace("slice:'no_authority_or_unsettled_obligations'", "slice:'unreviewed'")])
+      assert(!exactAcquisitionHashField('depotacquisitionruntime.js', changed, acquisitionPreimage, match));
+  }
+  const publicAcquisitionIds = 'return {seller:seller.id,buyer:buyer.id};';
+  for (const match of rawKeyFields(publicAcquisitionIds))
+    assert(!exactAcquisitionHashField('depotacquisitionruntime.js', acquisitionSource, publicAcquisitionIds, match), 'A narrative field gets no private-hash exception');
   const logisticsSource = fs.readFileSync('src/crewlogistics.js', 'utf8');
   for (const changed of [
     logisticsSource.replace('!kinds.includes(body.kind)', '!body.kind'),
@@ -3440,6 +3463,9 @@ scopedSocialContext = async function(db) {
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
     'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
+    'test/businesspartnerships-fixture.js': 'Import-only actual authenticated partnership gameplay setup executed by workforce memory/native suites; no standalone runner.',
+    'test/companygovernance-fixture.js': 'Import-only actual authenticated governance gameplay setup executed by its memory/native suite; no standalone runner.',
+    'test/companyacquisitions-fixture.js': 'Import-only actual authenticated acquisition gameplay setup executed by acquisition and contract memory/native suites; no standalone runner.',
     'test/companydemand-fixture.js': 'Import-only authenticated gameplay fixture used by the executed demand, forecast and discovery-contract suites; exports no standalone test runner.',
     'test/companyproduction-schema.js': 'Import-only frozen production DDL fixture; actual schema, constraints and canonical production execute in the memory/native production and migration suites.',
     'test/rc1-resident-restart.js':
@@ -3687,7 +3713,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
