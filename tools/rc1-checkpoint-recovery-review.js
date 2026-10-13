@@ -10,6 +10,8 @@ import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, CITY_SOURCE_REV
 
 import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, assertCrewLogisticsSourceTransfer } from './rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from './player-intel-source-compatibility.js';
+import { crewProjectionSourceBaseline } from './rc1-crew-projection-source-compatibility.js';
+import { CASE_CREW_CATALOG_TRANSFER, assertCaseCrewCatalogSource, caseCrewRecoveryCatalog } from './rc1-case-crew-catalog-compatibility.js';
 export const CHECKPOINT_CREW_SOURCE_REVIEW_TRANSFER = Object.freeze({ sourceRevision: CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, file: 'src/crew.js',
   actualSha256: CREW_LOGISTICS_SOURCE_CURRENT_PINS['src/crew.js'], predecessorSha256: CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS['src/crew.js'], inverseChunks: 2,
   evidence: 'docs/crew-logistics-security-review.md', phase: 'source compatibility only; financial activation disabled',
@@ -74,14 +76,17 @@ export const CHECKPOINT_RECOVERY_REVIEW = Object.freeze({
 });
 export async function verifyCheckpointRecoverySources(input) {
   const base = await verifyWorldRecoverySources(input);
+  for (const file of Object.keys(CASE_CREW_CATALOG_TRANSFER.sourcePins))
+    assertCaseCrewCatalogSource(file, String(await input.readFile(file)));
   for (const [file, expected] of Object.entries(EXTENSION_PINS)) {
-    const text = playerIntelSourceBaseline(file, String(await input.readFile(file)).replace(/\r\n/g, '\n'));
+    const text = crewProjectionSourceBaseline(file, playerIntelSourceBaseline(file, String(await input.readFile(file)).replace(/\r\n/g, '\n')));
     const baseline = file === 'src/crew.js' && sha256(text) === CREW_LOGISTICS_SOURCE_CURRENT_PINS[file]
       ? assertCrewLogisticsSourceTransfer(file, text).baselineText : text;
     assert.equal(sha256(baseline), expected, 'Checkpoint review source changed: ' + file);
     if (Object.hasOwn(CITY_SOURCE_CURRENT_PINS, file)) assertCitySourceTransfer(file, text);
   }
-  return { ...base, checkpointReviewSha256: hash(CHECKPOINT_RECOVERY_REVIEW), extensionPins: { ...EXTENSION_PINS } };
+  return { ...base, checkpointReviewSha256: hash(CHECKPOINT_RECOVERY_REVIEW), extensionPins: { ...EXTENSION_PINS },
+    caseCrewCatalogTransfer: CASE_CREW_CATALOG_TRANSFER };
 }
 export function recoveryCatalog(content) {
   return { nodes: [...content.registry.nodes.values()], graphs: content.coordinationRegistry.graphs,
@@ -99,6 +104,7 @@ export function cityGameplayRecoveryCatalog(catalog) {
   return predecessor;
 }
 export function historicalRecoveryCatalog(catalog) {
+  catalog = caseCrewRecoveryCatalog(catalog);
   catalog = cityGameplayRecoveryCatalog(catalog);
   const transfer = CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer;
   if (hash(catalog) !== transfer.actualSha256) return catalog;
@@ -183,7 +189,8 @@ export function reviewCanonicalCheckpoint({ manifest, source, checkpoint, snapsh
       // Custody-bearing recovery remains the existing escrow proof's responsibility.
       const emptyEscrow = !table('operation_escrow').some(row => row.operation_id === subject.id);
       const newRpg = instance?.graph_id === CHECKPOINT_RECOVERY_REVIEW.cityCatalogTransfer.packageId
-        || CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.includes(instance?.graph_id);
+        || CHECKPOINT_RPG_CATALOG_TRANSFER.packageIds.includes(instance?.graph_id)
+        || CASE_CREW_CATALOG_TRANSFER.packageIds.includes(instance?.graph_id);
       const reachable = !newRpg && ownerMatches && instance.status === 'active' && emptyEscrow;
       emit('objectives', obligation, reachable ? 'REACHABLE' : 'UNKNOWN', reachable
         ? 'Original cancellation binds immutable stored owner/account/graph/version; no recipe, current definition or living-character completion gate; this instance has no escrow.'

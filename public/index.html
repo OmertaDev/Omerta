@@ -9486,7 +9486,7 @@
     const epoch = ++_fieldworkEpoch, identity = cityIdentity();
     host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
     try {
-      await loadCityScript('/world-fieldwork.js?v=20261013-crew-1', () => !!window.OmertaFieldwork);
+      await loadCityScript('/world-fieldwork.js?v=20261013-critique-1', () => !!window.OmertaFieldwork);
       if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
       _fieldwork = window.OmertaFieldwork.mount(host, options);
     } catch {

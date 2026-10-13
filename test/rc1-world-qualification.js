@@ -11,6 +11,7 @@ import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-leagu
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
+import { crewProjectionSourceBaseline } from '../tools/rc1-crew-projection-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
@@ -392,10 +393,11 @@ assert.equal(serverProof.actualSha256, GOODS_SOURCE_CURRENT_PINS['src/server.js'
 assert.equal(serverProof.goodsSourceTransfer.baselineSha256, CITY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.citySourceTransfer.baselineSha256, ECONOMY_SOURCE_CURRENT_PINS['src/server.js']);
 assert.equal(serverProof.economyTransfer.baselineSha256, GENESIS_SNAPSHOT_SERVER_PIN);
-const operationText = (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n');
+const operationText = crewProjectionSourceBaseline('src/operations.js', (await fs.readFile('src/operations.js', 'utf8')).replaceAll('\r\n', '\n'));
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
-  const actual = file === 'src/server.js' ? serverText : cityGameplaySourceBaseline(file,await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const actual = file === 'src/server.js' ? serverText : crewProjectionSourceBaseline(file,
+    cityGameplaySourceBaseline(file,await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'));
   const text = Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file) ? assertGoodsSourceTransfer(file, actual).baselineText : actual;
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],

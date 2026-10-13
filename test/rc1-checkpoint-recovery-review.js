@@ -1,5 +1,7 @@
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
+import { crewProjectionSourceBaseline } from '../tools/rc1-crew-projection-source-compatibility.js';
+import { CASE_CREW_CATALOG_TRANSFER, caseCrewRecoveryCatalog, caseCrewCatalogSourceBaseline } from '../tools/rc1-case-crew-catalog-compatibility.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -14,7 +16,8 @@ import { coreProgressionContent } from '../src/content/core-progression.js';
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
   COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE' };
 const previous = Object.fromEntries(Object.keys(flags).map(key => [key, process.env[key]]));
-Object.assign(process.env, flags); const rpgCatalog = recoveryCatalog(coreProgressionContent());
+Object.assign(process.env, flags); const caseCrewCatalog = recoveryCatalog(coreProgressionContent());
+const rpgCatalog = caseCrewRecoveryCatalog(caseCrewCatalog);
 const catalog = cityGameplayRecoveryCatalog(rpgCatalog);
 for (const [key, value] of Object.entries(previous)) if (value === undefined) delete process.env[key]; else process.env[key] = value;
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value);
@@ -22,7 +25,7 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer
 for (const [file, blob] of Object.entries(CHECKPOINT_RPG_CATALOG_TRANSFER.sourceBlobs)) {
   const reference = `${CHECKPOINT_RPG_CATALOG_TRANSFER.sourceRevision}:${file}`;
   assert.equal(git('rev-parse', reference).trim(), blob, 'Complete immutable RPG catalog producer Git blob');
-  assert.equal((await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'), git('show', reference),
+  assert.equal(caseCrewCatalogSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')), git('show', reference),
     'The exact full RPG catalog producer is preserved, not only its package labels');
 }
 assert.equal(CHECKPOINT_RECOVERY_REVIEW.rpgCatalogTransfer, CHECKPOINT_RPG_CATALOG_TRANSFER);
@@ -34,6 +37,7 @@ assert.equal(hash(rpgCatalog.nodes.filter(node => CHECKPOINT_RPG_CATALOG_TRANSFE
   CHECKPOINT_RPG_CATALOG_TRANSFER.addedNodesSha256);
 assert.equal(cityGameplayRecoveryCatalog(catalog), catalog);
 const source = await verifyCheckpointRecoverySources({ readFile: file => fs.readFile(file), sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision });
+assert.equal(source.caseCrewCatalogTransfer, CASE_CREW_CATALOG_TRANSFER);
 for (const ending of ['\n', '\r\n']) assert.deepEqual(await verifyCheckpointRecoverySources({ sourceRevision: source.sourceRevision,
   readFile: async file => (await fs.readFile(file, 'utf8')).replace(/\r?\n/g, ending) }), source);
 await assert.rejects(verifyCheckpointRecoverySources({ readFile: file => file === 'src/mysteries.js' ? Buffer.from('changed') : fs.readFile(file), sourceRevision: source.sourceRevision }));
@@ -51,7 +55,7 @@ assert.deepEqual(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.predecessor
   Object.fromEntries(extensionFiles.map(file => [file, CITY_SOURCE_PREDECESSOR_PINS[file]])));
 assert.match(CHECKPOINT_RECOVERY_REVIEW.citySourceReviewTransfer.scope, /New GUI, RPG and exploration authority or reachability.*not inherited/);
 const sourceTexts = Object.fromEntries(await Promise.all(extensionFiles.map(async file =>
-  [file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n')])));
+  [file, crewProjectionSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))])));
 for (const [file, before, after] of [
   ['src/mysteries.js', 'row.account_id !== context.accountId', 'false'],
   ['src/mysteries.js', 'existing.choice_id !== choiceId', 'false'],
@@ -159,6 +163,49 @@ assert(reviewed.details.some(row => row.id === 'shared-canal-path' && row.ok));
     for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN',
       'Every new RPG package requires its own current-source ' + scope + ' evidence: ' + graphId);
     assert.equal(result.witnesses.find(row => row.id === 'mystery:m1').status, 'REACHABLE');
+  }
+}
+{
+  const current = fixture(data); current.catalog = caseCrewCatalog;
+  assert.deepEqual(reviewCanonicalCheckpoint(current).joined, reviewed.joined,
+    'Only the exact complete Case/Crew catalogue preserves original subjects through the unchanged RPG and City inverses.');
+  for (const graphId of CASE_CREW_CATALOG_TRANSFER.packageIds) {
+    const changed = clone(data), id = 'new-case-crew-' + graphId;
+    changed.mystery_instances.push({ id, graph_id: graphId, graph_version: CASE_CREW_CATALOG_TRANSFER.packageVersions[graphId],
+      owner_scope: 'character', owner_id: 'c0', authority_account_id: 'a0', status: 'active' });
+    const input = fixture(changed); input.catalog = caseCrewCatalog;
+    const result = reviewCanonicalCheckpoint(input);
+    assert.equal(result.witnesses.find(row => row.id === 'mystery:' + id).status, 'UNKNOWN');
+    assert.match(result.details.find(row => row.id === 'mystery:' + id).reason, /outside the historical sufficient-path review/);
+    for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(result.joined.scopes[scope].status, 'UNKNOWN',
+      'New Case/Crew instances do not inherit historical ' + scope + ' evidence: ' + graphId);
+    assert.equal(result.witnesses.find(row => row.id === 'mystery:m1').status, 'REACHABLE');
+  }
+  const changed = clone(data), operationId = 'new-crosscurrent-operation';
+  changed.world_operations = [{ id: operationId, graph_id: 'crew-crosscurrent-v1', graph_version: 1,
+    operation_node_id: 'operation:crosscurrent-run', opener_account_id: 'a0', status: 'active' }];
+  const operationInput = fixture(changed); operationInput.catalog = caseCrewCatalog;
+  operationInput.diagnostics.objectiveInventory.subjects.push({ type: 'operation', id: operationId });
+  operationInput.diagnosticEvidence.contentSha256 = hash(operationInput.diagnostics);
+  const operationResult = reviewCanonicalCheckpoint(operationInput);
+  assert.equal(operationResult.witnesses.find(row => row.id === 'operation:' + operationId).status, 'UNKNOWN',
+    'An actual Crew operation subject remains outside historical completion and recovery qualification.');
+  for (const scope of ['objectives', 'resources', 'knowledge']) assert.equal(operationResult.joined.scopes[scope].status, 'UNKNOWN');
+  const mutations = [];
+  for (const graphId of CASE_CREW_CATALOG_TRANSFER.packageIds) mutations.push(
+    value => { const index = value.nodes.findIndex(node => node.packageId === graphId); assert(index >= 0); value.nodes.splice(index, 1); },
+    value => value.nodes.push(clone(value.nodes.find(node => node.packageId === graphId))),
+    value => { value.nodes.find(node => node.packageId === graphId).metadata.description = 'Unreviewed Case/Crew content'; },
+  );
+  mutations.push(value => { value.nodes[0].version++; }, value => { value.graphs[0].version++; },
+    value => value.operations.push({ id: 'unreviewed-operation' }), value => value.objects.push({ id: 'unreviewed-object' }),
+    value => { value.unreviewed = true; });
+  for (const mutate of mutations) {
+    const changed = clone(caseCrewCatalog); mutate(changed); assert.notEqual(hash(changed), hash(caseCrewCatalog));
+    const input = fixture(data); input.catalog = changed;
+    const result = reviewCanonicalCheckpoint(input);
+    assert.equal(result.catalogApplicable, false);
+    assert.equal(result.joined.scopes.knowledge.status, 'UNKNOWN', 'Changed complete Case/Crew catalogues cannot inherit source coverage.');
   }
 }
 const rpgMutations = [];

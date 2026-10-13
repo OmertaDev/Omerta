@@ -504,7 +504,9 @@ try {
 
     await panel(fixture, 'adventures');
     const liveEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), livePose = (await state(fixture)).position;
-    const encounterBefore = await get(actor, '/v1/city/encounters'); assert.equal(encounterBefore.scenarios.length, 1); assert.equal(encounterBefore.active, null);
+    const encounterBefore = await get(actor, '/v1/city/encounters');
+    assert.deepEqual(encounterBefore.scenarios.map(scenario => scenario.id), ['docks-patrol', 'docks-mastery-v1']);
+    assert.equal(encounterBefore.active, null);
     const prepared = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/encounters/start');
     await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-patrol"]'));
     const prepareReply = await prepared; assert.equal(prepareReply.status(), 200); const prepareBody = await prepareReply.json();
@@ -540,6 +542,21 @@ try {
     }
     const completed = await get(actor, '/v1/city/encounters');
     assert.equal(completed.active, null); assert(completed.history.some(row => row.id === encounterId && row.status !== 'active'));
+
+    const masteryStarted = fixture.page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/v1/city/encounters/start');
+    await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-mastery-v1"]'));
+    const masteryResponse = await masteryStarted; assert.equal(masteryResponse.status(), 200);
+    const mastery = (await masteryResponse.json()).encounter; await settled(fixture);
+    assert.equal(mastery.scenarioId, 'docks-mastery-v1');
+    assert.match(await fixture.page.locator('[data-city-mastery="available"]').innerText(), /8 rounds.*half your drill health/);
+    const masteryRetreated = fixture.page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/v1/city/encounters/' + encodeURIComponent(mastery.id) + '/turn');
+    await activate(fixture, fixture.page.locator('[data-city-adventure-action="retreat"]'));
+    const masteryEndResponse = await masteryRetreated; assert.equal(masteryEndResponse.status(), 200);
+    const masteryEnd = (await masteryEndResponse.json()).encounter;
+    assert.equal(masteryEnd.status, 'retreated'); assert.equal(masteryEnd.mastery.achieved, false);
+    await settled(fixture); await same(fixture, liveEntry, livePose);
 
     const members = [actor, await create('Panel Lookout ' + viewport.width), await create('Panel Driver ' + viewport.width)];
     const crew = await success(post(actor, '/v1/crew', { name: 'Panel Crew ' + viewport.width }));
@@ -706,6 +723,14 @@ try {
       const activation = interior.actions.find(action => action.id === 'activate');
       await success(post(host, activation.path, activation.body));
       interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
+      const layout = interior.actions.find(action => action.id === 'layout');
+      await success(post(host, layout.path, { ...layout.body, room: { furniture: [
+        { id: 'chair', x: 0, y: 0 }, { id: 'table', x: 1, y: 0 }, { id: 'lamp', x: 2, y: 0 },
+      ] } }));
+      interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
+      const puzzle = interior.activity.catalog.find(puzzle => puzzle.id === 'two-voices-v1').action;
+      await success(post(host, puzzle.path, puzzle.body));
+      interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
       const invite = interior.actions.find(action => action.id === 'invite');
       const invitation = await success(post(host, invite.path, { ...invite.body, targetCharacterId: actor.id, rights: index ? ['visit'] : ['visit', 'workbench'] }));
       const accept = (await get(actor, '/v1/city/home/invitations')).invitations.find(row => row.id === invitation.effect.grantId).action;
@@ -717,6 +742,20 @@ try {
     const visitControl = home => fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText(home.key, { exact: true }) })
       .getByRole('button', { name: 'Enter home', exact: true });
     await panel(fixture, 'room'); await activate(fixture, visitControl(homeA)); await settled(fixture);
+    const consentWrites = [], trackConsent = request => { if (request.method() === 'POST') consentWrites.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', trackConsent);
+    const puzzleConsent = () => fixture.page.getByLabel('Share my name and join this home puzzle', { exact: true });
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    await activate(fixture, puzzleConsent()); assert(await puzzleConsent().isChecked());
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert(await puzzleConsent().isChecked(), 'A refresh of the same actual home and puzzle retains its unsubmitted consent choice.');
+    await activate(fixture, visitControl(homeB)); await settled(fixture);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await puzzleConsent().isChecked(), false, 'A different actual home cannot inherit prior identity-sharing consent.');
+    await activate(fixture, visitControl(homeA)); await settled(fixture);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await puzzleConsent().isChecked(), false, 'Returning to the prior home starts a new explicit consent choice.');
+    assert.deepEqual(consentWrites, []); fixture.page.off('request', trackConsent); await same(fixture, homeEntry, homePose);
     await activate(fixture, fixture.page.getByRole('button', { name: 'Workbench', exact: true }));
     const visitA = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeA.key));
     const recipe = visitA.workbench.recipes.find(row => row.id === 'recipe:hardened_steel'); assert(recipe?.action.available, JSON.stringify(recipe?.blockedBy));

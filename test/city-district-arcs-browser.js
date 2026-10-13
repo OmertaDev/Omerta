@@ -106,7 +106,8 @@ try {
   const settled = fixture => fixture.page.waitForFunction(() => !window.__arcProbe().pending && !document.querySelector('#busy.on'));
   const activate = async (fixture, control) => {
     await fixture.page.bringToFront();
-    if ((await control.getAttribute('data-destination') !== null || await control.getAttribute('data-city-world-map') !== null)
+    if ((await control.getAttribute('data-destination') !== null || await control.getAttribute('data-city-world-map') !== null
+      || await control.getAttribute('data-city-journal') !== null)
       && await fixture.page.locator('.omerta-city__overview').isVisible() && await fixture.page.locator('.omerta-city__overview').getAttribute('open') === null) {
       for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
         const close = fixture.page.locator(selector); if (await close.isVisible()) { if (fixture.viewport.width <= 680) await close.tap(); else await close.click(); }

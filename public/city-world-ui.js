@@ -32,7 +32,7 @@
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1, choicesShown = false;
-    let homeView = {};
+    let homeView = {}, renderedHomeScope = '', renderedHomeActivity = '';
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -664,7 +664,13 @@
       const focused = content.contains(active) || receiptBox.contains(active);
       const focusKey = active?.dataset?.worldControl || active?.getAttribute('aria-label');
       const preserveDraft = renderedOpening === opening;
-      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
+      const home = boards['home-interior'];
+      const homeScope = JSON.stringify([scope, home?.viewer?.characterId, home?.viewer?.generation, home?.viewer?.district, home?.home?.key, home?.home?.authorityToken]);
+      const homeActivity = home?.activity?.active?.id || '';
+      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'))
+        .filter(field => !field.closest('[data-city-home-tools]') || renderedHomeScope === homeScope
+          && (!field.closest('[data-city-home-activity]') || renderedHomeActivity === homeActivity))
+        .map(field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
@@ -678,6 +684,7 @@
         const draft=drafts.get(field.getAttribute('aria-label'));field.value=draft.value;if(field.type==='checkbox')field.checked=draft.checked;
       }
       renderedOpening = opening;
+      renderedHomeScope = homeScope; renderedHomeActivity = homeActivity;
       paintReadState(); dock.scrollTop = scroll;
       if (options.receipt) {
         receiptBox.append(el('strong', '', options.receipt.label || 'World action'), el('p', '', options.receipt.summary || ''));

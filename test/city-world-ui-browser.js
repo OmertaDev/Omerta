@@ -619,6 +619,56 @@ try {
     assert.equal(await page.locator('[data-city-continuity]').count(), 0);
     assert.equal(await page.locator('.city-world__dock').isVisible(), false);
     await page.evaluate(() => window.__resumeUI.destroy());
+    // Component DTOs isolate form restoration; actual two-home consent reads are
+    // also exercised against the real server in the gameplay-panels journey.
+    await page.addScriptTag({ path: 'public/city-home-ui.js' });
+    await page.evaluate(() => {
+      window.__homeDraftActions = []; window.__homeAuthority = 1; window.__homeActivity = 1;
+      const board = key => ({ viewer: { characterId: 'home-viewer', generation: 1, district: 'docks' },
+        home: { key, street: 'Street ' + key, authorityToken: key + ':' + window.__homeAuthority, revision: 1, layoutRevision: 1 },
+        access: { role: 'owner', rights: ['visit'] }, room: { active: true, catalog: [{ id: 'chair', name: 'Chair' }, { id: 'lamp', name: 'Lamp' }], furniture: [] },
+        actions: [{ id: 'layout', label: 'Save layout', available: true }], activity: { active: {
+          id: key + ':' + window.__homeActivity, title: 'Puzzle ' + key, capacity: 4, roster: [],
+          actions: [{ id: 'join', label: 'Join puzzle', available: true, inputFields: ['consent'] }],
+        } } });
+      window.__homeDraftUI = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        ...window.__fixture, scopeKey: 'home-draft-owner', character: { id: 'home-viewer', generation: 1 }, district: { id: 'docks' },
+        onAction: (...args) => window.__homeDraftActions.push(args), onRead: async (kind, input) => ({ code: 200,
+          body: kind === 'home-interior' ? board(input.homeKey) : kind === 'home-invitations'
+            ? { permissions: [{ homeKey: 'A', status: 'active' }, { homeKey: 'B', status: 'active' }] } : {} }),
+      }); window.__homeDraftUI.open('room');
+    });
+    const native = locator => viewport.width <= 680 ? locator.tap() : locator.click();
+    const enter = async key => {
+      await native(page.getByText(key, { exact: true }).locator('..').getByRole('button', { name: 'Enter home', exact: true }));
+      await page.getByRole('heading', { name: 'Street ' + key + ' · Your home', exact: true }).waitFor();
+    };
+    const consent = () => page.getByLabel('Share my name and join this home puzzle', { exact: true });
+    const roomRefresh = async () => {
+      const oldControl = await page.getByRole('button', { name: 'Refresh this room', exact: true }).elementHandle();
+      await native(page.getByRole('button', { name: 'Refresh this room', exact: true }));
+      await page.waitForFunction(control => !control.isConnected, oldControl); await oldControl.dispose();
+    };
+    await enter('A');
+    await page.getByLabel('Home furnishing', { exact: true }).selectOption('lamp');
+    await page.getByLabel('Home column', { exact: true }).fill('5');
+    await native(page.getByRole('button', { name: 'Hosting', exact: true })); await native(consent());
+    await roomRefresh(); assert(await consent().isChecked(), 'Same home, authority and puzzle retain the unsubmitted consent choice.');
+    await native(page.getByRole('button', { name: 'Room & furniture', exact: true }));
+    assert.equal(await page.getByLabel('Home furnishing', { exact: true }).inputValue(), 'lamp');
+    assert.equal(await page.getByLabel('Home column', { exact: true }).inputValue(), '5');
+    await enter('B');
+    assert.equal(await page.getByLabel('Home furnishing', { exact: true }).inputValue(), 'chair');
+    assert.equal(await page.getByLabel('Home column', { exact: true }).inputValue(), '2');
+    await native(page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await consent().isChecked(), false, 'A different home cannot inherit identity-sharing consent.');
+    await native(consent()); await page.evaluate(() => window.__homeActivity++); await roomRefresh();
+    assert.equal(await consent().isChecked(), false, 'A replacement puzzle requires its own consent choice.');
+    await native(consent()); await page.evaluate(() => window.__homeAuthority++); await roomRefresh();
+    await native(page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await consent().isChecked(), false, 'Changed deed authority retires the prior form choice.');
+    assert.deepEqual(await page.evaluate(() => window.__homeDraftActions), []);
+    await page.evaluate(() => window.__homeDraftUI.destroy());
     assert.deepEqual(errors, []); await context.close();
   }
   console.log('City world UI PASS: map, equipment, queued/dispatched lifecycle, same-key receipt recovery, default-off chat/XSS, furniture targets, confirmed gains and owner teardown on phone/desktop.');

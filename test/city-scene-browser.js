@@ -1347,7 +1347,8 @@ try {
   assert.deepEqual(requests.slice(beforeDirectory).filter(request => !['GET', 'HEAD'].includes(request.method)), [],
     'Revealing venue details from the destination list submits no gameplay action.');
   const selectTrackedCase = async graphId => {
-    await page.locator('[data-city-journal]').click();
+    if (await page.locator('.omerta-city__interaction').isVisible()) await page.locator('[data-city-close]').click();
+    await activateNeighborhood(page, '[data-city-journal]');
     const select = page.locator('[data-city-case-select]'); await select.waitFor();
     const index = await select.locator('option').evaluateAll((options, id) => options.findIndex(option => option.value === id), graphId);
     assert(index >= 0); await select.focus(); await page.keyboard.press('Home');
@@ -1357,7 +1358,7 @@ try {
     await page.locator('[data-city-world-close]').click();
   };
   await selectTrackedCase('neighborhood-initiation');
-  await page.locator('[data-destination="fixer"]').click();
+  await activateNeighborhood(page, '[data-destination="fixer"]');
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
   await page.waitForFunction(() => document.querySelector('.omerta-city__interaction')?.textContent.includes('Nico Bellini'));
   await questAction(page, page.locator('[data-city-quest-action]:enabled').first());
@@ -1397,6 +1398,10 @@ try {
   assert.equal(await page.locator('[data-city-nextmove]').getAttribute('aria-label'), 'Visit The Fixer',
     'Completing the newcomer quest surfaces the next real district story.');
   await page.setViewportSize({ width: 1440, height: 1000 });
+  // The resize event moves Journal out of the phone Overview. Wait for that actual
+  // arrangement before the helper chooses between Overview and the desktop control.
+  await page.waitForFunction(() => !document.querySelector('.omerta-city').classList.contains('is-play-shell')
+    && document.querySelector('.omerta-city__overview').hidden);
   const journalPose = (await state(page)).position, journalReadStart = requests.length;
   await activateNeighborhood(page, '[data-city-journal]');
   await page.locator('[data-city-case-select]').waitFor();
@@ -1744,6 +1749,30 @@ try {
   }
   assert.deepEqual(landRequests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'Walking and inspecting actual homes sends no gameplay POST.');
   await land.setViewportSize({ width: 1440, height: 1000 });
+  await land.waitForFunction(() => !document.querySelector('.omerta-city').classList.contains('is-play-shell'));
+  const roadStart = (await state(land)).position;
+  const residentialRoad = (await state(land)).roads.find(road => road.x > 960 && road.y + road.height > 800);
+  assert(residentialRoad, 'The actual deed directory has a road continuing into the southern residential extension');
+  const roadX = residentialRoad.x + residentialRoad.width / 2;
+  if (roadStart.x < roadX) await holdKey(land, 'ArrowRight', x => window.__cityHandles.at(-1).handle.getState().player.x >= x, roadX);
+  else await holdKey(land, 'ArrowLeft', x => window.__cityHandles.at(-1).handle.getState().player.x <= x, roadX);
+  await holdKey(land, 'ArrowDown', () => window.__cityHandles.at(-1).handle.getState().player.y > 700);
+  await waitForFrames(land, 3);
+  const roadPixels = await land.evaluate(x => {
+    const game = window.__cityGames.at(-1), camera = game.scene.getScenes(true)[0].cameras.main, canvas = game.canvas;
+    return [744, 758, 772].map(y => {
+      const px = Math.round((x - camera.worldView.x) * camera.zoom * canvas.width / camera.width);
+      const py = Math.round((y - camera.worldView.y) * camera.zoom * canvas.height / camera.height);
+      return { visible: px >= 0 && py >= 0 && px < canvas.width && py < canvas.height,
+        color: [...canvas.getContext('2d').getImageData(px, py, 1, 1).data] };
+    });
+  }, roadX);
+  assert(roadPixels.every(pixel => pixel.visible), 'Actual keyboard walking brings the lower deed-backed road into view');
+  assert.deepEqual(roadPixels.map(pixel => pixel.color), [[62,68,69,255],[62,68,69,255],[62,68,69,255]],
+    'The southern ground does not cover the rendered residential road');
+  assert(await land.evaluate(handle => window.__cityHandles.at(-1) === handle && !handle.destroyed, landHandle));
+  assert.deepEqual(landRequests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path)), [], 'The southern residential walk makes no gameplay write');
+  if (shots) await land.screenshot({ path: path.join(shots, 'southern-residential-road.png') });
   const landFare = Number(crimeRules.travelCost);
   assert(Number.isFinite(landFare) && landFare > 0);
   await app.pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [explorer.id, landFare * 3]);

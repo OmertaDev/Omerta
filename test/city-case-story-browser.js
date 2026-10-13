@@ -46,13 +46,19 @@ try {
     const activate = async locator => { const count = nativeClicks.length; if (width < 680) await locator.tap(); else await locator.click();
       assert(nativeClicks.length > count && nativeClicks.at(-1).trusted, 'Native input is trusted, including the click before logout navigation.'); }; 
     const state = () => page.evaluate(() => window.__caseHandles.at(-1).handle.getState());
+    const openJournal = async () => {
+      if (await page.locator('.omerta-city__interaction').isVisible()) await activate(page.locator('[data-city-close]'));
+      const overview = page.locator('.omerta-city__overview');
+      if (await overview.evaluate(node => !node.hidden && !node.open)) await activate(overview.locator('summary'));
+      await activate(page.locator('.omerta-city__journal'));
+    };
     const gameplay = () => requests.filter(request => request.method === 'POST' && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
     await page.goto(base, { waitUntil: 'networkidle' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     if (await page.locator('.modal-bg[data-managed-dialog]').count()) await page.keyboard.press('Escape');
     await activate(page.locator('#btn-player-view'));
     await page.waitForFunction(() => window.__caseHandles.at(-1)?.handle.getState().ready);
     const original = await state(), beforeOpen = gameplay().length; let expectedPose = original.position, inspectedProp = false;
-    await activate(page.locator('.omerta-city__journal'));
+    await openJournal();
     await page.locator('[data-city-case-select]').waitFor();
     assert.equal(await page.locator('[data-city-case-select]').inputValue(), 'first-errand-case-v2');
     assert.equal(await page.locator('[data-city-case-beat]').count(), 1);
@@ -84,7 +90,7 @@ try {
       await activate(page.locator('[data-city-case-action]:enabled').first());
       await page.waitForFunction(() => window.__caseProbe().pending);
       await activate(page.locator('[data-city-world-close]'));
-      await activate(page.locator('.omerta-city__journal'));
+      await openJournal();
     } finally { releaseRead(); }
     await page.waitForFunction(() => !window.__caseProbe().pending && !document.querySelector('#busy.on'));
     await page.unroute('**/v1/projections/player*', holdRead); console.log('case queue proof settled', width);
@@ -126,7 +132,7 @@ try {
         assert.match(await page.locator('.omerta-city__interaction').textContent(), /Receipt pinned beside Ada/);
         assert.equal(gameplay().length, zero, 'Walking and inspecting the visible prop do not complete or spend the action.');
         assert.deepEqual((await state()).position, expectedPose);
-        await activate(page.locator('.omerta-city__journal')); inspectedProp = true;
+        await openJournal(); inspectedProp = true;
       }
       if (action.id.includes(':choose:')) {
         assert.equal(await page.locator('[data-city-case-evidence] article').count(), 2, 'Actual acquired records sit together before the decision.');
@@ -159,7 +165,7 @@ try {
     assert.equal(native.json().nodes.find(node => node.id === 'choice:first-errand-explanation').status, 'completed');
     await activate(page.locator('#btn-player-view'));
     await page.waitForFunction(() => window.__caseHandles.at(-1)?.handle.getState().ready);
-    await activate(page.locator('.omerta-city__journal'));
+    await openJournal();
     await page.locator('[data-city-case-evidence] article').first().waitFor();
     const old = await page.evaluateHandle(() => document.querySelector('.city-world__dock'));
     let releaseLogout, observedLogout;
