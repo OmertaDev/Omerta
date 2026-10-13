@@ -660,6 +660,15 @@ const DISPOSITION = {
   infrastructure_concession_requests: 'ledger', // original actor consent and source receipts are historical, without fresh lease or policy grants
   territory_economics_profiles: 'special', // actual post-death hook disables the original profile and preserves history without inherited tribute authority
   territory_economics_requests: 'ledger', // historical original-owner requests cannot authorize heir payments
+  economic_intelligence_publications: 'special', // actual estate retires original seller listings; fresh purchase requires the living original seller and current Depot
+  economic_intelligence_purchases: 'ledger', // paid original-account report snapshots and paired journals survive without business or heir payment authority
+  agent_operating_memory_facts: 'ledger', // verified original-character history survives; current living character and Depot must match before any action preference is used
+  agent_operating_memory_requests: 'ledger', // immutable original actor acknowledgements grant no fresh execution authority
+  funded_external_work_jobs: 'ledger', // synthetic-only original course and party provenance holds no game or crypto custody; public settlement remains unavailable
+  management_team_plans: 'special', // actual estate retires original-party pending plans; canonical governance retains its original consent rules
+  management_team_autonomy_grants: 'metadata', // fresh execution rereads both living original parties, active partnership, current team and exact source grant; heirs receive no authority
+  strategy_laboratories: 'special', // actual estate marks the original owner's laboratory party_dead and retires observing arms without cash movement
+  strategy_laboratory_requests: 'ledger', // immutable original actor request receipts preserve history without new configuration grants
   coordination_instances: 'metadata', // immutable original actor and definition bind fresh execution; heirs may read history or cancel metadata without action grants
   coordination_events: 'ledger', // original action, actor and definition event lineage survives without fresh execution authority
   coordination_claims: 'ledger', // event-bound knowledge/discovery evidence remains historical and never grants execution authority
