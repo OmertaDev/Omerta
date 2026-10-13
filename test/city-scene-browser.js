@@ -773,11 +773,13 @@ try {
   await assertEntered(entry);
   assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'Repeated Player view reuses the same Phaser game.');
   await assertPosition(entry, entryPose, 'Repeated entry retains pose');
-  await app.pool.query('UPDATE characters SET cash=2222,health=22,energy=31,nerve=4 WHERE id=$1', [characterId]);
+  // Short real resource values leave room for the later winning projection to grow
+  // the capped phone HUD, including with wider platform monospace fallbacks.
+  await app.pool.query('UPDATE characters SET cash=222,health=2,energy=31,nerve=4 WHERE id=$1', [characterId]);
   const liveHud = entry.waitForResponse(async response => {
     if (new URL(response.url()).pathname !== '/v1/projections/player' || response.status() !== 200) return false;
     const reply = await response.json(), character = reply.player?.character || reply.player;
-    return character?.cash === 2222 && character.health < 30;
+    return character?.cash === 222 && character.health < 30;
   });
   await entry.locator('#btn-refresh').evaluate(button => button.click());
   const projected = (await (await liveHud).json()).player;
@@ -801,8 +803,12 @@ try {
       // Give the actual warning detail its own line: font fallbacks can otherwise
       // wrap both LOW HEALTH and SAFEHOUSE to the same height in this fixture.
       document.querySelector('.omerta-city__readiness > span').style.display = 'block';
+      document.querySelector('.omerta-city').style.setProperty('--mono', '"Courier New", monospace');
     });
-    else await entry.evaluate(() => document.querySelector('.omerta-city__readiness > span').style.removeProperty('display'));
+    else await entry.evaluate(() => {
+      document.querySelector('.omerta-city__readiness > span').style.removeProperty('display');
+      document.querySelector('.omerta-city').style.removeProperty('--mono');
+    });
     await entry.setViewportSize({ width, height }); await waitForFrames(entry, 3);
     if (width === 320) assert.deepEqual(await entry.locator('#toast').evaluate(node => ({ height: node.getBoundingClientRect().height, text: node.textContent, inert: node.inert })),
       { height: 56, text: 'Updated. Your current street view is ready. Check your next move before spending resources.', inert: false }, 'The short-frame fixture reaches the actual bounded toast and retains all its text.');
@@ -810,7 +816,14 @@ try {
     await assertPosition(entry, beforeResize, 'Compact resize retains the player pose');
     if (width === 320) {
       const initialHeight = (await state(entry)).camera.height;
-      const initialHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
+      const initialHud = await entry.locator('.omerta-city__world-hud').evaluate(node => ({
+        height: node.getBoundingClientRect().height, cap: parseFloat(getComputedStyle(node).maxHeight),
+        columns: getComputedStyle(node.querySelector('.omerta-city__resources--walking')).gridTemplateColumns.split(' ').length,
+        readinessHeight: node.querySelector('.omerta-city__readiness').getBoundingClientRect().height
+      }));
+      const initialHudHeight = initialHud.height;
+      assert.equal(initialHud.columns, 4, 'The pressure fixture starts with four actual resource columns: ' + JSON.stringify(initialHud));
+      assert(initialHudHeight + 3 < initialHud.cap, 'The pressure fixture starts with measured room below its real HUD cap: ' + JSON.stringify(initialHud));
       assert.equal(initialHeight, 568 - 215, 'The pressure fixture preserves the whole map below its actual215px header: ' + JSON.stringify(await entry.evaluate(() => ({
         canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON(),
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(),
@@ -828,6 +841,9 @@ try {
       await assertHud(entry, warningPlayer?.character || warningPlayer);
       await waitForFrames(entry, 3);
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
+      const warningReadinessHeight = await entry.locator('.omerta-city__readiness').evaluate(node => node.getBoundingClientRect().height);
+      assert(warningReadinessHeight > initialHud.readinessHeight + 3, 'The real winning warning adds a rendered line before checking HUD growth: '
+        + JSON.stringify({ initialReadinessHeight: initialHud.readinessHeight, warningReadinessHeight }));
       const warningHudHeight = await entry.locator('.omerta-city__world-hud').evaluate(node => node.getBoundingClientRect().height);
       assert(warningHudHeight > initialHudHeight + 3, 'The real winning warning must grow the measured pressure-fixture HUD before checking camera response: ' + JSON.stringify({ initialHudHeight, warningHudHeight }));
       assert.equal((await state(entry)).camera.height, initialHeight, 'A longer winning-projection warning preserves the full map without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
