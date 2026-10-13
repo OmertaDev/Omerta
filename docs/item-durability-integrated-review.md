@@ -1,0 +1,15 @@
+# Manufactured quality integration proof
+
+Reviewed runtime: `9c7d7c7163d7b29ee732a790bb3297e91d779f2f`. Proof source: `39e6077e4e4f4772d8b5dbe5c3b9a01a78435c07`. Phase: independent local integration qualification, not deployment or financial activation.
+
+The canonical craft entry point creates the immutable tempered birth certificate before returning. The authored recipe consumes two hardened steel and four salvage parts, with zero additional assembly cash cost; the fixture obtains its steel through twelve actual canonical crafts costing 3600. Condition 150 is separate from immutable creation quality and physical identity. Ordinary crafted, salvaged, awarded and imported tools retain maximum 100.
+
+Executed memory and fresh PostgreSQL 18.4 proofs on loopback 35449, role pilot_runner, owned empty database `item_durability_integrated_20261013_e`. The explicit ITEM_DURABILITY_QUALITY_TEST_DATABASE_URL guard rejects ambient endpoints. Native concurrency demonstrates one physical output/certificate and exactly one fresh winning reservation; replay reports no fresh ownership. Controls retain foreign refusal, historical retrofit refusal, missing-birth corruption, forged grade rejection, trade continuity, late rollback and a caught leaf error that still prevents root commit. Company specialization memory also passes its inactive-account negative. No local PostgreSQL 16 claim.
+
+Retained logs under ignored `output/durability-followup/`: grade-memory.txt SHA256 `E5B1DA9FC7144F46C51188EF8A342F0062E0B6BE697681566BC8E4DD44AE317F`; grade-native-final.txt SHA256 `B0CDD6D0D9FB0337FA4A025618149D354B289914F4E26CC784A3B9116E8B8F67`. Test SHA256 `D765F8CA57CBE2999D85F18AF878080525F9BEA6DB741FB170AE3E97CB15E20A`. Earlier checkout disappearance removed local ignored evidence; committed sources survived. The original source extension is `aa1325395db920df1ce981713a3419c83be8ca43`.
+
+Review passes adapt the repository's pinned Pashov access/replay boundaries, Plamen state/accounting/callback transitions, and Trail of Bits specification/invariant comparison. No claim that upstream orchestration ran. Focused static inspection confirms the certificate uses canonical request hash, completed guard, creation and consumed-input events; fresh ownership compares the immutable winning reservation UUID. Ordinary origin parity does not broaden the strict tempered witness. No new concrete runtime defect emerged in this bounded pass.
+
+This proof verifies automatic craft birth, not the complete Belladonna interaction or agent HTTP production path; those require separate coordinator integration evidence. Provider calls, external spending, paid compute and financial activation remain off.
+
+For F07, maintenance should consume an authored canonical material under the same item transaction, revalidate current physical custody and condition, cap restoration at the existing item's certified maximum, and bind a unique repair receipt to consumed-input events. Repair must neither recreate the item nor alter its birth certificate, quality digest or identity. No free repair endpoint or implementation is included here.
