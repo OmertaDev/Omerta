@@ -64,7 +64,7 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
 });
 export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "ed903348ee59e354bfae72bfbc2aed8273229bb2",
-  "reviewedCandidate": "752c472269bd10076c0bf869bece5c1d5e8af9cb",
+  "reviewedCandidate": "8b13aeebe3d0a5bc43b61e6eb23d5f39a4c0e507",
   "predecessorTree": "fe4913ffa8b9d7fe6f4bdebb5ccaee91721c9a65af92651279c15d0705ddeeda",
   "predecessorSchema": "220780ae48a8a6ce9a3a1970110c4d420720c777c80217811c7166cf53e36390",
   "predecessorCatalog": "028af7ab65761f08dfd10e3cb6ef0f213fe8db723796d0b41df9652733e12cb7",
