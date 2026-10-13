@@ -191,9 +191,10 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    # The measured PostgreSQL 16 baseline takes 56m24s; THIRD adds the eight-proof
-    # workforce chain (about 6m locally). Retain every step with a finite 75m bound.
-    timeout-minutes: 75
+    # The measured PostgreSQL 16 baseline takes 56m24s; eight workforce and ten
+    # commercial proofs add work. Keep every step and a finite 90m bound;
+    # expanded hosted duration remains unmeasured.
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
