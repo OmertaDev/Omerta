@@ -11,6 +11,9 @@ const compile = schema => ajv.compile({ ...schema, components: { schemas } });
 const responses = Object.fromEntries(Object.entries(contracts).map(([route, spec]) => [route, compile(spec.responseSchema)]));
 const bodies = Object.fromEntries(Object.entries(contracts).filter(([,spec]) => spec.requestSchema).map(([route,spec]) => [route,compile(spec.requestSchema)]));
 const f = await negotiationFixture(), app = f.app, witnessed = new Set(), receipts = [];
+const actualSpec=(await app.inject({method:'GET',url:'/openapi.json'})).json();
+for(const[key,contract]of Object.entries(contracts)){const[method,route]=key.split(' '),op=actualSpec.paths[route.replace(/:([A-Za-z]+)/g,'{$1}')][method.toLowerCase()];assert.equal(op.operationId,contract.operationId);assert.deepEqual(op.security,[{bearerAuth:[]}]);assert.deepEqual(op.responses[200].content['application/json'].schema,contract.responseSchema);if(contract.requestSchema)assert.deepEqual(op.requestBody.content['application/json'].schema,contract.requestSchema);}
+
 const routeFor = (method,url) => Object.keys(contracts).find(route => new RegExp('^' + route.replace(/:[A-Za-z]+/g,'[^/]+') + '$').test(method + ' ' + url));
 let serial = 0;
 const call = async (p,method,url,body,key='dto-'+(++serial)) => {
