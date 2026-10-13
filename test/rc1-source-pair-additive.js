@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { FIRST_FIVE_ADDITIVE_PAIR as pin,qualifyFirstFiveAdditiveBootstrap,sourcePairStateDifference } from '../tools/rc1-source-pair.js';
+import { FIRST_FIVE_ADDITIVE_PAIR as pin,qualifyFirstFiveAdditiveBootstrap,sourcePairStateDifference,sourcePairReviewedTreeHash,ADDITIVE_KNOWLEDGE_OUTPUTS } from '../tools/rc1-source-pair.js';
 const catalog=JSON.parse(await fs.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'));
 const predecessor={source:pin.predecessor,additiveSource:{tree:pin.predecessorTree,schema:pin.predecessorSchema,catalog:pin.predecessorCatalog}},candidate={source:pin.reviewedCandidate,additiveSource:{tree:pin.candidateTree,schema:pin.candidateSchema,catalog:pin.candidateCatalog,catalogTables:Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
 const old={tables:{accounts:['{"id":"owned-source-pair-fixture"}'],characters:[],telemetry:[]},sequences:[{sequencename:'item_events_sequence_seq',last_value:'10'}]},fresh={tables:{...old.tables,...Object.fromEntries(pin.tables.map(name=>[name,[]]))},sequences:structuredClone(old.sequences)};
@@ -20,4 +20,13 @@ negative('changed frozen catalog',(_a,_b,_p,c)=>{c.additiveSource.catalog='0'.re
 negative('changed actual catalog definition evidence',(_a,_b,_p,c)=>{c.additiveSource.catalogTables.item_durability_uses.constraints[0].definition='CHECK (true)';},/catalog evidence differs/);
 negative('missing NN evidence',(_a,_b,_p,c)=>{c.additiveSource.catalogTables.item_durability_states.notNullColumns=[];},/catalog evidence differs/);
 const sequenceDelta=sourcePairStateDifference(old,{...fresh,sequences:[{sequencename:'item_events_sequence_seq',last_value:'12'}]});assert.deepEqual(sequenceDelta.sequences,['item_events_sequence_seq']);assert.equal(sequenceDelta.sequenceStateEqual,false);
+const record = (file, hash = '1'.repeat(40)) => '100644 blob ' + hash + '\t' + file;
+const sourceRecords = [record('src/game.js'), record('schema.sql'), record('package.json'), record('test/migrate.js'), record('tools/knowledge.js'), record('test/lib/phase2-architecture-upgrade-catalog.json')];
+const sourceHash = sourcePairReviewedTreeHash(sourceRecords);
+assert.equal(ADDITIVE_KNOWLEDGE_OUTPUTS.length, 10);
+assert.equal(sourcePairReviewedTreeHash([...sourceRecords, ...ADDITIVE_KNOWLEDGE_OUTPUTS.map(file => record(file))]), sourceHash);
+assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords, record('knowledge/generated/unreviewed-authority.json')]), sourceHash, 'Unlisted derivative path remains frozen source');
+for (const file of ['tools/knowledge.js', 'package.json', 'test/migrate.js', 'test/lib/phase2-architecture-upgrade-catalog.json']) {
+  assert.notEqual(sourcePairReviewedTreeHash(sourceRecords.map(line => line.endsWith('\t' + file) ? record(file, '2'.repeat(40)) : line)), sourceHash, 'Generator, package, census and native catalog remain source authority');
+}
 console.log('rc1-source-pair-additive PASS: exact reviewed seven-empty-table relation; unknown/missing/nonempty/removed/old-row/sequence/unrelated-source/schema/catalog/NN negatives; full raw state remains unequal');

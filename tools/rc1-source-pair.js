@@ -14,6 +14,21 @@ import { sourceInventory } from './rc1-qualification.mjs';
 const option = (name, fallback) => process.argv.find((value) => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? process.env[fallback];
 const accounts = ['rc1-pair-predecessor', 'rc1-pair-candidate'];
 const additiveOwnedFiles = new Set(['tools/rc1-source-pair.js', 'test/rc1-source-pair-additive.js', 'docs/rc1-source-pair-additive-review.md']);
+// Derivative review outputs, not runtime, fixture or schema authority. Keep this literal closed
+// list; full checkout inventories retain their bytes and repository knowledge checks qualify them.
+export const ADDITIVE_KNOWLEDGE_OUTPUTS = Object.freeze([
+  'knowledge/generated/contracts.md', 'knowledge/generated/documents.md', 'knowledge/generated/github-history.md',
+  'knowledge/generated/graph-summary.md', 'knowledge/generated/graph.json', 'knowledge/generated/graph.mmd',
+  'knowledge/generated/inventory.md', 'knowledge/generated/modules.md', 'knowledge/generated/routes.md', 'knowledge/generated/schema.md',
+]);
+const additiveEvidenceOutputs = new Set(ADDITIVE_KNOWLEDGE_OUTPUTS);
+export function sourcePairReviewedTreeHash(records) {
+  const reviewed = records.filter(line => {
+    const file = line.slice(line.indexOf('\t') + 1);
+    return !additiveOwnedFiles.has(file) && !additiveEvidenceOutputs.has(file);
+  }).sort();
+  return sha256(JSON.stringify(reviewed));
+}
 export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
   predecessor: 'f254c64a54a019665d7a516d382d56b46f2dcd82', reviewedCandidate: 'b0cf6767a7cd74a06dfdd8a1afbd0ccb7b6414f1',
   predecessorTree: 'e61a5d7d3438d17079009e3e93c0b3f0ebc891b0d92156a103a9c25900ae199e',
@@ -49,14 +64,13 @@ export async function sourcePairIdentity(root) {
   const inventory = [];
   for (const file of git(root, 'ls-files', '-z').split('\0').filter(Boolean))
     inventory.push([file, sha256(await fs.readFile(path.join(root, file)))]);
-  const reviewedTree = git(root, 'ls-tree', '-r', '-z', 'HEAD').split('\0').filter(Boolean)
-    .filter(line => !additiveOwnedFiles.has(line.slice(line.indexOf('\t') + 1))).sort();
+  const reviewedTree = git(root, 'ls-tree', '-r', '-z', 'HEAD').split('\0').filter(Boolean);
   const tracked = new Set(inventory.map(([file]) => file));
   const schemaBlob = tracked.has('schema.sql') ? execFileSync('git', ['-C', root, 'show', 'HEAD:schema.sql']) : null;
   const catalogBlob = tracked.has('test/lib/phase2-architecture-upgrade-catalog.json')
     ? execFileSync('git', ['-C', root, 'show', 'HEAD:test/lib/phase2-architecture-upgrade-catalog.json']) : null;
   const catalog = catalogBlob ? JSON.parse(catalogBlob) : null;
-  const additiveSource = { tree: sha256(JSON.stringify(reviewedTree)), schema: schemaBlob ? sha256(schemaBlob) : null,
+  const additiveSource = { tree: sourcePairReviewedTreeHash(reviewedTree), schema: schemaBlob ? sha256(schemaBlob) : null,
     catalog: catalogBlob ? sha256(catalogBlob) : null,
     catalogTables: catalog ? Object.fromEntries(FIRST_FIVE_ADDITIVE_PAIR.tables.map(name => [name, {
       constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null,
@@ -85,7 +99,7 @@ export function qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) 
     [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
     [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
   ]) {
-    assert.equal(identity.additiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files');
+    assert.equal(identity.additiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
     assert.equal(identity.additiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
     assert.equal(identity.additiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
   }
@@ -261,7 +275,8 @@ export async function runSourcePair() {
     receiptComparison: 'Validate completed command schema and database instance/owner/graph/mutation receipt, then compare durable result, identity and immediate feedback. Fresh projection/asOf and differential feedback are retained but not byte-compared.',
     additiveBootstrapPolicy: { predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate,
       stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
-      sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test and scoped review document',
+      sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test/scoped review and the ten literal derivative knowledge outputs; full checkout inventories retain all bytes',
+      derivativeEvidenceOutputs: ADDITIVE_KNOWLEDGE_OUTPUTS,
       dataRule: 'Every predecessor row/table and all sequences remain exact; seven reviewed added tables must be empty; raw unequal hashes retained',
       excludedClaim: 'Empty added tables do not establish new authority or native schema validity' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
