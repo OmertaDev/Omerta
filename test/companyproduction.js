@@ -18,7 +18,7 @@ if (native) {
   process.env.DATABASE_URL = url.href;
 }
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', INVITE_MODE: 'off',
-  JWT_SECRET: 'company-production-isolated-fixture-secret', MARKET_SEED: 'production-fixture-seed', MOD_KEY: 'production-fixture-moderator' });
+  JWT_SECRET: 'company-production-isolated-fixture-secret', MARKET_SEED: 'production-fixture-seed-long-enough-for-native', MOD_KEY: 'production-fixture-moderator' });
 const { buildServer } = await import('../src/server.js'), G = await import('../src/game.js');
 const Items = await import('../src/items.js'), Crafting = await import('../src/crafting.js');
 const Production = await import('../src/companyproduction.js'), Routes = await import('../src/routes/companyproduction.js');
