@@ -60,6 +60,13 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+      - name: Compile original funded-work escrow artifact
+        run: npm run build:funded-work-artifact
+
       - name: Phase 1 world graph (deterministic package validation)
         run: npm run worldgraph:check
 
@@ -193,7 +200,7 @@ jobs:
     runs-on: ubuntu-latest
     # Expanded native coverage exhausted the former 20m lane after loadtest's
     # success report, before process exit and concurrency. Keep a 30m bound.
-    timeout-minutes: 60
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -226,6 +233,13 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+
+      # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+      - name: Compile original funded-work escrow artifact
+        run: npm run build:funded-work-artifact
 
       - name: Install PostgreSQL client tools matching the server major
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
@@ -828,6 +842,13 @@ jobs:
           RESOURCE_ECONOMY: 'off'
           COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
         run: npm run test:company-commercial:postgres
+
+      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RESOURCE_ECONOMY: 'off'
+          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+        run: npm run test:company-autonomy:postgres
 
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'

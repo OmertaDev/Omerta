@@ -3635,9 +3635,9 @@ scopedSocialContext = async function(db) {
     'the `suites` job must have exactly one 75-minute HANG bound for the measured full lifecycle');
   assert.deepEqual(timeouts(browser), [20],
     'the `browser` job must have exactly one 20-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [60],
-    'the `pgcheck` job must retain exactly one finite 60-minute HANG bound for the measured complete native chain');
-  for (const invalid of [0, 45, 90]) assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 60', 'timeout-minutes: ' + invalid)), [60]), 'native wall bound must remain finite and exactly the measured release budget');
+  assert.deepEqual(timeouts(pgcheck), [90],
+    'the `pgcheck` job must retain exactly one finite proposed90-minute HANG bound for the expanded native chain');
+  for (const invalid of [0, 45, 60, 120]) assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]), 'native wall bound must remain finite and exactly the measured release budget');
 
 
   const suitesCommands = ['npm test', 'npm run sim', 'npm run scale'];
@@ -3756,7 +3756,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'build:funded-work-artifact', 'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3793,7 +3793,7 @@ scopedSocialContext = async function(db) {
   };
   const withoutRealPgquery = replacePgquery(['# npm run pgquery']);
   const missingNativeCommands = nativeCommandsFrom(withoutRealPgquery);
-  assert.deepEqual(missingNativeCommands, expectedNativeCommands.slice(1));
+  assert.deepEqual(missingNativeCommands, expectedNativeCommands.filter(command=>command!=='pgquery'));
   assert.throws(() => assert.deepEqual(missingNativeCommands, expectedNativeCommands),
     { code: 'ERR_ASSERTION' }, 'deleting a command must fail the inventory without unsupported syntax');
   const misleadingPgquery = withoutRealPgquery.replace('    steps:', [
@@ -3804,7 +3804,7 @@ scopedSocialContext = async function(db) {
     '          COMMAND_NOTE: npm run pgquery',
     '        run: npm ci',
   ].join('\n'));
-  assert.deepEqual(nativeCommandsFrom(misleadingPgquery), expectedNativeCommands.slice(1),
+  assert.deepEqual(nativeCommandsFrom(misleadingPgquery), expectedNativeCommands.filter(command=>command!=='pgquery'),
     'metadata and whole-line comments cannot stand in for a deleted command');
   // Former echo/quote/heredoc decoys now refuse individually: no generic shell support is needed.
   const unsupportedPgqueryForms = [
@@ -3843,7 +3843,7 @@ scopedSocialContext = async function(db) {
       `${label} must refuse before admitting a misleading native command`);
   }
   const opaquePgquery = replacePgquery(['node -e "', 'npm run pgquery', '"']);
-  assert.deepEqual(nativeCommandsFrom(opaquePgquery), expectedNativeCommands.slice(1),
+  assert.deepEqual(nativeCommandsFrom(opaquePgquery), expectedNativeCommands.filter(command=>command!=='pgquery'),
     'an exact-looking native command inside supported node data is never inventoried');
   const quotedHashPgquery = replacePgquery([
     'node -e "', "console.log('&& # quoted data');", '"', 'npm run pgquery',
@@ -3869,6 +3869,22 @@ scopedSocialContext = async function(db) {
   assert.notEqual(badIndent, pgcheck);
   assert.throws(() => nativeCommandsFrom(badIndent), /unsupported inconsistent/,
     'a malformed literal scalar must not invent a command position');
+  const autonomyScripts=JSON.parse(fs.readFileSync('package.json','utf8')).scripts;
+  assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
+  const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol";
+  assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
+  const artifactAdmits=(job,command)=>job.includes('      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1')&&job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;
+  assert(artifactAdmits(suites.replaceAll('\r\n','\n'),expectedArtifactCommand));assert(artifactAdmits(pgcheck.replaceAll('\r\n','\n'),expectedArtifactCommand));
+  for(const bad of [expectedArtifactCommand.replace('v5.6.1','master'),'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json','echo synthetic'])assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n'),bad));
+  assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('version: v1.7.1','version: stable'),expectedArtifactCommand));
+  const {AUTONOMY_NATIVE_PROOFS}=await import('../tools/company-autonomy-native.js');
+  assert.equal(AUTONOMY_NATIVE_PROOFS.length,11,'All eleven fresh proofs required');
+  assert(AUTONOMY_NATIVE_PROOFS.some(([file,key,prefix])=>file==='fundedworkescrowadapter'&&key==='FUNDED_WORK_ADAPTER_TEST_DATABASE_URL'&&prefix==='funded_work_adapter_test_'));
+  for(const required of ['company-autonomy-native-guard','company-autonomy-fixture-guards','fundedworkchainobservations','company-late-five-integration'])assert(autonomyScripts['test:company-autonomy'].includes('node test/'+required+'.js'));
+  const autonomyStep=pgcheck.slice(pgcheck.indexOf('      - name: Economic intelligence,'),pgcheck.indexOf('      - name: Nonempty loan expiry'));
+  const admits=step=>step.includes("RESOURCE_ECONOMY: 'off'")&&step.includes('COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres')&&step.includes('run: npm run test:company-autonomy:postgres');
+  assert(admits(autonomyStep));
+  for(const drift of [autonomyStep.replace('127.0.0.1','remote.invalid'),autonomyStep.replace("RESOURCE_ECONOMY: 'off'",''),autonomyStep.replace('test:company-autonomy:postgres','test:company-autonomy')])assert(!admits(drift));
   const nativeCommands = nativeCommandsFrom(pgcheck);
   assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts['test:due-work:postgres'],
     'node test/due-work-process-recovery.js', 'native due-work recovery must execute the nonempty loan process controls');
@@ -3877,7 +3893,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at 75m, browser at 20m and pgcheck at 45m, with every lane intact');
+  console.log('  ✓ CI keeps suites at 75m, browser at 20m and pgcheck at proposed90m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
