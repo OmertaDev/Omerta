@@ -1,3 +1,7 @@
+import { retireIntelligenceAtDeath } from '../economicintelligence.js';
+import { retireManagementTeamsAtDeath } from '../managementteams.js';
+import { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';
+import { markExternalWorkRecoveryAtDeath } from '../fundedexternalwork.js';
 // Death — the estate, the grudges it settles, and the blood feuds it swears.
 //
 // runEstate is the most consequential function in the game: it wipes ~35 character-scoped
@@ -477,6 +481,10 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
     await voidEmploymentOrganizationsAtDeath(client, victim);
     await retireBusinessPartnershipsAtDeath(client, victim.id);
     await retireCompanyGovernanceAtDeath(client, victim.id);
+    await retireIntelligenceAtDeath(client, victim.id);
+    await retireManagementTeamsAtDeath(client, victim.id);
+    await voidStrategyLaboratoriesAtDeath(client, victim.id);
+    await markExternalWorkRecoveryAtDeath(client, victim.id);
     await retireAcquisitionsAtDeath(client, victim.id);
   }
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
