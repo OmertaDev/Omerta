@@ -478,6 +478,7 @@ const NOT_API = new Set([
   'timeStyle',  // Intl.DateTimeFormat presentation option used by the Content Desk
   'view',       // Content Desk's local cases/workshop/exchange/archive selection
   'initialView', // in-world Fieldwork renderer bootstrap; never sent in an API body
+  'themeMode',   // WalletConnect SDK modal appearance; never sent to the game API
 ]);
 // `field: 'value'` (deck bodies, JS objects) and `"field":"value"` (data-body attributes).
 // A TERNARY's colon looks exactly like a key's: `alt: guest ? null : 'everywhere'` contains the
