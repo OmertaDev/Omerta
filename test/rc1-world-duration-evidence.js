@@ -22,7 +22,9 @@ for (const [file, pinnedLfSha256] of Object.entries(WORKER_SOURCE_PINS)) {
   const originalSource = (file==='src/worker.js'?companyWorkflowSourceBaseline(file,authoredSource):authoredSource).replaceAll('\r\n', '\n');
   if(file==='src/worker.js'){
     const currentLf=currentSource.replaceAll('\r\n','\n');
-    for(const changed of [currentLf+'\n// unknown current worker\n',currentLf.slice(1),currentLf.replace('runManagementTeams(pool, 20)','runManagementTeams(pool, 21)')]){
+    const boundedCallback='runCompanyOperators(pool, 20)';
+    assert.equal(currentLf.split(boundedCallback).length,2,'The real bounded callback must occur exactly once');
+    for(const changed of [currentLf+'\n// unknown current worker\n',currentLf.slice(1),currentLf.replace(boundedCallback,'runCompanyOperators(pool, 21)')]){
       assert.notEqual(changed,currentLf);
       assert.equal(companyWorkflowSourceBaseline(file,cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,changed))),changed,'Unknown current worker cannot inherit historical trace source');
     }
