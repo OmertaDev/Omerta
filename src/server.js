@@ -83,6 +83,12 @@ import { register as registerCompanySuccession } from './routes/companysuccessio
 import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
+import { register as registerCompanyProduction } from './routes/companyproduction.js';
+import { register as registerCompanyDemand } from './routes/companydemand.js';
+import { register as registerCompanyForecast } from './routes/companyforecast.js';
+import { register as registerCompanySpecialization } from './routes/companyspecialization.js';
+import { register as registerItemDurability } from './routes/itemdurability.js';
+import { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';
 import { register as registerGameEmployment } from './routes/gameemployment.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
 import { register as registerCompanyOpportunities } from './routes/companyopportunities.js';
@@ -2423,6 +2429,11 @@ export async function buildServer() {
   registerMarketFeed(app, { pool });
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
+  registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft });
+  registerCompanyDemand(app, { pool, auth });
+  registerCompanyForecast(app, { pool, auth });
+  registerCompanySpecialization(app, { pool, auth });
+  registerItemDurability(app, { pool, auth });
   registerGameEmployment(app, { pool, auth });
   registerCompanyWorkflows(app, { pool, auth });
   registerCompanyOpportunities(app, { pool, auth });

@@ -1,3 +1,4 @@
+import { critiqueEconomySourceBaseline, critiqueEconomyRecoveryCatalog } from '../tools/rc1-critique-economy-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
@@ -28,7 +29,7 @@ assert.deepEqual(await verifyCheckpointRecoverySources({ ...input,
   readFile: file => String(fs.readFileSync(file)).replace(/\r?\n/g, '\r\n') }), source);
 let sourceNegatives = 0;
 for (const file of files) {
-  const current = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  const current = critiqueEconomySourceBaseline(file, fs.readFileSync(file, 'utf8'), 'caseCrew').replaceAll('\r\n', '\n');
   assert.equal(current, git('show', transfer.sourceRevision + ':' + file));
   assert.equal(current, git('show', transfer.sourceBlobs[file]));
   assert.equal(sha256(current), transfer.sourcePins[file]); assert.equal(blob(current), transfer.sourceBlobs[file]);
@@ -79,7 +80,7 @@ for (const value of [null, {}, 0]) assert.throws(() => assertCaseCrewCatalogSour
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
   COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE' };
 const previous = Object.fromEntries(Object.keys(flags).map(key => [key, process.env[key]]));
-Object.assign(process.env, flags); const current = recoveryCatalog(coreProgressionContent());
+Object.assign(process.env, flags); const current = critiqueEconomyRecoveryCatalog(recoveryCatalog(coreProgressionContent()), 'caseCrew');
 for (const [key, value] of Object.entries(previous)) if (value === undefined) delete process.env[key]; else process.env[key] = value;
 const untouched = canonicalJson(current), prior = caseCrewRecoveryCatalog(current);
 assert.equal(hash(current), transfer.actualSha256); assert.equal(hash(prior), transfer.predecessorSha256);

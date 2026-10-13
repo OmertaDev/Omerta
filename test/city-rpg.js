@@ -23,8 +23,8 @@ const paths = [
   { id: 'ask', task: 'mystery:neighborhood-ask', interaction: 'inspect_neighborhood_delivery',
     other: 'mystery:neighborhood-listen', evidence: 'evidence:neighborhood-route' },
 ];
-assert.equal(report.packages, 22);
-assert.equal(report.nodes, 187);
+assert.equal(report.packages, 23);
+assert.equal(report.nodes, 188);
 assert.equal(NEIGHBORHOOD_INITIATION_PACKAGE.nodes.length, 9, 'The original newcomer case remains nine nodes.');
 assert.equal(report.economyPolicy.omrAuthorityPaths, 0);
 assert.equal(report.economyPolicy.cashRewardSourcePaths, 0);

@@ -1390,6 +1390,8 @@ try {
   const salePrice = deeds.json().market.minPrice;
   const listed = await app.inject({ method: 'POST', url: '/v1/deeds/list', headers: { ...viewer.headers, 'idempotency-key': crypto.randomUUID() }, payload: { price: salePrice } });
   assert.equal(listed.statusCode, 200, listed.body);
+  // The seller's assertions are complete; its renderer is not part of the buyer's journey.
+  await sellerPage.context.close();
   await cityPage.bringToFront(); await enterDeeds(cityPage); await cityPage.locator(`[data-buydeed="${seller.id}"]`).waitFor();
   const beforeBuy = await currentActor(neighbor), buyFares = await fares(neighbor), buyAt = cityRequests.length;
   const boughtDeed = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/buy/' + seller.id);
@@ -1423,8 +1425,28 @@ try {
   const homeMoving = await state(cityPage), homePlot = homeMoving.homes.find(home => home.key === key);
   assert(Math.hypot(homeMoving.position.x - homePlot.entrance.x, homeMoving.position.y - homePlot.entrance.y) > 40,
     'A confirmed ride followed by the real home entry starts walking instead of teleporting to the property.');
-  await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
-    && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+  const homeWalkSnapshot = () => cityPage.evaluate(key => {
+    const entry = window.__worldHandles.at(-1), state = entry.handle.getState(), game = window.__worldGames.at(-1);
+    return { at: performance.now(), scene: window.__worldHandles.length, destroyed: entry.destroyed,
+      ready: state.ready, region: state.region.id, position: state.position, pathLength: state.pathLength,
+      selectedHome: state.selectedHome, home: state.homes.find(home => home.key === key), worldUI: state.worldUI,
+      focus: document.hasFocus(), visibility: document.visibilityState, active: document.activeElement?.tagName,
+      renderer: { frame: game.loop.frame, delta: game.loop.delta, actualFps: game.loop.actualFps, running: game.loop.running } };
+  }, key);
+  const homeWalkStart = await homeWalkSnapshot();
+  try {
+    await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
+      && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+  } catch (error) {
+    let diagnosticTimer;
+    const final = await Promise.race([
+      homeWalkSnapshot().catch(failure => ({ unavailable: failure.message })),
+      new Promise(resolve => { diagnosticTimer = setTimeout(() => resolve({ unavailable: 'snapshot exceeded 2000ms' }), 2000); }),
+    ]);
+    clearTimeout(diagnosticTimer);
+    console.error('world host: failed owned-home arrival', JSON.stringify({ key, start: homeWalkStart, final }));
+    throw error;
+  }
   const homeArrived = await state(cityPage);
   assert.equal(homeArrived.homes.filter(home => home.key === key).length, 1);
   assert(Math.hypot(homeArrived.position.x - homePlot.entrance.x, homeArrived.position.y - homePlot.entrance.y) < 42);
@@ -1498,7 +1520,7 @@ try {
     releasePrivateDeed(); releaseLogout();
     await cityPage.unroute('**/v1/deeds', holdPrivateDeed); await cityPage.unroute('**/v1/access/logout', holdLogout);
   }
-  await connected.context.close(); await sellerPage.context.close();
+  await connected.context.close();
   console.log('world host: canonical claim and same-parcel sale reveal fresh owned homes without fare, guarded deed focus, navigation cancellation and private teardown pass');
   }
   assert.deepEqual(errors, []);

@@ -1,3 +1,4 @@
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { BUSINESS_SEASON_SOURCE_TRANSFER } from '../tools/rc1-business-season-source-compatibility.js';
 import { COMMERCIAL_REPUTATION_SOURCE_TRANSFER } from '../tools/rc1-commercial-reputation-source-compatibility.js';
 import { COMPANY_OPPORTUNITY_SOURCE_TRANSFER } from '../tools/rc1-company-opportunity-source-compatibility.js';
@@ -80,7 +81,7 @@ assert.throws(() => assertCityHomesLeagueServerTransfer(homesServerText + '\n// 
 const crewSources = new Map();
 const franchiseSources = new Map();
 for (const file of Object.keys(FRANCHISE_SOURCE_CURRENT_PINS)) {
-  const raw = file === 'src/server.js' ? homesProof.baselineText : cityGameplaySourceBaseline(file,await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  const raw = file === 'src/server.js' ? homesProof.baselineText : cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,await fs.readFile(file, 'utf8'))).replaceAll('\r\n', '\n');
   const invoiceBaseline = invoiceSourceBaseline(file, coverageSourceBaseline(file, raw));
   const text = INTEL_SOURCE_CURRENT_PINS[file] ? qualifyIntelSource(file, invoiceBaseline).baselineText : invoiceBaseline;
   const proof = assertFranchiseSourceTransfer(file, text);
@@ -397,7 +398,7 @@ const operationText = crewProjectionSourceBaseline('src/operations.js', (await f
 const cityProofs = new Map();
 for (const file of Object.keys(CITY_SOURCE_CURRENT_PINS)) {
   const actual = file === 'src/server.js' ? serverText : crewProjectionSourceBaseline(file,
-    cityGameplaySourceBaseline(file,await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'));
+    cityGameplaySourceBaseline(file, firstBatchSourceBaseline(file, await fs.readFile(file, 'utf8'))).replaceAll('\r\n', '\n'));
   const text = Object.hasOwn(GOODS_SOURCE_CURRENT_PINS, file) ? assertGoodsSourceTransfer(file, actual).baselineText : actual;
   const proof = assertCitySourceTransfer(file, text);
   const predecessor = execFileSync('git', ['show', `${CITY_SOURCE_PREDECESSOR_REVISION}:${file}`],
@@ -454,7 +455,7 @@ for (const changed of [
   assert.throws(() => assertCitySourceTransfer('src/operations.js', changed), /source changed/);
 }
 for (const file of ['src/server.js', 'src/economy.js']) {
- const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'));
+ const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,await fs.readFile(file, 'utf8'))).replaceAll('\r\n', '\n'));
  const proof = assertEconomySourceTransfer(file, text);
  assert(proof.inverseChunks > 0);
  assert.equal(sha256(proof.baselineText), proof.baselineSha256);

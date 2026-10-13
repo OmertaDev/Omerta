@@ -266,6 +266,7 @@ assert.equal(undeclared.length, 0,
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectItemConditionIssues: 'read-only physical-condition and manufacturing-witness ledger oracle; no player collection, income or mutation authority',
   collectDefinitionChecks: 'read-only offline Phase 2 registry audit inside the ledger snapshot; no player collection, income or mutation authority',
   collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
     + 'validator admits trade only through the separate cashless, same-hash barter manifest, while the '
@@ -2104,6 +2105,7 @@ const SCENERY_WAIVED = {
     'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',
     'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',
     'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',
+    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',
     'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',
     // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business
     // TAKEOVER shipped `kind: r.kind` and the wire read "took your nightclub" as "took your
@@ -3434,6 +3436,8 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/companydemand-fixture.js': 'Import-only authenticated gameplay fixture used by the executed demand, forecast and discovery-contract suites; exports no standalone test runner.',
+    'test/companyproduction-schema.js': 'Import-only frozen production DDL fixture; actual schema, constraints and canonical production execute in the memory/native production and migration suites.',
     'test/rc1-resident-restart.js':
       'Requires the retained private alliance hour-24 dump, policy and RNG tape selected with --retained. '
       + 'A newly seeded CI database cannot reproduce the recorded interruption. The bounded native '
@@ -3679,7 +3683,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',

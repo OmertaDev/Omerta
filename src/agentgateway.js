@@ -10,6 +10,7 @@ import { CITY_ENCOUNTER_CONTRACTS, CITY_ENCOUNTER_SCHEMAS } from './city-encount
 import { CITY_WORLD_OPPORTUNITY_REQUEST_SCHEMAS, CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,
   CITY_WORLD_OPPORTUNITY_DETAIL_SCHEMA, CITY_WORLD_OPPORTUNITY_RESULT_SCHEMA } from './city-world-opportunities-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
+import { COMPANY_ECONOMY_CONTRACTS, COMPANY_ECONOMY_SCHEMAS } from './company-economy-contracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
@@ -288,6 +289,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...COMPANY_ECONOMY_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
   'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
@@ -918,6 +920,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...COMPANY_ECONOMY_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,
   CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,

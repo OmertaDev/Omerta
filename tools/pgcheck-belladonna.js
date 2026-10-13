@@ -460,6 +460,14 @@ export async function runBelladonnaPgChecks({
       for (const custodyId of custodyIds) {
         await pool.query('DELETE FROM operation_escrow WHERE operation_id=$1', [custodyId]);
       }
+      // The real Belladonna use now retains condition provenance referencing the
+      // fixture's creation/use events. Remove only this run's exact physical UID
+      // before its canonical events; keep the production foreign keys intact.
+      if (toolId) {
+        await pool.query('DELETE FROM item_durability_uses WHERE item_id=$1', [toolId]);
+        await pool.query('DELETE FROM item_durability_birth_quality WHERE item_id=$1', [toolId]);
+        await pool.query('DELETE FROM item_durability_states WHERE item_id=$1', [toolId]);
+      }
       for (const guardKey of new Set(guardKeys)) {
         await pool.query('DELETE FROM item_events WHERE idempotency_key=$1', [guardKey]);
       }

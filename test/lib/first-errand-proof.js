@@ -4,7 +4,15 @@ import { PHASE1_WORLD_GRAPH_PACKAGES } from '../../src/content/phase1.js';
 
 // Called by the existing district-arcs memory AND owned-schema native command.
 export async function firstErrandProof(app) {
-  assert.equal(crypto.createHash('sha256').update(JSON.stringify(PHASE1_WORLD_GRAPH_PACKAGES.slice(0, 20))).digest('hex'),
+  const originalIds = ['core-materials', 'automotive-salvage', 'belladonna-demo', 'neighborhood-initiation',
+    'district-docks-story', 'district-neon-story', 'district-foundry-story', 'district-brick-story',
+    'district-canal-story', 'district-cathedral-story', 'staged-crew-missions', 'city-neighbor-favors',
+    'city-shutter-lock', 'city-loading-route', 'city-careful-negotiation', 'city-sealed-record',
+    'city-rotating-account-0', 'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3'];
+  const packages = new Map(PHASE1_WORLD_GRAPH_PACKAGES.map(pkg => [pkg.id, pkg]));
+  assert.equal(packages.size, PHASE1_WORLD_GRAPH_PACKAGES.length, 'Package IDs remain unique.');
+  const original = originalIds.map(id => { assert(packages.has(id), 'Original package retained: ' + id); return packages.get(id); });
+  assert.equal(crypto.createHash('sha256').update(JSON.stringify(original)).digest('hex'),
     '351ec95b2762275f5a4ac4a3c18d65f62559a5ba3478245b5198cf5b2bb6599d', 'All 20 previously admitted packages remain exact.');
   const graph = 'first-errand-case-v2', base = '/v1/worldgraph/mysteries/' + graph;
   const request = (actor, method, url, body, key = crypto.randomUUID()) => app.inject({ method, url,

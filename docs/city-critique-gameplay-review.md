@@ -86,3 +86,22 @@ pixels. Removing only the new form filter fails the previously restored furnishi
 value after valid setup. Static diagnostics
 and source-guard failures are retained and repaired explicitly; unknown source bytes
 are never admitted by weakening a predecessor hash or broad normalization.
+
+## Retained native evidence and combined integration
+
+The clean local candidate `bd18e41feddd06afede5601f261912bce9a97c33`
+passed all seven unmodified City gameplay native proofs on PostgreSQL 18.4.
+The owned loopback cluster verified durable settings, retained exact before/after
+source hashes, left no owned fixture schemas, and was stopped after execution.
+Its retained manifest SHA-256 is
+`0c658444f2155d2786787a2ad1fbaf72c2445f954fd65a8ef540f230edafbb68`.
+The later `b9a7b37d` change affected only the Core browser fixture and generated
+knowledge; all sixteen native producer blobs remained identical. That comparison
+does not claim a native execution at the later revision.
+
+Integration with the separately reviewed Company economy candidate preserves its
+seven-table/47-constraint catalogue separately from the City 7/63/72 baseline and
+the two exact content-predicate replacements. The combined source requires new
+current-source, native, browser, source-pair and hosted qualification. The retained
+earlier native result does not qualify the incoming Company authority or this
+combined release. No activation or production claim follows from a local proof.

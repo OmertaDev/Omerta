@@ -159,13 +159,14 @@ try {
 
   assert.deepEqual(validateCraftingDefinitions(EXTENDED_REGISTRY), {
     ok: true,
-    recipes: 5,
+    recipes: 6,
     recipeIds: [
       'recipe:car_salvage_basic',
       'recipe:fixture_salvage',
       'recipe:fixture_tool',
       'recipe:hardened_steel',
       'recipe:precision_lock_tool',
+      'recipe:tempered_precision_lock_tool',
     ],
   }, 'the runtime accepts an authentic validated extension without editing crafting code');
   assert.throws(
@@ -318,7 +319,7 @@ try {
     skills: new Set(),
     cars: h.owned.cars,
   });
-  assert.equal(catalog.length, 3);
+  assert.equal(catalog.length, 4);
   assert(catalog.find((entry) => entry.id === 'recipe:car_salvage_basic')
     .blockedBy.some((blocker) => blocker.adapter === 'location'));
   assert(catalog.find((entry) => entry.id === 'recipe:hardened_steel')
@@ -711,7 +712,7 @@ try {
 
   // The preview becomes executable once its supplied state matches the same four adapter rules.
   catalog = recipeCatalog({
-    character: { id: CHARACTER, loc: 'foundry', level: 10 },
+    character: { id: CHARACTER, loc: 'foundry', level: 12 },
     skills: new Set(['fence_network']),
     cars: [{ id: 'preview-car', model_id: 'junker', trim_id: 'stock' }],
   });

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 // Data-defined Phase 1 crafting and salvage. Domain callers must enter through:
 //
 //   withItemTransaction(pool, (client) =>
@@ -235,6 +236,22 @@ function graphMutationAuthority(context, recipe) {
     ...(Object.hasOwn(source, 'discovery') ? { discovery: recipe.discovery } : {}),
     ...(Object.hasOwn(source, 'scarcity') ? { scarcity: recipe.scarcity } : {}),
   };
+}
+
+/** Read-only immutable canonical recipe witness for manufacturing provenance adapters. */
+export function canonicalCraftAuthority(recipeId) {
+  const context = contextOf(DEFAULT_CRAFTING_CONTEXT);
+  const recipe = recipeOf(context, recipeId);
+  return Object.freeze({ recipe: Object.freeze(graphIdentity(context, recipe)),
+    authority: Object.freeze(graphMutationAuthority(context, recipe)),
+    consumes: inputsOf(recipe), produces: outputsOf(recipe), cashCost: cashCostOf(recipe) });
+}
+
+export function canonicalCraftRequestHash(recipeId, accountId) {
+  const witness = canonicalCraftAuthority(recipeId);
+  return crypto.createHash('sha256').update(JSON.stringify({ kind: 'craft',
+    owner: { scope: 'account', id: canonicalString(accountId, 'Authenticated account id') },
+    request: witness.authority })).digest('hex');
 }
 
 const normalizedKey = (value) => String(value).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -975,7 +992,7 @@ export async function craftWorldGraphRecipe(
   if (inputsOf(recipe).some((entry) => entry.assetType === 'car')) {
     fail('salvage_required', 'Vehicle recipes must use salvageCar.');
   }
-  return withItemMutation(
+  const result = await withItemMutation(
     client,
     owner,
     'craft',
@@ -983,6 +1000,10 @@ export async function craftWorldGraphRecipe(
     graphMutationAuthority(context, recipe),
     async (mutation) => {
       const actor = await actorContext(client, accountId);
+      if (recipe.id === 'recipe:tempered_precision_lock_tool') {
+        const account = (await client.query('SELECT id,status FROM accounts WHERE id=$1 FOR UPDATE', [accountId])).rows[0];
+        if (account?.status !== 'active') fail('crafting_unavailable', 'Crafting is unavailable.');
+      }
       if (h.expectedCharacterId && actor.character.id !== h.expectedCharacterId) fail('crafting_unavailable', 'Crafting is unavailable.');
       const asOf = Date.now();
       await resolveRecipeAuthority(client, context, [recipe], accountId, actor, asOf);
@@ -1004,6 +1025,11 @@ export async function craftWorldGraphRecipe(
       };
     },
   );
+  if (recipe.id === 'recipe:tempered_precision_lock_tool') {
+    const { recordManufacturedQuality } = await import('./itemdurability.js');
+    await recordManufacturedQuality(client, { requestKey: idempotencyKey, itemId: result.outputs[0].id });
+  }
+  return result;
 }
 
 /** Execute one exact-car salvage recipe inside an active `withItemTransaction` callback. */

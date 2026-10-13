@@ -77,6 +77,7 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty conservation',
   'franchise royalty provenance',
   'logistics coverage bindings',
+  'physical equipment condition provenance',
   'reason vocabulary',
   'strategy league bindings',
   'strategy license bindings',
