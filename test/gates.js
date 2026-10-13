@@ -3579,6 +3579,9 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',
+    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',
+    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',
     'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
     'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',
     'test/businesspartnerships-fixture.js': 'Import-only actual authenticated partnership gameplay setup executed by workforce memory/native suites; no standalone runner.',
@@ -3629,6 +3632,42 @@ scopedSocialContext = async function(db) {
       + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
       + 'package\'s own verification, run from omerta-mcp/ after its install.',
   };
+
+  const {AUTONOMY_NATIVE_PROOFS:fixtureNativeProofs}=await import('../tools/company-autonomy-native.js');
+  const fixtureConsumers={
+    'test/economicintelligence-fixture.js':{factory:'intelligenceFixture',suites:['economicintelligence','company-autonomy-contracts']},
+    'test/fundedexternalwork-fixture.js':{factory:'externalWorkFixture',suites:['fundedexternalwork']},
+    'test/managementteams-fixture.js':{factory:'managementFixture',suites:['managementteams']},
+  };
+  const fixtureAdmission=(file,source,consumerSources,memory,proofs)=>{
+    try{
+      const spec=fixtureConsumers[file];if(!spec)return false;
+      const ast=parse(source,{ecmaVersion:'latest',sourceType:'module'});
+      const exported=ast.body.filter(n=>n.type.startsWith('Export'));
+      if(exported.length!==1||exported[0].declaration?.type!=='FunctionDeclaration'||!exported[0].declaration.async||exported[0].declaration.id?.name!==spec.factory)return false;
+      for(const suite of spec.suites){
+        if(!memory.split(' && ').includes('node test/'+suite+'.js')||!proofs.some(([f,,,mode])=>f===suite&&!mode))return false;
+        const text=consumerSources[suite];if(!text)return false;let imported=false;
+        const walk=node=>{if(!node||typeof node!=='object')return;if((node.type==='ImportDeclaration'||node.type==='ImportExpression')&&node.source?.value==='./'+path.basename(file))imported=true;for(const value of Object.values(node))if(Array.isArray(value))value.forEach(walk);else if(value&&typeof value==='object')walk(value);};
+        walk(parse(text,{ecmaVersion:'latest',sourceType:'module'}));
+        if(!imported||!text.includes('await '+spec.factory+'('))return false;
+      }
+      return memory.split(' && ').includes('node test/company-autonomy-contracts.js --laboratories')&&proofs.some(([file,,,_mode])=>file==='company-autonomy-contracts'&&_mode==='--laboratories');
+    }catch{return false;}
+  };
+  for(const[file,spec]of Object.entries(fixtureConsumers)){
+    const source=fs.readFileSync(path.join(ROOT,file),'utf8'),consumers=Object.fromEntries(spec.suites.map(suite=>[suite,fs.readFileSync(path.join(ROOT,'test',suite+'.js'),'utf8')])),memory=scripts['test:company-autonomy'];
+    assert(fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs),'Import-only fixture requires its actual memory/native/default/lab consumers');
+    assert(!fixtureAdmission('test/unknown-fixture.js',source,consumers,memory,fixtureNativeProofs));
+    assert(!fixtureAdmission(file,source+'\nexport function standaloneAuthority(){}',consumers,memory,fixtureNativeProofs));
+    for(const suite of spec.suites){
+      assert(!fixtureAdmission(file,source,consumers,memory.replace('node test/'+suite+'.js',''),fixtureNativeProofs));
+      assert(!fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs.filter(([f])=>f!==suite)));
+      assert(!fixtureAdmission(file,source,{...consumers,[suite]:consumers[suite].replaceAll('./'+path.basename(file),'./unknown-fixture.js')},memory,fixtureNativeProofs));
+    }
+    assert(!fixtureAdmission(file,source,consumers,memory.replace('node test/company-autonomy-contracts.js --laboratories',''),fixtureNativeProofs));
+    assert(!fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs.filter(([,,,mode])=>!mode)));
+  }
 
   const onDisk = fs.readdirSync(path.join(ROOT, 'test'))
     .filter((f) => f.endsWith('.js')).map((f) => `test/${f}`).sort();
