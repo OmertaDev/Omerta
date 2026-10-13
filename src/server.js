@@ -104,6 +104,9 @@ import { register as registerWorkerTraining } from './routes/workertraining.js';
 import { register as registerEmploymentOrganizations } from './routes/employmentorganizations.js';
 import { register as registerBusinessPartnerships } from './routes/businesspartnerships.js';
 import { register as registerCompanyGovernance } from './routes/companygovernance.js';
+import { register as registerManagementTeams } from './routes/managementteams.js';
+import { managementTeamTurnRegistrar } from './managementteamautonomy.js';
+import { register as registerStrategyLaboratories } from './routes/strategylaboratories.js';
 import { register as registerEconomicIntelligence } from './routes/economicintelligence.js';
 import { register as registerAgentOperatingMemory } from './routes/agentoperatingmemory.js';
 import { register as registerFundedExternalWork } from './routes/fundedexternalwork.js';
@@ -2470,6 +2473,8 @@ export async function buildServer() {
   registerBusinessPartnerships(app, { pool, auth });
   registerCompanyGovernance(app, { pool, auth });
   registerEconomicIntelligence(app, { pool, auth });
+  registerManagementTeams(app, { pool, auth, currentTeamTurn: managementTeamTurnRegistrar });
+  registerStrategyLaboratories(app, { pool, auth });
   registerAgentOperatingMemory(app, { pool, auth, readAuthorizedAgentTurn: account => readAgentTurn(account) });
   registerFundedExternalWork(app, { pool, auth });
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });

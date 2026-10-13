@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+assert(!process.env.DATABASE_URL,'Refuse ambient endpoint');const native=process.argv.includes('--postgres');
+if(native){const u=new URL(process.env.COMPANY_LATE_FIVE_TEST_DATABASE_URL);assert(['postgres:','postgresql:'].includes(u.protocol));assert.equal(u.hostname,'127.0.0.1');assert.match(u.pathname,/^\/company_late_five_test_[a-z0-9_]+$/);assert(!u.search&&!u.hash);const local=['35439','35449'].includes(u.port)&&u.username==='pilot_runner'&&!u.password,ci=u.port==='5432'&&u.username==='postgres'&&u.password==='pgcheck';assert(local||ci);const{default:pg}=await import('pg'),p=new pg.Pool({connectionString:u.href});try{const v=(await p.query('SHOW server_version')).rows[0].server_version;assert.match(v,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);assert.equal((await p.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0);console.log('Fresh native late proposal fixture',u.pathname,v);}finally{await p.end();}process.env.DATABASE_URL=u.href;}
+Object.assign(process.env,{RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',INVITE_MODE:'off',DEPOT_PILOT:'on',RESOURCE_ECONOMY:'off',JWT_SECRET:'late-five-owned-fixture-secret',MOD_KEY:'late-five-owned-fixture-mod',MARKET_SEED:'late-five-owned-fixture-market'});
+const{buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),A=await import('../src/managementteamautonomy.js'),M=await import('../src/managementteams.js'),I=await import('../src/items.js');
+const app=await buildServer(),pool=app.pool;let serial=0;
+const call=(p,method,url,payload,key='late-five-'+(++serial),agent=false)=>app.inject({method,url,payload,headers:{...(p?{authorization:'Bearer '+(agent?p.agent:p.token)}:{}),'idempotency-key':key}});
+const ok=async(...args)=>{const r=await call(...args);assert.equal(r.statusCode,200,r.body);return r.json();};
+const cash=async p=>Number((await pool.query('SELECT cash FROM characters WHERE id=$1',[p.id])).rows[0].cash);
+async function player(){const p={token:(await ok(null,'POST','/v1/auth/guest')).token};await ok(p,'POST','/v1/character',{name:'Late Five '+(++serial)});p.account=app.jwt.verify(p.token).sub;p.id=(await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive',[p.account])).rows[0].id;const old=await cash(p);await pool.query("UPDATE characters SET cash=100000,bank=0,energy=100,nerve=100,loc='docks',respect=10000,last_accrued_at=$2 WHERE id=$1",[p.id,new Date(Date.now()+3600000)]);await G.ledger(pool,{characterId:p.id,currency:'cash',amount:100000-old,reason:'crime:late-five-fixture'});p.agent=(await ok(p,'POST','/v1/auth/agent-key')).token;return p;}
+const cfg={salePrice:300,bidPrice:100,targetStock:8,reorderAt:0,restockBudget:5000};
+try{
+ const owner=await player(),planner=await player(),foreign=await player();
+ await ok(planner,'POST','/v1/resources/company',{expectedRevision:0,name:'Late Five Planner',published:false,premises:null});
+ await ok(owner,'POST','/v1/resources/company',{expectedRevision:0,name:'Late Five Company',published:false,premises:null});owner.depot=(await ok(owner,'POST','/v1/depot',cfg)).id;
+ const terms={depotId:owner.depot,partnerCharacter:planner.id,ownerCapital:1000,partnerCapital:1000,partnerBps:3000,maxDistributionCash:1000,reserveCash:1000,expiresInSeconds:3600,contributionAtRisk:true,distributionMode:'voluntary_realized_gin_profit',noPrincipalRefund:true,noOwnerAuthority:true};
+ const invited=await ok(owner,'POST','/v1/company/partnerships',terms),rid=invited.partnership.id,relationshipHash=invited.partnership.termsHash;
+ await ok(planner,'POST',`/v1/company/partnerships/${rid}/accept`,{termsHash:relationshipHash,consent:true});
+ await ok(owner,'POST',`/v1/company/partnerships/${rid}/contribute`,{termsHash:relationshipHash,amount:1000});await ok(planner,'POST',`/v1/company/partnerships/${rid}/contribute`,{termsHash:relationshipHash,amount:1000});
+ for(const p of[owner,planner])await ok(p,'POST',`/v1/company/partnerships/${rid}/governance/optin`,{partnershipHash:relationshipHash,consent:true,mode:'depot_config_two_of_two'});
+ await ok(owner,'POST',`/v1/company/partnerships/${rid}/team/optin`,{partnershipHash:relationshipHash,consent:true,role:'operator',shareMemorySelection:true});await ok(planner,'POST',`/v1/company/partnerships/${rid}/team/optin`,{partnershipHash:relationshipHash,consent:true,role:'planner',shareMemorySelection:true},undefined,true);
+ assert.equal((await pool.query('SELECT allow_autonomous FROM management_teams WHERE partnership_id=$1',[rid])).rows[0].allow_autonomous,false);
+ await ok(owner,'POST',`/v1/depot/${owner.depot}/policy`,{expectedRevision:0,enabled:true,allowRestock:true,allowReceive:true,businessPriority:false,maxSpend:5000,reserveCash:1000,expiresInSeconds:600});
+ const snapshot=await ok(owner,'GET',`/v1/company/partnerships/${rid}/team/snapshot`);
+ const proposal=await ok(planner,'POST',`/v1/company/partnerships/${rid}/team/plans`,{kind:'governance_config',config:{...cfg,salePrice:350},expectedRevision:snapshot.revision,expiresInSeconds:600,snapshotHash:snapshot.snapshotHash,teamRevision:snapshot.teamRevision,turnId:snapshot.turnId,selectionHash:snapshot.selectionHash});
+ const plan=proposal.plan;
+ const grantBody={consent:true,enabled:true,planHash:plan.planHash,expiresInSeconds:60};
+ assert.equal((await call(owner,'POST',`/v1/company/management-teams/plans/${plan.id}/autonomy`,grantBody,'agent-cannot-grant',true)).statusCode,400);
+ assert.equal((await call(owner,'POST',`/v1/company/management-teams/plans/${plan.id}/autonomy`,grantBody,'unvoted')).statusCode,400);
+ for(const p of[owner,planner])await ok(p,'POST',`/v1/company/governance/${plan.proposalId}/vote`,{approve:true,proposalHash:plan.proposalHash});
+ assert.equal((await call(owner,'POST',`/v1/company/management-teams/plans/${plan.id}/execute`,{planHash:plan.planHash},'no-scoped-grant',true)).statusCode,400);
+ const beforePolicy=(await pool.query('SELECT * FROM business_operating_policies WHERE depot_id=$1 ORDER BY revision',[owner.depot])).rows;
+ const beforeCash=[await cash(owner),await cash(planner)],beforeDepot=(await pool.query('SELECT * FROM business_depots WHERE id=$1',[owner.depot])).rows[0];
+ const grant=await ok(owner,'POST',`/v1/company/management-teams/plans/${plan.id}/autonomy`,grantBody,'owner-scoped-grant');assert.equal(grant.scope,'one_jointly_approved_five_field_configuration');
+ const worked=await A.runManagementTeams(pool,20);assert.equal(worked.length,1);assert.equal(worked[0].plan.state,'executed');assert.equal(worked[0].gameCashDebited,0);
+ const after=(await pool.query('SELECT * FROM business_depots WHERE id=$1',[owner.depot])).rows[0];assert.equal(Number(after.sale_price),350);for(const k of Object.keys(beforeDepot).filter(k=>k!=='sale_price'))assert.deepEqual(after[k],beforeDepot[k],k);
+ assert.deepEqual([await cash(owner),await cash(planner)],beforeCash);assert.deepEqual((await pool.query('SELECT * FROM business_operating_policies WHERE depot_id=$1 ORDER BY revision',[owner.depot])).rows,beforePolicy);
+ assert.equal((await pool.query('SELECT consumed FROM management_team_autonomy_grants WHERE plan_id=$1',[plan.id])).rows[0].consumed,true);assert.deepEqual(await A.runManagementTeams(pool,20),[]);
+ assert.equal((await call(foreign,'POST',`/v1/company/management-teams/plans/${plan.id}/autonomy`,grantBody)).statusCode,400);
+ const off=await ok(owner,'GET','/v1/company/external-work');assert.equal(off.available,false);assert.equal(off.financialActivation,false);const attempts=await call(owner,'POST','/v1/company/external-work',{activate:true,asset:'USDC'},'off-public',true);assert.equal(attempts.statusCode,503);assert.equal(attempts.json().newFinancialTransactions,0);
+ // Actual source-backed retail and forecast receipt; explicit historical clock fixture
+ // only for already executed paid sales, never invented journals or performance.
+ const memoryOwner=await player(),supplier=await player(),customers=[await player(),await player(),await player()];
+ await ok(memoryOwner,'POST','/v1/resources/company',{expectedRevision:0,name:'Late Memory Company',published:false,premises:null});
+ memoryOwner.depot=(await ok(memoryOwner,'POST','/v1/depot',{...cfg,targetStock:12})).id;
+ await ok(memoryOwner,'POST',`/v1/depot/${memoryOwner.depot}/fund`,{amount:10000});
+ const order=await ok(memoryOwner,'POST',`/v1/depot/${memoryOwner.depot}/restock`,{});
+ for(let n=0;n<2;n++){await ok(supplier,'POST','/v1/goods/buy',{goodId:'gin',qty:6});await ok(supplier,'POST',`/v1/market/${order.id}/fill`,{qty:6});}
+ await ok(memoryOwner,'POST',`/v1/depot/${memoryOwner.depot}/orders/${order.id}/receive`,{});
+ const buy=p=>ok(p,'POST',`/v1/depot/${memoryOwner.depot}/buy`,{qty:1,maxUnitPrice:300});for(let n=0;n<5;n++)await buy(customers[n%3]);
+ const clock=+new Date((await pool.query('SELECT clock_timestamp() AS at')).rows[0].at);await pool.query('UPDATE business_depots SET created_at=$2 WHERE id=$1',[memoryOwner.depot,new Date(clock-3*3600000)]);
+ const sales=(await pool.query("SELECT id FROM business_depot_journal WHERE depot_id=$1 AND reason='sale' ORDER BY created_at,id",[memoryOwner.depot])).rows;for(let n=0;n<sales.length;n++)await pool.query('UPDATE business_depot_journal SET created_at=$2 WHERE id=$1',[sales[n].id,new Date(clock-[150,120,90,60,5][n]*60000)]);
+ const input={windowHours:24,horizonHours:4},forecast=await ok(memoryOwner,'POST',`/v1/company/forecast/${memoryOwner.depot}`,input);assert.equal(forecast.status,'supported');
+ const forecastBody={...input,consent:true,evidenceId:forecast.evidenceId};await ok(memoryOwner,'POST',`/v1/company/forecast/${memoryOwner.depot}/apply`,forecastBody,'late-real-forecast');
+ await ok(memoryOwner,'POST','/v1/agent/memory/policy',{expectedRevision:0,enabled:true});
+ const fact=await ok(memoryOwner,'POST','/v1/agent/memory/capture',{kind:'forecast',businessId:memoryOwner.depot,sourceRequestKey:'late-real-forecast',sourceBody:forecastBody});
+ for(let n=0;n<5;n++)await buy(customers[n%3]);assert.equal((await ok(memoryOwner,'POST','/v1/agent/memory/observe',{factId:fact.factId})).outcome.status,'observed');
+ await ok(memoryOwner,'POST',`/v1/depot/${memoryOwner.depot}/policy`,{expectedRevision:0,enabled:true,allowRestock:true,allowReceive:true,businessPriority:false,maxSpend:5000,reserveCash:1000,expiresInSeconds:600});
+ const turn=await ok(memoryOwner,'GET','/v1/agent/turn',undefined,undefined,true);assert.equal(turn.memoryPreference.automaticAdoption,true);assert.equal(turn.recommendationSource,'verified_operating_memory');assert.equal(turn.recommendedActionId,turn.memoryPreference.recommendedActionId);assert.notEqual(turn.recommendedActionId,turn.memoryPreference.baselineRecommendedActionId);
+ const actual=await ok(memoryOwner,'POST','/v1/agent/act',{turnId:turn.turnId,actionId:turn.recommendedActionId},'late-automatic-choice',true);assert(actual.result.ok);assert((await pool.query("SELECT id FROM market_listings WHERE depot_id=$1 AND status='live'",[memoryOwner.depot])).rows.length===1);
+ const preview=await ok(memoryOwner,'POST',`/v1/company/intelligence/${memoryOwner.depot}/preview`,input);
+ const publication=await ok(memoryOwner,'POST','/v1/company/intelligence/publish',{...input,depotId:memoryOwner.depot,consent:true,evaluationAt:preview.evaluationAt,sourceHash:preview.sourceHash,reportHash:preview.reportHash,price:50,expiresInSeconds:600});
+ const priceBefore=[await cash(owner),await cash(memoryOwner)],purchase=await ok(owner,'POST',`/v1/company/intelligence/${publication.publication.id}/purchase`,{consent:true,maxPrice:50,reportHash:publication.publication.reportHash},'late-intelligence-paid',true);
+ assert.equal(purchase.paid,50);assert.deepEqual([await cash(owner),await cash(memoryOwner)],[priceBefore[0]-50,priceBefore[1]+50]);
+ assert.equal((await ok(foreign,'GET','/v1/company/intelligence/mine')).entitlements.length,0);
+ const inv=await(await import('../src/invariants.js')).runLedgerInvariants(pool,{alert:false});assert(inv.ok,JSON.stringify(inv.checks.filter(c=>!c.ok)));
+ console.log('Late-five actual registered API PASS: paid F21 paired report; F23 real forecast/paid outcome automatically changes actual issued recommendation and real AgentAct; F24 both real votes, primary-session narrow grant, actual agent:true worker configure, once-consumed, exact policy/cash/assets; F25 hardOFF; global',inv.checks.length,'checks. F22 elapsed/source scenarios follow separately.');
+}finally{await app.close();}

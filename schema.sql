@@ -8887,3 +8887,47 @@ CREATE TABLE IF NOT EXISTS territory_economics_payments (
 CREATE TABLE IF NOT EXISTS territory_economics_sources (
  journal_id TEXT PRIMARY KEY REFERENCES business_depot_journal(id), profile_id TEXT NOT NULL REFERENCES territory_economics_profiles(id),
  payment_id TEXT NOT NULL REFERENCES territory_economics_payments(id));
+
+-- Late-five proposal: managementteams metadata.
+CREATE TABLE IF NOT EXISTS management_teams (
+ partnership_id TEXT PRIMARY KEY REFERENCES company_governance(partnership_id),relationship_hash TEXT NOT NULL,
+ operator_opted BOOLEAN NOT NULL DEFAULT false,planner_opted BOOLEAN NOT NULL DEFAULT false,
+ revision INT NOT NULL DEFAULT 1 CHECK(revision BETWEEN 1 AND 2147483647),retired BOOLEAN NOT NULL DEFAULT false,created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS management_team_plans (
+ id TEXT PRIMARY KEY,partnership_id TEXT NOT NULL REFERENCES management_teams(partnership_id),creator_character TEXT NOT NULL REFERENCES characters(id),
+ proposal_id TEXT NOT NULL UNIQUE REFERENCES company_governance_proposals(id),proposal_hash TEXT NOT NULL,team_revision INT NOT NULL,
+ snapshot_hash TEXT NOT NULL,turn_id TEXT NOT NULL,selection_hash TEXT NOT NULL,plan_hash TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('planned','executed','retired')),created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,executed_at TIMESTAMPTZ);
+CREATE TABLE IF NOT EXISTS management_team_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),identity TEXT NOT NULL,receipt JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
+
+-- Late-five proposal: managementteamautonomy metadata.
+ALTER TABLE management_teams ADD COLUMN IF NOT EXISTS allow_autonomous BOOLEAN NOT NULL DEFAULT false;
+CREATE TABLE IF NOT EXISTS management_team_autonomy_grants (
+ plan_id TEXT PRIMARY KEY REFERENCES management_team_plans(id), original_owner TEXT NOT NULL REFERENCES characters(id), original_planner TEXT NOT NULL REFERENCES characters(id),
+ owner_account TEXT NOT NULL REFERENCES accounts(id), team_revision INT NOT NULL, plan_hash TEXT NOT NULL, proposal_hash TEXT NOT NULL,
+ snapshot_hash TEXT NOT NULL, policy_hash TEXT NOT NULL, before_config JSONB NOT NULL, config JSONB NOT NULL,
+ revision INT NOT NULL CHECK(revision>=1), enabled BOOLEAN NOT NULL DEFAULT false, consumed BOOLEAN NOT NULL DEFAULT false,
+ expires_at TIMESTAMPTZ NOT NULL, grant_hash TEXT NOT NULL CHECK(char_length(grant_hash)=64));
+
+-- Late-five proposal: strategylaboratories metadata.
+CREATE TABLE IF NOT EXISTS strategy_laboratories (
+ id TEXT PRIMARY KEY, original_account TEXT NOT NULL REFERENCES accounts(id), original_character TEXT NOT NULL REFERENCES characters(id),
+ business_id TEXT NOT NULL REFERENCES business_depots(id), territory_profile_id TEXT NOT NULL REFERENCES territory_economics_profiles(id),
+ territory_revision INT NOT NULL CHECK(territory_revision>=1), policy_hash TEXT NOT NULL CHECK(char_length(policy_hash)=64),
+ terms JSONB NOT NULL, terms_hash TEXT NOT NULL CHECK(char_length(terms_hash)=64), allow_autonomous BOOLEAN NOT NULL, owner_arm_grant BOOLEAN NOT NULL,
+ arm_index INT NOT NULL CHECK(arm_index BETWEEN 0 AND 2), observed_cost NUMERIC NOT NULL DEFAULT 0 CHECK(observed_cost>=0),
+ expires_at TIMESTAMPTZ NOT NULL, next_run_at TIMESTAMPTZ NOT NULL, state TEXT NOT NULL CHECK(state IN ('active','completed','retired','party_dead')),
+ CHECK(owner_arm_grant=false OR allow_autonomous=true));
+CREATE UNIQUE INDEX IF NOT EXISTS strategy_laboratory_active_depot ON strategy_laboratories(business_id) WHERE state='active';
+CREATE TABLE IF NOT EXISTS strategy_laboratory_arms (
+ id TEXT PRIMARY KEY, lab_id TEXT NOT NULL REFERENCES strategy_laboratories(id), ordinal INT NOT NULL CHECK(ordinal BETWEEN 0 AND 2),
+ config JSONB NOT NULL, baseline JSONB NOT NULL, start_receipt JSONB NOT NULL, started_at TIMESTAMPTZ NOT NULL, end_at TIMESTAMPTZ NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('observing','completed','retired')), result JSONB, UNIQUE(lab_id,ordinal));
+CREATE TABLE IF NOT EXISTS strategy_laboratory_sources (
+ journal_id TEXT PRIMARY KEY REFERENCES business_depot_journal(id), arm_id TEXT NOT NULL REFERENCES strategy_laboratory_arms(id));
+CREATE TABLE IF NOT EXISTS strategy_laboratory_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+ run_id TEXT NOT NULL UNIQUE, receipt JSONB, original_actor TEXT REFERENCES characters(id), account_ref TEXT REFERENCES accounts(id),
+ PRIMARY KEY(account_id,key_hash), CHECK((receipt IS NULL AND original_actor IS NULL AND account_ref IS NULL) OR
+ (receipt IS NOT NULL AND original_actor IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL)));

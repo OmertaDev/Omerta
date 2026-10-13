@@ -1,3 +1,5 @@
+import { economicIntelligenceTransferBooks } from './economicintelligence.js';
+import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';
 // §10.4 — the nightly ledger-invariant job. Value transfers, it is never minted:
 // every bucket of value must reconcile against the enumerated faucet/sink reasons
 // in the transactions ledger. Any drift beyond $1 (or one unit) — or any ledger
@@ -64,6 +66,7 @@ const KNOWN_REASONS = {
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
     'company_acquisition:pay', 'company_acquisition:receive',
+    'economic_intelligence:pay', 'economic_intelligence:receive',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
     // (the missions precedent — check (a) reconciles it per character).
@@ -744,6 +747,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('worker training canonical source', trainingIssues.length, 0, 0, { issues: trainingIssues });
   push('partnership capital transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:fund:pay','business_partnership:fund:receive')"), 0);
   push('partnership profit transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:profit:pay','business_partnership:profit:receive')"), 0);
+  const intelligenceBooks = await economicIntelligenceTransferBooks(pool);
+  push('economic intelligence transfers', 0, await sum(pool, "currency='cash' AND reason IN ('economic_intelligence:pay','economic_intelligence:receive')"), 0);
+  push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });
+  const labIssues = await collectStrategyLaboratoryIssues(pool);
+  push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });
   push('company acquisition transfers', 0, await sum(pool, "currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive')"), 0);
   const middleIssues = await collectMiddleFiveIssues(pool);
   push('company middle five source bindings', middleIssues.length, 0, 0, { issues: middleIssues });
