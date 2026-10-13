@@ -127,6 +127,14 @@ try {
   async function act(accountId, label) {
     const view = await observe(accountId), policy = policies[accountId];
     const decision = policy.choose(view, { logicalAt: at });
+    const counters = policy.summary();
+    originalConsole.log(JSON.stringify({ component: 'rc1-aggression-choice', label,
+      type: decision.type ?? null, category: decision.category ?? null, mixed: decision.mixed ?? null,
+      candidates: { conflict: decision.observedCandidates?.conflict ?? null,
+        other: decision.observedCandidates?.other ?? null },
+      counters: { choices: counters.choices, fresh: counters.fresh, mixedFresh: counters.mixedFresh,
+        mixedConflict: counters.mixedConflict, forcedConflict: counters.forcedConflict,
+        forcedOther: counters.forcedOther } }));
     await proof.record({ kind: 'policy-choice', label, accountId, decision, policy: policy.summary() });
     assert.equal(decision.kind, 'command', 'This declared bounded block needs an actual legal command');
     await proof.artifact(label + '-pending.json', policy.checkpoint());
