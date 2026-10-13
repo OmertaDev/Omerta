@@ -812,6 +812,13 @@ jobs:
           EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
         run: npm run test:equipment-economy:postgres
 
+      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RESOURCE_ECONOMY: 'off'
+          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+        run: npm run test:company-workforce:postgres
+
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
         env:
