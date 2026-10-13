@@ -1,5 +1,5 @@
 import { GameError } from './game.js';
-import { assertItemTransaction,registerItemTransactionUndo } from './items.js';
+import { assertItemTransaction,registerItemTransactionUndo,poisonItemTransaction } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
 import { latestPolicy } from './operatingpolicy.js';
 
@@ -48,7 +48,7 @@ async function healthy(client,policy,ch) {
   if(!tool||!((tool.owner_scope==='account'&&tool.owner_id===ch.account_id)||(tool.owner_scope==='character'&&tool.owner_id===ch.id)))fail('tool_owner');
   await assertEquipmentUsable(client,{itemId:policy.tool_item_id,owner:{scope:tool.owner_scope,id:tool.owner_id},minimum:80});
 }
-export async function setCompanySpecialization(client,accountId,body,requestKey,{ownerSession=false}={}) {
+async function setCompanySpecializationImpl(client,accountId,body,requestKey,{ownerSession=false}={}) {
   assertItemTransaction(client);const terms=companySpecializationTerms(body);key(requestKey);
   const prior=(await client.query('SELECT identity,receipt FROM company_specialization_requests WHERE account_id=$1 AND request_key=$2',[id(accountId),requestKey])).rows[0];
   if(prior){if(stable(prior.identity)!==stable(terms))fail('request_conflict');return {...prior.receipt,replayed:true};}
@@ -65,7 +65,7 @@ export async function setCompanySpecialization(client,accountId,body,requestKey,
   const receipt={ok:true,businessId:terms.businessId,revision,kind:terms.kind,...COMPANY_SPECIALIZATION[terms.kind],immutableRecipeQuality:true,agentGrant:{enabled:terms.allowAgentProduction,expiresAt:expires?.toISOString()??null,maxBatchCashCost:terms.maxBatchCashCost,maxGrantCashCost:terms.maxGrantCashCost,spent}};
   await client.query('INSERT INTO company_specialization_requests(account_id,request_key,identity,receipt) VALUES($1,$2,$3,$4)',[accountId,requestKey,terms,receipt]);registerItemTransactionUndo(client,()=>client.query('DELETE FROM company_specialization_requests WHERE account_id=$1 AND request_key=$2',[accountId,requestKey]));return receipt;
 }
-export async function assertCompanySpecializationBeforeCraft(client,ctx) {
+async function assertCompanySpecializationBeforeCraftImpl(client,ctx) {
   assertItemTransaction(client);const ch=await actor(client,ctx.accountId,id(ctx.originalCharacter));await business(client,ch,ctx.businessId);
   if(!Number.isSafeInteger(ctx.ordinal)||ctx.ordinal<0||ctx.ordinal>=ctx.totalCrafts||!Number.isSafeInteger(ctx.totalCrafts)||ctx.totalCrafts<1||ctx.totalCrafts>6)fail('batch');key(ctx.requestKey);
   if(typeof ctx.agent!=='boolean'||!Number.isSafeInteger(ctx.totalCashCost)||ctx.totalCashCost<0||ctx.totalCashCost>1800||!Number.isSafeInteger(ctx.recipeCashCost)||ctx.recipeCashCost<0||ctx.recipeCashCost>ctx.totalCashCost)fail('cost_authority');
@@ -90,4 +90,10 @@ export async function assertCompanySpecializationBeforeCraft(client,ctx) {
 }
 export async function ownCompanySpecializations(client,accountId) {
   return (await client.query('SELECT business_id,revision,kind,recipe_ids,tool_item_id,next_run_at,allow_agent_production,grant_expires_at,max_batch_cash,max_grant_cash,grant_spent FROM company_specializations WHERE account_id=$1 ORDER BY business_id LIMIT 20',[id(accountId)])).rows;
+}
+export async function setCompanySpecialization(client,...args) {
+  assertItemTransaction(client);try{return await setCompanySpecializationImpl(client,...args);}catch(error){poisonItemTransaction(client,error);throw error;}
+}
+export async function assertCompanySpecializationBeforeCraft(client,ctx) {
+  assertItemTransaction(client);try{return await assertCompanySpecializationBeforeCraftImpl(client,ctx);}catch(error){poisonItemTransaction(client,error);throw error;}
 }

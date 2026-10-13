@@ -1,5 +1,5 @@
 import { GameError } from './game.js';
-import { assertItemTransaction, itemMutationContext, registerItemTransactionUndo,registerItemTransactionBeforeEventUndo } from './items.js';
+import { assertItemTransaction, itemMutationContext, registerItemTransactionUndo,registerItemTransactionBeforeEventUndo,poisonItemTransaction } from './items.js';
 
 export const ITEM_DURABILITY = Object.freeze({ templateId:'item:precision_lock_tool', maximum:100, useCost:10 });
 const fail=reason=>{ throw new GameError('item_durability',reason); };
@@ -24,14 +24,14 @@ async function physical(client,itemId,owner) {
   if(state&&state.creation_event!==created[0].id) fail('creation');
   return {item,creationEvent:created[0].id,remaining:Number(state?.remaining??100),revision:Number(state?.revision??0),state};
 }
-export async function assertEquipmentUsable(client,{itemId,owner,mutation,minimum=10}) {
+async function assertEquipmentUsableImpl(client,{itemId,owner,mutation,minimum=10}) {
   assertItemTransaction(client);
   if(mutation) { const root=itemMutationContext(client,mutation);if(root.mutationKind!=='mystery_action'||root.owner.scope!==owner.scope||root.owner.id!==owner.id) fail('authority'); }
   if(!Number.isSafeInteger(minimum)||minimum<10||minimum>100) fail('minimum');
   const equipment=await physical(client,itemId,owner);if(equipment.remaining<minimum) fail('broken');
   return {itemId:equipment.item.id,remaining:equipment.remaining,maximum:100};
 }
-export async function recordEquipmentUse(client,{instanceId,nodeId,itemId,eventId,mutation}) {
+async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,mutation}) {
   const root=itemMutationContext(client,mutation);if(root.mutationKind!=='mystery_action'||nodeId!=='mystery:belladonna-lock') fail('authority');
   const instance=(await client.query('SELECT * FROM mystery_instances WHERE id=$1',[id(instanceId)])).rows[0];
   const node=(await client.query('SELECT * FROM mystery_node_state WHERE instance_id=$1 AND node_id=$2',[instanceId,nodeId])).rows[0];
@@ -78,4 +78,10 @@ export async function collectItemConditionIssues(client) {
     }
   }
   return issues;
+}
+export async function recordEquipmentUse(client,ctx) {
+  assertItemTransaction(client);try{return await recordEquipmentUseImpl(client,ctx);}catch(error){poisonItemTransaction(client,error);throw error;}
+}
+export async function assertEquipmentUsable(client,ctx) {
+  assertItemTransaction(client);try{return await assertEquipmentUsableImpl(client,ctx);}catch(error){poisonItemTransaction(client,error);throw error;}
 }
