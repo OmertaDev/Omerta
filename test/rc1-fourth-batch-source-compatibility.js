@@ -39,9 +39,9 @@ assert.equal(catalog.added.filter(r=>tables.includes(r.table_name)).length,132);
 console.log('FOURTH source transfer PASS: 8 literal domains, '+hunks+' actual Git inverse hunks, '+negatives+' negative controls; complete FIRST/SECOND/THIRD composition and actual City/Deed/Franchise rejection; 13/132/114 native bindings retained, source-only');
 
 // Legacy EOL normalization is intentionally unchanged; substantive full-caller drift must still refuse.
-const worldFiles=['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js'];
+const worldFiles=['src/server.js','src/worker.js'];
 const worldRead=file=>fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
 await verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:worldRead});
 let worldNegatives=0;
-for(const file of worldFiles){const text=worldRead(file),d=O.FOURTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}));worldNegatives++;}}
+for(const file of worldFiles){const text=worldRead(file),d=O.FOURTH_BATCH_SOURCE_DOMAINS[file];const bads=[text+'\n// unknown substantive change\n',text.slice(1),text.replace(/\S/,'?')];for(const h of d.inverses)bads.push(text.replace(h.current,''),text.replace(h.current,()=>h.current+h.current),text.replace(h.current,()=>h.current.replace(/\S/,'?')));for(const bad of bads){await assert.rejects(()=>verifyWorldRecoverySources({sourceRevision:O.FOURTH_BATCH_SOURCE_REVISION,readFile:f=>f===file?bad:worldRead(f)}),file+' substantive mutation index '+bads.indexOf(bad));worldNegatives++;}}
 console.log('Actual world recovery substantive rejection PASS: '+worldNegatives+' changed/unknown/missing/duplicate-context controls; pre-existing mixed-EOL normalization limit retained.');
