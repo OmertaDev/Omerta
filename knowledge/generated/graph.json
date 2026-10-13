@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d93dfc09245709762aac68acedadc3629670cefb",
+  "sourceRevision": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12336,
-    "edges": 50068,
+    "nodes": 12338,
+    "edges": 50079,
     "byNodeType": {
       "Artifact": 4702,
       "Command": 259,
-      "Commit": 3356,
+      "Commit": 3358,
       "Contract": 126,
       "Document": 780,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 3845,
-      "CHANGED": 19720,
+      "CHANGED": 19729,
       "CONTAINS": 4723,
       "DECLARES": 259,
       "DEFINED_IN": 1534,
       "DEPENDS_ON": 67,
       "EXECUTES": 892,
       "HANDLED_BY": 859,
-      "HAS_COMMIT": 3356,
+      "HAS_COMMIT": 3358,
       "IMPLEMENTS": 124,
       "IMPORTS": 5223,
       "INHERITS": 42,
@@ -145906,6 +145906,22 @@
       ]
     },
     {
+      "key": "Commit:a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+      "type": "Commit",
+      "id": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+      "label": "Merge pull request #260 from OmertaDev/codex/city-gameplay-expansion",
+      "title": "Merge pull request #260 from OmertaDev/codex/city-gameplay-expansion",
+      "date": "2026-10-13T08:38:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+      "provenance": [
+        {
+          "commit": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5"
+        }
+      ]
+    },
+    {
       "key": "Commit:a08c5a546db6637503042af460c6cb5363c6595a",
       "type": "Commit",
       "id": "a08c5a546db6637503042af460c6cb5363c6595a",
@@ -158814,6 +158830,22 @@
         {
           "commit": "e0ada62b14ef9684d837001c6a7219d3855104a4",
           "url": "https://github.com/OmertaDev/Omerta/commit/e0ada62b14ef9684d837001c6a7219d3855104a4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "type": "Commit",
+      "id": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "label": "chore(knowledge): refresh City gameplay integration artifacts",
+      "title": "chore(knowledge): refresh City gameplay integration artifacts",
+      "date": "2026-10-13T07:08:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "provenance": [
+        {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
         }
       ]
     },
@@ -187631,6 +187663,9 @@
           "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -189333,6 +189368,9 @@
         },
         {
           "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
+        },
+        {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
         },
         {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
@@ -191147,6 +191185,9 @@
           "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -192959,6 +193000,9 @@
           "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -193608,6 +193652,9 @@
         },
         {
           "commit": "dfa5d6ae750df870b9716cfc44325bb5645f8b46"
+        },
+        {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
         },
         {
           "commit": "e17c6bf884f429249049ccc5a01497e7a1d7d777"
@@ -195278,6 +195325,9 @@
           "commit": "e07f09ee5ae2de1b887d23bb0fce31f8fc4bef6c"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -196058,6 +196108,9 @@
           "commit": "dfa5d6ae750df870b9716cfc44325bb5645f8b46"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e0c94ef158691731579a7681c57931fd258c9ccd"
         },
         {
@@ -196445,6 +196498,9 @@
           "commit": "df0ee2bf53bfa214a7da63a08a18028a9fdc407a"
         },
         {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+        },
+        {
           "commit": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
         },
         {
@@ -196788,6 +196844,9 @@
         },
         {
           "commit": "df0ee2bf53bfa214a7da63a08a18028a9fdc407a"
+        },
+        {
+          "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
         },
         {
           "commit": "e46ddfad5389ba83c55c1ca04cda0469a59e821e"
@@ -206774,8 +206833,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d93dfc09245709762aac68acedadc3629670cefb",
-      "currentBranch": "codex/city-gameplay-expansion",
+      "revision": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -419666,6 +419725,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e0b94cfe9c2115b6616a844f01fe3cdd4449e373",
       "to": "Artifact:docs/earning-receipts-security-review.md",
       "provenance": {
@@ -533575,6 +533706,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5",
+      "provenance": {
+        "commit": "a06f5c3f34b5c9e57eb6ae4784b82b26a62aeee5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a08c5a546db6637503042af460c6cb5363c6595a",
       "provenance": {
         "commit": "a08c5a546db6637503042af460c6cb5363c6595a"
@@ -540026,6 +540165,14 @@
       "to": "Commit:e0ada62b14ef9684d837001c6a7219d3855104a4",
       "provenance": {
         "commit": "e0ada62b14ef9684d837001c6a7219d3855104a4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e0b7557826d024eff66d6a40fee8a85bdef0a9dd",
+      "provenance": {
+        "commit": "e0b7557826d024eff66d6a40fee8a85bdef0a9dd"
       }
     },
     {
