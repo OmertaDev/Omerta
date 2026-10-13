@@ -8609,3 +8609,35 @@ CREATE TABLE IF NOT EXISTS equipment_maintenance_repairs (
  fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), debit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id),
  credit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), condition_before INT NOT NULL, condition_after INT NOT NULL,
  CHECK(condition_after>condition_before AND condition_after-condition_before<=10), UNIQUE(payer_account,request_key));
+
+CREATE TABLE IF NOT EXISTS commercial_negotiations (
+ id TEXT PRIMARY KEY, order_id TEXT NOT NULL UNIQUE, depot_id TEXT NOT NULL,
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), supplier_account TEXT NOT NULL REFERENCES accounts(id),
+ buyer_character TEXT NOT NULL REFERENCES characters(id), supplier_character TEXT NOT NULL REFERENCES characters(id),
+ revision INT NOT NULL CHECK(revision BETWEEN 1 AND 3), last_offer_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, terms_hash TEXT NOT NULL, source_hash TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('offered','accepted','withdrawn','expired')),
+ expires_at TIMESTAMPTZ NOT NULL, delivery_deadline TIMESTAMPTZ NOT NULL, created_at TIMESTAMPTZ NOT NULL,
+ commitment_id TEXT UNIQUE);
+CREATE TABLE IF NOT EXISTS commercial_negotiation_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity TEXT NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS contract_auctions (
+ id TEXT PRIMARY KEY, depot_id TEXT NOT NULL REFERENCES business_depots(id), order_id TEXT NOT NULL,
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id),
+ quantity INT NOT NULL CHECK(quantity BETWEEN 1 AND 40), unit_price INT NOT NULL CHECK(unit_price>0),
+ quote_hash TEXT NOT NULL CHECK(char_length(quote_hash)=64), source_quote JSONB NOT NULL,
+ closes_at TIMESTAMPTZ NOT NULL, award_until TIMESTAMPTZ NOT NULL CHECK(award_until>closes_at),
+ state TEXT NOT NULL CHECK(state IN ('open','awarded','cancelled','buyer_dead')), winning_bid_id TEXT,
+ commitment_id TEXT UNIQUE, award_receipt JSONB,
+ CHECK((state='awarded' AND winning_bid_id IS NOT NULL AND commitment_id IS NOT NULL AND award_receipt IS NOT NULL) OR (state<>'awarded' AND winning_bid_id IS NULL AND commitment_id IS NULL AND award_receipt IS NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS contract_auction_one_open_order ON contract_auctions(order_id) WHERE state='open';
+CREATE TABLE IF NOT EXISTS contract_auction_bids (
+ id TEXT PRIMARY KEY, auction_id TEXT NOT NULL REFERENCES contract_auctions(id),
+ supplier_account TEXT NOT NULL REFERENCES accounts(id), supplier_character TEXT NOT NULL REFERENCES characters(id),
+ deadline_seconds INT NOT NULL CHECK(deadline_seconds BETWEEN 60 AND 21600), max_procurement_cash INT NOT NULL CHECK(max_procurement_cash BETWEEN 1 AND 100000),
+ quote_hash TEXT NOT NULL CHECK(char_length(quote_hash)=64), consent BOOLEAN NOT NULL CHECK(consent=true),
+ UNIQUE(auction_id,supplier_account));
+CREATE TABLE IF NOT EXISTS contract_auction_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), action TEXT NOT NULL CHECK(action IN ('create','bid','award','cancel')),
+ request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128), original_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,action,request_key));
