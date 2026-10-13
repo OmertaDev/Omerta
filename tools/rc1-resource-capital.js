@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { Pool } from 'pg';
 import { makeDb } from '../src/db.js';
-import { withCharacter, travel, ledger, notify, loadOwned, persistAccountFields, ESTATE_ACCOUNT_FIELDS } from '../src/game.js';
+import { withCharacter, withTwoCharacters, travel } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { withItemTransaction } from '../src/items.js';
 import { createCraftingContext, craftWorldGraphRecipe, salvageCar } from '../src/crafting.js';
@@ -36,10 +36,14 @@ const assertPinnedSource = () => {
     assert(file.accepted.includes(crypto.createHash('sha256').update(fs.readFileSync(file.path)).digest('hex')), `Checkout differs from pinned source: ${file.path}`);
 };
 assertPinnedSource();
+assert(!process.env.DATABASE_URL, 'Refuse an ambient database endpoint; this harness creates its own fixture database');
 assert(process.env.RC1_RESOURCE_DATABASE_URL, 'Explicit isolated PostgreSQL endpoint required');
 const endpoint = new URL(process.env.RC1_RESOURCE_DATABASE_URL);
 assert(['postgres:', 'postgresql:'].includes(endpoint.protocol));
 assert(['127.0.0.1', 'localhost', '[::1]'].includes(endpoint.hostname));
+const localFixture = ['35439', '35449'].includes(endpoint.port) && endpoint.username === 'pilot_runner' && !endpoint.password;
+const ciFixture = (endpoint.port || '5432') === '5432' && endpoint.username === 'postgres' && endpoint.password === 'pgcheck';
+assert(localFixture || ciFixture, 'Use only the approved local/CI loopback fixture role');
 const runId = `resource-capital-${source.commit.slice(0, 12)}-${crypto.randomBytes(5).toString('hex')}`;
 const output = path.resolve(process.env.RC1_RESOURCE_OUTPUT || path.join(os.tmpdir(), 'omerta-rc1-resource-proof', runId));
 assert(!fs.existsSync(path.join(output, 'result.json')), 'Never overwrite retained evidence');
@@ -197,6 +201,10 @@ async function removeFailure() {
 }
 
 try {
+  const probe = await admin.connect();
+  try { await probe.query('BEGIN READ ONLY'); const version = (await probe.query('SHOW server_version')).rows[0].server_version;
+    assert.match(version, localFixture ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/); await probe.query('ROLLBACK');
+  } finally { probe.release(); }
   await admin.query(`CREATE DATABASE ${database}`); endpoint.pathname = `/${database}`;
   process.env.DATABASE_URL = endpoint.toString(); pool = await makeDb();
   report.database = { name: database, version: (await pool.query('SELECT version() AS version')).rows[0].version };
@@ -311,17 +319,19 @@ try {
   const death = await draft('death'); await deposit(death);
   let heir;
   await observe('death:canonical-estate-and-heir', async () => {
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      const victim = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [character(boss)])).rows[0];
-      const victimAcct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [boss])).rows[0];
-      const victimOwned = await loadOwned(client, victim);
-      const estate = await runEstate(client, { ledger, notify, victimAcct, victimOwned }, victim, 'RC1 resource proof');
-      await persistAccountFields(client, boss, victimAcct, ESTATE_ACCOUNT_FIELDS);
-      await client.query('COMMIT'); heir = estate.heirId; return { heirId: heir };
-    } catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
-  }, ({ after }) => { assert.equal(stateOf(after, death.id), 'held'); assert(after.characters.find((row) => row.id === heir)?.alive); });
+    return withTwoCharacters(pool, actors.supplier, character(boss), async (observer, victim, client, helpers) => {
+      assert.equal(observer.id, character(actors.supplier)); assert.equal(observer.account_id, actors.supplier);
+      assert.equal(observer.is_npc, false); assert(observer.alive); assert.notEqual(observer.account_id, boss);
+      assert.equal(victim.id, character(boss)); assert.equal(victim.account_id, boss);
+      const estate = await runEstate(client, helpers, victim, 'RC1 resource proof');
+      heir = estate.heirId; return { heirId: heir };
+    }, { meet: false });
+  }, ({ before, after, receipts }) => {
+    assert.equal(stateOf(after, death.id), 'held'); assert(after.characters.find((row) => row.id === heir)?.alive);
+    const observerId = character(actors.supplier);
+    assert.deepEqual(after.characters.find(row => row.id === observerId), before.characters.find(row => row.id === observerId));
+    assert(!receipts.some(row => row.character_id === observerId || row.account_id === actors.supplier), 'Existing observer receives no estate credit or charge');
+  });
   const heirBefore = (await snapshot()).characters.find((row) => row.id === heir).cash;
   await installFailure('forfeit');
   try { await rejected('death:forfeit-rollback', () => invoke(death, 'organizer', 'cancel', {}, commandKey('death-cancel')), 'P0001'); }
