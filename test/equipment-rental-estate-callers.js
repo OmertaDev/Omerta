@@ -20,7 +20,7 @@ if (native) {
 }
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off',
   JWT_SECRET: 'rental-estate-callers-fixture', MARKET_SEED: 'rental-estate-callers-fixture',
-  PEN_YARD_EVENT: 'quiet', SHANK_P: '1', WANTED_HUNT_P: '1' });
+  MOD_KEY: 'rental-estate-callers-fixture-moderator' });
 const { buildServer } = await import('../src/server.js');
 const I = await import('../src/items.js'), C = await import('../src/crafting.js'), G = await import('../src/game.js');
 const R = await import('../src/equipmentrentals.js'), Q = await import('../src/itemdurability.js');
@@ -28,6 +28,8 @@ const { huntWanted } = await import('../src/social/combat.js');
 const { NPC_HITMEN } = await import('../src/rules.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 const app = await buildServer(), pool = app.pool;
+// Deterministic fixture rolls after genuine production preflight; no pacing or lock timeout override.
+Object.assign(process.env, { PEN_YARD_EVENT: 'quiet', SHANK_P: '1', WANTED_HUNT_P: '1' });
 let serial = 0;
 const call = (p, method, url, payload, key = 'rental-estate-' + (++serial)) => app.inject({ method, url, payload,
   headers: { ...(p ? { authorization: 'Bearer ' + p.token } : {}), 'idempotency-key': key } });
