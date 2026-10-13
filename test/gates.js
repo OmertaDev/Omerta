@@ -267,6 +267,10 @@ assert.equal(undeclared.length, 0,
 // pass as one.
 const COLLECT_EXEMPT = {
   collectContractAuctionIssues: 'read-only canonical award/source binding oracle; no player collection, income or mutation authority',
+  collectCompanyRestructuringIssues: 'read-only original-plan, request, source and canonical effect history oracle; no player collection or mutation authority',
+  collectCommercialHistoryIssues: 'read-only original dispute, concession and territory history bindings; no player collection or mutation authority',
+  collectEquipmentInsuranceIssues: 'read-only real reserve, wear, repair, paired payout and recovery provenance; no player collection or new claim authority',
+  collectTerritoryEconomicsIssues: 'read-only canonical profit, withdrawal and tribute source bindings; no player collection or mutation authority',
   collectMiddleFiveIssues: 'read-only original contribution, payout, vote and acquisition source binding oracle; no player collection, income or mutation authority',
   collectWorkerTrainingIssues: 'read-only canonical reserve, wage, refund, burn and session binding oracle; no player collection, income or mutation authority',
   collectEquipmentRentalIssues: 'read-only paid deposit/custody/title ledger oracle; no player collection, income or mutation authority',
@@ -2196,8 +2200,26 @@ const SCENERY_WAIVED = {
       && /!kinds\.includes\(body\.kind\)/.test(validator)
       && !/\bbody\.kind\s*=(?!=)|\bkinds\.(?:push|pop|shift|unshift|splice)\s*\(/.test(source);
   };
+  const exactRestructuringDiscriminator = (base, source, lit, match) => {
+    if (base !== 'companyrestructuring.js' || match[1] !== 'kind' || match[2] !== 's' || match[3] !== 'kind') return false;
+    const start = source.indexOf('function planTerms(b){');
+    const end = source.indexOf('\nfunction requestTerms(', start);
+    const validator = source.slice(start, end);
+    return start >= 0 && end > start && validator.includes(lit)
+      && validator.includes("const rank=['cancel_order','withdraw','configure'].indexOf(s?.kind);if(rank<=previous)fail('step_order');")
+      && !/\bs\.kind\s*=(?!=)/.test(validator);
+  };
+  const exactConcessionActorCapsule = (base, source, lit, match) => {
+    if (base !== 'infrastructureconcessions.js' || match[1] !== 'actor' || match[2] !== 'ch' || match[3] !== 'id') return false;
+    return lit.startsWith('{actor:ch.id,receipt:{ok:true,concessionId,revision:1,sourceHash:s.hash,')
+      && source.split(lit).length === 2
+      && source.includes('account_ref=$1,actor_ref=$5')
+      && source.includes('return value.receipt;');
+  };
   let logisticsClassified = 0;
   let acquisitionHashClassified = 0;
+  let restructuringClassified = 0;
+  let concessionActorClassified = 0;
   const cityClassified = [];
   const cityRawProblems = source => {
     const problems = [];
@@ -2219,6 +2241,8 @@ const SCENERY_WAIVED = {
         corpus++;
         // Only these exact hash-preimage identities are private provenance, not narrative fields.
         if (exactAcquisitionHashField(base, s, lit, m)) { acquisitionHashClassified++; continue; }
+        if (exactRestructuringDiscriminator(base, s, lit, m)) { restructuringClassified++; continue; }
+        if (exactConcessionActorCapsule(base, s, lit, m)) { concessionActorClassified++; continue; }
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2247,6 +2271,22 @@ const SCENERY_WAIVED = {
     'The exact City selector/discriminator classifications must each govern one current site.');
   assert.equal(logisticsClassified, 1, 'Exactly one closed Crew source discriminator must be classified.');
   assert.equal(acquisitionHashClassified, 2, 'Only both actual private acquisition hash fields are classified.');
+  assert.equal(restructuringClassified, 3, 'Exactly three closed canonical restructuring step discriminators are classified.');
+  assert.equal(concessionActorClassified, 1, 'Only the private concession actor/receipt persistence capsule is classified.');
+  const restructuringSource = fs.readFileSync('src/companyrestructuring.js', 'utf8');
+  for (const lit of literals(restructuringSource)) for (const match of rawKeyFields(lit)) {
+    if (!exactRestructuringDiscriminator('companyrestructuring.js', restructuringSource, lit, match)) continue;
+    for (const changed of [restructuringSource.replace("['cancel_order','withdraw','configure']", "['cancel_order','withdraw','configure','unbounded']"), restructuringSource.replace('if(rank<=previous)', 'if(false)')])
+      assert(!exactRestructuringDiscriminator('companyrestructuring.js', changed, lit, match));
+    assert(!exactRestructuringDiscriminator('other.js', restructuringSource, lit, match));
+  }
+  const concessionSource = fs.readFileSync('src/infrastructureconcessions.js', 'utf8');
+  for (const lit of literals(concessionSource)) for (const match of rawKeyFields(lit)) {
+    if (!exactConcessionActorCapsule('infrastructureconcessions.js', concessionSource, lit, match)) continue;
+    for (const changed of [concessionSource + lit, concessionSource.replace('return value.receipt;', 'return value;'), concessionSource.replace('account_ref=$1,actor_ref=$5', 'account_ref=$1')])
+      assert(!exactConcessionActorCapsule('infrastructureconcessions.js', changed, lit, match));
+    assert(!exactConcessionActorCapsule('other.js', concessionSource, lit, match));
+  }
   const acquisitionSource = fs.readFileSync('src/depotacquisitionruntime.js', 'utf8');
   const acquisitionPreimage = "hash({depot:d,seller:seller.id,buyer:buyer.id,references,slice:'no_authority_or_unsettled_obligations'})";
   for (const match of rawKeyFields(acquisitionPreimage)) {
@@ -3463,6 +3503,7 @@ scopedSocialContext = async function(db) {
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
     'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
+    'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',
     'test/businesspartnerships-fixture.js': 'Import-only actual authenticated partnership gameplay setup executed by workforce memory/native suites; no standalone runner.',
     'test/companygovernance-fixture.js': 'Import-only actual authenticated governance gameplay setup executed by its memory/native suite; no standalone runner.',
     'test/companyacquisitions-fixture.js': 'Import-only actual authenticated acquisition gameplay setup executed by acquisition and contract memory/native suites; no standalone runner.',
@@ -3715,7 +3756,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3916,6 +3957,7 @@ scopedSocialContext = async function(db) {
     'mysteries.js:NPC_GRAPH_REGISTRIES': 'cache: deterministic set of NPC-bound graph identifiers keyed by an immutable validated registry; no actor state or durable authorization is stored here',
     'city-world-opportunities-contract.js:NPC_AUTHORITIES': 'cache: request-local authenticity marker for a frozen server-derived NPC binding; each process derives its own read snapshot and mutations recheck durable actor authority under database locks',
     'equipmentrentals.js:deathScopes': 'cache: opaque proof bound to exact active client/transaction identity and prelocked original actor union; canonical SQL locks and fresh original sources provide cross-process authority, not this local marker',
+    'social/estate.js:estateResolutionScopes': 'cache: private proof bound to the active actual estate invocation, exact client, transaction and victim; fresh SQL actor locks and death facts remain authoritative, and the proof is deleted at scope exit',
     'items.js:TRANSACTION_IDENTITIES': 'cache: opaque equality identity keyed by one active item transaction object; grants no mutation authority and fresh transactions cannot reuse prior scope identities',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
@@ -4403,11 +4445,14 @@ scopedSocialContext = async function(db) {
   // SQL column or variable with the same name must still fail closed.
   const bucketSource = (file, source) => file === 'src/companyworkflows.js'
     ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
-    : file === 'src/commercialnegotiation.js' ? source.replace(/\bfail\('source_used'\)/g, '') : source;
+    : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : source;
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);
+  assert.deepEqual(bucketNames('src/territoryeconomics.js', "fail('source_used');"), []);
+  assert.deepEqual(bucketNames('src/territoryeconomics.js', "fail('source_used'); client.query('SELECT source_used FROM meters');"), ['source_used'],
+    'Actual territory counters cannot hide behind the immutable paid-journal uniqueness refusal');
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
     'Actual counter columns cannot hide behind same-named workflow refusal reasons');
   assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
