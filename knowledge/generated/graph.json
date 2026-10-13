@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "6257e0ed5d84671f12c4144dcd877ae4aa618e9b",
+  "sourceRevision": "77ebd54a914416b46bb8b9201d872f47505c8292",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 12498,
-    "edges": 50667,
+    "nodes": 12502,
+    "edges": 50684,
     "byNodeType": {
-      "Artifact": 4736,
+      "Artifact": 4737,
       "Command": 261,
-      "Commit": 3431,
+      "Commit": 3433,
       "Contract": 126,
       "Document": 789,
       "Domain": 13,
@@ -60,25 +60,25 @@
       "Route": 975,
       "Subsystem": 8,
       "Table": 450,
-      "TestSuite": 702,
+      "TestSuite": 703,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 3880,
-      "CHANGED": 19916,
-      "CONTAINS": 4757,
+      "BELONGS_TO": 3881,
+      "CHANGED": 19924,
+      "CONTAINS": 4758,
       "DECLARES": 261,
       "DEFINED_IN": 1551,
       "DEPENDS_ON": 67,
       "EXECUTES": 918,
       "HANDLED_BY": 869,
-      "HAS_COMMIT": 3431,
+      "HAS_COMMIT": 3433,
       "IMPLEMENTS": 124,
-      "IMPORTS": 5325,
+      "IMPORTS": 5328,
       "INHERITS": 42,
       "REFERENCES": 3299,
-      "REPRESENTS": 1914,
-      "TESTS": 1875,
+      "REPRESENTS": 1915,
+      "TESTS": 1876,
       "TRACKS": 126,
       "USES_TABLE": 2312
     }
@@ -79459,20 +79459,20 @@
       "path": "public/defi.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 72400,
-      "lines": 1052,
-      "version": "babdfa6fcedc1d66",
+      "bytes": 83469,
+      "lines": 1234,
+      "version": "b99718aa86989f7f",
       "text": true,
       "provenance": [
         {
           "file": "public/defi.html",
           "line": 1,
-          "version": "babdfa6fcedc1d66"
+          "version": "b99718aa86989f7f"
         }
       ],
-      "lastChangedAt": "2026-10-07T06:00:06.000Z",
+      "lastChangedAt": "2026-10-13T15:11:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9ae83b9c5450e02b76e2e2bec47ab76f50c33b5c"
+      "lastChangedCommit": "77ebd54a914416b46bb8b9201d872f47505c8292"
     },
     {
       "key": "Artifact:public/fee-flows.html",
@@ -79804,20 +79804,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1432167,
-      "lines": 15018,
-      "version": "9977f2d57e78b463",
+      "bytes": 1437600,
+      "lines": 15104,
+      "version": "b14bfe9987fc7e46",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "9977f2d57e78b463"
+          "version": "b14bfe9987fc7e46"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-13T15:11:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "77ebd54a914416b46bb8b9201d872f47505c8292"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -91048,20 +91048,20 @@
       "path": "test/client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 742554,
-      "lines": 9531,
-      "version": "6bd4ae5bfa5829cb",
+      "bytes": 742637,
+      "lines": 9532,
+      "version": "1704d87abfbce0d6",
       "text": true,
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "6bd4ae5bfa5829cb"
+          "version": "1704d87abfbce0d6"
         }
       ],
-      "lastChangedAt": "2026-10-12T22:05:39.000Z",
+      "lastChangedAt": "2026-10-13T15:11:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+      "lastChangedCommit": "77ebd54a914416b46bb8b9201d872f47505c8292"
     },
     {
       "key": "Artifact:test/clues.js",
@@ -103068,6 +103068,29 @@
       "lastChangedAt": "2026-10-12T22:05:39.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "7dd6745a8ef8a36f4394844e267b20e77b2ab58e"
+    },
+    {
+      "key": "Artifact:test/wallet-connect-browser.js",
+      "type": "Artifact",
+      "id": "test/wallet-connect-browser.js",
+      "label": "wallet-connect-browser.js",
+      "path": "test/wallet-connect-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 18253,
+      "lines": 294,
+      "version": "1e2031543ac7b695",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/wallet-connect-browser.js",
+          "line": 1,
+          "version": "1e2031543ac7b695"
+        }
+      ],
+      "lastChangedAt": "2026-10-13T15:11:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "77ebd54a914416b46bb8b9201d872f47505c8292"
     },
     {
       "key": "Artifact:test/walletforge.js",
@@ -138234,6 +138257,22 @@
       ]
     },
     {
+      "key": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "type": "Commit",
+      "id": "77ebd54a914416b46bb8b9201d872f47505c8292",
+      "label": "Improve wallet picker and mobile connection flow",
+      "title": "Improve wallet picker and mobile connection flow",
+      "date": "2026-10-13T15:11:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/77ebd54a914416b46bb8b9201d872f47505c8292",
+      "provenance": [
+        {
+          "commit": "77ebd54a914416b46bb8b9201d872f47505c8292",
+          "url": "https://github.com/OmertaDev/Omerta/commit/77ebd54a914416b46bb8b9201d872f47505c8292"
+        }
+      ]
+    },
+    {
       "key": "Commit:783887507c3124a31cd72edfc3ff351b5ad474fb",
       "type": "Commit",
       "id": "783887507c3124a31cd72edfc3ff351b5ad474fb",
@@ -163306,6 +163345,22 @@
       ]
     },
     {
+      "key": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "type": "Commit",
+      "id": "ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "label": "chore(knowledge): refresh generated artifacts for 6257e0ed",
+      "title": "chore(knowledge): refresh generated artifacts for 6257e0ed",
+      "date": "2026-10-13T14:57:13.000Z",
+      "author": "github-actions[bot]",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "provenance": [
+        {
+          "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ed903348ee59e354bfae72bfbc2aed8273229bb2"
+        }
+      ]
+    },
+    {
       "key": "Commit:ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8",
       "type": "Commit",
       "id": "ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8",
@@ -182398,7 +182453,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 525
+          "line": 526
         }
       ]
     },
@@ -182410,7 +182465,7 @@
       "provenance": [
         {
           "file": "test/client.js",
-          "line": 546
+          "line": 547
         }
       ]
     },
@@ -183561,6 +183616,10 @@
           "line": 9
         },
         {
+          "file": "test/wallet-connect-browser.js",
+          "line": 6
+        },
+        {
           "file": "test/world-fieldwork-browser.js",
           "line": 6
         },
@@ -184190,7 +184249,7 @@
         },
         {
           "file": "test/client.js",
-          "line": 8501
+          "line": 8502
         },
         {
           "file": "test/deeds.js",
@@ -184226,6 +184285,10 @@
         },
         {
           "file": "test/vig.js",
+          "line": 7
+        },
+        {
+          "file": "test/wallet-connect-browser.js",
           "line": 7
         },
         {
@@ -191656,6 +191719,9 @@
           "commit": "ecd32c32004f2ac1724b9e49170a0e97f5c2ddea"
         },
         {
+          "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+        },
+        {
           "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         },
         {
@@ -193495,6 +193561,9 @@
           "commit": "ecd32c32004f2ac1724b9e49170a0e97f5c2ddea"
         },
         {
+          "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+        },
+        {
           "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
         },
         {
@@ -195332,6 +195401,9 @@
         },
         {
           "commit": "ecd32c32004f2ac1724b9e49170a0e97f5c2ddea"
+        },
+        {
+          "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
         },
         {
           "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
@@ -197687,6 +197759,9 @@
         },
         {
           "commit": "ecd32c32004f2ac1724b9e49170a0e97f5c2ddea"
+        },
+        {
+          "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
         },
         {
           "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
@@ -209314,12 +209389,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "6257e0ed5d84671f12c4144dcd877ae4aa618e9b",
-      "currentBranch": "main",
+      "revision": "77ebd54a914416b46bb8b9201d872f47505c8292",
+      "currentBranch": "codex/wallet-connect-release",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 4736,
+      "currentArtifactCount": 4737,
       "provenance": [
         {
           "file": "README.md",
@@ -243396,13 +243471,13 @@
       "type": "TestSuite",
       "id": "test/client.js",
       "label": "test/client.js",
-      "lines": 9531,
-      "version": "6bd4ae5bfa5829cb",
+      "lines": 9532,
+      "version": "1704d87abfbce0d6",
       "provenance": [
         {
           "file": "test/client.js",
           "line": 1,
-          "version": "6bd4ae5bfa5829cb"
+          "version": "1704d87abfbce0d6"
         }
       ]
     },
@@ -251068,6 +251143,21 @@
           "file": "test/vouch.js",
           "line": 1,
           "version": "48ae70514357da0b"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/wallet-connect-browser.js",
+      "type": "TestSuite",
+      "id": "test/wallet-connect-browser.js",
+      "label": "test/wallet-connect-browser.js",
+      "lines": 294,
+      "version": "1e2031543ac7b695",
+      "provenance": [
+        {
+          "file": "test/wallet-connect-browser.js",
+          "line": 1,
+          "version": "1e2031543ac7b695"
         }
       ]
     },
@@ -275382,6 +275472,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/vouch.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/wallet-connect-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
         "line": 1
       }
     },
@@ -361699,6 +361798,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "to": "Artifact:public/defi.html",
+      "provenance": {
+        "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "to": "Artifact:test/client.js",
+      "provenance": {
+        "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "to": "Artifact:test/wallet-connect-browser.js",
+      "provenance": {
+        "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:783887507c3124a31cd72edfc3ff351b5ad474fb",
       "to": "Artifact:test/resource-deliver.js",
       "provenance": {
@@ -432643,6 +432774,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ed9ce6bcc913e15eaf11ec0a9ff0bff7d163a0e8",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -475059,6 +475222,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/wallet-connect-browser.js",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/walletforge.js",
       "provenance": {
         "file": "test/walletforge.js",
@@ -504914,7 +505086,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1488
+      "weight": 1489
     },
     {
       "type": "DEPENDS_ON",
@@ -535115,6 +535287,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:77ebd54a914416b46bb8b9201d872f47505c8292",
+      "provenance": {
+        "commit": "77ebd54a914416b46bb8b9201d872f47505c8292"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:783887507c3124a31cd72edfc3ff351b5ad474fb",
       "provenance": {
         "commit": "783887507c3124a31cd72edfc3ff351b5ad474fb"
@@ -547646,6 +547826,14 @@
       "to": "Commit:ed8cdb192c5ad496aa6c56fd9b771edc0418808c",
       "provenance": {
         "commit": "ed8cdb192c5ad496aa6c56fd9b771edc0418808c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ed903348ee59e354bfae72bfbc2aed8273229bb2",
+      "provenance": {
+        "commit": "ed903348ee59e354bfae72bfbc2aed8273229bb2"
       }
     },
     {
@@ -568278,7 +568466,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1300
+        "line": 1301
       }
     },
     {
@@ -568296,7 +568484,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2578
+        "line": 2579
       }
     },
     {
@@ -568323,7 +568511,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6153
+        "line": 6154
       }
     },
     {
@@ -568332,7 +568520,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6256
+        "line": 6257
       }
     },
     {
@@ -568350,7 +568538,7 @@
       "to": "ExternalDependency:\\.\\/([\\w.-]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 525
+        "line": 526
       }
     },
     {
@@ -568359,7 +568547,7 @@
       "to": "ExternalDependency:\\.\\/([\\w./]+)",
       "provenance": {
         "file": "test/client.js",
-        "line": 546
+        "line": 547
       }
     },
     {
@@ -568368,7 +568556,7 @@
       "to": "ExternalDependency:viem/accounts",
       "provenance": {
         "file": "test/client.js",
-        "line": 8501
+        "line": 8502
       }
     },
     {
@@ -590779,6 +590967,33 @@
       "provenance": {
         "file": "test/vouch.js",
         "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/wallet-connect-browser.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/wallet-connect-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/wallet-connect-browser.js",
+      "to": "ExternalDependency:viem/accounts",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 7
       }
     },
     {
@@ -645566,6 +645781,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/wallet-connect-browser.js",
+      "to": "Artifact:test/wallet-connect-browser.js",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/walletforge.js",
       "to": "Artifact:test/walletforge.js",
       "provenance": {
@@ -647901,7 +648125,7 @@
       "to": "Artifact:src/chain.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 1300
+        "line": 1301
       }
     },
     {
@@ -647919,7 +648143,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 2578
+        "line": 2579
       }
     },
     {
@@ -647946,7 +648170,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6153
+        "line": 6154
       }
     },
     {
@@ -647955,7 +648179,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/client.js",
-        "line": 6256
+        "line": 6257
       }
     },
     {
@@ -661186,6 +661410,15 @@
       "provenance": {
         "file": "test/vouch.js",
         "line": 11
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/wallet-connect-browser.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "test/wallet-connect-browser.js",
+        "line": 8
       }
     },
     {
