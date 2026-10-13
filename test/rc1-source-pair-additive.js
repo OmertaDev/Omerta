@@ -104,3 +104,7 @@ fourthNegative('third catalog substituted',(_a,_b,_p,c)=>{c.fourthBatchAdditiveS
 fourthNegative('third identity cannot qualify fourth',(_a,_b,_p,c)=>{c.thirdBatchAdditiveSource=c.fourthBatchAdditiveSource;delete c.fourthBatchAdditiveSource;},/source changed/);
 assert.deepEqual(qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate),qualified);assert.deepEqual(qualifySecondBatchAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate),secondQualified);assert.deepEqual(qualifyThirdBatchAdditiveBootstrap(thirdOld,thirdFresh,thirdPredecessor,thirdCandidate),thirdQualified);
 console.log('rc1-source-pair-additive FOURTH COMPLETE PASS: '+fourthNegatives+' negatives + cross-profile controls; exact132definition/114NN evidence; old three profiles/exclusions unchanged; no populated or deployed authority');
+
+fourthNegative('sequence removed',(_a,b)=>{b.sequences=[];},/Sequence state changed/);
+assert.equal(fourthNegatives,826);
+console.log('rc1-source-pair-additive FOURTH FINAL PASS: '+fourthNegatives+' negatives; all three original profiles and every unknown/old row/sequence remain exact');
