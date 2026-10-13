@@ -1,4 +1,5 @@
 import { COMPANY_COMMERCIAL_CONTRACTS, COMPANY_COMMERCIAL_SCHEMAS } from './company-commercial-contracts.js';
+import { COMPANY_AUTONOMY_CONTRACTS, COMPANY_AUTONOMY_SCHEMAS } from './company-autonomy-contracts.js';
 // THE AGENT GATEWAY — the machine-discovery layer. Agents are first-class players (see AGENTS.md),
 // so the game publishes a standard OpenAPI 3.1 contract + an llms.txt index, both auto-derived from
 // the live route registry (server.js collects routes via an onRoute hook, so this never drifts from
@@ -296,6 +297,7 @@ const OPERATION_CONTRACTS = {
   ...EQUIPMENT_ECONOMY_CONTRACTS,
   ...COMPANY_WORKFORCE_CONTRACTS,
   ...COMPANY_COMMERCIAL_CONTRACTS,
+  ...COMPANY_AUTONOMY_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
   'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
@@ -930,6 +932,7 @@ const AGENT_SCHEMAS = {
   ...EQUIPMENT_ECONOMY_SCHEMAS,
   ...COMPANY_WORKFORCE_SCHEMAS,
   ...COMPANY_COMMERCIAL_SCHEMAS,
+  ...COMPANY_AUTONOMY_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,
   CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,
@@ -2161,18 +2164,19 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
         ...(contract?.requestParameters || []),
       ],
       responses: {
-        200: { description: 'OK' },
+        ...(contract?.responseStatus === 503 && contract?.executable === false ? {} : { 200: { description: 'OK' } }),
         400: { description: 'Game error — { error: <stable code>, message }' },
         ...(isPublic ? {} : { 401: { description: 'Missing/invalid token' } }),
         ...(contract?.extraResponses || {}),
       },
     };
+    if (contract?.executable === false) op['x-executable'] = false;
     if (contract?.responseSchema) op.responses[200] = {
       description: 'OK',
       ...(contract.responseHeaders ? { headers: contract.responseHeaders } : {}),
       content: { 'application/json': { schema: contract.responseSchema } },
     };
-    if (method !== 'GET' && method !== 'DELETE') {
+    if (method !== 'GET' && method !== 'DELETE' && contract?.executable !== false) {
       op.requestBody = { required: !!contract?.requestSchema?.required,
         content: { 'application/json': { schema: contract?.requestSchema || { type: 'object' } } } };
     }
