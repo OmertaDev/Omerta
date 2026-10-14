@@ -16,7 +16,7 @@ try {
     const {Pool}=await import('pg');admin=new Pool({connectionString:endpoint.toString()});namespace='city_encounters_'+crypto.randomBytes(8).toString('hex');
     await admin.query(`CREATE SCHEMA ${namespace}`);endpoint.searchParams.set('options',`-c search_path=${namespace}`);process.env.DATABASE_URL=endpoint.toString();
   }else assert(!process.env.DATABASE_URL,'Memory proof requires disposable pg-mem');
-  const {buildServer}=await import('../src/server.js');app=await buildServer();
+  const {buildServer}=await import('./server-fixture.js');app=await buildServer();
   if(postgres){const row=(await app.pool.query('SELECT current_schema() AS schema,version() AS version')).rows[0];assert.equal(row.schema,namespace);assert.match(row.version,/^PostgreSQL /);}
   const ajv=new Ajv({strict:false});for(const [name,schema]of Object.entries(CITY_ENCOUNTER_SCHEMAS))ajv.addSchema(schema,'#/components/schemas/'+name);
   const valid=(schema,value)=>assert(ajv.getSchema('#/components/schemas/'+schema)(value),JSON.stringify(ajv.getSchema('#/components/schemas/'+schema).errors));

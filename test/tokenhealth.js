@@ -27,7 +27,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { tokenHealth } from '../src/tokenhealth.js';
 import { ledger } from '../src/game.js';
 import * as Desk from '../src/desk.js';

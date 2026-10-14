@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { inviteModeEnabled, normalizeInviteCode } from '../src/invites.js';
 import { accessCookie, readAccessCookie } from '../src/access.js';
 import { makeInviteBatch, validateBatch, importBatch } from '../tools/invites.js';

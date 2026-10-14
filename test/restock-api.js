@@ -1,7 +1,7 @@
 process.env.RATE_LIMIT = 'off';
 process.env.JWT_SECRET = 'restock-test-secret';
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { CONSTANTS, DISTRICTS, goodPriceOf } from '../src/rules.js';
 

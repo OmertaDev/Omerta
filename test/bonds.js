@@ -7,7 +7,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA: let the mod route drive the real-revenue flywheel (D-MED2 gate)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { BONDS, bondPayout } from '../src/rules.js';
 // the pledge + charter figures are read off the levers, not restated, so a re-denomination moves
 // them without editing this file (the lever-register argument applied to a fixture)

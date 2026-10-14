@@ -5,7 +5,7 @@
 // rake split, the exhibition faucet/sink, the belt claim + vacate-on-death, the legend, DEATH, and §10.4.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { BOXING, UNDERWORLD, PACING } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepMainEvents, enforceBeltDefense } from '../src/boxing.js';

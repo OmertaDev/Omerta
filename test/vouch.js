@@ -6,7 +6,7 @@
 // street falls), and §10.4-neutrality (the whole flow writes ZERO transactions rows).
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { VOUCH } from '../src/rules.js';
 import * as Vouch from '../src/vouch.js';
 import { recordPlayerIntel } from '../src/playerintel.js';

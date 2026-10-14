@@ -1,0 +1,339 @@
+{
+  "status": "SCRATCH MIX VERIFIED",
+  "createdAt": "2026-10-01T21:08:45.070Z",
+  "duration": 390,
+  "voice": {
+    "name": "Microsoft David Desktop",
+    "provider": "Local Windows System.Speech / SAPI",
+    "finalVoice": "Selected original Voice A remains reserved for a separately authorized final performance; Voice A was not used.",
+    "connectedChapterReads": 10,
+    "cloudCalls": 0,
+    "paidCalls": 0,
+    "localTimeStretching": false,
+    "sourceFormat": "16 kHz mono PCM16; mixed at48 kHz stereo PCM24",
+    "timing": "SAPI bookmarks and word-start events at matching16 kHz; each caption tightened to audible waveform edges inside its bookmark span."
+  },
+  "costs": {
+    "newSpendUsd": 0,
+    "paidApiCalls": 0
+  },
+  "narrationSource": "brand/flagship-rebuild/story-source.mjs",
+  "narrationSourceSha256": "e3f6b900b5cd19728ac2d21fefe0fd7d3d2ad79c6f355efda591b436628bc0cd",
+  "narrationReport": "brand/flagship-rebuild/audio-narration-report.json",
+  "music": {
+    "source": "public/art/market-v2-soul/audio/SOUL-SCORE.mp3",
+    "sourceSha256": "669793177b480b11b43e24e5507f8fdfc75977bc188b343704e2d2e9daadab52",
+    "originalGenerationRequest": "brand/market-v2-soul/generation-requests/score.json",
+    "originalProviderModel": "elevenlabs/music/v2.5 (existing project asset)",
+    "newGeneration": false,
+    "originalSourceDuration": 180.024,
+    "mode": "Reversible arrangement of selected existing acoustic score sections; some passages recur, no time stretching or pitch shifting.",
+    "stereoPreserved": true,
+    "processing": {
+      "highpassHz": 40,
+      "lowpassHz": 11500,
+      "compressor": {
+        "thresholdDbfs": -22,
+        "ratio": 2.2,
+        "attackMs": 18,
+        "releaseMs": 260,
+        "kneeDb": 3,
+        "stereoLinked": true,
+        "makeupDb": 0
+      }
+    },
+    "sourceGainDb": -3.972,
+    "phraseDuckingDb": -8,
+    "lookaheadSeconds": 0.14,
+    "releaseSeconds": 0.65,
+    "levelAutomationDb": [
+      [
+        0,
+        -4
+      ],
+      [
+        15,
+        -1
+      ],
+      [
+        51,
+        -2
+      ],
+      [
+        90,
+        0
+      ],
+      [
+        122,
+        0
+      ],
+      [
+        130,
+        1
+      ],
+      [
+        151,
+        2.5
+      ],
+      [
+        165,
+        -5
+      ],
+      [
+        178,
+        -3
+      ],
+      [
+        212,
+        -1
+      ],
+      [
+        252,
+        -1
+      ],
+      [
+        280,
+        -2
+      ],
+      [
+        345,
+        -2
+      ],
+      [
+        355,
+        0
+      ],
+      [
+        372,
+        1
+      ],
+      [
+        383,
+        4
+      ],
+      [
+        388,
+        3
+      ],
+      [
+        390,
+        -10
+      ]
+    ],
+    "segments": [
+      {
+        "id": "arrival-and-preparation",
+        "at": 0,
+        "sourceStart": 0,
+        "length": 125,
+        "fadeIn": 1.8,
+        "fadeOut": 4,
+        "reason": "Keep the original motif and gradual ensemble entrance for the opening, player choices and preparation."
+      },
+      {
+        "id": "heist-tightening",
+        "at": 121,
+        "sourceStart": 91,
+        "length": 38,
+        "fadeIn": 4,
+        "fadeOut": 0.12,
+        "reason": "Revisit the denser middle passage for heist momentum; the measured betrayal drop gates the last two seconds."
+      },
+      {
+        "id": "aftermath-return",
+        "at": 165,
+        "sourceStart": 0,
+        "length": 87,
+        "fadeIn": 4,
+        "fadeOut": 6,
+        "reason": "Return to the sparse opening motif after the betrayal, then rebuild through investigation."
+      },
+      {
+        "id": "city-and-money",
+        "at": 246,
+        "sourceStart": 60,
+        "length": 109,
+        "fadeIn": 6,
+        "fadeOut": 5,
+        "reason": "Sustain the ensemble through agent play and the economics explanation, with a shared theme."
+      },
+      {
+        "id": "closing-cadence",
+        "at": 350,
+        "sourceStart": 140,
+        "length": 40,
+        "fadeIn": 5,
+        "fadeOut": 3.2,
+        "reason": "Use the source score’s original final forty seconds and resolution for the invitation and CTA."
+      }
+    ],
+    "drop": {
+      "start": 157.209604,
+      "end": 165.446292,
+      "length": 8.236688,
+      "fadeOutSeconds": 0.055,
+      "returnFadeSeconds": 1.8,
+      "trigger": "Measured start of “The law was waiting.”; returns two seconds after the audible jail result."
+    }
+  },
+  "master": {
+    "file": "public/art/flagship-rebuild/audio/rebuild-mix.wav",
+    "durationSeconds": 390,
+    "integratedLufs": -15.44,
+    "truePeakDbtp": -1.99,
+    "loudnessRangeLu": 3.2,
+    "sampleRate": 48000,
+    "channels": 2,
+    "codec": "pcm_s24le",
+    "normalizationType": "dynamic",
+    "valid": true,
+    "preNormalization": {
+      "input_i": "-23.65",
+      "input_tp": "-5.89",
+      "input_lra": "3.60",
+      "input_thresh": "-34.22",
+      "output_i": "-15.92",
+      "output_tp": "-2.00",
+      "output_lra": "3.30",
+      "output_thresh": "-26.39",
+      "normalization_type": "dynamic",
+      "target_offset": "0.92"
+    },
+    "secondPass": {
+      "input_i": "-23.65",
+      "input_tp": "-5.89",
+      "input_lra": "3.60",
+      "input_thresh": "-34.22",
+      "output_i": "-15.44",
+      "output_tp": "-2.00",
+      "output_lra": "3.20",
+      "output_thresh": "-25.87",
+      "normalization_type": "dynamic",
+      "target_offset": "0.44"
+    },
+    "finalMeasurement": {
+      "input_i": "-15.44",
+      "input_tp": "-1.99",
+      "input_lra": "3.20",
+      "input_thresh": "-25.90",
+      "output_i": "-15.11",
+      "output_tp": "-2.00",
+      "output_lra": "3.10",
+      "output_thresh": "-25.53",
+      "normalization_type": "dynamic",
+      "target_offset": "0.11"
+    }
+  },
+  "windows": [
+    {
+      "name": "opening",
+      "start": 0,
+      "end": 15,
+      "dialogueRmsDbfs": -27,
+      "musicRmsDbfs": -40.438,
+      "dialogueAboveMusicDb": 13.44,
+      "musicSamplePeakDbfs": -16.676
+    },
+    {
+      "name": "heist-build",
+      "start": 145,
+      "end": 156,
+      "dialogueRmsDbfs": -27.511,
+      "musicRmsDbfs": -33.675,
+      "dialogueAboveMusicDb": 6.16,
+      "musicSamplePeakDbfs": -10.851
+    },
+    {
+      "name": "betrayal-silence",
+      "start": 157.209604,
+      "end": 165.446292,
+      "dialogueRmsDbfs": -28.714,
+      "musicRmsDbfs": -240,
+      "dialogueAboveMusicDb": 211.29,
+      "musicSamplePeakDbfs": -240
+    },
+    {
+      "name": "economics",
+      "start": 280,
+      "end": 345,
+      "dialogueRmsDbfs": -26.714,
+      "musicRmsDbfs": -37.503,
+      "dialogueAboveMusicDb": 10.79,
+      "musicSamplePeakDbfs": -14.332
+    },
+    {
+      "name": "CTA-hold",
+      "start": 384,
+      "end": 390,
+      "dialogueRmsDbfs": -240,
+      "musicRmsDbfs": -50.179,
+      "dialogueAboveMusicDb": -189.82,
+      "musicSamplePeakDbfs": -35.28
+    }
+  ],
+  "silenceChecks": [
+    {
+      "name": "before-betrayal",
+      "start": 157.209604,
+      "end": 157.254604,
+      "duration": 0.045,
+      "samplePeakDbfs": -44.223,
+      "rmsDbfs": -59.093,
+      "peak": 0.006149888038635254,
+      "rms": 0.001110090172162344
+    },
+    {
+      "name": "after-informant-reveal",
+      "start": 160.333333,
+      "end": 161.86191699999998,
+      "duration": 1.528584,
+      "samplePeakDbfs": -71.224,
+      "rmsDbfs": -100.921,
+      "peak": 0.000274658203125,
+      "rms": 0.00000899345097048836
+    },
+    {
+      "name": "after-jail-result",
+      "start": 163.526292,
+      "end": 165.246292,
+      "duration": 1.72,
+      "samplePeakDbfs": -100.412,
+      "rmsDbfs": -125.903,
+      "peak": 0.0000095367431640625,
+      "rms": 5.068420972265343e-7
+    }
+  ],
+  "validation": {
+    "allTextPreserved": true,
+    "noCaptionOverlap": true,
+    "allChaptersFit": true,
+    "sourceUnchanged": true,
+    "sourceScoreUnchanged": true,
+    "masterValid": true,
+    "scoreIsExactlySilentDuringBetrayal": true
+  },
+  "selfCritique": {
+    "improved": [
+      "Replaced separately generated short fragments and redistributed gaps with connected chapter performances.",
+      "Used speech-engine event timestamps at a verified16 kHz clock, then tightened captions to actual audio.",
+      "Rebuilt an existing instrumental around five broad dramatic passages rather than an automatic390-second loop.",
+      "Applied mild score compression and phrase ducking to reduce piano-transient competition with speech.",
+      "Self-review of the first mix found only1.57dB average voice/music separation in the heist buildup; reduced the base score2dB and deepened speech ducking from4.2to8dB before delivery.",
+      "Cut the score at the measured betrayal reveal and kept it absent through the jail consequence.",
+      "Kept the CTA quiet enough to hear and used the score’s original closing cadence."
+    ],
+    "remaining": [
+      "David Desktop is still an audible local scratch voice; these changes improve connection and timing, not emotional acting.",
+      "Repeated musical passages are intentionally reused and documented; a newly commissioned or generated final score could develop motifs further.",
+      "No complete human listening review is claimed. Automated measurements establish timing and levels, not subjective musical quality."
+    ]
+  },
+  "speechActiveBalance": {
+    "region": "heist145–156s",
+    "method": "RMS over measured audible caption spans only, excluding purposeful speech rests",
+    "activeSeconds": 6.6578125,
+    "voiceRmsDbfs": -25.33,
+    "musicRmsDbfs": -34.45,
+    "voiceAboveMusicDb": 9.12
+  }
+}

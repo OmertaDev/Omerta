@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { getAddress, keccak256 } from 'viem';
 import { DataType, newDb } from 'pg-mem';
 import { registerPgMemCompatibility } from '../src/db.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { buildStockTokenActivationV2, computeStockAssetVersionKey } from '../src/stockcatalogv2.js';
 import {
   disposeRwaNominationReviewWithSafePackage, expireRwaApprovals, rwaNominationReviewQueue,

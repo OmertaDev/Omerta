@@ -14,7 +14,7 @@ if (postgres) {
 }
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ledger, withCharacter, withTwoCharacters } from '../src/game.js';
 import { acceptDelivery, expireCommitment } from '../src/delivery.js';
 import { reservedQuantity } from '../src/deliverybook.js';

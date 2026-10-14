@@ -1,0 +1,761 @@
+[
+  {
+    "id": "M04-L01",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "The market has defenses. Every one can run out.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L02",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L03",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "As selling crosses active ranges, Ether converts into O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L04",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "As buying crosses active ranges, O M R converts into Ether.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L05",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Crossing a range isn’t final. Inventory can still convert back.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L06",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Finalization removes eligible positions and separates returned principal from fees.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L07",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L08",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L09",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L10",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L11",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Spaced healthy observations can unlock a bounded, funded refill.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L12",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Only real idle assets move. Lifetime limits stay consumed.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L13",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "A price recovery creates no Ether. There is no guaranteed floor.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L14",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Canonical sells pay nine percent, split across four recipients.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L15",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Three percent funds Core. Additional sell pressure funds stability.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L16",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "A fee receipt can contain Ether or O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L17",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Opening buys have temporary rules. Later buys have no Hook tax.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L18",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "These rules cover the canonical pool, not every trading venue.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L19",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Bonds reserve existing O M R upfront, then release it through linear vesting.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L20",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "No minting or sellback. Vested claims survive a purchasing pause.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L21",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L22",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Actual profit is checked. Competition and failed gas remain your risk.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L23",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Players commit canonical position N F Ts. Rewards require qualifying, fresh depth samples.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L24",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L25",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Families contest seasonal price slabs and future funded fee credits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L26",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L27",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L28",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Sieges freeze participant wallets and allocate only funded escrow.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L29",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "At season exit, fees settle and protocol principal returns for retirement.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L30",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L31",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Game cash, O M R, Ether and R W A allocations remain separate.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L32",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L33",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Oh mare tah Market version two. Learn what moves the city.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  }
+]

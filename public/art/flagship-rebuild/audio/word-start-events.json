@@ -1,0 +1,4904 @@
+[
+  {
+    "chapter": "C01",
+    "text": "Nico",
+    "startMs": 180,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "has",
+    "startMs": 545,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "put",
+    "startMs": 725,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "up",
+    "startMs": 945,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "the",
+    "startMs": 1115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "stake",
+    "startMs": 1210,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "One",
+    "startMs": 2535,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "seat",
+    "startMs": 2760,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "is",
+    "startMs": 3065,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "empty",
+    "startMs": 3220,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "Fill",
+    "startMs": 4490,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "it",
+    "startMs": 4780,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "with",
+    "startMs": 4910,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "the",
+    "startMs": 5115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "wrong",
+    "startMs": 5235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "person",
+    "startMs": 5505,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "and",
+    "startMs": 6425,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "everyone",
+    "startMs": 6620,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "could",
+    "startMs": 7110,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "go",
+    "startMs": 7300,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "to",
+    "startMs": 7495,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "jail",
+    "startMs": 7635,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "This",
+    "startMs": 8885,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "is",
+    "startMs": 9115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "oh",
+    "startMs": 9270,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "mare",
+    "startMs": 9415,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "tah",
+    "startMs": 9650,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "a",
+    "startMs": 10360,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "multiplayer",
+    "startMs": 10445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "mafia",
+    "startMs": 11115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "strategy",
+    "startMs": 11555,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "R",
+    "startMs": 12170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "P",
+    "startMs": 12345,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "G",
+    "startMs": 12565,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "in",
+    "startMs": 12825,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "your",
+    "startMs": 12955,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C01",
+    "text": "browser",
+    "startMs": 13100,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Nico",
+    "startMs": 15350,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "starts",
+    "startMs": 15710,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "with",
+    "startMs": 16120,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "a",
+    "startMs": 16300,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "name",
+    "startMs": 16360,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "and",
+    "startMs": 16670,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "a",
+    "startMs": 16840,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "little",
+    "startMs": 16905,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "cash",
+    "startMs": 17190,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "He",
+    "startMs": 18525,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "takes",
+    "startMs": 18665,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "a",
+    "startMs": 18995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "small",
+    "startMs": 19050,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "job",
+    "startMs": 19455,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Nerve",
+    "startMs": 20730,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "goes",
+    "startMs": 21000,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "down",
+    "startMs": 21305,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Cash",
+    "startMs": 22565,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "and",
+    "startMs": 22890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "respect",
+    "startMs": 23080,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "go",
+    "startMs": 23535,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "up",
+    "startMs": 23740,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Now",
+    "startMs": 24890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "what",
+    "startMs": 25135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Another",
+    "startMs": 26340,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "job",
+    "startMs": 26715,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "could",
+    "startMs": 27045,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "build",
+    "startMs": 27225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "his",
+    "startMs": 27495,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "bankroll",
+    "startMs": 27655,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Training",
+    "startMs": 29170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "spends",
+    "startMs": 29575,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "energy",
+    "startMs": 29975,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "to",
+    "startMs": 30415,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "improve",
+    "startMs": 30570,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "his",
+    "startMs": 30970,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "stats",
+    "startMs": 31100,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Banking",
+    "startMs": 32515,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "protects",
+    "startMs": 32950,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "money",
+    "startMs": 33405,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "once",
+    "startMs": 33710,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "it",
+    "startMs": 33995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "arrives",
+    "startMs": 34100,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "but",
+    "startMs": 35050,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "the",
+    "startMs": 35235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "trip",
+    "startMs": 35320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "leaves",
+    "startMs": 35630,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "it",
+    "startMs": 35930,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "exposed",
+    "startMs": 36035,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Three",
+    "startMs": 37560,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "choices",
+    "startMs": 37850,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "different",
+    "startMs": 38850,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "risks",
+    "startMs": 39245,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "Nico",
+    "startMs": 40630,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "has",
+    "startMs": 40995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "to",
+    "startMs": 41235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "choose",
+    "startMs": 41365,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "what",
+    "startMs": 41695,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "matters",
+    "startMs": 41900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "next",
+    "startMs": 42300,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "That",
+    "startMs": 43675,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "is",
+    "startMs": 43880,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "how",
+    "startMs": 44025,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "a",
+    "startMs": 44230,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "place",
+    "startMs": 44300,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "in",
+    "startMs": 44660,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "this",
+    "startMs": 44785,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "city",
+    "startMs": 44940,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "begins",
+    "startMs": 45215,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "one",
+    "startMs": 46195,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "decision",
+    "startMs": 46405,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "then",
+    "startMs": 47380,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "its",
+    "startMs": 47575,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C02",
+    "text": "consequence",
+    "startMs": 47725,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "As",
+    "startMs": 52330,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "he",
+    "startMs": 52490,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "progresses",
+    "startMs": 52590,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "six",
+    "startMs": 53460,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Paths",
+    "startMs": 53715,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "open",
+    "startMs": 54025,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "different",
+    "startMs": 54265,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "ways",
+    "startMs": 54550,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "forward",
+    "startMs": 54785,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 55861,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Gun",
+    "startMs": 55946,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "brings",
+    "startMs": 56146,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "street",
+    "startMs": 56366,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "combat",
+    "startMs": 56631,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 57801,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Ledger",
+    "startMs": 57881,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "fronts",
+    "startMs": 58516,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "and",
+    "startMs": 58808.563,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "trade",
+    "startMs": 58945.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 59997.188,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Kitchen",
+    "startMs": 60077.188,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "better",
+    "startMs": 60777.188,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "cooking",
+    "startMs": 60983.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 62038.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Wheel",
+    "startMs": 62118.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "faster",
+    "startMs": 62758.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "convoys",
+    "startMs": 63088.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 64243.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Shadow",
+    "startMs": 64323.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "quicker",
+    "startMs": 65023.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "searches",
+    "startMs": 65288.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "The",
+    "startMs": 66453.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Ring",
+    "startMs": 66548.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "stronger",
+    "startMs": 67108.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "duels",
+    "startMs": 67474.375,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "and",
+    "startMs": 67792.125,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "bouts",
+    "startMs": 67943.25,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Every",
+    "startMs": 69015.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "advantage",
+    "startMs": 69255.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "costs",
+    "startMs": 69670.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "something",
+    "startMs": 69990.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Nico",
+    "startMs": 71080.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "chooses",
+    "startMs": 71360.312,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "the",
+    "startMs": 71720.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Wheel",
+    "startMs": 71800.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "faster",
+    "startMs": 72440.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "convoys",
+    "startMs": 72775.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "slower",
+    "startMs": 73545.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "cooking",
+    "startMs": 73885.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Mara",
+    "startMs": 74920.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "chooses",
+    "startMs": 75175.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "the",
+    "startMs": 75535.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Gun",
+    "startMs": 75615.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Their",
+    "startMs": 76580.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "specialties",
+    "startMs": 76720.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "are",
+    "startMs": 77255.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "different",
+    "startMs": 77385.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "their",
+    "startMs": 78095.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "preparation",
+    "startMs": 78220.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "still",
+    "startMs": 78750.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "matters",
+    "startMs": 78990.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "Nico",
+    "startMs": 80105.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "starts",
+    "startMs": 80385.313,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "thinking",
+    "startMs": 80685.5,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "beyond",
+    "startMs": 80976.5,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "his",
+    "startMs": 81276.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "next",
+    "startMs": 81411.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "payout",
+    "startMs": 81636.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "What",
+    "startMs": 82761.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "can",
+    "startMs": 82926.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "he",
+    "startMs": 83076.687,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "do",
+    "startMs": 83191.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "that",
+    "startMs": 83331.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "makes",
+    "startMs": 83491.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "someone",
+    "startMs": 83701.687,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "else",
+    "startMs": 84001.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "want",
+    "startMs": 84216.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "him",
+    "startMs": 84441.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C03",
+    "text": "around",
+    "startMs": 84591.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "He",
+    "startMs": 90350,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "buys",
+    "startMs": 90490,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "a",
+    "startMs": 90835,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "sack",
+    "startMs": 90890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "of",
+    "startMs": 91235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "coffee",
+    "startMs": 91365,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "There",
+    "startMs": 92705,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "is",
+    "startMs": 92900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 93045,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "price",
+    "startMs": 93135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 93745,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "debit",
+    "startMs": 93850,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "and",
+    "startMs": 94405,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 94555,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "cargo",
+    "startMs": 94640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "in",
+    "startMs": 95080,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "his",
+    "startMs": 95220,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "trunk",
+    "startMs": 95405,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Getting",
+    "startMs": 96770,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "a",
+    "startMs": 97070,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "bargain",
+    "startMs": 97135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "is",
+    "startMs": 97545,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "only",
+    "startMs": 97735,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "half",
+    "startMs": 98035,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 98290,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "decision",
+    "startMs": 98395,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Goods",
+    "startMs": 99835,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "need",
+    "startMs": 100105,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "moving",
+    "startMs": 100330,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Cars",
+    "startMs": 101610,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "need",
+    "startMs": 101935,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "repairs",
+    "startMs": 102160,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Boats",
+    "startMs": 103635,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "open",
+    "startMs": 103945,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "sea",
+    "startMs": 104235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "runs",
+    "startMs": 104480,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "with",
+    "startMs": 104780,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "risks",
+    "startMs": 104980,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "of",
+    "startMs": 105340,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "their",
+    "startMs": 105445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "own",
+    "startMs": 105640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "A",
+    "startMs": 106825,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "business",
+    "startMs": 106915,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "has",
+    "startMs": 107365,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "upkeep",
+    "startMs": 107545,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "a",
+    "startMs": 108455,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Kitchen",
+    "startMs": 108545,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "batch",
+    "startMs": 108925,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "takes",
+    "startMs": 109255,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "time",
+    "startMs": 109590,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Races",
+    "startMs": 110855,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "boxing",
+    "startMs": 111480,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 112190,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Den",
+    "startMs": 112300,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "and",
+    "startMs": 112795,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "the",
+    "startMs": 112945,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Speakeasy",
+    "startMs": 113025,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "give",
+    "startMs": 113720,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "people",
+    "startMs": 113915,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "other",
+    "startMs": 114290,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "reasons",
+    "startMs": 114545,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "to",
+    "startMs": 114995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "return",
+    "startMs": 115115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "Loans",
+    "startMs": 116515,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "auctions",
+    "startMs": 117320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "and",
+    "startMs": 117760,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "fixers",
+    "startMs": 117935,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "create",
+    "startMs": 118425,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "other",
+    "startMs": 118820,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "opportunities",
+    "startMs": 119085,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "The",
+    "startMs": 120860,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "city",
+    "startMs": 120955,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "rewards",
+    "startMs": 121285,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "paying",
+    "startMs": 121755,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C04",
+    "text": "attention",
+    "startMs": 122080,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Nico",
+    "startMs": 125360,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "forms",
+    "startMs": 125750,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "a",
+    "startMs": 126175,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Crew",
+    "startMs": 126245,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "a",
+    "startMs": 127160,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "small",
+    "startMs": 127250,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "circle",
+    "startMs": 127680,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "for",
+    "startMs": 128135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "mutual",
+    "startMs": 128320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "aid",
+    "startMs": 128835,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "and",
+    "startMs": 129055,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "chat",
+    "startMs": 129230,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Then",
+    "startMs": 130640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "comes",
+    "startMs": 130890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "the",
+    "startMs": 131230,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Payroll",
+    "startMs": 131330,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Office",
+    "startMs": 131845,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "job",
+    "startMs": 132235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "This",
+    "startMs": 133645,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "heist",
+    "startMs": 133890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "needs",
+    "startMs": 134225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "a",
+    "startMs": 134500,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "wheelman",
+    "startMs": 134570,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "and",
+    "startMs": 135060,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "muscle",
+    "startMs": 135250,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Nico",
+    "startMs": 136685,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "takes",
+    "startMs": 137075,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "the",
+    "startMs": 137445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "wheelman",
+    "startMs": 137555,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "role",
+    "startMs": 138045,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "and",
+    "startMs": 138345,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "puts",
+    "startMs": 138540,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "up",
+    "startMs": 138840,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "the",
+    "startMs": 139030,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "stake",
+    "startMs": 139125,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "The",
+    "startMs": 140590,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "second",
+    "startMs": 140690,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "seat",
+    "startMs": 141145,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "is",
+    "startMs": 141475,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "empty",
+    "startMs": 141660,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Mara",
+    "startMs": 143055,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "joins",
+    "startMs": 143415,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Both",
+    "startMs": 144955,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "names",
+    "startMs": 145270,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "are",
+    "startMs": 145640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "there",
+    "startMs": 145825,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Preparation",
+    "startMs": 147130,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "improves",
+    "startMs": 147925,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "their",
+    "startMs": 148440,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "odds",
+    "startMs": 148660,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "It",
+    "startMs": 150080,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "cannot",
+    "startMs": 150235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "tell",
+    "startMs": 150615,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Nico",
+    "startMs": 150905,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "what",
+    "startMs": 151260,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "somebody",
+    "startMs": 151470,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "else",
+    "startMs": 152005,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "will",
+    "startMs": 152310,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "choose",
+    "startMs": 152495,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "He",
+    "startMs": 153990,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "commits",
+    "startMs": 154135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "The",
+    "startMs": 157235,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "law",
+    "startMs": 157355,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "was",
+    "startMs": 157575,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "waiting",
+    "startMs": 157790,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Somebody",
+    "startMs": 159240,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "talked",
+    "startMs": 159775,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Both",
+    "startMs": 161895,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "players",
+    "startMs": 162190,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "go",
+    "startMs": 162675,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "to",
+    "startMs": 162885,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "jail",
+    "startMs": 163035,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "The",
+    "startMs": 165975,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "result",
+    "startMs": 166115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "names",
+    "startMs": 166535,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "no",
+    "startMs": 166920,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "informant",
+    "startMs": 167170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "Nico",
+    "startMs": 168780,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "can",
+    "startMs": 169170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "read",
+    "startMs": 169420,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "exactly",
+    "startMs": 169665,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "what",
+    "startMs": 170270,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "happened",
+    "startMs": 170475,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "He",
+    "startMs": 171975,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "still",
+    "startMs": 172130,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "does",
+    "startMs": 172460,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "not",
+    "startMs": 172710,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "know",
+    "startMs": 172955,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "whom",
+    "startMs": 173195,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "to",
+    "startMs": 173445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C05",
+    "text": "believe",
+    "startMs": 173585,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Jail",
+    "startMs": 178350,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "ends",
+    "startMs": 178650,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "The",
+    "startMs": 179900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "question",
+    "startMs": 180010,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "remains",
+    "startMs": 180530,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Would",
+    "startMs": 181995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "you",
+    "startMs": 182185,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "invite",
+    "startMs": 182335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "the",
+    "startMs": 182690,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "same",
+    "startMs": 182770,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "person",
+    "startMs": 183090,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "again",
+    "startMs": 183490,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Bigger",
+    "startMs": 184775,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "risks",
+    "startMs": 185070,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "can",
+    "startMs": 185385,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "cost",
+    "startMs": 185595,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "more",
+    "startMs": 185970,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "a",
+    "startMs": 186730,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "character",
+    "startMs": 186820,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "can",
+    "startMs": 187330,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "die",
+    "startMs": 187565,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Your",
+    "startMs": 188680,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "account",
+    "startMs": 188880,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "continues",
+    "startMs": 189245,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "but",
+    "startMs": 190335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "an",
+    "startMs": 190510,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "heir",
+    "startMs": 190650,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "keeps",
+    "startMs": 190830,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "only",
+    "startMs": 191135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "a",
+    "startMs": 191435,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "limited",
+    "startMs": 191505,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "legacy",
+    "startMs": 191895,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Seasons",
+    "startMs": 193315,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "have",
+    "startMs": 193820,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "their",
+    "startMs": 193990,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "own",
+    "startMs": 194190,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "rules",
+    "startMs": 194395,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Eligible",
+    "startMs": 195795,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "gear",
+    "startMs": 196275,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "and",
+    "startMs": 196575,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "vehicles",
+    "startMs": 196750,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "can",
+    "startMs": 197220,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "leave",
+    "startMs": 197435,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "the",
+    "startMs": 197655,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "game",
+    "startMs": 197760,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "but",
+    "startMs": 198555,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "extracted",
+    "startMs": 198725,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "items",
+    "startMs": 199345,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "stop",
+    "startMs": 199705,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "working",
+    "startMs": 200050,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "inside",
+    "startMs": 200435,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "it",
+    "startMs": 200870,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "Combat",
+    "startMs": 201945,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "cannot",
+    "startMs": 202430,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "take",
+    "startMs": 202765,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "unrelated",
+    "startMs": 203020,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "assets",
+    "startMs": 203630,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "from",
+    "startMs": 204105,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "your",
+    "startMs": 204325,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "external",
+    "startMs": 204490,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "wallet",
+    "startMs": 205025,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "What",
+    "startMs": 206410,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "do",
+    "startMs": 206625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "you",
+    "startMs": 206775,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "keep",
+    "startMs": 206920,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "in",
+    "startMs": 207170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "play",
+    "startMs": 207320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "What",
+    "startMs": 208540,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "are",
+    "startMs": 208755,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "you",
+    "startMs": 208850,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "prepared",
+    "startMs": 209020,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "to",
+    "startMs": 209480,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C06",
+    "text": "lose",
+    "startMs": 209595,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Elsewhere",
+    "startMs": 212335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "in",
+    "startMs": 212755,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "the",
+    "startMs": 212875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "city",
+    "startMs": 212912.188,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "discoveries",
+    "startMs": 213681.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "can",
+    "startMs": 214306.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "be",
+    "startMs": 214486.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "kept",
+    "startMs": 214601.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "private",
+    "startMs": 214851.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "or",
+    "startMs": 215181.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "shared",
+    "startMs": 215331.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "with",
+    "startMs": 215656.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "permission",
+    "startMs": 215806.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Two",
+    "startMs": 217101.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "investigators",
+    "startMs": 217251.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "may",
+    "startMs": 217961.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "need",
+    "startMs": 218141.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "evidence",
+    "startMs": 218351.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "they",
+    "startMs": 218751.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "found",
+    "startMs": 218876.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "independently",
+    "startMs": 219171.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Copying",
+    "startMs": 220688.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "the",
+    "startMs": 221093.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "same",
+    "startMs": 221158.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "clue",
+    "startMs": 221438.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "is",
+    "startMs": 221638.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "not",
+    "startMs": 221788.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "another",
+    "startMs": 221973.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "witness",
+    "startMs": 222273.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Objects",
+    "startMs": 223473.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "tell",
+    "startMs": 223923.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "stories",
+    "startMs": 224153.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "too",
+    "startMs": 224603.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "salvage",
+    "startMs": 225208.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "becomes",
+    "startMs": 225643.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "material",
+    "startMs": 226013.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "and",
+    "startMs": 226973.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "an",
+    "startMs": 227113.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "eligible",
+    "startMs": 227238.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "recipe",
+    "startMs": 227663.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "makes",
+    "startMs": 228073.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "an",
+    "startMs": 228323.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "item",
+    "startMs": 228418.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "with",
+    "startMs": 228688.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "a",
+    "startMs": 228843.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "traceable",
+    "startMs": 228898.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "history",
+    "startMs": 229388.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Beyond",
+    "startMs": 230618.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Nico's",
+    "startMs": 230963.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "small",
+    "startMs": 231313.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Crew",
+    "startMs": 231638.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Families",
+    "startMs": 232333.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "pursue",
+    "startMs": 232743.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "larger",
+    "startMs": 233078.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "ambitions",
+    "startMs": 233448.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "treasury",
+    "startMs": 234403.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "territory",
+    "startMs": 235028.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "rivalries",
+    "startMs": 235778.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "and",
+    "startMs": 236523.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "wars",
+    "startMs": 236668.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Shared",
+    "startMs": 237863.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "operations",
+    "startMs": 238183.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "need",
+    "startMs": 238793.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "contributions",
+    "startMs": 238988.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "and",
+    "startMs": 239701.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "approval",
+    "startMs": 239858.438,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Convoys",
+    "startMs": 241070.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "can",
+    "startMs": 241490.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "be",
+    "startMs": 241675.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "ambushed",
+    "startMs": 241810.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Commission",
+    "startMs": 243135.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "seats",
+    "startMs": 243505.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "give",
+    "startMs": 243825.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "votes",
+    "startMs": 243995.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "on",
+    "startMs": 244255.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "specific",
+    "startMs": 244405.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "city",
+    "startMs": 244850.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "rules",
+    "startMs": 245105.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Events",
+    "startMs": 246355.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "and",
+    "startMs": 246695.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "the",
+    "startMs": 246835.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "Director's",
+    "startMs": 246910.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "authored",
+    "startMs": 247400.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "situations",
+    "startMs": 247735.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "change",
+    "startMs": 248405.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "the",
+    "startMs": 248725.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "opportunities",
+    "startMs": 248860.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "around",
+    "startMs": 249520.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C07",
+    "text": "you",
+    "startMs": 249845.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Not",
+    "startMs": 252335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "every",
+    "startMs": 252540,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "rival",
+    "startMs": 252825,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "is",
+    "startMs": 253160,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "at",
+    "startMs": 253320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "a",
+    "startMs": 253465,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "keyboard",
+    "startMs": 253515,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "A",
+    "startMs": 254735,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "player",
+    "startMs": 254815,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "can",
+    "startMs": 255135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "operate",
+    "startMs": 255320,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "an",
+    "startMs": 255730,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "agent",
+    "startMs": 255850,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Here",
+    "startMs": 256995,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "it",
+    "startMs": 257200,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "reads",
+    "startMs": 257315,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "its",
+    "startMs": 257560,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "available",
+    "startMs": 257690,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "actions",
+    "startMs": 258110,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "and",
+    "startMs": 258470,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "takes",
+    "startMs": 258630,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "a",
+    "startMs": 258900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "street",
+    "startMs": 258945,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "job",
+    "startMs": 259255,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Nerve",
+    "startMs": 260380,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "falls",
+    "startMs": 260610,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "cash",
+    "startMs": 261430,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "and",
+    "startMs": 261720,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "respect",
+    "startMs": 261880,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "change",
+    "startMs": 262265,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "The",
+    "startMs": 263465,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "next",
+    "startMs": 263560,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "decision",
+    "startMs": 263810,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "starts",
+    "startMs": 264195,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "from",
+    "startMs": 264550,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "that",
+    "startMs": 264740,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "new",
+    "startMs": 264915,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "state",
+    "startMs": 265055,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Permissions",
+    "startMs": 266210,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "and",
+    "startMs": 266740,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "resources",
+    "startMs": 266900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "still",
+    "startMs": 267435,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "limit",
+    "startMs": 267675,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "what",
+    "startMs": 267930,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "it",
+    "startMs": 268090,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "can",
+    "startMs": 268195,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "do",
+    "startMs": 268380,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "The",
+    "startMs": 269365,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "city's",
+    "startMs": 269445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "N",
+    "startMs": 269800,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "P",
+    "startMs": 269985,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Cs",
+    "startMs": 270155,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "are",
+    "startMs": 270585,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "separate",
+    "startMs": 270720,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "Whether",
+    "startMs": 271965,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "you",
+    "startMs": 272225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "bring",
+    "startMs": 272375,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "friends",
+    "startMs": 272615,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "or",
+    "startMs": 272960,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "build",
+    "startMs": 273115,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "an",
+    "startMs": 273350,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "agent",
+    "startMs": 273475,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "the",
+    "startMs": 274200,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "choices",
+    "startMs": 274295,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "still",
+    "startMs": 274710,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "have",
+    "startMs": 274940,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C08",
+    "text": "consequences",
+    "startMs": 275120,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Nico",
+    "startMs": 280335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "needs",
+    "startMs": 280655,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "equipment",
+    "startMs": 280870,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "access",
+    "startMs": 281445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "and",
+    "startMs": 282045,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "people",
+    "startMs": 282195,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Money",
+    "startMs": 283330,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "helps",
+    "startMs": 283620,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "but",
+    "startMs": 284440,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "the",
+    "startMs": 284595,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "balances",
+    "startMs": 284670,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "have",
+    "startMs": 285170,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "different",
+    "startMs": 285335,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "jobs",
+    "startMs": 285670,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Game",
+    "startMs": 286900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "cash",
+    "startMs": 287135,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "pays",
+    "startMs": 287430,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "for",
+    "startMs": 287705,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "city",
+    "startMs": 287855,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "life",
+    "startMs": 288140,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "In-game",
+    "startMs": 289310,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 289685,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 289840,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 290030,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "buys",
+    "startMs": 290180,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "selected",
+    "startMs": 290460,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "gear",
+    "startMs": 290870,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "and",
+    "startMs": 291130,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "services",
+    "startMs": 291275,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "some",
+    "startMs": 292200,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "privileges",
+    "startMs": 292410,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "require",
+    "startMs": 292900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "holding",
+    "startMs": 293305,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "or",
+    "startMs": 293670,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "staking",
+    "startMs": 293815,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "it",
+    "startMs": 294225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Most",
+    "startMs": 295180,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 295475,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 295630,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 295825,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "spends",
+    "startMs": 295975,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "recycle",
+    "startMs": 296302.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "it",
+    "startMs": 296818.688,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Wallet",
+    "startMs": 297776.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 298171.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 298326.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 298516.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "is",
+    "startMs": 298686.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "separate",
+    "startMs": 298796.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "onchain",
+    "startMs": 299606.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "The",
+    "startMs": 300921.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "funded",
+    "startMs": 301006.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Window",
+    "startMs": 301356.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "spends",
+    "startMs": 301656.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 302016.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 302171.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 302361.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "for",
+    "startMs": 302511.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "game",
+    "startMs": 302686.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "cash",
+    "startMs": 302911.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "That",
+    "startMs": 304076.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "conversion",
+    "startMs": 304256.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "goes",
+    "startMs": 304761.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "one",
+    "startMs": 305011.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "way",
+    "startMs": 305211.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Game",
+    "startMs": 306226.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "rewards",
+    "startMs": 306506.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "are",
+    "startMs": 306886.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "not",
+    "startMs": 307011.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "automatic",
+    "startMs": 307216.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "wallet",
+    "startMs": 307691.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "payouts",
+    "startMs": 308041.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Trading",
+    "startMs": 309351.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "fees",
+    "startMs": 309711.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "fund",
+    "startMs": 309946.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "developer",
+    "startMs": 310181.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "community",
+    "startMs": 310781.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "asset",
+    "startMs": 311416.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "and",
+    "startMs": 311961.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "liquidity",
+    "startMs": 312116.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "budgets",
+    "startMs": 312541.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Inventory",
+    "startMs": 313826.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "bonds",
+    "startMs": 314371.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "release",
+    "startMs": 314666.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "existing",
+    "startMs": 315006.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 315486.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 315641.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 315831.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "over",
+    "startMs": 316001.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "time",
+    "startMs": 316221.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Liquidity",
+    "startMs": 317351.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "rewards",
+    "startMs": 317806.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "need",
+    "startMs": 318216.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "eligible",
+    "startMs": 318416.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "positions",
+    "startMs": 318821.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "and",
+    "startMs": 319301.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "funded",
+    "startMs": 319451.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "campaigns",
+    "startMs": 319781.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Some",
+    "startMs": 321236.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "realized",
+    "startMs": 321486.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "arbitrage",
+    "startMs": 321991.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "profit",
+    "startMs": 322526.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "can",
+    "startMs": 322891.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "support",
+    "startMs": 323101.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "reserves",
+    "startMs": 323481.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Families",
+    "startMs": 324811.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "compete",
+    "startMs": 325311.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "for",
+    "startMs": 325636.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "designated",
+    "startMs": 325781.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "trading-fee",
+    "startMs": 326351.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "rights",
+    "startMs": 326876.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "they",
+    "startMs": 327621.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "do",
+    "startMs": 327741.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "not",
+    "startMs": 327881.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "take",
+    "startMs": 328086.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "the",
+    "startMs": 328301.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "pool's",
+    "startMs": 328386.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "principal",
+    "startMs": 328716.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Real-world",
+    "startMs": 330021.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "assets",
+    "startMs": 330496.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "include",
+    "startMs": 330906.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Stock",
+    "startMs": 331246.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Tokens",
+    "startMs": 331556.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "exposure",
+    "startMs": 332401.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "to",
+    "startMs": 332951.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "assets",
+    "startMs": 333116.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "outside",
+    "startMs": 333526.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "the",
+    "startMs": 333951.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "game",
+    "startMs": 334031.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Commission",
+    "startMs": 335131.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "choices",
+    "startMs": 335526.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "acquisition",
+    "startMs": 336136.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "custody",
+    "startMs": 336916.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "and",
+    "startMs": 337566.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "eligibility",
+    "startMs": 337736.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "govern",
+    "startMs": 338336.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "the",
+    "startMs": 338641.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "process",
+    "startMs": 338716.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Holding",
+    "startMs": 340051.875,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "O",
+    "startMs": 340412.625,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "M",
+    "startMs": 340579.188,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "R",
+    "startMs": 340777,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "does",
+    "startMs": 340948.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "not",
+    "startMs": 341163.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "promise",
+    "startMs": 341343.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "everyone",
+    "startMs": 341723.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "a",
+    "startMs": 342113.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "payout",
+    "startMs": 342168.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "These",
+    "startMs": 343433.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "systems",
+    "startMs": 343623.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "shape",
+    "startMs": 344043.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "what",
+    "startMs": 344298.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "players",
+    "startMs": 344448.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "can",
+    "startMs": 344833.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "organize",
+    "startMs": 345008.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "They",
+    "startMs": 346363.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "cannot",
+    "startMs": 346493.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "decide",
+    "startMs": 346783.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "whom",
+    "startMs": 347123.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "Nico",
+    "startMs": 347313.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "should",
+    "startMs": 347593.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C09",
+    "text": "trust",
+    "startMs": 347793.75,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "The",
+    "startMs": 351785,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "next",
+    "startMs": 351900,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "job",
+    "startMs": 352210,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "comes",
+    "startMs": 352515,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "round",
+    "startMs": 352835,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Another",
+    "startMs": 354155,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "stake",
+    "startMs": 354520,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Another",
+    "startMs": 355840,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "empty",
+    "startMs": 356225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "seat",
+    "startMs": 356555,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Nico",
+    "startMs": 357820,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "has",
+    "startMs": 358180,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "learned",
+    "startMs": 358380,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "how",
+    "startMs": 358685,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "to",
+    "startMs": 358860,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "earn",
+    "startMs": 359030,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "how",
+    "startMs": 359770,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "to",
+    "startMs": 359940,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "specialize",
+    "startMs": 360075,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "and",
+    "startMs": 361290,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "how",
+    "startMs": 361445,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "much",
+    "startMs": 361640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "another",
+    "startMs": 361890,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "person's",
+    "startMs": 362225,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "decision",
+    "startMs": 362730,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "can",
+    "startMs": 363210,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "cost",
+    "startMs": 363425,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "him",
+    "startMs": 363790,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "The",
+    "startMs": 364940,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "next",
+    "startMs": 365055,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "invitation",
+    "startMs": 365365,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "is",
+    "startMs": 366025,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "a",
+    "startMs": 366190,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "choice",
+    "startMs": 366250,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "he",
+    "startMs": 366610,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "has",
+    "startMs": 366745,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "to",
+    "startMs": 366985,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "make",
+    "startMs": 367090,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "You",
+    "startMs": 368315,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "can",
+    "startMs": 368460,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "buy",
+    "startMs": 368650,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "equipment",
+    "startMs": 368840,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "You",
+    "startMs": 370270,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "cannot",
+    "startMs": 370415,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "buy",
+    "startMs": 370745,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "trust",
+    "startMs": 370950,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Choose",
+    "startMs": 372360,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "your",
+    "startMs": 372665,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "path",
+    "startMs": 372820,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Find",
+    "startMs": 374150,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "your",
+    "startMs": 374530,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "people",
+    "startMs": 374685,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Make",
+    "startMs": 375985,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "your",
+    "startMs": 376240,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "name",
+    "startMs": 376395,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "oh",
+    "startMs": 377640,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "mare",
+    "startMs": 377790,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "tah",
+    "startMs": 378020,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Who",
+    "startMs": 379130,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "will",
+    "startMs": 379285,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "you",
+    "startMs": 379465,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "bring",
+    "startMs": 379605,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "Start",
+    "startMs": 380865,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "playing",
+    "startMs": 381245,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "at",
+    "startMs": 381605,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "oh",
+    "startMs": 381785,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "mare",
+    "startMs": 381930,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "tah",
+    "startMs": 382165,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "dot",
+    "startMs": 382420,
+    "method": "SAPI word-start event; no word-end inference"
+  },
+  {
+    "chapter": "C10",
+    "text": "fun",
+    "startMs": 382670,
+    "method": "SAPI word-start event; no word-end inference"
+  }
+]

@@ -5,7 +5,7 @@
 // test: the open events surface with a clock (or progress), a settled/absent event does NOT, and the
 // whole aggregator moves no value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 const pool = app.pool;

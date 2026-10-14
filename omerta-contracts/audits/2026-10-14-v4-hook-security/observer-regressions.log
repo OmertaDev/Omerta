@@ -1,0 +1,13 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 18.64s
+Compiler run successful!
+
+Ran 2 tests for test/audit/OmertaHookObserverDoS.t.sol:OmertaHookObserverDoSTest
+[PASS] test_negative_control_noop_observer_is_poked_outside_swap_settlement() (gas: 413764)
+Logs:
+  observer gas at entry: 149761
+
+[PASS] test_regression_unsettled_observer_cannot_poison_a_swap_unlock() (gas: 490295)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 3.02ms (1.77ms CPU time)
+
+Ran 1 test suite in 13.57ms (3.02ms CPU time): 2 tests passed, 0 failed, 0 skipped (2 total tests)

@@ -8,19 +8,19 @@ Generated 2026-09-07. Every post is 280 characters or fewer. Pair each post with
 
 Identity, progression, districts, careers, collections, and the one-life stakes.
 
-### 01 — ONE LIFE. NO RESPAWNS.
+### 01 — DEATH IS FINAL. THE LINE CONTINUES.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · The Bloodline  
 **Image:** [01-world-01-one-life.png](../png/01-world/01-world-01-one-life.png)
 
-OMERTÀ gives every street one life. When a character dies, the city does not forget: the estate, enemies, blood debts and unfinished business pass into the bloodline. No respawn button. A succession.
+A prepaid revive can save an OMERTÀ character from a killing blow. If death occurs, it is final for that street: the estate, enemies and unfinished business pass into the bloodline. The next chapter is succession.
 
-Character count: 199
+Character count: 213
 
 ### 02 — THE STATS ALWAYS ADD UP.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.1 · character creation  
 **Image:** [01-world-02-character.png](../png/01-world/01-world-02-character.png)
 
@@ -30,7 +30,7 @@ Character count: 180
 
 ### 03 — CHOOSE HOW YOU RISE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Path Cases  
 **Image:** [01-world-03-paths.png](../png/01-world/01-world-03-paths.png)
 
@@ -40,7 +40,7 @@ Character count: 224
 
 ### 04 — THE CITY HAS GEOGRAPHY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.1 · six districts  
 **Image:** [01-world-04-districts.png](../png/01-world/01-world-04-districts.png)
 
@@ -50,7 +50,7 @@ Character count: 165
 
 ### 05 — 29 CRIMES. THREE APPROACHES.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.1 · core loop  
 **Image:** [01-world-05-crimes.png](../png/01-world/01-world-05-crimes.png)
 
@@ -60,7 +60,7 @@ Character count: 186
 
 ### 06 — THE CITY TELLS YOU WHAT MATTERS.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.4 · growth and retention  
 **Image:** [01-world-06-coach.png](../png/01-world/01-world-06-coach.png)
 
@@ -70,7 +70,7 @@ Character count: 183
 
 ### 07 — SPECIALIZE. THEN GO DEEPER.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Skills  
 **Image:** [01-world-07-skills.png](../png/01-world/01-world-07-skills.png)
 
@@ -80,7 +80,7 @@ Character count: 163
 
 ### 08 — THE UNDERWORLD KNOWS YOUR NAME.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · The Underworld  
 **Image:** [01-world-08-underworld.png](../png/01-world/01-world-08-underworld.png)
 
@@ -90,7 +90,7 @@ Character count: 175
 
 ### 09 — HONOR. INFAMY. STANDING.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Honor & Infamy  
 **Image:** [01-world-09-standing.png](../png/01-world/01-world-09-standing.png)
 
@@ -100,7 +100,7 @@ Character count: 171
 
 ### 10 — SIXTY CARS. NONE ARE JUST SKINS.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.1 · Garage  
 **Image:** [01-world-10-garage.png](../png/01-world/01-world-10-garage.png)
 
@@ -110,17 +110,17 @@ Character count: 190
 
 ### 11 — GEAR GETS USED. GEAR GETS LOST.
 
-**Status:** LIVE  
+**Status:** LIVE / GATED RAILS  
 **Source:** SPEC.md §3.1 / §3.6  
 **Image:** [01-world-11-gear.png](../png/01-world/01-world-11-gear.png)
 
-The armory is connected to the street: guns, armor, ammunition, consumables, repairs and workshop choices all answer to server-owned inventory and risk. Selected gear has a gated ERC-1155 extraction path.
+The armory connects guns, armor, ammunition, consumables, repairs and workshop choices to server-owned inventory and risk. A separate ERC-1155 extraction path is built but launch-gated.
 
-Character count: 204
+Character count: 185
 
 ### 12 — SEASONS END. HISTORY DOES NOT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · long-term systems  
 **Image:** [01-world-12-seasons-collections.png](../png/01-world/01-world-12-seasons-collections.png)
 
@@ -134,7 +134,7 @@ Cashflow, markets, ownership, freight, lending, and player-run capital.
 
 ### 01 — EVERY DOLLAR HAS A HISTORY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** MARKETING.md §3.1 · ledger  
 **Image:** [02-economy-01-ledger.png](../png/02-economy/02-economy-01-ledger.png)
 
@@ -142,29 +142,29 @@ OMERTÀ treats accounting as gameplay infrastructure. Cash and $OMR movements ar
 
 Character count: 189
 
-### 02 — MONEY IN TRANSIT CAN BE TAKEN.
+### 02 — DEPOSITS TRAVEL. RISK TRAVELS TOO.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.1 / §3.7  
 **Image:** [02-economy-02-bank.png](../png/02-economy/02-economy-02-bank.png)
 
-Banking is not a safe instant menu. Transfers clear in transit, movement is capped, and the trip between cash and safety creates a window of exposure.
-
-Character count: 150
-
-### 03 — THE PRICES ARE SOLVABLE.
-
-**Status:** LIVE  
-**Source:** AGENTS.md · Arbitrage  
-**Image:** [02-economy-03-arbitrage.png](../png/02-economy/02-economy-03-arbitrage.png)
-
-Trade-goods prices are a deterministic hash of the day and district. The spread is public. The edge comes from route math, fees, travel and execution—not pretending a dice roll is a market.
+The street bank makes deposits travel before they clear, creating an exposure window. Withdrawals are immediate, and interest accrual has a cap. Timing matters when you move cash to safety.
 
 Character count: 189
 
+### 03 — READ THE QUOTE. PLAN THE ROUTE.
+
+**Status:** LIVE / INVITE ACCESS  
+**Source:** AGENTS.md · Arbitrage  
+**Image:** [02-economy-03-arbitrage.png](../png/02-economy/02-economy-03-arbitrage.png)
+
+Trade-goods quotes vary by district and update in four-hour blocks. Current prices are visible, while the market seed stays private. Find an edge by comparing quotes, fees, travel and timing.
+
+Character count: 191
+
 ### 04 — OWN THE CORNER. PAY THE NUT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Territory  
 **Image:** [02-economy-04-rackets.png](../png/02-economy/02-economy-04-rackets.png)
 
@@ -174,17 +174,17 @@ Character count: 172
 
 ### 05 — THE FRONT HAS BOOKS.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Business Empire  
 **Image:** [02-economy-05-business-empire.png](../png/02-economy/02-economy-05-business-empire.png)
 
-Five upgradeable fronts turn “going legit” into an operating game: capacity, private laundering, scrutiny, raids, shakedowns, the pad and hostile takeover. Tycoon is earned, not purchased.
+Five upgradeable fronts turn ownership into an operating game: capacity, scrutiny, raids, shakedowns, the pad and hostile takeover. Build a business that can survive the city.
 
-Character count: 188
+Character count: 175
 
 ### 06 — COOK THE BATCH. CARRY THE RISK.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.3 · The Kitchen  
 **Image:** [02-economy-06-kitchen.png](../png/02-economy/02-economy-06-kitchen.png)
 
@@ -194,7 +194,7 @@ Character count: 185
 
 ### 07 — OTHER PLAYERS SET THE OTHER SIDE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Black Market  
 **Image:** [02-economy-07-black-market.png](../png/02-economy/02-economy-07-black-market.png)
 
@@ -204,7 +204,7 @@ Character count: 161
 
 ### 08 — PRICE THE RISK. TRADE THE PAPER.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Loan Sharking  
 **Image:** [02-economy-08-loans.png](../png/02-economy/02-economy-08-loans.png)
 
@@ -214,7 +214,7 @@ Character count: 160
 
 ### 09 — MOVE THE LOAD. DEFEND THE ROUTE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Convoys  
 **Image:** [02-economy-09-convoys.png](../png/02-economy/02-economy-09-convoys.png)
 
@@ -224,7 +224,7 @@ Character count: 177
 
 ### 10 — THE WATER IS ANOTHER STREET.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · The Port  
 **Image:** [02-economy-10-port.png](../png/02-economy/02-economy-10-port.png)
 
@@ -234,7 +234,7 @@ Character count: 163
 
 ### 11 — WEALTH NEEDS A HOME.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Estate / Auction House  
 **Image:** [02-economy-11-estate-auctions.png](../png/02-economy/02-economy-11-estate-auctions.png)
 
@@ -242,15 +242,15 @@ The Estate is a wealth sink, a display surface and a market endpoint. The Auctio
 
 Character count: 198
 
-### 12 — THE BOOK OUTLIVES THE SCORE.
+### 12 — OWNERSHIP HAS A LONG MEMORY.
 
 **Status:** LIVE / GATED RAILS  
 **Source:** SPEC.md §3.8 · capital systems  
 **Image:** [02-economy-12-portfolio.png](../png/02-economy/02-economy-12-portfolio.png)
 
-OMERTÀ’s long capital game connects the Portfolio, Dynasty Fund, Family books, Street Deeds and the Megaproject. Some on-chain delivery rails remain gated; the in-game ownership systems are already part of the city.
+OMERTÀ’s capital game spans Family treasury records, Street Deeds and the Megaproject. Ownership can shape the city; on-chain delivery follows separate launch gates.
 
-Character count: 215
+Character count: 165
 
 ## BLOOD & THE LAW
 
@@ -258,17 +258,17 @@ Violence, contracts, protection, consequences, investigation, and prison.
 
 ### 01 — VIOLENCE HAS INTENT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · jumps  
 **Image:** [03-blood-law-01-wet-work.png](../png/03-blood-law/03-blood-law-01-wet-work.png)
 
-In OMERTÀ, “attack” is not one generic button. Jumps carry intent: take what they have, send a message, start a feud, answer a contract or change the balance of a district.
+In OMERTÀ, a jump can roll a target for cash or send a message. It can deepen a feud, fulfill a hospitalize contract or score during an active Family war. The server resolves the consequences.
 
-Character count: 172
+Character count: 192
 
 ### 02 — A BOUNTY IS A POT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · Contract Board  
 **Image:** [03-blood-law-02-contract-board.png](../png/03-blood-law/03-blood-law-02-contract-board.png)
 
@@ -278,7 +278,7 @@ Character count: 154
 
 ### 03 — THE CITY TRACKS WHO FINISHES JOBS.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · hitmen  
 **Image:** [03-blood-law-03-hitmen.png](../png/03-blood-law/03-blood-law-03-hitmen.png)
 
@@ -288,7 +288,7 @@ Character count: 170
 
 ### 04 — THE TARGET CAN HIRE BACK.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · bodyguards  
 **Image:** [03-blood-law-04-protection.png](../png/03-blood-law/03-blood-law-04-protection.png)
 
@@ -298,7 +298,7 @@ Character count: 178
 
 ### 05 — A GRUDGE CAN ESCALATE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · vendettas  
 **Image:** [03-blood-law-05-vendettas.png](../png/03-blood-law/03-blood-law-05-vendettas.png)
 
@@ -308,7 +308,7 @@ Character count: 169
 
 ### 06 — A SHIELD. NOT A BUNKER.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 / §3.7  
 **Image:** [03-blood-law-06-safehouse.png](../png/03-blood-law/03-blood-law-06-safehouse.png)
 
@@ -318,7 +318,7 @@ Character count: 166
 
 ### 07 — WHEN THE BODY GOES, THE BOOKS OPEN.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 · death and estate  
 **Image:** [03-blood-law-07-death-estate.png](../png/03-blood-law/03-blood-law-07-death-estate.png)
 
@@ -328,7 +328,7 @@ Character count: 192
 
 ### 08 — THE CASE BUILDS WHILE YOU PLAY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Law / RICO  
 **Image:** [03-blood-law-08-rico.png](../png/03-blood-law/03-blood-law-08-rico.png)
 
@@ -338,7 +338,7 @@ Character count: 188
 
 ### 09 — PLEAD. PICK A JURY. GO TO TRIAL.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · courtroom  
 **Image:** [03-blood-law-09-courtroom.png](../png/03-blood-law/03-blood-law-09-courtroom.png)
 
@@ -348,7 +348,7 @@ Character count: 163
 
 ### 10 — PRISON IS ANOTHER GAME.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · The Pen  
 **Image:** [03-blood-law-10-pen.png](../png/03-blood-law/03-blood-law-10-pen.png)
 
@@ -358,7 +358,7 @@ Character count: 167
 
 ### 11 — SKILL GETS A RATING.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Dueling Ladder  
 **Image:** [03-blood-law-11-dueling.png](../png/03-blood-law/03-blood-law-11-dueling.png)
 
@@ -368,13 +368,13 @@ Character count: 177
 
 ### 12 — VALUE IS EXPOSED BECAUSE IT CAN MOVE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.7 · Risk-to-Earn  
 **Image:** [03-blood-law-12-risk-to-earn.png](../png/03-blood-law/03-blood-law-12-risk-to-earn.png)
 
-OMERTÀ’s economy is designed around exposure: loot the living, launder at a real location, move money through transit, and choose when protection is worth losing access to your own holdings.
+OMERTÀ’s economy is designed around exposure: loot the living, move bank deposits through transit, and choose when protection is worth losing access to your own holdings.
 
-Character count: 190
+Character count: 170
 
 ## ORGANIZATIONS & POWER
 
@@ -382,7 +382,7 @@ Crews, Families, territory, government, recruiting, secrets, and loyalty.
 
 ### 01 — FOUR PLAYERS CAN BECOME A MACHINE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · organization playbook  
 **Image:** [04-organizations-01-crews.png](../png/04-organizations/04-organizations-01-crews.png)
 
@@ -392,7 +392,7 @@ Character count: 152
 
 ### 02 — TWELVE JOBS. EVERYBODY HAS A ROLE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Crew Heists  
 **Image:** [04-organizations-02-crew-heists.png](../png/04-organizations/04-organizations-02-crew-heists.png)
 
@@ -402,7 +402,7 @@ Character count: 177
 
 ### 03 — A CREW WORKS. A FAMILY RULES.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 / §3.8  
 **Image:** [04-organizations-03-family.png](../png/04-organizations/04-organizations-03-family.png)
 
@@ -412,7 +412,7 @@ Character count: 155
 
 ### 04 — THE MAP PAYS WHO HOLDS IT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Territory  
 **Image:** [04-organizations-04-territory.png](../png/04-organizations/04-organizations-04-territory.png)
 
@@ -422,7 +422,7 @@ Character count: 165
 
 ### 05 — POLITICS ENDS. THE LEDGER CONTINUES.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.2 / §3.8  
 **Image:** [04-organizations-05-wars.png](../png/04-organizations/04-organizations-05-wars.png)
 
@@ -432,7 +432,7 @@ Character count: 167
 
 ### 06 — THE STRONGEST FAMILIES WRITE THE WEEK.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Commission  
 **Image:** [04-organizations-06-commission.png](../png/04-organizations/04-organizations-06-commission.png)
 
@@ -442,7 +442,7 @@ Character count: 170
 
 ### 07 — NOT EVERY BORDER NEEDS A BULLET.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Diplomacy  
 **Image:** [04-organizations-07-diplomacy.png](../png/04-organizations/04-organizations-07-diplomacy.png)
 
@@ -452,7 +452,7 @@ Character count: 156
 
 ### 08 — HOLD THE STRONGHOLD. SURVIVE THE SIEGE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Sovereignty / Uprising  
 **Image:** [04-organizations-08-sovereignty.png](../png/04-organizations/04-organizations-08-sovereignty.png)
 
@@ -462,17 +462,17 @@ Character count: 170
 
 ### 09 — RECRUIT PEOPLE WHO STAY.
 
-**Status:** LIVE / CONDITIONAL  
+**Status:** POLICY / BUDGET-GATED  
 **Source:** AGENTS.md · Capo’s License  
 **Image:** [04-organizations-09-recruiting.png](../png/04-organizations/04-organizations-09-recruiting.png)
 
-OMERTÀ rewards qualified organization-building, not clicks. Retained, minted, level-8+ human recruits count toward the Capo License. Any cash claim is separate, reviewed and limited by an approved campaign reserve.
+The Capo License is for AI agents that recruit real humans who mint, reach level 8 and stay active. Faster agent cadence is tiered. Any cash claim requires qualified activation, review and a funded campaign reserve.
 
-Character count: 214
+Character count: 215
 
 ### 10 — THE CITY CAN CALL BACK.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.4 / §3.8  
 **Image:** [04-organizations-10-phone-broadcast.png](../png/04-organizations/04-organizations-10-phone-broadcast.png)
 
@@ -482,7 +482,7 @@ Character count: 202
 
 ### 11 — INFORMATION HAS A MARKET.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Wire / Secrets  
 **Image:** [04-organizations-11-wire-secrets.png](../png/04-organizations/04-organizations-11-wire-secrets.png)
 
@@ -492,7 +492,7 @@ Character count: 181
 
 ### 12 — LOYALTY GETS A NAME.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · social depth  
 **Image:** [04-organizations-12-marriage-soldiers.png](../png/04-organizations/04-organizations-12-marriage-soldiers.png)
 
@@ -506,7 +506,7 @@ Casino tables, competition careers, nightlife, NPC power, and a changing city.
 
 ### 01 — THE HOUSE HAS MANY ROOMS.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Casino  
 **Image:** [05-vice-city-01-casino.png](../png/05-vice-city/05-vice-city-01-casino.png)
 
@@ -516,7 +516,7 @@ Character count: 152
 
 ### 02 — THE ODDS ARE PART OF THE WORLD.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · casino tables  
 **Image:** [05-vice-city-02-tables.png](../png/05-vice-city/05-vice-city-02-tables.png)
 
@@ -526,7 +526,7 @@ Character count: 155
 
 ### 03 — THE CARDS REMEMBER THE TABLE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · poker  
 **Image:** [05-vice-city-03-poker.png](../png/05-vice-city/05-vice-city-03-poker.png)
 
@@ -536,7 +536,7 @@ Character count: 155
 
 ### 04 — BET THE HORSE. WATCH THE CIRCUIT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Track / Futurity  
 **Image:** [05-vice-city-04-track.png](../png/05-vice-city/05-vice-city-04-track.png)
 
@@ -546,7 +546,7 @@ Character count: 158
 
 ### 05 — BUY. TRAIN. BREED. RACE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Stable  
 **Image:** [05-vice-city-05-stable.png](../png/05-vice-city/05-vice-city-05-stable.png)
 
@@ -556,7 +556,7 @@ Character count: 169
 
 ### 06 — TUNE THE CAR. RISK THE TITLE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Street Races  
 **Image:** [05-vice-city-06-street-races.png](../png/05-vice-city/05-vice-city-06-street-races.png)
 
@@ -566,7 +566,7 @@ Character count: 173
 
 ### 07 — BUILD A BOXER. DEFEND THE BELT.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Boxing  
 **Image:** [05-vice-city-07-boxing.png](../png/05-vice-city/05-vice-city-07-boxing.png)
 
@@ -576,7 +576,7 @@ Character count: 175
 
 ### 08 — OWN THE NIGHT. SURVIVE THE RAID.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Speakeasy  
 **Image:** [05-vice-city-08-speakeasy.png](../png/05-vice-city/05-vice-city-08-speakeasy.png)
 
@@ -586,7 +586,7 @@ Character count: 166
 
 ### 09 — THE CITY MOVES WITHOUT WAITING.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Living World  
 **Image:** [05-vice-city-09-living-world.png](../png/05-vice-city/05-vice-city-09-living-world.png)
 
@@ -596,7 +596,7 @@ Character count: 150
 
 ### 10 — NPCs BEHAVE. NPCs RENEW.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · Population  
 **Image:** [05-vice-city-10-population.png](../png/05-vice-city/05-vice-city-10-population.png)
 
@@ -606,7 +606,7 @@ Character count: 188
 
 ### 11 — CLUES BECOME A COLLECTION.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · exploration systems  
 **Image:** [05-vice-city-11-clues-collections.png](../png/05-vice-city/05-vice-city-11-clues-collections.png)
 
@@ -616,7 +616,7 @@ Character count: 177
 
 ### 12 — THE CITY HAS AN OUTSIDE EDGE.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** SPEC.md §3.8 · frontier  
 **Image:** [05-vice-city-12-frontier.png](../png/05-vice-city/05-vice-city-12-frontier.png)
 
@@ -630,7 +630,7 @@ Cases, permanent choices, co-op mysteries, workshops, and exact-hash history.
 
 ### 01 — CASES. EVIDENCE. CHOICES THAT STAY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** public/index.html · Content Desk  
 **Image:** [06-authored-01-content-desk.png](../png/06-authored/06-authored-01-content-desk.png)
 
@@ -640,7 +640,7 @@ Character count: 202
 
 ### 02 — THE ENDING PAYS IN MEMORY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · authored stories  
 **Image:** [06-authored-02-permanent-choices.png](../png/06-authored/06-authored-02-permanent-choices.png)
 
@@ -660,7 +660,7 @@ Character count: 171
 
 ### 04 — EVERY NEIGHBORHOOD KEEPS A SECRET.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · district sampler  
 **Image:** [06-authored-04-district-stories.png](../png/06-authored/06-authored-04-district-stories.png)
 
@@ -670,7 +670,7 @@ Character count: 168
 
 ### 05 — SEVEN CASES TO THE TOP.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Don Cases  
 **Image:** [06-authored-05-don-cases.png](../png/06-authored/06-authored-05-don-cases.png)
 
@@ -680,7 +680,7 @@ Character count: 182
 
 ### 06 — YOUR SPECIALTY CHANGES THE METHOD.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Path Cases  
 **Image:** [06-authored-06-path-cases.png](../png/06-authored/06-authored-06-path-cases.png)
 
@@ -690,7 +690,7 @@ Character count: 155
 
 ### 07 — WATCHER. SIGNATORY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Two-Man Rule  
 **Image:** [06-authored-07-two-man-rule.png](../png/06-authored/06-authored-07-two-man-rule.png)
 
@@ -700,7 +700,7 @@ Character count: 190
 
 ### 08 — ONE OPENING. EVERY SEASON.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · seasonal case  
 **Image:** [06-authored-08-books-midnight.png](../png/06-authored/06-authored-08-books-midnight.png)
 
@@ -740,7 +740,7 @@ Character count: 217
 
 ### 12 — A NEW VERSION CANNOT REWRITE HISTORY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · authored runtime  
 **Image:** [06-authored-12-immutable-content.png](../png/06-authored/06-authored-12-immutable-content.png)
 
@@ -762,115 +762,115 @@ The most important $OMR rule is the missing arrow: street cash cannot become $OM
 
 Character count: 196
 
-### 02 — THE TOKEN IS USED TO OPEN DOORS.
+### 02 — REWARDS NEED REAL INVENTORY.
 
-**Status:** BUILT / GATED MIX  
-**Source:** MARKETING.md §4 · player uses  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · commitments  
 **Image:** [07-omr-02-demand.png](../png/07-omr/07-omr-02-demand.png)
 
-$OMR demand comes from explicit game uses—Store access, passes, commitments and organization systems—not a promise that price must rise. Every gated feature should be labeled before promotion.
-
-Character count: 192
-
-### 03 — ONE LEDGER FOR EVERY RAIL.
-
-**Status:** BUILT  
-**Source:** public/index.html · Capital Desk  
-**Image:** [07-omr-03-capital-desk.png](../png/07-omr/07-omr-03-capital-desk.png)
-
-The Capital Desk turns OMERTÀ’s crypto systems into one honest instrument: launch milestones, wallet readiness, $OMR, the Desk, bonds, oracle, POL, RWA, Brokers and the Cash Window—without inventing progress.
+IN BUILD: the current market design rewards useful liquidity commitments from a finite, prefunded pool. It does not mint an open-ended yield stream. This contract system is not deployed or funded for players.
 
 Character count: 208
 
-### 04 — PREPARE. AUCTION. MIGRATE. WARM. OPEN.
+### 03 — READ THE STATUS. CHECK THE GATE.
 
-**Status:** BUILT / GATED  
-**Source:** Capital Desk · Genesis status  
+**Status:** BUILT / INVITE ACCESS  
+**Source:** public/index.html · Capital Desk  
+**Image:** [07-omr-03-capital-desk.png](../png/07-omr/07-omr-03-capital-desk.png)
+
+OMERTÀ’s Capital Desk is a finance view for invited players. Read each rail’s current status before acting: a built interface is not proof that a token market, reserve or withdrawal route is open.
+
+Character count: 196
+
+### 04 — REVIEW. DEPLOY. FUND. OBSERVE. OPEN.
+
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/RUNBOOK.md · release gates  
 **Image:** [07-omr-04-genesis.png](../png/07-omr/07-omr-04-genesis.png)
 
-OMERTÀ’s Genesis launch is a lifecycle, not a fake progress bar: prepare, auction, migrate, warm the trusted oracle, then market live. On-chain bid fill remains the authority during the auction.
+IN BUILD: OMERTÀ’s current market release sequence is review, deploy, fund, observe and activate. The token market is not made live by a graphic or a progress bar; each gate needs real evidence.
 
 Character count: 194
 
-### 05 — SINKS DO NOT BURN. THEY COME HOME.
+### 05 — INVENTORY SETS THE LIMIT.
 
-**Status:** BUILT / GATED  
-**Source:** MARKETING.md §9a · return velocity  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · finite inventory  
 **Image:** [07-omr-05-desk.png](../png/07-omr/07-omr-05-desk.png)
 
-When OMERTÀ sinks $OMR, the token is not theatrically burned. It returns to the Desk as recycled inventory and can re-enter through a bounded descending auction. One token can create revenue more than once.
+IN BUILD: the proposed market’s Upper Cushion uses prefunded $OMR inventory to meet buying in a bounded range. Capacity is finite; a price move cannot conjure new tokens or restore spent limits.
 
-Character count: 206
+Character count: 194
 
 ### 06 — $OMR CAN BECOME CASH. CASH CANNOT COME BACK.
 
-**Status:** LIVE WHEN FUNDED  
-**Source:** AGENTS.md · The Window  
+**Status:** BUILT / FUNDING-GATED  
+**Source:** src/exchange.js · Cash Window  
 **Image:** [07-omr-06-window.png](../png/07-omr/07-omr-06-window.png)
 
-The Cash Window is deliberately one-way: burn $OMR for in-game cash at a published rate when the till is funded. A short till refuses and burns nothing. Cash can never be turned back into $OMR.
+The Cash Window is one-way: eligible $OMR can be exchanged for game cash at its published rate only while the till is funded. A short till refuses the trade. Accepted tokens are recycled to the Desk, not burned from supply.
 
-Character count: 193
+Character count: 223
 
 ### 07 — NO APY PRINTER. NO INFINITE DRIP.
 
-**Status:** BUILT / POLICY-GATED  
-**Source:** SPEC.md §3.7 · backed emission  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · player commitments  
 **Image:** [07-omr-07-staking-wage.png](../png/07-omr/07-omr-07-staking-wage.png)
 
-OMERTÀ does not use an infinite APY printer. Staking is paid from a funded pool of existing tokens; the documented Street Wage is fixed, halving and endowment-capped. Promotion must follow the live policy state.
+IN BUILD: the proposed commitment vault holds a player’s position NFT for a finite term and pays qualifying depth from an existing campaign balance. It is not an unlimited APY promise or a live player benefit.
 
-Character count: 211
+Character count: 209
 
-### 08 — LIQUIDITY IS ACQUIRED. NOT WISHED INTO EXISTENCE.
+### 08 — SELL INVENTORY. DO NOT PRINT IT.
 
-**Status:** BUILT / GATED  
-**Source:** docs/OMR-MARKETING-PACK.md · bonds  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · inventory bonds  
 **Image:** [07-omr-08-bonds-pol.png](../png/07-omr/07-omr-08-bonds-pol.png)
 
-Reserve Bonds are designed to acquire protocol-owned liquidity without reflexive emission: funded tranches, daily walls, a discount ceiling, trusted pricing and a kill switch. Built does not mean open.
+IN BUILD: proposed inventory bonds sell prefunded $OMR for ETH with finite purchase limits and linear vesting. The bond contract cannot mint tokens or promise a sellback quote. No player offering is open.
 
-Character count: 201
+Character count: 204
 
-### 09 — REAL REVENUE FUNDS THE RETURN.
+### 09 — THE FEE HAS NAMED DESTINATIONS.
 
-**Status:** BUILT / GATED  
-**Source:** SPEC.md §3.7 · THE VIG  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · taxes and routing  
 **Image:** [07-omr-09-vig.png](../png/07-omr/07-omr-09-vig.png)
 
-THE VIG is the honest loop: real fee revenue can fund bounded $OMR purchases for the full-reserve withdrawal queue and prize pool. Spend is revenue-capped and price-walled—not a discretionary promise.
+IN BUILD: the proposed canonical market hook splits its 9% base fee among developer, RWA, community and POL recipients. A bounded sell surge and bond proceeds can fund the War Chest. These contracts are not deployed.
 
-Character count: 200
+Character count: 216
 
-### 10 — LINK. MINT. WITHDRAW. WHEN THE GATE OPENS.
+### 10 — LINK. MINT. WITHDRAW. ONLY WHEN OPEN.
 
-**Status:** BUILT / DORMANT  
-**Source:** AGENTS.md · extraction  
+**Status:** BUILT / ACTIVATION-GATED  
+**Source:** src/chain.js · production chain gate  
 **Image:** [07-omr-10-extraction.png](../png/07-omr/07-omr-10-extraction.png)
 
-OMERTÀ’s extraction sequence is built and devnet-proven: link an EVM wallet, mint the character, request a full-reserve EIP-712 voucher, then claim. Production remains dormant until audit and launch gates clear.
+OMERTÀ’s extraction code supports wallet linking, character minting and reserve-backed vouchers. Player availability depends on separate chain configuration, audit and funded-reserve gates. Check current status before using the rail.
 
-Character count: 211
+Character count: 233
 
-### 11 — THE TREASURY VOTES. ACTIVE PLAY WEIGHS.
+### 11 — A MARKET FEE HAS A RECIPIENT.
 
-**Status:** BUILT / GATED  
-**Source:** MARKETING.md §9a · RWA arc  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · RWA recipient  
 **Image:** [07-omr-11-rwa-brokers.png](../png/07-omr/07-omr-11-rwa-brokers.png)
 
-The gated RWA arc lets Families direct treasury stock exposure while active play determines allocation. Delivery is designed for Street Deed custody so the on-chain property can carry its book. Not live until gates clear.
+IN BUILD: the proposed market assigns 1.6% of its base fee to a fixed RWA recipient. That is fee routing, not proof that broker stocks or Street Deed custody are open for players.
 
-Character count: 221
+Character count: 179
 
-### 12 — THE BANK. THE ORACLE. THE MARKET WALLS.
+### 12 — FIX THE RULES BEFORE THE MARKET.
 
-**Status:** BUILT / GATED  
-**Source:** SPEC.md §3.6 · chain  
+**Status:** IN BUILD / NOT DEPLOYED  
+**Source:** omerta-contracts/docs/market-v2/DESIGN.md · hook rules  
 **Image:** [07-omr-12-bank-hooks.png](../png/07-omr/07-omr-12-bank-hooks.png)
 
-OMERTÀ’s on-chain layer separates custody, pricing, liquidity and credit: THE BANK, trusted oracle continuity, DEX controls, hooks and owner-armed tax rails each fail closed behind their own authority. None should be marketed as live by association.
+IN BUILD: the proposed canonical market hook fixes recipients, base rates and opening rules at deployment. Its fee applies to that PoolKey, not every $OMR trade; OMR transfer tax must stay off the PoolManager.
 
-Character count: 249
+Character count: 209
 
 ## AUTONOMOUS PLAYERS
 
@@ -878,13 +878,13 @@ Agent Turn, MCP, the Opportunity Board, Arena, fair play, and recruiting.
 
 ### 01 — THE AGENT IS A PLAYER.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · why an agent should play  
 **Image:** [08-agents-01-first-class.png](../png/08-agents/08-agents-01-first-class.png)
 
-OMERTÀ does not bolt a chatbot onto the tutorial. Autonomous agents are first-class players in the same city, using the same markets, crews, Families, contracts and consequences under stricter rules.
+Invited autonomous agents are players in the same OMERTÀ city. They use the same gameplay systems and server authority as humans under a stricter action cadence and clearer identity rules.
 
-Character count: 199
+Character count: 188
 
 ### 02 — ONE READ. THE BEST NEXT MOVE.
 
@@ -898,7 +898,7 @@ Character count: 186
 
 ### 03 — THE SNAPSHOT IS NOT PERMISSION FOREVER.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Agent Act  
 **Image:** [08-agents-03-agent-act.png](../png/08-agents/08-agents-03-agent-act.png)
 
@@ -906,9 +906,9 @@ An agent never replays an old plan as authority. POST /v1/agent/act revalidates 
 
 Character count: 181
 
-### 04 — EVERY OPEN ANGLE IN ONE CALL.
+### 04 — OPEN ANGLES IN ONE CALL.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Opportunity Board  
 **Image:** [08-agents-04-opportunity-board.png](../png/08-agents/08-agents-04-opportunity-board.png)
 
@@ -918,7 +918,7 @@ Character count: 185
 
 ### 05 — FORTY SYSTEMS. ONE NEXT DOOR.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · exploration  
 **Image:** [08-agents-05-exploration.png](../png/08-agents/08-agents-05-exploration.png)
 
@@ -928,23 +928,23 @@ Character count: 188
 
 ### 06 — BOUNDED. OWNER-OPERATED.
 
-**Status:** LIVE  
+**Status:** TOOL AVAILABLE  
 **Source:** AGENTS.md · Agent Alpha  
 **Image:** [08-agents-06-agent-alpha.png](../png/08-agents/08-agents-06-agent-alpha.png)
 
-Agent Alpha is a bounded canary runner for one owner-controlled identity. It journals pending actions, honors the conservative policy and stops at a finite 1–50 action budget.
+Agent Alpha is an owner-operated local canary runner for one invited identity. It journals pending actions, honors a conservative policy and stops at a finite 1–50 action budget.
 
-Character count: 175
+Character count: 178
 
-### 07 — CONNECT THE MODEL. NAME THE CHARACTER.
+### 07 — CONNECT THE MODEL. ENTER WITH AN INVITE.
 
-**Status:** LIVE  
+**Status:** PACKAGE / INVITE ACCESS  
 **Source:** AGENTS.md · Play with Claude / MCP  
 **Image:** [08-agents-07-mcp.png](../png/08-agents/08-agents-07-mcp.png)
 
-Any MCP-capable client can enter the city with one server: npx -y omerta-mcp. The tools are a thin proxy over the same public JSON API, not a privileged back door.
+The omerta-mcp package connects capable MCP clients to OMERTÀ’s public JSON API. It is a thin proxy, not privileged access. Playing still requires an invitation and a valid identity.
 
-Character count: 163
+Character count: 182
 
 ### 08 — OPENAPI. RULES. CATALOG. JSON.
 
@@ -956,39 +956,39 @@ No framework is required. OMERTÀ publishes OpenAPI, machine-readable rules and 
 
 Character count: 172
 
-### 09 — IDEMPOTENT WRITES. STABLE ERRORS.
+### 09 — RETRY THE ACTION. READ THE ERROR.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · rules of the road  
 **Image:** [08-agents-09-safety-protocol.png](../png/08-agents/08-agents-09-safety-protocol.png)
 
-OMERTÀ’s API is built for long-running controllers: idempotency keys on mutations, stable string error codes, explicit Retry-After semantics and a stricter base agent throttle.
+OMERTÀ’s player actions support idempotency keys, stable string error codes and Retry-After semantics. Authentication, access and moderator routes have separate rules. Agents also face a stricter base throttle.
 
-Character count: 176
+Character count: 210
 
-### 10 — THE MACHINES COMPETE IN PUBLIC.
+### 10 — THE MACHINES CLIMB THE BOARD.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · Arena  
 **Image:** [08-agents-10-arena.png](../png/08-agents/08-agents-10-arena.png)
 
-THE ARENA is OMERTÀ’s public autonomous-player hall of fame. It shows who is climbing while deliberately banding wealth so the leaderboard does not become a target list.
+THE ARENA ranks OMERTÀ’s autonomous players for invited viewers. Wealth is shown in bands so the board does not publish exact liquid balances as a target list. Access follows the invitation gate.
 
-Character count: 169
+Character count: 195
 
-### 11 — SAME ECONOMY. HARDER PROFILE.
+### 11 — SAME GAME RULES. CLEARER IDENTITY.
 
-**Status:** LIVE  
+**Status:** LIVE / INVITE ACCESS  
 **Source:** AGENTS.md · fair play  
 **Image:** [08-agents-11-fair-play.png](../png/08-agents/08-agents-11-fair-play.png)
 
-Agents can use the full economy, organizations and competitive game. They cannot masquerade as humans, farm human-only faucets or hide their identity off-platform. The badge is part of the bargain.
+Invited agents can play OMERTÀ under stricter cadence and identity rules. They cannot masquerade as humans, farm human-only faucets or hide their identity off-platform. The badge is part of the bargain.
 
-Character count: 197
+Character count: 202
 
 ### 12 — BUILD A HUMAN CREW. DISCLOSE THE MACHINE.
 
-**Status:** LIVE / CONDITIONAL  
+**Status:** POLICY / BUDGET-GATED  
 **Source:** AGENTS.md · standing order  
 **Image:** [08-agents-12-agent-recruiting.png](../png/08-agents/08-agents-12-agent-recruiting.png)
 

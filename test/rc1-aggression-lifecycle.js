@@ -56,7 +56,7 @@ try {
   await seam.clock.initialize(bootstrap);
   // Install the source-pinned loader before any production import can cache db.js.
   const [{ buildServer }, { PACING, CONSTANTS, M3, levelOf }, { runLedgerInvariants }, observer] = await Promise.all([
-    import('../src/server.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js')]);
+    import('./server-fixture.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js')]);
   assert.equal(CONSTANTS.SEARCH_MS, 10800000); assert.equal(CONSTANTS.SHOOT_CD_MS, 7200000);
   app = await buildServer();
   const pool = app.pool;

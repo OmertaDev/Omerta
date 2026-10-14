@@ -13,16 +13,16 @@ const ABI = parseAbi([
   'function positionManager() view returns (address)',
   'function permit2() view returns (address)',
   'function poolKey() view returns (address currency0, address currency1, uint24 fee, int24 tickSpacing, address hooks)',
-  'function governanceSafe() view returns (address)',
-  'function opsRecipient() view returns (address)',
-  'function OPS_SELL_BPS() view returns (uint16)',
-  'function TAX_CONFIG_DELAY() view returns (uint256)',
-  'function TAX_EXECUTION_SAFE_ONLY() view returns (bool)',
-  'function baseSellBps() view returns (uint16)',
-  'function taxConfig() view returns (uint16 rwaBps, uint16 communityBps, uint16 polBps, uint16 surgeMaxBps)',
-  'function queuedTaxHash() view returns (bytes32)',
-  'function queuedTaxExecuteAfter() view returns (uint64)',
-  'function taxConfigNonce() view returns (uint256)',
+  'function BASE_SELL_BPS() view returns (uint16)',
+  'function MAX_SURGE_BPS() view returns (uint16)',
+  'function managerCollectsRevenue() view returns (bool)',
+  'function recipients(uint256) view returns (address)',
+  'function revenuePolicyId() view returns (bytes32)',
+  'function TRADE_FEE_BPS() view returns (uint16)',
+  'function developerRecipient() view returns (address)',
+  'function rwaRecipient() view returns (address)',
+  'function communityRecipient() view returns (address)',
+  'function polRecipient() view returns (address)',
   'function eligibilityChainId() view returns (uint256)',
   'function launchGate() view returns (address)',
   'function launchGateCodeHash() view returns (bytes32)',
@@ -130,14 +130,14 @@ function configuration(manifest, account) {
     || custody.some(key => !isAddress(policy[key] || '') || same(policy[key], ZERO)
       || !same(policy[key], policy.familySafe)))
     fail('invalid_configuration', 'The reviewed founder allocation and Safe custody policy is incomplete or differs.');
-  const governance = manifest.hookGovernance;
-  const governanceKeys = ['governanceSafe', 'fixedFounderRecipient', 'fixedFounderBps', 'delaySeconds', 'executionSafeOnly'];
-  if (!governance || Object.keys(governance).length !== governanceKeys.length
-    || Object.keys(governance).some(key => !governanceKeys.includes(key))
-    || !same(governance.governanceSafe, policy.familySafe)
-    || !same(governance.fixedFounderRecipient, '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD')
-    || governance.fixedFounderBps !== 200 || governance.delaySeconds !== 172800 || governance.executionSafeOnly !== true)
-    fail('invalid_configuration', 'The reviewed fixed founder tax and delayed Safe governance policy differs.');
+  const hookPolicy = manifest.hookPolicy;
+  const fixed = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 };
+  if (!hookPolicy || Object.keys(hookPolicy).length !== 7
+    || Object.entries(fixed).some(([key, value]) => hookPolicy[key] !== value)
+    || !Array.isArray(hookPolicy.recipients) || hookPolicy.recipients.length !== 5
+    || hookPolicy.recipients.some(recipient => !isAddress(recipient || '') || same(recipient, ZERO))
+    || !same(hookPolicy.recipients[0], '0xA87b7A7eEcB6f4c771445f5cBa5bb0d4b29E5ceD'))
+    fail('invalid_configuration', 'The reviewed fixed 5% trade revenue, 0.5% surge cap or recipients differ.');
   const maxAge = manifest.maxSnapshotAgeSeconds ?? 120;
   if (!Number.isSafeInteger(maxAge) || maxAge < 1 || maxAge > 120)
     fail('invalid_configuration', 'The snapshot freshness limit is invalid.');
@@ -208,22 +208,21 @@ async function context({ manifest, account, client, bidId, nowMs = Date.now() },
         functionName: 'poolManager', blockNumber: block.number }), deps.poolManager.address))
       fail('deployment_mismatch', 'The production pool and position-manager bindings differ.');
   }
-  const hook = manifest.dependencies.hook.address, governance = manifest.hookGovernance;
-  const hookValues = await Promise.all(['governanceSafe', 'opsRecipient', 'OPS_SELL_BPS', 'TAX_CONFIG_DELAY', 'TAX_EXECUTION_SAFE_ONLY',
-    'baseSellBps', 'taxConfig', 'queuedTaxHash', 'queuedTaxExecuteAfter', 'taxConfigNonce'].map(fn => read(hook, fn)));
-  const [governanceSafe, opsRecipient, opsBps, delay, safeOnly, baseSellBps, taxConfig, queuedTaxHash, queuedTaxExecuteAfter, taxConfigNonce] = hookValues;
-  if (!same(governanceSafe, governance.governanceSafe) || !same(opsRecipient, governance.fixedFounderRecipient)
-    || BigInt(opsBps) !== 200n || BigInt(delay) !== 172800n || safeOnly !== true)
-    fail('deployment_mismatch', 'The hook immutable tax authority, founder recipient, rate or delay differs.');
-  if (!Array.isArray(taxConfig) || taxConfig.length !== 4)
-    fail('state_unavailable', 'The live hook tax configuration is unavailable.');
-  const rates = taxConfig.map(BigInt), base = BigInt(baseSellBps);
-  if (rates.some(rate => rate < 0n || rate > 1000n) || base !== 200n + rates[0] + rates[1] + rates[2]
-    || base + rates[3] > 1000n || !HASH.test(queuedTaxHash || '') || BigInt(queuedTaxExecuteAfter) < 0n || BigInt(taxConfigNonce) < 0n)
-    fail('deployment_mismatch', 'The live hook tax bounds or fixed founder allocation differ.');
-  const hookTax = { ...governance, baseSellBps: base.toString(), rwaBps: rates[0].toString(), communityBps: rates[1].toString(),
-    polBps: rates[2].toString(), surgeMaxBps: rates[3].toString(), queuedTaxHash, queuedTaxExecuteAfter: BigInt(queuedTaxExecuteAfter).toString(),
-    taxConfigNonce: BigInt(taxConfigNonce).toString(), committeeProposalProcess: 'Recorded offchain; Safe-authorized delayed execution, no onchain committee voting.' };
+  const hook = manifest.dependencies.hook.address, manager = manifest.dependencies.poolManager.address;
+  const hookPolicy = manifest.hookPolicy;
+  const [base, surge, managerCollectsRevenue, revenuePolicy, managerFee, managerOmr, ...recipients] = await Promise.all([
+    read(hook, 'BASE_SELL_BPS'), read(hook, 'MAX_SURGE_BPS'), read(hook, 'managerCollectsRevenue'),
+    read(manager, 'revenuePolicyId'), read(manager, 'TRADE_FEE_BPS'), read(manager, 'omr'),
+    ...Array.from({ length: 5 }, (_, i) => read(hook, 'recipients', [BigInt(i)])),
+    ...['developerRecipient', 'rwaRecipient', 'communityRecipient', 'polRecipient'].map(fn => read(manager, fn)),
+  ]);
+  const expectedRevenuePolicy = keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS'));
+  if (BigInt(base) !== 500n || BigInt(surge) !== 50n || managerCollectsRevenue !== true
+    || !same(revenuePolicy, expectedRevenuePolicy) || BigInt(managerFee) !== 500n || !same(managerOmr, c.omr.address)
+    || recipients.slice(0, 5).some((recipient, i) => !same(recipient, hookPolicy.recipients[i]))
+    || recipients.slice(5).some((recipient, i) => !same(recipient, hookPolicy.recipients[i])))
+    fail('deployment_mismatch', 'The fixed trade revenue policy requires a reviewed restricted manager, exact fee caps and recipients.');
+  const hookTax = { ...hookPolicy, managerCollectsRevenue: true, managerRevenuePolicy: revenuePolicy };
   const validator = await read('auction', 'validationHook');
   if (!isAddress(validator || '') || same(validator, ZERO)) fail('deployment_mismatch', 'The auction ownership validator is missing.');
   const validatorCode = await client.getCode({ address: validator, blockNumber: block.number });

@@ -1,0 +1,29 @@
+{
+  "sourceRepository": "https://github.com/OmertaDev/Omerta",
+  "sourceRevision": "3280817300cdcff3301745b1fce0bac9fe290129",
+  "sourceReviewDate": "2026-09-29",
+  "filmPremise": "Fully released and available to the public, per user direction September 30, 2026",
+  "capturesCompletedAt": "2026-09-30T14:46:21.289Z",
+  "publicSite": {
+    "url": "https://www.omerta.fun",
+    "observation": "Invitation required; no general gameplay activation proved"
+  },
+  "editorialReference": {
+    "url": "https://pleometric.net/articles/brief-practical-advice-for-short-form-brainrot/",
+    "use": "Recognition, novelty and sensation adapted through recurring envelope, earned reveals, legible holds and payoff; no external clips/music reused"
+  },
+  "sourceLedgers": [
+    "claims-gameplay.json",
+    "claims-economy.json"
+  ],
+  "captureEnvironment": "Disposable pg-mem; loopback only; actual pinned repository UI and handlers",
+  "syntheticSetup": [
+    "Explicit composite time jump: both sample characters seeded with qualifying heist resources/stats. This is not a natural progression recording.",
+    "One starter car seeded for an inventory/garage illustration; no claimed purchase receipt.",
+    "Documented informant branch exercised in disposable scenario; the public outcome does not reveal the informant."
+  ],
+  "exactGameCodeModified": false,
+  "productionStateChanged": false,
+  "credentialsIncluded": false,
+  "independentViewerTest": "Unavailable; no audience feedback claimed"
+}

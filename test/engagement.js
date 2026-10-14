@@ -9,7 +9,7 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { opsEngagement, SYSTEMS, NON_ENGAGEMENT } from '../src/engagement.js';
 import { PATH_QUIZ_QUESTIONS } from '../src/path-funnel.js';
 

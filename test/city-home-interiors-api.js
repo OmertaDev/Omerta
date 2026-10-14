@@ -53,7 +53,7 @@ try {
     await admin.query(`CREATE SCHEMA ${namespace}`); createdSchema = true;
     endpoint.searchParams.set('options', `-c search_path=${namespace}`); process.env.DATABASE_URL = endpoint.toString();
   } else assert(!process.env.DATABASE_URL, 'Memory proof requires disposable pg-mem.');
-  const { buildServer } = await import('../src/server.js');
+  const { buildServer } = await import('./server-fixture.js');
   const { ledger, withTwoCharacters } = await import('../src/game.js');
   const { runEstate } = await import('../src/social/estate.js');
   const { retireResident } = await import('../src/population.js');

@@ -1,6 +1,6 @@
 // M1 smoke test: full player journey + ledger invariant. Runs on pg-mem — zero infra.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 const call = async (method, url, { token, body } = {}) => {

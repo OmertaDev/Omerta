@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // THE DISPATCH (src/dispatch.js) — the opt-in "while you were gone" email digest. DORMANT until an email
 // provider key is set; OPT-IN only; one-click unsubscribe; §10.4-FREE (reads the Morning Paper, moves
 // nothing). The centre of the test: prefs (bad email refused, opt-in stored), the unsubscribe token round-
@@ -7,18 +8,19 @@ import assert from 'node:assert';
 
 // arm the provider BEFORE buildServer so digestConfigured() sees it (read at call time)
 process.env.EMAIL_API_KEY = 'test-key';
+process.env.LEGAL_POSTAL_ADDRESS = '123 Test Street, Example City';
 process.env.EMAIL_FROM = 'OMERTA <noreply@omerta.fun>';
 process.env.DIGEST_LAPSE_DAYS = '3';
 process.env.DIGEST_COOLDOWN_DAYS = '7';
 process.env.DIGEST_MAX_LAPSE_DAYS = '30';
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const Dispatch = await import('../src/dispatch.js');
 
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, body) });
   let b; try { b = res.json(); } catch { b = res.body; }
   return { code: res.statusCode, body: b };
 };
@@ -46,7 +48,10 @@ Dispatch.__setSender(async (to, subject, html, text) => { sent.push({ to, subjec
 const digests = () => sent.filter((s) => !/^Confirm your/.test(s.subject));
 
 // ════════════ configured — the availability flag is surfaced ════════════
-assert.equal(Dispatch.digestConfigured(), true, 'the provider is armed');
+assert.equal(Dispatch.digestConfigured(), true, 'the provider and postal address are armed');
+const postal = process.env.LEGAL_POSTAL_ADDRESS; delete process.env.LEGAL_POSTAL_ADDRESS;
+assert.equal(Dispatch.digestConfigured(), false, 'marketing is disabled without a postal address');
+process.env.LEGAL_POSTAL_ADDRESS = postal;
 assert.equal((await call('GET', '/v1/rules')).body.digest.available, true, 'the client sees digest available on /v1/rules');
 
 // ════════════ prefs: bad email refused, opt-in stored, read back ════════════
@@ -173,6 +178,7 @@ assert.equal((await call('GET', '/v1/digest', { token: ring[0].token })).body.ve
 // ════════════ §10.4 — the digest moves no value ════════════
 assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n), 0, 'THE DISPATCH writes no ledger rows — it is pure notification');
 
+for (const email of digests()) { assert(email.html.includes(postal), 'marketing HTML includes postal address'); assert(email.text.includes(postal), 'marketing text includes postal address'); }
 console.log('dispatch: PASS');
 await app.close();
 process.exit(0);

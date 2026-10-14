@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 import { recordPlayerIntel } from '../src/playerintel.js';
 async function seedKnownPlayer(q, ownerCharacterId, targetId) {
   const owner = (await q.query('SELECT account_id FROM characters WHERE id=$1', [ownerCharacterId])).rows[0];
@@ -58,7 +59,7 @@ import assert from 'node:assert';
 import vm from 'node:vm';
 import { readFileSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { M3, M4, PATHS, NPC_HITMEN, HEIST_ROLES, HEIST_JOBS, DRUGS, GOODS, DISTRICTS,
   COMMISSION, CONVOY, DUELS, TERRITORY_TYPES, CARS, TRIMS, ASSETS, RACKETS, BUSINESSES, ESTATE, WIRE, SECRETS, STABLE, WORLD, WORLD_NPCS,
   PEN, HONOR, MARRIAGE, CAMPAIGNS, LIMITED_RUNS, SHIPMENT, VANITY,
@@ -1265,7 +1266,7 @@ assert(reads.size > 40, `only ${reads.size} (route, binding) pairs found — the
 
 
 const inject = async (method, url, token, payload) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
   try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
 };
 const token = (await inject('POST', '/v1/auth/guest')).body.token;
@@ -7760,7 +7761,7 @@ await app.close();
 {
   const app2 = await buildServer();
   const inj2 = async (method, url, token, payload) => {
-    const res = await app2.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app2.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mk73 = async (nm) => {
@@ -7843,7 +7844,7 @@ await app.close();
 {
   const app3 = await buildServer();
   const inj3 = async (method, url, token, payload) => {
-    const res = await app3.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app3.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mk73s = async (nm) => {
@@ -7919,7 +7920,7 @@ await app.close();
 {
   const app4 = await buildServer();
   const inj4 = async (method, url, token, payload) => {
-    const res = await app4.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app4.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mk73w = async (nm) => {
@@ -8022,7 +8023,7 @@ await app.close();
 {
   const app5 = await buildServer();
   const inj5 = async (method, url, token, payload) => {
-    const res = await app5.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app5.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mk73p = async (nm) => {
@@ -8207,7 +8208,7 @@ await app.close();
 {
   const app6 = await buildServer();
   const inj6 = async (method, url, token, payload) => {
-    const res = await app6.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app6.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mkF = async (nm, loc) => {
@@ -8330,7 +8331,7 @@ await app.close();
 {
   const app7 = await buildServer();
   const inj7 = async (method, url, token, payload) => {
-    const res = await app7.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app7.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mkE = async (nm, loc, stats) => {
@@ -8535,7 +8536,7 @@ await app.close();
 
   const app8 = await buildServer();
   const inj8 = async (method, url, token, payload) => {
-    const res = await app8.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app8.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   // the client's own fmt, mirrored: these figures carry decimals (a 2% toll on 12 $OMR is 0.24), so
@@ -8723,7 +8724,7 @@ await app.close();
 
   const app9 = await buildServer();
   const inj9 = async (method, url, token, payload) => {
-    const res = await app9.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app9.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const fmtC = (n) => { const v = Number(n);
@@ -8942,7 +8943,7 @@ await app.close();
 {
   const app10 = await buildServer();
   const inj10 = async (method, url, token, payload) => {
-    const res = await app10.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app10.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const fmtD = (n) => { const v = Number(n);
@@ -9098,7 +9099,7 @@ console.log(`✅ client wiring test passed — across the console AND /admin: of
 {
   const app11 = await buildServer();
   const inj11 = async (method, url, token, payload) => {
-    const res = await app11.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload });
+    const res = await app11.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
     try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
   };
   const mk11 = async (nm) => {

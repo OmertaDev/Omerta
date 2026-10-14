@@ -1,0 +1,18 @@
+[
+  {
+    "Path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\src\\OmertaHook.sol",
+    "Hash": "95563000DD26F9709AD57BA89D09076FB6E5FCFE0516E9C06532D7AEB3CB3ECE"
+  },
+  {
+    "Path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\src\\market-v2\\OmertaHookV2.sol",
+    "Hash": "EC6362E88DAEB7F35BD8F95CBC6BF2344378CB29603B3BF31460A14EADA0C903"
+  },
+  {
+    "Path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\src\\market-v2\\OmertaSwapRouterV2.sol",
+    "Hash": "6AF5BE95FAC73EDF33FACFE7348B3B326305AF0F33BDD7F2F40459701F313D70"
+  },
+  {
+    "Path": "C:\\Users\\Jorge\\Documents\\Omerta\\omerta-contracts\\src\\market-v2\\core\\OmertaPoolManagerV2.sol",
+    "Hash": "551C86E193CC33C7FABD07433BB4B15286D5420332E52B86FA37DC34B05EBAC0"
+  }
+]

@@ -20,7 +20,7 @@ if (native) {
 process.env.DEPOT_PILOT = 'on'; process.env.DELIVERY_CONTRACTS = 'on'; process.env.RATE_LIMIT = 'off';
 process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.JWT_SECRET = 'employment-local-isolated-test-secret';
 process.env.MARKET_SEED = 'employment-local-native-seed'; process.env.MOD_KEY = 'employment-local-test-mod-key';
-const { buildServer } = await import('../src/server.js'), G = await import('../src/game.js');
+const { buildServer } = await import('./server-fixture.js'), G = await import('../src/game.js');
 const D = await import('../src/depot.js'), M = await import('../src/market.js'), Delivery = await import('../src/delivery.js');
 const { setAgentCompany } = await import('../src/agentcompany.js');
 const { runEstate } = await import('../src/social/estate.js');

@@ -10,7 +10,7 @@
 //   4. The family yield is a TRANSFER, so the $OMR bucket sum is unmoved by a distribution.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { fundExchange, payFamilyYield, fundFamilyYield, exchangePool, familyYieldPool,
   runExchangeInvariants } from '../src/exchange.js';

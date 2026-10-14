@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // M5 hardening test: the §10.4 invariant job over an organically-earned economy
 // (zero SQL cash seeding), drift detection, idempotency keys, invite codes,
 // X OAuth + guest upgrade, season rollover (§8), and §10.2 rate limits
@@ -13,7 +14,7 @@ import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import zlib from 'node:zlib';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants, alertDrift } from '../src/invariants.js';
 import { runSeasonRollover } from '../src/worker.js';
 import { deadlockToRetry as G_deadlockToRetry, withCharacterRead } from '../src/game.js';
@@ -44,9 +45,10 @@ for (const code of ['40P01', '23505', '55P03'])
   app.post(`/v1/__contention_${code}`, async () => { const e = new Error('boom'); e.code = code; throw e; });
 app.post('/v1/__genuine_bug', async () => { throw new Error('a real null-dereference'); });
 const pool = app.pool;
+const ageCookie = (await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '1990-01-01' } })).headers['set-cookie'].split(';')[0];
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url, payload: body,
+  const res = await app.inject({ method, url, payload: headers?.['content-type'] === 'application/json' && body === undefined ? undefined : adultAuthFixture(method, url, body),
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) } });
   return { code: res.statusCode, body: res.json(), headers: res.headers };
 };
@@ -956,14 +958,14 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     let r = await call('POST', '/v1/auth/x/start', { body: {} });
     let state = new URL(r.body.url).searchParams.get('state');
     let cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}` } });
+      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
     assert(cb.headers.location.includes('#token='), 'a real exchange lands a signed session token');
     const xToken = decodeURIComponent(cb.headers.location.split('#token=')[1]);
     const sess = await call('GET', '/v1/session', { token: xToken });
     assert.equal(sess.body.provider, 'x', 'the minted session is the X identity');
     // REPLAY the same callback → the state was consumed (single-use, DELETE-returning)
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}` } });
+      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
     assert(cb.headers.location.includes('#autherr=oauth_state'), 'a replayed callback finds no state');
     // (2) the guest UPGRADE: an authed start claims-in-place; the same X id can never claim twice
     const claimer = await mk('Claim Kid');
@@ -971,7 +973,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     r = await call('POST', '/v1/auth/x/start', { token: claimer.token, body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}` } });
+      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
     assert(cb.headers.location.includes('#claimed=x'), 'the guest is upgraded in place');
     assert.equal((await call('GET', '/v1/session', { token: claimer.token })).body.provider, 'x',
       'same account row, now an X identity');
@@ -979,14 +981,14 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
     r = await call('POST', '/v1/auth/x/start', { token: rival.token, body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}` } });
+      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
     assert(cb.headers.location.includes('#autherr=linked_elsewhere'), 'one X account, one street — the collision is clean');
     // (3) a transient X failure during the exchange is a clean retryable x_busy, never a 500
     xmock.token = () => jres(500, {});
     r = await call('POST', '/v1/auth/x/start', { body: {} });
     state = new URL(r.body.url).searchParams.get('state');
     cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,
-      headers: { cookie: `omerta_oauth=${state}` } });
+      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });
     assert(cb.headers.location.includes('#autherr=x_busy'), 'an X outage mid-exchange reads as busy, not broken');
     // (4) verifyPostUp semantics: transient ≠ definitive (an outage must NEVER read as "post gone")
     process.env.SOCIAL_VERIFY_MODE = 'live';
@@ -1511,6 +1513,18 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
 // This is the whole silent-failure class the drift monitor exists to catch, aimed at the monitor itself.
 {
   const { webhookText } = await import('../src/invariants.js');
+  const split = webhookText('split', [{ name: 'chain parity', mismatches: [
+    { what: 'OmertaBond.polBps', onchain: 7500, backend: 6500 },
+    { what: 'OmertaFees.mintFee', onchain: '5000000000000000', backend: '3000000000000000' },
+    { what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 },
+  ], note: 'Check the active deployment configuration.' }]);
+  assert(split.includes('OmertaBond.polBps: on-chain 7500 vs backend 6500'));
+  assert(split.includes('5000000000000000 vs backend 3000000000000000'));
+  assert(split.includes('on-chain null vs backend 10000'));
+  assert(split.includes('Check the active deployment configuration.'));
+  assert(!split.includes('[object Object]'));
+  assert(webhookText('backup', [{ name: 'nested', detail: { archive: 'off' } }])
+    .includes('detail={"archive":"off"}'), 'other nested diagnostics remain readable');
   const drift = [{ name: 'character cash', lhs: 1477500, rhs: -22500, drift: 1500000, ok: false }];
   const sent = [];
   const realFetch = globalThis.fetch;
@@ -1676,7 +1690,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
   // helper actually CONSULTS it — is a labelled source tripwire, since a real full-buffer socket
   // cannot be manufactured through pg-mem + inject.
   {
-    const { wsSendable, WS_MAX_BUFFER } = await import('../src/server.js');
+    const { wsSendable, WS_MAX_BUFFER } = await import('./server-fixture.js');
     assert(WS_MAX_BUFFER > 0, 'WS_MAX_BUFFER is a positive bound');
     assert(wsSendable({ bufferedAmount: 0 }) === true, 'an empty socket buffer is sendable');
     assert(wsSendable({ bufferedAmount: WS_MAX_BUFFER - 1 }) === true, 'just under the bound is sendable');
@@ -1746,7 +1760,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
 // DRIVEN through the real `startWorkerWatch`, not a copy: the returned `check` is the same predicate
 // the interval runs. Driven rather than slept through, so no wall clock decides whether it passes.
 {
-  const { startWorkerWatch } = await import('../src/server.js');
+  const { startWorkerWatch } = await import('./server-fixture.js');
   const { webhookText } = await import('../src/invariants.js');
   const sent = [];
   const alert = async (_pool, failed, kind) => { sent.push({ failed, kind }); };

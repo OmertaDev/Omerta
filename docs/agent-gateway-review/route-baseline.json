@@ -1,0 +1,40 @@
+{
+  "baseline": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "expectedBy": "test/routes.js:351",
+  "original": [
+    {
+      "name": "omr-03-money-router.png",
+      "present": false
+    },
+    {
+      "name": "omr-04-reserve-rwa.png",
+      "present": false
+    },
+    {
+      "name": "omr-05-ohm-contrast.png",
+      "present": false
+    },
+    {
+      "name": "gameplay-01-choose-your-path.png",
+      "present": true
+    }
+  ],
+  "current": [
+    {
+      "name": "omr-03-money-router.png",
+      "present": false
+    },
+    {
+      "name": "omr-04-reserve-rwa.png",
+      "present": false
+    },
+    {
+      "name": "omr-05-ohm-contrast.png",
+      "present": false
+    },
+    {
+      "name": "gameplay-01-choose-your-path.png",
+      "present": true
+    }
+  ]
+}

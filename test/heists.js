@@ -3,7 +3,7 @@
 // shared cooldown), a bust (shared jail), the rat (informant paid, crew doubled, nobody named),
 // disband/leave refunds, the stale sweep, and the reason-vocabulary check. pg-mem, zero infra.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { HEIST_JOBS, HEIST_CASE_ENERGY } from '../src/rules.js';
 import { sweepStaleHeists } from '../src/heists.js';
 import { runLedgerInvariants } from '../src/invariants.js';

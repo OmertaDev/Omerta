@@ -1,0 +1,74 @@
+
+Detector: divide-before-multiply
+Alchemist.harvest(address) (src/Alchemist.sol#371-446) performs a multiplication on the result of a division:
+	- take = (d + scale - 1) / scale (src/Alchemist.sol#395)
+	- asDebt = take * scale (src/Alchemist.sol#397)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: incorrect-equality
+FlashGuard.notSameBlockAsEntry(address) (src/FlashGuard.sol#75-78) uses a dangerous strict equality:
+	- _lastEntry[account] == block.number (src/FlashGuard.sol#76)
+CollateralEscrow.withdrawAll(address) (src/CollateralEscrow.sol#87-91) uses a dangerous strict equality:
+	- shares == 0 (src/CollateralEscrow.sol#89)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: reentrancy-no-eth
+Reentrancy in Alchemist.harvest(address) (src/Alchemist.sol#371-446):
+	External calls:
+	- e.withdraw(take + fee,address(this)) (src/Alchemist.sol#420)
+	State variables written after the call(s):
+	- debtOf[user] = d - asDebt (src/Alchemist.sol#421)
+	Alchemist.debtOf (src/Alchemist.sol#106) can be used in cross function reentrancies:
+	- Alchemist.debtOf (src/Alchemist.sol#106)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+
+Detector: unused-return
+CollateralEscrow.deployToVault(uint256) (src/CollateralEscrow.sol#71-78) ignores return value by vault.deposit(assets,address(this)) (src/CollateralEscrow.sol#74)
+CollateralEscrow.withdraw(uint256,address) (src/CollateralEscrow.sol#81-83) ignores return value by vault.withdraw(assets,to,address(this)) (src/CollateralEscrow.sol#82)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: missing-zero-check
+CollateralEscrow.constructor(address,IERC20,IERC4626).owner_ (src/CollateralEscrow.sol#60) lacks a zero-check on :
+		- owner = owner_ (src/CollateralEscrow.sol#62)
+Denari.setMinter(address).m (src/Denari.sol#63) lacks a zero-check on :
+		- minter = m (src/Denari.sol#64)
+Denari.setBurner(address).b (src/Denari.sol#72) lacks a zero-check on :
+		- burner = b (src/Denari.sol#73)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Detector: reentrancy-benign
+Reentrancy in Alchemist.deposit(uint256,uint256) (src/Alchemist.sol#266-289):
+	External calls:
+	- shares = e.deployToVault(assets) (src/Alchemist.sol#285)
+	State variables written after the call(s):
+	- principalOf[msg.sender] += assets (src/Alchemist.sol#287)
+Reentrancy in Alchemist.harvest(address) (src/Alchemist.sol#371-446):
+	External calls:
+	- e.withdraw(take + fee,address(this)) (src/Alchemist.sol#420)
+	State variables written after the call(s):
+	- accruedFees += fee (src/Alchemist.sol#437)
+Reentrancy in Alchemist.withdraw(uint256) (src/Alchemist.sol#291-305):
+	External calls:
+	- e.withdraw(assets,msg.sender) (src/Alchemist.sol#296)
+	State variables written after the call(s):
+	- principalOf[msg.sender] = 0 (src/Alchemist.sol#300)
+	- principalOf[msg.sender] = p - assets (src/Alchemist.sol#300)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+FlashGuard._meter(FlashGuard.Flow,uint256,uint256,uint256) (src/FlashGuard.sol#101-118) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp >= f.dayStart + 86400 (src/FlashGuard.sol#108)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: cyclomatic-complexity
+Alchemist.harvest(address) (src/Alchemist.sol#371-446) has a high cyclomatic complexity (12).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+
+Detector: unindexed-event-address
+Event Alchemist.HarvestFeeSet(uint16,address) (src/Alchemist.sol#134) has address parameters but no indexed parameters
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unindexed-event-address-parameters
+src\Alchemist.sol analyzed (34 contracts with 102 detectors), 15 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\Alchemist.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

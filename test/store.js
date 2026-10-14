@@ -11,7 +11,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA: let the mod route drive the real-revenue flywheel (D-MED2 gate)
 import assert from 'node:assert';
 import { getAddress } from 'viem';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { STORE } from '../src/rules.js';
 import { recordStorePurchase, reconcileStore, revenueStatus, benefactorLeaderboard } from '../src/store.js';
 import { PATRON, PASS, patronTierOf } from '../src/rules.js';

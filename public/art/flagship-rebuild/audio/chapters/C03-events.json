@@ -1,0 +1,653 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "As",
+        "ms":  80,
+        "character":  125,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "he",
+        "ms":  240,
+        "character":  128,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "progresses",
+        "ms":  340,
+        "character":  131,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "six",
+        "ms":  1210,
+        "character":  143,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Paths",
+        "ms":  1465,
+        "character":  147,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "open",
+        "ms":  1775,
+        "character":  153,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "different",
+        "ms":  2015,
+        "character":  158,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "ways",
+        "ms":  2300,
+        "character":  168,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "forward",
+        "ms":  2535,
+        "character":  173,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U02",
+        "ms":  3531,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  3611,
+        "character":  231,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Gun",
+        "ms":  3696,
+        "character":  235,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "brings",
+        "ms":  3896,
+        "character":  239,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "street",
+        "ms":  4116,
+        "character":  246,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "combat",
+        "ms":  4381,
+        "character":  253,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U03",
+        "ms":  5471,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  5551,
+        "character":  310,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Ledger",
+        "ms":  5631,
+        "character":  314,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "fronts",
+        "ms":  6266,
+        "character":  322,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  6558.5625,
+        "character":  329,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "trade",
+        "ms":  6695.875,
+        "character":  333,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U04",
+        "ms":  7667.1875,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  7747.1875,
+        "character":  389,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Kitchen",
+        "ms":  7827.1875,
+        "character":  393,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "better",
+        "ms":  8527.1875,
+        "character":  402,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "cooking",
+        "ms":  8733.875,
+        "character":  409,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U05",
+        "ms":  9708.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  9788.75,
+        "character":  467,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Wheel",
+        "ms":  9868.75,
+        "character":  471,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "faster",
+        "ms":  10508.75,
+        "character":  478,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "convoys",
+        "ms":  10838.75,
+        "character":  485,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U06",
+        "ms":  11913.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  11993.75,
+        "character":  543,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Shadow",
+        "ms":  12073.75,
+        "character":  547,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "quicker",
+        "ms":  12773.75,
+        "character":  555,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "searches",
+        "ms":  13038.75,
+        "character":  563,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U07",
+        "ms":  14123.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  14203.75,
+        "character":  622,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Ring",
+        "ms":  14298.75,
+        "character":  626,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "stronger",
+        "ms":  14858.75,
+        "character":  632,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "duels",
+        "ms":  15224.375,
+        "character":  641,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  15542.125,
+        "character":  647,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "bouts",
+        "ms":  15693.25,
+        "character":  651,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U08",
+        "ms":  16685.3125,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Every",
+        "ms":  16765.3125,
+        "character":  707,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "advantage",
+        "ms":  17005.3125,
+        "character":  713,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "costs",
+        "ms":  17420.3125,
+        "character":  723,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "something",
+        "ms":  17740.3125,
+        "character":  729,
+        "length":  9
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U09",
+        "ms":  18750.3125,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  18830.3125,
+        "character":  789,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "chooses",
+        "ms":  19110.3125,
+        "character":  794,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  19470.3125,
+        "character":  802,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Wheel",
+        "ms":  19550.3125,
+        "character":  806,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "faster",
+        "ms":  20190.3125,
+        "character":  813,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "convoys",
+        "ms":  20525.3125,
+        "character":  820,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "slower",
+        "ms":  21295.3125,
+        "character":  829,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "cooking",
+        "ms":  21635.3125,
+        "character":  836,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U10",
+        "ms":  22590.3125,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Mara",
+        "ms":  22670.3125,
+        "character":  894,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "chooses",
+        "ms":  22925.3125,
+        "character":  899,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  23285.3125,
+        "character":  907,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Gun",
+        "ms":  23365.3125,
+        "character":  911,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U11",
+        "ms":  24250.3125,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Their",
+        "ms":  24330.3125,
+        "character":  965,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "specialties",
+        "ms":  24470.3125,
+        "character":  971,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "are",
+        "ms":  25005.3125,
+        "character":  983,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "different",
+        "ms":  25135.3125,
+        "character":  987,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "their",
+        "ms":  25845.3125,
+        "character":  998,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "preparation",
+        "ms":  25970.3125,
+        "character":  1004,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "still",
+        "ms":  26500.3125,
+        "character":  1016,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "matters",
+        "ms":  26740.3125,
+        "character":  1022,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U12",
+        "ms":  27775.3125,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  27855.3125,
+        "character":  1080,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "starts",
+        "ms":  28135.3125,
+        "character":  1085,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "thinking",
+        "ms":  28435.5,
+        "character":  1092,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "beyond",
+        "ms":  28726.5,
+        "character":  1101,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "his",
+        "ms":  29026.6875,
+        "character":  1108,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "next",
+        "ms":  29161.6875,
+        "character":  1112,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "payout",
+        "ms":  29386.6875,
+        "character":  1117,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U13",
+        "ms":  30431.6875,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "What",
+        "ms":  30511.6875,
+        "character":  1174,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  30676.6875,
+        "character":  1179,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "he",
+        "ms":  30826.6875,
+        "character":  1183,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "do",
+        "ms":  30941.6875,
+        "character":  1186,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "that",
+        "ms":  31081.6875,
+        "character":  1189,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "makes",
+        "ms":  31241.6875,
+        "character":  1194,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "someone",
+        "ms":  31451.6875,
+        "character":  1200,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "else",
+        "ms":  31751.6875,
+        "character":  1208,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "want",
+        "ms":  31966.6875,
+        "character":  1213,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "him",
+        "ms":  32191.6875,
+        "character":  1218,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "around",
+        "ms":  32341.6875,
+        "character":  1222,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C03-U13-end",
+        "ms":  33326.6875,
+        "character":  0,
+        "length":  0
+    }
+]

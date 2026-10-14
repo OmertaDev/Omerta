@@ -12,6 +12,7 @@ import { WIRE, wireActive, wireTierOf, wireSubTier, disinfoActive, spyRankOf, sp
 import { spendOmr } from './vanity.js';
 import { recordContact } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
+import { queuePaymentReceipt } from './payment-receipts.js';
 
 // STEP FOUR — the account's lifetime intel-ops (the SPYMASTER rank basis) → its TRADECRAFT perks
 const spyOps = async (client, accountId) =>
@@ -240,6 +241,7 @@ export async function subscribeWire(ch, tier, client, h) {
   ch.wire_tier = t.tier;
   await bumpIntelOps(client, ch.account_id);
   await h.track(client, ch.account_id, 'wire_sub', { tier: t.tier });
+  await queuePaymentReceipt(client, ch.account_id, { kind: 'wire', amount: t.omr, durationSeconds: t.ms / 1000 });
   return { ok: true, spent: t.omr, tier: t.tier, tierName: t.name, watchSlots: t.watchSlots,
     wireSeconds: Math.ceil((new Date(ch.wire_until) - Date.now()) / 1000) };
 }
@@ -266,6 +268,7 @@ export async function enrollWatch(ch, targetId, client, h) {
   const tap = await placeTap(ch, targetId, client, h);   // place/refresh the tap now (the normal intel:wiretap sink)
   if (!already) await client.query('INSERT INTO wire_watches (watcher_character, target_character) VALUES ($1,$2)', [ch.id, targetId]);
   await h.track(client, ch.account_id, 'wire_watch', { target: targetId });
+  await queuePaymentReceipt(client, ch.account_id, { kind: 'watch', amount: tap.spent, durationSeconds: WIRE.TAP_MS / 1000 });
   // WHAT IT COST, AND THAT IT KEEPS COSTING. Setting a watch CHARGES — placeTap burns the tap price
   // right here — and it then goes on burning it every time the sweep renews the line, which is the
   // whole mechanic. The reply carried neither, so the client could not have said either: an ongoing
@@ -333,7 +336,8 @@ export async function wireBoard(ch, client, h) {
   const board = {
     subscribed: sub, subSeconds: sub ? Math.max(0, Math.ceil((new Date(ch.wire_until) - Date.now()) / 1000)) : 0,
     subTier: tierN, subTierName: tierCfg ? tierCfg.name : null,
-    subTiers: WIRE.SUB_TIERS.map((t) => ({ tier: t.tier, name: t.name, omr: t.omr, watchSlots: t.watchSlots, warRoom: t.warRoom })),
+    subTiers: WIRE.SUB_TIERS.map((t) => ({ tier: t.tier, name: t.name, omr: t.omr, days: t.ms / 86400000, watchSlots: t.watchSlots, warRoom: t.warRoom })),
+    tapHours: WIRE.TAP_MS / 3600000,
     watchSlots: tierCfg ? tierCfg.watchSlots : 0, watches,
     // step four: intel-read costs are the DISCOUNTED (rank-adjusted) prices; defensive/sub costs are flat
     costs: { tap: intelCost(WIRE.TAP_OMR, ops), sweep: WIRE.SWEEP_OMR, sub: WIRE.SUB_OMR, trace: WIRE.TRACE_OMR, dossier: intelCost(WIRE.DOSSIER_OMR, ops), disinfo: WIRE.DISINFO_OMR, informant: intelCost(WIRE.INFORMANT_OMR, ops) },

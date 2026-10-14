@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { migrateCityHomeStorage } from './city-home-migration.js';
+import { enforceDatabaseRls } from './db-rls.js';
 
 // What the live driver can actually do, decided ONCE at makeDb (a driver property, not a per-call
 // one). Deliberately NOT a runtime probe: in real Postgres a failed statement aborts the ENCLOSING
@@ -14,7 +15,7 @@ import { migrateCityHomeStorage } from './city-home-migration.js';
 // Defaults are correctness-first fallbacks. Real Postgres capabilities turn on only after its schema
 // boot succeeds; an unknown/custom query adapter therefore gets portable SQL rather than a fast shape
 // whose semantics pg-mem is known to mis-execute.
-export const dbCaps = { skipLocked: false, indexedTextArrayAny: false };
+export const dbCaps = { skipLocked: false, indexedTextArrayAny: false, timestampText: false };
 
 // Register only the PostgreSQL built-ins that the schema and custody journals need and pg-mem omits. Callers
 // that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the
@@ -567,8 +568,9 @@ export async function migrateSchemaUnderLock(
   await migrateRwaHealthOverlayV2(boot, { compatibility });
   await migrateCityHomeStorage(boot, { compatibility });
   await resetStartingLevels(boot);
+  const rls = await enforceDatabaseRls(boot, { compatibility });
   const stamp = await stampSchema(boot);
-  return { migration, stamp };
+  return { migration, stamp, rls };
 }
 
 // One-time player level reset. makeDb holds the schema advisory lock on Postgres.
@@ -973,6 +975,7 @@ export async function makeDb() {
     }
     dbCaps.skipLocked = true; // real Postgres — see dbCaps
     dbCaps.indexedTextArrayAny = true; // pg-mem returns zero for indexed TEXT = ANY(array), even with scalar literals
+    dbCaps.timestampText = true; // preserve timestamp microseconds in durable event cursors
     return pool;
   }
   // (red-team R9 config F2) A production deploy that forgot DATABASE_URL would SILENTLY boot the whole
@@ -983,6 +986,7 @@ export async function makeDb() {
   dbCaps.skipLocked = false; // pg-mem parses neither SKIP LOCKED nor NOWAIT
   const { newDb, DataType } = await import('pg-mem');
   dbCaps.indexedTextArrayAny = false;
+  dbCaps.timestampText = false; // pg-mem timestamps have millisecond precision and cannot cast to text
   const mem = newDb();
   registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();

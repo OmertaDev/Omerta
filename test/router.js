@@ -10,7 +10,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA gate: the mod ingest routes may carry a txHash here
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import fs from 'node:fs';
 import { waterfall, runRouterInvariants, routerBoard, VIG_SOURCES, TREASURY_SOURCES, BANK_SOURCES, BANK_HARVEST_FEE_BPS } from '../src/router.js';
 import { VIG_BPS } from '../src/vig.js';

@@ -15,7 +15,7 @@ if (native) {
 } else assert(!process.env.DATABASE_URL, 'Memory proof refuses ambient DATABASE_URL');
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.JWT_SECRET = 'strategy-license-api-module-local-test-secret'; process.env.MOD_KEY = 'strategy-license-api-local-test-mod-secret';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { DISTRICTS, priceBlock } = await import('../src/rules.js');
 const { INTEL_FORECAST } = await import('../src/intelforecasts.js');
 const { strategyLicenseFaults } = await import('../src/strategylicenseinvariants.js');

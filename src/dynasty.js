@@ -215,23 +215,49 @@ export async function endConsigliere(ch, client, role = null) {
 }
 
 // the public board — your marriage, pending proposals both ways, your consigliere + houses you counsel
-export async function dynastyBoard(ch, client) {
+export async function dynastyBoard(ch, client, { limit } = {}) {
+  if (limit !== undefined && (!Number.isSafeInteger(limit) || limit < 1 || limit > 100)) throw new TypeError('Invalid dynasty board limit');
+  const bounded = limit !== undefined;
+  let houses = null;
   const stewardOf = async (accountId) => (await client.query(
     'SELECT name FROM characters WHERE account_id=$1 AND alive', [accountId])).rows[0]?.name || null;
   const dynastyOf = async (accountId) => (await client.query(
     'SELECT dynasty_name FROM account_persistent WHERE account_id=$1', [accountId])).rows[0]?.dynasty_name || null;
-  const houseView = async (accountId) => ({
+  const houseView = async (accountId) => houses ? houses.get(accountId) : ({
     accountId, dynasty: await dynastyOf(accountId), steward: await stewardOf(accountId) });
-  const rows = (await client.query(
+  const rows = bounded ? [
+    ...(await client.query(`SELECT * FROM dynasty_marriages WHERE (account_a=$1 OR account_b=$1) AND accepted
+      ORDER BY created_at,account_a,account_b LIMIT 1`, [ch.account_id])).rows,
+    ...(await client.query(`SELECT * FROM dynasty_marriages WHERE (account_a=$1 OR account_b=$1) AND NOT accepted
+      ORDER BY created_at DESC,account_a,account_b LIMIT $2`, [ch.account_id, limit + 1])).rows,
+  ] : (await client.query(
     'SELECT * FROM dynasty_marriages WHERE account_a=$1 OR account_b=$1', [ch.account_id])).rows;
   const marriage = rows.find((m) => m.accepted) || null;
-  const pending = rows.filter((m) => !m.accepted);
+  let pending = rows.filter((m) => !m.accepted);
   const cons = (await client.query('SELECT * FROM consiglieri WHERE dynasty_account=$1', [ch.account_id])).rows[0] || null;
-  const advising = (await client.query(
-    'SELECT * FROM consiglieri WHERE adviser_account=$1 AND accepted', [ch.account_id])).rows;
-  const consOffers = (await client.query(
-    'SELECT * FROM consiglieri WHERE adviser_account=$1 AND NOT accepted', [ch.account_id])).rows;
+  let advising = (await client.query(
+    'SELECT * FROM consiglieri WHERE adviser_account=$1 AND accepted'
+      + (bounded ? ' ORDER BY created_at DESC,dynasty_account LIMIT $2' : ''), bounded ? [ch.account_id, limit + 1] : [ch.account_id])).rows;
+  let consOffers = (await client.query(
+    'SELECT * FROM consiglieri WHERE adviser_account=$1 AND NOT accepted'
+      + (bounded ? ' ORDER BY created_at DESC,dynasty_account LIMIT $2' : ''), bounded ? [ch.account_id, limit + 1] : [ch.account_id])).rows;
   const otherOf = (m) => (m.account_a === ch.account_id ? m.account_b : m.account_a);
+  const truncated = bounded ? { proposals: pending.length > limit, advising: advising.length > limit, consigliereOffers: consOffers.length > limit } : null;
+  if (bounded) {
+    pending = pending.slice(0, limit); advising = advising.slice(0, limit); consOffers = consOffers.slice(0, limit);
+    const ids = [...new Set([...(marriage ? [otherOf(marriage)] : []), ...pending.map(otherOf),
+      ...(cons ? [cons.adviser_account] : []), ...advising.map((row) => row.dynasty_account), ...consOffers.map((row) => row.dynasty_account)])];
+    houses = new Map(ids.map((id) => [id, { accountId: id, dynasty: null, steward: null }]));
+    if (ids.length) {
+      const parameters = ids.map((_, index) => `$${index + 1}`).join(',');
+      for (const row of (await client.query(`SELECT account_id,dynasty_name FROM account_persistent
+        WHERE account_id IN (${parameters})`, ids)).rows) houses.get(row.account_id).dynasty = row.dynasty_name || null;
+      for (const row of (await client.query(`SELECT account_id,name FROM characters WHERE alive AND account_id IN (${parameters})
+        ORDER BY created_at DESC,id LIMIT $${ids.length + 1}`, [...ids, ids.length])).rows) {
+        const house = houses.get(row.account_id); if (house.steward === null) house.steward = row.name;
+      }
+    }
+  }
   // SEQUENTIAL: every houseView runs two queries on the ONE shared client, and node-pg cannot run
   // concurrent queries on a single connection (queued behind a deprecation warning today, a THROW
   // from pg@9). Promise.all over them bought no speed — the connection serialized them regardless.
@@ -244,5 +270,6 @@ export async function dynastyBoard(ch, client) {
     advising: await each(advising, (c) => houseView(c.dynasty_account)),
     consigliereOffers: await each(consOffers, (c) => houseView(c.dynasty_account)),
     costs: { propose: MARRIAGE.PROPOSE_COST, accept: MARRIAGE.ACCEPT_COST, consigliere: MARRIAGE.CONSIGLIERE_COST },
+    ...(bounded ? { truncated } : {}),
   };
 }

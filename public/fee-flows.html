@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>OMERTÀ — Fee-flow sandbox</title>
+<title>Fee allocation sandbox | OMERTÀ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Explore an illustrative OMERTÀ fee-allocation scenario. Edit local basis-point splits and export a proposal; this sandbox does not change the live game.">
+<meta name="description" content="Draft a hypothetical fee allocation for OMERTÀ. Edit the splits in your browser and export a proposal for review.">
 <link rel="stylesheet" href="/omerta-ui.css?v=20260826">
 <style>
   /* ── palette: a prohibition-era ledger. bare :root is the light set; dark redefines tokens only ── */
@@ -166,8 +166,8 @@
 <main class="wrap" id="fee-main" tabindex="-1">
   <header>
     <div class="stamp">Illustrative<br>scenario</div>
-    <h1>Where a Dollar Goes <span class="amp">&amp;</span> Why</h1>
-    <p class="sub">An editable fee-flow sandbox. Follow each source into its destinations, change the split, and export a proposal for review.</p>
+    <h1>Where the fees go</h1>
+    <p class="sub">Try a fee allocation. Change each source's split, trace its destinations, then export your proposal.</p>
   </header>
   <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model follows current market destinations and separate gameplay fee policies. Inventory-bond proceeds, surge receipts and the arbitrage reserve share fund the War Chest; the base POL fee funds Core. ETH and OMR receipts are accounted separately on-chain; each currency row here is an example. The base-fee shares are rounded to this editor's 10,000-bps grid. Character creation proceeds go 100% to DEV_WALLET. All edits stay in this browser; they cannot change on-chain policy, move money or open extraction. The chart starts at the approved 9% base sell tax with up to 1% surge and a separate static 0.3% LP fee; opening buy penalties and caps are disabled. Committee proposals may adjust other bounded market-tax rates only through Safe queueing and explicit execution after 48 hours, preserving the absolute 2% founder/operations sell slice to A87, all recipients and accrued fees. A local edit that changes that fixed slice or enables opening buy penalties/caps is not an executable governance proposal. Character NFT creation fees and gameplay charges are outside this authority. Read the <a href="/wiki#canonical-market">Codex for current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
 
@@ -182,14 +182,14 @@
     <button id="exp" class="gold">Export JSON</button>
   </div>
   <div class="pill" id="status" role="status" aria-live="polite">Loading the local scenario…</div>
-  <p class="note">Destination shares below give every active source equal weight. They show allocation structure, not dollar volume. Select a destination to trace its flows.</p>
+  <p class="note">Each active source has equal weight in the destination totals below, regardless of currency or revenue. Select a destination to trace its flows.</p>
 
   <div class="totals" id="totals"></div>
 
   <div class="flowcard">
     <figure>
       <div class="svgscroll" tabindex="0" role="region" aria-label="Fee-flow diagram; scroll horizontally to see all destinations">
-        <svg id="flow" role="img" aria-label="Sankey flow of every OMERTA real-value inflow to its destinations"></svg>
+        <svg id="flow" role="img" aria-label="Fee allocation diagram for this hypothetical scenario"></svg>
       </div>
       <figcaption>Band height shows share of a source. Hover a node or select a destination above to isolate its flows. Every amount also appears in the editable ledger below.</figcaption>
     </figure>
@@ -200,9 +200,9 @@
     </div>
   </div>
 
-  <h2>The Ledger — every source, every slice</h2>
-  <p class="note" style="margin:6px 0 0">Each source's slices must sum to <b>10,000 bps (100%)</b> — the badge on the right goes red until they do.
-    A <span class="mono">retired</span> source is kept on the record rather than deleted (a rail that just vanishes says nothing).</p>
+  <h2>Edit the allocations</h2>
+  <p class="note" style="margin:6px 0 0">Each source's slices must total <b>10,000 bps (100%)</b>. The badge turns red when they don't.
+    Retiring a source excludes it from the diagram and totals while keeping it in the ledger.</p>
   <div id="ledger"></div>
 
   <footer>
@@ -283,7 +283,7 @@ const DESTS = [
   {id:"turf-families",label:"Turf family fee entitlements"},
   {id:"operations",label:"Operations"},
   {id:"community",label:"Community (family yield pool)"},
-  {id:"desk-buyback",label:"The Desk buyback budget"},
+  {id:"desk-buyback",label:"Buyback budget"},
 ];
 const destColor = d => DESTS.some(x=>x.id===d) ? `var(--d-${d})` : 'var(--gold)';
 const destLabel = d => (DESTS.find(x=>x.id===d)||{}).label || d;
@@ -506,9 +506,9 @@ function status(){
   const bad=model.filter(s=>!s.retired && sumOf(s)!==10000);
   const live=model.filter(s=>!s.retired).length;
   const el=document.getElementById("status");
-  if(staleLocal){ el.textContent="A newer illustrative seed is shown. To continue an earlier proposal, import its saved JSON before editing."; el.style.color="var(--stamp)"; return; }
-  if(bad.length){ el.textContent=`${bad.length} source${bad.length>1?'s do':' does'} not sum to 10,000 bps — fix the allocation before sharing`; el.style.color="var(--stamp)"; }
-  else { el.textContent=`${live} active source${live===1?'':'s'}, all balanced to 10,000 bps · ${hasLocalEdits?'local scenario':'illustrative seed'}`; el.style.color="var(--faint)"; }
+  if(staleLocal){ el.textContent="The starting scenario has changed. Import your saved JSON to continue an earlier proposal before editing."; el.style.color="var(--stamp)"; return; }
+  if(bad.length){ el.textContent=`${bad.length} source${bad.length>1?'s do':' does'} not total 10,000 bps. Fix the allocation before sharing.`; el.style.color="var(--stamp)"; }
+  else { el.textContent=`${live} active source${live===1?'':'s'}, all balanced to 10,000 bps · ${hasLocalEdits?'local scenario':'hypothetical example'}`; el.style.color="var(--faint)"; }
   if(localSaveFailed){el.textContent+=' · Browser storage unavailable. Export to keep your edits.';el.style.color='var(--stamp)';}
   else if(hasLocalEdits)el.textContent+=' · saved in this browser';
 }
@@ -520,8 +520,8 @@ document.getElementById("exp").onclick=()=>{
   const json=JSON.stringify({schema:"omerta.fee-structure.v1",exportedAt:new Date().toISOString(),sources:model},null,2);
   const blob=new Blob([json],{type:"application/json"}); const url=URL.createObjectURL(blob);
   const a=document.createElement("a"); a.href=url; a.download="fee-structure.json"; a.click(); URL.revokeObjectURL(url);
-  document.getElementById("io-h").textContent="Exported — fee-structure.json";
-  document.getElementById("io-note").textContent="Download requested. The JSON below is ready to select and copy if you need it. This export describes your local scenario.";
+  document.getElementById("io-h").textContent="Exported: fee-structure.json";
+  document.getElementById("io-note").textContent="Your scenario is ready to download. You can also copy the JSON below.";
   const dobtn=document.getElementById("io-do"); dobtn.textContent="Done"; dobtn.onclick=()=>dlg.close();
   ioText.value=json; dlg.showModal();
 };

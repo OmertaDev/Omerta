@@ -1,0 +1,53 @@
+[
+  {
+    "id": "R3-V1-G03-poly-first-v2",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Unmistakably crude low-poly 2000s game-engine artwork: coarse triangular mesh, flat vertex shading, rectangular eyes, block hands, no skin texture, no realistic human faces or scanned people, no photographic faces or fine hair. All objects visibly faceted. Full-size city geometry, no miniature toys. Original fictional avatars, no actual game or franchise. Acid lime, cobalt, bone and black. Blank screens/notices, no letters or logos. Vertical 9:16. Close side view of a cobalt industrial punch press. At its SAFE OUTPUT LEDGE, far in front of the press tooling, lies one very obvious FLAT GRAY POLYGON KEY, square hole at top and THREE square teeth at its bottom. Key is the center of the picture and half the picture height. Only two violet blocky gloved hands enter at the very edge, waiting outside the press. No full person or face. Empty uncluttered output ledge apart from the ONE key. Press tooling safely separated behind it.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G06-poly-first-v2",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Unmistakably crude low-poly 2000s game-engine artwork: coarse triangular mesh, flat vertex shading, rectangular eyes, block hands, no skin texture, no realistic human faces or scanned people, no photographic faces or fine hair. All objects visibly faceted. Full-size city geometry, no miniature toys. Original fictional avatars, no actual game or franchise. Acid lime, cobalt, bone and black. Blank screens/notices, no letters or logos. Vertical 9:16. Two ordinary ADULT HUMAN dockworker avatars with rectangular faces, plain hardhats and solid blue overalls in a full-size shipping-container alley. One simple cargo trolley beside a closed market stall with a basic roll-up shutter. Giant blank white shipping notice on wall. No fantasy creatures, no animal ears, no goggles, no spikes, no spiky hair, no hedgehogs, no cartoon franchise characters, no other people. A clear human street scene from a fictional low-poly crime game.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G03-poly-first-v2",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Unmistakably crude low-poly 2000s game-engine artwork: coarse triangular mesh, flat vertex shading, rectangular eyes, block hands, no skin texture, no realistic human faces or scanned people, no photographic faces or fine hair. All objects visibly faceted. Full-size city geometry, no miniature toys. Original fictional avatars, no actual game or franchise. Acid lime, cobalt, bone and black. Blank screens/notices, no letters or logos. Vertical 9:16. The EXACT supplied coarse polygon Rookie avatar with a simple wedge-shaped head and flat rectangular eyes stands in a low-poly copyshop. Preserve her faceted face and angular polygon cap hair; DO NOT turn her into a realistic or smooth animated person. Silver TRIANGULAR MESH windbreaker, violet blocky gloves. One blank large paper sheet and one flat gray polygon cargo seal in the foreground. Cobalt copier boxes behind. Overhead-oblique view. No pores, realistic eyes, detailed skin, realistic buzzcut, smooth facial shading, realistic hands or additional people.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  }
+]

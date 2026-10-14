@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { familyOperationInvariants } from '../src/coordination/operation-invariants.js';
 assert(!process.env.DATABASE_URL, 'Family API uses only an isolated memory database');
 const names = ['COORDINATION_ENGINE', 'COORDINATION_OPERATIONS', 'WORLD_GRAPH_KERNEL',

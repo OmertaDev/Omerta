@@ -3,7 +3,7 @@
 // ready/todo/done state each, the state reflects real progress (claiming the streak flips it to done),
 // and the whole read moves no value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 
 const app = await buildServer();

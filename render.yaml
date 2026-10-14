@@ -43,6 +43,26 @@ databases:
 envVarGroups:
   - name: omerta-secrets         # shared by BOTH processes so MARKET_SEED matches (the draws must agree)
     envVars:
+      # Required legal profile. Supply real operator details; registration happens
+      # with the Copyright Office before setting DMCA_AGENT_REGISTERED=true.
+      - key: LEGAL_OPERATOR_NAME
+        sync: false
+      - key: LEGAL_POSTAL_ADDRESS
+        sync: false
+      - key: PRIVACY_CONTACT_EMAIL
+        sync: false
+      - key: DMCA_AGENT_NAME
+        sync: false
+      - key: DMCA_AGENT_EMAIL
+        sync: false
+      - key: DMCA_AGENT_ADDRESS
+        sync: false
+      - key: DMCA_AGENT_PHONE
+        sync: false
+      - key: DMCA_AGENT_REGISTERED
+        sync: false
+      - key: PAYMENT_REFUND_POLICY
+        sync: false
       - key: JWT_SECRET
         generateValue: true      # signs player login tokens (Render makes a strong random value)
       - key: MARKET_SEED

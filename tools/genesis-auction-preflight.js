@@ -15,7 +15,9 @@ const assert = (ok, message) => { if (!ok) throw Error(message); };
 const LIVE_ABI = parseAbi(['function totalSupply() view returns(uint256)', 'function decimals() view returns(uint8)',
   'function balanceOf(address) view returns(uint256)', 'function minter() view returns(address)', 'function sellTaxBps() view returns(uint256)',
   'function ammPairs(address) view returns(bool)', 'function poolManager() view returns(address)', 'function permit2() view returns(address)',
-  'function getOwners() view returns(address[])', 'function getThreshold() view returns(uint256)', 'function arbBlockNumber() view returns(uint256)']);
+  'function revenuePolicyId() view returns(bytes32)', 'function TRADE_FEE_BPS() view returns(uint16)',
+  'function omr() view returns(address)', 'function developerRecipient() view returns(address)', 'function rwaRecipient() view returns(address)',
+  'function communityRecipient() view returns(address)', 'function polRecipient() view returns(address)', 'function getOwners() view returns(address[])', 'function getThreshold() view returns(uint256)', 'function arbBlockNumber() view returns(uint256)']);
 
 function sourceRuntimeMatches(artifact, code) {
   const actual = Buffer.from(code.slice(2), 'hex'), template = Buffer.from(artifact.runtimeTemplate.slice(2), 'hex');
@@ -70,6 +72,17 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
     === JSON.stringify(evidence.reads.safeOwners.map(x => x.toLowerCase()).sort()), 'Safe owner/threshold record changed');
   assert(BigInt(supply) === BigInt(input.allocation.totalSupply) && Number(decimals) === 18 && BigInt(balance) === BigInt(supply), '100M supply or full Safe inventory changed');
   assert(equal(minter, '0x' + '0'.repeat(40)) && BigInt(tax) === 0n && managerTaxed === false, 'Minter/tax configuration differs from reviewed funding assumptions');
+  let managerPolicy;
+  try {
+    managerPolicy = await Promise.all(['revenuePolicyId', 'TRADE_FEE_BPS', 'omr', 'developerRecipient',
+      'rwaRecipient', 'communityRecipient', 'polRecipient'].map(fn => read(input.external.poolManager.address, fn)));
+  } catch {
+    throw Error('Production readiness requires the reviewed restricted manager; the current standard manager has no fixed revenue policy.');
+  }
+  assert(equal(managerPolicy[0], keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')))
+    && BigInt(managerPolicy[1]) === 500n && equal(managerPolicy[2], input.external.omr.address)
+    && managerPolicy.slice(3).every((recipient, i) => equal(recipient, plan.finalManifest.hookPolicy.recipients[i])),
+    'Restricted manager fixed revenue policy, OMR or recipients differ from the reviewed plan');
   assert(equal(pmManager, input.external.poolManager.address) && equal(pmPermit, input.external.permit2.address), 'Periphery binding changed');
   assert(arbCode && equal(keccak256(arbCode), evidence.codes.arbSys.keccak256), 'Native clock implementation changed');
   assert(input.nativeClock.mode === 'arbsys', 'Successful actual ArbSys call requires the production constructor to select ArbSys');
@@ -134,9 +147,7 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
       ['hook', 'poolManager', input.external.poolManager.address], ['hook', 'omr', input.external.omr.address], ['hook', 'authorized', plan.addresses.coordinator],
       ['hook', 'poolFee', input.hook.poolFee], ['hook', 'tickSpacing', input.hook.tickSpacing], ['hook', 'epochDuration', input.hook.epochDuration],
       ['hook', 'openingBlocks', 0], ['hook', 'openingBuyBps', 0], ['hook', 'openingMaxBuyQuote', 0], ['hook', 'surgeFullTicks', input.hook.surgeFullTicks],
-      ['hook', 'governanceSafe', input.roles.safe], ['hook', 'opsRecipient', input.hookGovernance.fixedFounderRecipient],
-      ['hook', 'OPS_SELL_BPS', 200], ['hook', 'TAX_CONFIG_DELAY', 172800], ['hook', 'TAX_EXECUTION_SAFE_ONLY', true],
-      ['hook', 'baseSellBps', 900], ['hook', 'queuedTaxHash', '0x' + '0'.repeat(64)], ['hook', 'queuedTaxExecuteAfter', 0], ['hook', 'taxConfigNonce', 0],
+      ['hook', 'managerCollectsRevenue', true], ['hook', 'BASE_SELL_BPS', 500], ['hook', 'MAX_SURGE_BPS', 50],
       ['auction', 'token', input.external.omr.address], ['auction', 'characterNft', input.external.characterNft.address], ['auction', 'launchGate', plan.addresses.coordinator],
       ['auction', 'fundsRecipient', plan.addresses.coordinator], ['auction', 'tokensRecipient', input.roles.safe], ['auction', 'currency', '0x' + '0'.repeat(40)],
       ['auction', 'validationHook', plan.internalValidatorAddress], ['auction', 'totalSupply', input.auction.totalSupply], ['auction', 'minimumRaiseWei', input.auction.requiredCurrencyRaised],
@@ -158,10 +169,6 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
     assert(equal(key.currency0 ?? key[0], '0x' + '0'.repeat(40)) && equal(key.currency1 ?? key[1], input.external.omr.address)
       && equal(key.fee ?? key[2], input.hook.poolFee) && equal(key.tickSpacing ?? key[3], input.hook.tickSpacing)
       && equal(key.hooks ?? key[4], plan.addresses.hook), 'Local fork coordinator pool key differs from approved constructor plan');
-    const tax = await forkClient.readContract({ address: plan.addresses.hook, abi: loadGenesisAuctionArtifact('OmertaHookV2').abi,
-      functionName: 'taxConfig', blockNumber: forkHead.number });
-    const initialTax = [tax.rwaBps ?? tax[0], tax.communityBps ?? tax[1], tax.polBps ?? tax[2], tax.surgeMaxBps ?? tax[3]].map(Number);
-    assert(JSON.stringify(initialTax) === JSON.stringify([160, 240, 300, 100]), 'Initial local-fork tax buckets differ from the reviewed unqueued constructor state');
     const end = await forkClient.getBlock({ blockNumber: forkHead.number }); assert(equal(end.hash, forkHead.hash), 'Local fork changed during verification');
   }
   const finalHead = await client.getBlock({ blockNumber: head.number });
@@ -175,6 +182,7 @@ export async function verifyGenesisAuctionPreflight({ candidate, evidence, evide
     auxiliaryRuntimeChecks: forkSnapshots.filter(x => ['validator', 'scheduleStore'].includes(x.name)).map(({ name, address, sha256 }) => ({ name, address, sha256 })),
     deploymentTransactions: plan.deployments, safeFundingCalls: plan.safeFundingCalls, deployerBindCall: plan.deployerBindCall,
     unresolved: [!plan.workingTreeMatchesRevision && 'Reviewed source commit/artifact refresh', !forkClient && 'Actual five-contract/two-child bound local-fork snapshots',
+      'Typed sealed-token funding implementation and rehearsal; genesis Safe remains a nonoperator',
       'Signer key availability and gas funding', 'Human fee/surge/epoch/recipient and exact packet approval', 'Final CI/reviewer/source/evidence checks'].filter(Boolean) };
 }
 

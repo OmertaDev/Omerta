@@ -56,6 +56,15 @@ export const TEST_ONLY_ENV = [
 // ── REQUIRED in production. Each one fails CLOSED today (the server refuses to boot, or the feature
 //    is inert) — listing them here is what makes the failure legible instead of mysterious.
 export const REQUIRED_ENV = {
+  LEGAL_OPERATOR_NAME: 'identifies the privacy/payment operator',
+  LEGAL_POSTAL_ADDRESS: 'valid operator postal address for policies and marketing email',
+  PRIVACY_CONTACT_EMAIL: 'reachable contact for privacy rights and child-data reports',
+  DMCA_AGENT_NAME: 'designated copyright agent for hosted player content',
+  DMCA_AGENT_EMAIL: 'designated agent email',
+  DMCA_AGENT_ADDRESS: 'designated agent postal address',
+  DMCA_AGENT_PHONE: 'designated agent telephone number',
+  DMCA_AGENT_REGISTERED: 'operator must confirm the external Copyright Office registration',
+  PAYMENT_REFUND_POLICY: 'published operator refund policy',
   JWT_SECRET: 'signs player tokens — the dev fallback is public, so anyone could forge a session',
   MARKET_SEED: 'the §7.11 secret behind every seeded draw (Numbers 600:1, the Track, the Fight, goods prices)',
   MOD_KEY: 'the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable',
@@ -301,6 +310,11 @@ export function preflight(env = process.env) {
   for (const [key, why] of Object.entries(REQUIRED_ENV))
     if (!env[key]) errors.push(`${key} must be set for a real deployment — ${why}.`);
 
+  for (const key of ['LEGAL_OPERATOR_NAME', 'LEGAL_POSTAL_ADDRESS', 'PRIVACY_CONTACT_EMAIL', 'DMCA_AGENT_NAME', 'DMCA_AGENT_EMAIL', 'DMCA_AGENT_ADDRESS', 'DMCA_AGENT_PHONE', 'PAYMENT_REFUND_POLICY'])
+    if (env[key] && (typeof env[key] !== 'string' || !env[key].trim())) errors.push(`${key} must contain real operator information.`);
+  if (env.DMCA_AGENT_REGISTERED !== 'true') errors.push('DMCA_AGENT_REGISTERED must be true after external registration is verified.');
+  for (const key of ['PRIVACY_CONTACT_EMAIL', 'DMCA_AGENT_EMAIL'])
+    if (env[key] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env[key])) errors.push(`${key} must be a valid contact email.`);
   // the dev JWT fallback and the public seed are worse than absent: they LOOK configured
   if (env.JWT_SECRET === 'dev-secret-change-me')
     errors.push('JWT_SECRET is still the public dev fallback — anyone could forge a token for any account.');

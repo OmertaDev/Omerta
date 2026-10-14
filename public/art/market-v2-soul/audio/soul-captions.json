@@ -1,0 +1,557 @@
+{
+  "timing": "Forced-aligned chapter words at native playback speed; absolute film seconds",
+  "lines": [
+    {
+      "id": "SOUL-CAP-001",
+      "text": "Everybody wants control.",
+      "start": 0.33499999999999996,
+      "end": 1.985,
+      "beatId": "M04-B01",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-002",
+      "text": "But control costs.",
+      "start": 2.6550000000000002,
+      "end": 4.505,
+      "beatId": "M04-B01",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-003",
+      "text": "Core provides two-sided liquidity.",
+      "start": 5.294999999999999,
+      "end": 7.585,
+      "beatId": "M04-B02",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-004",
+      "text": "Other reserves have different jobs.",
+      "start": 8.254999999999999,
+      "end": 10.185,
+      "beatId": "M04-B02",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-005",
+      "text": "Sell through active downside ranges:",
+      "start": 10.854999999999999,
+      "end": 13.145000000000001,
+      "beatId": "M04-B03",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-006",
+      "text": "Ether becomes OMR.",
+      "start": 13.614999999999998,
+      "end": 15.705,
+      "beatId": "M04-B03",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-007",
+      "text": "Buy through upside ranges:",
+      "start": 16.095000000000002,
+      "end": 17.885,
+      "beatId": "M04-B04",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-008",
+      "text": "OMR becomes Ether.",
+      "start": 18.255000000000003,
+      "end": 20.385,
+      "beatId": "M04-B04",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-009",
+      "text": "Crossing isn't final.",
+      "start": 20.815,
+      "end": 22.205000000000005,
+      "beatId": "M04-B05",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-010",
+      "text": "Until withdrawal, inventory can still convert",
+      "start": 22.555000000000003,
+      "end": 25.955000000000005,
+      "beatId": "M04-B05",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-011",
+      "text": "back.",
+      "start": 25.955000000000005,
+      "end": 26.385,
+      "beatId": "M04-B05",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-012",
+      "text": "Finalization removes eligible positions,",
+      "start": 27.055000000000003,
+      "end": 29.625000000000004,
+      "beatId": "M04-B06",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-013",
+      "text": "separating principal from fees.",
+      "start": 29.955000000000005,
+      "end": 31.845000000000002,
+      "beatId": "M04-B06",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-014",
+      "text": "Deployment spends capacity.",
+      "start": 32.234,
+      "end": 33.965,
+      "beatId": "M04-B07",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-015",
+      "text": "Deposits and withdrawals don't reset it.",
+      "start": 34.235,
+      "end": 36.585,
+      "beatId": "M04-B07",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-016",
+      "text": "Completed pool history informs each move,",
+      "start": 37.155,
+      "end": 39.525,
+      "beatId": "M04-B08",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-017",
+      "text": "checked against current conditions.",
+      "start": 39.895,
+      "end": 41.625,
+      "beatId": "M04-B08",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-018",
+      "text": "Stress gates, cooldowns and capacity limit",
+      "start": 42.055,
+      "end": 44.735,
+      "beatId": "M04-B09",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-019",
+      "text": "deployment.",
+      "start": 44.735,
+      "end": 45.385,
+      "beatId": "M04-B09",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-020",
+      "text": "Surge fees, bond proceeds and arbitrage shares",
+      "start": 45.795,
+      "end": 49.365,
+      "beatId": "M04-B10",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-021",
+      "text": "fund the War Chest.",
+      "start": 49.695,
+      "end": 50.825,
+      "beatId": "M04-B10",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-022",
+      "text": "Refill requires a full window of spaced,",
+      "start": 51.275,
+      "end": 53.915,
+      "beatId": "M04-B11",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-023",
+      "text": "healthy observations.",
+      "start": 53.915,
+      "end": 55.305,
+      "beatId": "M04-B11",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-024",
+      "text": "Only actual idle assets move.",
+      "start": 55.815000000000005,
+      "end": 58.105,
+      "beatId": "M04-B12",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-025",
+      "text": "Lifetime limits stay spent.",
+      "start": 58.615,
+      "end": 60.445,
+      "beatId": "M04-B12",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-026",
+      "text": "A bounce creates no Ether.",
+      "start": 60.935,
+      "end": 62.645,
+      "beatId": "M04-B13",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-027",
+      "text": "No guaranteed floor.",
+      "start": 63.155,
+      "end": 64.565,
+      "beatId": "M04-B13",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-028",
+      "text": "Canonical sells pay nine percent, split four",
+      "start": 65.18833333333333,
+      "end": 68.26833333333333,
+      "beatId": "M04-B14",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-029",
+      "text": "ways.",
+      "start": 68.26833333333333,
+      "end": 68.77833333333332,
+      "beatId": "M04-B14",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-030",
+      "text": "Three percent funds Core.",
+      "start": 69.20833333333333,
+      "end": 70.77833333333332,
+      "beatId": "M04-B15",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-031",
+      "text": "Up to one extra percent funds stability.",
+      "start": 71.18833333333333,
+      "end": 73.43833333333332,
+      "beatId": "M04-B15",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-032",
+      "text": "Fees settle in Ether or OMR, including partial",
+      "start": 73.86833333333333,
+      "end": 77.59833333333333,
+      "beatId": "M04-B16",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-033",
+      "text": "fills.",
+      "start": 77.60833333333332,
+      "end": 78.11833333333333,
+      "beatId": "M04-B16",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-034",
+      "text": "Opening buys have temporary fees and limits.",
+      "start": 78.64833333333333,
+      "end": 81.47833333333332,
+      "beatId": "M04-B17",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-035",
+      "text": "Afterwards, no Hook buy tax.",
+      "start": 82.16833333333332,
+      "end": 84.59833333333333,
+      "beatId": "M04-B17",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-036",
+      "text": "Other venues have their own rules.",
+      "start": 85.10833333333332,
+      "end": 86.83833333333332,
+      "beatId": "M04-B18",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-037",
+      "text": "Pool liquidity fees are separate.",
+      "start": 87.28833333333333,
+      "end": 89.03833333333333,
+      "beatId": "M04-B18",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-038",
+      "text": "Pay Ether for bonds backed by existing OMR,",
+      "start": 89.655,
+      "end": 92.925,
+      "beatId": "M04-B19",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-039",
+      "text": "released through linear vesting.",
+      "start": 93.29499999999999,
+      "end": 95.04499999999999,
+      "beatId": "M04-B19",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-040",
+      "text": "No minting. No sellback.",
+      "start": 95.395,
+      "end": 97.16499999999999,
+      "beatId": "M04-B20",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-041",
+      "text": "Purchasing pauses don't erase vested claims.",
+      "start": 97.49499999999999,
+      "end": 100.24499999999999,
+      "beatId": "M04-B20",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-042",
+      "text": "Solvers commit a plan, then fund a two-pool",
+      "start": 100.79499999999999,
+      "end": 104.02499999999999,
+      "beatId": "M04-B21",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-043",
+      "text": "arbitrage cycle.",
+      "start": 104.035,
+      "end": 105.205,
+      "beatId": "M04-B21",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-044",
+      "text": "Profit is checked after costs and reserve",
+      "start": 105.49499999999999,
+      "end": 107.985,
+      "beatId": "M04-B22",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-045",
+      "text": "share. Failed gas remains your risk.",
+      "start": 107.99499999999999,
+      "end": 110.945,
+      "beatId": "M04-B22",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-046",
+      "text": "Lock canonical position NFTs.",
+      "start": 111.41499999999999,
+      "end": 114.32499999999999,
+      "beatId": "M04-B23",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-047",
+      "text": "Rewards require fresh, qualifying depth",
+      "start": 114.71499999999999,
+      "end": 117.765,
+      "beatId": "M04-B23",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-048",
+      "text": "samples.",
+      "start": 117.79499999999999,
+      "end": 118.445,
+      "beatId": "M04-B23",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-049",
+      "text": "Rewards need funded campaigns.",
+      "start": 118.895,
+      "end": 121.225,
+      "beatId": "M04-B24",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-050",
+      "text": "Mature positions can exit independently.",
+      "start": 121.755,
+      "end": 124.68499999999999,
+      "beatId": "M04-B24",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-051",
+      "text": "Families fight for seasonal Turf fees.",
+      "start": 125.29499999999999,
+      "end": 127.82499999999999,
+      "beatId": "M04-B25",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-052",
+      "text": "The protocol keeps principal.",
+      "start": 128.375,
+      "end": 130.04500000000002,
+      "beatId": "M04-B25",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-053",
+      "text": "Syndicates split rights.",
+      "start": 130.575,
+      "end": 132.005,
+      "beatId": "M04-B26",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-054",
+      "text": "Status doesn't multiply money.",
+      "start": 132.55499999999998,
+      "end": 134.285,
+      "beatId": "M04-B26",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-055",
+      "text": "A checkpoint assigns earned fees before",
+      "start": 134.89499999999998,
+      "end": 137.355,
+      "beatId": "M04-B27",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-056",
+      "text": "control changes. Existing claims keep their",
+      "start": 137.355,
+      "end": 140.61499999999998,
+      "beatId": "M04-B27",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-057",
+      "text": "recipients.",
+      "start": 140.61499999999998,
+      "end": 141.445,
+      "beatId": "M04-B27",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-058",
+      "text": "Sieges freeze wallets and allocate only funded",
+      "start": 142.015,
+      "end": 145.215,
+      "beatId": "M04-B28",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-059",
+      "text": "escrow.",
+      "start": 145.215,
+      "end": 145.845,
+      "beatId": "M04-B28",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-060",
+      "text": "At season exit, fees settle;",
+      "start": 146.375,
+      "end": 148.365,
+      "beatId": "M04-B29",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-061",
+      "text": "principal returns for retirement.",
+      "start": 148.595,
+      "end": 151.165,
+      "beatId": "M04-B29",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-062",
+      "text": "The Safe binds and funds systems.",
+      "start": 151.755,
+      "end": 153.925,
+      "beatId": "M04-B30",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-063",
+      "text": "Keepers have budgets.",
+      "start": 154.475,
+      "end": 155.805,
+      "beatId": "M04-B30",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-064",
+      "text": "The game can't withdraw principal.",
+      "start": 156.315,
+      "end": 158.165,
+      "beatId": "M04-B30",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-065",
+      "text": "Game cash, OMR, Ether and RWA stay separate.",
+      "start": 158.595,
+      "end": 163.025,
+      "beatId": "M04-B31",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-066",
+      "text": "Trades change inventory.",
+      "start": 163.375,
+      "end": 165.105,
+      "beatId": "M04-B32",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-067",
+      "text": "Revenue funds reserves.",
+      "start": 165.355,
+      "end": 166.965,
+      "beatId": "M04-B32",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-068",
+      "text": "Conditions gate the next move.",
+      "start": 167.475,
+      "end": 169.165,
+      "beatId": "M04-B32",
+      "timing": "Root-provided forced-aligned caption timing"
+    },
+    {
+      "id": "SOUL-CAP-069",
+      "text": "OMERTÀ. Control costs.",
+      "start": 169.915,
+      "end": 172.905,
+      "beatId": "M04-B33",
+      "timing": "Root-provided forced-aligned caption timing"
+    }
+  ]
+}

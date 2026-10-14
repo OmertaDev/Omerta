@@ -1,0 +1,1 @@
+gateway events: durable subscriptions, scoped replay, discovery isolation, membership changes, revocation and bounded streams passed

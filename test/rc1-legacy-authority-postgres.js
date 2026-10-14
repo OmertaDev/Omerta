@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { withItemTransaction, createItem } from '../src/items.js';
 import { compileContentPack } from '../src/content/compiler.js';
 import { GOODS, GEAR_TOKEN_IDS } from '../src/rules.js';

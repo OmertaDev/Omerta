@@ -226,6 +226,10 @@ assert.equal(isHardened({ DATABASE_URL: 'postgres://x' }), true,
 
 // ════════════ PRODUCTION ════════════
 const GOOD = {
+  LEGAL_OPERATOR_NAME: 'Test Operator', LEGAL_POSTAL_ADDRESS: '123 Test Street, Test City',
+  PRIVACY_CONTACT_EMAIL: 'privacy@example.test', DMCA_AGENT_NAME: 'Test Agent',
+  DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Test Street, Test City',
+  DMCA_AGENT_PHONE: '+1 202 555 0100', DMCA_AGENT_REGISTERED: 'true', PAYMENT_REFUND_POLICY: 'Test refund policy',
   NODE_ENV: 'production',
   JWT_SECRET: 'a-real-jwt-secret-value-long-enough',   // ≥24 chars, ≥8 distinct (blue-team H1 floor)
   MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge',

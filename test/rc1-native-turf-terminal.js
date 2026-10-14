@@ -51,7 +51,7 @@ try {
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
   const [{ buildServer }, { runLedgerInvariants }, observer, { PACING }] = await Promise.all([
-    import('../src/server.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'), import('../src/rules.js')]);
+    import('./server-fixture.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'), import('../src/rules.js')]);
   const { verifyTurfTerminalBoundary, turfTerminalCorruptions } = await import('./rc1-world-turf-terminal.js');
   app = await buildServer(); const pool = app.pool;
   app.addHook('onResponse', async req => { const id = req.headers['x-rc1-response-completion'], done = completions.get(id); assert(done); completions.delete(id); done(); });

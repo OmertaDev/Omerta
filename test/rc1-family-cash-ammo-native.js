@@ -57,7 +57,7 @@ try {
   await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
   const [{ buildServer }, { runLedgerInvariants }, observer, { PACING }] = await Promise.all([
-    import('../src/server.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'), import('../src/rules.js')]);
+    import('./server-fixture.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'), import('../src/rules.js')]);
   app = await buildServer(); const pool = app.pool;
   // app.inject can resolve before original response hooks finish their SQL.
   // Observe their actual completion before disarming or taking a snapshot.

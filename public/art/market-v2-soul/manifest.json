@@ -1,0 +1,119 @@
+{
+  "captures": {
+    "finance": {
+      "src": "art/market-v2-soul/captures/finance.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "Actual local preview UI · synthetic account",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:12:08.025Z"
+    },
+    "territory": {
+      "src": "art/market-v2-soul/captures/territory.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "Actual local preview UI · synthetic account",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:31.513Z"
+    },
+    "desk": {
+      "src": "art/market-v2-soul/captures/desk.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "Actual local preview UI · synthetic account",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.260Z"
+    },
+    "family": {
+      "src": "art/market-v2-soul/captures/family.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "Actual local preview UI · synthetic account",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:29.962Z"
+    }
+  },
+  "plates": {
+    "city": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-city.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "reserves": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-reserves.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "vault": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-vault.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "harbor": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-harbor.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "ledger": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-ledger.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "family": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-family.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "city-motion": {
+      "src": "art/market-v2-soul/clips/SOUL-MOTION-city.mp4",
+      "width": 720,
+      "height": 1280,
+      "duration": 8.041667,
+      "type": "video",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "vault-motion": {
+      "src": "art/market-v2-soul/clips/SOUL-MOTION-vault.mp4",
+      "width": 720,
+      "height": 1280,
+      "duration": 8.041667,
+      "type": "video",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    },
+    "harbor-motion": {
+      "src": "art/market-v2-soul/clips/SOUL-MOTION-harbor.mp4",
+      "width": 720,
+      "height": 1280,
+      "duration": 8.041667,
+      "type": "video",
+      "provenance": "Generated original editorial atmosphere; not game footage."
+    }
+  },
+  "audio": {
+    "src": "art/market-v2-soul/audio/soul-mix.wav"
+  }
+}

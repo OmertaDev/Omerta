@@ -22,7 +22,7 @@ try {
     SOCIAL_VERIFY_MODE: 'off', LIVING_WORLD_DIRECTOR: 'DIRECTOR_DISABLED', JWT_SECRET: crypto.randomBytes(32).toString('hex'),
     MARKET_SEED: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex') });
   const [{ buildServer }, { recordReckoning }, { runSeasonRollover }, { runLedgerInvariants }] = await Promise.all([
-    import('../src/server.js'), import('../src/season.js'), import('../src/worker.js'), import('../src/invariants.js')]);
+    import('./server-fixture.js'), import('../src/season.js'), import('../src/worker.js'), import('../src/invariants.js')]);
   app = await buildServer();
   const guest = await app.inject({ method: 'POST', url: '/v1/auth/guest' }); assert.equal(guest.statusCode, 200);
   const born = await app.inject({ method: 'POST', url: '/v1/character',

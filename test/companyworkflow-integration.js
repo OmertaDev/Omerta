@@ -11,7 +11,7 @@ if(native) {
   process.env.DATABASE_URL=url.href;
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',DELIVERY_CONTRACTS:'on',RESOURCE_ECONOMY:'off',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'workflow-integration-local-proof-secret',MARKET_SEED:'workflow-integration-native-local-seed',MOD_KEY:'workflow-integration-local-mod' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js');
 const { buyGood }=await import('../src/economy.js'), { runLedgerInvariants }=await import('../src/invariants.js');
 const Workflow=await import('../src/companyworkflows.js'), { runCompanyWorkflows }=await import('../src/companyworkflowrunner.js');
 const app=await buildServer(); let serial=0;

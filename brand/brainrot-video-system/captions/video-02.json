@@ -1,0 +1,156 @@
+[
+  {
+    "text": "I bought some cargo.",
+    "startMs": 0,
+    "endMs": 1500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Pickup only.",
+    "startMs": 1500,
+    "endMs": 3000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Fine. Send a convoy.",
+    "startMs": 3000,
+    "endMs": 4500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Ambushed.",
+    "startMs": 4500,
+    "endMs": 6000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The rest got through.",
+    "startMs": 6000,
+    "endMs": 7500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Rival dock. Pay the toll.",
+    "startMs": 7500,
+    "endMs": 9000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Our Family’s treasury.",
+    "startMs": 9000,
+    "endMs": 10500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "So that’s the economy?",
+    "startMs": 10500,
+    "endMs": 12000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Cash. OMR’s different.",
+    "startMs": 12000,
+    "endMs": 13500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Sell some OMR.",
+    "startMs": 13500,
+    "endMs": 15000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Hook funds protocol liquidity.",
+    "startMs": 15000,
+    "endMs": 16500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Why’s this a war map?",
+    "startMs": 16500,
+    "endMs": 18000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Family siege.",
+    "startMs": 18000,
+    "endMs": 19500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Our Family won.",
+    "startMs": 19500,
+    "endMs": 21000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "They get the pool?",
+    "startMs": 21000,
+    "endMs": 22500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "The fee rights.",
+    "startMs": 22500,
+    "endMs": 24000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Only fees actually funded.",
+    "startMs": 24000,
+    "endMs": 25500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "So the pool stays?",
+    "startMs": 25500,
+    "endMs": 27000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Principal stays protocol-owned.",
+    "startMs": 27000,
+    "endMs": 28500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "OMERTÀ.",
+    "startMs": 28500,
+    "endMs": 30000,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Bring your Family.",
+    "startMs": 30000,
+    "endMs": 31500,
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "text": "Where’s my cargo?",
+    "startMs": 31500,
+    "endMs": 33000,
+    "timestampMs": null,
+    "confidence": null
+  }
+]

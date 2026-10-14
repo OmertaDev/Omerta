@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { addPlayer, commandDatabase, postgres, findCommand } from './lib/player-command-support.js';
 import { recordWorldObservation, recordWorldCommand, worldReleaseMetrics, flushWorldTelemetry,
   commandConsequenceReferences } from '../src/world-telemetry.js';

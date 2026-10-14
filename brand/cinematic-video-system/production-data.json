@@ -1,0 +1,2037 @@
+{
+  "version": 4,
+  "date": "2026-09-24",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "setting": "Future fully live release; source UI is a local preview build with synthetic accounts. Chain/world-release integrations are illustrated where captures cannot establish activation.",
+  "style": "Cinematic noir; genuine game captures; selective 360/scope/snap edits; original audio",
+  "films": [
+    {
+      "id": "01",
+      "title": "BUILD AN EMPIRE",
+      "subtitle": "Earn power. Keep it.",
+      "duration": 72,
+      "accent": "#B99C60",
+      "beats": [
+        {
+          "id": "C1-B01",
+          "start": 0,
+          "end": 4,
+          "headline": "Your next move.\nAn empire.",
+          "narration": "Your next move could build an empire.",
+          "caption": "Your next move could build an empire.",
+          "screen": "streets",
+          "tags": [
+            "A persistent mafia RPG"
+          ],
+          "factIds": [
+            "F01"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C1-B02",
+          "start": 4,
+          "end": 8,
+          "headline": "Cash. Respect. Heat.",
+          "narration": "Crimes earn cash and respect. Heat follows.",
+          "caption": "Crimes earn cash and respect. Heat follows.",
+          "screen": "streets",
+          "tags": [
+            "Nerve / energy",
+            "Risk / reward"
+          ],
+          "factIds": [
+            "F49"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C1-B03",
+          "start": 8,
+          "end": 12,
+          "headline": "Become good\nat something.",
+          "narration": "Train your skills and build a career through action.",
+          "caption": "Train your skills and build a career through action.",
+          "screen": "skills",
+          "tags": [
+            "Skills / careers",
+            "Ten trades"
+          ],
+          "factIds": [
+            "F18",
+            "F50"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B04",
+          "start": 12,
+          "end": 16,
+          "headline": "A wreck has value.",
+          "narration": "Steal a car. Salvage eligible wrecks into materials.",
+          "caption": "Steal a car. Salvage eligible wrecks into materials.",
+          "screen": "garage",
+          "tags": [
+            "Garage / armory",
+            "Salvage / materials"
+          ],
+          "factIds": [
+            "F16",
+            "F15",
+            "F51"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C1-B05",
+          "start": 16,
+          "end": 20,
+          "headline": "Build your advantage.",
+          "narration": "Discover recipes to craft, repair, and track your gear.",
+          "caption": "Discover recipes to craft, repair, and track your gear.",
+          "screen": "crafting",
+          "tags": [
+            "Inventory / provenance",
+            "Recipes / tools"
+          ],
+          "factIds": [
+            "F12",
+            "F13",
+            "F14",
+            "F19"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C1-B06",
+          "start": 20,
+          "end": 24,
+          "headline": "An empire has upkeep.",
+          "narration": "Build businesses. Run kitchens. Pay the people working them.",
+          "caption": "Build businesses. Run kitchens. Pay the people working them.",
+          "screen": "business",
+          "tags": [
+            "Rackets / kitchens",
+            "Labor / upkeep"
+          ],
+          "factIds": [
+            "F52",
+            "F53"
+          ],
+          "screens": [
+            "business",
+            "kitchen"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C1-B07",
+          "start": 24,
+          "end": 28,
+          "headline": "Getting it there\nis the game.",
+          "narration": "Move cargo through markets and risky convoys.",
+          "caption": "Move cargo through markets and risky convoys.",
+          "screen": "market",
+          "tags": [
+            "Markets / auctions",
+            "Convoys / boats"
+          ],
+          "factIds": [
+            "F24",
+            "F61",
+            "F11",
+            "F65"
+          ],
+          "screens": [
+            "market",
+            "logistics"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B08",
+          "start": 28,
+          "end": 32,
+          "headline": "Bring a Crew.",
+          "narration": "Recruit a Crew. Coordinate heists and harder targets.",
+          "caption": "Recruit a Crew. Coordinate heists and harder targets.",
+          "screen": "crew",
+          "tags": [
+            "Crew heists",
+            "NPC raids"
+          ],
+          "factIds": [
+            "F08",
+            "F54",
+            "F95"
+          ],
+          "screens": [
+            "crew",
+            "heists"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C1-B09",
+          "start": 32,
+          "end": 36,
+          "headline": "Strength becomes\nterritory.",
+          "narration": "Build a Family. Turn strength into territory.",
+          "caption": "Build a Family. Turn strength into territory.",
+          "screen": "family",
+          "tags": [
+            "Hierarchy / wars",
+            "Diplomacy / alliances"
+          ],
+          "factIds": [
+            "F09",
+            "F10",
+            "F57"
+          ],
+          "screens": [
+            "family",
+            "territory"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C1-B10",
+          "start": 36,
+          "end": 40,
+          "headline": "Control has a cost.",
+          "narration": "Territory earns income while diplomacy shapes the fight.",
+          "caption": "Territory earns income while diplomacy shapes the fight.",
+          "screen": "territory",
+          "tags": [
+            "Commission / favors",
+            "Speakeasy status"
+          ],
+          "factIds": [
+            "F58",
+            "F59",
+            "F90"
+          ],
+          "screens": [
+            "territory",
+            "speakeasy"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B11",
+          "start": 40,
+          "end": 44,
+          "headline": "Make the deal.",
+          "narration": "Loans and escrow put consequences behind every deal.",
+          "caption": "Loans and escrow put consequences behind every deal.",
+          "screen": "loans",
+          "tags": [
+            "Loans / collateral",
+            "Escrow / contracts"
+          ],
+          "factIds": [
+            "F32",
+            "F64"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C1-B12",
+          "start": 44,
+          "end": 48,
+          "headline": "Own the room.",
+          "narration": "Race, fight, and play the tables.",
+          "caption": "Race, fight, and play the tables.",
+          "screen": "races",
+          "tags": [
+            "Races / duels / boxing",
+            "Poker / casino / stable"
+          ],
+          "factIds": [
+            "F62",
+            "F63",
+            "F89"
+          ],
+          "screens": [
+            "races",
+            "boxing",
+            "casino",
+            "stable"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B13",
+          "start": 48,
+          "end": 52,
+          "headline": "The city hits back.",
+          "narration": "Rivals strike back. So do investigators, courts, and prison.",
+          "caption": "Rivals strike back. So do investigators, courts, and prison.",
+          "screen": "law",
+          "tags": [
+            "PvP / bounties / hitmen",
+            "Law / courts / prison"
+          ],
+          "factIds": [
+            "F25",
+            "F55",
+            "F60",
+            "F91",
+            "F33"
+          ],
+          "screens": [
+            "combat",
+            "law",
+            "prison"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B14",
+          "start": 52,
+          "end": 56,
+          "headline": "One life.\nReal consequences.",
+          "narration": "Protection costs. Death can end a character.",
+          "caption": "Protection costs. Death can end a character.",
+          "screen": "estate",
+          "tags": [
+            "Protection / death",
+            "Heirs / bloodlines"
+          ],
+          "factIds": [
+            "F56"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C1-B15",
+          "start": 56,
+          "end": 60,
+          "headline": "Leave a legacy.",
+          "narration": "Your heirs, deeds, and reputation carry the legacy.",
+          "caption": "Your heirs, deeds, and reputation carry the legacy.",
+          "screen": "deeds",
+          "tags": [
+            "Deeds / compounds",
+            "Honor / dynastic ties"
+          ],
+          "factIds": [
+            "F66",
+            "F67"
+          ],
+          "screens": [
+            "deeds",
+            "estate"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C1-B16",
+          "start": 60,
+          "end": 64,
+          "headline": "The season turns.",
+          "narration": "Seasons reshape the city while players build monuments.",
+          "caption": "Seasons reshape the city while players build monuments.",
+          "screen": "city",
+          "tags": [
+            "Seasons / megaprojects",
+            "Landmarks / collections"
+          ],
+          "factIds": [
+            "F28",
+            "F68",
+            "F96"
+          ],
+          "kind": "capture",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C1-B17",
+          "start": 64,
+          "end": 68,
+          "headline": "The empire loop.",
+          "narration": "Equip your Crew to take control and reinvest.",
+          "caption": "Equip your Crew to take control and reinvest.",
+          "screen": "family",
+          "tags": [
+            "Player choices drive the loop"
+          ],
+          "factIds": [
+            "F48"
+          ],
+          "kind": "flow",
+          "flow": [
+            "EARN → EQUIP",
+            "COORDINATE → CONTROL",
+            "INCOME → UPKEEP → REINVEST"
+          ],
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C1-B18",
+          "start": 68,
+          "end": 72,
+          "headline": "Build something\nworth defending.",
+          "narration": "OMERTÀ. Build something worth defending.",
+          "caption": "OMERTÀ. Build something worth defending.",
+          "screen": "territory",
+          "tags": [],
+          "factIds": [],
+          "kind": "end",
+          "kicker": "01 / THE EMPIRE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        }
+      ],
+      "captions": [
+        {
+          "text": "Your next move could build an empire.",
+          "startMs": 79.083,
+          "endMs": 2417.8540000000003,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Crimes earn cash and respect. Heat follows.",
+          "startMs": 4080.021,
+          "endMs": 7872.104,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Train your skills and build a career through action.",
+          "startMs": 8082.729,
+          "endMs": 11211.458,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Steal a car. Salvage eligible wrecks into materials.",
+          "startMs": 12076.625,
+          "endMs": 15876.917000000001,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Discover recipes to craft,",
+          "startMs": 16080.020999999999,
+          "endMs": 17883.951,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "repair, and track your gear.",
+          "startMs": 17883.951,
+          "endMs": 19784.521,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Build businesses. Run kitchens.",
+          "startMs": 20079.916999999998,
+          "endMs": 22000.77,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Pay the people working them.",
+          "startMs": 22000.77,
+          "endMs": 23831.583,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Move cargo through markets and risky convoys.",
+          "startMs": 24080.271,
+          "endMs": 27633.875,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Recruit a Crew. Coordinate heists and harder targets.",
+          "startMs": 28080.104,
+          "endMs": 31891.687,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Build a Family. Turn strength into territory.",
+          "startMs": 32066.792,
+          "endMs": 35873.958,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Territory earns income while",
+          "startMs": 36080.021,
+          "endMs": 37777.303,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "diplomacy shapes the fight.",
+          "startMs": 37777.303,
+          "endMs": 39365.083,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Loans and escrow put consequences behind every deal.",
+          "startMs": 40079.396,
+          "endMs": 43113.25,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Race, fight, and play the tables.",
+          "startMs": 44080.958000000006,
+          "endMs": 47266.479,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Rivals strike back. So do",
+          "startMs": 48104.437,
+          "endMs": 49779.152,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "investigators, courts, and prison.",
+          "startMs": 49779.152,
+          "endMs": 51849.708,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Protection costs. Death can end a character.",
+          "startMs": 52080,
+          "endMs": 54827.5,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Your heirs, deeds, and reputation carry the legacy.",
+          "startMs": 56082.125,
+          "endMs": 58980.979,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Seasons reshape the city",
+          "startMs": 60079.125,
+          "endMs": 61654.75399999999,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "while players build monuments.",
+          "startMs": 61654.75399999999,
+          "endMs": 63522.167,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Equip your Crew to take control and reinvest.",
+          "startMs": 64078.771,
+          "endMs": 67404.542,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "OMERTÀ. Build something worth defending.",
+          "startMs": 68085.208,
+          "endMs": 71875.729,
+          "timestampMs": null,
+          "confidence": null
+        }
+      ],
+      "captionTiming": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment."
+    },
+    {
+      "id": "02",
+      "title": "THE ECONOMY HAS TERRITORY",
+      "subtitle": "Source. Cost. Custody.",
+      "duration": 75,
+      "accent": "#AABBAE",
+      "beats": [
+        {
+          "id": "C2-B01",
+          "start": 0,
+          "end": 4.166666666666667,
+          "headline": "Two currencies.\nDifferent jobs.",
+          "narration": "Game cash and OMR follow separate economic circuits.",
+          "caption": "Game cash and OMR follow separate economic circuits.",
+          "screen": "finance",
+          "tags": [
+            "Game cash ≠ OMR",
+            "ETH has separate custody"
+          ],
+          "factIds": [
+            "F29"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C2-B02",
+          "start": 4.166666666666667,
+          "end": 8.333333333333334,
+          "headline": "A source for\nevery token.",
+          "narration": "Defined missions and funded rewards put OMR in reach.",
+          "caption": "Defined missions and funded rewards put OMR in reach.",
+          "screen": "finance",
+          "tags": [
+            "Missions / seasons / pass",
+            "Genesis / funded pools"
+          ],
+          "factIds": [
+            "F30",
+            "F85",
+            "F84"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C2-B03",
+          "start": 8.333333333333334,
+          "end": 12.5,
+          "headline": "Utility creates demand.",
+          "narration": "Spend on eligible gear, services, and upgrades.",
+          "caption": "Spend on eligible gear, services, and upgrades.",
+          "screen": "store",
+          "tags": [
+            "Equipment / services",
+            "Made status / commitments"
+          ],
+          "factIds": [
+            "F31",
+            "F71"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C2-B04",
+          "start": 12.5,
+          "end": 16.666666666666668,
+          "headline": "Spend. Recycle.\nRecirculate.",
+          "narration": "Eligible spending refills the Desk’s existing token inventory.",
+          "caption": "Eligible spending refills the Desk’s existing token inventory.",
+          "screen": "desk",
+          "tags": [
+            "Existing inventory",
+            "No mint at resale"
+          ],
+          "factIds": [
+            "F69"
+          ],
+          "kind": "flow",
+          "flow": [
+            "PLAYER OMR → ELIGIBLE SPEND",
+            "DESK INVENTORY",
+            "FUNDED INVENTORY SALE → PLAYER"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C2-B05",
+          "start": 16.666666666666668,
+          "end": 20.833333333333332,
+          "headline": "One way.\nFunding required.",
+          "narration": "The funded Window converts OMR to cash only.",
+          "caption": "The funded Window converts OMR to cash only.",
+          "screen": "finance",
+          "tags": [
+            "OMR → game cash",
+            "Cash cannot buy OMR"
+          ],
+          "factIds": [
+            "F70"
+          ],
+          "kind": "flow",
+          "flow": [
+            "PLAYER OMR",
+            "FUNDED WINDOW",
+            "GAME CASH — NO REVERSE ROUTE"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C2-B06",
+          "start": 20.833333333333332,
+          "end": 25,
+          "headline": "Funding sets\nthe limit.",
+          "narration": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+          "caption": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+          "screen": "treasury",
+          "tags": [
+            "Bank / Vig / community",
+            "City / Family funded pools"
+          ],
+          "factIds": [
+            "F72",
+            "F73",
+            "F74",
+            "F35"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C2-B07",
+          "start": 25,
+          "end": 28.766666666666666,
+          "headline": "The canonical market.",
+          "narration": "Canonical sells route a nine-percent base fee.",
+          "caption": "Canonical sells route a nine-percent base fee.",
+          "screen": "desk",
+          "tags": [
+            "Uniswap v4 / OMERTÀ Hook",
+            "Canonical pool policy"
+          ],
+          "factIds": [
+            "F37",
+            "F76"
+          ],
+          "kind": "flow",
+          "flow": [
+            "CANONICAL ETH / OMR SWAP",
+            "9% BASE SELL FEE",
+            "RECIPIENT BUCKETS"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan",
+          "note": "Canonical pool only. Actual launch policy and funding apply."
+        },
+        {
+          "id": "C2-B08",
+          "start": 28.766666666666666,
+          "end": 33.333333333333336,
+          "headline": "Where the fee goes.",
+          "narration": "Fees support development, RWA, community, and liquidity.",
+          "caption": "Fees support development, RWA, community, and liquidity.",
+          "screen": "treasury",
+          "tags": [
+            "0–1% extra stability charge",
+            "LP fee is additional"
+          ],
+          "factIds": [
+            "F37"
+          ],
+          "kind": "flow",
+          "flow": [
+            "2% · Developer",
+            "1.6% · RWA recipient",
+            "2.4% · Community",
+            "3% · POL → Core"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap",
+          "flowMode": "allocation"
+        },
+        {
+          "id": "C2-B09",
+          "start": 33.333333333333336,
+          "end": 37.5,
+          "headline": "Core has limits.",
+          "narration": "That liquidity allocation funds Core. Stability uses finite reserves.",
+          "caption": "That liquidity allocation funds Core. Stability uses finite reserves.",
+          "screen": "finance",
+          "tags": [
+            "Core / War Chest",
+            "Bounded keepers / arbitrage"
+          ],
+          "factIds": [
+            "F36",
+            "F77",
+            "F80"
+          ],
+          "kind": "flow",
+          "flow": [
+            "HOOK POL ALLOCATION → CORE",
+            "SEPARATE WAR CHEST BUDGET",
+            "FINITE ACTION / LIFETIME CAPACITY"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C2-B10",
+          "start": 37.5,
+          "end": 41.666666666666664,
+          "headline": "Liquidity has territory.",
+          "narration": "Families contest future funded fees in seasonal Turf.",
+          "caption": "Families contest future funded fees in seasonal Turf.",
+          "screen": "territory",
+          "tags": [
+            "Turf / syndicates",
+            "Prospective fee rights"
+          ],
+          "factIds": [
+            "F38",
+            "F78"
+          ],
+          "kind": "flow",
+          "flow": [
+            "DESIGNATED TURF LP FEES",
+            "FUNDED BRIDGE / CHECKPOINT",
+            "ENTITLED FAMILY CREDITS"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C2-B11",
+          "start": 41.666666666666664,
+          "end": 45.833333333333336,
+          "headline": "Fee rights.\nNot the principal.",
+          "narration": "Sieges allocate funded escrow while principal stays protocol-owned.",
+          "caption": "Sieges allocate funded escrow while principal stays protocol-owned.",
+          "screen": "family",
+          "tags": [
+            "Funded siege escrow",
+            "Protocol custody stays"
+          ],
+          "factIds": [
+            "F32"
+          ],
+          "kind": "flow",
+          "flow": [
+            "SIEGE → ADJUDICATED OUTCOME",
+            "FUTURE FUNDED FEE RIGHTS",
+            "POOL PRINCIPAL → PROTOCOL"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C2-B12",
+          "start": 45.833333333333336,
+          "end": 50,
+          "headline": "Inventory,\nnot new supply.",
+          "narration": "Inventory bonds vest existing OMR. They do not mint more.",
+          "caption": "Inventory bonds vest existing OMR. They do not mint more.",
+          "screen": "desk",
+          "tags": [
+            "Prefunded OMR",
+            "Linear vesting"
+          ],
+          "factIds": [
+            "F34"
+          ],
+          "kind": "flow",
+          "flow": [
+            "ETH PAYMENT",
+            "FUNDED OMR ENTITLEMENT",
+            "VESTED CLAIM"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C2-B13",
+          "start": 50,
+          "end": 54.166666666666664,
+          "headline": "Commit a position.",
+          "narration": "Liquidity commitments lock positions against prefunded campaign rewards.",
+          "caption": "Liquidity commitments lock positions against prefunded campaign rewards.",
+          "screen": "finance",
+          "tags": [
+            "Position NFT custody",
+            "Mature exit independent"
+          ],
+          "factIds": [
+            "F79"
+          ],
+          "kind": "flow",
+          "flow": [
+            "QUALIFYING LP POSITION",
+            "FINITE COMMITMENT",
+            "PREFUNDED REWARD CAMPAIGN"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C2-B14",
+          "start": 54.166666666666664,
+          "end": 58.333333333333336,
+          "headline": "Ownership has rules.",
+          "narration": "Eligible assets use distinct onchain ownership rails.",
+          "caption": "Eligible assets use distinct onchain ownership rails.",
+          "screen": "chain",
+          "tags": [
+            "Identity / gear / vehicles",
+            "Withdrawal / backing"
+          ],
+          "factIds": [
+            "F39",
+            "F40",
+            "F42",
+            "F75"
+          ],
+          "screens": [
+            "chain",
+            "garage",
+            "deeds"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C2-B15",
+          "start": 58.333333333333336,
+          "end": 62.5,
+          "headline": "Real assets.\nSpecific rails.",
+          "narration": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+          "caption": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+          "screen": "brokers",
+          "tags": [
+            "Brokers / acquired units",
+            "Street Deed delivery"
+          ],
+          "factIds": [
+            "F41",
+            "F81",
+            "F82"
+          ],
+          "screens": [
+            "brokers",
+            "deeds"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C2-B16",
+          "start": 62.5,
+          "end": 66.66666666666667,
+          "headline": "Three different steps.",
+          "narration": "Acquisition, allocation, and delivery each have separate rules.",
+          "caption": "Acquisition, allocation, and delivery each have separate rules.",
+          "screen": "deeds",
+          "tags": [
+            "ETH Vault: allocation only",
+            "No automatic universal claim"
+          ],
+          "factIds": [
+            "F83"
+          ],
+          "kind": "flow",
+          "flow": [
+            "ACQUIRE APPROVED REAL UNITS",
+            "ALLOCATE TO ELIGIBLE PLAYERS",
+            "DELIVER TO ELIGIBLE DEED VAULT"
+          ],
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C2-B17",
+          "start": 66.66666666666667,
+          "end": 70.83333333333333,
+          "headline": "Source. Cost. Custody.",
+          "narration": "Every balance has a source. Every move has a cost.",
+          "caption": "Every balance has a source. Every move has a cost.",
+          "screen": "finance",
+          "tags": [
+            "Cash / OMR / ETH / RWA",
+            "Separate balances and rules"
+          ],
+          "factIds": [
+            "F29"
+          ],
+          "kind": "capture",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C2-B18",
+          "start": 70.83333333333333,
+          "end": 75,
+          "headline": "The economy\nhas territory.",
+          "narration": "OMERTÀ. The economy has territory.",
+          "caption": "OMERTÀ. The economy has territory.",
+          "screen": "territory",
+          "tags": [],
+          "factIds": [],
+          "kind": "end",
+          "kicker": "02 / THE ECONOMY",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        }
+      ],
+      "captions": [
+        {
+          "text": "Game cash and OMR follow separate economic circuits.",
+          "startMs": 80.125,
+          "endMs": 3985.771,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Defined missions and funded rewards put OMR in reach.",
+          "startMs": 4247.979,
+          "endMs": 8199.125,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Spend on eligible gear, services, and upgrades.",
+          "startMs": 8409.207999999999,
+          "endMs": 12162.479,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Eligible spending refills the",
+          "startMs": 12580,
+          "endMs": 14302.667,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Desk’s existing token inventory.",
+          "startMs": 14302.667,
+          "endMs": 16079.167000000001,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "The funded Window converts OMR to cash only.",
+          "startMs": 16746.688,
+          "endMs": 20228.896,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Revenue can fund buybacks and",
+          "startMs": 20913.917,
+          "endMs": 22774.521,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "rewards. Funding sets the limit.",
+          "startMs": 22774.521,
+          "endMs": 24692.375,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Canonical sells route a nine-percent base fee.",
+          "startMs": 25079.937,
+          "endMs": 28282.854,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Fees support development,",
+          "startMs": 28846.686999999998,
+          "endMs": 30887.784,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "RWA, community, and liquidity.",
+          "startMs": 30887.784,
+          "endMs": 33198.458,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "That liquidity allocation funds Core.",
+          "startMs": 33412.687,
+          "endMs": 35571.793999999994,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Stability uses finite reserves.",
+          "startMs": 35571.793999999994,
+          "endMs": 37375.604,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Families contest future funded fees in seasonal Turf.",
+          "startMs": 37575.729,
+          "endMs": 40656.416999999994,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Sieges allocate funded escrow while",
+          "startMs": 41746.687,
+          "endMs": 43921.055,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "principal stays protocol-owned.",
+          "startMs": 43921.055,
+          "endMs": 45700.083,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Inventory bonds vest existing",
+          "startMs": 45911.313,
+          "endMs": 47982.646,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "OMR. They do not mint more.",
+          "startMs": 47982.646,
+          "endMs": 49859.792,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Liquidity commitments lock positions",
+          "startMs": 50077.416999999994,
+          "endMs": 52110.249,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "against prefunded campaign rewards.",
+          "startMs": 52110.249,
+          "endMs": 54038.833,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Eligible assets use distinct onchain ownership rails.",
+          "startMs": 54246.604,
+          "endMs": 57565.646,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Approved RWA acquisitions can",
+          "startMs": 58411.333,
+          "endMs": 60260.657,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "reach eligible Street Deed vaults.",
+          "startMs": 60260.657,
+          "endMs": 62370.042,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Acquisition, allocation,",
+          "startMs": 62568.583,
+          "endMs": 64034.553,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "and delivery each have separate rules.",
+          "startMs": 64034.553,
+          "endMs": 66538.917,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Every balance has a source. Every move has a cost.",
+          "startMs": 66737.47899999999,
+          "endMs": 69933.333,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "OMERTÀ. The economy has territory.",
+          "startMs": 70913.104,
+          "endMs": 74082.292,
+          "timestampMs": null,
+          "confidence": null
+        }
+      ],
+      "captionTiming": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment."
+    },
+    {
+      "id": "03",
+      "title": "THE CITY REMEMBERS",
+      "subtitle": "Know more. Move together.",
+      "duration": 72,
+      "accent": "#B25243",
+      "beats": [
+        {
+          "id": "C3-B01",
+          "start": 0,
+          "end": 4,
+          "headline": "Somebody knows.",
+          "narration": "In this city, what you know changes everything.",
+          "caption": "In this city, what you know changes everything.",
+          "screen": "evidence",
+          "tags": [
+            "Mysteries / hidden information"
+          ],
+          "factIds": [
+            "F20",
+            "F22"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C3-B02",
+          "start": 4,
+          "end": 8,
+          "headline": "A shipment.\nAn investigation.",
+          "narration": "A missing shipment becomes an investigation.",
+          "caption": "A missing shipment becomes an investigation.",
+          "screen": "cases",
+          "tags": [
+            "Campaign Network",
+            "Actual prerequisites"
+          ],
+          "factIds": [
+            "F04"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C3-B03",
+          "start": 8,
+          "end": 12,
+          "headline": "Everything connects.",
+          "narration": "Clues connect people, places, objects, and history.",
+          "caption": "Clues connect people, places, objects, and history.",
+          "screen": "case-detail",
+          "tags": [
+            "World Graph",
+            "People / places / objects"
+          ],
+          "factIds": [
+            "F02"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B04",
+          "start": 12,
+          "end": 16,
+          "headline": "Your view is personal.",
+          "narration": "Your view is personal. Private intelligence stays private.",
+          "caption": "Your view is personal. Private intelligence stays private.",
+          "screen": "knowledge",
+          "tags": [
+            "Own / shared / public",
+            "Permission boundaries"
+          ],
+          "factIds": [
+            "F23"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C3-B05",
+          "start": 16,
+          "end": 20,
+          "headline": "Two originals.\nOne connection.",
+          "narration": "Find original evidence from two independent sources.",
+          "caption": "Find original evidence from two independent sources.",
+          "screen": "evidence",
+          "tags": [
+            "Independent sources",
+            "Evidence / provenance"
+          ],
+          "factIds": [
+            "F21",
+            "F86"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C3-B06",
+          "start": 20,
+          "end": 24,
+          "headline": "A rumor is not proof.",
+          "narration": "Share knowledge carefully: forwarded rumors are not proof.",
+          "caption": "Share knowledge carefully: forwarded rumors are not proof.",
+          "screen": "knowledge",
+          "tags": [
+            "Knowledge sharing",
+            "Disclosure ≠ guilt"
+          ],
+          "factIds": [
+            "F23",
+            "F47"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C3-B07",
+          "start": 24,
+          "end": 28,
+          "headline": "Preparation matters.",
+          "narration": "Bring recipes and tools to the right facility.",
+          "caption": "Bring recipes and tools to the right facility.",
+          "screen": "crafting",
+          "tags": [
+            "Facilities / recipe access",
+            "Tools / materials"
+          ],
+          "factIds": [
+            "F17"
+          ],
+          "screens": [
+            "crafting",
+            "inventory"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B08",
+          "start": 28,
+          "end": 32,
+          "headline": "Different players.\nDifferent pieces.",
+          "narration": "Bring equipment while another player brings the intelligence.",
+          "caption": "Bring equipment while another player brings the intelligence.",
+          "screen": "coordination",
+          "tags": [
+            "Roles / contributions",
+            "Items / knowledge"
+          ],
+          "factIds": [
+            "F07"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C3-B09",
+          "start": 32,
+          "end": 36,
+          "headline": "Authority matters.",
+          "narration": "Crew roles and Family authority decide who can act.",
+          "caption": "Crew roles and Family authority decide who can act.",
+          "screen": "roles",
+          "tags": [
+            "Crew participation",
+            "Family authorization"
+          ],
+          "factIds": [
+            "F46"
+          ],
+          "screens": [
+            "roles",
+            "family"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C3-B10",
+          "start": 36,
+          "end": 40,
+          "headline": "An interface\ninto the city.",
+          "narration": "An Agent can read permitted context and propose a move.",
+          "caption": "An Agent can read permitted context and propose a move.",
+          "screen": "consigliere",
+          "tags": [
+            "Agents / Consigliere",
+            "Permitted context only"
+          ],
+          "factIds": [
+            "F43",
+            "F44",
+            "F87"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.34,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B11",
+          "start": 40,
+          "end": 44,
+          "headline": "Automation has limits.",
+          "narration": "Consequential proposals still need your approval.",
+          "caption": "Consequential proposals still need your approval.",
+          "screen": "approval",
+          "tags": [
+            "Scoped automation",
+            "No unrestricted wallet control"
+          ],
+          "factIds": [
+            "F45"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C3-B12",
+          "start": 44,
+          "end": 48,
+          "headline": "You make the move.",
+          "narration": "You confirm. The server checks authority and resources again.",
+          "caption": "You confirm. The server checks authority and resources again.",
+          "screen": "approval",
+          "tags": [
+            "Player Commands",
+            "Human confirmation"
+          ],
+          "factIds": [
+            "F06",
+            "F46"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B13",
+          "start": 48,
+          "end": 52,
+          "headline": "The city keeps\nthe consequence.",
+          "narration": "The operation changes the world. Its receipt becomes history.",
+          "caption": "The operation changes the world. Its receipt becomes history.",
+          "screen": "history",
+          "tags": [
+            "Committed state / history",
+            "Visibility-filtered records"
+          ],
+          "factIds": [
+            "F26",
+            "F27",
+            "F88"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B14",
+          "start": 52,
+          "end": 56,
+          "headline": "A world that reacts.",
+          "narration": "The Director responds to real conditions with authored situations.",
+          "caption": "The Director responds to real conditions with authored situations.",
+          "screen": "city",
+          "tags": [
+            "Living World Director",
+            "Conditions → authored response"
+          ],
+          "factIds": [
+            "F03"
+          ],
+          "kind": "flow",
+          "flow": [
+            "CANONICAL WORLD CONDITIONS",
+            "ELIGIBLE AUTHORED SITUATION",
+            "PERSISTENT CONSEQUENCE"
+          ],
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "spin"
+        },
+        {
+          "id": "C3-B15",
+          "start": 56,
+          "end": 60,
+          "headline": "One event\nopens another.",
+          "narration": "Divert cargo; exposure can trigger a new case.",
+          "caption": "Divert cargo; exposure can trigger a new case.",
+          "screen": "cases",
+          "tags": [
+            "A supported campaign branch",
+            "Prerequisites still apply"
+          ],
+          "factIds": [
+            "F04"
+          ],
+          "kind": "flow",
+          "flow": [
+            "SHIPMENT DIVERTED",
+            "CANAL MARKET ESTABLISHED",
+            "EXPOSURE → INFORMANT CASE"
+          ],
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        },
+        {
+          "id": "C3-B16",
+          "start": 60,
+          "end": 64,
+          "headline": "Your next opening.",
+          "narration": "Opportunities connect the next move to what actually happened.",
+          "caption": "Opportunities connect the next move to what actually happened.",
+          "screen": "cases",
+          "tags": [
+            "Opportunity feed",
+            "Available / authorized moves"
+          ],
+          "factIds": [
+            "F05"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "scope"
+        },
+        {
+          "id": "C3-B17",
+          "start": 64,
+          "end": 68,
+          "headline": "Information is power.",
+          "narration": "Secrets and alliances give your decisions lasting weight.",
+          "caption": "Secrets and alliances give your decisions lasting weight.",
+          "screen": "wire",
+          "tags": [
+            "Wire / secrets / blackmail",
+            "Clue scrolls / social history"
+          ],
+          "factIds": [
+            "F92",
+            "F93",
+            "F94"
+          ],
+          "kind": "capture",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "snap"
+        },
+        {
+          "id": "C3-B18",
+          "start": 68,
+          "end": 72,
+          "headline": "Know more.\nMove together.",
+          "narration": "OMERTÀ. Know more. Move together.",
+          "caption": "OMERTÀ. Know more. Move together.",
+          "screen": "history",
+          "tags": [],
+          "factIds": [],
+          "kind": "end",
+          "kicker": "03 / THE INTELLIGENCE",
+          "focus": {
+            "x": 0.505,
+            "y": 0.52,
+            "scale": 1.04
+          },
+          "transition": "pan"
+        }
+      ],
+      "captions": [
+        {
+          "text": "In this city, what you know changes everything.",
+          "startMs": 78.458,
+          "endMs": 3479.437,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "A missing shipment becomes an investigation.",
+          "startMs": 4082.167,
+          "endMs": 7094.708,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Clues connect people, places, objects, and history.",
+          "startMs": 8079.729,
+          "endMs": 11845.667000000001,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Your view is personal. Private",
+          "startMs": 12079.957999999999,
+          "endMs": 14104.271,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "intelligence stays private.",
+          "startMs": 14104.271,
+          "endMs": 15879.438,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Find original evidence from two independent sources.",
+          "startMs": 16084.375000000002,
+          "endMs": 19869.104,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Share knowledge carefully:",
+          "startMs": 20079.270999999997,
+          "endMs": 21788.685,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "forwarded rumors are not proof.",
+          "startMs": 21788.685,
+          "endMs": 23871.063,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Bring recipes and tools to the right facility.",
+          "startMs": 24080.020999999997,
+          "endMs": 26864.208000000002,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Bring equipment while another",
+          "startMs": 28080,
+          "endMs": 29734.174,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "player brings the intelligence.",
+          "startMs": 29734.174,
+          "endMs": 31440.041999999998,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Crew roles and Family authority decide who can act.",
+          "startMs": 32080.750000000004,
+          "endMs": 35567.979,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "An Agent can read permitted",
+          "startMs": 36079.896,
+          "endMs": 38003.143000000004,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "context and propose a move.",
+          "startMs": 38003.143000000004,
+          "endMs": 39863.333,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Consequential proposals still need your approval.",
+          "startMs": 40080.021,
+          "endMs": 43664.875,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "You confirm. The server checks",
+          "startMs": 44078.5,
+          "endMs": 45944.321,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "authority and resources again.",
+          "startMs": 45944.321,
+          "endMs": 47781.437,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "The operation changes the world.",
+          "startMs": 48078.958,
+          "endMs": 50106.87,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Its receipt becomes history.",
+          "startMs": 50106.87,
+          "endMs": 51870.271,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "The Director responds to real",
+          "startMs": 52079.979,
+          "endMs": 53825.183000000005,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "conditions with authored situations.",
+          "startMs": 53825.183000000005,
+          "endMs": 55865.729,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Divert cargo; exposure can trigger a new case.",
+          "startMs": 56075.208000000006,
+          "endMs": 59814.521,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Opportunities connect the next",
+          "startMs": 60079.583,
+          "endMs": 61909.564000000006,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "move to what actually happened.",
+          "startMs": 61909.564000000006,
+          "endMs": 63767.271,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "Secrets and alliances give",
+          "startMs": 64073.791999999994,
+          "endMs": 65851.141,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "your decisions lasting weight.",
+          "startMs": 65851.141,
+          "endMs": 67812.35399999999,
+          "timestampMs": null,
+          "confidence": null
+        },
+        {
+          "text": "OMERTÀ. Know more. Move together.",
+          "startMs": 68081.43699999999,
+          "endMs": 71182.542,
+          "timestampMs": null,
+          "confidence": null
+        }
+      ],
+      "captionTiming": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment."
+    }
+  ]
+}

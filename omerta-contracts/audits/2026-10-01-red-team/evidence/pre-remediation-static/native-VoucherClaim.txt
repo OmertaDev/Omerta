@@ -1,0 +1,11 @@
+
+Detector: timestamp
+VoucherClaim.claim(VoucherClaim.Voucher,bytes) (src/VoucherClaim.sol#123-160) uses timestamp for comparisons
+	Dangerous comparisons:
+	- require(bool,string)(block.timestamp <= v.deadline,VC: expired) (src/VoucherClaim.sol#124)
+	- require(bool,string)(v.deadline <= block.timestamp + MAX_VOUCHER_TTL,VC: deadline too far) (src/VoucherClaim.sol#125)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+src\VoucherClaim.sol analyzed (23 contracts with 102 detectors), 1 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\VoucherClaim.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

@@ -20,7 +20,7 @@ import { sendDailyCashReminders } from './dailyreminder.js';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const day = 24 * 3600 * 1000;
 
-export function digestConfigured() { return !!process.env.EMAIL_API_KEY; }
+export function digestConfigured() { return !!process.env.EMAIL_API_KEY && !!process.env.LEGAL_POSTAL_ADDRESS?.trim(); }
 const cfg = {
   lapseDays: () => Number(process.env.DIGEST_LAPSE_DAYS ?? 3),
   cooldownDays: () => Number(process.env.DIGEST_COOLDOWN_DAYS ?? 7),
@@ -219,20 +219,22 @@ function renderEmail(name, d, accountId) {
       <hr style="border:0;border-top:1px solid rgba(233,227,214,.13);margin:24px 0">
       <p style="font-family:monospace;font-size:11px;color:#6f675d;line-height:1.7">
         You're getting this because you turned on the digest in OMERTÀ. Figures are in-game currency only.<br>
-        <a href="${unsub}" style="color:#a89e90">Unsubscribe</a> — one click, no questions.
+        <a href="${unsub}" style="color:#a89e90">Unsubscribe</a> — one click, no questions.<br>
+        ${escapeHtml(process.env.LEGAL_OPERATOR_NAME || 'OMERTÀ')} · ${escapeHtml(process.env.LEGAL_POSTAL_ADDRESS)}
       </p>
     </div></body></html>`;
-  const text = `While you were gone, ${name}.\n\n${takeLine ? takeLine + '\n\n' : ''}${heads.length ? heads.map((h) => '· ' + h).join('\n') : `${takeLine ? 'Otherwise quiet' : "It's quiet"} — but it won't stay that way.`}\n\nBack to the city: ${base}/\n\nFigures are in-game currency only.\n\nUnsubscribe: ${unsub}`;
+  const text = `While you were gone, ${name}.\n\n${takeLine ? takeLine + '\n\n' : ''}${heads.length ? heads.map((h) => '· ' + h).join('\n') : `${takeLine ? 'Otherwise quiet' : "It's quiet"} — but it won't stay that way.`}\n\nBack to the city: ${base}/\n\nFigures are in-game currency only.\n\nUnsubscribe: ${unsub}\n\n${process.env.LEGAL_OPERATOR_NAME || 'OMERTÀ'}\n${process.env.LEGAL_POSTAL_ADDRESS}`;
   return { subject, html, text };
 }
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 
 // the actual send — a provider HTTP POST (Resend shape: from/to/subject/html/text + Bearer key). A seam so
 // the test observes without a real provider. Returns true on a 2xx.
-let sender = async (to, subject, html, text) => {
+let sender = async (to, subject, html, text, idempotencyKey) => {
   const res = await fetch(cfg.apiUrl(), {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.EMAIL_API_KEY}` },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${process.env.EMAIL_API_KEY}`,
+      ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}) },
     // bounded (the verify.js AbortSignal pattern): sweepDispatch runs claim-then-send, so a HUNG provider
     // would hold the worker sweep for undici's ~300s default per recipient — 10s bounds each send.
     signal: AbortSignal.timeout(10_000),
@@ -241,6 +243,11 @@ let sender = async (to, subject, html, text) => {
   return res.ok;
 };
 export function __setSender(fn) { sender = fn; }   // test seam only
+
+export async function sendTransactionalEmail({ to, subject, html, text, idempotencyKey }) {
+  if (!process.env.EMAIL_API_KEY) return false;
+  return !!(await sender(to, subject, html, text, idempotencyKey));
+}
 
 // ── THE WORKER SWEEP — email each lapsed, opted-in player one digest, then stamp digest_at (the cooldown).
 // Lapsed = last activity between DIGEST_LAPSE_DAYS and DIGEST_MAX_LAPSE_DAYS ago (we stop nagging the long
@@ -283,7 +290,7 @@ export async function sweepDispatch(pool) {
     // CLAIM the cooldown BEFORE the send (claim-then-send, the push C1 discipline): stamp digest_at with
     // a guard so two overlapping workers can't both email; only the winner proceeds.
     const claim = await pool.query(
-      'UPDATE account_persistent SET digest_at=now() WHERE account_id=$1 AND (digest_at IS NULL OR digest_at < $2)',
+      'UPDATE account_persistent SET digest_at=now() WHERE account_id=$1 AND digest_optin AND email_verified AND (digest_at IS NULL OR digest_at < $2)',
       [c.account_id, cooldownBefore]);
     if (!claim.rowCount) continue;
     // build the digest over the window since they went quiet (capped at the max lapse)

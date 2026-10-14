@@ -3,7 +3,7 @@
 // seed → same face), DISTINCT (different seeds differ), well-formed SVG, has NO injection surface (the seed
 // is hash-only, never rendered), and the route serves it public + cacheable + moving no value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { avatarSvg } from '../src/avatar.js';
 
 const app = await buildServer();

@@ -6,7 +6,7 @@
 // mentor's legend +1), the anti-Sybil gates, and that the ONLY value that moves is the ledgered
 // `mentor:protege` faucet.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { MENTOR } from '../src/rules.js';
 

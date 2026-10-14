@@ -1,0 +1,346 @@
+[
+  {
+    "id": "R3-V1-G01-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. Compose this new in-game scene: Four full-size adults carry an absurdly large flat gray polygon key, square hole and three blunt teeth. It is harmlessly wedged at a concrete stairwell corner. Rookie nearest lens, Don behind. Location: Full-size concrete stairwell, one cobalt handrail. Camera: Low phone fisheye, almost static. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb970/g9QMcejf3Y5w2NSmOax5Q_e79fd35b89ef40d3b6a33b78a5542399.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G02-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Compose this new in-game scene: Rookie stands beside an already stripped compact-car shell; separate metal offcuts and a violet cable lie on concrete. Location: Outdoor salvage apron, full-size stripped car. Camera: Waist-height locked wide, quick crop available. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G03-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Compose this new in-game scene: Cobalt industrial punch press with the polygon key already supported at its output ledge. Location: Full-size outdoor Foundry workshop. Camera: Tight side angle, safe clearance visible. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G04-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Four weathered full-size public phone booths at a bus interchange. Four distinct adults each use their own phone; Don occupies the last booth. Location: Concrete bus interchange, cobalt booth panels. Camera: One gentle lateral tracking pass. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb970/g9QMcejf3Y5w2NSmOax5Q_e79fd35b89ef40d3b6a33b78a5542399.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G05-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Compose this new in-game scene: Full-size archive shutter underneath a city underpass. Rookie steps aside as an ordinary passerby notices the opening. Location: Industrial archive under concrete road. Camera: Wide low street-level view. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V1-G06-poly-first",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs.  Compose this new in-game scene: Full-size container alley, cargo trolley at a side aisle, existing small market stall and large blank shipping notice on a wall. Location: Actual-scale port container alley. Camera: Short handheld pan between already-present objects. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G01-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Rookie is nearly hidden behind a stack of black hard shipping cases tied with acid-lime straps on an industrial cargo scale. Auditor points at a blank pickup terminal. Location: Full-size freight depot scale. Camera: Close wide phone fisheye, low angle. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G02-poly-first",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs.  Compose this new in-game scene: Unbranded full-size cargo van is stopped beside a curb, rear open, several cases inside. One original rival adult has one accessible case in hand. Location: Concrete industrial curb. Camera: Fixed low curb camera near axle height. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G03-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. Compose this new in-game scene: Rookie at a wire-fenced dock access turnstile, Don representing the destination Family behind the fence. Blank payment reader at hand height. Location: Full-size rival Family dock gate. Camera: Phone recording through wire fence. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb970/g9QMcejf3Y5w2NSmOax5Q_e79fd35b89ef40d3b6a33b78a5542399.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G04-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Full-size tiled open-outcry exchange with original adult extras. Rookie uses her own terminal; Auditor points toward two separate blank display panels. Location: Cobalt-and-bone tiled exchange pit. Camera: High wide angle descending slightly. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G05-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. Compose this new in-game scene: Full-size rooftop court divided into long rectangular lanes. Opposing original Family colors, a single contested lane, other lanes remain occupied and still. Location: Concrete rooftop court over actual city. Camera: Very high oblique wide with simple forward drift. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/g9QMcejf3Y5w2NSmOax5Q_e79fd35b89ef40d3b6a33b78a5542399.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V2-G06-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Fully clothed Rookie and Auditor stand safely on a public swimming-pool deck. Rookie gestures at the whole pool; Auditor points only to her own phone. Location: Full-size empty adult pool facility, no swimmers or children. Camera: Static too-wide phone shot, deliberately awkward negative space. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G01-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. Compose this new in-game scene: Don face extremely close to an ultra-wide phone lens at the docks, blank phone held toward camera, eyebrows raised. Location: Public dock sidewalk. Camera: Arm-length ultra-wide phone recording. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/g9QMcejf3Y5w2NSmOax5Q_e79fd35b89ef40d3b6a33b78a5542399.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G02-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Auditor looks comically small beside a building-size blank shipping notice on a public port facade; an unimpressed adult pedestrian passes. Location: Full-size public dock facade. Camera: Very wide locked street photograph. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G03-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Compose this new in-game scene: Rookie in a fluorescent white-tiled copyshop with cobalt machines. Large blank copy and a plain metal cargo seal in foreground, other blank prints hanging behind. Location: Full-size late-night copyshop. Camera: Tight overhead-oblique crop, not a meeting table. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G04-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Compose this new in-game scene: Two full-size upper-floor street windows, one reflecting the sky, one completely covered by an opaque blind. Rookie stands below. Location: Plain city facade. Camera: Locked upward street view. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G05-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. Compose this new in-game scene: Rookie and Auditor at separate outdoor access terminals. Rookie holds a plain metal seal on her flat palm; Auditor holds her own phone. Location: Full-size outdoor access checkpoint. Camera: Lateral two-shot with two distinct devices. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  },
+  {
+    "id": "R3-V3-G06-poly-first",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Match only the supplied clearly polygonal game-avatar designs. Adult female adviser avatar with a long faceted rectangular head, flat neutral-tan vertex color, black angular swept-back hair shape crossed by one solid white stripe. Bone-gray sharp-shouldered suit, one thin silver earpiece line, black mitten fingertips. Dry unimpressed stance. Compose this new in-game scene: Big blank street lightbox beside an already-open industrial entrance. Ordinary adult pedestrians continue along the street. Location: City street after the completed operation. Camera: Short lateral street-level move. Lighting must remain coarse game-engine vertex lighting, never photographic. Everything is built from obvious flat-shaded polygons. Main action visible immediately, caption region below center. No text.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/TtFWtUWd5O1P2hpG73iQ7_0515992aa5d44a9cae5d1d598134a2df.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  }
+]

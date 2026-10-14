@@ -1508,8 +1508,10 @@ const SCENERY_WAIVED = {
       why: 'viem RPC only; configuration closes c to exactly five reviewed contract pins, getCode reads use the same block.number, and unchanged() rechecks that canonical block/chain before releasing status or calldata; no PostgreSQL handle or query' },
     { file: 'src/genesisauction.js', mark: 'bindings.map(async ([name, fn, expected]) => {',
       why: 'viem RPC only; a fixed immutable-binding table calls the local read closure, which invokes client.readContract at the single verified block.number; unchanged() rechecks canonical block/chain, with no shared SQL client' },
-    { file: 'src/genesisauction.js', mark: '.map(fn => read(hook, fn))',
-      why: 'viem RPC only; ten fixed hook governance/tax getters target the runtime-pinned hook at the same block.number through client.readContract; bounded rates and immutable authority are verified then canonical block/chain is rechecked, no database queries' },
+    { file: 'src/genesisauction.js', mark: "read(hook, 'BASE_SELL_BPS'), read(hook, 'MAX_SURGE_BPS')",
+      why: 'viem RPC only; fixed hook and restricted-manager revenue-policy getters plus fixed recipient indices use client.readContract at the verified block.number, followed by exact policy and canonical-block checks; no SQL connection' },
+    { file: 'src/gateway/events.js', mark: 'queries',
+      why: 'read() builds at most three independent pool.query promises for notification, coordination and public-result projections; production construction receives the server Pool, no checked-out transaction client, and fresh scope/owner authorization runs again after the batch' },
     { file: 'src/genesisauction.js', mark: 'requests.map(async ([name, fn, args = []]) => { state[fn] = await read(name, fn, args); })',
       why: 'viem RPC only; sixteen fixed auction/coordinator state getters use client.readContract at the same verified block.number and unchanged() rejects block/chain changes before release; no PostgreSQL transaction or connection allocation' },
     { file: 'src/bank.js', mark: "'collateralOf', 'debtOf', 'maxDebtOf'",
@@ -2154,7 +2156,13 @@ const SCENERY_WAIVED = {
   const rawKeyFields = lit => lit.matchAll(/\b(\w+):\s*(\w+)\.(id|kind)\b/g);
   const hasPayloadName = (lit, k, src) => new RegExp(`\\b(name|title|label|${k}Name)\\s*:`).test(lit)
     || new RegExp(`:\\s*${src}\\.(name|title|label)\\b`).test(lit)
+    // Published world results pair their machine kind with the same record's readable headline.
+    || (k === 'kind' && new RegExp(`\\bheadline\\s*:\\s*${src}\\.headline\\b`).test(lit))
     || new RegExp(`(?<![\\w$.])${k}Name\\s*[,}]`).test(lit);
+  assert(hasPayloadName('{ kind: row.kind, headline: row.headline }', 'kind', 'row'));
+  assert(!hasPayloadName('{ kind: row.kind, headline: other.headline }', 'kind', 'row'),
+    'an unrelated headline cannot label the catalog kind');
+  assert(!hasPayloadName('{ kind: row.kind }', 'kind', 'row'));
   // These two exact City sites are selectors/discriminators, not raw narrative catalog labels.
   // Bind the exception to the actual matched field; another field in this file/literal gets no waiver.
   const exactCityField = (base, source, lit, match) => {
@@ -2787,7 +2795,11 @@ const SCENERY_WAIVED = {
   // checkout policy cannot false-fail the review. Comments, whitespace and every other byte remain
   // sealed. This literal was independently recomputed with PowerShell SHA256.HashData over the same
   // byte-level CRLF normalization; it is never derived from the checked-out source at assertion time.
-  const REVIEWED_EXPLORE_FILE_SHA256 = 'd56b18801cd3109f84bae8caaa3ba7478c773eda4b223f4504e6f5ad8e871ffd';
+  // 2026-10-14 merge review: the upstream difference is revised player-facing hook copy and
+  // depot_id added to the existing listing SELECT. scopedSocialContext and all ANY bindings
+  // are unchanged; its independent AST seal above still holds. Recomputed separately with
+  // PowerShell SHA256.HashData and Node crypto after reviewing that complete diff.
+  const REVIEWED_EXPLORE_FILE_SHA256 = '797a2b76833968049f21c78dffa02b9b60b3eb975a8e3c8bc1ab5228985f8f88';
   const normalizeCrlfBytes = (value) => {
     const bytes = Buffer.isBuffer(value) ? value : Buffer.from(value);
     const normalized = Buffer.allocUnsafe(bytes.length);
@@ -3336,6 +3348,10 @@ scopedSocialContext = async function(db) {
     'src/rwanominations.js|values.join(\',\')': 'same batched-INSERT placeholder fan-out; values bound',
     'src/rwanominations.js|placeholders': 'same — a generated $n list; values bound',
     'src/rwanominations.js|conditions.join(\' OR \')': 'OR of generated $n comparisons; values bound',
+    'src/dynasty.js|ids.length + 1': 'the final LIMIT placeholder index follows the bounded account-ID list; only the array length becomes SQL text, and the IDs and limit are bound parameters',
+    "src/gateway/events.js|cursorColumn('created_at')": 'a literal notifications column selects either that fixed identifier or a fixed to_char timestamp expression using boot-established dbCaps.timestampText; event types, cursor values, identity and scan limit remain bound',
+    "src/gateway/events.js|cursorColumn('e.occurred_at')": 'a literal coordination-events column selects the same two fixed timestamp forms; account, event types, cursor and limit are bound parameters',
+    "src/gateway/events.js|cursorColumn('resolved_at')": 'a literal public-results column selects the same two fixed timestamp forms; cursor and scan limit are bound parameters',
     'src/coordination/knowledge.js|filter': 'visibleSql builds fixed owner/grant predicates with numbered placeholders from the authenticated membership context; account, crew and family recipient values are bound, and every alias call site is a literal',
     'src/coordination/knowledge.js|left': "visibleSql with literal alias 'a'; authenticated membership values are bound as numbered parameters",
     'src/coordination/knowledge.js|right': "visibleSql with literal alias 'b'; authenticated membership values are bound as numbered parameters",
@@ -3462,6 +3478,8 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/auth-fixture.js': 'Import-only synthetic-adult request fixture used by gameplay suites; the independent age suite exercises missing and ineligible birth dates against the real server.',
+    'test/server-fixture.js': 'Import-only wrapper around the real server for unrelated gameplay suites; it supplies synthetic-adult auth bodies and exports no standalone assertions.',
     'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
     'test/businesspartnerships-fixture.js': 'Import-only actual authenticated partnership gameplay setup executed by workforce memory/native suites; no standalone runner.',
     'test/companygovernance-fixture.js': 'Import-only actual authenticated governance gameplay setup executed by its memory/native suite; no standalone runner.',
@@ -3643,6 +3661,8 @@ scopedSocialContext = async function(db) {
     '        run: node test/wallet-connect-browser.js',
     '      - name: City Mode and RPG desktop/mobile journeys',
     '        run: npm run test:city:browser',
+    '      - name: Consigliere gateway recovery in the browser',
+    '        run: npm run test:gateway:browser',
     '      - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)',
     '        env:',
     '          JWT_SECRET: ci-jwt-secret-not-a-real-one',
@@ -3655,6 +3675,12 @@ scopedSocialContext = async function(db) {
   // This is deliberately the two run-scalar shapes THIS workflow uses, not a YAML/shell parser:
   // an unnamed `- run: command`, a named step's `run: command`, and their literal `|` bodies.
   // Unknown block scalar syntax fails closed so a new shape cannot quietly stop being inventoried.
+  const exactNativeNodeCommands = new Set([
+    'node test/db-rls.js --postgres',
+    'node test/payment-receipts-postgres.js',
+    'node test/deeds-supply-postgres.js',
+    'node test/readiness-migration-failure.js',
+  ]);
   const nativeCommandsFrom = (block) => {
     const lines = block.replaceAll('\r\n', '\n').split('\n');
     const blank = (line) => /^[ \t]*$/.test(line);
@@ -3713,6 +3739,7 @@ scopedSocialContext = async function(db) {
         if (!command || command.startsWith('#') || command === 'npm ci') continue;
         if (command === "bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'") continue;
         if (command === 'node -e "') { nodeBody = true; continue; }
+        if (exactNativeNodeCommands.has(command)) { commands.push(command); continue; }
         const npm = /^npm run ([a-zA-Z0-9:_-]+)$/.exec(command);
         assert(npm, `unsupported pgcheck command shape: \`${command}\``);
         commands.push(npm[1]);
@@ -3722,6 +3749,8 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
+    'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
+    'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
     'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
@@ -3729,6 +3758,12 @@ scopedSocialContext = async function(db) {
     'test:rwaregistrylifecycle:postgres', 'test:audit:mint-dev:postgres', 'test:identity-checkout:postgres',
     'test:audit:deed-reimport:postgres', 'backup:selftest', 'chaos', 'loadtest', 'concurrency',
   ];
+  const gatewayNativeSection = pgcheck.split(/\n {6}- /).find(section =>
+    /^\s*node test\/db-rls\.js --postgres\s*$/m.test(section));
+  assert(gatewayNativeSection, 'the native Gateway/RLS/receipt step must execute');
+  for (const key of ['COORDINATION_TEST_DATABASE_URL', 'GATEWAY_TEST_DATABASE_URL'])
+    assert(new RegExp(`^\\s*${key}: postgres://postgres:pgcheck@localhost:5432/omerta_check\\s*$`, 'm').test(gatewayNativeSection),
+      'new native proofs require their explicit isolated database endpoint: ' + key);
   const assertResourceNativeEnvironment = workflow => {
     for (const section of workflow.split(/\n {6}- /)) {
       if (/^\s*(?:run:\s*)?npm run (?:test:resources:postgres|pilot:resources:postgres)\s*$/m.test(section))
@@ -3759,7 +3794,8 @@ scopedSocialContext = async function(db) {
   };
   const withoutRealPgquery = replacePgquery(['# npm run pgquery']);
   const missingNativeCommands = nativeCommandsFrom(withoutRealPgquery);
-  assert.deepEqual(missingNativeCommands, expectedNativeCommands.slice(1));
+  const withoutPgquery = expectedNativeCommands.filter(command => command !== 'pgquery');
+  assert.deepEqual(missingNativeCommands, withoutPgquery);
   assert.throws(() => assert.deepEqual(missingNativeCommands, expectedNativeCommands),
     { code: 'ERR_ASSERTION' }, 'deleting a command must fail the inventory without unsupported syntax');
   const misleadingPgquery = withoutRealPgquery.replace('    steps:', [
@@ -3770,7 +3806,7 @@ scopedSocialContext = async function(db) {
     '          COMMAND_NOTE: npm run pgquery',
     '        run: npm ci',
   ].join('\n'));
-  assert.deepEqual(nativeCommandsFrom(misleadingPgquery), expectedNativeCommands.slice(1),
+  assert.deepEqual(nativeCommandsFrom(misleadingPgquery), withoutPgquery,
     'metadata and whole-line comments cannot stand in for a deleted command');
   // Former echo/quote/heredoc decoys now refuse individually: no generic shell support is needed.
   const unsupportedPgqueryForms = [
@@ -3809,7 +3845,7 @@ scopedSocialContext = async function(db) {
       `${label} must refuse before admitting a misleading native command`);
   }
   const opaquePgquery = replacePgquery(['node -e "', 'npm run pgquery', '"']);
-  assert.deepEqual(nativeCommandsFrom(opaquePgquery), expectedNativeCommands.slice(1),
+  assert.deepEqual(nativeCommandsFrom(opaquePgquery), withoutPgquery,
     'an exact-looking native command inside supported node data is never inventoried');
   const quotedHashPgquery = replacePgquery([
     'node -e "', "console.log('&& # quoted data');", '"', 'npm run pgquery',

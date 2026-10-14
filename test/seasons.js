@@ -10,7 +10,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.SEASON_MOD = 'dead_quiet'; // TEST-ONLY override (boot-guard rejects it in production)
 process.env.SEARCH_MS = '50'; process.env.SHOOT_CD_MS = '1'; // the §9 hit timers (test-only)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { SEASON_MODS, seasonModOf, seasonPhaseOf, seasonPhaseLeft, seasonFx, cityHourOf, M3, M4 } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { onWatch } from '../src/social.js';

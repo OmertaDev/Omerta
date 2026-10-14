@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'City presence browser checks require disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';

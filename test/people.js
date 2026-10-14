@@ -10,7 +10,7 @@
 //   · pure reads: the whole suite writes ZERO transactions rows through these routes
 import assert from 'node:assert';
 process.env.MOD_KEY = 'test-mod-key';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 
 const app = await buildServer();
 const pool = app.pool;

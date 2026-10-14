@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { createItem, withItemTransaction } from '../src/items.js';
 import { NEIGHBORHOOD_QUEST_GRAPH_ID } from '../src/content/neighborhood-initiation.js';
 import { PHASE1_WORLD_GRAPH } from '../src/routes/worldgraph.js';

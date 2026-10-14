@@ -14,7 +14,7 @@
 // because the ceiling is measured in requests), and `/v1/daily` reads through its querier argument —
 // handing it the request's own write-refusing client is stricter than the route it mirrors.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { STREETS_BOARDS, marketPrices } from '../src/streets.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

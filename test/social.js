@@ -20,7 +20,7 @@ process.env.SHOOT_CD_MS = '1000';
 process.env.MOD_KEY = 'test-mod-key'; // for the mod-kill used in the directed-pot death regression
 
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { payFamilyYield } from '../src/exchange.js';
 import { runBuyback } from '../src/worker.js';
 import { huntWanted, sweepContests } from '../src/social.js';

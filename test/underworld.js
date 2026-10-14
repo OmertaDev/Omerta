@@ -7,7 +7,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.SEARCH_MS = '10000';    // 10s search (TEST-ONLY knob)
 process.env.CONVOY_MS = '600000';   // 10-min road (TEST-ONLY knob)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { UNDERWORLD, BLACK_MARKET, CONVOY, CASINO, ACCESS_STAKE, GUNS, CONSUMABLES, NPC_HITMEN, leadTaskOf, taskLabelOf, dayOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { recordPlayerIntel } from '../src/playerintel.js';

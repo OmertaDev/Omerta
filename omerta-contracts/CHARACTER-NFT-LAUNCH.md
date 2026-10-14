@@ -23,10 +23,10 @@ the mint against the originating account. Existing made accounts are also eligib
 NFT route does not charge another identity fee. Existing gameplay methods of earning a
 mint credit remain in place.
 
-The NFT is a transferable portrait. The game account, login, and made entitlement stay
-with the original account. The first transfer freezes the portrait when it is confirmed and indexed;
-the snapshot contains the account state observed then, not reconstructed transfer-time history. The collection has no
-lifetime supply cap; the current testnet mint rate is capped at ten per day. This workstream
+The current NFT is an ERC-5192 soulbound portrait, permanently bound to its minting wallet.
+The game account, login, made entitlement and evolving portrait remain with the original account.
+Existing frozen metadata is retained as historical data; new identities cannot transfer.
+The collection has no lifetime supply cap; the recorded testnet mint rate is capped at ten per day. This workstream
 does not require OMR issuance, a liquidity pool, a bond sale, the Bank, or token withdrawals.
 
 ## Existing testnet deployment (historical fee policy)
@@ -90,7 +90,7 @@ commit, dirty/clean state, relevant source and artifact hashes, and passed check
 - Real fee-event decoding, single credit, and repeat-safe credit consumption.
 - Voucher issuance only to the linked wallet, one pending voucher, and actual EIP-712 claim.
 - Rejection of replay, correct account attribution, and a durable claimed voucher.
-- Metadata resolution, portrait freezing after transfer, and account entitlement separation.
+- Metadata resolution, ERC-5192 discovery, transfer rejection and account entitlement separation.
 
 This proof uses the real contracts and watcher decoders with pg-mem and zero local
 confirmations. It does not prove PostgreSQL concurrency, public RPC availability, a browser
@@ -180,6 +180,6 @@ Before opening that checkout to players, finish these specific release items:
    must also survive an accidental environment change. These findings remain open in the review.
 
 If minting needs to stop after activation, disable new voucher issuance and have the Safe
-pause DynastyNFT mints. Pausing does not stop NFT transfers. The fee contract has no pause:
+pause DynastyNFT mints. Soulbound identities remain nontransferable in either pause state. The fee contract has no pause:
 closing the web checkout alone does not prevent direct fee payments, so keep fee indexing
 running and retain a documented recovery path for any payment already sent.

@@ -18,7 +18,7 @@ if (native) {
   finally { await probe.end(); }
 } else delete process.env.DATABASE_URL;
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import * as G from '../src/game.js';
 import { runCompanyOperators } from '../src/companyoperatorrunner.js';
 import { runLedgerInvariants } from '../src/invariants.js';

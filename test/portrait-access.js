@@ -1,6 +1,6 @@
 // Paid portrait reveal is enforced at the image and metadata routes, including frozen NFTs.
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { portraitRow } from '../src/portrait.js';
 import { hasPaidPortraitFee } from '../src/portrait-access.js';
 import { recordFeePayment, reconcileFees } from '../src/fees.js';

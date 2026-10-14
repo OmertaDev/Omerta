@@ -47,7 +47,7 @@ async function request(name, owner, amount, expectedStatus = 200, expectedBalanc
 }
 try {
   await proof.record({ kind: 'database-created', ...await database.create() });
-  app = await (await import('../src/server.js')).buildServer();
+  app = await (await import('./server-fixture.js')).buildServer();
   for (const [id, balance] of Object.entries(fixtures)) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [id]);
     await pool.query('INSERT INTO account_persistent(account_id,omr) VALUES($1,$2)', [id, balance]);

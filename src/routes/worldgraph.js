@@ -148,7 +148,7 @@ function canonicalHeader(value) {
   return value;
 }
 
-function innerIdempotencyKey(accountId, externalKey) {
+export function innerIdempotencyKey(accountId, externalKey) {
   const digest = crypto.createHash('sha256')
     .update(JSON.stringify([
       'omerta-worldgraph-http-v1', accountId, canonicalHeader(externalKey),
@@ -239,7 +239,7 @@ function graphPackages(kind, registry = PHASE1_WORLD_GRAPH) {
   ));
 }
 
-function publicMysteryNodes(graphId, registry = PHASE1_WORLD_GRAPH) {
+export function publicMysteryNodes(graphId, registry = PHASE1_WORLD_GRAPH) {
   return [...registry.nodes.values()].filter((node) => (
     node.packageId === graphId
     && ['mystery_step', 'world_gate', 'choice'].includes(node.type)
@@ -247,7 +247,7 @@ function publicMysteryNodes(graphId, registry = PHASE1_WORLD_GRAPH) {
   ));
 }
 
-async function mysteryDiscovery(client, accountId, characterId, registry = PHASE1_WORLD_GRAPH) {
+export async function mysteryDiscovery(client, accountId, characterId, registry = PHASE1_WORLD_GRAPH) {
   const instances = (await client.query(
     `SELECT id,graph_id,graph_version,status,created_at,completed_at,canceled_at
        FROM mystery_instances
@@ -297,7 +297,7 @@ async function mysteryGateReady(client, accountId, characterId, root) {
     && !(root.excludes || []).some((id) => completed.has(id));
 }
 
-async function operationDiscovery(client, accountId, characterId) {
+export async function operationDiscovery(client, accountId, characterId) {
   const membership = (await client.query(
     'SELECT crew_id FROM crew_members WHERE account_id=$1', [accountId],
   )).rows[0];
@@ -416,7 +416,7 @@ async function historicalMysteryOwner(client, accountId, graphId, instanceId) {
   return { scope: row.owner_scope, id: row.owner_id };
 }
 
-async function requireCurrentCrewOperation(client, accountId, operationId) {
+export async function requireCurrentCrewOperation(client, accountId, operationId) {
   const accessible = (await client.query(
     `SELECT 1 FROM world_operations operation
        JOIN crew_members membership ON membership.crew_id=operation.crew_id

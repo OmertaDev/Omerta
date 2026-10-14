@@ -231,6 +231,9 @@ for (const vp of VIEWPORTS) {
   await check(page, 'landing', vp);
 
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 15000 });
   await check(page, 'create', vp);
 
@@ -602,6 +605,9 @@ for (const vp of VIEWPORTS) {
 
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
   await page.fill('#new-name', 'Restart Probe');
   await page.click('#btn-create');
@@ -709,6 +715,9 @@ for (const vp of VIEWPORTS) {
   const vp = { w: 375, h: 667 };
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
   await page.fill('#new-name', 'Cooldown Probe');
   await page.click('#btn-create');
@@ -805,6 +814,9 @@ for (const vp of VIEWPORTS) {
   });
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
   await page.fill('#new-name', 'Deep City Probe');
   await page.click('#btn-create');
@@ -873,6 +885,9 @@ for (const vp of VIEWPORTS) {
   const vp = { w: 375, h: 667 };
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
   await page.fill('#new-name', 'Lockup Probe');
   await page.click('#btn-create');
@@ -958,6 +973,9 @@ for (const vp of VIEWPORTS) {
   page.on('pageerror', (e) => errs.push(String(e).split('\n')[0]));
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await page.click('#btn-guest');
+  await page.waitForSelector('#age-date');
+  await page.fill('#age-date', '1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });
   await page.fill('#new-name', 'Xss Probe');
   await page.click('#btn-create');

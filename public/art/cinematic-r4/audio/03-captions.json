@@ -1,0 +1,249 @@
+{
+  "film": "03",
+  "timing": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment.",
+  "lines": [
+    {
+      "id": "C03-L01-P1",
+      "lineId": "C03-L01",
+      "text": "In this city, what you know changes everything.",
+      "fullText": "In this city, what you know changes everything.",
+      "start": 0.078458,
+      "end": 3.479437,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L02-P1",
+      "lineId": "C03-L02",
+      "text": "A missing shipment becomes an investigation.",
+      "fullText": "A missing shipment becomes an investigation.",
+      "start": 4.082167,
+      "end": 7.094708,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L03-P1",
+      "lineId": "C03-L03",
+      "text": "Clues connect people, places, objects, and history.",
+      "fullText": "Clues connect people, places, objects, and history.",
+      "start": 8.079729,
+      "end": 11.845667,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L04-P1",
+      "lineId": "C03-L04",
+      "text": "Your view is personal. Private",
+      "fullText": "Your view is personal. Private intelligence stays private.",
+      "start": 12.079958,
+      "end": 14.104271,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L04-P2",
+      "lineId": "C03-L04",
+      "text": "intelligence stays private.",
+      "fullText": "Your view is personal. Private intelligence stays private.",
+      "start": 14.104271,
+      "end": 15.879438,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L05-P1",
+      "lineId": "C03-L05",
+      "text": "Find original evidence from two independent sources.",
+      "fullText": "Find original evidence from two independent sources.",
+      "start": 16.084375,
+      "end": 19.869104,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L06-P1",
+      "lineId": "C03-L06",
+      "text": "Share knowledge carefully:",
+      "fullText": "Share knowledge carefully: forwarded rumors are not proof.",
+      "start": 20.079271,
+      "end": 21.788685,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L06-P2",
+      "lineId": "C03-L06",
+      "text": "forwarded rumors are not proof.",
+      "fullText": "Share knowledge carefully: forwarded rumors are not proof.",
+      "start": 21.788685,
+      "end": 23.871063,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L07-P1",
+      "lineId": "C03-L07",
+      "text": "Bring recipes and tools to the right facility.",
+      "fullText": "Bring recipes and tools to the right facility.",
+      "start": 24.080021,
+      "end": 26.864208,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L08-P1",
+      "lineId": "C03-L08",
+      "text": "Bring equipment while another",
+      "fullText": "Bring equipment while another player brings the intelligence.",
+      "start": 28.08,
+      "end": 29.734174,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L08-P2",
+      "lineId": "C03-L08",
+      "text": "player brings the intelligence.",
+      "fullText": "Bring equipment while another player brings the intelligence.",
+      "start": 29.734174,
+      "end": 31.440042,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L09-P1",
+      "lineId": "C03-L09",
+      "text": "Crew roles and Family authority decide who can act.",
+      "fullText": "Crew roles and Family authority decide who can act.",
+      "start": 32.08075,
+      "end": 35.567979,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L10-P1",
+      "lineId": "C03-L10",
+      "text": "An Agent can read permitted",
+      "fullText": "An Agent can read permitted context and propose a move.",
+      "start": 36.079896,
+      "end": 38.003143,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L10-P2",
+      "lineId": "C03-L10",
+      "text": "context and propose a move.",
+      "fullText": "An Agent can read permitted context and propose a move.",
+      "start": 38.003143,
+      "end": 39.863333,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L11-P1",
+      "lineId": "C03-L11",
+      "text": "Consequential proposals still need your approval.",
+      "fullText": "Consequential proposals still need your approval.",
+      "start": 40.080021,
+      "end": 43.664875,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L12-P1",
+      "lineId": "C03-L12",
+      "text": "You confirm. The server checks",
+      "fullText": "You confirm. The server checks authority and resources again.",
+      "start": 44.0785,
+      "end": 45.944321,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L12-P2",
+      "lineId": "C03-L12",
+      "text": "authority and resources again.",
+      "fullText": "You confirm. The server checks authority and resources again.",
+      "start": 45.944321,
+      "end": 47.781437,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L13-P1",
+      "lineId": "C03-L13",
+      "text": "The operation changes the world.",
+      "fullText": "The operation changes the world. Its receipt becomes history.",
+      "start": 48.078958,
+      "end": 50.10687,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L13-P2",
+      "lineId": "C03-L13",
+      "text": "Its receipt becomes history.",
+      "fullText": "The operation changes the world. Its receipt becomes history.",
+      "start": 50.10687,
+      "end": 51.870271,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L14-P1",
+      "lineId": "C03-L14",
+      "text": "The Director responds to real",
+      "fullText": "The Director responds to real conditions with authored situations.",
+      "start": 52.079979,
+      "end": 53.825183,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L14-P2",
+      "lineId": "C03-L14",
+      "text": "conditions with authored situations.",
+      "fullText": "The Director responds to real conditions with authored situations.",
+      "start": 53.825183,
+      "end": 55.865729,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L15-P1",
+      "lineId": "C03-L15",
+      "text": "Divert cargo; exposure can trigger a new case.",
+      "fullText": "Divert cargo; exposure can trigger a new case.",
+      "start": 56.075208,
+      "end": 59.814521,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C03-L16-P1",
+      "lineId": "C03-L16",
+      "text": "Opportunities connect the next",
+      "fullText": "Opportunities connect the next move to what actually happened.",
+      "start": 60.079583,
+      "end": 61.909564,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L16-P2",
+      "lineId": "C03-L16",
+      "text": "move to what actually happened.",
+      "fullText": "Opportunities connect the next move to what actually happened.",
+      "start": 61.909564,
+      "end": 63.767271,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L17-P1",
+      "lineId": "C03-L17",
+      "text": "Secrets and alliances give",
+      "fullText": "Secrets and alliances give your decisions lasting weight.",
+      "start": 64.073792,
+      "end": 65.851141,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L17-P2",
+      "lineId": "C03-L17",
+      "text": "your decisions lasting weight.",
+      "fullText": "Secrets and alliances give your decisions lasting weight.",
+      "start": 65.851141,
+      "end": 67.812354,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C03-L18-P1",
+      "lineId": "C03-L18",
+      "text": "OMERTÀ. Know more. Move together.",
+      "fullText": "OMERTÀ. Know more. Move together.",
+      "start": 68.081437,
+      "end": 71.182542,
+      "timing": "Measured audible sentence edges"
+    }
+  ]
+}

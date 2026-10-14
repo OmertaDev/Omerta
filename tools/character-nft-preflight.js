@@ -45,6 +45,25 @@ export async function verifyCharacterMintPolicy(read) {
   return { mintDevBps, mintVigBps: 0n, recipientGetter: 'feeRecipient', verified: true };
 }
 
+export async function verifyCharacterNftPolicy(read, tokenId = null) {
+  const interfaceId = '0xb45a3c0e';
+  let supported;
+  try {
+    supported = await read('supportsInterface', [interfaceId]);
+    if (supported === true && tokenId !== null) supported = await read('locked', [tokenId]);
+  } catch {
+    const error = new Error('DynastyNFT soulbound policy is unreadable; this deployment is unready.');
+    error.code = 'character_nft_policy_unavailable';
+    throw error;
+  }
+  if (supported !== true) {
+    const error = new Error('DynastyNFT must implement ERC-5192 and permanently lock existing identities.');
+    error.code = 'character_nft_policy_mismatch';
+    throw error;
+  }
+  return { soulbound: true, interfaceId, verified: true };
+}
+
 function emitReport(report) {
   if (args.includes('--write-report')) {
     fs.mkdirSync(reportDirectory, { recursive: true });
@@ -168,6 +187,7 @@ async function main() {
       const [signer, dailyMintCap, nextId, paused, royalty] = await Promise.all([
         read('signer'), read('dailyMintCap'), read('nextId'), read('paused'), read('royaltyInfo', [1n, 10_000n]),
       ]);
+      const identityPolicy = await verifyCharacterNftPolicy(read, nextId > 1n ? 1n : null);
       equalAddress(signer, governance.voucherSigner, 'Dynasty signer differs from manifest');
       assert.notEqual(signer.toLowerCase(), owner.toLowerCase(), 'Dynasty signer must be separate from owner');
       assert.equal(dailyMintCap, BigInt(profile.dynastyDailyMintCap), 'Dynasty cap differs from manifest');
@@ -181,7 +201,7 @@ async function main() {
       assert.equal(constructorValues[4], BigInt(profile.dynastyRoyaltyBps), 'Constructor royalty BPS mismatch');
       assert.equal(constructorValues[5], BigInt(profile.dynastyDailyMintCap), 'Constructor dynasty cap mismatch');
       report.state = { signer, dailyMintCap, nextId, mintedCount: nextId - 1n, paused,
-        royaltyRecipient: royalty[0], royaltyBps: royalty[1] };
+        royaltyRecipient: royalty[0], royaltyBps: royalty[1], identityPolicy };
       report.metadata = { constructorBaseUri: constructorValues[2], currentBaseUri: null,
         currentBaseUriVerification: 'Unavailable through tokenURI: no token exists, and the base URI has no public getter.',
         servedMetadataChecked: false };

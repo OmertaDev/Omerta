@@ -1,0 +1,13 @@
+PostgreSQL 18.4; Node v24.19.0; isolated schema gateway_test_679f7a66b10265fd; UTC 2026-09-21T05:15:09.712Z
+PASS full production schema and additive reapplication
+PASS exactly 60 of 65 concurrent calls across connections and security instances
+PASS shared rate window rollover
+PASS connection revocation, account logout, ban and exact expiry revalidation
+PASS concurrent subscription cap and cross-instance idempotent registration
+PASS microsecond timestamp order, equal-timestamp ties, and persisted cursor replay across instances
+PASS concurrent preparation replay and changed-argument refusal
+PASS expired executing preparation recovers a committed durable receipt across instances without redispatch
+PASS expired executing preparation without a committed receipt cannot issue a new command
+PASS revocation still blocks recovery of an executing preparation with a valid receipt
+Source SHA256: {"schema.sql":"c18dcff81eddb3a1dd8f2c721f81a15bf57e1bf7fbc0746a93080788654a97ff","src/db.js":"7afdf7ea54a006c152f16bd5711bfa13f129ce13fec72ec0ac9f0adc8f02a09c","src/gateway/security.js":"586225c8ecb0789c0257ee3a3e98ae0ca4411532857d1a6a76625361410efe8c","src/gateway/service.js":"53cf398350bebf069404f32d08c14a93fc38b92706cee2272f0aea225245840e","src/gateway/events.js":"bac1529b2beaf40bb085d8759424bfd2cf4cf4bc7212cfa3873aa3ccac66a8fb","src/gateway/actions.js":"95c90c7aba09a0ee31be1db5d90566d9fcec308ff27366bf86083b30e3385cfb","src/gateway/capabilities.js":"c03823f43941d4f5875f8b53f6f620d9a947fdeaaa7a41cc688991674e28b0ea","test/gateway-postgres.js":"8124b685ab4b0b502c8b4a7e8fa71d503d2c7b2fb0c27c45bb85c56878d48b20"}
+gateway PostgreSQL regression passed

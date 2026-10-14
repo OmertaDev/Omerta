@@ -6,7 +6,7 @@
 // pg-mem, zero infra.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { MASTERY, RACES, masteryLvlOf, masteryXpFor } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

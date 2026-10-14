@@ -4,7 +4,7 @@
 // carries the install tags. Runs on pg-mem — zero infra.
 import assert from 'node:assert';
 import vm from 'node:vm';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 const get = async (url) => { const r = await app.inject({ method: 'GET', url }); return r; };

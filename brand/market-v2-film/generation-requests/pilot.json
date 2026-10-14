@@ -1,0 +1,25 @@
+[
+  {
+    "id": "M04-L01",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "The market has defenses. Every one can run out.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  }
+]

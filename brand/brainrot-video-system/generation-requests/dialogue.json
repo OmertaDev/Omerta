@@ -1,0 +1,1497 @@
+[
+  {
+    "id": "R3-V1-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "This key needs FOUR PEOPLE?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "You wanted a mafia game.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "I stole a car.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "You salvaged it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Made a key.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "After finding the recipe.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Door opens?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Four people.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "One brings the key.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Others bring what’s missing.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Boss signs.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "It’s a door.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Now the archive is open.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Other people can see that?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Meanwhile, a shipment gets diverted.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "A market opens.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Someone exposes it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Now it’s an investigation?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L19",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Anyway. Oh mare tah.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L20",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Bring your committee.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V1-L21",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Got your key?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "I bought some cargo.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Pickup only.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Fine. Send a convoy.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Ambushed.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The rest got through.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Rival dock. Pay the toll.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Our Family’s treasury.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "So that’s the economy?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "That’s cash. This is O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Fine. Sell some O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Hook funds protocol liquidity.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Why’s this a war map?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Family siege.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Our Family won.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "They get the pool?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The fee rights.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Only fees actually funded.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "So the pool stays?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L19",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The principal stays protocol-owned.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L20",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Oh mare tah.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L21",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Bring your Family.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V2-L22",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Where’s my cargo?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Find the rat.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "You mean,  the noticeboard?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Our route got exposed.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Check what you can see.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Notice at the docks.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Matching copy at the Foundry.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Two screenshots. Case closed.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Two independent sources.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Disclosure. Not guilt.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "He has a private report.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "His. You can’t read it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Fine. Form the operation.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "I’ll bring the seal.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "I’ll bring the evidence.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Your boss still approves.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Document the disclosure.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "So nobody’s the rat?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-q1n3hNep",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "You haven’t proved that.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L19",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "And the city keeps this?",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L20",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The consequence. Yes.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L21",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Oh mare tah.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-V3-L22",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Bring receipts.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1.15,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  }
+]

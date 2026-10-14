@@ -1,0 +1,1912 @@
+{
+  "version": 1,
+  "voiceChoice": "A",
+  "duration": 174.5,
+  "ratePolicy": "Native speed; preserve full decoded chapters and internal pauses.",
+  "chapters": [
+    {
+      "id": "SOUL-CH01",
+      "sourceId": "SOUL-CH01-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH01-v2.mp3",
+      "start": 0.1,
+      "end": 36.749796,
+      "duration": 36.649796,
+      "words": [
+        {
+          "text": "Everybody",
+          "start": 0.26,
+          "end": 0.76
+        },
+        {
+          "text": "wants",
+          "start": 0.86,
+          "end": 1.08
+        },
+        {
+          "text": "control.",
+          "start": 1.16,
+          "end": 1.8
+        },
+        {
+          "text": "But",
+          "start": 2.58,
+          "end": 2.74
+        },
+        {
+          "text": "control",
+          "start": 2.78,
+          "end": 3.38
+        },
+        {
+          "text": "costs.",
+          "start": 3.74,
+          "end": 4.32
+        },
+        {
+          "text": "Core",
+          "start": 5.22,
+          "end": 5.5
+        },
+        {
+          "text": "provides",
+          "start": 5.62,
+          "end": 6.16
+        },
+        {
+          "text": "two-sided",
+          "start": 6.2,
+          "end": 6.72
+        },
+        {
+          "text": "liquidity.",
+          "start": 6.8,
+          "end": 7.4
+        },
+        {
+          "text": "Other",
+          "start": 8.18,
+          "end": 8.34
+        },
+        {
+          "text": "reserves",
+          "start": 8.38,
+          "end": 8.84
+        },
+        {
+          "text": "have",
+          "start": 8.88,
+          "end": 9.08
+        },
+        {
+          "text": "different",
+          "start": 9.12,
+          "end": 9.38
+        },
+        {
+          "text": "jobs.",
+          "start": 9.5,
+          "end": 10
+        },
+        {
+          "text": "Sell",
+          "start": 10.78,
+          "end": 11
+        },
+        {
+          "text": "through",
+          "start": 11.02,
+          "end": 11.28
+        },
+        {
+          "text": "active",
+          "start": 11.4,
+          "end": 11.68
+        },
+        {
+          "text": "downside",
+          "start": 11.78,
+          "end": 12.34
+        },
+        {
+          "text": "ranges:",
+          "start": 12.44,
+          "end": 12.96
+        },
+        {
+          "text": "Ether",
+          "start": 13.54,
+          "end": 13.8
+        },
+        {
+          "text": "becomes",
+          "start": 13.9,
+          "end": 14.36
+        },
+        {
+          "text": "O",
+          "start": 14.58,
+          "end": 14.7
+        },
+        {
+          "text": "M",
+          "start": 14.92,
+          "end": 15.04
+        },
+        {
+          "text": "R.",
+          "start": 15.36,
+          "end": 15.52
+        },
+        {
+          "text": "Buy",
+          "start": 16.02,
+          "end": 16.3
+        },
+        {
+          "text": "through",
+          "start": 16.32,
+          "end": 16.58
+        },
+        {
+          "text": "upside",
+          "start": 16.64,
+          "end": 17.08
+        },
+        {
+          "text": "ranges:",
+          "start": 17.18,
+          "end": 17.7
+        },
+        {
+          "text": "O",
+          "start": 18.18,
+          "end": 18.36
+        },
+        {
+          "text": "M",
+          "start": 18.62,
+          "end": 18.74
+        },
+        {
+          "text": "R",
+          "start": 19.02,
+          "end": 19.18
+        },
+        {
+          "text": "becomes",
+          "start": 19.28,
+          "end": 19.74
+        },
+        {
+          "text": "Ether.",
+          "start": 19.88,
+          "end": 20.2
+        },
+        {
+          "text": "Crossing",
+          "start": 20.74,
+          "end": 21.22
+        },
+        {
+          "text": "isn't",
+          "start": 21.28,
+          "end": 21.6
+        },
+        {
+          "text": "final.",
+          "start": 21.66,
+          "end": 22.02
+        },
+        {
+          "text": "Until",
+          "start": 22.48,
+          "end": 22.8
+        },
+        {
+          "text": "withdrawal,",
+          "start": 22.9,
+          "end": 23.5
+        },
+        {
+          "text": "inventory",
+          "start": 24.04,
+          "end": 24.7
+        },
+        {
+          "text": "can",
+          "start": 24.82,
+          "end": 25
+        },
+        {
+          "text": "still",
+          "start": 25.12,
+          "end": 25.32
+        },
+        {
+          "text": "convert",
+          "start": 25.44,
+          "end": 25.78
+        },
+        {
+          "text": "back.",
+          "start": 25.88,
+          "end": 26.2
+        },
+        {
+          "text": "Finalization",
+          "start": 26.98,
+          "end": 27.78
+        },
+        {
+          "text": "removes",
+          "start": 27.86,
+          "end": 28.26
+        },
+        {
+          "text": "eligible",
+          "start": 28.34,
+          "end": 28.76
+        },
+        {
+          "text": "positions,",
+          "start": 28.86,
+          "end": 29.44
+        },
+        {
+          "text": "separating",
+          "start": 29.88,
+          "end": 30.38
+        },
+        {
+          "text": "principal",
+          "start": 30.48,
+          "end": 30.88
+        },
+        {
+          "text": "from",
+          "start": 30.98,
+          "end": 31.1
+        },
+        {
+          "text": "fees.",
+          "start": 31.24,
+          "end": 31.66
+        },
+        {
+          "text": "Deployment",
+          "start": 32.159,
+          "end": 32.659
+        },
+        {
+          "text": "spends",
+          "start": 32.8,
+          "end": 33.08
+        },
+        {
+          "text": "capacity.",
+          "start": 33.12,
+          "end": 33.78
+        },
+        {
+          "text": "Deposits",
+          "start": 34.16,
+          "end": 34.74
+        },
+        {
+          "text": "and",
+          "start": 34.78,
+          "end": 34.88
+        },
+        {
+          "text": "withdrawals",
+          "start": 34.92,
+          "end": 35.5
+        },
+        {
+          "text": "don't",
+          "start": 35.6,
+          "end": 35.78
+        },
+        {
+          "text": "reset",
+          "start": 35.82,
+          "end": 36.2
+        },
+        {
+          "text": "it.",
+          "start": 36.24,
+          "end": 36.4
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B01",
+          "narration": "Everybody wants control. But control costs.",
+          "speechStart": 0.36,
+          "speechEnd": 4.42
+        },
+        {
+          "id": "M04-B02",
+          "narration": "Core provides two-sided liquidity. Other reserves have different jobs.",
+          "speechStart": 5.319999999999999,
+          "speechEnd": 10.1
+        },
+        {
+          "id": "M04-B03",
+          "narration": "Sell through active downside ranges: Ether becomes OMR.",
+          "speechStart": 10.879999999999999,
+          "speechEnd": 15.62
+        },
+        {
+          "id": "M04-B04",
+          "narration": "Buy through upside ranges: OMR becomes Ether.",
+          "speechStart": 16.12,
+          "speechEnd": 20.3
+        },
+        {
+          "id": "M04-B05",
+          "narration": "Crossing isn't final. Until withdrawal, inventory can still convert back.",
+          "speechStart": 20.84,
+          "speechEnd": 26.3
+        },
+        {
+          "id": "M04-B06",
+          "narration": "Finalization removes eligible positions, separating principal from fees.",
+          "speechStart": 27.080000000000002,
+          "speechEnd": 31.76
+        },
+        {
+          "id": "M04-B07",
+          "narration": "Deployment spends capacity. Deposits and withdrawals don't reset it.",
+          "speechStart": 32.259,
+          "speechEnd": 36.5
+        }
+      ],
+      "alignmentLoss": 0.637373775517175
+    },
+    {
+      "id": "SOUL-CH02",
+      "sourceId": "SOUL-CH02-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH02-v2.mp3",
+      "start": 37,
+      "end": 64.794286,
+      "duration": 27.794286,
+      "words": [
+        {
+          "text": "Completed",
+          "start": 0.18,
+          "end": 0.62
+        },
+        {
+          "text": "pool",
+          "start": 0.74,
+          "end": 0.92
+        },
+        {
+          "text": "history",
+          "start": 0.98,
+          "end": 1.32
+        },
+        {
+          "text": "informs",
+          "start": 1.38,
+          "end": 1.82
+        },
+        {
+          "text": "each",
+          "start": 1.88,
+          "end": 2.04
+        },
+        {
+          "text": "move,",
+          "start": 2.16,
+          "end": 2.44
+        },
+        {
+          "text": "checked",
+          "start": 2.92,
+          "end": 3.16
+        },
+        {
+          "text": "against",
+          "start": 3.2,
+          "end": 3.5
+        },
+        {
+          "text": "current",
+          "start": 3.62,
+          "end": 3.86
+        },
+        {
+          "text": "conditions.",
+          "start": 3.94,
+          "end": 4.54
+        },
+        {
+          "text": "Stress",
+          "start": 5.08,
+          "end": 5.34
+        },
+        {
+          "text": "gates,",
+          "start": 5.44,
+          "end": 5.74
+        },
+        {
+          "text": "cooldowns",
+          "start": 5.98,
+          "end": 6.6
+        },
+        {
+          "text": "and",
+          "start": 6.64,
+          "end": 6.76
+        },
+        {
+          "text": "capacity",
+          "start": 6.84,
+          "end": 7.38
+        },
+        {
+          "text": "limit",
+          "start": 7.48,
+          "end": 7.72
+        },
+        {
+          "text": "deployment.",
+          "start": 7.76,
+          "end": 8.3
+        },
+        {
+          "text": "Surge",
+          "start": 8.82,
+          "end": 9.12
+        },
+        {
+          "text": "fees,",
+          "start": 9.22,
+          "end": 9.58
+        },
+        {
+          "text": "bond",
+          "start": 10.08,
+          "end": 10.3
+        },
+        {
+          "text": "proceeds",
+          "start": 10.38,
+          "end": 10.9
+        },
+        {
+          "text": "and",
+          "start": 10.98,
+          "end": 11.12
+        },
+        {
+          "text": "arbitrage",
+          "start": 11.24,
+          "end": 11.84
+        },
+        {
+          "text": "shares",
+          "start": 11.88,
+          "end": 12.28
+        },
+        {
+          "text": "fund",
+          "start": 12.72,
+          "end": 12.94
+        },
+        {
+          "text": "the",
+          "start": 12.98,
+          "end": 13.06
+        },
+        {
+          "text": "War",
+          "start": 13.1,
+          "end": 13.26
+        },
+        {
+          "text": "Chest.",
+          "start": 13.36,
+          "end": 13.74
+        },
+        {
+          "text": "Refill",
+          "start": 14.3,
+          "end": 14.68
+        },
+        {
+          "text": "requires",
+          "start": 14.76,
+          "end": 15.28
+        },
+        {
+          "text": "a",
+          "start": 15.34,
+          "end": 15.42
+        },
+        {
+          "text": "full",
+          "start": 15.48,
+          "end": 15.66
+        },
+        {
+          "text": "window",
+          "start": 15.74,
+          "end": 16.12
+        },
+        {
+          "text": "of",
+          "start": 16.18,
+          "end": 16.26
+        },
+        {
+          "text": "spaced,",
+          "start": 16.42,
+          "end": 16.84
+        },
+        {
+          "text": "healthy",
+          "start": 16.94,
+          "end": 17.28
+        },
+        {
+          "text": "observations.",
+          "start": 17.4,
+          "end": 18.22
+        },
+        {
+          "text": "Only",
+          "start": 18.84,
+          "end": 19.14
+        },
+        {
+          "text": "actual",
+          "start": 19.26,
+          "end": 19.62
+        },
+        {
+          "text": "idle",
+          "start": 19.78,
+          "end": 20.04
+        },
+        {
+          "text": "assets",
+          "start": 20.16,
+          "end": 20.58
+        },
+        {
+          "text": "move.",
+          "start": 20.7,
+          "end": 21.02
+        },
+        {
+          "text": "Lifetime",
+          "start": 21.64,
+          "end": 22.18
+        },
+        {
+          "text": "limits",
+          "start": 22.28,
+          "end": 22.58
+        },
+        {
+          "text": "stay",
+          "start": 22.66,
+          "end": 22.84
+        },
+        {
+          "text": "spent.",
+          "start": 23.02,
+          "end": 23.36
+        },
+        {
+          "text": "A",
+          "start": 23.96,
+          "end": 24.04
+        },
+        {
+          "text": "bounce",
+          "start": 24.1,
+          "end": 24.44
+        },
+        {
+          "text": "creates",
+          "start": 24.56,
+          "end": 24.96
+        },
+        {
+          "text": "no",
+          "start": 25.02,
+          "end": 25.12
+        },
+        {
+          "text": "Ether.",
+          "start": 25.24,
+          "end": 25.56
+        },
+        {
+          "text": "No",
+          "start": 26.18,
+          "end": 26.3
+        },
+        {
+          "text": "guaranteed",
+          "start": 26.42,
+          "end": 26.96
+        },
+        {
+          "text": "floor.",
+          "start": 27.1,
+          "end": 27.48
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B08",
+          "narration": "Completed pool history informs each move, checked against current conditions.",
+          "speechStart": 37.18,
+          "speechEnd": 41.54
+        },
+        {
+          "id": "M04-B09",
+          "narration": "Stress gates, cooldowns and capacity limit deployment.",
+          "speechStart": 42.08,
+          "speechEnd": 45.3
+        },
+        {
+          "id": "M04-B10",
+          "narration": "Surge fees, bond proceeds and arbitrage shares fund the War Chest.",
+          "speechStart": 45.82,
+          "speechEnd": 50.74
+        },
+        {
+          "id": "M04-B11",
+          "narration": "Refill requires a full window of spaced, healthy observations.",
+          "speechStart": 51.3,
+          "speechEnd": 55.22
+        },
+        {
+          "id": "M04-B12",
+          "narration": "Only actual idle assets move. Lifetime limits stay spent.",
+          "speechStart": 55.84,
+          "speechEnd": 60.36
+        },
+        {
+          "id": "M04-B13",
+          "narration": "A bounce creates no Ether. No guaranteed floor.",
+          "speechStart": 60.96,
+          "speechEnd": 64.48
+        }
+      ],
+      "alignmentLoss": 0.6277407355930494
+    },
+    {
+      "id": "SOUL-CH03",
+      "sourceId": "SOUL-CH03-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH03-v2.mp3",
+      "start": 65.03333333333333,
+      "end": 89.24884333333333,
+      "duration": 24.21551,
+      "words": [
+        {
+          "text": "Canonical",
+          "start": 0.18,
+          "end": 0.62
+        },
+        {
+          "text": "sells",
+          "start": 0.74,
+          "end": 1.02
+        },
+        {
+          "text": "pay",
+          "start": 1.12,
+          "end": 1.24
+        },
+        {
+          "text": "nine",
+          "start": 1.34,
+          "end": 1.54
+        },
+        {
+          "text": "percent,",
+          "start": 1.62,
+          "end": 2.06
+        },
+        {
+          "text": "split",
+          "start": 2.6,
+          "end": 2.84
+        },
+        {
+          "text": "four",
+          "start": 2.98,
+          "end": 3.16
+        },
+        {
+          "text": "ways.",
+          "start": 3.26,
+          "end": 3.66
+        },
+        {
+          "text": "Three",
+          "start": 4.2,
+          "end": 4.36
+        },
+        {
+          "text": "percent",
+          "start": 4.46,
+          "end": 4.82
+        },
+        {
+          "text": "funds",
+          "start": 4.92,
+          "end": 5.18
+        },
+        {
+          "text": "Core.",
+          "start": 5.3,
+          "end": 5.66
+        },
+        {
+          "text": "Up",
+          "start": 6.18,
+          "end": 6.28
+        },
+        {
+          "text": "to",
+          "start": 6.34,
+          "end": 6.44
+        },
+        {
+          "text": "one",
+          "start": 6.54,
+          "end": 6.64
+        },
+        {
+          "text": "extra",
+          "start": 6.7,
+          "end": 6.94
+        },
+        {
+          "text": "percent",
+          "start": 7.02,
+          "end": 7.38
+        },
+        {
+          "text": "funds",
+          "start": 7.5,
+          "end": 7.74
+        },
+        {
+          "text": "stability.",
+          "start": 7.8,
+          "end": 8.32
+        },
+        {
+          "text": "Fees",
+          "start": 8.86,
+          "end": 9.12
+        },
+        {
+          "text": "settle",
+          "start": 9.18,
+          "end": 9.46
+        },
+        {
+          "text": "in",
+          "start": 9.5,
+          "end": 9.66
+        },
+        {
+          "text": "Ether",
+          "start": 9.74,
+          "end": 10.1
+        },
+        {
+          "text": "or",
+          "start": 10.26,
+          "end": 10.38
+        },
+        {
+          "text": "O",
+          "start": 10.54,
+          "end": 10.64
+        },
+        {
+          "text": "M",
+          "start": 10.8,
+          "end": 10.94
+        },
+        {
+          "text": "R,",
+          "start": 11.08,
+          "end": 11.24
+        },
+        {
+          "text": "including",
+          "start": 11.66,
+          "end": 12.04
+        },
+        {
+          "text": "partial",
+          "start": 12.16,
+          "end": 12.48
+        },
+        {
+          "text": "fills.",
+          "start": 12.6,
+          "end": 13
+        },
+        {
+          "text": "Opening",
+          "start": 13.64,
+          "end": 13.96
+        },
+        {
+          "text": "buys",
+          "start": 14.06,
+          "end": 14.42
+        },
+        {
+          "text": "have",
+          "start": 14.46,
+          "end": 14.64
+        },
+        {
+          "text": "temporary",
+          "start": 14.7,
+          "end": 15.22
+        },
+        {
+          "text": "fees",
+          "start": 15.38,
+          "end": 15.7
+        },
+        {
+          "text": "and",
+          "start": 15.74,
+          "end": 15.84
+        },
+        {
+          "text": "limits.",
+          "start": 15.92,
+          "end": 16.36
+        },
+        {
+          "text": "Afterwards,",
+          "start": 17.16,
+          "end": 17.74
+        },
+        {
+          "text": "no",
+          "start": 18.18,
+          "end": 18.38
+        },
+        {
+          "text": "Hook",
+          "start": 18.42,
+          "end": 18.6
+        },
+        {
+          "text": "buy",
+          "start": 18.68,
+          "end": 18.9
+        },
+        {
+          "text": "tax.",
+          "start": 19.02,
+          "end": 19.48
+        },
+        {
+          "text": "Other",
+          "start": 20.1,
+          "end": 20.24
+        },
+        {
+          "text": "venues",
+          "start": 20.32,
+          "end": 20.68
+        },
+        {
+          "text": "have",
+          "start": 20.74,
+          "end": 20.88
+        },
+        {
+          "text": "their",
+          "start": 20.92,
+          "end": 21.02
+        },
+        {
+          "text": "own",
+          "start": 21.08,
+          "end": 21.24
+        },
+        {
+          "text": "rules.",
+          "start": 21.32,
+          "end": 21.72
+        },
+        {
+          "text": "Pool",
+          "start": 22.28,
+          "end": 22.46
+        },
+        {
+          "text": "liquidity",
+          "start": 22.5,
+          "end": 22.96
+        },
+        {
+          "text": "fees",
+          "start": 23.08,
+          "end": 23.3
+        },
+        {
+          "text": "are",
+          "start": 23.32,
+          "end": 23.44
+        },
+        {
+          "text": "separate.",
+          "start": 23.52,
+          "end": 23.92
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B14",
+          "narration": "Canonical sells pay nine percent, split four ways.",
+          "speechStart": 65.21333333333334,
+          "speechEnd": 68.69333333333333
+        },
+        {
+          "id": "M04-B15",
+          "narration": "Three percent funds Core. Up to one extra percent funds stability.",
+          "speechStart": 69.23333333333333,
+          "speechEnd": 73.35333333333332
+        },
+        {
+          "id": "M04-B16",
+          "narration": "Fees settle in Ether or OMR, including partial fills.",
+          "speechStart": 73.89333333333333,
+          "speechEnd": 78.03333333333333
+        },
+        {
+          "id": "M04-B17",
+          "narration": "Opening buys have temporary fees and limits. Afterwards, no Hook buy tax.",
+          "speechStart": 78.67333333333333,
+          "speechEnd": 84.51333333333334
+        },
+        {
+          "id": "M04-B18",
+          "narration": "Other venues have their own rules. Pool liquidity fees are separate.",
+          "speechStart": 85.13333333333333,
+          "speechEnd": 88.95333333333333
+        }
+      ],
+      "alignmentLoss": 0.6337273332137096
+    },
+    {
+      "id": "SOUL-CH04",
+      "sourceId": "SOUL-CH04-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH04-v2.mp3",
+      "start": 89.5,
+      "end": 124.843673,
+      "duration": 35.343673,
+      "words": [
+        {
+          "text": "Pay",
+          "start": 0.18,
+          "end": 0.36
+        },
+        {
+          "text": "Ether",
+          "start": 0.44,
+          "end": 0.72
+        },
+        {
+          "text": "for",
+          "start": 0.8,
+          "end": 0.88
+        },
+        {
+          "text": "bonds",
+          "start": 0.98,
+          "end": 1.32
+        },
+        {
+          "text": "backed",
+          "start": 1.42,
+          "end": 1.68
+        },
+        {
+          "text": "by",
+          "start": 1.72,
+          "end": 1.82
+        },
+        {
+          "text": "existing",
+          "start": 1.86,
+          "end": 2.38
+        },
+        {
+          "text": "O",
+          "start": 2.54,
+          "end": 2.66
+        },
+        {
+          "text": "M",
+          "start": 2.86,
+          "end": 2.96
+        },
+        {
+          "text": "R,",
+          "start": 3.22,
+          "end": 3.34
+        },
+        {
+          "text": "released",
+          "start": 3.82,
+          "end": 4.22
+        },
+        {
+          "text": "through",
+          "start": 4.26,
+          "end": 4.48
+        },
+        {
+          "text": "linear",
+          "start": 4.62,
+          "end": 4.92
+        },
+        {
+          "text": "vesting.",
+          "start": 5.04,
+          "end": 5.46
+        },
+        {
+          "text": "No",
+          "start": 5.92,
+          "end": 6.04
+        },
+        {
+          "text": "minting.",
+          "start": 6.14,
+          "end": 6.5
+        },
+        {
+          "text": "No",
+          "start": 6.84,
+          "end": 6.94
+        },
+        {
+          "text": "sellback.",
+          "start": 7.1,
+          "end": 7.58
+        },
+        {
+          "text": "Purchasing",
+          "start": 8.02,
+          "end": 8.48
+        },
+        {
+          "text": "pauses",
+          "start": 8.62,
+          "end": 9.04
+        },
+        {
+          "text": "don't",
+          "start": 9.16,
+          "end": 9.34
+        },
+        {
+          "text": "erase",
+          "start": 9.38,
+          "end": 9.74
+        },
+        {
+          "text": "vested",
+          "start": 9.84,
+          "end": 10.16
+        },
+        {
+          "text": "claims.",
+          "start": 10.26,
+          "end": 10.66
+        },
+        {
+          "text": "Solvers",
+          "start": 11.32,
+          "end": 11.74
+        },
+        {
+          "text": "commit",
+          "start": 11.84,
+          "end": 12.04
+        },
+        {
+          "text": "a",
+          "start": 12.08,
+          "end": 12.16
+        },
+        {
+          "text": "plan,",
+          "start": 12.22,
+          "end": 12.64
+        },
+        {
+          "text": "then",
+          "start": 13.26,
+          "end": 13.4
+        },
+        {
+          "text": "fund",
+          "start": 13.54,
+          "end": 13.76
+        },
+        {
+          "text": "a",
+          "start": 13.82,
+          "end": 13.9
+        },
+        {
+          "text": "two-pool",
+          "start": 13.96,
+          "end": 14.44
+        },
+        {
+          "text": "arbitrage",
+          "start": 14.56,
+          "end": 15.12
+        },
+        {
+          "text": "cycle.",
+          "start": 15.2,
+          "end": 15.62
+        },
+        {
+          "text": "Profit",
+          "start": 16.02,
+          "end": 16.36
+        },
+        {
+          "text": "is",
+          "start": 16.42,
+          "end": 16.56
+        },
+        {
+          "text": "checked",
+          "start": 16.64,
+          "end": 16.92
+        },
+        {
+          "text": "after",
+          "start": 17,
+          "end": 17.2
+        },
+        {
+          "text": "costs",
+          "start": 17.32,
+          "end": 17.76
+        },
+        {
+          "text": "and",
+          "start": 17.8,
+          "end": 17.92
+        },
+        {
+          "text": "reserve",
+          "start": 17.98,
+          "end": 18.4
+        },
+        {
+          "text": "share.",
+          "start": 18.52,
+          "end": 18.86
+        },
+        {
+          "text": "Failed",
+          "start": 19.42,
+          "end": 19.72
+        },
+        {
+          "text": "gas",
+          "start": 19.84,
+          "end": 20.18
+        },
+        {
+          "text": "remains",
+          "start": 20.28,
+          "end": 20.72
+        },
+        {
+          "text": "your",
+          "start": 20.78,
+          "end": 20.88
+        },
+        {
+          "text": "risk.",
+          "start": 20.98,
+          "end": 21.36
+        },
+        {
+          "text": "Lock",
+          "start": 21.94,
+          "end": 22.24
+        },
+        {
+          "text": "canonical",
+          "start": 22.44,
+          "end": 22.96
+        },
+        {
+          "text": "position",
+          "start": 23.08,
+          "end": 23.6
+        },
+        {
+          "text": "N",
+          "start": 23.8,
+          "end": 23.98
+        },
+        {
+          "text": "F",
+          "start": 24.1,
+          "end": 24.2
+        },
+        {
+          "text": "Tees.",
+          "start": 24.3,
+          "end": 24.74
+        },
+        {
+          "text": "Rewards",
+          "start": 25.24,
+          "end": 25.74
+        },
+        {
+          "text": "require",
+          "start": 25.8,
+          "end": 26.24
+        },
+        {
+          "text": "fresh,",
+          "start": 26.38,
+          "end": 26.74
+        },
+        {
+          "text": "qualifying",
+          "start": 27.18,
+          "end": 27.82
+        },
+        {
+          "text": "depth",
+          "start": 27.94,
+          "end": 28.18
+        },
+        {
+          "text": "samples.",
+          "start": 28.32,
+          "end": 28.86
+        },
+        {
+          "text": "Rewards",
+          "start": 29.42,
+          "end": 29.96
+        },
+        {
+          "text": "need",
+          "start": 30.04,
+          "end": 30.28
+        },
+        {
+          "text": "funded",
+          "start": 30.42,
+          "end": 30.74
+        },
+        {
+          "text": "campaigns.",
+          "start": 30.86,
+          "end": 31.64
+        },
+        {
+          "text": "Mature",
+          "start": 32.28,
+          "end": 32.58
+        },
+        {
+          "text": "positions",
+          "start": 32.68,
+          "end": 33.3
+        },
+        {
+          "text": "can",
+          "start": 33.4,
+          "end": 33.72
+        },
+        {
+          "text": "exit",
+          "start": 33.8,
+          "end": 34.12
+        },
+        {
+          "text": "independently.",
+          "start": 34.24,
+          "end": 35.1
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B19",
+          "narration": "Pay Ether for bonds backed by existing OMR, released through linear vesting.",
+          "speechStart": 89.68,
+          "speechEnd": 94.96
+        },
+        {
+          "id": "M04-B20",
+          "narration": "No minting. No sellback. Purchasing pauses don't erase vested claims.",
+          "speechStart": 95.42,
+          "speechEnd": 100.16
+        },
+        {
+          "id": "M04-B21",
+          "narration": "Solvers commit a plan, then fund a two-pool arbitrage cycle.",
+          "speechStart": 100.82,
+          "speechEnd": 105.12
+        },
+        {
+          "id": "M04-B22",
+          "narration": "Profit is checked after costs and reserve share. Failed gas remains your risk.",
+          "speechStart": 105.52,
+          "speechEnd": 110.86
+        },
+        {
+          "id": "M04-B23",
+          "narration": "Lock canonical position NFTs. Rewards require fresh, qualifying depth samples.",
+          "speechStart": 111.44,
+          "speechEnd": 118.36
+        },
+        {
+          "id": "M04-B24",
+          "narration": "Rewards need funded campaigns. Mature positions can exit independently.",
+          "speechStart": 118.92,
+          "speechEnd": 124.6
+        }
+      ],
+      "alignmentLoss": 0.6474725667294745
+    },
+    {
+      "id": "SOUL-CH05",
+      "sourceId": "SOUL-CH05-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH05-v2.mp3",
+      "start": 125.1,
+      "end": 151.353061,
+      "duration": 26.253061,
+      "words": [
+        {
+          "text": "Families",
+          "start": 0.22,
+          "end": 0.64
+        },
+        {
+          "text": "fight",
+          "start": 0.76,
+          "end": 0.98
+        },
+        {
+          "text": "for",
+          "start": 1.06,
+          "end": 1.18
+        },
+        {
+          "text": "seasonal",
+          "start": 1.34,
+          "end": 1.76
+        },
+        {
+          "text": "Turf",
+          "start": 1.88,
+          "end": 2.12
+        },
+        {
+          "text": "fees.",
+          "start": 2.24,
+          "end": 2.64
+        },
+        {
+          "text": "The",
+          "start": 3.3,
+          "end": 3.38
+        },
+        {
+          "text": "protocol",
+          "start": 3.42,
+          "end": 3.86
+        },
+        {
+          "text": "keeps",
+          "start": 4,
+          "end": 4.24
+        },
+        {
+          "text": "principal.",
+          "start": 4.34,
+          "end": 4.86
+        },
+        {
+          "text": "Syndicates",
+          "start": 5.5,
+          "end": 5.98
+        },
+        {
+          "text": "split",
+          "start": 6.12,
+          "end": 6.34
+        },
+        {
+          "text": "rights.",
+          "start": 6.44,
+          "end": 6.82
+        },
+        {
+          "text": "Status",
+          "start": 7.48,
+          "end": 7.9
+        },
+        {
+          "text": "doesn't",
+          "start": 7.94,
+          "end": 8.2
+        },
+        {
+          "text": "multiply",
+          "start": 8.24,
+          "end": 8.7
+        },
+        {
+          "text": "money.",
+          "start": 8.8,
+          "end": 9.1
+        },
+        {
+          "text": "A",
+          "start": 9.82,
+          "end": 9.9
+        },
+        {
+          "text": "checkpoint",
+          "start": 9.96,
+          "end": 10.44
+        },
+        {
+          "text": "assigns",
+          "start": 10.5,
+          "end": 10.98
+        },
+        {
+          "text": "earned",
+          "start": 11.1,
+          "end": 11.34
+        },
+        {
+          "text": "fees",
+          "start": 11.48,
+          "end": 11.8
+        },
+        {
+          "text": "before",
+          "start": 11.88,
+          "end": 12.24
+        },
+        {
+          "text": "control",
+          "start": 12.28,
+          "end": 12.68
+        },
+        {
+          "text": "changes.",
+          "start": 12.8,
+          "end": 13.32
+        },
+        {
+          "text": "Existing",
+          "start": 13.96,
+          "end": 14.44
+        },
+        {
+          "text": "claims",
+          "start": 14.54,
+          "end": 14.96
+        },
+        {
+          "text": "keep",
+          "start": 15.08,
+          "end": 15.3
+        },
+        {
+          "text": "their",
+          "start": 15.36,
+          "end": 15.5
+        },
+        {
+          "text": "recipients.",
+          "start": 15.54,
+          "end": 16.26
+        },
+        {
+          "text": "Sieges",
+          "start": 16.94,
+          "end": 17.42
+        },
+        {
+          "text": "freeze",
+          "start": 17.58,
+          "end": 17.92
+        },
+        {
+          "text": "wallets",
+          "start": 18.02,
+          "end": 18.48
+        },
+        {
+          "text": "and",
+          "start": 18.72,
+          "end": 18.82
+        },
+        {
+          "text": "allocate",
+          "start": 18.9,
+          "end": 19.28
+        },
+        {
+          "text": "only",
+          "start": 19.36,
+          "end": 19.58
+        },
+        {
+          "text": "funded",
+          "start": 19.72,
+          "end": 20.04
+        },
+        {
+          "text": "escrow.",
+          "start": 20.14,
+          "end": 20.66
+        },
+        {
+          "text": "At",
+          "start": 21.3,
+          "end": 21.42
+        },
+        {
+          "text": "season",
+          "start": 21.48,
+          "end": 21.8
+        },
+        {
+          "text": "exit,",
+          "start": 21.88,
+          "end": 22.18
+        },
+        {
+          "text": "fees",
+          "start": 22.46,
+          "end": 22.7
+        },
+        {
+          "text": "settle;",
+          "start": 22.84,
+          "end": 23.18
+        },
+        {
+          "text": "principal",
+          "start": 23.52,
+          "end": 23.96
+        },
+        {
+          "text": "returns",
+          "start": 24.06,
+          "end": 24.72
+        },
+        {
+          "text": "for",
+          "start": 25.1,
+          "end": 25.22
+        },
+        {
+          "text": "retirement.",
+          "start": 25.28,
+          "end": 25.98
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B25",
+          "narration": "Families fight for seasonal Turf fees. The protocol keeps principal.",
+          "speechStart": 125.32,
+          "speechEnd": 129.96
+        },
+        {
+          "id": "M04-B26",
+          "narration": "Syndicates split rights. Status doesn't multiply money.",
+          "speechStart": 130.6,
+          "speechEnd": 134.2
+        },
+        {
+          "id": "M04-B27",
+          "narration": "A checkpoint assigns earned fees before control changes. Existing claims keep their recipients.",
+          "speechStart": 134.92,
+          "speechEnd": 141.35999999999999
+        },
+        {
+          "id": "M04-B28",
+          "narration": "Sieges freeze wallets and allocate only funded escrow.",
+          "speechStart": 142.04,
+          "speechEnd": 145.76
+        },
+        {
+          "id": "M04-B29",
+          "narration": "At season exit, fees settle; principal returns for retirement.",
+          "speechStart": 146.4,
+          "speechEnd": 151.07999999999998
+        }
+      ],
+      "alignmentLoss": 0.6484116717908509
+    },
+    {
+      "id": "SOUL-CH06",
+      "sourceId": "SOUL-CH06-v2",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH06-v2.mp3",
+      "start": 151.6,
+      "end": 169.441633,
+      "duration": 17.841633,
+      "words": [
+        {
+          "text": "The",
+          "start": 0.18,
+          "end": 0.24
+        },
+        {
+          "text": "Safe",
+          "start": 0.32,
+          "end": 0.56
+        },
+        {
+          "text": "binds",
+          "start": 0.68,
+          "end": 1.04
+        },
+        {
+          "text": "and",
+          "start": 1.06,
+          "end": 1.16
+        },
+        {
+          "text": "funds",
+          "start": 1.28,
+          "end": 1.62
+        },
+        {
+          "text": "systems.",
+          "start": 1.68,
+          "end": 2.24
+        },
+        {
+          "text": "Keepers",
+          "start": 2.9,
+          "end": 3.3
+        },
+        {
+          "text": "have",
+          "start": 3.36,
+          "end": 3.58
+        },
+        {
+          "text": "budgets.",
+          "start": 3.62,
+          "end": 4.12
+        },
+        {
+          "text": "The",
+          "start": 4.74,
+          "end": 4.84
+        },
+        {
+          "text": "game",
+          "start": 4.88,
+          "end": 5.1
+        },
+        {
+          "text": "can't",
+          "start": 5.22,
+          "end": 5.46
+        },
+        {
+          "text": "withdraw",
+          "start": 5.5,
+          "end": 5.86
+        },
+        {
+          "text": "principal.",
+          "start": 5.98,
+          "end": 6.48
+        },
+        {
+          "text": "Game",
+          "start": 7.02,
+          "end": 7.24
+        },
+        {
+          "text": "cash,",
+          "start": 7.36,
+          "end": 7.74
+        },
+        {
+          "text": "O",
+          "start": 8.119,
+          "end": 8.2
+        },
+        {
+          "text": "M",
+          "start": 8.38,
+          "end": 8.52
+        },
+        {
+          "text": "R,",
+          "start": 8.78,
+          "end": 8.92
+        },
+        {
+          "text": "Ether",
+          "start": 9.12,
+          "end": 9.4
+        },
+        {
+          "text": "and",
+          "start": 9.52,
+          "end": 9.64
+        },
+        {
+          "text": "R",
+          "start": 9.8,
+          "end": 9.88
+        },
+        {
+          "text": "W",
+          "start": 10.1,
+          "end": 10.3
+        },
+        {
+          "text": "A",
+          "start": 10.38,
+          "end": 10.46
+        },
+        {
+          "text": "stay",
+          "start": 10.6,
+          "end": 10.78
+        },
+        {
+          "text": "separate.",
+          "start": 10.92,
+          "end": 11.34
+        },
+        {
+          "text": "Trades",
+          "start": 11.8,
+          "end": 12.26
+        },
+        {
+          "text": "change",
+          "start": 12.32,
+          "end": 12.64
+        },
+        {
+          "text": "inventory.",
+          "start": 12.72,
+          "end": 13.42
+        },
+        {
+          "text": "Revenue",
+          "start": 13.78,
+          "end": 14.14
+        },
+        {
+          "text": "funds",
+          "start": 14.26,
+          "end": 14.56
+        },
+        {
+          "text": "reserves.",
+          "start": 14.64,
+          "end": 15.28
+        },
+        {
+          "text": "Conditions",
+          "start": 15.9,
+          "end": 16.42
+        },
+        {
+          "text": "gate",
+          "start": 16.52,
+          "end": 16.72
+        },
+        {
+          "text": "the",
+          "start": 16.76,
+          "end": 16.82
+        },
+        {
+          "text": "next",
+          "start": 16.88,
+          "end": 17.08
+        },
+        {
+          "text": "move.",
+          "start": 17.18,
+          "end": 17.48
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B30",
+          "narration": "The Safe binds and funds systems. Keepers have budgets. The game can't withdraw principal.",
+          "speechStart": 151.78,
+          "speechEnd": 158.07999999999998
+        },
+        {
+          "id": "M04-B31",
+          "narration": "Game cash, OMR, Ether and RWA stay separate.",
+          "speechStart": 158.62,
+          "speechEnd": 162.94
+        },
+        {
+          "id": "M04-B32",
+          "narration": "Trades change inventory. Revenue funds reserves. Conditions gate the next move.",
+          "speechStart": 163.4,
+          "speechEnd": 169.07999999999998
+        }
+      ],
+      "alignmentLoss": 0.7225242771514474
+    },
+    {
+      "id": "SOUL-CH07",
+      "sourceId": "SOUL-CH07",
+      "src": "public/art/market-v2-soul/audio/SOUL-CH07.mp3",
+      "start": 169.7,
+      "end": 173.226531,
+      "duration": 3.526531,
+      "words": [
+        {
+          "text": "Oh-MAIR-tah.",
+          "start": 0.24,
+          "end": 1.4
+        },
+        {
+          "text": "Control",
+          "start": 2.04,
+          "end": 2.46
+        },
+        {
+          "text": "costs.",
+          "start": 2.6,
+          "end": 3.12
+        }
+      ],
+      "beats": [
+        {
+          "id": "M04-B33",
+          "narration": "OMERTÀ. Control costs.",
+          "speechStart": 169.94,
+          "speechEnd": 172.82
+        }
+      ],
+      "alignmentLoss": 1.0224761962890625
+    }
+  ]
+}

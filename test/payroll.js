@@ -8,7 +8,7 @@
 // consistency the tester asked for), paying through the real till flips the row, an empty book
 // renders empty, and the read is §10.4-free (zero transactions rows, cash drift delta unchanged).
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { ESTATE } from '../src/rules.js';
 

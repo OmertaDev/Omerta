@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 process.env.INVITE_MODE = 'on'; process.env.RATE_LIMIT = 'off';
 const app = await buildServer();
 await app.pool.query("INSERT INTO invite_codes (code, uses_left) VALUES ('BROWSER-TEST-ONLY',1)");
@@ -22,6 +22,9 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'no mobile overflow');
   await page.locator('#btn-guest').click();
+  await page.waitForSelector('#age-date');
+  await page.locator('#age-date').fill('1990-01-01');
+  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 30000 });
   const token = await page.evaluate(() => localStorage.getItem('omerta_token'));
   assert(token, 'admission token saved durably before navigation');

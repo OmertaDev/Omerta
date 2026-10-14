@@ -1,0 +1,43 @@
+{
+  "baseline": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "checkedAt": "2026-09-21T05:16:25.604Z",
+  "unchanged": [
+    {
+      "file": "src/bonds.js",
+      "unchanged": true,
+      "baselineSha256": "9b65ed3456878ae312f186e9d94c80c2fe194dacf4b426770f0b4355c55608a7",
+      "currentSha256": "9b65ed3456878ae312f186e9d94c80c2fe194dacf4b426770f0b4355c55608a7"
+    },
+    {
+      "file": "test/gates.js",
+      "unchanged": true,
+      "baselineSha256": "223a40d3d9832cc8755a2957840c96618dc06136db26bd0c3226913ed78c8ed8",
+      "currentSha256": "223a40d3d9832cc8755a2957840c96618dc06136db26bd0c3226913ed78c8ed8"
+    },
+    {
+      "file": "tools/knowledge-test.js",
+      "unchanged": true,
+      "baselineSha256": "13862829b467d2a42b2599de57b8d78b7666e343db1cd54417eca524d69dd8af",
+      "currentSha256": "13862829b467d2a42b2599de57b8d78b7666e343db1cd54417eca524d69dd8af"
+    },
+    {
+      "file": "tools/knowledge.js",
+      "unchanged": true,
+      "baselineSha256": "cda4103b4dffef3cb8a01210a720a727b1a2f528e610260f08e249fa597782f0",
+      "currentSha256": "cda4103b4dffef3cb8a01210a720a727b1a2f528e610260f08e249fa597782f0"
+    }
+  ],
+  "rootPageHandlerUnchanged": true,
+  "failures": [
+    {
+      "test": "node test/gates.js",
+      "location": "test/gates.js:499",
+      "finding": "bondQuoteBudgetAmount is not in the existing price-bound waiver list; both the game implementation and test are unchanged."
+    },
+    {
+      "test": "node tools/knowledge-test.js",
+      "location": "tools/knowledge-test.js:355",
+      "finding": "Expected root provenance symbol servePage, actual serveLaunchPage; test and relevant root handler are unchanged."
+    }
+  ]
+}

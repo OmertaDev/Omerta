@@ -24,7 +24,7 @@ process.env.TOURNEY_MS = '5000';        // GENEROUS registration window (test-on
 // round early. With a wide window the field always fills; the window is then CLOSED DETERMINISTICALLY
 // via SQL (closeReg below) instead of a wall-clock sleep, so the sweep timing can't flake either.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { CASINO } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepRingTables } from '../src/ring.js';

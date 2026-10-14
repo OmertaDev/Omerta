@@ -16,7 +16,7 @@ if (postgres) {
 Object.assign(process.env, { RATE_LIMIT: 'off', JWT_SECRET: 'invoice-api-local-test-secret-no-production',
   MOD_KEY: 'invoice-api-local-test-mod-only', SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', DELIVERY_CONTRACTS: 'on',
   MARKET_SEED: 'invoice-api-local-native-proof-only-seed' });
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const { loanOwed, loanVig } = await import('../src/rules.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');

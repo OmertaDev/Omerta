@@ -104,7 +104,7 @@ async function nativeExercise() {
       RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on', SOCIAL_VERIFY_MODE: 'off', LIVING_WORLD_DIRECTOR: 'DIRECTOR_DISABLED',
       JWT_SECRET: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex') });
     const [{ buildServer }, { CONSTANTS }, { runLedgerInvariants }, { directorConfiguration }] = await Promise.all([
-      import('../src/server.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../src/director/config.js')]);
+      import('./server-fixture.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../src/director/config.js')]);
     assert.equal(directorConfiguration().mode, 'DIRECTOR_DISABLED'); app = await buildServer();
     const sessions = new Map(), credentials = new Map();
     const request = async (sessionRef, method, path, body, key) => {

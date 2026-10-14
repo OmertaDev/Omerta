@@ -10,7 +10,7 @@ if(native) {
   process.env.DATABASE_URL=url.href;
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',RESOURCE_ECONOMY:'off',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'portfolio-integration-local-test-secret',MARKET_SEED:'portfolio-integration-native-local-seed',MOD_KEY:'portfolio-integration-local-mod' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js');
 const Portfolio=await import('../src/companybankportfolios.js'), { runCompanyBankPortfolios }=await import('../src/companybankportfoliorunner.js');
 const { runLedgerInvariants }=await import('../src/invariants.js');
 const app=await buildServer(); let serial=0;

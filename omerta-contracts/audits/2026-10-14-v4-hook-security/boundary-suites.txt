@@ -1,0 +1,216 @@
+No files changed, compilation skipped
+
+Ran 3 tests for test/market-v2/PlayerGenesisIntegrationV2.t.sol:PlayerGenesisIntegrationV2Test
+[PASS] testRealAuctionAndPoolSettleBeforeBothClaims() (gas: 1109359)
+[PASS] testRealAuctionFailedPoolFundingRetainsPrincipalAndCanRetry() (gas: 1102031)
+[PASS] testRealAuctionPlayerTimeoutRefundsAndPublicMigrationRecovers() (gas: 871711)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 135.83ms (3.16ms CPU time)
+
+Ran 7 tests for test/market-v2/GenesisCoordinatorV2.t.sol:GenesisCoordinatorV2Test
+[PASS] testBindingRejectsWrongHookPoolBeforeBidding() (gas: 5371216)
+[PASS] testCancelledPlayersRefundAndPublicSaleStillMigrates() (gas: 883466)
+[PASS] testCannotRebindOrSpoofPlayerCallback() (gas: 19922)
+[PASS] testFuzzBothLegsFundLiquidityAndResiduals(uint96) (runs: 512, μ: 1010746, ~: 1010686)
+Logs:
+  Bound result 2496920359
+
+[PASS] testInsufficientMatchingInventoryRollsBackAllLegs() (gas: 419742)
+[PASS] testNoEarlyMigration() (gas: 61464)
+[PASS] testRealPositionCombinesBothLegsAndClaimsWaitForCliff() (gas: 1082147)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 138.43ms (137.00ms CPU time)
+
+Ran 13 tests for test/market-v2/RestrictedMarketIntegrationV2.t.sol:RestrictedMarketIntegrationV2Test
+[PASS] test_actualFeeAdjustedLimitsRevertAtomically() (gas: 700124)
+[PASS] test_firstWalletBuyRegistersOnlyItsAuthenticatedRecipient() (gas: 408722)
+[PASS] test_foreignManagerAndCounterfactualCannotReceiveRevenueInventory() (gas: 4612422)
+[PASS] test_liquidityPrincipalHasNoTradeTax() (gas: 185510)
+[PASS] test_openingBuysReachSixPercentInBothExactModes() (gas: 842540)
+[PASS] test_openingExactOutputCapIncludesManagerBase() (gas: 807669)
+[PASS] test_realPartialFillUsesFilledOutputAndRefundsETH() (gas: 411823)
+[PASS] test_realRouterExactInputBuyCollectsBaseOnly() (gas: 422121)
+[PASS] test_realRouterExactInputSellCollectsBaseAndSeparateSurge() (gas: 483050)
+[PASS] test_realRouterExactOutputBuyAddsBaseToActualInput() (gas: 407379)
+[PASS] test_realRouterExactOutputSellAddsBaseAndSurgeToActualInput() (gas: 509288)
+[PASS] test_restrictedOpeningFeeAboveHalfPercentIsRejected() (gas: 73300)
+[PASS] test_saturatedSellSurgeReachesSixPercentInBothExactModes() (gas: 939105)
+Suite result: ok. 13 passed; 0 failed; 0 skipped; finished in 138.25ms (26.51ms CPU time)
+
+Ran 27 tests for test/market-v2/RestrictedPoolManagerV2.t.sol:RestrictedPoolManagerV2Test
+[PASS] invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------------+-----------------+-------+---------+----------╮
+| Contract                            | Selector        | Calls | Reverts | Discards |
++====================================================================================+
+| RestrictedRevenueInvariantHandlerV2 | adjustLiquidity | 1309  | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | forwardRevenue  | 1401  | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | trade           | 1386  | 0       | 0        |
+╰-------------------------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1000000000000
+  Bound result 999999000236973745
+  Bound result 4999999000000009969
+  Bound result 999999000000009983
+  Bound result 999999000000000012
+  Bound result 999999000000015208
+  Bound result 999999000000000026
+  Bound result 4999999000000006016
+  Bound result 999999000000335256
+  Bound result 999999000031536001
+  Bound result 999999000000026473
+  Bound result 999999000007080750
+  Bound result 999999000000001128
+  Bound result 4999999000000000250
+  Bound result 999999000000297598
+  Bound result 5793569029905
+  Bound result 999999000000002420
+  Bound result 999999000000203576
+  Bound result 36147922539713
+  Bound result 999999000000000061
+  Bound result 999999000000000205
+  Bound result 3230975364504507611
+  Bound result 1711022040977082499
+  Bound result 19282493212879299
+  Bound result 4999999000000004495
+  Bound result 4999999000000004815
+  Bound result 4583806173314560440
+  Bound result 4999999000000003268
+  Bound result 3421078420574357957
+  Bound result 3745346531913066456
+  Bound result 3473344779327324
+  Bound result 4999999000000005255
+  Bound result 1553418089515831422
+  Bound result 4999999000000009970
+  Bound result 446762073709551597
+  Bound result 446762073709551597
+  Bound result 4999999000000000765
+  Bound result 999999000000017401
+  Bound result 4999999000000000239
+
+[PASS] testAllValueEntryPointsRejectAnUnapprovedCaller() (gas: 300379)
+[PASS] testAnyoneCanInitializeAnotherPermittedNoHookPool() (gas: 59515)
+[PASS] testApprovedHookAtFiftyBpsKeepsEverySwapModeAtSixPercentMaximum() (gas: 964993)
+[PASS] testApprovedHookOverFiftyBpsRollsBackEverySwapModeAndPayout() (gas: 1159355)
+[PASS] testBothDirectionsPreserveFounderTwoPercentAndHalveOtherBuckets() (gas: 560874)
+[PASS] testClaimAndProtocolFeeWithdrawalCannotOccurDuringUnlock() (gas: 103302)
+[PASS] testClaimReceiptsCannotTransferToAnIndependentPool() (gas: 13039)
+[PASS] testClaimTokenMintAndBurnSettlementStillPaysEveryTradeFee() (gas: 507642)
+[PASS] testFeeRoundingMatchesExistingBasisPointConvention() (gas: 164106)
+[PASS] testFeeSplitAndPermissionlessSweepPayOnlyFixedRecipients() (gas: 400590)
+[PASS] testForeignManagerHookAndCustomBeforeSwapAccountingAreRejected() (gas: 65434)
+[PASS] testFuzzBothDirectionsAndExactModesSettleAndConserveRevenue(uint96,bool,bool) (runs: 512, μ: 299609, ~: 299482)
+Logs:
+  Bound result 9999999000000001004
+
+[PASS] testLiquidityAdditionAndRemovalDoNotAccrueTradeRevenue() (gas: 273197)
+[PASS] testNoHookExactInputBuyPaysFivePointFivePercent() (gas: 298028)
+[PASS] testNoHookExactInputSellPaysFivePointFivePercent() (gas: 298580)
+[PASS] testNoHookExactOutputBuyPaysFivePointFivePercent() (gas: 291519)
+[PASS] testNoHookExactOutputSellPaysFivePointFivePercent() (gas: 304757)
+[PASS] testOnlyRecipientMayRedirectItsOwnTokenBucket() (gas: 321350)
+[PASS] testPartialFillFeesUseExecutedAmount() (gas: 279442)
+[PASS] testPinnedRuntimeChangeRevokesOperatorAndHookAccess() (gas: 106151)
+[PASS] testRevenueBucketAndRecipientValidation() (gas: 40844)
+[PASS] testSyncedTokenWithdrawalIsRejectedUntilNativeResync() (gas: 322205)
+[PASS] testTwoPoolInternalNettingCannotAvoidEitherLegFee() (gas: 472729)
+[PASS] testUnapprovedHookAndForeignCurrenciesAreRejected() (gas: 69823)
+[PASS] testUnsealedOrOtherBoundManagerCannotInitializePools() (gas: 11721241)
+[PASS] testZeroFeeHookCannotUndercutBuyOrSellRevenue() (gas: 586944)
+Suite result: ok. 27 passed; 0 failed; 0 skipped; finished in 2.85s (3.00s CPU time)
+
+Ran 30 tests for test/market-v2/RestrictedRevenueBoundariesV2.t.sol:RestrictedRevenueBoundariesV2Test
+[PASS] invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations() (runs: 64, calls: 4096, reverts: 0)
+
+╭-------------------------------------+-----------------+-------+---------+----------╮
+| Contract                            | Selector        | Calls | Reverts | Discards |
++====================================================================================+
+| RestrictedRevenueInvariantHandlerV2 | adjustLiquidity | 1309  | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | forwardRevenue  | 1401  | 0       | 0        |
+|-------------------------------------+-----------------+-------+---------+----------|
+| RestrictedRevenueInvariantHandlerV2 | trade           | 1386  | 0       | 0        |
+╰-------------------------------------+-----------------+-------+---------+----------╯
+
+Logs:
+  Bound result 1000000000000
+  Bound result 999999000236973745
+  Bound result 58929346027337134
+  Bound result 4999999001985634108
+  Bound result 999999000000009979
+  Bound result 999999000000000012
+  Bound result 999999000000015208
+  Bound result 4999999000000003082
+  Bound result 999999000000000026
+  Bound result 4999999000000007195
+  Bound result 4999999000000019239
+  Bound result 999999000000335256
+  Bound result 999999000031536001
+  Bound result 999999000000026473
+  Bound result 999999000007080750
+  Bound result 999999000000001128
+  Bound result 4999999000000000250
+  Bound result 999999000000297598
+  Bound result 5793569029905
+  Bound result 999999001424214542
+  Bound result 999999000000203576
+  Bound result 4999999000000009976
+  Bound result 36147922539713
+  Bound result 999999000000000061
+  Bound result 999999001259352357
+  Bound result 3230975364504507611
+  Bound result 1711022040977082499
+  Bound result 19282493212879299
+  Bound result 4999999000000003499
+  Bound result 4999999000000004108
+  Bound result 4999999000000005030
+  Bound result 4583806173314560440
+  Bound result 4999999000000004449
+  Bound result 3421078420574357957
+  Bound result 3745346531913066456
+  Bound result 3473344779327324
+  Bound result 4999999000000005158
+  Bound result 4999999000000004697
+  Bound result 4999999000000010356
+  Bound result 446762073709551597
+  Bound result 446762073709551597
+  Bound result 4999999000000000777
+  Bound result 999999000000017981
+  Bound result 4999999000000000239
+
+[PASS] testAllValueEntryPointsRejectAnUnapprovedCaller() (gas: 300415)
+[PASS] testAnyoneCanInitializeAnotherPermittedNoHookPool() (gas: 59605)
+[PASS] testApprovedHookAtFiftyBpsKeepsEverySwapModeAtSixPercentMaximum() (gas: 965110)
+[PASS] testApprovedHookOverFiftyBpsRollsBackEverySwapModeAndPayout() (gas: 1159587)
+[PASS] testBothDirectionsPreserveFounderTwoPercentAndHalveOtherBuckets() (gas: 560987)
+[PASS] testClaimAndProtocolFeeWithdrawalCannotOccurDuringUnlock() (gas: 103416)
+[PASS] testClaimReceiptsCannotTransferToAnIndependentPool() (gas: 13146)
+[PASS] testClaimTokenMintAndBurnSettlementStillPaysEveryTradeFee() (gas: 507715)
+[PASS] testFeeRoundingMatchesExistingBasisPointConvention() (gas: 164187)
+[PASS] testFeeSplitAndPermissionlessSweepPayOnlyFixedRecipients() (gas: 400667)
+[PASS] testForeignManagerHookAndCustomBeforeSwapAccountingAreRejected() (gas: 65526)
+[PASS] testFuzzBothDirectionsAndExactModesSettleAndConserveRevenue(uint96,bool,bool) (runs: 512, μ: 299717, ~: 299585)
+Logs:
+  Bound result 9649584242512472149
+
+[PASS] testLiquidityAdditionAndRemovalDoNotAccrueTradeRevenue() (gas: 273348)
+[PASS] testNoHookExactInputBuyPaysFivePointFivePercent() (gas: 298155)
+[PASS] testNoHookExactInputSellPaysFivePointFivePercent() (gas: 298728)
+[PASS] testNoHookExactOutputBuyPaysFivePointFivePercent() (gas: 291606)
+[PASS] testNoHookExactOutputSellPaysFivePointFivePercent() (gas: 304916)
+[PASS] testOnlyRecipientMayRedirectItsOwnTokenBucket() (gas: 321458)
+[PASS] testPartialFillFeesUseExecutedAmount() (gas: 279540)
+[PASS] testPinnedRuntimeChangeRevokesOperatorAndHookAccess() (gas: 106344)
+[PASS] testProtocolAndTradeRevenueRemainSeparateThroughBothCurrencyWithdrawals() (gas: 791971)
+[PASS] testRawDeltaUnderpaymentRollsBackAllModesAndRevenueLiabilities() (gas: 1274944)
+[PASS] testRecipientReentryCannotRepeatPayoutOrEnterSettlement() (gas: 997696)
+[PASS] testRevenueBucketAndRecipientValidation() (gas: 41015)
+[PASS] testSyncedTokenWithdrawalIsRejectedUntilNativeResync() (gas: 322334)
+[PASS] testTwoPoolInternalNettingCannotAvoidEitherLegFee() (gas: 472822)
+[PASS] testUnapprovedHookAndForeignCurrenciesAreRejected() (gas: 69979)
+[PASS] testUnsealedOrOtherBoundManagerCannotInitializePools() (gas: 11721399)
+[PASS] testZeroFeeHookCannotUndercutBuyOrSellRevenue() (gas: 587124)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 3.03s (3.19s CPU time)
+
+Ran 5 test suites in 3.04s (6.30s CPU time): 80 tests passed, 0 failed, 0 skipped (80 total tests)

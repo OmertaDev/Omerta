@@ -5,7 +5,7 @@
 // and the vocabulary knows the new reasons. Runs on pg-mem — zero infra.
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { CASINO, STABLE, UNDERWORLD, ACCESS_STAKE, numbersDrawOf, dayOf, weekOf, hash01, MARKET_SEED, PACING } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepTournaments, trackFieldOf, sweepTrackEntries, sweepFuturity } from '../src/casino.js';

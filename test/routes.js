@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // THE MOUNTED SURFACE (the 48th suite).
 //
 // server.js registers ~279 routes in one 2,400-line file, and the thing that would actually hurt is
@@ -17,7 +18,7 @@ import assert from 'node:assert';
 import { readFileSync, readdirSync } from 'node:fs';
 import zlib from 'node:zlib';
 import { createHash, randomUUID } from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 
@@ -82,6 +83,7 @@ const PUBLIC = {
     + 'spend comes back to the desk to be sold again is entitled to read the shelf and the sink list',
   'GET /v1/deeds/plate/:tokenId': 'STREET DEEDS — the on-chain deed\'s block-plate SVG, the ERC-721 tokenURI image a marketplace/crawler fetches with no token; the untrusted street name is escaped (the /v1/art precedent)',
   'POST /v1/auth/guest': 'an auth entry point — there is no token to present yet',
+  'POST /v1/age-check': 'checks eligibility without saving a birth date before account creation',
   'POST /v1/access/redeem': 'launch admission authenticates an unused invite and a durable bootstrap credential before creating or recovering an account',
   'POST /v1/access/logout': 'clears only the caller browser view cookie and grants no account or gameplay authority',
   'POST /v1/auth/privy': 'an auth entry point — there is no token to present yet',
@@ -230,7 +232,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 // for it is guesswork, and guesswork here reports confident nonsense. This asks the running server.
 {
   const call = async (m, u, o = {}) => {
-    const r = await app.inject({ method: m, url: u, headers: o.token ? { authorization: `Bearer ${o.token}` } : {}, payload: o.body });
+    const r = await app.inject({ method: m, url: u, headers: o.token ? { authorization: `Bearer ${o.token}` } : {}, payload: adultAuthFixture(m, u, o.body) });
     let b = null; try { b = r.json(); } catch { /* not JSON */ }
     return { code: r.statusCode, body: b };
   };

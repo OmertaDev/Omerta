@@ -1,0 +1,98 @@
+[
+  {
+    "id": "SOUL-PLATE-city",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. A rain-dark waterfront city at blue hour seen from the roof of an old private club. In the foreground, a lone adult man in a beautifully worn dark wool suit stands in three-quarter back view, small in frame, looking over docks and old warehouses. Warm window light grazes his hand on a stone parapet. Towering wet urban depth, subtle fog, a few amber windows, no futuristic buildings. 50mm lens, slightly low camera. Quiet ambition, human scale, not a superhero pose.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  },
+  {
+    "id": "SOUL-PLATE-reserves",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. Extreme tactile close-up of unmarked brass counters and dark oxblood gaming chips on a worn green felt table, a few short finite stacks and an almost empty open leather case. One adult hand has just slid a stack away, motion implied but fingers anatomically correct. Raking amber lamp light, dramatic shadows, intimate low 85mm macro angle. Make depletion feel physical and precious, no readable denominations, no currency symbols.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  },
+  {
+    "id": "SOUL-PLATE-vault",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. The open throat of an old steel bank vault, heavy patinated brass locking wheels and polished worn steel bolts foreground right. Dim shelves hold only a few unmarked linen inventory bags. Warm light spills across a black marble threshold from an unseen door. Rich metallic material detail, low 40mm angle, cinematic deliberate negative space left. A place with real limits, not piles of gold or a fantasy treasury.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  },
+  {
+    "id": "SOUL-PLATE-harbor",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. An old commercial harbor at dawn, wet cobblestones and mooring ropes close to camera, a single warehouse window glowing honey amber through sea mist. Dark cargo cranes and a freighter create layered silhouettes. Deep olive water reflects burnt-orange light. Moody beautifully photographed working city, 50mm film lens, no people close to camera, no readable company markings.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  },
+  {
+    "id": "SOUL-PLATE-ledger",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. Close-up of an adult hand in a charcoal wool suit resting beside an open aged ledger and a mechanical desk calculator on a walnut table. Blank unmarked paper, no readable writing or numbers. A green banker lamp grazes paper fibers and worn brass edges. Heavy burgundy curtain soft in background. Off-center diagonal composition, 75mm lens, a human presence and atmosphere of careful decisions.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  },
+  {
+    "id": "SOUL-PLATE-family",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "folder": "frames",
+    "ext": "png",
+    "input": {
+      "prompt": "Original cinematic crime-drama editorial photograph, vertical 9:16, tactile 35mm motion-picture negative, very fine organic grain, rich warm amber practical light, deep olive shadows, burgundy accents, controlled blacks with visible texture, beautiful realistic chiaroscuro, restrained halation, shallow depth of field. Premium photographed atmosphere with imperfect lived-in surfaces, emotionally evocative. NOT an illustration, NOT a 3D render, NOT cyberpunk. No text, logos, lettering, watermarks, charts, numbers, borders, split screens or celebrity resemblance. Keep the center-left shadow area uncluttered enough for later editorial compositing; photograph itself fills every edge. After-hours private dining room in an old Italian-American social club, four original fictional adults in dark tailored coats sit around a small round table, mostly seen as natural three-quarter silhouettes with faces not prominent. One passes a plain sealed cream envelope across the table. Warm tungsten pool of light, olive velvet upholstery and burgundy walls, half-finished espresso, intimate solemn camaraderie. Wide 40mm low angle, no guns, no brands, no readable text.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    }
+  }
+]

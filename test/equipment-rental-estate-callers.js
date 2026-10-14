@@ -21,7 +21,7 @@ if (native) {
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off',
   JWT_SECRET: 'rental-estate-callers-fixture', MARKET_SEED: 'rental-estate-callers-fixture',
   MOD_KEY: 'rental-estate-callers-fixture-moderator' });
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const I = await import('../src/items.js'), C = await import('../src/crafting.js'), G = await import('../src/game.js');
 const R = await import('../src/equipmentrentals.js'), Q = await import('../src/itemdurability.js');
 const { huntWanted } = await import('../src/social/combat.js');

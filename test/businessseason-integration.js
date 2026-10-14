@@ -19,7 +19,7 @@ if (native) {
 Object.assign(process.env, { RATE_LIMIT: 'off', JWT_SECRET: 'business-season-api-isolated-secret', SOCIAL_VERIFY_MODE: 'off',
   DEPOT_PILOT: 'on', MARKET_SEED: 'business-season-api-seed', MOD_KEY: 'business-season-api-mod' });
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 import * as G from '../src/game.js';
 import * as D from '../src/depot.js';
 import * as Market from '../src/market.js';

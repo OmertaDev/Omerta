@@ -1,0 +1,111 @@
+{
+  "reviewedAtUtc": "2026-10-14T20:27:27.9744582Z",
+  "phase": "source-implementation",
+  "baseCommit": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty; unrelated existing work preserved",
+  "policy": {
+    "remintExistingIdentityConsumesSlot": false,
+    "playerKillerReceivesDeedsAndAssets": "confirmed design; custody/death implementation pending asset-exit and non-player-death choices",
+    "maxLifetimeUniqueDeeds": 2500,
+    "characterSoulbound": true
+  },
+  "sourceFiles": [
+    {
+      "path": "omerta-contracts/src/DynastyNFT.sol",
+      "sha256": "13478135c5499e56f3d04a89babe956d2e4a05357c23e78e55597eb93cd521d0"
+    },
+    {
+      "path": "omerta-contracts/src/StreetDeed.sol",
+      "sha256": "599434095ec645f853ec3fdaae038cbe4de2c1f83d7bd9c21c24594da3db23cf"
+    },
+    {
+      "path": "omerta-contracts/test/DynastyNFT.t.sol",
+      "sha256": "092db2195bdfd71cddf470ad345aa92bcb4832bbd281942616f3e1266aa7c0f8"
+    },
+    {
+      "path": "omerta-contracts/test/StreetDeed.t.sol",
+      "sha256": "2b4de1c99028bfa4047cc659312db33d2cf098db186194a605064406e8a1d340"
+    },
+    {
+      "path": "omerta-contracts/test/CharacterLaunchAudit.t.sol",
+      "sha256": "8b5efc095d007a321f2c4067b844b31608ff4d07df48a5479b9c793ea6f4877b"
+    },
+    {
+      "path": "src/deeds.js",
+      "sha256": "1bcafb0bd755fb565795736d66542eff153772b24b26dcff9050a470134042a3"
+    },
+    {
+      "path": "schema.sql",
+      "sha256": "ac4b5db6a62e691d425563b0e0c82483d4289291913b8f4b51aefe18830e9aad"
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "ad52bbc3cbacc1d167c21f7d9e94cdd36320c479fe958f38c16bff7255a2d12e"
+    },
+    {
+      "path": "tools/character-nft-preflight.js",
+      "sha256": "0241bdc591a854fd64673775eb2e8f617b627b258ca8bdc00de582dceff6bbd8"
+    },
+    {
+      "path": "tools/character-nft-rehearsal.js",
+      "sha256": "5b94bb1cbe7a8d3fdfbda19734a31e85b0b4c40797ca17b2026f0de2c89664d1"
+    },
+    {
+      "path": "test/character-mint-policy.js",
+      "sha256": "2d76b020dd5dd1129fecc28d7da3fe32012fd6ff54ddd40fb26b3a645461df4a"
+    },
+    {
+      "path": "test/deeds.js",
+      "sha256": "6c0cbc2000464b1a41f3d6501b59b2a835fa96c4046b8a98b0e813dddc605093"
+    },
+    {
+      "path": "test/deeds-supply-postgres.js",
+      "sha256": "c0e97b85c6015d2eb1932ebe9b4080034223dca4b32e2899a86612efd8d32121"
+    },
+    {
+      "path": "omerta-contracts/CHARACTER-NFT-LAUNCH.md",
+      "sha256": "b66470d01292a8f22e5356cf9f8cbab9065aefc8a725a3ecf15ddd36e6fdd372"
+    },
+    {
+      "path": "docs/character-deed-policy-2026-10-14.md",
+      "sha256": "6c8124e4aa133c4ca37ebb7487785f7392783843f868c45f5077e9bc2f9b7583"
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": "output/nft-policy-review-2026-10-14/soulbound-tests.txt",
+      "sha256": "6d0c4e9d7048dc7f3c6c38c775b7cb0633317ef06b270610c3df8d5335bfe94e"
+    },
+    {
+      "path": "output/nft-policy-review-2026-10-14/deed-supply-tests.txt",
+      "sha256": "8bd70b86001a9a9b141662fc50c7efc6e852c3da3e8b2b061a30a03910dfa534"
+    },
+    {
+      "path": "output/nft-policy-review-2026-10-14/deed-supply-backend-tests.txt",
+      "sha256": "4ae6f3e2afc965bb17ca68ef38c6ff3a0daca4dd8ec99458e73a2f66f7b0d0b1"
+    },
+    {
+      "path": "output/character-nft/rehearsals/2026-10-14T20-24-36-525Z-mint-dev.json",
+      "sha256": "06c38ebd69bb6f5e67cf65db3e6ba45b1da7d2606925b1cebce4c08c0e48d921"
+    },
+    {
+      "path": "omerta-contracts/audits/2026-10-14-character-deed-policy/report.md",
+      "sha256": "3e27d56b9b4bf9200d69ac7886c26009f4dfedfbd27aeead491300debf372a9d"
+    }
+  ],
+  "compiler": {
+    "optimizerRuns": 800,
+    "evm": "cancun",
+    "version": "0.8.26"
+  },
+  "verification": {
+    "postgresConcurrency": "passed",
+    "invariantDepth": 500,
+    "solidityTestsPassed": 92,
+    "invariantCallsPerSuite": 256000,
+    "deploymentPerformed": false,
+    "invariantSeed": "0x20261014",
+    "localRehearsalChecksPassed": 13,
+    "invariantRunsPerSuite": 512
+  }
+}

@@ -7,7 +7,7 @@ if (postgres) {
 } else if (process.env.DATABASE_URL) throw new Error('Memory proof refuses an existing DATABASE_URL.');
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.JWT_SECRET = 'franchise-api-local-test-secret'; process.env.MOD_KEY = 'franchise-api-local-test-mod'; process.env.MARKET_SEED = 'franchise-api-local-test-seed';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const { bookDepot } = await import('../src/depotbook.js');
 const { prepareFranchiseSale, settleFranchiseSale } = await import('../src/franchiselicenses.js');

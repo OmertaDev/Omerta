@@ -130,7 +130,7 @@ const spec = read('SPEC.md');
     for (const craftingPack of craftingPacks) {
       assert(prose.includes(craftingPack), `${name} must list the authored workshop ${craftingPack}`);
     }
-    assert(/personal/i.test(guide) && /district-gated|location-gated/i.test(guide),
+    assert(/personal/i.test(guide) && /district-gated|location-gated|stories require their named district/i.test(guide),
       `${name} must explain personal, district-gated authored stories`);
     assert(/value-neutral|gameplay-inert/i.test(guide),
       `${name} must state that the authored rewards are gameplay-inert`);
@@ -1188,7 +1188,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const wikiWeb = fs.readFileSync('public/wiki.html', 'utf8');
 
   // slice each codex to its OWN risk section so a matching figure elsewhere can never satisfy us
-  const mdStart = wikiMd.indexOf('Risk Factors — the honest register');
+  const mdStart = wikiMd.indexOf('Risk Factors: losses, fees and launch limits');
   assert(mdStart > 0, 'docs/WIKI.md has lost its Risk Factors section');
   const mdEnd = wikiMd.indexOf('\n## ', mdStart);
   const mdRisk = wikiMd.slice(mdStart, mdEnd > 0 ? mdEnd : undefined);

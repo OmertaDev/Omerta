@@ -1,0 +1,744 @@
+[
+  {
+    "startMs": 110,
+    "endMs": 1305.542,
+    "text": "The stake is down.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 2125.542,
+    "endMs": 3412.646,
+    "text": "One seat is empty.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 4232.646,
+    "endMs": 5775.604,
+    "text": "Who do you trust to fill it?",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 6595.604,
+    "endMs": 13266.958,
+    "text": "This is OMERTÀ: a multiplayer mafia strategy RPG, played in your browser.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 15180,
+    "endMs": 15876.521,
+    "text": "Meet Nico.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 16595.563,
+    "endMs": 20189.979,
+    "text": "One name, a little cash, no reputation.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 20909.021,
+    "endMs": 25397.292,
+    "text": "Nico's story starts with one simple question: what's worth risking?",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 26116.333,
+    "endMs": 27667.729,
+    "text": "His first job is small.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 28386.771,
+    "endMs": 32426.646,
+    "text": "The cost is nerve; success earns game cash and respect.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 33145.688,
+    "endMs": 38448.542,
+    "text": "Now there's a choice: train, bank some money, or risk another job.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 39167.583,
+    "endMs": 41847.938,
+    "text": "Training spends energy to improve his stats.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 42566.979,
+    "endMs": 45972,
+    "text": "Even a bank deposit spends time in vulnerable transit.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 46691.042,
+    "endMs": 49590.021,
+    "text": "Progress is deciding what to put at risk next.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 50180,
+    "endMs": 52950.25,
+    "text": "Eventually, Nico earns a Path.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 53443,
+    "endMs": 55512.396,
+    "text": "The Gun favors street combat.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 56005.146,
+    "endMs": 58903.208,
+    "text": "The Ledger builds income through fronts and trade.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 59395.958,
+    "endMs": 61455.5,
+    "text": "The Kitchen improves cook quality.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 61948.25,
+    "endMs": 63940.5,
+    "text": "The Wheel moves convoys faster.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 64433.25,
+    "endMs": 66357.292,
+    "text": "The Shadow shortens searches.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 66850.042,
+    "endMs": 69164.063,
+    "text": "The Ring improves duels and bouts.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 69656.813,
+    "endMs": 71448.729,
+    "text": "Each edge brings a drawback.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 71941.479,
+    "endMs": 73543.25,
+    "text": "Nico chooses the Wheel.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 74036,
+    "endMs": 79741.604,
+    "text": "He likes routes, engines, and arriving before somebody changes their mind.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 80234.354,
+    "endMs": 81715.188,
+    "text": "Mara chooses the Gun.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 82207.938,
+    "endMs": 88723.75,
+    "text": "Their Paths don't magically solve a heist; the job still checks their preparation and abilities.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 89216.5,
+    "endMs": 94590.083,
+    "text": "But they've found different reasons to log in, and different things to bring to the table.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 95180,
+    "endMs": 96833.458,
+    "text": "Routes connect more than places.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 97351.25,
+    "endMs": 101150.938,
+    "text": "A business earns, but upkeep and exposure eat into the plan.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 101668.729,
+    "endMs": 103182.646,
+    "text": "A Kitchen batch takes time.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 103700.438,
+    "endMs": 105427.458,
+    "text": "Goods occupy cargo space.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 105945.25,
+    "endMs": 111261.688,
+    "text": "Cars can be repaired, sold, or broken down; boats put freight on vulnerable water.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 111779.479,
+    "endMs": 114515.396,
+    "text": "A price is only useful if you can get the goods there.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 115033.188,
+    "endMs": 119930.875,
+    "text": "For Nico, transport becomes a business decision, not background scenery.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 120448.667,
+    "endMs": 128256.979,
+    "text": "Around that work: races, boxing, the Den, a Speakeasy, loans, auctions, fixers.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 128774.771,
+    "endMs": 131830.396,
+    "text": "Events and NPC activity change the surroundings.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 132348.188,
+    "endMs": 134590.083,
+    "text": "The next opportunity may be across town.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 135180,
+    "endMs": 139052.646,
+    "text": "Nico forms a Crew: a small circle for mutual aid.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 139688.875,
+    "endMs": 146767.688,
+    "text": "A Family is a larger structure, with hierarchy, a treasury, rivals, and territory.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 147403.917,
+    "endMs": 148745.833,
+    "text": "They're different commitments.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 149382.063,
+    "endMs": 154676.833,
+    "text": "For this heist, a temporary team fills two seats: wheelman and muscle.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 155313.063,
+    "endMs": 156791.833,
+    "text": "Nico puts up the stake.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 157428.063,
+    "endMs": 158337.688,
+    "text": "Mara joins.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 158973.917,
+    "endMs": 162708.563,
+    "text": "Preparation improves the odds; it doesn't erase the risk.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 163344.792,
+    "endMs": 167057.708,
+    "text": "Families contest districts and commit resources to wars.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 167693.938,
+    "endMs": 169756.729,
+    "text": "Convoys move through dangerous routes.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 170392.958,
+    "endMs": 173525.375,
+    "text": "Commission seats bring votes on specific city rules.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 174161.604,
+    "endMs": 176435.271,
+    "text": "The game can enforce a stake or a role.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 177071.5,
+    "endMs": 179589.917,
+    "text": "A promise between friends is still a promise.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 180180,
+    "endMs": 181586.521,
+    "text": "A wreck becomes salvage.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 181900.646,
+    "endMs": 183638.833,
+    "text": "Salvage becomes material.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 183952.958,
+    "endMs": 189490.229,
+    "text": "An eligible recipe turns material into something useful, with a traceable history.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 189804.354,
+    "endMs": 194207.667,
+    "text": "That's one part of the World Graph: the city keeps connections that matter.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 194521.792,
+    "endMs": 197159.25,
+    "text": "In this city, knowledge has permissions.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 197473.375,
+    "endMs": 200526.375,
+    "text": "Discoveries aren't automatically shared with everyone.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 200840.5,
+    "endMs": 206465.667,
+    "text": "Two investigators can need independently obtained evidence, not two copies of one clue.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 206779.792,
+    "endMs": 212336.896,
+    "text": "Advanced coordination adds contributions and approval; it isn't ordinary Crew chat.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 212651.021,
+    "endMs": 216687.458,
+    "text": "The Living World Director selects authored situations from game state.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 217001.583,
+    "endMs": 219589.938,
+    "text": "Every discovery can change the next move.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 220180,
+    "endMs": 222045.313,
+    "text": "Nico's neighbor might be a person.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 222776.354,
+    "endMs": 224778.271,
+    "text": "Or a program operated by one.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 225509.313,
+    "endMs": 232088.958,
+    "text": "Here, a sample agent reads an allowed action, submits it, and receives changed game state.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 232820,
+    "endMs": 235089.667,
+    "text": "The result changes what happens next.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 235820.708,
+    "endMs": 239432.375,
+    "text": "An agent makes decisions through the same action-and-result loop.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 240163.417,
+    "endMs": 246227.458,
+    "text": "Supported automation has limits: permissions, resources, risk, and bounded actions.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 246958.5,
+    "endMs": 249590.042,
+    "text": "NPCs are a separate part of the city.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 250180,
+    "endMs": 252953.479,
+    "text": "To follow the money, separate three balances.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 253489.979,
+    "endMs": 255337.396,
+    "text": "Game cash pays for city life.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 255873.896,
+    "endMs": 262731.833,
+    "text": "In-game OMR buys selected equipment, access, and services; some privileges require holding or staking it.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 263268.333,
+    "endMs": 265237.812,
+    "text": "Wallet OMR lives onchain.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 265774.313,
+    "endMs": 268520.875,
+    "text": "The funded Window spends OMR for game cash.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 269057.375,
+    "endMs": 270542.646,
+    "text": "Cash doesn't convert back.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 271079.146,
+    "endMs": 274044.792,
+    "text": "Limited game rewards aren't automatic wallet payouts.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 274581.292,
+    "endMs": 278669.708,
+    "text": "Many spends recycle OMR; they don't destroy token supply.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 279206.208,
+    "endMs": 280689.958,
+    "text": "The market adds another layer.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 281226.458,
+    "endMs": 286543,
+    "text": "Trading fees fund separate developer, community, real-world asset, and liquidity budgets.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 287079.5,
+    "endMs": 290028.479,
+    "text": "Protocol-owned liquidity remains protocol-controlled.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 290564.979,
+    "endMs": 294039.146,
+    "text": "Inventory bonds sell existing OMR released over time.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 294575.646,
+    "endMs": 298387.646,
+    "text": "Liquidity rewards need qualifying positions and funded campaigns.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 298924.146,
+    "endMs": 302349.313,
+    "text": "Market rewards depend on qualification and available funding.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 302885.813,
+    "endMs": 307361.229,
+    "text": "Successful arbitrage can contribute a share of realized profit to reserves.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 307897.729,
+    "endMs": 312406.438,
+    "text": "Families compete for designated trading-fee rights, not the pool's principal.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 312942.938,
+    "endMs": 316525.479,
+    "text": "Real-world assets are interests tied to assets outside the game.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 317061.979,
+    "endMs": 320026.417,
+    "text": "The system includes Stock Tokens and Commission choices.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 320562.917,
+    "endMs": 327185.792,
+    "text": "Allocating a fee is the first step: acquisition, custody, eligibility, and delivery each have their place.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 327722.292,
+    "endMs": 331061.75,
+    "text": "Purchase, custody and delivery follow their own rules.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 331598.25,
+    "endMs": 334590.104,
+    "text": "Holding OMR does not promise everyone a payout.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 335180,
+    "endMs": 337607.708,
+    "text": "Back at the heist, somebody talked.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 337974.313,
+    "endMs": 339469.813,
+    "text": "The result doesn't name them.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 339836.417,
+    "endMs": 341241.229,
+    "text": "Everyone goes to jail.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 341607.833,
+    "endMs": 347473.146,
+    "text": "A character can die; the account continues, with only specified legacy preserved.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 347839.75,
+    "endMs": 349693.563,
+    "text": "An heir doesn't recover everything.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 350060.167,
+    "endMs": 351776.979,
+    "text": "Seasons have separate rules.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 352143.583,
+    "endMs": 354182.354,
+    "text": "Eligible items can be extracted.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 354548.958,
+    "endMs": 357514.5,
+    "text": "Exported gear and vehicles stop working in-game.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 357881.104,
+    "endMs": 361401,
+    "text": "Combat cannot seize unrelated external wallet holdings.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 361767.604,
+    "endMs": 362910.604,
+    "text": "You can buy equipment.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 363277.208,
+    "endMs": 364589.917,
+    "text": "You cannot buy trust.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 365180,
+    "endMs": 370410.396,
+    "text": "The next time that envelope comes round, Nico isn't just filling a seat.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 371130.458,
+    "endMs": 372909.437,
+    "text": "Someone is counting on him.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 373629.5,
+    "endMs": 376237.583,
+    "text": "From needing a favor to being worth calling.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 376957.646,
+    "endMs": 378065.021,
+    "text": "Choose your path.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 378785.083,
+    "endMs": 379949.813,
+    "text": "Find your people.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 380669.875,
+    "endMs": 381604.187,
+    "text": "Make your name.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 382324.25,
+    "endMs": 383085.333,
+    "text": "OMERTÀ.",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 383805.396,
+    "endMs": 384817.813,
+    "text": "Who will you bring?",
+    "timestampMs": null,
+    "confidence": null
+  },
+  {
+    "startMs": 385537.875,
+    "endMs": 388140.021,
+    "text": "Start playing at omerta.fun.",
+    "timestampMs": null,
+    "confidence": null
+  }
+]

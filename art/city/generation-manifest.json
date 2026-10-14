@@ -1,0 +1,68 @@
+{
+  "provider": "fal.ai",
+  "budgetUsd": 3,
+  "jobs": {
+    "neighborhood-v1": {
+      "model": "openai/gpt-image-2.5/sunburst/edit",
+      "inputFile": "art/city/requests/neighborhood-v1.json",
+      "reserveUsd": 0.6,
+      "status": "downloaded",
+      "submittedAt": "2026-10-09T03:15:21.072Z",
+      "request_id": "01a11ea8-810c-74a2-a6de-379d396aa8ec",
+      "response_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-810c-74a2-a6de-379d396aa8ec",
+      "status_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-810c-74a2-a6de-379d396aa8ec/status",
+      "cancel_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-810c-74a2-a6de-379d396aa8ec/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "user_queue_position": 0,
+      "user_queued_count": 1,
+      "result": {
+        "images": [
+          {
+            "url": "https://v3b.fal.media/files/b/0aada2d4/f3dToGeSmGfr-Mbpnyzm4_gnxaslGR.png",
+            "content_type": "image/png",
+            "file_name": "f3dToGeSmGfr-Mbpnyzm4_gnxaslGR.png",
+            "file_size": null,
+            "width": null,
+            "height": null
+          }
+        ]
+      },
+      "file": "art/city/neighborhood-v1.png",
+      "bytes": 3108470,
+      "sha256": "e33aa9d19125866bd278d9f2c12839f5d5b46f1549397ba58b823e8e45fc0987"
+    },
+    "characters-v1": {
+      "model": "openai/gpt-image-2.5/flare/text-to-image",
+      "inputFile": "art/city/requests/characters-v1.json",
+      "reserveUsd": 0.6,
+      "status": "downloaded",
+      "submittedAt": "2026-10-09T03:15:21.490Z",
+      "request_id": "01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "response_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-81ed-7321-bbab-da9932e79e35",
+      "status_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-81ed-7321-bbab-da9932e79e35/status",
+      "cancel_url": "https://queue.fal.run/openai/gpt-image-2.5/requests/01a11ea8-81ed-7321-bbab-da9932e79e35/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "user_queue_position": 0,
+      "user_queued_count": 1,
+      "result": {
+        "images": [
+          {
+            "url": "https://v3b.fal.media/files/b/0aada2d4/6tXMnLw0h1BwXv8HvWwq__SilVbq0v.png",
+            "content_type": "image/png",
+            "file_name": "6tXMnLw0h1BwXv8HvWwq__SilVbq0v.png",
+            "file_size": null,
+            "width": null,
+            "height": null
+          }
+        ]
+      },
+      "file": "art/city/characters-v1.png",
+      "bytes": 1653922,
+      "sha256": "d9b0292662ca2ff405ec5f0f9400a362f42671fa297f6794db6387a9c84e67e7"
+    }
+  }
+}

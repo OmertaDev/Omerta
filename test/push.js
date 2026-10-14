@@ -14,7 +14,7 @@ process.env.VAPID_PRIVATE_KEY = keys.privateKey;
 // filter for them; a dedicated block below flips it on and proves the skip + the away-player push.
 process.env.PUSH_SKIP_ACTIVE_MIN = '0';
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const Push = await import('../src/push.js');
 
 const app = await buildServer();

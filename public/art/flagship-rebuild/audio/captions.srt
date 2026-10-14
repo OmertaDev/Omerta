@@ -1,0 +1,455 @@
+1
+00:00:00,182 --> 00:00:01,660
+Nico has put up the stake.
+
+2
+00:00:02,555 --> 00:00:03,607
+One seat is empty.
+
+3
+00:00:04,575 --> 00:00:08,010
+Fill it with the wrong person, and everyone could go to jail.
+
+4
+00:00:08,905 --> 00:00:13,636
+This is OMERTÀ, a multiplayer mafia strategy RPG in your browser.
+
+5
+00:00:15,352 --> 00:00:17,652
+Nico starts with a name and a little cash.
+
+6
+00:00:18,558 --> 00:00:19,853
+He takes a small job.
+
+7
+00:00:20,731 --> 00:00:21,684
+Nerve goes down.
+
+8
+00:00:22,580 --> 00:00:23,998
+Cash and respect go up.
+
+9
+00:00:24,892 --> 00:00:25,450
+Now what?
+
+10
+00:00:26,345 --> 00:00:28,300
+Another job could build his bankroll.
+
+11
+00:00:29,177 --> 00:00:31,652
+Training spends energy to improve his stats.
+
+12
+00:00:32,534 --> 00:00:36,680
+Banking protects money once it arrives, but the trip leaves it exposed.
+
+13
+00:00:37,605 --> 00:00:39,768
+Three choices, different risks.
+
+14
+00:00:40,632 --> 00:00:42,792
+Nico has to choose what matters next.
+
+15
+00:00:43,687 --> 00:00:48,645
+That is how a place in this city begins: one decision, then its consequence.
+
+16
+00:00:52,340 --> 00:00:55,162
+As he progresses, six Paths open different ways forward.
+
+17
+00:00:55,872 --> 00:00:57,084
+The Gun brings street combat.
+
+18
+00:00:57,812 --> 00:00:59,289
+The Ledger, fronts and trade.
+
+19
+00:01:00,008 --> 00:01:01,339
+The Kitchen, better cooking.
+
+20
+00:01:02,049 --> 00:01:03,540
+The Wheel, faster convoys.
+
+21
+00:01:04,254 --> 00:01:05,753
+The Shadow, quicker searches.
+
+22
+00:01:06,464 --> 00:01:08,321
+The Ring, stronger duels and bouts.
+
+23
+00:01:09,017 --> 00:01:10,369
+Every advantage costs something.
+
+24
+00:01:11,082 --> 00:01:14,216
+Nico chooses the Wheel: faster convoys, slower cooking.
+
+25
+00:01:14,932 --> 00:01:15,863
+Mara chooses the Gun.
+
+26
+00:01:16,592 --> 00:01:19,409
+Their specialties are different; their preparation still matters.
+
+27
+00:01:20,107 --> 00:01:21,971
+Nico starts thinking beyond his next payout.
+
+28
+00:01:22,776 --> 00:01:24,942
+What can he do that makes someone else want him around?
+
+29
+00:01:30,383 --> 00:01:31,830
+He buys a sack of coffee.
+
+30
+00:01:32,734 --> 00:01:35,903
+There is the price, the debit, and the cargo in his trunk.
+
+31
+00:01:36,791 --> 00:01:38,943
+Getting a bargain is only half the decision.
+
+32
+00:01:39,861 --> 00:01:40,729
+Goods need moving.
+
+33
+00:01:41,625 --> 00:01:42,762
+Cars need repairs.
+
+34
+00:01:43,654 --> 00:01:45,937
+Boats open sea runs with risks of their own.
+
+35
+00:01:46,831 --> 00:01:49,973
+A business has upkeep; a Kitchen batch takes time.
+
+36
+00:01:50,867 --> 00:01:55,623
+Races, boxing, the Den and the Speakeasy give people other reasons to return.
+
+37
+00:01:56,528 --> 00:01:59,985
+Loans, auctions and fixers create other opportunities.
+
+38
+00:02:00,871 --> 00:02:02,643
+The city rewards paying attention.
+
+39
+00:02:05,362 --> 00:02:09,646
+Nico forms a Crew, a small circle for mutual aid and chat.
+
+40
+00:02:10,652 --> 00:02:12,667
+Then comes the Payroll Office job.
+
+41
+00:02:13,657 --> 00:02:15,721
+This heist needs a wheelman and muscle.
+
+42
+00:02:16,687 --> 00:02:19,619
+Nico takes the wheelman role and puts up the stake.
+
+43
+00:02:20,601 --> 00:02:22,076
+The second seat is empty.
+
+44
+00:02:23,067 --> 00:02:23,975
+Mara joins.
+
+45
+00:02:25,008 --> 00:02:26,166
+Both names are there.
+
+46
+00:02:27,241 --> 00:02:29,100
+Preparation improves their odds.
+
+47
+00:02:30,085 --> 00:02:33,015
+It cannot tell Nico what somebody else will choose.
+
+48
+00:02:34,006 --> 00:02:34,719
+He commits.
+
+49
+00:02:37,255 --> 00:02:38,274
+The law was waiting.
+
+50
+00:02:39,253 --> 00:02:40,253
+Somebody talked.
+
+51
+00:02:41,942 --> 00:02:43,446
+Both players go to jail.
+
+52
+00:02:45,995 --> 00:02:47,797
+The result names no informant.
+
+53
+00:02:48,782 --> 00:02:50,998
+Nico can read exactly what happened.
+
+54
+00:02:51,998 --> 00:02:54,109
+He still does not know whom to believe.
+
+55
+00:02:58,357 --> 00:02:59,028
+Jail ends.
+
+56
+00:02:59,911 --> 00:03:01,111
+The question remains.
+
+57
+00:03:02,017 --> 00:03:03,897
+Would you invite the same person again?
+
+58
+00:03:04,798 --> 00:03:07,824
+Bigger risks can cost more: a character can die.
+
+59
+00:03:08,691 --> 00:03:12,440
+Your account continues, but an heir keeps only a limited legacy.
+
+60
+00:03:13,330 --> 00:03:14,919
+Seasons have their own rules.
+
+61
+00:03:15,806 --> 00:03:20,984
+Eligible gear and vehicles can leave the game, but extracted items stop working inside it.
+
+62
+00:03:21,960 --> 00:03:25,446
+Combat cannot take unrelated assets from your external wallet.
+
+63
+00:03:26,433 --> 00:03:27,664
+What do you keep in play?
+
+64
+00:03:28,563 --> 00:03:30,035
+What are you prepared to lose?
+
+65
+00:03:32,346 --> 00:03:36,305
+Elsewhere in the city, discoveries can be kept private or shared with permission.
+
+66
+00:03:37,107 --> 00:03:39,914
+Two investigators may need evidence they found independently.
+
+67
+00:03:40,704 --> 00:03:42,704
+Copying the same clue is not another witness.
+
+68
+00:03:43,479 --> 00:03:48,634
+Objects tell stories too: salvage becomes material, and an eligible recipe makes an item
+
+69
+00:03:48,634 --> 00:03:49,840
+with a traceable history.
+
+70
+00:03:50,654 --> 00:03:57,084
+Beyond Nico's small Crew, Families pursue larger ambitions: treasury, territory, rivalries and wars.
+
+71
+00:03:57,874 --> 00:04:00,297
+Shared operations need contributions and approval.
+
+72
+00:04:01,091 --> 00:04:02,357
+Convoys can be ambushed.
+
+73
+00:04:03,155 --> 00:04:05,581
+Commission seats give votes on specific city rules.
+
+74
+00:04:06,363 --> 00:04:10,065
+Events and the Director's authored situations change the opportunities around you.
+
+75
+00:04:12,337 --> 00:04:13,955
+Not every rival is at a keyboard.
+
+76
+00:04:14,740 --> 00:04:16,213
+A player can operate an agent.
+
+77
+00:04:17,025 --> 00:04:19,594
+Here it reads its available actions and takes a street job.
+
+78
+00:04:20,382 --> 00:04:22,695
+Nerve falls; cash and respect change.
+
+79
+00:04:23,476 --> 00:04:25,424
+The next decision starts from that new state.
+
+80
+00:04:26,295 --> 00:04:28,597
+Permissions and resources still limit what it can do.
+
+81
+00:04:29,375 --> 00:04:31,175
+The city's NPCs are separate.
+
+82
+00:04:31,984 --> 00:04:35,971
+Whether you bring friends or build an agent, the choices still have consequences.
+
+83
+00:04:40,337 --> 00:04:42,551
+Nico needs equipment, access and people.
+
+84
+00:04:43,342 --> 00:04:46,121
+Money helps, but the balances have different jobs.
+
+85
+00:04:46,926 --> 00:04:48,515
+Game cash pays for city life.
+
+86
+00:04:49,315 --> 00:04:54,330
+In-game OMR buys selected gear and services; some privileges require holding or staking it.
+
+87
+00:04:55,192 --> 00:04:56,920
+Most OMR spends recycle it.
+
+88
+00:04:57,797 --> 00:05:00,132
+Wallet OMR is separate, onchain.
+
+89
+00:05:00,937 --> 00:05:03,298
+The funded Window spends OMR for game cash.
+
+90
+00:05:04,089 --> 00:05:05,461
+That conversion goes one way.
+
+91
+00:05:06,253 --> 00:05:08,586
+Game rewards are not automatic wallet payouts.
+
+92
+00:05:09,360 --> 00:05:13,058
+Trading fees fund developer, community, asset and liquidity budgets.
+
+93
+00:05:13,833 --> 00:05:16,561
+Inventory bonds release existing OMR over time.
+
+94
+00:05:17,362 --> 00:05:20,454
+Liquidity rewards need eligible positions and funded campaigns.
+
+95
+00:05:21,253 --> 00:05:24,032
+Some realized arbitrage profit can support reserves.
+
+96
+00:05:24,878 --> 00:05:29,249
+Families compete for designated trading-fee rights; they do not take the pool's principal.
+
+97
+00:05:30,033 --> 00:05:34,349
+Real-world assets include Stock Tokens: exposure to assets outside the game.
+
+98
+00:05:35,152 --> 00:05:39,280
+Commission choices, acquisition, custody and eligibility govern the process.
+
+99
+00:05:40,068 --> 00:05:42,548
+Holding OMR does not promise everyone a payout.
+
+100
+00:05:43,446 --> 00:05:45,585
+These systems shape what players can organize.
+
+101
+00:05:46,375 --> 00:05:48,256
+They cannot decide whom Nico should trust.
+
+102
+00:05:51,796 --> 00:05:53,274
+The next job comes round.
+
+103
+00:05:54,160 --> 00:05:54,968
+Another stake.
+
+104
+00:05:55,845 --> 00:05:56,927
+Another empty seat.
+
+105
+00:05:57,822 --> 00:06:04,062
+Nico has learned how to earn, how to specialize, and how much another person's decision can cost him.
+
+106
+00:06:04,950 --> 00:06:07,437
+The next invitation is a choice he has to make.
+
+107
+00:06:08,326 --> 00:06:09,391
+You can buy equipment.
+
+108
+00:06:10,281 --> 00:06:11,482
+You cannot buy trust.
+
+109
+00:06:12,371 --> 00:06:13,257
+Choose your path.
+
+110
+00:06:14,176 --> 00:06:15,115
+Find your people.
+
+111
+00:06:15,996 --> 00:06:16,756
+Make your name.
+
+112
+00:06:17,646 --> 00:06:18,275
+OMERTÀ.
+
+113
+00:06:19,159 --> 00:06:19,974
+Who will you bring?
+
+114
+00:06:20,882 --> 00:06:23,019
+Start playing at omerta.fun.

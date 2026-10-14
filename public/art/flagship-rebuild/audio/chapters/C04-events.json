@@ -1,0 +1,604 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "He",
+        "ms":  100,
+        "character":  125,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "buys",
+        "ms":  240,
+        "character":  128,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  585,
+        "character":  133,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "sack",
+        "ms":  640,
+        "character":  135,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "of",
+        "ms":  985,
+        "character":  140,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "coffee",
+        "ms":  1115,
+        "character":  143,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U02",
+        "ms":  2355,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "There",
+        "ms":  2455,
+        "character":  200,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  2650,
+        "character":  206,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  2795,
+        "character":  209,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "price",
+        "ms":  2885,
+        "character":  213,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  3495,
+        "character":  220,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "debit",
+        "ms":  3600,
+        "character":  224,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  4155,
+        "character":  231,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  4305,
+        "character":  235,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "cargo",
+        "ms":  4390,
+        "character":  239,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "in",
+        "ms":  4830,
+        "character":  245,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "his",
+        "ms":  4970,
+        "character":  248,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "trunk",
+        "ms":  5155,
+        "character":  252,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U03",
+        "ms":  6420,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Getting",
+        "ms":  6520,
+        "character":  308,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  6820,
+        "character":  316,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "bargain",
+        "ms":  6885,
+        "character":  318,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  7295,
+        "character":  326,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "only",
+        "ms":  7485,
+        "character":  329,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "half",
+        "ms":  7785,
+        "character":  334,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  8040,
+        "character":  339,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "decision",
+        "ms":  8145,
+        "character":  343,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U04",
+        "ms":  9485,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Goods",
+        "ms":  9585,
+        "character":  402,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "need",
+        "ms":  9855,
+        "character":  408,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "moving",
+        "ms":  10080,
+        "character":  413,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U05",
+        "ms":  11260,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Cars",
+        "ms":  11360,
+        "character":  470,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "need",
+        "ms":  11685,
+        "character":  475,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "repairs",
+        "ms":  11910,
+        "character":  480,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U06",
+        "ms":  13285,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Boats",
+        "ms":  13385,
+        "character":  538,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "open",
+        "ms":  13695,
+        "character":  544,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "sea",
+        "ms":  13985,
+        "character":  549,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "runs",
+        "ms":  14230,
+        "character":  553,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "with",
+        "ms":  14530,
+        "character":  558,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "risks",
+        "ms":  14730,
+        "character":  563,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "of",
+        "ms":  15090,
+        "character":  569,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "their",
+        "ms":  15195,
+        "character":  572,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "own",
+        "ms":  15390,
+        "character":  578,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U07",
+        "ms":  16475,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "A",
+        "ms":  16575,
+        "character":  632,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "business",
+        "ms":  16665,
+        "character":  634,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "has",
+        "ms":  17115,
+        "character":  643,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "upkeep",
+        "ms":  17295,
+        "character":  647,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  18205,
+        "character":  655,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "Kitchen",
+        "ms":  18295,
+        "character":  657,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "batch",
+        "ms":  18675,
+        "character":  665,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "takes",
+        "ms":  19005,
+        "character":  671,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "time",
+        "ms":  19340,
+        "character":  677,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U08",
+        "ms":  20505,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Races",
+        "ms":  20605,
+        "character":  732,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "boxing",
+        "ms":  21230,
+        "character":  739,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  21940,
+        "character":  747,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Den",
+        "ms":  22050,
+        "character":  751,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  22545,
+        "character":  755,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  22695,
+        "character":  759,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Speakeasy",
+        "ms":  22775,
+        "character":  763,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "give",
+        "ms":  23470,
+        "character":  773,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "people",
+        "ms":  23665,
+        "character":  778,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "other",
+        "ms":  24040,
+        "character":  785,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "reasons",
+        "ms":  24295,
+        "character":  791,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  24745,
+        "character":  799,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "return",
+        "ms":  24865,
+        "character":  802,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U09",
+        "ms":  26165,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Loans",
+        "ms":  26265,
+        "character":  859,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "auctions",
+        "ms":  27070,
+        "character":  866,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  27510,
+        "character":  875,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "fixers",
+        "ms":  27685,
+        "character":  879,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "create",
+        "ms":  28175,
+        "character":  886,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "other",
+        "ms":  28570,
+        "character":  893,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "opportunities",
+        "ms":  28835,
+        "character":  899,
+        "length":  13
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U10",
+        "ms":  30510,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  30610,
+        "character":  963,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "city",
+        "ms":  30705,
+        "character":  967,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "rewards",
+        "ms":  31035,
+        "character":  972,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "paying",
+        "ms":  31505,
+        "character":  980,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "attention",
+        "ms":  31830,
+        "character":  987,
+        "length":  9
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C04-U10-end",
+        "ms":  33185,
+        "character":  0,
+        "length":  0
+    }
+]

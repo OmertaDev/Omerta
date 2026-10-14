@@ -28,7 +28,7 @@ try {
     process.env.DATABASE_URL = endpoint.toString();
   } else assert(!process.env.DATABASE_URL, 'Without --postgres, require disposable pg-mem.');
 
-  const { buildServer } = await import('../src/server.js');
+  const { buildServer } = await import('./server-fixture.js');
   app = await buildServer();
   if (postgres) {
     const native = (await app.pool.query('SELECT current_schema() AS schema,version() AS version')).rows[0];

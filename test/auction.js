@@ -7,7 +7,7 @@
 // precedent), so the $OMR-conservation DRIFT stays exactly the grant.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { AUCTION, auctionLotsOf, weekOf } from '../src/rules.js';
 import { sweepAuctions } from '../src/auction.js';
 import { deadlockToRetry } from '../src/game.js';
