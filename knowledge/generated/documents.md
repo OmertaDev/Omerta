@@ -324,8 +324,8 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
-| [docs/agent-economy-autonomy-release-review.md](../../docs/agent-economy-autonomy-release-review.md) | documentation | 98 | 2026-10-13 |
-| [docs/agent-economy-commercial-release-review.md](../../docs/agent-economy-commercial-release-review.md) | documentation | 66 | 2026-10-13 |
+| [docs/agent-economy-autonomy-release-review.md](../../docs/agent-economy-autonomy-release-review.md) | documentation | 110 | 2026-10-13 |
+| [docs/agent-economy-commercial-release-review.md](../../docs/agent-economy-commercial-release-review.md) | documentation | 78 | 2026-10-13 |
 | [docs/agent-economy-equipment-contracts-security-review.md](../../docs/agent-economy-equipment-contracts-security-review.md) | documentation | 44 | 2026-10-13 |
 | [docs/agent-economy-final-integrated-native-review.md](../../docs/agent-economy-final-integrated-native-review.md) | documentation | 23 | 2026-10-12 |
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
@@ -333,7 +333,7 @@
 | [docs/agent-economy-final-prefix-native-review.md](../../docs/agent-economy-final-prefix-native-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/agent-economy-first-five-security-review.md](../../docs/agent-economy-first-five-security-review.md) | documentation | 24 | 2026-10-13 |
 | [docs/agent-economy-integration-boundary-review.md](../../docs/agent-economy-integration-boundary-review.md) | documentation | 46 | 2026-10-12 |
-| [docs/agent-economy-workforce-release-review.md](../../docs/agent-economy-workforce-release-review.md) | documentation | 41 | 2026-10-13 |
+| [docs/agent-economy-workforce-release-review.md](../../docs/agent-economy-workforce-release-review.md) | documentation | 45 | 2026-10-14 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
 | [docs/agent-operating-memory-security-review.md](../../docs/agent-operating-memory-security-review.md) | documentation | 50 | 2026-10-13 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
@@ -514,7 +514,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 162 | 2026-10-13 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 167 | 2026-10-14 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
@@ -758,5 +758,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-13 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-14 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
