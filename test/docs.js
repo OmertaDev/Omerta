@@ -1186,6 +1186,9 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const R = await import('../src/rules.js');
   const wikiMd  = fs.readFileSync('docs/WIKI.md', 'utf8');
   const wikiWeb = fs.readFileSync('public/wiki.html', 'utf8');
+  const managerSource = fs.readFileSync('omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol', 'utf8');
+  const tradeFee = managerSource.match(/uint16 public constant TRADE_FEE_BPS = (\d+);/);
+  assert(tradeFee, 'Current market manager must expose its fixed trade fee');
 
   // slice each codex to its OWN risk section so a matching figure elsewhere can never satisfy us
   const mdStart = wikiMd.indexOf('Risk Factors: losses, fees and launch limits');
@@ -1200,7 +1203,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     .replace(/<[^>]+>/g, '');  // markup-free, so a <b> split can never hide a phrase
 
   const phrases = [
-    ['the sell tax',        `${R.SELL_TAX.BPS / 100}% comes off the top`],
+    ['the market sell fee', `${Number(tradeFee[1]) / 100}% comes off the top`],
     ['the surcharge window',`younger than ${R.freshWindowMs() / 3600000} hours`],
     ['the surcharge rate',  `up to an extra ${R.earlySellTaxBps() / 100}% that fades to zero`],
     ['the exit toll',       `a flat ${R.withdrawTaxBps() / 100}% toll`],

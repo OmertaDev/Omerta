@@ -169,7 +169,7 @@
     <h1>Where the fees go</h1>
     <p class="sub">Try a fee allocation. Change each source's split, trace its destinations, then export your proposal.</p>
   </header>
-  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The starting model follows current market destinations and separate gameplay fee policies. Inventory-bond proceeds, surge receipts and the arbitrage reserve share fund the War Chest; the base POL fee funds Core. ETH and OMR receipts are accounted separately on-chain; each currency row here is an example. The base-fee shares are rounded to this editor's 10,000-bps grid. Character creation proceeds go 100% to DEV_WALLET. All edits stay in this browser; they cannot change on-chain policy, move money or open extraction. The chart starts at the approved 9% base sell tax with up to 1% surge and a separate static 0.3% LP fee; opening buy penalties and caps are disabled. Committee proposals may adjust other bounded market-tax rates only through Safe queueing and explicit execution after 48 hours, preserving the absolute 2% founder/operations sell slice to A87, all recipients and accrued fees. A local edit that changes that fixed slice or enables opening buy penalties/caps is not an executable governance proposal. Character NFT creation fees and gameplay charges are outside this authority. Read the <a href="/wiki#canonical-market">Codex for current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
+  <div class="scenario-notice"><b>This is an illustrative scenario, not current production.</b> The current restricted-manager policy charges a fixed 5% base on buys and sells: 2% developer, 1% RWA, 1% community and 1% POL, with rounding remainder assigned to POL. The Hook adds a sell-pressure surcharge of at most 0.5% without collecting the base twice. The planned genesis pool uses a separate static 0.3% LP fee; its opening buy charges and caps are disabled. Base rates, allocation shares and recipients are fixed for the deployment; local edits cannot become an executable Committee or Safe fee-change proposal. Inventory-bond proceeds, surge receipts and the arbitrage reserve share fund the War Chest; the base POL fee funds Core. ETH and OMR receipts are separate, and each currency row is an example; exact-input fees use actual output and exact-output fees use actual input. Character creation proceeds go 100% to DEV_WALLET. Gameplay fees and withdrawal policy are separate. All edits stay in this browser; they cannot change policy, move money or open extraction. Production trading remains inactive. Read the <a href="/wiki#canonical-market">current market mechanics</a> and <a href="/wiki#chain">production rail status</a>.</div>
 
   <div class="scenario-notice"><b>Approved genesis terms, subject to deployment and launch verification.</b> One five-day ETH/OMR auction admits paid or free-credit character NFT holders without individual allocation caps. The 100M allocation is 40M offered, 20M for initial liquidity and 40M held at the Safe until bond activation; unsold sale tokens are tracked separately. The successful-raise minimum is 10 ETH. Half of accepted ETH funds liquidity at the funded asset ratio, independently of the last auction price; all remaining accepted ETH credits the Safe’s Family Yield treasury. Successful-auction filled tokens are claimable at closure after bid exit, without waiting for LP migration; completed purchases are final and unused ETH is returned. Read <a href="/wiki#genesis">the full terms and native-clock timing</a>.</div>
 
@@ -229,8 +229,8 @@
 "use strict";
 /* Illustrative current-market destinations, with separate gameplay fee policies from
    deploy/fee-splits.json. Market authority is defined by src/market-v2 and docs/market/DESIGN.md.
-   The editor changes a local illustration, not on-chain policy; Committee execution requires the Safe and a 48-hour delay with the fixed 2% operations share. Base-fee ratios are rounded
-   to the editor's bps grid; on-chain allocation uses exact 200:160:240:300 shares with POL remainder.
+   The editor changes a local illustration, not the immutable on-chain fee policy.
+   Base revenue uses exact 200:100:100:100 shares, with POL receiving rounding remainder.
    Existing source IDs and the export schema remain compatible with saved scenarios. */
 const LIVE = [
   {id:"mint",name:"Character creation mint",currency:"eth",splits:[
@@ -247,12 +247,12 @@ const LIVE = [
     {dest:"operations",bps:5000,lands:"dev wallet (on-chain remainder)",implicit:true}]},
   {id:"bond",name:"Inventory bonds — ETH for prefunded OMR",currency:"eth",splits:[
     {dest:"war-chest",bps:10000,lands:"Fixed proceeds recipient → War Chest funding adapter"}]},
-  {id:"tax",name:"Initial canonical base sell fee — 9% of settled base",currency:"eth",splits:[
-    {dest:"operations",bps:2222,lands:"Fixed Founder Ops: 2% of the settled base to A87"},
-    {dest:"treasury",bps:1778,lands:"Initial RWA allocation: 1.6% of settled base; fixed recipient"},
-    {dest:"community",bps:2667,lands:"Initial community allocation: 2.4% of settled base; fixed recipient"},
-    {dest:"pol",bps:3333,lands:"Core funding: 3% of the settled base, including rounding remainder"}]},
-  {id:"surge",name:"Canonical surge — 0–1% of settled sell base",currency:"eth",splits:[
+  {id:"tax",name:"Fixed canonical base trade fee — 5% of settled fee leg",currency:"eth",splits:[
+    {dest:"operations",bps:4000,lands:"Fixed developer allocation: 2% of settled fee base to A87"},
+    {dest:"treasury",bps:2000,lands:"Fixed RWA allocation: 1% of settled fee base"},
+    {dest:"community",bps:2000,lands:"Fixed community allocation: 1% of settled fee base"},
+    {dest:"pol",bps:2000,lands:"Core funding: 1% of settled fee base, including rounding remainder"}]},
+  {id:"surge",name:"Canonical sell-pressure surcharge — 0–0.5% of settled fee leg",currency:"eth",splits:[
     {dest:"war-chest",bps:10000,lands:"Fixed stability recipient → War Chest funding adapter"}]},
   {id:"opening",name:"Hypothetical opening buy charge — disabled at launch",currency:"omr",splits:[
     {dest:"war-chest",bps:10000,lands:"Fixed stability recipient; actual fee currency depends on swap mode"}]},
@@ -295,7 +295,7 @@ const destLabel = d => (DESTS.find(x=>x.id===d)||{}).label || d;
    load the NEW seed and FLAG it (never silently drop edits — the status pill says the baseline moved
    and to Import to recover). An Import or Reset re-saves under the current version, so a chosen
    variant persists. */
-const SEED_VERSION = 6;
+const SEED_VERSION = 7;
 let staleLocal = false;
 let localSaveFailed = false;
 let hasLocalEdits = false;

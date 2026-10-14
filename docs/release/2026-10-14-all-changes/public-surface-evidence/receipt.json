@@ -1,0 +1,304 @@
+{
+  "schema": "omerta.public-surface-checks.v1",
+  "capturedAtUtc": "2026-10-14T22:00:56.692Z",
+  "repositoryHeadAtCapture": "750c07431ab157d8bf764ef1cb60d2cb4332c59b",
+  "state": "Staged working-tree content extends the named HEAD; per-file hashes and index blob IDs identify the checked inputs. Fourteen checked inputs are not a claim of fourteen changed files.",
+  "phase": "Public copy, source inventory and local HTTP route verification only. No production access, deployment, activation, chain/runtime qualification or full security audit is established.",
+  "toolchain": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "source": [
+    {
+      "path": "public/index.html",
+      "bytes": 1450720,
+      "rawSha256": "39ae9522725fe7e67f964c2f0f4893d32343b2e9a3821067097818e7f4c44228",
+      "normalizedLfSha256": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c",
+      "stagedBlobOid": "f5430cc904706625d6812a4a3ea5c0edbde6c884",
+      "stagedRawSha256": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c",
+      "stagedNormalizedLfSha256": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c"
+    },
+    {
+      "path": "public/wiki.html",
+      "bytes": 246484,
+      "rawSha256": "170386e9ee88a7e3cb17b8ffafa6e2c9bdff9f31d07d0fc6ae39d26d4a6c2d06",
+      "normalizedLfSha256": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696",
+      "stagedBlobOid": "df2e88fde8a86c2639ece6f6f3fd49a087bc924b",
+      "stagedRawSha256": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696",
+      "stagedNormalizedLfSha256": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696"
+    },
+    {
+      "path": "public/defi.html",
+      "bytes": 84614,
+      "rawSha256": "35c35abbf94677643834b86a74fbbc8fd24a6a0c5e83680333353097c0fffaa0",
+      "normalizedLfSha256": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a",
+      "stagedBlobOid": "778524260321323fa8850802d063361873927fb4",
+      "stagedRawSha256": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a",
+      "stagedNormalizedLfSha256": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a"
+    },
+    {
+      "path": "public/fee-flows.html",
+      "bytes": 38513,
+      "rawSha256": "af6229f4eeee345469377a69944170441ba4664523212e77f4cfcd217b282212",
+      "normalizedLfSha256": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498",
+      "stagedBlobOid": "2ad9da841ee8aa1b2d09417ab96e80ad1663e280",
+      "stagedRawSha256": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498",
+      "stagedNormalizedLfSha256": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498"
+    },
+    {
+      "path": "public/admin.html",
+      "bytes": 101315,
+      "rawSha256": "819f6524f214f55d98add90af55b4cee124e01206871f492e31d6eefecf87385",
+      "normalizedLfSha256": "32a03fd7f9af4485e872ff1405d02d55ba96a5957d7d16c6ff54580410f874fe",
+      "stagedBlobOid": "eb007603283dd7f45685d317ead3b1e7abb97893",
+      "stagedRawSha256": "32a03fd7f9af4485e872ff1405d02d55ba96a5957d7d16c6ff54580410f874fe",
+      "stagedNormalizedLfSha256": "32a03fd7f9af4485e872ff1405d02d55ba96a5957d7d16c6ff54580410f874fe"
+    },
+    {
+      "path": "public/arena.html",
+      "bytes": 17055,
+      "rawSha256": "ff9a315fca02ecde8df6259867d49aa64345572f21361f95b4cd87e383419620",
+      "normalizedLfSha256": "1f34dff7d3c52bd40493e080ee8d61a140db419296001ae6bf2502b8658431f2",
+      "stagedBlobOid": "bb54b36a0965f2724cb56c1ff55013719b4011d6",
+      "stagedRawSha256": "1f34dff7d3c52bd40493e080ee8d61a140db419296001ae6bf2502b8658431f2",
+      "stagedNormalizedLfSha256": "1f34dff7d3c52bd40493e080ee8d61a140db419296001ae6bf2502b8658431f2"
+    },
+    {
+      "path": "public/play.html",
+      "bytes": 16594,
+      "rawSha256": "d1d2e8a355f05032ec1e8a9ff8dee14aa6f85eae9f04069d783ba7d606ba9d2d",
+      "normalizedLfSha256": "2600cbec2c1569e0c14781e61c5e84eef8a050cc39beb7d6fece6da05cf984d0",
+      "stagedBlobOid": "eb75b489fbf58dda0c928697d7f7fb8e9b2e2230",
+      "stagedRawSha256": "2600cbec2c1569e0c14781e61c5e84eef8a050cc39beb7d6fece6da05cf984d0",
+      "stagedNormalizedLfSha256": "2600cbec2c1569e0c14781e61c5e84eef8a050cc39beb7d6fece6da05cf984d0"
+    },
+    {
+      "path": "docs/WIKI.md",
+      "bytes": 229544,
+      "rawSha256": "e842aeaa1c201991d8d49f7dcff76af7a067b6a7a17af6c038e0eea7d447c743",
+      "normalizedLfSha256": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2",
+      "stagedBlobOid": "6613bff4d598badeb76b6fa325c26a20af6986e5",
+      "stagedRawSha256": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2",
+      "stagedNormalizedLfSha256": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2"
+    },
+    {
+      "path": "test/current-copy.js",
+      "bytes": 5251,
+      "rawSha256": "19d7d4763e8a5dec16b271ed2a8d14e4ebc781b68456efb594236a6122b9b01d",
+      "normalizedLfSha256": "2353e3760a2c9bf517d49c788390b3e2f685421f9e2e1a9954483fe58621339f",
+      "stagedBlobOid": "8b5034fb95af7a44b8c78ed74608f21676a31e16",
+      "stagedRawSha256": "2353e3760a2c9bf517d49c788390b3e2f685421f9e2e1a9954483fe58621339f",
+      "stagedNormalizedLfSha256": "2353e3760a2c9bf517d49c788390b3e2f685421f9e2e1a9954483fe58621339f"
+    },
+    {
+      "path": "test/docs.js",
+      "bytes": 321647,
+      "rawSha256": "1d5bb04a3ad599b2cc2d8832c28bb4e53974064f251eba262f476c9626b91e13",
+      "normalizedLfSha256": "797a07dd3c03c3ba21f21fb7a1196150d034dede4e02be4e7be7d8669210f531",
+      "stagedBlobOid": "600291c2bdd400b18773193afdc4ad84f58bac71",
+      "stagedRawSha256": "797a07dd3c03c3ba21f21fb7a1196150d034dede4e02be4e7be7d8669210f531",
+      "stagedNormalizedLfSha256": "797a07dd3c03c3ba21f21fb7a1196150d034dede4e02be4e7be7d8669210f531"
+    },
+    {
+      "path": "test/routes.js",
+      "bytes": 42698,
+      "rawSha256": "28be82c19f076e03d5783459101147f6be9849d3a697d896ae073518b541cd7e",
+      "normalizedLfSha256": "0d02a892672f2ee8d6bb417252145ac269aa648ef403a346dbf95c7b276734cb",
+      "stagedBlobOid": "2faa79f071f2798f67fd80688948240c30dbcb81",
+      "stagedRawSha256": "0d02a892672f2ee8d6bb417252145ac269aa648ef403a346dbf95c7b276734cb",
+      "stagedNormalizedLfSha256": "0d02a892672f2ee8d6bb417252145ac269aa648ef403a346dbf95c7b276734cb"
+    },
+    {
+      "path": "SPEC.md",
+      "bytes": 57807,
+      "rawSha256": "90b9c016e41c66f6a9cafac6ef4464ba39993712e81f145f02cf48cb853fc4b9",
+      "normalizedLfSha256": "2159bd9590ac4cc3ed6d427ac7073e07f93b33ff66dac9fde36730addbcaf65f",
+      "stagedBlobOid": "026c043bc334b4aee1b0370e39a1473bcbe141b5",
+      "stagedRawSha256": "2159bd9590ac4cc3ed6d427ac7073e07f93b33ff66dac9fde36730addbcaf65f",
+      "stagedNormalizedLfSha256": "2159bd9590ac4cc3ed6d427ac7073e07f93b33ff66dac9fde36730addbcaf65f"
+    },
+    {
+      "path": "CHAIN-AUDIT-PACKET-O1.md",
+      "bytes": 39260,
+      "rawSha256": "95368c907ffe8c445b9fe0f2fb9f5fb33794271e215ad7b82c1229d7250bcd9b",
+      "normalizedLfSha256": "82ad6132b8148574d14ae312d21cb680617c49ff69093eeb1e2441b8546007cb",
+      "stagedBlobOid": "5113d4ebc6de8d7bf4db5393d3de1f5c835147ec",
+      "stagedRawSha256": "82ad6132b8148574d14ae312d21cb680617c49ff69093eeb1e2441b8546007cb",
+      "stagedNormalizedLfSha256": "82ad6132b8148574d14ae312d21cb680617c49ff69093eeb1e2441b8546007cb"
+    },
+    {
+      "path": "MARKETING-POSTS.md",
+      "bytes": 7189,
+      "rawSha256": "18b8b9c475cfd2fe28de80cce0af1e703251b5066127414142610a5757349cf3",
+      "normalizedLfSha256": "6e3d1a436e66787d6243312818ab8d87cf9926ea1f51f6faafe0b530713c216c",
+      "stagedBlobOid": "231e3fc969b1fd0db8edf904ea3c090648fdb26e",
+      "stagedRawSha256": "6e3d1a436e66787d6243312818ab8d87cf9926ea1f51f6faafe0b530713c216c",
+      "stagedNormalizedLfSha256": "6e3d1a436e66787d6243312818ab8d87cf9926ea1f51f6faafe0b530713c216c"
+    }
+  ],
+  "measured": {
+    "backendFiles": 459,
+    "backendLines": 124474,
+    "testFiles": 645,
+    "testLines": 170431,
+    "schemaTables": 487,
+    "schemaLines": 8865,
+    "clientLines": 15114,
+    "markdownFiles": 912,
+    "markdownLines": 153496,
+    "routeRegistrations": 1119,
+    "uniqueRoutes": 1119,
+    "v1Registrations": 1054,
+    "declaredPublicRoutes": 56,
+    "envelopedRoutes": 78
+  },
+  "checks": [
+    {
+      "command": "node test/routes.js",
+      "runs": [
+        {
+          "attempt": 1,
+          "exitCode": 1,
+          "log": "routes-attempt-01.log",
+          "exit": "routes-attempt-01.exit",
+          "finding": "PUB-ROUTE-01"
+        },
+        {
+          "attempt": 2,
+          "exitCode": 1,
+          "log": "routes-attempt-02.log",
+          "exit": "routes-attempt-02.exit",
+          "finding": "PUB-ROUTE-02"
+        },
+        {
+          "attempt": 3,
+          "exitCode": 0,
+          "log": "routes-attempt-03.log",
+          "exit": "routes-attempt-03.exit"
+        }
+      ],
+      "result": "pass",
+      "scope": "Registered-route auth boundary, typed envelopes, immutable research hashes, required landing claims and inactive-rail caveat, responsive LCP, deferred retained films, HTTP byte-range streaming, gzip/304/identity behavior."
+    },
+    {
+      "command": "node test/docs.js",
+      "exitCode": 0,
+      "log": "docs-final.log",
+      "exit": "docs-final.exit",
+      "result": "pass",
+      "scope": "Full documentation gate including current-copy source-derived fee binding, measured census, frozen/current packet scope, player/agent disclosures and existing risk/governance assertions."
+    }
+  ],
+  "findings": [
+    {
+      "id": "PUB-ROUTE-01",
+      "status": "resolved integration defect",
+      "observed": "SPEC route census claimed 1091 registrations while mounted current source declared 1119.",
+      "resolution": "Updated SPEC measured row to 1119 unique registrations / 1054 under /v1, and two derived MARKETING-POSTS route claims to 1119.",
+      "retest": "routes-attempt-03 and docs-final passed."
+    },
+    {
+      "id": "PUB-ROUTE-02",
+      "status": "resolved integration defect",
+      "observed": "Incoming landing copy omitted existing required tagline, cash/OMR separation phrase and production-chain gating label.",
+      "resolution": "Restored visible labels in incoming layout; no route-test assertions changed.",
+      "retest": "routes-attempt-03 passed."
+    },
+    {
+      "id": "PUB-DOC-01",
+      "status": "resolved integration defects",
+      "observed": "Earlier documentation runs exposed stale SPEC census, current O1 missing four owned-source representatives, absent explicit Arena public/inactive labels, heading-case drift, and disabled recovery-copy drift.",
+      "resolution": "Truthful inventory and visible-copy updates; historical source pins/review conclusions and existing assertions preserved.",
+      "evidenceLimit": "Earlier documentation failures were observed in tool output; raw failure logs were not retained. Only the complete final documentation run is retained here."
+    }
+  ],
+  "limitations": [
+    "The two failed route runs preceded their stated copy/census fixes; final source hashes identify successful current checks, not the failed candidates.",
+    "Routes execute a local in-memory server fixture; no production environment, RPC or deployed bytecode was accessed.",
+    "This receipt does not extend or replace source-pinned historical backend, contract or migration evidence."
+  ],
+  "evidence": [
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/.gitattributes",
+      "bytes": 149,
+      "rawSha256": "1e103be122bcf8d796163210787b42ea1142207c2164d63e30fb92b7504ec757",
+      "normalizedLfSha256": "1e103be122bcf8d796163210787b42ea1142207c2164d63e30fb92b7504ec757",
+      "stagedBlobOid": "3522f048baf9d3f3b46b96203ce832c4b0282f8d",
+      "stagedRawSha256": "1e103be122bcf8d796163210787b42ea1142207c2164d63e30fb92b7504ec757",
+      "stagedNormalizedLfSha256": "1e103be122bcf8d796163210787b42ea1142207c2164d63e30fb92b7504ec757"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/docs-final.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "normalizedLfSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "stagedBlobOid": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+      "stagedRawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "stagedNormalizedLfSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/docs-final.log",
+      "bytes": 4506,
+      "rawSha256": "f2491c8205c6dba6b45ed59654702cf507629456ff09172a13cd22a6782b6de8",
+      "normalizedLfSha256": "afc14c2498378d1ae37ee67b923f65bb5dec5f653780a36b0fef5984e91f2935",
+      "stagedBlobOid": "87282ba163bc1c9f2801232bbd17273cf6a85a64",
+      "stagedRawSha256": "f2491c8205c6dba6b45ed59654702cf507629456ff09172a13cd22a6782b6de8",
+      "stagedNormalizedLfSha256": "afc14c2498378d1ae37ee67b923f65bb5dec5f653780a36b0fef5984e91f2935"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-01.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "normalizedLfSha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "stagedBlobOid": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "stagedRawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "stagedNormalizedLfSha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-01.log",
+      "bytes": 584,
+      "rawSha256": "d3b0e9b8b06fef53f3f92a9c2683e59bd312c0bcb15f71c37f51f8fa3e1c4a97",
+      "normalizedLfSha256": "6eee43a7825ed1a2a09d20c5a79bfc4f91b9ba04663017bfa5f7d29f1c705418",
+      "stagedBlobOid": "01e615376fb4788070f2a557af59b07c59612ad1",
+      "stagedRawSha256": "d3b0e9b8b06fef53f3f92a9c2683e59bd312c0bcb15f71c37f51f8fa3e1c4a97",
+      "stagedNormalizedLfSha256": "6eee43a7825ed1a2a09d20c5a79bfc4f91b9ba04663017bfa5f7d29f1c705418"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-02.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "normalizedLfSha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "stagedBlobOid": "f33dfa25aa16a97ca941fe1d9cabdc3689179f3f",
+      "stagedRawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "stagedNormalizedLfSha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-02.log",
+      "bytes": 1844,
+      "rawSha256": "2f2093f960503494ebe270f2e49dc362040cbec0e2b00cb9084c4a5cffc35725",
+      "normalizedLfSha256": "d6916bc976c7b4fdde177ef46e7bba5f327ccb96c55e22351090562d5b9d90bd",
+      "stagedBlobOid": "f2ef5ff136fd49d08b58b0f052473c5249d7ea8f",
+      "stagedRawSha256": "2f2093f960503494ebe270f2e49dc362040cbec0e2b00cb9084c4a5cffc35725",
+      "stagedNormalizedLfSha256": "d6916bc976c7b4fdde177ef46e7bba5f327ccb96c55e22351090562d5b9d90bd"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-03.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "normalizedLfSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+      "stagedBlobOid": "18748286e5b8b4de5db905f87cdfed1a7d48fe60",
+      "stagedRawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "stagedNormalizedLfSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "docs/release/2026-10-14-all-changes/public-surface-evidence/routes-attempt-03.log",
+      "bytes": 1584,
+      "rawSha256": "419180ac04dc28a7fba581231011db9bdb90e8751493cd23e78501f31cde80d3",
+      "normalizedLfSha256": "f8b06000ed09638cdc9dda1f5a86ab45c3380d272f80461cbc7d47cf198e4d8f",
+      "stagedBlobOid": "fe173e91e9757617e2a80b8e01fa6dd78e3d4af0",
+      "stagedRawSha256": "419180ac04dc28a7fba581231011db9bdb90e8751493cd23e78501f31cde80d3",
+      "stagedNormalizedLfSha256": "f8b06000ed09638cdc9dda1f5a86ab45c3380d272f80461cbc7d47cf198e4d8f"
+    }
+  ]
+}
