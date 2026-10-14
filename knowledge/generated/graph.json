@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d443d9ac882929dd8f670d6ef18c0feaa1e23f8f",
+  "sourceRevision": "4f135c0fbb0991e41b5a46f29b478f2814441862",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14671,
-    "edges": 57697,
+    "nodes": 14674,
+    "edges": 57710,
     "byNodeType": {
-      "Artifact": 6395,
+      "Artifact": 6396,
       "Command": 273,
-      "Commit": 3624,
+      "Commit": 3626,
       "Contract": 133,
       "Document": 899,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5021,
-      "CHANGED": 22527,
-      "CONTAINS": 6416,
+      "BELONGS_TO": 5022,
+      "CHANGED": 22536,
+      "CONTAINS": 6417,
       "DECLARES": 273,
       "DEFINED_IN": 1639,
       "DEPENDS_ON": 68,
       "EXECUTES": 964,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3624,
+      "HAS_COMMIT": 3626,
       "IMPLEMENTS": 124,
       "IMPORTS": 5808,
       "INHERITS": 45,
@@ -7514,6 +7514,29 @@
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
     },
     {
+      "key": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "type": "Artifact",
+      "id": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "label": "forge-cpu-affinity-2026-10-14.json",
+      "path": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7882,
+      "lines": 116,
+      "version": "ccbcec97275677bc",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+          "line": 1,
+          "version": "ccbcec97275677bc"
+        }
+      ],
+      "lastChangedAt": "2026-10-14T23:43:45.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
+    },
+    {
       "key": "Artifact:.github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
       "type": "Artifact",
       "id": ".github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
@@ -7567,20 +7590,20 @@
       "path": ".github/workflows/forge.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 10749,
-      "lines": 205,
-      "version": "e042629a6dbd52b8",
+      "bytes": 11009,
+      "lines": 206,
+      "version": "f70fa7613f13d4f7",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "e042629a6dbd52b8"
+          "version": "f70fa7613f13d4f7"
         }
       ],
-      "lastChangedAt": "2026-10-14T23:10:58.000Z",
+      "lastChangedAt": "2026-10-14T23:43:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d443d9ac882929dd8f670d6ef18c0feaa1e23f8f"
+      "lastChangedCommit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
     },
     {
       "key": "Artifact:.github/workflows/knowledge-refresh.yml",
@@ -130427,20 +130450,20 @@
       "path": "test/docs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 317392,
-      "lines": 4273,
-      "version": "d04a7daabb7f58f1",
+      "bytes": 317626,
+      "lines": 4278,
+      "version": "e71083891eff9339",
       "text": true,
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "d04a7daabb7f58f1"
+          "version": "e71083891eff9339"
         }
       ],
-      "lastChangedAt": "2026-10-14T23:10:58.000Z",
+      "lastChangedAt": "2026-10-14T23:43:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d443d9ac882929dd8f670d6ef18c0feaa1e23f8f"
+      "lastChangedCommit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
     },
     {
       "key": "Artifact:test/drop.js",
@@ -168854,6 +168877,22 @@
       ]
     },
     {
+      "key": "Commit:4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "type": "Commit",
+      "id": "4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "label": "Serialize hosted compiler profiles using CPU affinity",
+      "title": "Serialize hosted compiler profiles using CPU affinity",
+      "date": "2026-10-14T23:43:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "provenance": [
+        {
+          "commit": "4f135c0fbb0991e41b5a46f29b478f2814441862",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4f135c0fbb0991e41b5a46f29b478f2814441862"
+        }
+      ]
+    },
+    {
       "key": "Commit:4f191faf5ec40190da498034ace4d3781d39528f",
       "type": "Commit",
       "id": "4f191faf5ec40190da498034ace4d3781d39528f",
@@ -175618,6 +175657,22 @@
         {
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2",
           "url": "https://github.com/OmertaDev/Omerta/commit/6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "type": "Commit",
+      "id": "6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "label": "chore(knowledge): snapshot release verification source",
+      "title": "chore(knowledge): snapshot release verification source",
+      "date": "2026-10-14T23:14:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "provenance": [
+        {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6e997246cb2ad1c8a55277b302c8011cd57f8293"
         }
       ]
     },
@@ -234510,6 +234565,9 @@
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
         },
         {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+        },
+        {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
         },
         {
@@ -236398,6 +236456,9 @@
         },
         {
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+        },
+        {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
         },
         {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
@@ -238290,6 +238351,9 @@
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
         },
         {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+        },
+        {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
         },
         {
@@ -239544,6 +239608,9 @@
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
         },
         {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+        },
+        {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
         },
         {
@@ -240709,6 +240776,9 @@
         },
         {
           "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+        },
+        {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
         },
         {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
@@ -242035,6 +242105,9 @@
         },
         {
           "commit": "6bfc5b49d4e5c82d6f2b3817ce999a2a49ff693b"
+        },
+        {
+          "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
         },
         {
           "commit": "6f41563273c5faa06fc09b9f4e04affbfdcacda5"
@@ -253869,12 +253942,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d443d9ac882929dd8f670d6ef18c0feaa1e23f8f",
+      "revision": "4f135c0fbb0991e41b5a46f29b478f2814441862",
       "currentBranch": "codex/production-all-changes-20261014",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6395,
+      "currentArtifactCount": 6396,
       "provenance": [
         {
           "file": "README.md",
@@ -291578,13 +291651,13 @@
       "type": "TestSuite",
       "id": "test/docs.js",
       "label": "test/docs.js",
-      "lines": 4273,
-      "version": "d04a7daabb7f58f1",
+      "lines": 4278,
+      "version": "e71083891eff9339",
       "provenance": [
         {
           "file": "test/docs.js",
           "line": 1,
-          "version": "d04a7daabb7f58f1"
+          "version": "e71083891eff9339"
         }
       ]
     },
@@ -298673,13 +298746,13 @@
       "type": "Workflow",
       "id": ".github/workflows/forge.yml",
       "label": ".github/workflows/forge.yml",
-      "lines": 205,
-      "version": "e042629a6dbd52b8",
+      "lines": 206,
+      "version": "f70fa7613f13d4f7",
       "provenance": [
         {
           "file": ".github/workflows/forge.yml",
           "line": 1,
-          "version": "e042629a6dbd52b8"
+          "version": "f70fa7613f13d4f7"
         }
       ]
     },
@@ -298745,6 +298818,15 @@
     }
   ],
   "edges": [
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+        "line": 1
+      }
+    },
     {
       "type": "BELONGS_TO",
       "from": "Artifact:.github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
@@ -391872,6 +391954,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "to": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "provenance": {
+        "commit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "to": "Artifact:.github/workflows/forge.yml",
+      "provenance": {
+        "commit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "to": "Artifact:test/docs.js",
+      "provenance": {
+        "commit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4f191faf5ec40190da498034ace4d3781d39528f",
       "to": "Artifact:test/marketfeed-api.js",
       "provenance": {
@@ -411764,6 +411870,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
       }
     },
     {
@@ -542320,6 +542474,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+      "provenance": {
+        "file": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:.github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
       "provenance": {
         "file": ".github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
@@ -626247,6 +626410,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4f135c0fbb0991e41b5a46f29b478f2814441862",
+      "provenance": {
+        "commit": "4f135c0fbb0991e41b5a46f29b478f2814441862"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4f191faf5ec40190da498034ace4d3781d39528f",
       "provenance": {
         "commit": "4f191faf5ec40190da498034ace4d3781d39528f"
@@ -629626,6 +629797,14 @@
       "to": "Commit:6e7ea76791d620e9878af6e707ef08ca2a0b8be2",
       "provenance": {
         "commit": "6e7ea76791d620e9878af6e707ef08ca2a0b8be2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6e997246cb2ad1c8a55277b302c8011cd57f8293",
+      "provenance": {
+        "commit": "6e997246cb2ad1c8a55277b302c8011cd57f8293"
       }
     },
     {
@@ -671804,7 +671983,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4210
+        "line": 4215
       }
     },
     {
@@ -671813,7 +671992,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4211
+        "line": 4216
       }
     },
     {
@@ -671822,7 +672001,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1186
+        "line": 1191
       }
     },
     {
@@ -671831,7 +672010,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4053
+        "line": 4058
       }
     },
     {
@@ -757718,7 +757897,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4210
+        "line": 4215
       }
     },
     {
@@ -757727,7 +757906,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4211
+        "line": 4216
       }
     },
     {
@@ -757736,7 +757915,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 1186
+        "line": 1191
       }
     },
     {
@@ -757745,7 +757924,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/docs.js",
-        "line": 4053
+        "line": 4058
       }
     },
     {

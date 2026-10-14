@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d443d9ac8829`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4f135c0fbb09`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3624 |
+| Commits in clone | 3626 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-14 — test(release): reconcile privacy fixtures and closed native catalogs |
+| Latest commit | 2026-10-14 — Serialize hosted compiler profiles using CPU affinity |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2666 |
+| OmertaDev | 2668 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 627 | historical |
-| knowledge/generated/graph-summary.md | 627 | historical |
-| knowledge/generated/graph.json | 627 | historical |
-| knowledge/generated/inventory.md | 627 | historical |
+| knowledge/generated/github-history.md | 628 | historical |
+| knowledge/generated/graph-summary.md | 628 | historical |
+| knowledge/generated/graph.json | 628 | historical |
+| knowledge/generated/inventory.md | 628 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 509 | yes |
 | [public/index.html](../../public/index.html) | 461 | yes |
@@ -42,10 +42,10 @@
 | knowledge/generated/documents.md | 315 | historical |
 | [package.json](../../package.json) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/modules.md | 225 | historical |
+| knowledge/generated/modules.md | 226 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
-| knowledge/generated/graph.mmd | 174 | historical |
+| knowledge/generated/graph.mmd | 175 | historical |
 | [test/gates.js](../../test/gates.js) | 154 | yes |
 | [src/invariants.js](../../src/invariants.js) | 147 | yes |
 | [src/worker.js](../../src/worker.js) | 137 | yes |
@@ -69,7 +69,7 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 59 | yes |
-| [test/docs.js](../../test/docs.js) | 56 | yes |
+| [test/docs.js](../../test/docs.js) | 57 | yes |
 
 ## Pull requests
 
