@@ -12,7 +12,7 @@ const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLengt
 const files = ['package-lock.json', 'package.json', 'schema.sql', 'src/agentgateway.js', 'src/crew.js', 'src/db.js',
   'src/deeds.js', 'src/game.js', 'src/routes/worldgraph.js', 'src/server.js', 'src/wire.js', 'src/worker.js',
   'src/rules.generated.js', 'src/rules.tail.js', 'src/genesisauction.js', 'public/genesis-deploy-client.js', 'tools/genesis-auction-preflight.js'];
-assert.equal(RELEASE_SOURCE_REVISION, 'b602dc0da8fd3922ae53b84d23e4e46b6e90439f');
+assert.equal(RELEASE_SOURCE_REVISION, 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0');
 assert.equal(RELEASE_SOURCE_PREDECESSOR, 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463');
 assert.equal(RELEASE_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime/native/migration/financial/genesis/deployment clearance');
 assert.deepEqual(Object.keys(RELEASE_SOURCE_DOMAINS), files);
@@ -86,5 +86,9 @@ for (const [file, domain] of Object.entries(RELEASE_SOURCE_DOMAINS)) {
 for (const file of ['src/unknown.js', 'src/generated.js', 'package.json.unreviewed', 'src/server.js.extra', 'toString', '__proto__']) {
   reject(file, fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : 'unknown');
 }
+// The superseded release lacks the newly reviewed dated reset and has no current alias.
+const supersededDb = git('show', 'b602dc0da8fd3922ae53b84d23e4e46b6e90439f:src/db.js');
+assert.notEqual(supersededDb, git('show', RELEASE_SOURCE_REVISION + ':src/db.js'));
+reject('src/db.js', supersededDb);
 reject('schema.sql', Buffer.from('unknown'));
 console.log(`Release source transfer PASS: ${files.length} literal candidate domains, ${comparisons} complete-text comparisons, 68 SHA256/Gitblob bindings, ${hunks} actual inverse hunks, ${negatives} negative controls; source-only, no inherited runtime/native/migration/financial/genesis/deployment qualification`);

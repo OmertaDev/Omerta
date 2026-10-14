@@ -8,7 +8,7 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update('blob ' + Buffer.byteLength(text) + '\0').update(text).digest('hex');
 const uniform = text => text === lf(text) || text === lf(text).replaceAll('\n', '\r\n');
 
-export const RELEASE_SOURCE_REVISION = 'b602dc0da8fd3922ae53b84d23e4e46b6e90439f';
+export const RELEASE_SOURCE_REVISION = 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0';
 export const RELEASE_SOURCE_PREDECESSOR = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 export const RELEASE_SOURCE_PHASE = 'exact-source-transfer-only; no historical runtime/native/migration/financial/genesis/deployment clearance';
 export const RELEASE_SOURCE_DOMAINS = Object.freeze({
@@ -382,8 +382,8 @@ export const RELEASE_SOURCE_DOMAINS = Object.freeze({
     ]
   },
   "src/db.js": {
-    "currentSha256": "0fdad8781931817f104df25265ff91c477a33aac3904626c294ed043e17f6bed",
-    "currentBlob": "45bd2b6f01f6bebea26dd40e3270c20116221b3c",
+    "currentSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+    "currentBlob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13",
     "baselineSha256": "8753bb1f90e55f9b6b239f205af552ac7f93a71989b51bb0892c598ffde15313",
     "baselineBlob": "01a092d4c18666cb1a65fcb58051354c6e71a970",
     "contextLines": 3,
@@ -397,8 +397,8 @@ export const RELEASE_SOURCE_DOMAINS = Object.freeze({
         "baseline": "// Defaults are correctness-first fallbacks. Real Postgres capabilities turn on only after its schema\n// boot succeeds; an unknown/custom query adapter therefore gets portable SQL rather than a fast shape\n// whose semantics pg-mem is known to mis-execute.\nexport const dbCaps = { skipLocked: false, indexedTextArrayAny: false };\n\n// Register only the PostgreSQL built-ins that the schema and custody journals need and pg-mem omits. Callers\n// that create a raw pg-mem database for schema tests must opt in before applying schema.sql; the\n"
       },
       {
-        "current": "  await migrateRwaHealthOverlayV2(boot, { compatibility });\n  await migrateCityHomeStorage(boot, { compatibility });\n  await resetStartingLevels(boot);\n  const rls = await enforceDatabaseRls(boot, { compatibility });\n  const stamp = await stampSchema(boot);\n  return { migration, stamp, rls };\n}\n\n// One-time player level reset. makeDb holds the schema advisory lock on Postgres.\n",
-        "baseline": "  await migrateRwaHealthOverlayV2(boot, { compatibility });\n  await migrateCityHomeStorage(boot, { compatibility });\n  await resetStartingLevels(boot);\n  const stamp = await stampSchema(boot);\n  return { migration, stamp };\n}\n\n// One-time player level reset. makeDb holds the schema advisory lock on Postgres.\n"
+        "current": "  await migrateRwaHealthOverlayV2(boot, { compatibility });\n  await migrateCityHomeStorage(boot, { compatibility });\n  await resetStartingLevels(boot);\n  const rls = await enforceDatabaseRls(boot, { compatibility });\n  const stamp = await stampSchema(boot);\n  return { migration, stamp, rls };\n}\n\n// Owner-requested October 14 reset; the October 6 marker remains historical.\n// makeDb holds the schema advisory lock on Postgres.\nexport async function resetStartingLevels(q) {\n  await q.query(`CREATE TABLE IF NOT EXISTS player_reset_migrations (\n    id TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now()\n  )`);\n  await q.query('BEGIN');\n  try {\n    const applied = await q.query(\"SELECT id FROM player_reset_migrations WHERE id='starting-levels-2026-10-14'\");\n    if (!applied.rowCount) {\n      await q.query('UPDATE characters SET respect=0 WHERE alive=true AND is_npc=false');\n      await q.query(\"INSERT INTO player_reset_migrations (id) VALUES ('starting-levels-2026-10-14')\");\n    }\n    await q.query('COMMIT');\n  } catch (error) {\n",
+        "baseline": "  await migrateRwaHealthOverlayV2(boot, { compatibility });\n  await migrateCityHomeStorage(boot, { compatibility });\n  await resetStartingLevels(boot);\n  const stamp = await stampSchema(boot);\n  return { migration, stamp };\n}\n\n// One-time player level reset. makeDb holds the schema advisory lock on Postgres.\nexport async function resetStartingLevels(q) {\n  await q.query(`CREATE TABLE IF NOT EXISTS player_reset_migrations (\n    id TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now()\n  )`);\n  await q.query('BEGIN');\n  try {\n    const applied = await q.query(\"SELECT id FROM player_reset_migrations WHERE id='starting-levels-2026-10-06'\");\n    if (!applied.rowCount) {\n      await q.query('UPDATE characters SET respect=0 WHERE alive=true AND is_npc=false');\n      await q.query(\"INSERT INTO player_reset_migrations (id) VALUES ('starting-levels-2026-10-06')\");\n    }\n    await q.query('COMMIT');\n  } catch (error) {\n"
       },
       {
         "current": "    }\n    dbCaps.skipLocked = true; // real Postgres — see dbCaps\n    dbCaps.indexedTextArrayAny = true; // pg-mem returns zero for indexed TEXT = ANY(array), even with scalar literals\n    dbCaps.timestampText = true; // preserve timestamp microseconds in durable event cursors\n    return pool;\n  }\n  // (red-team R9 config F2) A production deploy that forgot DATABASE_URL would SILENTLY boot the whole\n",
