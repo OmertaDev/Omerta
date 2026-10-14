@@ -149,12 +149,12 @@ export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
   ])
 });
 export const FIFTH_BATCH_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "332e12b7c78833c4481c716277170f382faef09b",
-  "reviewedCandidate": "59cbfecb5722e37f189971c840d15e131ba30809",
-  "predecessorTree": "f59c6239e37117fca06d0a99d897ce5fef658c4efa9ad0a40c8e492864140c69",
+  "predecessor": "0c72a29748df6b1c6955ebcb648efe5f20fec6a1",
+  "reviewedCandidate": "94ae0cf067939d05e18f997aef7ddd7b3fd18615",
+  "predecessorTree": "d936c15e8a2e6af2a66be9c82c9f1e053c98c86a379283cc5a1ec8bf331b562a",
   "predecessorSchema": "c24abb3e7a3863dabeecbb683671a12e95c447918a2b385b38cc36691fbb9dc9",
   "predecessorCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
-  "candidateTree": "8f5dea265b1c7c433e2601f6c38fb9425d6bae112f095da98cf779490cb2cbea",
+  "candidateTree": "83da348182a2a26fdb06b13dbfaf81284268c9ae2ae7cf88c0c26df177ca35e5",
   "candidateSchema": "a1d078109ccd50394e30871e4ccff8b5c2df976fcba72a5fedc2168e6404270c",
   "candidateCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
   "candidateTableCatalog": "b9058463f72e0b694211f5d82ea0ea9eb39e117ce70edd4cf64ce44277a62b5d",
