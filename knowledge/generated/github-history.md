@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c07a002bd74b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d9f9bf357678`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3617 |
+| Commits in clone | 3621 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-14 — Verify integrated release and retain exact source-transfer proofs |
+| Latest commit | 2026-10-14 — Verify contract integration and reconcile current release surfaces |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2659 |
+| OmertaDev | 2663 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,37 +30,37 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 625 | historical |
-| knowledge/generated/graph-summary.md | 625 | historical |
-| knowledge/generated/graph.json | 625 | historical |
-| knowledge/generated/inventory.md | 625 | historical |
+| knowledge/generated/github-history.md | 626 | historical |
+| knowledge/generated/graph-summary.md | 626 | historical |
+| knowledge/generated/graph.json | 626 | historical |
+| knowledge/generated/inventory.md | 626 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [SPEC.md](../../SPEC.md) | 508 | yes |
-| [public/index.html](../../public/index.html) | 460 | yes |
+| [SPEC.md](../../SPEC.md) | 509 | yes |
+| [public/index.html](../../public/index.html) | 461 | yes |
 | [src/server.js](../../src/server.js) | 418 | yes |
 | [schema.sql](../../schema.sql) | 349 | yes |
-| knowledge/generated/documents.md | 313 | historical |
+| knowledge/generated/documents.md | 314 | historical |
 | [package.json](../../package.json) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/modules.md | 223 | historical |
+| knowledge/generated/modules.md | 224 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
-| knowledge/generated/graph.mmd | 173 | historical |
+| knowledge/generated/graph.mmd | 174 | historical |
 | [test/gates.js](../../test/gates.js) | 154 | yes |
 | [src/invariants.js](../../src/invariants.js) | 147 | yes |
 | [src/worker.js](../../src/worker.js) | 137 | yes |
 | [test/client.js](../../test/client.js) | 130 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| knowledge/generated/schema.md | 123 | historical |
+| knowledge/generated/schema.md | 124 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| knowledge/generated/routes.md | 113 | historical |
+| knowledge/generated/routes.md | 114 | historical |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 104 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [public/wiki.html](../../public/wiki.html) | 92 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 88 | yes |
+| [public/wiki.html](../../public/wiki.html) | 93 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 89 | yes |
 | [test/social.js](../../test/social.js) | 87 | yes |
 | [test/growth.js](../../test/growth.js) | 82 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 80 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 81 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 76 | yes |
 | [test/migrate.js](../../test/migrate.js) | 74 | yes |
 | [test/hardening.js](../../test/hardening.js) | 68 | yes |
@@ -69,7 +69,7 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 59 | yes |
-| [src/growth.js](../../src/growth.js) | 55 | yes |
+| [test/docs.js](../../test/docs.js) | 55 | yes |
 
 ## Pull requests
 
