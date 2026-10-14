@@ -296,9 +296,12 @@ try {
       const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
       const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
       return { copy: notice.textContent, busy: content.getAttribute('aria-busy'), outsideBusy: !content.contains(notice),
+        compact: dock.classList.contains('is-compact'), loading: dock.classList.contains('is-loading'),
         visible: bounds.height > 0 && bounds.top >= box.top && bounds.bottom <= box.bottom && (hit === title || title.contains(hit)) };
     });
     assert.equal(loading.copy, 'Loading ' + label + '…'); assert.equal(loading.busy, 'true');
+    assert.equal(loading.loading, true);
+    if (page.viewportSize().width === 320) assert.equal(loading.compact, true, 'The wider fallback exercises the compact loading title.');
     assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content.');
     await assertFrame(page);
   };
@@ -312,6 +315,8 @@ try {
     };
     for (const scenario of ['active', 'map', 'close']) {
       const fixture = await newPage(viewport, { noResizeObserver: viewport.width === 320 }), { page, requests } = fixture;
+      // The wider fallback forces the real HUD to reserve enough room for a compact dock.
+      if (viewport.width === 320) await page.addStyleTag({ content: '.omerta-city { --mono: "Courier New", monospace; }' });
       const handle = await page.evaluateHandle(() => window.__worldHandles.at(-1)), position = (await state(page)).position;
       const queues = new Map(), holds = [];
       const hold = url => {
@@ -326,6 +331,7 @@ try {
         await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false'
           && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
         assert.equal(await page.locator('.city-world__notice').textContent(), '');
+        assert.equal(await page.locator('.city-world__dock').evaluate(dock => dock.classList.contains('is-loading')), false);
       };
       try {
         for (const url of ['/v1/city/social', '/v1/worldgraph/inventory']) {
@@ -344,6 +350,13 @@ try {
         assert.equal(await page.locator('[data-city-outfit]').count(), 0);
         await assertPanelLoading(page, 'Style');
         if (scenario === 'active') {
+          if (viewport.width === 320) {
+            await page.locator('.city-world__dock').hover(); await page.mouse.wheel(0, 160);
+            await page.waitForFunction(() => document.querySelector('.city-world__dock').scrollTop > 0); await frames(page);
+            await assertPanelLoading(page, 'Style');
+            assert.equal(await page.locator('.city-world__dock-bar').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(24, 37, 40)',
+              'The compact loading title keeps an opaque background over content scrolled behind it.');
+          }
           if (process.env.CITY_WORLD_SHOTS) {
             fs.mkdirSync(process.env.CITY_WORLD_SHOTS, { recursive: true });
             await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-loading-' + viewport.width + '.png') });

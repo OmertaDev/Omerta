@@ -123,6 +123,7 @@
       const label = panel === 'journal' ? 'Case journal' : PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
       const heading = label + (loading ? ' · Loading…' : ''), busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
       const altered = title.textContent !== heading || content.getAttribute('aria-busy') !== busy || state.textContent !== copy;
+      dock.classList.toggle('is-loading', loading);
       if (title.textContent !== heading) title.textContent = heading;
       if (content.getAttribute('aria-busy') !== busy) content.setAttribute('aria-busy', busy);
       if (state.textContent !== copy) state.textContent = copy;
