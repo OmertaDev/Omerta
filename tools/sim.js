@@ -35,6 +35,8 @@ import { CRIMES, GUNS, CONSTANTS, M3, LOAN, btkOf,
          TREASURY, STORE, SELL_TAX, BONDS, MISSIONS, DEEDS,
          firstsCatalog, LIMITED_RUNS, LIMITED_RUN_P, SHIPMENT, shipmentCityCap, carVal, CASINO } from '../src/rules.js';
 
+// Synthetic adult identity for throwaway harness signups; the real age gate remains enabled.
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body, headers } = {}) => {
@@ -45,7 +47,7 @@ const call = async (method, url, { token, body, headers } = {}) => {
 const modH = { 'x-mod-key': 'sim-mod-key' };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;
 const newChar = async (name) => {
-  const { body: { token } } = await call('POST', '/v1/auth/guest');
+  const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
   const r = await call('POST', '/v1/character', { token, body: { name } });
   assert.equal(r.code, 200, `character create: ${JSON.stringify(r.body)}`);
   return { token, id: r.body.id };

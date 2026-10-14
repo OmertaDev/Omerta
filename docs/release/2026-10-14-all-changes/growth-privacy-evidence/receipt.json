@@ -1,0 +1,126 @@
+{
+  "schema": "omerta.growth-privacy-test-integration.v1",
+  "capturedAtUtc": "2026-10-14T22:29:05.615Z",
+  "repositoryHeadAtCapture": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "phase": "Test integration alignment with existing optional-tracking privacy behavior; scoped synthetic preflight fixture completion. No production code, legal profile, deployment configuration or privacy gate changed.",
+  "changedFile": "test/growth.js",
+  "findings": [
+    {
+      "id": "GROWTH-PRIVACY-01",
+      "status": "resolved integration defect",
+      "observed": "Legacy assertions expected POST /v1/broadcast/shared and POST /v1/screens to persist optional analytics and increase founder-funnel reach counters.",
+      "existingBehavior": "Authenticated compatibility acknowledgements remain available while optional marketing/screen telemetry is disabled; test/legal-security.js separately asserts no analytics persistence.",
+      "resolution": "Full growth test now requires auth, exact compatibility acknowledgements, repeated requests from distinct actors, no attempted telemetry writes, unchanged complete telemetry rows, and unchanged share/kind/sharer/conversion and reporter/open/reach counters. Operational funnel, referral, career, ledger and consent checks remain."
+    },
+    {
+      "id": "GROWTH-FIXTURE-01",
+      "status": "resolved integration defect",
+      "observed": "First focused retest passed privacy sections then reached production-preflight inputs missing nine required legal fields, invalidating its unrelated no-social-token warning assertion.",
+      "resolution": "A clearly synthetic Test Operator/example.test legal profile is spread only into two explicit preflight fixture objects, matching test/preflight.js. Token, warning and severity assertions remain intact; process.env and production legal gates are unchanged."
+    }
+  ],
+  "checks": [
+    {
+      "command": "npm test body tail beginning index70",
+      "result": "failure at index71 node test/growth.js",
+      "log": "npm-test-main-tail-failure.log",
+      "exitCode": null,
+      "exitEvidence": "Original root log copied byte-for-byte; no original exit artifact supplied or reconstructed."
+    },
+    {
+      "command": "node test/growth.js",
+      "attempt": 1,
+      "result": "failure",
+      "exitCode": 1,
+      "log": "growth-retest-01.log",
+      "exit": "growth-retest-01.exit",
+      "finding": "GROWTH-FIXTURE-01",
+      "passedBeforeFailure": "Updated optional-tracking assertions and original operational career checks."
+    },
+    {
+      "command": "node test/growth.js",
+      "attempt": 2,
+      "result": "pass",
+      "exitCode": 0,
+      "log": "growth-retest-02.log",
+      "exit": "growth-retest-02.exit",
+      "scope": "Complete existing growth suite including kitchen/gameplay, referrals/recruit qualification, first-week progression, operational telemetry/funnel, career, ledger/consent, disabled optional analytics and social preflight warnings."
+    }
+  ],
+  "source": [
+    {
+      "path": "test/growth.js",
+      "rawSha256": "5eaa5bd33940cccda0e4bb7118bacc9f3f3040c2f9abb4f0a237721e2cf9ee72",
+      "normalizedLfSha256": "9849a22c0566fdedbd25214930465fc119fab3f6ef1498abd4fff393838a2a66",
+      "stagedBlobOid": "7bec63f2f2970d74d0d22fda413603471ccb78c9",
+      "stagedRawSha256": "9849a22c0566fdedbd25214930465fc119fab3f6ef1498abd4fff393838a2a66"
+    },
+    {
+      "path": "src/server.js",
+      "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+      "normalizedLfSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
+      "stagedBlobOid": "9263d8f566bdc6d165b79a12c6c09227d041471f",
+      "stagedRawSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4"
+    },
+    {
+      "path": "src/growth.js",
+      "rawSha256": "c2c0d8f8a352f713ae21f4f71e339b220f31287f20266a4775a673fd817b5ca9",
+      "normalizedLfSha256": "16d08e25af66f0f522751009694dfc6161a7459552c4036622021390a5cf85a4",
+      "stagedBlobOid": "5770a4ef7157630aae8ff9fd13cfd1efcb2a18af",
+      "stagedRawSha256": "16d08e25af66f0f522751009694dfc6161a7459552c4036622021390a5cf85a4"
+    },
+    {
+      "path": "src/preflight.js",
+      "rawSha256": "1f6d52bc531ca7d89d164ffd1ddbfa6c0246c45c812fa92788717043ea06067d",
+      "normalizedLfSha256": "791fe890e56a06663471c612921933d19ba816654f3a9643a42d47cf0be1b3fb",
+      "stagedBlobOid": "ac32077d3c1229e758af1beab5ebc49949478b3c",
+      "stagedRawSha256": "791fe890e56a06663471c612921933d19ba816654f3a9643a42d47cf0be1b3fb"
+    },
+    {
+      "path": "test/legal-security.js",
+      "rawSha256": "580b57c11973cc9e634a027d06282503df4d305c711660a45aff3d6b74e354bb",
+      "normalizedLfSha256": "e9d4ae0af7d5c62abb0ad1593d587597405479a3388a0d9c97ad39e72aa124e7",
+      "stagedBlobOid": "03e56bb443162b623ba223e58ccdee0bf42c354a",
+      "stagedRawSha256": "e9d4ae0af7d5c62abb0ad1593d587597405479a3388a0d9c97ad39e72aa124e7"
+    },
+    {
+      "path": "test/preflight.js",
+      "rawSha256": "04efefd141272d2cbd9427f1e40ef4e6035a93add6f84757a6b40cbe353ef701",
+      "normalizedLfSha256": "7e96c05cf32fa1dbae55d21cec70d4ee96e0afb48dddcbf1b44df60a740f4d6e",
+      "stagedBlobOid": "6bbdebed0bc4beef6f80c5b61d307ba5c8f081e7",
+      "stagedRawSha256": "7e96c05cf32fa1dbae55d21cec70d4ee96e0afb48dddcbf1b44df60a740f4d6e"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "npm-test-main-tail-failure.log",
+      "bytes": 2158,
+      "rawSha256": "a2e7cd4fd0ada4b0f53e006ee2e794c63d94f23372175f503bb68dd907df9d9a"
+    },
+    {
+      "path": "growth-retest-01.log",
+      "bytes": 1649,
+      "rawSha256": "86e8e3c681a5ea37d36e4ea3e48b72b67d2d8539d8b8a9df100ac5358b8f498e"
+    },
+    {
+      "path": "growth-retest-01.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "growth-retest-02.log",
+      "bytes": 812,
+      "rawSha256": "b0df46def036b4801a312deef60189eec564e69259fe5107cdb71969ca8cbeaa"
+    },
+    {
+      "path": "growth-retest-02.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    }
+  ],
+  "limitations": [
+    "The final source hashes bind the successful retest. Failed candidates are described by their retained logs and finding history, not asserted byte-identical to final source.",
+    "Tests use the local pg-mem server fixture. No production environment, real personal/legal data or RPC access is used.",
+    "This receipt establishes no native database or on-chain/production release qualification."
+  ]
+}

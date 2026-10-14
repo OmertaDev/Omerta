@@ -1,0 +1,18 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":129971,"rhs":117626,"drift":12345,"ok":false}]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: WalletConnect CDN import is pinned to an exact SDK version
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/hardening.js:405:1
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

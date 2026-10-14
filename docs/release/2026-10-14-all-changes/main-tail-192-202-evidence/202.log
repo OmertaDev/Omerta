@@ -1,0 +1,23 @@
+
+> omerta-backend@1.5.0 test:company-workforce
+> node test/rc1-third-batch-source-compatibility.js && node test/company-workforce-native-guards.js && node test/workertraining.js && node test/employmentorganizations.js && node test/businesspartnerships.js && node test/companygovernance.js && node test/companyacquisitions.js && node test/depotacquisitionruntime.js && node test/company-middle-five-integration.js && node test/company-workforce-contracts.js
+
+Third-batch source compatibility PASS: 6 literal domains, 137 full-text/12 SHA256/12 Gitblob comparisons, 13 actual inverse hunks, 101 negative controls; source transfer only
+Third native schema admission PASS: exact LF/CRLF transfer only; mixed/unknown raw bytes rejected, all30 new-family tables and independent104/121 native bindings remain visible
+Workforce native endpoint guards PASS: only fresh owned or CI names; authority/host/protocol/port/query/credentials refused before connecting
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+workertraining memory PASS: actual canonical train gain/energy/cooldown, real prepaid earned wages/source journals, JWT agent/human, exact replay/foreign/budgets, real estate sameTX proposed leaf, refund/burn oracle; native additionally latefault rollback/samekey contention/post-lock expiry. Root registration excluded; memory transactional rollback not claimed.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+employmentorganizations memory PASS: real canonical Crew form/invite/accept/leave, original leader/Depot, actual funded F11 course/canonical training/stat-energy-cooldown/wage, exact requests/revision/limits/privacy/guard/estate; native rollback/samekey budget/Crew-kick race. Actual registered standalone F11 guard/public-offer filter/trusted Crew wrapper; no memory atomicity claim.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+businesspartnerships PASS memory: two fresh consents, real paired capital→canonicalDepot, realizedGIN margin→canonicalwithdraw+realpaired distribution, exact replay/caps/privateboard, supported/future/unknown/finite source and policy guards, actualboth-party estate metadata-only retirement/FXzero
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+companygovernance PASS memory: separate2optins/explicit2votes, canonicalowneronlyactualconfig+observableGINprice, nofinancialeffect/partnercontrol, exactreplay/3proposalcap/config+policydrift, actualbothpartyestate/heirACKonly
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+companyacquisitions PASS memory: direct missing capability refuses; actual registered canonical quote; synthetic source refuses real execution => no ownership/cash mutation; fixture-only bilateral immutable metadata/replay/private/death; ACTUAL TRANSFER NOT QUALIFIED
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+depotacquisitionruntime memory PASS: actual F15 consent+real Depot owner transfer, buyer-funded price/two G.ledger legs, all assets/history preserved, full rollback/exact replay/current owner API rights, dormant grants/market liabilities/unknown schema closed. Actual global reason vocabulary and all accounting checks pass.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Middle five actual integration memory PASS: Crew-first standalone training/private board and dissolution; actual stat/energy/wage; original recovery; bilateral funding/config; bare real funded acquisition/title and canonical owner rights; 117 global books. Memory rollback/concurrency not claimed.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","phase":"actual registered closed workforce OpenAPI and runtime binding","native":false,"version":"memory","operations":30,"unknownQueryRuntimeGaps":[]}

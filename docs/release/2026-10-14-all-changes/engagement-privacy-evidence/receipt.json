@@ -1,0 +1,171 @@
+{
+  "schema": "omerta.engagement-privacy-history-integration.v1",
+  "capturedAtUtc": "2026-10-14T23:10:03.592Z",
+  "repositoryHeadAtCapture": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "phase": "Test-only distinction between disabled optional analytics and the existing historical telemetry reader. No runtime catalog/emitter, privacy gate, actual gameplay event or source17 changed; no general orphan allowance.",
+  "changedFile": "test/engagement.js",
+  "finding": {
+    "id": "ENGAGEMENT-HISTORY-01",
+    "status": "resolved integration defect",
+    "observed": "Original catalog-drift assertion treated eight deliberately retired analytics names as invalid catalog phantoms; old Path fixture expected live optional tracking.",
+    "resolution": "Exact closed eight-name historical set must remain catalogued and have no current track emitter. Every other emitted/current catalog event retains bidirectional coverage and uniqueness. Real optional beacons must persist no data; only explicit synthetic historical rows exercise unchanged legacy aggregation."
+  },
+  "retiredHistoricalOnlyNames": [
+    "broadcast_share",
+    "screen_open",
+    "path_quiz_start",
+    "path_quiz_answer",
+    "path_quiz_complete",
+    "path_result_view",
+    "path_cta_click",
+    "path_share"
+  ],
+  "currentEmitterCount": 156,
+  "closedCatalogChecks": [
+    "All current events are claimed once; current unclaimed events fail.",
+    "Every retired name exists in original catalog and is not emitted; a retired emitter reintroduction fails.",
+    "Any additional catalog orphan outside these exact eight names fails; no generic phantom allowance."
+  ],
+  "beaconProof": {
+    "pathEvents": [
+      "start",
+      "answer",
+      "complete",
+      "result_view",
+      "cta_click",
+      "share"
+    ],
+    "authenticatedCompatibility": [
+      "broadcast/shared",
+      "screens"
+    ],
+    "actors": 2,
+    "checks": [
+      "Actual HTTP200 compatibility responses and functional gun quiz scoring.",
+      "Zero attempted telemetry writes observed on forwarded real pool.query calls.",
+      "All telemetry rows deeply equal before and after requests.",
+      "Historical Path report counters unchanged by new HTTP requests."
+    ]
+  },
+  "historicalFixture": {
+    "classification": "Explicit synthetic HISTORICAL data only; not actual current emissions or measured gameplay adoption.",
+    "rows": 9,
+    "accountId": null,
+    "timestamp": "now() minus 1 hour",
+    "sessionIds": "synthetic historical-session-one/two and historical-social-view",
+    "preservedOriginalReport": {
+      "starts": 2,
+      "answerEvents": 0,
+      "completions": 1,
+      "resultViews": 2,
+      "playClicks": 1,
+      "codexClicks": 0,
+      "portraitDownloads": 1,
+      "verticalDownloads": 1,
+      "shares": 1,
+      "startToCompletePct": 50,
+      "resultToPlayPct": 50,
+      "completionPaths": {
+        "gun": 1,
+        "ledger": 0,
+        "kitchen": 0,
+        "wheel": 0,
+        "shadow": 0,
+        "ring": 0
+      },
+      "viewedPaths": {
+        "gun": 1,
+        "ledger": 1,
+        "kitchen": 0,
+        "wheel": 0,
+        "shadow": 0,
+        "ring": 0
+      }
+    }
+  },
+  "preservedAssertions": "Original public gameplay market/loan/contracts events, distinct-human adoption, dead/untracked separation, D1 eligible/pending/return rate, agent/human event isolation, account-ID nondisclosure and mod authorization all remain and pass.",
+  "checks": [
+    {
+      "command": "main body rules tail",
+      "result": "failure at index184 node test/engagement.js",
+      "log": "npm-test-rules-tail-failure.log",
+      "exitCode": null,
+      "exitEvidence": "Original release-owner raw log captures passed178..183 and failed184. No original exit artifact supplied or reconstructed."
+    },
+    {
+      "command": "node test/engagement.js",
+      "result": "pass",
+      "exitCode": 0,
+      "log": "engagement-retest-01.log",
+      "exit": "engagement-retest-01.exit",
+      "node": "v24.19.0",
+      "platform": "win32"
+    }
+  ],
+  "source": [
+    {
+      "path": "test/engagement.js",
+      "rawSha256": "c3c14bfc793276cbaba9d285e1f6d2cf0f5b27120332c17d4d5f2a59b49b888f",
+      "normalizedLfSha256": "6f9e80675ca09125b5e8952da4e3bc06bca8f01066c6095ad55ddfdf7a8ee2e7",
+      "stagedBlobOid": "6d08097609623c6448100a750f1322a5b0fc646a",
+      "stagedRawSha256": "6f9e80675ca09125b5e8952da4e3bc06bca8f01066c6095ad55ddfdf7a8ee2e7"
+    },
+    {
+      "path": "src/engagement.js",
+      "rawSha256": "dab59918746788179bda353bbdfc471ba59e816150d146d3e742c680fdf1e305",
+      "normalizedLfSha256": "faa830ec77759bda1b6d5ef5f85caa8b61b968e5a38faedce4b07fb9a040d330",
+      "stagedBlobOid": "06b2428b38b505829e25f53ecf98f1a27d221147",
+      "stagedRawSha256": "faa830ec77759bda1b6d5ef5f85caa8b61b968e5a38faedce4b07fb9a040d330"
+    },
+    {
+      "path": "src/server.js",
+      "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+      "normalizedLfSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
+      "stagedBlobOid": "9263d8f566bdc6d165b79a12c6c09227d041471f",
+      "stagedRawSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4"
+    },
+    {
+      "path": "src/path-funnel.js",
+      "rawSha256": "cbe5e34e4fa67384738d41eefd0a3851e09ec2c16cafcc36f33d6ade2dd5ec2f",
+      "normalizedLfSha256": "a5505acd93bb9483d91e807cb1e5034820a769b9ad7a2d533bbdcabe120a60fb",
+      "stagedBlobOid": "167b2cfce29d78a115ff977ed917136cc0385ef8",
+      "stagedRawSha256": "a5505acd93bb9483d91e807cb1e5034820a769b9ad7a2d533bbdcabe120a60fb"
+    },
+    {
+      "path": "test/legal-security.js",
+      "rawSha256": "580b57c11973cc9e634a027d06282503df4d305c711660a45aff3d6b74e354bb",
+      "normalizedLfSha256": "e9d4ae0af7d5c62abb0ad1593d587597405479a3388a0d9c97ad39e72aa124e7",
+      "stagedBlobOid": "03e56bb443162b623ba223e58ccdee0bf42c354a",
+      "stagedRawSha256": "e9d4ae0af7d5c62abb0ad1593d587597405479a3388a0d9c97ad39e72aa124e7"
+    },
+    {
+      "path": "test/path-funnel.js",
+      "rawSha256": "26ae101edd91b62fcd2508ed91e47a4f6c759023938e970bd170af0f2d61a689",
+      "normalizedLfSha256": "aefd36402734ff6536905af93a849fa70e4f302ddd128628e8c40797cab3bef4",
+      "stagedBlobOid": "db756e04391a98c354b2a8078e75d567c3853255",
+      "stagedRawSha256": "aefd36402734ff6536905af93a849fa70e4f302ddd128628e8c40797cab3bef4"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "npm-test-rules-tail-failure.log",
+      "bytes": 14978,
+      "rawSha256": "30ce890a1344d88f29cff0a6c367874923dc47aba1fc34b937b99ca2fc046946"
+    },
+    {
+      "path": "engagement-retest-01.log",
+      "bytes": 1297,
+      "rawSha256": "20f974ac06b2e589111dd378cf32df954419c5e1dbee18f4a7f4c4f269cfe17e"
+    },
+    {
+      "path": "engagement-retest-01.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    }
+  ],
+  "limitations": [
+    "Local pg-mem and synthetic actors/history only; no production analytics or personal data accessed.",
+    "Synthetic historical rows prove the existing reader aggregation contract, not that current clients collect those instruments.",
+    "No financial, native database, chain activation or deployment qualification is established."
+  ]
+}

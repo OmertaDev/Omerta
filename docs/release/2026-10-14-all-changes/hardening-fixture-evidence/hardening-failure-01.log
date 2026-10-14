@@ -1,0 +1,15 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: docs/WIKI.md must document "bank's city leg" (codex drift)
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/hardening.js:35:5 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

@@ -46,12 +46,21 @@ assert.equal(unclaimed.length, 0,
   + `invisible in the engagement report and their systems would read as DEAD: ${unclaimed.join(', ')}\n`
   + '  → add each to SYSTEMS in src/engagement.js, or to NON_ENGAGEMENT if it is not player engagement.');
 
-const phantom = [...claimed.keys()].filter((e) => !emitted.has(e)).sort();
+// These exact retired optional instruments remain readable in historical reports. Every other
+// catalogued event still requires a current emitter, and re-enabling any of these fails closed.
+const retiredAnalytics = new Set(['broadcast_share', 'screen_open', 'path_quiz_start',
+  'path_quiz_answer', 'path_quiz_complete', 'path_result_view', 'path_cta_click', 'path_share']);
+assert.equal(retiredAnalytics.size, 8, 'the historical-only instrument set is exactly eight names');
+for (const event of retiredAnalytics) {
+  assert(claimed.has(event), `${event} remains in the existing historical reader catalog`);
+  assert(!emitted.has(event), `${event} must have no current tracking emitter`);
+}
+const phantom = [...claimed.keys()].filter((e) => !retiredAnalytics.has(e) && !emitted.has(e)).sort();
 assert.equal(phantom.length, 0,
   `${phantom.length} catalogued events are emitted nowhere in src/ — a rename left the catalog `
   + `pointing at nothing, so that system will read as dead forever: ${phantom.join(', ')}`);
 console.log(`✓ catalog: all ${emitted.size} track() events in src/ are claimed by exactly one of `
-  + `${Object.keys(SYSTEMS).length} systems (or declared non-engagement); no phantoms`);
+  + `${Object.keys(SYSTEMS).length} systems (or declared non-engagement); exactly eight retired historical instruments, no other phantoms`);
 
 // ── (2) the report reads a real database ────────────────────────────────────────────────────────
 const app = await buildServer();
@@ -83,21 +92,65 @@ await app.inject({ method: 'POST', url: '/v1/crimes/pick', headers: { authorizat
 const pathPost = async (payload) => {
   const response = await app.inject({ method: 'POST', url: '/v1/path-quiz',
     payload: { source: 'direct', ...payload } });
-  assert.equal(response.statusCode, 200, `${payload.event} fixture should reach Path telemetry: ${response.body}`);
+  assert.equal(response.statusCode, 200, `${payload.event} remains functional without optional tracking: ${response.body}`);
   return response;
 };
 const gunAnswers = Object.fromEntries(PATH_QUIZ_QUESTIONS.map((question) => [
   question.id, question.options.find((option) => option.lead === 'gun').id,
 ]));
-await pathPost({ event: 'start', session: 'funnel-session-one' });
-await pathPost({ event: 'complete', session: 'funnel-session-one', answers: gunAnswers });
-await pathPost({ event: 'result_view', session: 'funnel-session-one', path: 'gun', secondary: 'ring' });
-await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'play' });
-await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_portrait' });
-await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta: 'download_vertical' });
-await pathPost({ event: 'share', session: 'funnel-session-one', path: 'gun', channel: 'native' });
-await pathPost({ event: 'start', session: 'funnel-session-two' });
-await pathPost({ event: 'result_view', session: 'funnel-social-view', path: 'ledger', secondary: null, source: 'social' });
+const beforeOptional = (await pool.query('SELECT * FROM telemetry ORDER BY id')).rows;
+assert(beforeOptional.every((row) => !retiredAnalytics.has(row.event)), 'the new fixture has no historical optional rows');
+const beforePathFunnel = (await opsEngagement(pool, 14)).funnels.pathQuiz;
+const trackingWrites = [], queryBeforeBeacons = pool.query;
+pool.query = function (sql, ...args) {
+  const text = typeof sql === 'string' ? sql : sql?.text || '';
+  if (/\b(?:INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+telemetry\b/i.test(text)) trackingWrites.push(text);
+  return queryBeforeBeacons.call(this, sql, ...args);
+};
+try {
+  await pathPost({ event: 'start', session: 'funnel-session-one' });
+  const firstQuestion = PATH_QUIZ_QUESTIONS[0];
+  await pathPost({ event: 'answer', session: 'funnel-session-one', question: firstQuestion.id,
+    option: firstQuestion.options[0].id, step: 1 });
+  assert.equal((await pathPost({ event: 'complete', session: 'funnel-session-one', answers: gunAnswers })).json().primary,
+    'gun', 'quiz scoring remains functional while optional tracking is disabled');
+  await pathPost({ event: 'result_view', session: 'funnel-session-one', path: 'gun', secondary: 'ring' });
+  for (const cta of ['play', 'download_portrait', 'download_vertical'])
+    await pathPost({ event: 'cta_click', session: 'funnel-session-one', path: 'gun', cta });
+  await pathPost({ event: 'share', session: 'funnel-session-one', path: 'gun', channel: 'native' });
+  await pathPost({ event: 'start', session: 'funnel-session-two' });
+  await pathPost({ event: 'result_view', session: 'funnel-social-view', path: 'ledger', secondary: null, source: 'social' });
+  for (const actor of [a, b]) {
+    const share = await call('POST', '/v1/broadcast/shared', { token: actor.token, body: { kind: 'win' } });
+    assert.equal(share.code, 200, 'authenticated legacy share posts remain compatible');
+    assert.deepEqual(share.body, { ok: true }, 'share compatibility creates no tracking enrollment');
+    const screens = await call('POST', '/v1/screens', { token: actor.token, body: { screens: ['streets', 'streets', 'kitchen'] } });
+    assert.equal(screens.code, 200, 'authenticated legacy screen posts remain compatible');
+    assert.deepEqual(screens.body, { ok: true, counted: 0 }, 'screen compatibility counts no tracking');
+  }
+} finally { pool.query = queryBeforeBeacons; }
+assert.deepEqual(trackingWrites, [], 'all eight retired instruments attempt no telemetry writes');
+assert.deepEqual((await pool.query('SELECT * FROM telemetry ORDER BY id')).rows, beforeOptional,
+  'Path, share and screen beacons persist or change no telemetry, across distinct actors');
+assert.deepEqual((await opsEngagement(pool, 14)).funnels.pathQuiz, beforePathFunnel,
+  'current quiz requests increment no historical-funnel counters');
+
+// Explicit synthetic HISTORICAL rows exercise the unchanged legacy reader. They are anonymous,
+// predate these requests, and are never presented as current emissions or gameplay adoption.
+const historicalPathRows = [
+  ['path_quiz_start', { session: 'historical-session-one', source: 'direct' }],
+  ['path_quiz_complete', { session: 'historical-session-one', source: 'direct', primary: 'gun' }],
+  ['path_result_view', { session: 'historical-session-one', source: 'direct', path: 'gun', secondary: 'ring' }],
+  ['path_cta_click', { session: 'historical-session-one', source: 'direct', path: 'gun', cta: 'play' }],
+  ['path_cta_click', { session: 'historical-session-one', source: 'direct', path: 'gun', cta: 'download_portrait' }],
+  ['path_cta_click', { session: 'historical-session-one', source: 'direct', path: 'gun', cta: 'download_vertical' }],
+  ['path_share', { session: 'historical-session-one', source: 'direct', path: 'gun', channel: 'native' }],
+  ['path_quiz_start', { session: 'historical-session-two', source: 'direct' }],
+  ['path_result_view', { session: 'historical-social-view', source: 'social', path: 'ledger', secondary: null }],
+];
+for (const [i, [event, props]] of historicalPathRows.entries())
+  await pool.query("INSERT INTO telemetry (id,account_id,event,props,at) VALUES ($1,NULL,$2,$3,now()-interval '1 hour')",
+    [`historical-path-${i}`, event, JSON.stringify(props)]);
 
 // The economy report must observe real player interaction, not a fixture that inserts telemetry
 // directly. Supply and a completed trade are separate signals: two people list/buy contraband.
@@ -162,7 +215,7 @@ assert.deepEqual(r.funnels.pathQuiz, {
   resultToPlayPct: 50,
   completionPaths: { gun: 1, ledger: 0, kitchen: 0, wheel: 0, shadow: 0, ring: 0 },
   viewedPaths: { gun: 1, ledger: 1, kitchen: 0, wheel: 0, shadow: 0, ring: 0 },
-}, 'the mod report exposes the privacy-safe Path acquisition funnel and both conversion denominators');
+}, 'the mod report preserves the historical Path funnel and both original conversion denominators');
 console.log(`✓ live read: ${r.players.humans} humans, streets/crime shows ${streets.accounts} account(s) / ${streets.events} event(s)`);
 
 // ── (3) THE DEAD LIST — the whole point ─────────────────────────────────────────────────────────

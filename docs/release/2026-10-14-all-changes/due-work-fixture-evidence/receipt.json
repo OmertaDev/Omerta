@@ -1,0 +1,135 @@
+{
+  "schema": "omerta.due-work-adult-fixture-retest.v1",
+  "capturedAtUtc": "2026-10-14T22:52:08.476Z",
+  "repositoryHeadAtCapture": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "phase": "One synthetic-adult fixture correction plus scoped native process-recovery retest; no production runtime, age gate or source17 edits.",
+  "finding": {
+    "id": "DUE-FIXTURE-01",
+    "status": "resolved integration defect",
+    "observed": "Old hosted PostgreSQL 18.4 step failed test/due-work-process-recovery.js69: real guest-auth POST with empty body received 400 instead of 200.",
+    "resolution": "Only the existing synthetic guest payload now supplies birthDate 1990-01-01, using the real unwrapped server. Same-file inspection found exactly one guest-auth call."
+  },
+  "oldCi": {
+    "run": 38645118992,
+    "job": 116129941340,
+    "head": "fd9713822a96fe8eba6e9e3e582b45dd4104afb0",
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/38645118992/job/116129941340",
+    "step": "Nonempty loan expiry process recovery (real PostgreSQL)",
+    "node": "v22.23.3",
+    "fullDownloadedJobLogSha256": "f5039b2634fa3c99908fbf33d050913116a205f31c0262954712a7d2eb6c71f0",
+    "excerpt": "old-ci-loan-expiry-failure.log",
+    "exitCode": 1,
+    "exitEvidence": "Hosted Actions step log explicitly reports process exit code 1; no separate historical exit file reconstructed."
+  },
+  "retest": {
+    "command": "npm run test:due-work:postgres",
+    "expandedScript": "node test/due-work-process-recovery.js",
+    "exitCode": 0,
+    "node": "v24.19.0",
+    "platform": "win32",
+    "controlEndpoint": "postgresql://postgres@127.0.0.1:55438/postgres",
+    "isolation": "Canonical planOwnedWorldDatabase creates a fresh exclusively owned rc1_world database and verifies exact ownership/name/OID on cleanup; no schema-only isolation.",
+    "environment": "Nine clearly synthetic Test Operator/example.test legal fixture fields supplied only to local subprocesses. No real operator registration represented.",
+    "log": "due-work-native-retest.log",
+    "exit": "due-work-native-retest.exit",
+    "result": {
+      "status": "PASS_SCOPED",
+      "source": "8cf20835738ae14fb6df51142334d777332e5bcd",
+      "databaseVersion": "18.4",
+      "cases": [
+        {
+          "mode": "worker-interruption",
+          "dueBefore": 1,
+          "refundedOnce": true,
+          "acknowledgedOfferReplay": true,
+          "originalPeriodMs": 3600000,
+          "elapsedMs": 6371
+        },
+        {
+          "mode": "database-disconnect",
+          "dueBefore": 1,
+          "refundedOnce": true,
+          "acknowledgedOfferReplay": true,
+          "originalPeriodMs": 3600000,
+          "elapsedMs": 5600
+        },
+        {
+          "mode": "api-restart",
+          "dueBefore": 1,
+          "refundedOnce": true,
+          "acknowledgedOfferReplay": true,
+          "originalPeriodMs": 3600000,
+          "elapsedMs": 8322
+        }
+      ],
+      "fixture": "Initial character cash10000 liquidity fixture, canonical HTTP offers, initial offered_at aging and native refund-insert barrier before baseline; no post-baseline state/deadline rewrites",
+      "scope": "One nonempty cash escrow expiry queue through original API/worker process interruption and native backend disconnect; not all queues, full resources or soak qualification"
+    }
+  },
+  "source": [
+    {
+      "path": "test/due-work-process-recovery.js",
+      "rawSha256": "330d66df20e279635c0a32524fa2049626a1c240ce133021a4e860956d012a7d",
+      "normalizedLfSha256": "c69d369132772cc9c18a7a7c9186bdb285a2d00968c7b55e28c4852edce1bced",
+      "stagedBlobOid": "6035a1a210f56dab0b26f5b6997fccf50ddf6a06",
+      "stagedRawSha256": "c69d369132772cc9c18a7a7c9186bdb285a2d00968c7b55e28c4852edce1bced"
+    },
+    {
+      "path": "tools/rc1-native-database.js",
+      "rawSha256": "14989715eac3599ecb0eaf25f8436730a17b93ac3c1430491e7a4840610ada9a",
+      "normalizedLfSha256": "9e07c0304d9a5c326d68cbb5f6898b2949b3fc8f87d3a3779b40277b3b0887c8",
+      "stagedBlobOid": "205ce02fc594cdc4dd485f52d663ecc120de6694",
+      "stagedRawSha256": "9e07c0304d9a5c326d68cbb5f6898b2949b3fc8f87d3a3779b40277b3b0887c8"
+    },
+    {
+      "path": "src/server.js",
+      "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+      "normalizedLfSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
+      "stagedBlobOid": "9263d8f566bdc6d165b79a12c6c09227d041471f",
+      "stagedRawSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4"
+    },
+    {
+      "path": "src/worker.js",
+      "rawSha256": "8e6368c9bbcc9f2cf9dee49f227039d2cefebecda89d73e323ccd8002a18e1b9",
+      "normalizedLfSha256": "1e1e7c48865995d308b6de60f81a37a8ab3a9db349fbb4e896ea2ff3d37c07d1",
+      "stagedBlobOid": "77f7316057624ebf35ef2b6c555be85d02d816b2",
+      "stagedRawSha256": "1e1e7c48865995d308b6de60f81a37a8ab3a9db349fbb4e896ea2ff3d37c07d1"
+    },
+    {
+      "path": "src/db.js",
+      "rawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+      "normalizedLfSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+      "stagedBlobOid": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13",
+      "stagedRawSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808"
+    },
+    {
+      "path": "src/loans.js",
+      "rawSha256": "6caed79be67a4e3200b6d77d83de8c269713522e5c6aff7e3af60e3571f01702",
+      "normalizedLfSha256": "2393c2e961842b92d40b08b101e32b138f8cd4ff9e82d4c235bda2741f0f71e9",
+      "stagedBlobOid": "71963bb297c0dc7b3d745b48fc7a6fc49ab3ffd6",
+      "stagedRawSha256": "2393c2e961842b92d40b08b101e32b138f8cd4ff9e82d4c235bda2741f0f71e9"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "old-ci-loan-expiry-failure.log",
+      "bytes": 2411,
+      "rawSha256": "27249cdc64162fb0fdffb13e3c668fac3efe86c99bb718afacfed5bb4faa5730"
+    },
+    {
+      "path": "due-work-native-retest.log",
+      "bytes": 992,
+      "rawSha256": "b2052b41606a8ca577e9d4174fae1bdbdd028ca340b889f3ac5465d80cb7834e"
+    },
+    {
+      "path": "due-work-native-retest.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    }
+  ],
+  "limitations": [
+    "Result covers one nonempty cash-escrow loan-expiry queue through original API/worker interruption, backend disconnect and API restart, exact refund-once and acknowledged offer replay. It does not qualify all queues, resources, a long soak or production.",
+    "Cash 10000, initial offered_at aging and a native refund-insert barrier are declared initialization fixtures before the measured baseline; no measured deadline/status rewrites.",
+    "Local Windows PostgreSQL 18.4 / Node 24 retest is not a substitute for the fresh hosted Linux/PostgreSQL 16 + 18.4 matrix."
+  ]
+}

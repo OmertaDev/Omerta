@@ -1,0 +1,551 @@
+{
+  "schema": "omerta.canonical-main-tail-execution.v1",
+  "startedAtUtc": "2026-10-14T22:45:16.405Z",
+  "repositoryHeadAtStart": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "dirtyStateAtStart": [
+    "A  .github/ci-evidence/forge-runner-shutdown-2026-10-14.json",
+    "M  .github/workflows/forge.yml",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/.gitattributes",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/growth-retest-01.exit",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/growth-retest-01.log",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/growth-retest-02.exit",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/growth-retest-02.log",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/npm-test-main-tail-failure.log",
+    "A  docs/release/2026-10-14-all-changes/growth-privacy-evidence/receipt.json",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/.gitattributes",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-failure-01.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-failure-01.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-02.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-02.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-03.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-03.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-04.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-04.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-05.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-05.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-06.exit",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/hardening-retest-06.log",
+    "A  docs/release/2026-10-14-all-changes/hardening-fixture-evidence/receipt.json",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-before.exit",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-before.log",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-playthrough-retest.exit",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-playthrough-retest.log",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-sim-retest.exit",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-sim-retest.log",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/social-coach-copy.initial-failure.log",
+    "A  docs/release/2026-10-14-all-changes/test-fixture-evidence/social-coach-copy.retest.log",
+    "A  docs/release/readiness-work/2026-10-14-harness-adult-fixture-retest.json",
+    "A  docs/release/readiness-work/2026-10-14-social-coach-copy-retest.json",
+    " M knowledge/generated/github-history.md",
+    " M knowledge/generated/graph-summary.md",
+    " M knowledge/generated/graph.json",
+    " M knowledge/generated/inventory.md",
+    "M  test/docs.js",
+    "M  test/growth.js",
+    "M  test/hardening.js",
+    "M  test/social.js",
+    "M  tools/chaos.js",
+    "M  tools/concurrency.js",
+    "M  tools/loadtest.js",
+    "M  tools/pgcheck.js",
+    "M  tools/playthrough.js",
+    "M  tools/sim.js",
+    "?? docs/release/2026-10-14-all-changes/main-tail-192-202-evidence/",
+    "?? docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-chaos-attempt1.exit",
+    "?? docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-concurrency-attempt1.exit",
+    "?? docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-loadtest-attempt1.exit",
+    "?? docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-pgcheck-attempt1.exit",
+    "?? docs/release/readiness-work/2026-10-14-harness-native-fixture-retest.json"
+  ],
+  "packageRawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+  "mainTestScriptSha256": "2ff53b3f3d207fce6b6576212138adfcaa0557edc270b2564bb6847a584f68a6",
+  "mainBodyCommandCount": 203,
+  "indexing": "Zero-based package.json scripts.test split at &&; canonical indices192..202 inclusive. Index191 knowledge-test intentionally remains assigned to the release owner and is not claimed here.",
+  "environment": {
+    "DATABASE_URL": "",
+    "syntheticLegalFixtureOnly": {
+      "LEGAL_OPERATOR_NAME": "Test Operator",
+      "LEGAL_POSTAL_ADDRESS": "123 Test Street, Test City",
+      "PRIVACY_CONTACT_EMAIL": "privacy@example.test",
+      "DMCA_AGENT_NAME": "Test Agent",
+      "DMCA_AGENT_EMAIL": "copyright@example.test",
+      "DMCA_AGENT_ADDRESS": "123 Test Street, Test City",
+      "DMCA_AGENT_PHONE": "+1 202 555 0100",
+      "DMCA_AGENT_REGISTERED": "true",
+      "PAYMENT_REFUND_POLICY": "Test refund policy"
+    },
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "phase": "Local pg-mem canonical test-tail execution only; no production access, deployment or chain qualification.",
+  "status": "pass",
+  "runs": [
+    {
+      "index": 192,
+      "command": "node test/genesisauction.js",
+      "startedAtUtc": "2026-10-14T22:45:16.499Z",
+      "elapsedMs": 633,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "192.log",
+      "exit": "192.exit",
+      "logRawSha256": "d9c86691eb56e0a65fd3fcabd7e75cf158a87cbeb081bf9462229cae469a910b"
+    },
+    {
+      "index": 193,
+      "command": "node test/genesis-auction-http.js",
+      "startedAtUtc": "2026-10-14T22:45:17.133Z",
+      "elapsedMs": 823,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "193.log",
+      "exit": "193.exit",
+      "logRawSha256": "368ffc7b0a7ae92239b9c9c68921247b0160f43c2cfb3055c431f5991c42eaa3"
+    },
+    {
+      "index": 194,
+      "command": "node test/player-genesis-client.js",
+      "startedAtUtc": "2026-10-14T22:45:17.957Z",
+      "elapsedMs": 1333,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "194.log",
+      "exit": "194.exit",
+      "logRawSha256": "c2e97f449917915129a2d9fb092bdf79193ca236bad9450ded8738eaab39ffec"
+    },
+    {
+      "index": 195,
+      "command": "node test/genesis-auction-operations.js",
+      "startedAtUtc": "2026-10-14T22:45:19.292Z",
+      "elapsedMs": 505,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "195.log",
+      "exit": "195.exit",
+      "logRawSha256": "79a91be5304b849ab554bc947b4039d87c6bae8170f551918ae870c60419a286"
+    },
+    {
+      "index": 196,
+      "command": "node test/genesis-deploy-client.js",
+      "startedAtUtc": "2026-10-14T22:45:19.798Z",
+      "elapsedMs": 5939,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "196.log",
+      "exit": "196.exit",
+      "logRawSha256": "2b5aaca2d8ffef92cf22c7a4b3d6ac5bce58a750508843598f5ce848570d5b54"
+    },
+    {
+      "index": 197,
+      "command": "node test/city-presence.js",
+      "startedAtUtc": "2026-10-14T22:45:25.738Z",
+      "elapsedMs": 6708,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "197.log",
+      "exit": "197.exit",
+      "logRawSha256": "52a80facbb0bac5a1b03318d1ebba1a9eb81cf6c2f004b9a4c2c1dfe356aa87a"
+    },
+    {
+      "index": 198,
+      "command": "node test/city-presence-api.js",
+      "startedAtUtc": "2026-10-14T22:45:32.448Z",
+      "elapsedMs": 7400,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "198.log",
+      "exit": "198.exit",
+      "logRawSha256": "6735e35d235fa67b396aa2a6ae09c42c9cf7f02e0b7436cd550db624b6c519b8"
+    },
+    {
+      "index": 199,
+      "command": "node test/city-social-api.js",
+      "startedAtUtc": "2026-10-14T22:45:39.849Z",
+      "elapsedMs": 10410,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "199.log",
+      "exit": "199.exit",
+      "logRawSha256": "a801faaf04fb8d2433b1c9abfc3fed231765fa61e601fa25636281158eafc199"
+    },
+    {
+      "index": 200,
+      "command": "node test/city-homes-api.js",
+      "startedAtUtc": "2026-10-14T22:45:50.261Z",
+      "elapsedMs": 6278,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "200.log",
+      "exit": "200.exit",
+      "logRawSha256": "cfa08e3a7be5324ce0627914700e83bfec491c991cb82f96c109c4d6659c13d8"
+    },
+    {
+      "index": 201,
+      "command": "npm run test:city-gameplay",
+      "startedAtUtc": "2026-10-14T22:45:56.540Z",
+      "elapsedMs": 48566,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "201.log",
+      "exit": "201.exit",
+      "logRawSha256": "05b5fb636322239a35424bd31ce7b6946274f31f58346f8939ff09100ca2a78b",
+      "expandedScript": "node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js",
+      "expandedScriptSha256": "cec0edd8f13f77908851db489efea4149230166f6072764bf57ad66a5a936e88"
+    },
+    {
+      "index": 202,
+      "command": "npm run test:company-workforce",
+      "startedAtUtc": "2026-10-14T22:46:45.108Z",
+      "elapsedMs": 70207,
+      "exitCode": 0,
+      "signal": null,
+      "error": null,
+      "log": "202.log",
+      "exit": "202.exit",
+      "logRawSha256": "ac03ea53a17fc5710ac2f8bab092485f70957f2ab62248076ab947d0fc72bf32",
+      "expandedScript": "node test/rc1-third-batch-source-compatibility.js && node test/company-workforce-native-guards.js && node test/workertraining.js && node test/employmentorganizations.js && node test/businesspartnerships.js && node test/companygovernance.js && node test/companyacquisitions.js && node test/depotacquisitionruntime.js && node test/company-middle-five-integration.js && node test/company-workforce-contracts.js",
+      "expandedScriptSha256": "f2f142bec0f539f04b187abf85115b6fca2a7b9e27139a135b35180ea8edf88d"
+    }
+  ],
+  "completedAtUtc": "2026-10-14T22:47:55.317Z",
+  "repositoryHeadAtEnd": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "packageRawSha256AtEnd": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+  "checkedInputsAtEvidenceFinalization": [
+    {
+      "path": "package.json",
+      "rawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+      "normalizedLfSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+      "stagedBlobOid": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+      "stagedRawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/businesspartnerships.js",
+      "rawSha256": "5d9999cac33b524b429c9599e1c2e0ddffde0d00337b239dcd3f3182086d122c",
+      "normalizedLfSha256": "3bacdd154c7ef4430d63ecf219ec5e62cb2216f5c089ad3007dc54ca100eb0c2",
+      "stagedBlobOid": "daa24a45898a428ef8e18c0d89279710f81024d9",
+      "stagedRawSha256": "3bacdd154c7ef4430d63ecf219ec5e62cb2216f5c089ad3007dc54ca100eb0c2",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-district-arcs.js",
+      "rawSha256": "cd55f4a76e49bf2101a6942657cf25e3b9c90dd823ade9be02bc8ec58f6b938e",
+      "normalizedLfSha256": "94918ee8b2579efcdf53f6909d52af9eb7684f08a0b64a84551a54406a6fe232",
+      "stagedBlobOid": "1df15ca48bf8cb849d02a908812a6059ed12ee11",
+      "stagedRawSha256": "94918ee8b2579efcdf53f6909d52af9eb7684f08a0b64a84551a54406a6fe232",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-encounters.js",
+      "rawSha256": "3cb9e612692ccf5d507cb72faee9a9188ea5f5c438263345ea23808baf905930",
+      "normalizedLfSha256": "99e1c41611a22448bb259d699ecf62a5e67dbc90f9215cfd14bb5564ab522659",
+      "stagedBlobOid": "94c4035c3d43877cabaafa7bb41176ff1157bbf5",
+      "stagedRawSha256": "99e1c41611a22448bb259d699ecf62a5e67dbc90f9215cfd14bb5564ab522659",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-home-interiors-api.js",
+      "rawSha256": "c07aff97788500eba759cb64b59d2ebfcacf6ed3f835511e8df6bd71bad6d0c2",
+      "normalizedLfSha256": "8ce4871df4bc256c863f0b039fbea75267ff59740469d64f3c734276b2c9f19a",
+      "stagedBlobOid": "2e193d1c953183fed5438a33a2f86a3e54546da1",
+      "stagedRawSha256": "8ce4871df4bc256c863f0b039fbea75267ff59740469d64f3c734276b2c9f19a",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-homes-api.js",
+      "rawSha256": "e6677d3c0c54a238571a31d82b15312c38ef9ef4c27dd337248ef920dd987d73",
+      "normalizedLfSha256": "0dcf436759b5c58a6ee81a7a217123f825f857bdb760cb8be7a29ec8208efeea",
+      "stagedBlobOid": "2242fac166ad149e3d0588da8b974e621cde5d7a",
+      "stagedRawSha256": "0dcf436759b5c58a6ee81a7a217123f825f857bdb760cb8be7a29ec8208efeea",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-presence-api.js",
+      "rawSha256": "729061b9dd19efb241366d3f0e902cfedc7fc42f95a748077e7cb96f89c4ca02",
+      "normalizedLfSha256": "3e575ae5aa319d2982be473c24806f98b3e0cbabe0fa252c22cda58124ed31e2",
+      "stagedBlobOid": "37dc78838c04ce0185d7dcdefc648fe32a25282b",
+      "stagedRawSha256": "3e575ae5aa319d2982be473c24806f98b3e0cbabe0fa252c22cda58124ed31e2",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-presence.js",
+      "rawSha256": "e955ffdf8ae602b7f4a63052f497b3424c2c2551ef6e526d682c8bfa5cdc3143",
+      "normalizedLfSha256": "d5c4c7331c5a87eec225a69c198f43c5b936bfacb7d53f53ce51ef3111dd0ebe",
+      "stagedBlobOid": "de57e356ce05b501980e76c247127d1e7b67a36b",
+      "stagedRawSha256": "d5c4c7331c5a87eec225a69c198f43c5b936bfacb7d53f53ce51ef3111dd0ebe",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-social-api.js",
+      "rawSha256": "6171a04fce94a60550fa7f4c547b8e434e82c8cfaaf3937fb762564365f08124",
+      "normalizedLfSha256": "85bef7dc2f2cc05fbf56f65664bb930efb1af042ba036ca1fd15eb2296a9f82f",
+      "stagedBlobOid": "aa8f6e6a42e96edc6570ae118aafe2bb5bcbd320",
+      "stagedRawSha256": "85bef7dc2f2cc05fbf56f65664bb930efb1af042ba036ca1fd15eb2296a9f82f",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/city-world-opportunities.js",
+      "rawSha256": "225cf8517a389f36eae20dd786c42bf050fb0c21910bfae0b4bc370a5f184b66",
+      "normalizedLfSha256": "342f9fd24d5b86d8df8d2cb5be12d055e4096ad99c4e556eab1459e07a58de5c",
+      "stagedBlobOid": "e38e62d1a0d41f4be1713269ae440840dd4e77ad",
+      "stagedRawSha256": "342f9fd24d5b86d8df8d2cb5be12d055e4096ad99c4e556eab1459e07a58de5c",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/company-middle-five-integration.js",
+      "rawSha256": "59dc48431ba83f1ddd2cd93f6a63c0335660588a95be1fedf41b88252d7760e3",
+      "normalizedLfSha256": "6dbf45cabb161cdd9686c2247b2906775dd6ec0ad98083f6a357be4041aaa160",
+      "stagedBlobOid": "325666a81efefcc4ea2a186a48e20823a39fa9d1",
+      "stagedRawSha256": "6dbf45cabb161cdd9686c2247b2906775dd6ec0ad98083f6a357be4041aaa160",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/company-workforce-contracts.js",
+      "rawSha256": "9a545d7a4bcbc429b8a99a9ed8ecb50baf0dd5d5b536e8b7fa19d9e3293398a7",
+      "normalizedLfSha256": "16bdd1845d07967cc860650295a10b6bac31bbe1fd5575d3cdcea6d5cb335bf1",
+      "stagedBlobOid": "81ea7be9a94ab97b7034fb754cfc71a24169aa33",
+      "stagedRawSha256": "16bdd1845d07967cc860650295a10b6bac31bbe1fd5575d3cdcea6d5cb335bf1",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/company-workforce-native-guards.js",
+      "rawSha256": "62916597fdf6e29e69922c78d380df61dceae9b1519b313d805194181bb1773e",
+      "normalizedLfSha256": "23b987d89f5cbbf42b1453659e773aafb9a1a10e5d5b68933bb8f86bf96e02bc",
+      "stagedBlobOid": "8147783bff707759c4f71b39866f164dc9ad55c9",
+      "stagedRawSha256": "23b987d89f5cbbf42b1453659e773aafb9a1a10e5d5b68933bb8f86bf96e02bc",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/companyacquisitions.js",
+      "rawSha256": "1d5b45a365ca9ae0d7b80b70e04b146a40a1a0870f6ec931a60d6f2032e4053a",
+      "normalizedLfSha256": "afc17673603106c773be087e3225c3b2e11dc5cc8609acb00dac2b4aa324587e",
+      "stagedBlobOid": "1cc6eb36319b9c7f3a53901ded0b7bdf395f14cd",
+      "stagedRawSha256": "afc17673603106c773be087e3225c3b2e11dc5cc8609acb00dac2b4aa324587e",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/companygovernance.js",
+      "rawSha256": "3bd04020e0339f234e2361dc3ad3f0bea08f79eebcd2145557ffdd8504781f5e",
+      "normalizedLfSha256": "b54f4ac21c029623abf252adb10d5a487af5580da5403100b4e89e4dd5607285",
+      "stagedBlobOid": "cf42be0d8c4eb22483bf810650bff6af7ba9179a",
+      "stagedRawSha256": "b54f4ac21c029623abf252adb10d5a487af5580da5403100b4e89e4dd5607285",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/depotacquisitionruntime.js",
+      "rawSha256": "785395bef4f4833ef2ccf7ff48d96d9285b2c8c3fc90791090e964343156ff31",
+      "normalizedLfSha256": "36bf76815d9a3f450fb41ae70d5c2620717e53e34ea24d11f72f9b3c8d984fc6",
+      "stagedBlobOid": "4ec8f49bf87fd17180450c093f6c2c44bd4a3e1d",
+      "stagedRawSha256": "36bf76815d9a3f450fb41ae70d5c2620717e53e34ea24d11f72f9b3c8d984fc6",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/employmentorganizations.js",
+      "rawSha256": "9b6ef0d13d1bc1f8bc14d82342453297fb3ffd8c1c59bca16127065655b95785",
+      "normalizedLfSha256": "8fd84f577d1daed2e7f37ce1303b334309f05e0d9d486e3b65465716b8ccc2e4",
+      "stagedBlobOid": "9b253467fef26f08cd91db6c1d446bed38ced6a8",
+      "stagedRawSha256": "8fd84f577d1daed2e7f37ce1303b334309f05e0d9d486e3b65465716b8ccc2e4",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/genesis-auction-http.js",
+      "rawSha256": "cfed1f8300a61794ee95564bc1315422f0be93cb8c87f3fc56c3ae4db737db0d",
+      "normalizedLfSha256": "fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87",
+      "stagedBlobOid": "ea5a58c7d5c1cadc3526b5985b4ebb8bad16124e",
+      "stagedRawSha256": "fb2cf3267f4fdc090b5b9a0240bfae75db4e2a4cb77f669a47dfce1bab340b87",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/genesis-auction-operations.js",
+      "rawSha256": "0ae531bf4a61e7602bc41e91d75d339d8cfaa179ae1af20fe9cd937dbe2ca9f1",
+      "normalizedLfSha256": "0ae531bf4a61e7602bc41e91d75d339d8cfaa179ae1af20fe9cd937dbe2ca9f1",
+      "stagedBlobOid": "0636b37706c46f999d14f43fb443abebbf1dedb5",
+      "stagedRawSha256": "0ae531bf4a61e7602bc41e91d75d339d8cfaa179ae1af20fe9cd937dbe2ca9f1",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/genesis-deploy-client.js",
+      "rawSha256": "3bfdd98148a242616c3a1d9495f7f19f7e41b45b8abaabe54faa13f2bc27c954",
+      "normalizedLfSha256": "3bfdd98148a242616c3a1d9495f7f19f7e41b45b8abaabe54faa13f2bc27c954",
+      "stagedBlobOid": "f0a3ea1d04a5e5f1e7a54d19708a32d2ccf0d95f",
+      "stagedRawSha256": "3bfdd98148a242616c3a1d9495f7f19f7e41b45b8abaabe54faa13f2bc27c954",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/genesisauction.js",
+      "rawSha256": "352cf6ae3908a6bf8617742fa45aba0d5a35585645acd6b7f8270221a0bc3147",
+      "normalizedLfSha256": "352cf6ae3908a6bf8617742fa45aba0d5a35585645acd6b7f8270221a0bc3147",
+      "stagedBlobOid": "ac93b726c5440920cae7f25d54ecddb413bea00a",
+      "stagedRawSha256": "352cf6ae3908a6bf8617742fa45aba0d5a35585645acd6b7f8270221a0bc3147",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/player-genesis-client.js",
+      "rawSha256": "23041dccc9d0a54e4d8add3a4cdd40de9d71d8e517cd95d7fa556d59f13dae05",
+      "normalizedLfSha256": "cf2727765332d54ada5b8f6134f201ddda0cd1cc13dd3e974460e6a3042fa862",
+      "stagedBlobOid": "651ccb29d4f6353b3f2d72174bb8f1434b63ebd1",
+      "stagedRawSha256": "cf2727765332d54ada5b8f6134f201ddda0cd1cc13dd3e974460e6a3042fa862",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/rc1-third-batch-source-compatibility.js",
+      "rawSha256": "7da73577f8a63e24c57e57cbd5170f05a88f1c9263cd2e3df36f296f2aeddfe4",
+      "normalizedLfSha256": "181931c80edd09925f85f60b3ef13d8f2a2ae95d4e623118acc0d694c5feab39",
+      "stagedBlobOid": "0066373d444d285f4872c8bff22e6af13100f3c2",
+      "stagedRawSha256": "181931c80edd09925f85f60b3ef13d8f2a2ae95d4e623118acc0d694c5feab39",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/staged-crew-missions-api.js",
+      "rawSha256": "e8aab3dc7e665491ac8d084eb491081860701f5cde46514df880ab7d758a1598",
+      "normalizedLfSha256": "8a1df6bd7009aebaed4646bd856d4c23bedb513b3194f934a2ce2fe878f12e0a",
+      "stagedBlobOid": "ab5dd961d4092f925537fac98c3ac03fd886a431",
+      "stagedRawSha256": "8a1df6bd7009aebaed4646bd856d4c23bedb513b3194f934a2ce2fe878f12e0a",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/staged-crew-missions.js",
+      "rawSha256": "e4995e96824a58d70d1b3c7032433beb2109df6442b2b59adaece2bf2c13313b",
+      "normalizedLfSha256": "ee5e98dea7d5b71ea0d979d746eb102a5e48a3ab757ca7064a6a7b46b4947b4e",
+      "stagedBlobOid": "5b97bffdecdbff3de55c83e2939f9f796b523c5a",
+      "stagedRawSha256": "ee5e98dea7d5b71ea0d979d746eb102a5e48a3ab757ca7064a6a7b46b4947b4e",
+      "unchangedFromStartHead": true
+    },
+    {
+      "path": "test/workertraining.js",
+      "rawSha256": "1bbe95185c2c8f35ce87d4b15b8ca888b3af437b245c047b77bd7499c61fb4d3",
+      "normalizedLfSha256": "94a7110b370eb7a8fef40b249c3c3ab3b385ee85e6c08bc914d3d7ee386cd625",
+      "stagedBlobOid": "bbb3e00b94d0e2fea291279767092bec6f97725e",
+      "stagedRawSha256": "94a7110b370eb7a8fef40b249c3c3ab3b385ee85e6c08bc914d3d7ee386cd625",
+      "unchangedFromStartHead": true
+    }
+  ],
+  "evidence": [
+    {
+      "path": "192.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "192.log",
+      "bytes": 549,
+      "rawSha256": "d9c86691eb56e0a65fd3fcabd7e75cf158a87cbeb081bf9462229cae469a910b"
+    },
+    {
+      "path": "193.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "193.log",
+      "bytes": 109,
+      "rawSha256": "368ffc7b0a7ae92239b9c9c68921247b0160f43c2cfb3055c431f5991c42eaa3"
+    },
+    {
+      "path": "194.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "194.log",
+      "bytes": 249,
+      "rawSha256": "c2e97f449917915129a2d9fb092bdf79193ca236bad9450ded8738eaab39ffec"
+    },
+    {
+      "path": "195.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "195.log",
+      "bytes": 225,
+      "rawSha256": "79a91be5304b849ab554bc947b4039d87c6bae8170f551918ae870c60419a286"
+    },
+    {
+      "path": "196.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "196.log",
+      "bytes": 1281,
+      "rawSha256": "2b5aaca2d8ffef92cf22c7a4b3d6ac5bce58a750508843598f5ce848570d5b54"
+    },
+    {
+      "path": "197.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "197.log",
+      "bytes": 360,
+      "rawSha256": "52a80facbb0bac5a1b03318d1ebba1a9eb81cf6c2f004b9a4c2c1dfe356aa87a"
+    },
+    {
+      "path": "198.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "198.log",
+      "bytes": 356,
+      "rawSha256": "6735e35d235fa67b396aa2a6ae09c42c9cf7f02e0b7436cd550db624b6c519b8"
+    },
+    {
+      "path": "199.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "199.log",
+      "bytes": 577,
+      "rawSha256": "a801faaf04fb8d2433b1c9abfc3fed231765fa61e601fa25636281158eafc199"
+    },
+    {
+      "path": "200.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "200.log",
+      "bytes": 362,
+      "rawSha256": "cfa08e3a7be5324ce0627914700e83bfec491c991cb82f96c109c4d6659c13d8"
+    },
+    {
+      "path": "201.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "201.log",
+      "bytes": 4655,
+      "rawSha256": "05b5fb636322239a35424bd31ce7b6946274f31f58346f8939ff09100ca2a78b"
+    },
+    {
+      "path": "202.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "202.log",
+      "bytes": 3795,
+      "rawSha256": "ac03ea53a17fc5710ac2f8bab092485f70957f2ab62248076ab947d0fc72bf32"
+    }
+  ],
+  "limitations": [
+    "Canonical11 command outcomes include every command inside both nested npm scripts; no internal checks bypassed.",
+    "Tracked command inputs and package script match the start HEAD bytes after LF normalization, despite the recorded dirty checkout. This is scoped execution evidence, not whole-checkout qualification.",
+    "All subprocesses use local pg-mem and synthetic test-only legal details; the DMCA flag is a fixture value, not a representation about any real registration."
+  ]
+}

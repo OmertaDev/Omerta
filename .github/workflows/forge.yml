@@ -114,8 +114,16 @@ jobs:
       # suite did not run at all, on a path-filtered workflow nobody was watching. Same shape as the
       # v4-core dependency gap recorded above, different cause. A size regression must fail on its
       # own step, after the suite has already proven the contracts work.
+      # Controlled concurrency experiment after two runner shutdowns during compilation. The
+      # shutdown trigger is unproven; this reduces peak compiler concurrency without changing
+      # either compiler profile, sources, optimizer, or downstream test and size assertions.
+      - name: Runner resources before compilation
+        run: |
+          free -m
+          df -h .
+
       - name: forge build
-        run: forge build
+        run: forge build --threads 1
 
       - name: Market V2 artifact contracts and keeper orchestration
         working-directory: .
@@ -193,4 +201,4 @@ jobs:
       # A1Task4RawCreateFactory), which costs a few hundred bytes and keeps this gate's claim true.
       - name: forge build --sizes (EIP-170)
         working-directory: omerta-contracts
-        run: forge build --sizes --skip FuzzTester
+        run: forge build --sizes --skip FuzzTester --threads 1

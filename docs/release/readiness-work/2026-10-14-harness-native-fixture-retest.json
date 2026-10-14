@@ -1,0 +1,235 @@
+{
+  "schema": "omerta.harness-native-fixture-compatibility.v1",
+  "sourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "scope": "Explicit synthetic adult fixture birthDate compatibility through the real production server import; source-only C2 remains unchanged. No deployed-state or onchain activation qualification.",
+  "platform": {
+    "node": "v24.19.0",
+    "os": "win32",
+    "arch": "x64"
+  },
+  "database": {
+    "createdAt": "2026-10-14T22:41:56.090Z",
+    "initialServer": {
+      "version": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "address": "127.0.0.1",
+      "port": 55438
+    },
+    "finalServer": {
+      "version": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "address": "127.0.0.1",
+      "port": 55438,
+      "postmaster_started_at": "2026-10-14T21:06:28.681Z"
+    },
+    "endpoint": "127.0.0.1:55438",
+    "freshDatabasePerHarness": true,
+    "productionAccessed": false
+  },
+  "fixtureEnvironment": {
+    "LEGAL_OPERATOR_NAME": "CI Test Operator",
+    "LEGAL_POSTAL_ADDRESS": "123 Fixture Street, Test City",
+    "PRIVACY_CONTACT_EMAIL": "privacy@example.test",
+    "DMCA_AGENT_NAME": "CI Test Agent",
+    "DMCA_AGENT_EMAIL": "copyright@example.test",
+    "DMCA_AGENT_ADDRESS": "123 Fixture Street, Test City",
+    "DMCA_AGENT_PHONE": "+1 202 555 0100",
+    "DMCA_AGENT_REGISTERED": "true",
+    "PAYMENT_REFUND_POLICY": "Test fixture policy; not a production policy.",
+    "JWT_SECRET": "ci-jwt-secret-not-a-real-one",
+    "MOD_KEY": "ci-mod-key-long-enough-to-pass-preflight",
+    "MARKET_SEED": "ciMarketSeed7Qx2mVb9PwLn4RtY6hJc",
+    "SOCIAL_VERIFY_MODE": "off",
+    "POPULATION_OFF": "on",
+    "PG_CTL": null,
+    "LOAD_PLAYERS": "8 (loadtest only)",
+    "LOAD_SECONDS": "20 (default)",
+    "birthDate": "1990-01-01 (synthetic adult)"
+  },
+  "harnessSha256": {
+    "tools/pgcheck.js": "063b1beac753b933fc243cf79515a8279a8c7fef0b07fa81dd43a845915adaa4",
+    "tools/concurrency.js": "518972cc9f31ee75c0603a4a8c4de2ee17f6f345c9784c6a965d8ac12db31cc1",
+    "tools/loadtest.js": "9dac68178104c06afc9334e99293c05c80e08f984b3033bd8cbd32019a3c9874",
+    "tools/chaos.js": "d4142374f2840153f4a8eaca22a8a76d10ab6feb0dfe7021277d53d8e2b55edd"
+  },
+  "protectedSourceSha256": {
+    "package-lock.json": {
+      "rawSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+      "lfSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+      "matchesFrozenC2": true
+    },
+    "package.json": {
+      "rawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+      "lfSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+      "matchesFrozenC2": true
+    },
+    "schema.sql": {
+      "rawSha256": "7fa216f2c81c2739f4d004d8231c3db55381e5654f4549f2df2f37bb9274429a",
+      "lfSha256": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
+      "matchesFrozenC2": true
+    },
+    "src/agentgateway.js": {
+      "rawSha256": "4116c13545125570dfcc5513e6b71ae3e1df379ba039d82ac40f4bde358b26df",
+      "lfSha256": "04b4f3566281661865e8e108e8c76b67724af43f7defebbb9d5a2510cbf1d191",
+      "matchesFrozenC2": true
+    },
+    "src/crew.js": {
+      "rawSha256": "bc13577b15244bafcad4b037cba5579f730ec7b20c913fc416f65da7761bfbdd",
+      "lfSha256": "3ed0798cc073457d504fd308c6c5c5a58fce9a03c7aac7aa168d203c6ce46bca",
+      "matchesFrozenC2": true
+    },
+    "src/db.js": {
+      "rawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+      "lfSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+      "matchesFrozenC2": true
+    },
+    "src/deeds.js": {
+      "rawSha256": "40ac691a9484227d0b12069509ddcf84523c269e4cfaed2a36f05d117b82c6c1",
+      "lfSha256": "4c4a45c8f90f8655a2e4da23410e3e33b2dce877ee459e37302c57899cce238b",
+      "matchesFrozenC2": true
+    },
+    "src/game.js": {
+      "rawSha256": "6332ad6f3cf406c16168d58a486622fde791a53ad87954153870d77084af60cd",
+      "lfSha256": "f429d6f54255e20b7b123efb20802a9ce70701c422620693ff702c9deb2424f0",
+      "matchesFrozenC2": true
+    },
+    "src/routes/worldgraph.js": {
+      "rawSha256": "773007a00e986505524df1e4cd085a212f2e3bd406824d73f81797be2441e3f5",
+      "lfSha256": "762bd5300203925bc3c58743f0e72c3b9eaf347c38b3d351cdc7b17ac662a377",
+      "matchesFrozenC2": true
+    },
+    "src/server.js": {
+      "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+      "lfSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
+      "matchesFrozenC2": true
+    },
+    "src/wire.js": {
+      "rawSha256": "528a371378eb078633a4f294644322d2f0350ec55c7eb1f089da279283962b95",
+      "lfSha256": "fe9783c20b06257e12d47412eba2af54fb0395d57755b82c00ae3fe07ce3cf1f",
+      "matchesFrozenC2": true
+    },
+    "src/worker.js": {
+      "rawSha256": "8e6368c9bbcc9f2cf9dee49f227039d2cefebecda89d73e323ccd8002a18e1b9",
+      "lfSha256": "1e1e7c48865995d308b6de60f81a37a8ab3a9db349fbb4e896ea2ff3d37c07d1",
+      "matchesFrozenC2": true
+    },
+    "src/rules.generated.js": {
+      "rawSha256": "0d07a6c18299dd137ba4e364070502d44ba0c04ea5ea26ddcaf90b406c989fd4",
+      "lfSha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b",
+      "matchesFrozenC2": true
+    },
+    "src/rules.tail.js": {
+      "rawSha256": "ce08776af6d10e0895805faf18960870d62adf2563e422a7f52ff9682d3ce755",
+      "lfSha256": "84eeb263dcfc13cc4ea13683a9460dc8429df126182562c5b6986654be6f9e05",
+      "matchesFrozenC2": true
+    },
+    "src/genesisauction.js": {
+      "rawSha256": "632c67c95a581b9c7242a959632312cbd5aa44266fb309f37d9ddbb0eab00d7d",
+      "lfSha256": "4383c630f8039ce5c4f45e20cb35afa5a8447da31d93c1376b934c22eb8efeaa",
+      "matchesFrozenC2": true
+    },
+    "public/genesis-deploy-client.js": {
+      "rawSha256": "33bfae481ab143bc462c12b99c9ca51706f7b49b89e3785c9097c1f57e3a4272",
+      "lfSha256": "33bfae481ab143bc462c12b99c9ca51706f7b49b89e3785c9097c1f57e3a4272",
+      "matchesFrozenC2": true
+    },
+    "tools/genesis-auction-preflight.js": {
+      "rawSha256": "6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7",
+      "lfSha256": "6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7",
+      "matchesFrozenC2": true
+    }
+  },
+  "runs": [
+    {
+      "command": "node tools/pgcheck.js",
+      "startedAt": "2026-10-14T22:42:18.051Z",
+      "endedAt": "2026-10-14T22:43:35.153Z",
+      "exitCode": 0,
+      "signal": null,
+      "database": "omerta_harness_pgcheck_20261014_92670802",
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-pgcheck-attempt1.log",
+          "bytes": 18536,
+          "sha256": "30eab0956990aa45e90f180311b2f5f7533e52d8858e93a08413824366ab9966"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-pgcheck-attempt1.exit",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      }
+    },
+    {
+      "command": "node tools/concurrency.js",
+      "startedAt": "2026-10-14T22:42:28.168Z",
+      "endedAt": "2026-10-14T22:42:37.915Z",
+      "exitCode": 0,
+      "signal": null,
+      "database": "omerta_harness_concurrency_20261014_92670802",
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-concurrency-attempt1.log",
+          "bytes": 2147,
+          "sha256": "160bf2d574b9359b659a0a840bd6407e000bf4d6722d942f7ca1ff998296f715"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-concurrency-attempt1.exit",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      }
+    },
+    {
+      "command": "node tools/loadtest.js",
+      "startedAt": "2026-10-14T22:42:41.984Z",
+      "endedAt": "2026-10-14T22:43:40.519Z",
+      "exitCode": 0,
+      "signal": null,
+      "database": "omerta_harness_loadtest_20261014_92670802",
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-loadtest-attempt1.log",
+          "bytes": 2262,
+          "sha256": "46c5765db975a05012021c6366f441d36b15866bfa379cedabd708799fcefa1f"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-loadtest-attempt1.exit",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      }
+    },
+    {
+      "command": "node tools/chaos.js",
+      "startedAt": "2026-10-14T22:42:58.031Z",
+      "endedAt": "2026-10-14T22:43:30.122Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "omerta_harness_chaos_20261014_92670802",
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-chaos-attempt1.log",
+          "bytes": 16526,
+          "sha256": "47e76156ee5fb7e84e28bfeea2f2d6d8a60ac7d6484655d64992c64022b7ddde"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-native-chaos-attempt1.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    }
+  ],
+  "results": {
+    "pgcheck": "PASS: 221 passed, 0 failed, including ledger, locks, oldest schema, account UUID migration and post-commit behavior.",
+    "concurrency": "PASS: idempotency once, single-winner escrow, six AB-BA rounds, ten concurrent bodyguard hires; zero deadlocks and no ledger drift.",
+    "loadtest": "PASS: CI field of 8 players over 20 seconds; 3,498 operations, all 97 ledger checks stable, zero 5xx/deadlocks/pool failures. Throughput is local diagnostic data, not production capacity.",
+    "chaos": "FAIL (exit 1): scenarios 1, 2 and 5 passed, with exactly-once auction settlement and ledger stability under killed backends. Three SIGTERM drain assertions failed on Windows: parked request ECONNRESET, child terminated by SIGTERM, no drain announcement. Guest admission succeeded for all fixtures. Scenario 3 full database restart skipped explicitly because PG_CTL was unset, matching CI."
+  },
+  "platformLimit": {
+    "explanation": "The observed SIGTERM child termination matches documented Windows child_process.kill behavior. No workaround, runtime edit, skip or weakened assertion was made. Full chaos must pass on Linux CI before release.",
+    "primarySource": "https://nodejs.org/api/child_process.html#subprocesskillsignal"
+  },
+  "signalScope": "All executed pg_terminate_backend SQL was constrained by datname = current_database() and ran against the per-harness disposable database. PG_CTL was explicitly removed; no PostgreSQL server stop/start command ran. OS child signals targeted only workers/server processes spawned by this chaos harness. The owned PostgreSQL server remained online, as verified by finalServer.",
+  "sourcePinCheck": "All 17 domain contents match the frozen C2 literal hashes and inverse envelope after LF normalization; raw hashes also record actual Windows worktree bytes. schema.sql, src/agentgateway.js and src/db.js currently have mixed CRLF/LF; direct raw source-transfer tests were not claimed by these native runs. No source bytes changed.",
+  "changesDuringNativeValidation": "None. Existing explicit fixture-DOB edits were validated; no runtime source or harness assertions/budgets changed."
+}

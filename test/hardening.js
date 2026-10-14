@@ -30,10 +30,18 @@ import * as Ops from '../src/ops.js';
   for (const term of ['spread the word', 'family tree', 'opportunity', '/agents',
     'dueling circuit', 'clue scrolls', 'megaproject', 'cellphone',
     'ring poker', 'house window', 'gala', 'the family yield', 'the trades', 'my profile',
-    'the black book', 'word on the street', 'the take', 'the made man',
-    "bank's city leg"]) {
+    'the black book', 'word on the street', 'the take', 'the made man']) {
     assert(wm.includes(term), `docs/WIKI.md must document "${term}" (codex drift)`);
     assert(wh.includes(term), `public/wiki.html must document "${term}" (codex drift)`);
+  }
+  for (const [name, text] of [['docs/WIKI.md', wm], ['public/wiki.html', wh]]) {
+    const plain = text.replace(/<[^>]*>/g, ' ').replace(/[*`]/g, '').replace(/\s+/g, ' ');
+    const bank = plain.match(/bank's city (?:leg|distribution)[\s\S]{0,1200}/)?.[0];
+    assert(bank, `${name} must document the Bank's city distribution (codex drift)`);
+    assert(/buy(?:ing)? \$omr on the open market/.test(bank), `${name} must explain the Bank's purchased OMR`);
+    assert(/that day's active players|players who played that day/.test(bank),
+      `${name} must identify the Bank distribution's daily active recipients`);
+    assert(bank.includes('purchased first'), `${name} must say distributed OMR was purchased first`);
   }
 }
 
@@ -394,16 +402,30 @@ assert(/object-src 'none'/.test(home.headers['content-security-policy-report-onl
   'browser pages ship the monitored CSP boundary');
 assert(/camera=\(\)/.test(home.headers['permissions-policy'] || ''), 'browser capabilities default closed');
 const clientSrc = readFileSync(new URL('../public/index.html', import.meta.url), 'utf8');
-assert(/ethereum-provider@2\.21\.5/.test(clientSrc) && !/ethereum-provider@2['"]/.test(clientSrc),
-  'WalletConnect CDN import is pinned to an exact SDK version');
+assert(clientSrc.includes("import('/vendor/walletconnect.js')")
+  && !/import\(\s*['"]https?:[^'"]*ethereum-provider/.test(clientSrc),
+  'WalletConnect loads the local bundle rather than an external SDK import');
+const walletInventory = JSON.parse(readFileSync(new URL('../public/vendor/walletconnect-manifest.json', import.meta.url), 'utf8'));
+const walletLock = JSON.parse(readFileSync(new URL('../package-lock.json', import.meta.url), 'utf8'));
+const walletSdk = walletInventory.packages.find((p) => p.name === '@walletconnect/ethereum-provider');
+assert.equal(walletSdk?.version, '2.26.0', 'the local WalletConnect inventory pins the reviewed SDK version');
+assert.equal(walletLock.packages['node_modules/@walletconnect/ethereum-provider'].version, walletSdk.version,
+  'the local SDK inventory agrees with the exact dependency lock');
+assert.equal(walletInventory.script, '/vendor/walletconnect.js', 'the inventory identifies the actual local module');
+assert.deepEqual([walletInventory.analytics, walletInventory.telemetry, walletInventory.mandatoryModalEvents],
+  [false, false, false], 'the local SDK disables optional and mandatory modal tracking');
+assert.equal((await app.inject({ method: 'GET', url: '/vendor/walletconnect.js' })).statusCode, 200,
+  'the exact local WalletConnect module is served');
 assert(/rel="canonical"/.test(clientSrc) && /twitter:card/.test(clientSrc),
   'the front door publishes canonical and social metadata');
 for (const id of ['btn-jump', 'btn-phone', 'btn-alerts', 'btn-sfx'])
   assert(new RegExp(`id="${id}"[^>]*aria-label=`).test(clientSrc), `${id} has an accessible name`);
 assert(!/<a\b[^>]*>\s*<button\b/i.test(clientSrc), 'interactive controls are not nested');
 // and the guide itself is vendor-neutral — a non-Claude agent reading it finds its own lane.
-assert(/Every model works here/.test(ag.body) && /openapi\.json/.test(ag.body),
-  'the agent guide carries the vendor-neutral (any-model) section');
+assert(/Use another agent client|Every model works here/i.test(ag.body)
+  && /Any MCP-capable client/i.test(ag.body) && /HTTP directly/i.test(ag.body)
+  && /openapi\.json/.test(ag.body) && /ChatGPT/.test(ag.body) && /Gemini/.test(ag.body),
+  'the agent guide explains vendor-neutral MCP, OpenAPI and direct HTTP connection lanes');
 
 // ── THE OPPORTUNITY BOARD + THE AGENT LEADERBOARD (the agent economy) ──
 const agtGuest = (await call('POST', '/v1/auth/guest')).body.token;
@@ -444,11 +466,14 @@ assert(arena.economy.wealth === undefined && arena.economy.collectiveWealth === 
 assert(arena.leaderboard.some((a) => a.name === 'Machine Malone') && arena.leaderboard.every((a) => a.netWorth === undefined), 'the arena hall of fame lists agents, banded (no exact net worth)');
 assert(arena.links.quickstart.endsWith('/agents') && arena.links.openapi.endsWith('/openapi.json'), 'the arena links out to the machine-discovery surfaces');
 const arenaPage = await app.inject({ method: 'GET', url: '/arena' });
-assert(arenaPage.statusCode === 200 && /text\/html/.test(arenaPage.headers['content-type']) && /THE ARENA/.test(arenaPage.body), 'the public human-facing arena page serves at /arena');
+assert(arenaPage.statusCode === 200 && /text\/html/.test(arenaPage.headers['content-type'])
+  && /<h1\b[^>]*>\s*The Arena\s*<\/h1>/i.test(arenaPage.body),
+  'the public human-facing arena page serves its named heading at /arena');
 const publicArenaLink = arenaPage.body.match(/<a\b[^>]*href=["']\/v1\/arena["'][^>]*>([\s\S]*?)<\/a>/i)?.[1]
   .replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 assert(publicArenaLink && /Arena snapshot \(JSON\)/i.test(publicArenaLink)
-    && /the public banded board behind this page/i.test(publicArenaLink),
+    && /\bpublic\b/i.test(publicArenaLink) && /banded|wealth bands/i.test(publicArenaLink)
+    && /(?:behind|shown on) this page/i.test(publicArenaLink),
   'the public Arena page identifies its keyless JSON snapshot as the public banded board behind this page');
 assert(!arenaPage.body.includes('/v1/leaderboard/agents'),
   'unauthenticated Arena navigation never links to the authenticated agent leaderboard');
@@ -1690,7 +1715,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
   // helper actually CONSULTS it — is a labelled source tripwire, since a real full-buffer socket
   // cannot be manufactured through pg-mem + inject.
   {
-    const { wsSendable, WS_MAX_BUFFER } = await import('./server-fixture.js');
+    const { wsSendable, WS_MAX_BUFFER } = await import('../src/server.js');
     assert(WS_MAX_BUFFER > 0, 'WS_MAX_BUFFER is a positive bound');
     assert(wsSendable({ bufferedAmount: 0 }) === true, 'an empty socket buffer is sendable');
     assert(wsSendable({ bufferedAmount: WS_MAX_BUFFER - 1 }) === true, 'just under the bound is sendable');
@@ -1760,7 +1785,7 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
 // DRIVEN through the real `startWorkerWatch`, not a copy: the returned `check` is the same predicate
 // the interval runs. Driven rather than slept through, so no wall clock decides whether it passes.
 {
-  const { startWorkerWatch } = await import('./server-fixture.js');
+  const { startWorkerWatch } = await import('../src/server.js');
   const { webhookText } = await import('../src/invariants.js');
   const sent = [];
   const alert = async (_pool, failed, kind) => { sent.push({ failed, kind }); };
