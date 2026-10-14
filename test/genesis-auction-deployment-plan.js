@@ -155,7 +155,7 @@ else assert.throws(() => buildGenesisAuctionDeploymentPlan(mainnet), /Production
 const wrongSafe = clone(mainnet); wrongSafe.localRehearsal = true; wrongSafe.roles.safe = A(101); wrongSafe.allocation.safeAddress = A(101);
 assert.throws(() => buildGenesisAuctionDeploymentPlan(wrongSafe), /founder approval/);
 for (const [edit, pattern] of [[v => { v.hook.poolFee = 500; }, /approved static LP fee/],
-  [v => { v.hook.opening = { blocks: 200, buyBps: 500, maxBuyQuote: String(10n * E) }; }, /opening restrictions must be OFF/],
+  [v => { v.hook.opening = { blocks: 200, buyBps: 50, maxBuyQuote: String(10n * E) }; }, /opening restrictions must be OFF/],
   [v => { v.hook.tickSpacing = 10; }, /tick spacing 60/], [v => { v.hook.epochDuration = 60; }, /epoch 3600/],
   [v => { v.hook.surgeFullTicks = 200; }, /surge calibration/]]) {
   const invalidProduction = clone(mainnet); invalidProduction.localRehearsal = true; edit(invalidProduction);

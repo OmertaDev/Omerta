@@ -1,0 +1,207 @@
+{
+  "sourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "phase": "local backend merge integration",
+  "runDate": "2026-10-14",
+  "versions": {
+    "node": "24.19.0",
+    "postgres": "18.4",
+    "pg": "8.22.0",
+    "pgMem": "3.0.14",
+    "acorn": "8.18.0"
+  },
+  "database": {
+    "isolated": true,
+    "host": "127.0.0.1",
+    "port": 55438,
+    "database": "omerta_release_native",
+    "credentials": "disposable local trust authentication"
+  },
+  "fuzz": {
+    "executed": false,
+    "seed": null,
+    "note": "Random schema/UUID suffixes isolate deterministic fixtures; no fuzz run claimed."
+  },
+  "reportSha256": "7b2db9b382f3e1fb0191bdd761126d5d49890fe42f38ce5233557a06e8e74d9c",
+  "sourceHashesSha256": "6c632946ae12fc662842fbc430ab2dce5a6e9750ae1f86d9a7498c3b9d1ea426",
+  "runs": [
+    {
+      "stem": "rls-native",
+      "command": "node test/db-rls.js --postgres",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "payment-receipts-native",
+      "command": "node test/payment-receipts-postgres.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "gateway-native",
+      "command": "node test/gateway-postgres.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "deeds-supply-native",
+      "command": "node test/deeds-supply-postgres.js",
+      "exit": 1,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "deeds-supply-native-retest",
+      "command": "node test/deeds-supply-postgres.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "migration-failure-native",
+      "command": "node test/readiness-migration-failure.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "migration-memory",
+      "command": "node test/migrate.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    },
+    {
+      "stem": "gates",
+      "command": "node test/gates.js",
+      "exit": 1,
+      "exitRecording": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    {
+      "stem": "gates-retest",
+      "command": "node test/gates.js",
+      "exit": 1,
+      "exitRecording": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    {
+      "stem": "gates-retest2",
+      "command": "node test/gates.js",
+      "exit": 1,
+      "exitRecording": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    {
+      "stem": "gates-retest3",
+      "command": "node test/gates.js",
+      "exit": 0,
+      "exitRecording": "copied retained execution artifact"
+    }
+  ],
+  "artifacts": {
+    "rls-native.log": {
+      "sha256": "7477aedba2fa847d01a32293a42c98a1f3ff8aef5a32ab6fafb40434eacf0403",
+      "bytes": 182,
+      "origin": "copied retained execution artifact"
+    },
+    "rls-native.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "payment-receipts-native.log": {
+      "sha256": "580d8fa3b55f442a741a04ed12622ca2b10a48f0b15d2269d2f66b72ef43e90d",
+      "bytes": 181,
+      "origin": "copied retained execution artifact"
+    },
+    "payment-receipts-native.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "gateway-native.log": {
+      "sha256": "442b467c2d3596bc16bcc52a084a7a980f81521a1187210b648f66a758d4c876",
+      "bytes": 1666,
+      "origin": "copied retained execution artifact"
+    },
+    "gateway-native.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "deeds-supply-native.log": {
+      "sha256": "74367bd2d985c114e4c079f3cc3a1160e054640ce2d375b7960fdd1669f330e3",
+      "bytes": 1115,
+      "origin": "copied retained execution artifact"
+    },
+    "deeds-supply-native.exit": {
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "deeds-supply-native-retest.log": {
+      "sha256": "9f3b4739e77a1de91e76b7345ea4d17088e790eee2e078a909e4a04965b8232e",
+      "bytes": 104,
+      "origin": "copied retained execution artifact"
+    },
+    "deeds-supply-native-retest.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "migration-failure-native.log": {
+      "sha256": "a0b150f39fbff8c43fe7852d5eecbd7fde618ce51f2fd39f9f4a17dc60c7e21d",
+      "bytes": 325,
+      "origin": "copied retained execution artifact"
+    },
+    "migration-failure-native.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "migration-memory.log": {
+      "sha256": "fe621cdd9e900da5c15cd02122d4bd8d675b2f5489710da8dde8c33d00d48304",
+      "bytes": 719,
+      "origin": "copied retained execution artifact"
+    },
+    "migration-memory.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    },
+    "gates.log": {
+      "sha256": "1065bc6907d802f5912c8d3d69da6856df3096f96936875c49eede3e151362c5",
+      "bytes": 4060,
+      "origin": "copied retained execution artifact"
+    },
+    "gates.exit": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "origin": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    "gates-retest.log": {
+      "sha256": "01457bb82d8b4e4e67faee804eeb90e82bdcd4fe853475fab63d490842213972",
+      "bytes": 3800,
+      "origin": "copied retained execution artifact"
+    },
+    "gates-retest.exit": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "origin": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    "gates-retest2.log": {
+      "sha256": "b297ca31751352c307edc573b9ee73db38aea320d7d3d244d438f08d91424c3b",
+      "bytes": 4469,
+      "origin": "copied retained execution artifact"
+    },
+    "gates-retest2.exit": {
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "bytes": 2,
+      "origin": "reconstructed from captured functions.exec exit_code; no rerun"
+    },
+    "gates-retest3.log": {
+      "sha256": "796e3134934060def49c5321ca9a574d1798a861ab8f0753860b89e5650ced41",
+      "bytes": 4346,
+      "origin": "copied retained execution artifact"
+    },
+    "gates-retest3.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3,
+      "origin": "copied retained execution artifact"
+    }
+  },
+  "reportSha256Convention": "UTF-8 report with CRLF normalized to LF; evidence artifacts retain raw bytes via local .gitattributes"
+}

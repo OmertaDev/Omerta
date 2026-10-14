@@ -85,7 +85,8 @@ export function loadMarketV2Artifact(contract, { contractsRoot = ROOT } = {}) {
   const sourceHashes = {};
   for (const [source, info] of Object.entries(m.sources)) {
     const p = path.resolve(root, source);
-    const mount = source.startsWith('lib/permit2/') ? fs.realpathSync(path.join(root, 'lib', 'permit2')) : root;
+    const dependency = /^lib\/(openzeppelin-contracts|v4-core|v4-periphery|permit2)\//.exec(source);
+    const mount = dependency ? fs.realpathSync(path.join(root, 'lib', dependency[1])) : root;
     if (!within(root, p) || !within(mount, fs.realpathSync(p))) throw Error(`${contract}: source outside approved source/dependency mount`);
     const sourceBytes = fs.readFileSync(p);
     const actual = keccak256(toHex(sourceBytes));
