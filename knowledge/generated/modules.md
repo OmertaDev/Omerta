@@ -353,7 +353,7 @@
 | [src/routes/deliveryfinance.js](../../src/routes/deliveryfinance.js) | 69 | platform-core | 4 / 2 | 7 | 3 | 0 |
 | [src/routes/depot.js](../../src/routes/depot.js) | 48 | platform-core | 4 / 1 | 15 | 2 | 0 |
 | [src/routes/diplomacy.js](../../src/routes/diplomacy.js) | 25 | platform-core | 2 / 1 | 7 | 2 | 0 |
-| [src/routes/economicintelligence.js](../../src/routes/economicintelligence.js) | 10 | platform-core | 2 / 2 | 6 | 1 | 1 |
+| [src/routes/economicintelligence.js](../../src/routes/economicintelligence.js) | 11 | platform-core | 2 / 2 | 6 | 1 | 1 |
 | [src/routes/employmentorganizations.js](../../src/routes/employmentorganizations.js) | 11 | platform-core | 2 / 2 | 0 | 3 | 1 |
 | [src/routes/equipmentinsurance.js](../../src/routes/equipmentinsurance.js) | 5 | platform-core | 3 / 1 | 0 | 1 | 0 |
 | [src/routes/equipmentmaintenance.js](../../src/routes/equipmentmaintenance.js) | 11 | platform-core | 3 / 1 | 0 | 1 | 0 |
@@ -372,7 +372,7 @@
 | [src/routes/law.js](../../src/routes/law.js) | 31 | law-intelligence | 2 / 1 | 9 | 0 | 0 |
 | [src/routes/leaderboards.js](../../src/routes/leaderboards.js) | 122 | platform-core | 35 / 1 | 42 | 8 | 0 |
 | [src/routes/logisticscoverage.js](../../src/routes/logisticscoverage.js) | 34 | platform-core | 2 / 1 | 3 | 3 | 0 |
-| [src/routes/managementteams.js](../../src/routes/managementteams.js) | 14 | platform-core | 4 / 2 | 7 | 1 | 1 |
+| [src/routes/managementteams.js](../../src/routes/managementteams.js) | 15 | platform-core | 4 / 2 | 7 | 1 | 1 |
 | [src/routes/marketfeed.js](../../src/routes/marketfeed.js) | 6 | platform-core | 1 / 1 | 1 | 0 | 0 |
 | [src/routes/modtools.js](../../src/routes/modtools.js) | 430 | platform-core | 28 / 1 | 68 | 17 | 0 |
 | [src/routes/pen.js](../../src/routes/pen.js) | 60 | law-intelligence | 2 / 1 | 19 | 1 | 0 |
