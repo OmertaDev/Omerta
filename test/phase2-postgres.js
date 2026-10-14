@@ -13,6 +13,7 @@ import { createActivationPolicy } from '../src/content/activation-policy.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
+import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -215,12 +216,18 @@ async function child(url) {
       const gameplayMetadata = await readCityGameplayMigrationMetadata(pool);
       gameplayCatalog.verifyMetadata(gameplayMetadata);
       const version = Number(settings.server_version_num);
-      const projection = gameplayUpgradeProjection(gameplayCatalog,oldConstraints,version), normalize = projection.normalize;
+      const equipment = equipmentEconomyMigrationProjection(schema,gameplayMetadata);
+      const cityProjection = gameplayUpgradeProjection(gameplayCatalog,oldConstraints,version);
+      assert.throws(()=>cityProjection.normalize(upgradedConstraints),error=>error?.code==='ERR_ASSERTION',
+        'The unchanged City oracle refuses the new equipment predicate without the closed equipment projection');
+      const projection = Object.freeze({ ...cityProjection, normalize: rows => cityProjection.normalize(equipment.normalize(rows)) });
+      const normalize = projection.normalize;
       const normalized = normalize(upgradedConstraints);
       verifyUpgradeConstraintCatalog(oldConstraints,normalized,version);
       verifyUpgradeConstraintCausalNegatives(oldConstraints,normalized,version);
       verifyPlayerIntelUpgradeCausalNegatives(oldConstraints,normalized,version);
       verifyGameplayUpgradeCausalNegatives(gameplayCatalog,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
+      verifyEquipmentEconomyUpgradeCausalNegatives(equipment,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       console.log('phase2-postgres: exact account-owned PlayerIntel identity and required columns pass with removal, alteration, renamed binding and unknown-addition negatives');
@@ -244,6 +251,31 @@ async function child(url) {
     await snapshotEvidence(pool);
     await queryPlans(pool);
   } finally { await pool.end(); }
+}
+function verifyEquipmentEconomyUpgradeCausalNegatives(equipment,metadata,before,after,version,projection) {
+  const tables = new Set(EQUIPMENT_ECONOMY_MIGRATION_TABLES);
+  const declared = architectureUpgradeCatalog.added.filter(row => tables.has(row.table_name));
+  assert.equal(new Set(declared.map(row => row.table_name)).size,14,'All equipment tables remain in the independent native oracle');
+  assert.equal(declared.length,122,'All declared equipment constraints remain visible');
+  const notNull = Object.entries(architectureUpgradeCatalog.notNullColumns).filter(([table]) => tables.has(table));
+  assert.equal(notNull.reduce((count,[,columns])=>count+columns.length,0),132,'All equipment NOT NULL bindings remain declared');
+  const verify = rows => verifyUpgradeConstraintCatalog(before,projection.normalize(rows),version);
+  const mutate = (key,change) => { const rows=after.map(row=>({...row})),index=rows.findIndex(row=>catalogIdentity(row)===key);
+    assert(index>=0,'Declared equipment native causal target exists');change(rows,index);return rows; };
+  for (const row of declared) {
+    const key=catalogIdentity(row);
+    for (const change of [(rows,index)=>rows.splice(index,1),(rows,index)=>{rows[index].definition='CHECK (true)';},
+      (rows,index)=>{rows[index].name+='__unknown';}]) assert.throws(()=>verify(mutate(key,change)),error=>error?.code==='ERR_ASSERTION');
+  }
+  if(version>=180000)for(const [table,columns]of notNull)for(const column of columns){
+    const key=catalogIdentity({table_name:table,name:`${table}_${column}_not_null`});
+    for(const change of [(rows,index)=>rows.splice(index,1),(rows,index)=>{rows[index].definition+=' altered';}])
+      assert.throws(()=>verify(mutate(key,change)),error=>error?.code==='ERR_ASSERTION');
+  }
+  for(const table of tables)assert.throws(()=>verify([...after,constraintRow(table,'unreviewed_constraint','CHECK (true)')]),error=>error?.code==='ERR_ASSERTION');
+  for(const field of ['validated','type']){const changed=structuredClone(metadata),row=changed.constraints.find(row=>row.table_name==='item_events'&&row.name==='item_event_kind');
+    row[field]=field==='validated'?false:'f';assert.throws(()=>equipment.verifyMetadata(changed),error=>error?.code==='ERR_ASSERTION');}
+  console.log('phase2-postgres equipment delta: exact predicate projection; all14 tables/122 constraints/132 NOT NULLs retained and causal removals/alterations/renames/unknown additions rejected');
 }
 async function legacySnapshot(q) {
   return { bundles: (await q.query('SELECT * FROM content_bundles ORDER BY namespace,version')).rows,

@@ -76,3 +76,71 @@ assert.throws(() => qualifyReviewedAdditiveBootstrap(old, fresh, predecessor,
 assert.throws(() => qualifyReviewedAdditiveBootstrap(old, fresh, predecessor,
   { ...candidate, additiveSource: { ...candidate.additiveSource, tree: combinedPin.candidateTree } }), /schema definitions/);
 console.log('rc1-source-pair-additive combined PASS: separate exact tree/schema profile; thirteen direct and selected negative controls, crossed-profile rejection, unchanged seven-table catalog/NN proof and unequal raw state');
+
+// A separate exact relation: original seven-table identity and negatives above remain unchanged.
+const { SECOND_BATCH_ADDITIVE_PAIR: secondPin,qualifySecondBatchAdditiveBootstrap }=await import('../tools/rc1-source-pair.js');
+const { EQUIPMENT_ECONOMY_MIGRATION_TABLES }=await import('./lib/equipment-economy-migration-catalog.js');
+assert.deepEqual(secondPin.tables,[...EQUIPMENT_ECONOMY_MIGRATION_TABLES].sort());
+assert.equal(secondPin.predecessor,'18e28bda62759c4d18aaefea461a407b43c0b62f');
+assert.equal(secondPin.reviewedCandidate,'960e5ac8444313fdc2dfcd0930cccbb27dacc1fd');
+const secondPredecessor={source:secondPin.predecessor,secondBatchAdditiveSource:{tree:secondPin.predecessorTree,schema:secondPin.predecessorSchema,catalog:secondPin.predecessorCatalog}},secondCandidate={source:secondPin.reviewedCandidate,secondBatchAdditiveSource:{tree:secondPin.candidateTree,schema:secondPin.candidateSchema,catalog:secondPin.candidateCatalog,catalogTables:Object.fromEntries(secondPin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
+const secondOld={tables:{...old.tables,unknown_existing_custody:['{"owner":"original","reserved":3}']},sequences:structuredClone(old.sequences)},secondFresh={tables:{...secondOld.tables,...Object.fromEntries(secondPin.tables.map(name=>[name,[]]))},sequences:structuredClone(secondOld.sequences)};
+const secondQualified=qualifySecondBatchAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate);
+assert.equal(secondQualified.relation,'REVIEWED_FOURTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');assert.notEqual(secondQualified.beforeNormalizedSha256,secondQualified.afterNormalizedSha256);assert.deepEqual(secondQualified.addedEmptyTables,secondPin.tables);
+let secondNegatives=0;
+const secondNegative=(label,mutate,pattern)=>{const a=structuredClone(secondOld),b=structuredClone(secondFresh),p=structuredClone(secondPredecessor),c=structuredClone(secondCandidate);mutate(a,b,p,c);assert.throws(()=>qualifySecondBatchAdditiveBootstrap(a,b,p,c),pattern,label);secondNegatives++;};
+secondNegative('unknown addition',(_a,b)=>{b.tables.unknown_new_authority=[];},/unlisted/);
+for(const table of secondPin.tables){secondNegative('each required table missing '+table,(_a,b)=>{delete b.tables[table];},/Missing expected/);secondNegative('each new table populated '+table,(_a,b)=>{b.tables[table]=['{"id":"new-authority"}'];},/not empty/);}
+secondNegative('unknown old row changed',(_a,b)=>{b.tables.unknown_existing_custody=['{"owner":"replacement","reserved":3}'];},/row\/table changed/);
+secondNegative('unknown old table removed',(_a,b)=>{delete b.tables.unknown_existing_custody;},/removed/);
+secondNegative('old row changed',(_a,b)=>{b.tables.accounts=['{"id":"replacement"}'];},/row\/table changed/);
+secondNegative('old sequence changed',(_a,b)=>{b.sequences[0].last_value='11';},/Sequence state changed/);
+secondNegative('new sequence',(_a,b)=>{b.sequences.push({sequencename:'unreviewed_seq',last_value:null});},/Sequence state changed/);
+secondNegative('unrelated candidate source',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.tree='0'.repeat(64);},/Unrelated source changed/);
+secondNegative('wrong predecessor',(_a,_b,p)=>{p.source=pin.predecessor;},/predecessor/);
+secondNegative('predecessor schema drift',(_a,_b,p)=>{p.secondBatchAdditiveSource.schema='0'.repeat(64);},/schema definitions/);
+secondNegative('candidate schema drift including predicate',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.schema='0'.repeat(64);},/schema definitions/);
+secondNegative('full native catalog drift',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalog='0'.repeat(64);},/catalog differs/);
+secondNegative('actual definition drift',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables.contract_auctions.constraints[0].definition='CHECK (true)';},/catalog evidence differs/);
+secondNegative('required clock NN missing',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables.service_subscription_cycles.notNullColumns=[];},/catalog evidence differs/);
+secondNegative('seven table catalog substituted',(_a,_b,_p,c)=>{c.secondBatchAdditiveSource.catalogTables=structuredClone(candidate.additiveSource.catalogTables);},/catalog evidence differs/);
+secondNegative('first identity cannot qualify second',(_a,_b,_p,c)=>{c.additiveSource=c.secondBatchAdditiveSource;delete c.secondBatchAdditiveSource;},/Unrelated source changed/);
+assert.throws(()=>qualifyFirstFiveAdditiveBootstrap(secondOld,secondFresh,secondPredecessor,secondCandidate),/predecessor/);
+assert.throws(()=>qualifySecondBatchAdditiveBootstrap(old,fresh,predecessor,candidate),/predecessor/);
+// New qualification cannot mutate or broaden the historical identity/catalog.
+assert.deepEqual(qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate),qualified);
+for(const file of ['src/equipmentrentals.js','src/social/estate.js','.github/workflows/ci.yml','test/lib/equipment-economy-migration-catalog.js','knowledge/generated/not-listed.md'])assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords,record(file)]),sourceHash,'Second batch grants no new source exclusion');
+console.log(`rc1-source-pair-additive SECOND PASS: separate14-empty-table relation, ${secondNegatives} negatives, cross-relation refusal, exact unknown/old rows/sequences/catalog/source and unchanged original7 identity; no populated authority or backing claim`);
+
+const { SOURCE_PAIR_COMMAND_WINDOW: clockPolicy, sourcePairCommandWindow, waitForSourcePairCommandWindow, assertSourcePairCommandWindow } = await import('../tools/rc1-source-pair.js');
+assert.deepEqual(clockPolicy,{periodMs:600000,minimumCampaignMs:240000,schedulingHeadroomMs:30000,waitSliceMs:30000});
+assert.equal(sourcePairCommandWindow(330000).ready,true);
+assert.equal(sourcePairCommandWindow(330001).ready,false);
+assert.equal(sourcePairCommandWindow(600000).remainingMs,600000);
+for(const at of[-1,NaN,Infinity,0.5])assert.throws(()=>sourcePairCommandWindow(at),/Invalid/);
+let simulatedNow=599999;const waits=[];
+const scheduled=await waitForSourcePairCommandWindow({now:()=>simulatedNow,sleep:async ms=>{waits.push(ms);simulatedNow+=ms;}});
+assert.deepEqual(waits,[1]);assert.equal(scheduled.scheduledExpiresAt,new Date(1200000).toISOString());
+simulatedNow=330001;waits.length=0;
+await waitForSourcePairCommandWindow({now:()=>simulatedNow,sleep:async ms=>{waits.push(ms);simulatedNow+=ms;}});
+assert(waits.every(ms=>ms>0&&ms<=30000));assert.equal(waits.reduce((a,b)=>a+b,0),269999);
+await assert.rejects(waitForSourcePairCommandWindow({now:()=>599999,sleep:async()=>{throw Error('human interruption');}}),/human interruption/);
+const actualDeadline=new Date(600000).toISOString();assert.equal(assertSourcePairCommandWindow(actualDeadline,599999,'before').remainingMs,1);
+assert.throws(()=>assertSourcePairCommandWindow(actualDeadline,600000,'boundary'),/expired/);
+assert.throws(()=>assertSourcePairCommandWindow(actualDeadline,600001,'after'),/expired/);
+assert.throws(()=>assertSourcePairCommandWindow('invalid',0,'invalid'),/Invalid/);
+negative('expired-window added board remains a strict old-table change',(a,b)=>{a.tables.player_command_boards=['{"id":"old","expires_at":"old"}'];b.tables.player_command_boards=[...a.tables.player_command_boards,'{"id":"fresh","expires_at":"new"}'];},/row\/table changed/);
+secondNegative('clock metadata never normalizes a new projection',(a,b)=>{a.tables.player_command_boards=['{"id":"old","expires_at":"old"}'];b.tables.player_command_boards=[...a.tables.player_command_boards,'{"id":"fresh","expires_at":"new"}'];},/row\/table changed/);
+console.log('rc1-source-pair timing PASS: real-window scheduler bounds, exact boundary refusal, interrupt propagation, strict new-cache-row refusal in both historical relations; no runtime clock or TTL override');
+
+// The current equipment source already contains both historical table batches.
+// None of these additive profiles may excuse a delta from that predecessor.
+const strictPredecessorSource = '7cd8476ee7cf0b2dba66cb86928f43487cbfaa5f';
+assert.throws(() => qualifyReviewedAdditiveBootstrap(old, fresh,
+  { ...predecessor, source: strictPredecessorSource }, candidate), /predecessor/);
+assert.throws(() => qualifyReviewedAdditiveBootstrap(old, fresh,
+  { ...predecessor, source: strictPredecessorSource }, combinedCandidate), /predecessor/);
+assert.throws(() => qualifySecondBatchAdditiveBootstrap(secondOld, secondFresh,
+  { ...secondPredecessor, source: strictPredecessorSource }, secondCandidate), /predecessor/);
+assert.deepEqual(qualifyCritiqueEconomyAdditiveBootstrap(old, fresh, predecessor, combinedCandidate), combined);
+console.log('rc1-source-pair composition PASS: current equipment predecessor cannot select any historical additive relation; strict equality remains required');

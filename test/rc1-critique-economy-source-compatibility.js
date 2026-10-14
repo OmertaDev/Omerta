@@ -5,7 +5,10 @@ import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
 import { CRITIQUE_ECONOMY_SOURCE_TRANSFER as transfer, assertCritiqueEconomySourceTransfer,
+  CITY_EQUIPMENT_SOURCE_TRANSFER as mergedTransfer, assertCityEquipmentSourceTransfer,
   critiqueEconomySourceBaseline, critiqueEconomyRecoveryCatalog } from '../tools/rc1-critique-economy-source-compatibility.js';
+import { SECOND_BATCH_SOURCE_DOMAINS, SECOND_BATCH_SOURCE_PREDECESSOR,
+  assertSecondBatchSourceTransfer } from '../tools/rc1-second-batch-source-compatibility.js';
 import { FIRST_BATCH_SOURCE_DOMAINS, FIRST_BATCH_SOURCE_PREDECESSOR, firstBatchSourceBaseline,
   assertFirstBatchSourceTransfer } from '../tools/rc1-first-batch-source-compatibility.js';
 import { CASE_CREW_CATALOG_TRANSFER, caseCrewRecoveryCatalog } from '../tools/rc1-case-crew-catalog-compatibility.js';
@@ -21,6 +24,9 @@ const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'sr
 assert.deepEqual(Object.keys(transfer.domains), files);
 assert.equal(transfer.peerRevision, '9adc01bea4963b89f12419126bd91bb5e7d57a55');
 assert.equal(transfer.caseCrewRevision, 'b9a7b37dddd00c0abc184c61d352633a1a05cb40');
+assert.equal(mergedTransfer.cityRevision, '4692ac0bf7096411e021b3e62069c80d730def8b');
+assert.equal(mergedTransfer.equipmentRevision, '7cd8476ee7cf0b2dba66cb86928f43487cbfaa5f');
+assert.deepEqual(Object.keys(mergedTransfer.domains), ['schema.sql', 'src/agentgateway.js', 'package.json']);
 assert.match(transfer.scope, /ALL new Company, Case, Crew, Home and Encounter authority, privacy, current native, migration, worker, activation and deployment qualification remain outside/);
 assert.match(transfer.scope, /new package instances remain UNKNOWN/);
 assert.equal(transfer.catalog.peerSha256, CHECKPOINT_RECOVERY_REVIEW.productionCatalogTransfer.actualSha256);
@@ -31,7 +37,9 @@ const input = { sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile
 const source = await verifyCheckpointRecoverySources(input);
 let sourceNegatives = 0, hunks = 0;
 for (const file of files) {
-  const current = normalize(fs.readFileSync(file, 'utf8'));
+  const current = git('show', mergedTransfer.cityRevision + ':' + file);
+  if (!Object.hasOwn(mergedTransfer.domains, file))
+    assert.equal(normalize(fs.readFileSync(file, 'utf8')), current, 'Unmerged source domains retain their complete current bytes.');
   for (const view of file === 'src/content/phase1.js' ? ['peer', 'caseCrew'] : ['peer']) {
     const d = view === 'peer' ? transfer.domains[file] : transfer.caseManifest;
     const revision = view === 'peer' ? transfer.peerRevision : transfer.caseCrewRevision;
@@ -43,7 +51,7 @@ for (const file of files) {
     assert.equal(critiqueEconomySourceBaseline(file, current, view), prior);
     assert.equal(critiqueEconomySourceBaseline(file, prior, view), prior);
     const actualChunks = []; let chunk;
-    for (const line of git('diff', '--no-ext-diff', '--unified=3', revision, '--', file).split('\n')) {
+    for (const line of git('diff', '--no-ext-diff', '--unified=3', revision, mergedTransfer.cityRevision, '--', file).split('\n')) {
       if (line.startsWith('@@ ')) { chunk = { current: '', baseline: '' }; actualChunks.push(chunk); continue; }
       if (!chunk || line.startsWith('\\')) continue;
       if (line.startsWith(' ')) { chunk.current += line.slice(1) + '\n'; chunk.baseline += line.slice(1) + '\n'; }
@@ -75,6 +83,61 @@ for (const file of files) {
   assert.equal(firstBatchSourceBaseline(file, current), git('show', FIRST_BATCH_SOURCE_PREDECESSOR + ':' + file));
   assert.equal(transfer.domains[file].predecessorSha256, FIRST_BATCH_SOURCE_DOMAINS[file].currentSha256);
 }
+let mergedHunks = 0, mergedNegatives = 0;
+for (const [file, d] of Object.entries(mergedTransfer.domains)) {
+  const current = normalize(fs.readFileSync(file, 'utf8'));
+  const incoming = git('show', mergedTransfer.equipmentRevision + ':' + file);
+  assert.equal(sha256(current), d.currentSha256); assert.equal(blob(current), d.currentBlob);
+  assert.equal(sha256(incoming), d.predecessorSha256); assert.equal(blob(incoming), d.predecessorBlob);
+  assert.equal(d.predecessorSha256, SECOND_BATCH_SOURCE_DOMAINS[file].currentSha256);
+  assert.equal(d.predecessorBlob, SECOND_BATCH_SOURCE_DOMAINS[file].currentBlob);
+  for (const text of [current, current.replaceAll('\n', '\r\n')]) {
+    assert.equal(assertCityEquipmentSourceTransfer(file, text).baselineText, incoming);
+    assert.equal(assertCritiqueEconomySourceTransfer(file, text).baselineText, incoming);
+    assert.equal(critiqueEconomySourceBaseline(file, text), incoming);
+    assert.equal(assertSecondBatchSourceTransfer(file, critiqueEconomySourceBaseline(file, text)).baselineText,
+      git('show', SECOND_BATCH_SOURCE_PREDECESSOR + ':' + file));
+    assert.equal(assertFirstBatchSourceTransfer(file, text).baselineText,
+      git('show', FIRST_BATCH_SOURCE_PREDECESSOR + ':' + file));
+  }
+  const actualChunks = []; let chunk;
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', mergedTransfer.equipmentRevision, '--', file).split('\n')) {
+    if (line.startsWith('@@ ')) { chunk = { current: '', baseline: '' }; actualChunks.push(chunk); continue; }
+    if (!chunk || line.startsWith('\\')) continue;
+    if (line.startsWith(' ')) { chunk.current += line.slice(1) + '\n'; chunk.baseline += line.slice(1) + '\n'; }
+    else if (line.startsWith('+')) chunk.current += line.slice(1) + '\n';
+    else if (line.startsWith('-')) chunk.baseline += line.slice(1) + '\n';
+  }
+  assert.deepEqual(actualChunks, d.inverses, 'Every merged inverse is the actual complete source diff: ' + file);
+  const mutations = [current + '\n// unknown merged source\n', current.slice(1), current.replace(/\S/, '?')];
+  let reconstructed = current;
+  for (const part of actualChunks) {
+    mergedHunks++; assert.equal(reconstructed.split(part.current).length, 2);
+    reconstructed = reconstructed.replace(part.current, () => part.baseline);
+    mutations.push(current.replace(part.current, ''), current.replace(part.current, () => part.current + part.current),
+      current.replace(part.current, () => part.baseline), current.replace(part.current, () => part.current.replace(/\S/, '?')),
+      current.replace(part.current, () => part.current.trimEnd().split('\n').reverse().join('\n') + '\n'));
+  }
+  assert.equal(reconstructed, incoming, 'Merged inverses retain the complete reviewed equipment source.');
+  if (actualChunks.length > 1) {
+    const a = actualChunks[0].current, b = actualChunks[1].current;
+    mutations.push(current.replace(a, '@@merged-source-test@@').replace(b, () => a).replace('@@merged-source-test@@', () => b));
+  }
+  for (const changed of mutations) {
+    assert.notEqual(changed, current);
+    assert.throws(() => assertCityEquipmentSourceTransfer(file, changed), /source changed/);
+    assert.throws(() => assertCritiqueEconomySourceTransfer(file, changed), /source changed/);
+    assert.equal(critiqueEconomySourceBaseline(file, changed), changed, 'Unknown merged bytes remain rejecting.');
+    assert.throws(() => assertFirstBatchSourceTransfer(file, changed), /source drift/);
+    assert.equal(firstBatchSourceBaseline(file, changed), changed);
+    mergedNegatives++;
+  }
+  assert.throws(() => assertCityEquipmentSourceTransfer(file, incoming), /source changed/);
+}
+for (const file of ['src/unknown.js', '../schema.sql', '__proto__', 'src/equipmentrentals.js', 'src/content/phase1.js']) {
+  assert.throws(() => assertCityEquipmentSourceTransfer(file, 'unknown'), /Unknown/); mergedNegatives++;
+}
+for (const value of [null, {}, 0]) assert.throws(() => assertCityEquipmentSourceTransfer('schema.sql', value), /non-text/);
 for (const [file, before, after] of [
   ['schema.sql', "'docks-mastery-v1'", "'unreviewed-master-v1'"],
   ['src/agentgateway.js', "completedOperations", "unreviewedOperations"],
@@ -128,4 +191,4 @@ for (const mutate of [
   assert.equal(critiqueEconomyRecoveryCatalog(changed), changed); assert.equal(critiqueEconomyRecoveryCatalog(changed, 'caseCrew'), changed);
   assert.equal(historicalRecoveryCatalog(changed), changed, 'Unknown full catalogue retains historical UNKNOWN boundary.'); catalogNegatives++;
 }
-console.log(`Critique/economy composition PASS: five complete source domains/two exact manifest views, ${hunks} actual inverse hunks, ${sourceNegatives} source/consumer negatives, two complete catalogue views and ${catalogNegatives} catalogue negatives; no new authority/native/release qualification.`);
+console.log(`Critique/economy composition PASS: five historical source domains/two exact manifest views, ${hunks} actual inverse hunks, ${sourceNegatives} source/consumer negatives; three merged source domains, ${mergedHunks} actual inverse hunks, ${mergedNegatives} merged-source negatives; two complete catalogue views and ${catalogNegatives} catalogue negatives; no new authority/native/release qualification.`);

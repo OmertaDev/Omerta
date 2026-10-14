@@ -11,6 +11,7 @@ import { CITY_WORLD_OPPORTUNITY_REQUEST_SCHEMAS, CITY_WORLD_OPPORTUNITY_INDEX_SC
   CITY_WORLD_OPPORTUNITY_DETAIL_SCHEMA, CITY_WORLD_OPPORTUNITY_RESULT_SCHEMA } from './city-world-opportunities-contract.js';
 import { RESOURCE_CONTRACTS } from './resourcecontracts.js';
 import { COMPANY_ECONOMY_CONTRACTS, COMPANY_ECONOMY_SCHEMAS } from './company-economy-contracts.js';
+import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
@@ -290,6 +291,7 @@ export const COORDINATION_SCHEMAS = {
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
   ...COMPANY_ECONOMY_CONTRACTS,
+  ...EQUIPMENT_ECONOMY_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
   'GET /v1/city/opportunities': { operationId:'readCityWorldOpportunities', responseSchema:{ $ref:'#/components/schemas/CityWorldOpportunityIndex' } },
@@ -921,6 +923,7 @@ const OPERATION_CONTRACTS = {
 
 const AGENT_SCHEMAS = {
   ...COMPANY_ECONOMY_SCHEMAS,
+  ...EQUIPMENT_ECONOMY_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,
   CityWorldOpportunityIndex:CITY_WORLD_OPPORTUNITY_INDEX_SCHEMA,
@@ -1767,6 +1770,14 @@ const AGENT_SCHEMAS = {
     type: 'object', additionalProperties: false,
     required: ['instanceId', 'graph', 'status', 'createdAt', 'nodes', 'choices'],
     properties: {
+      borrowedEquipment: { type: 'object', additionalProperties: false,
+        required: ['templateId', 'leaseId', 'itemId', 'endsAt', 'remaining', 'maximum', 'usable', 'allowedNode', 'title'],
+        properties: {
+          templateId: { const: 'item:precision_lock_tool' }, leaseId: { type: 'string' }, itemId: { type: 'string' },
+          endsAt: { type: 'string', format: 'date-time' }, remaining: { type: 'integer', minimum: 0, maximum: 150 },
+          maximum: { enum: [100, 150] }, usable: { type: 'boolean' }, allowedNode: { const: 'mystery:belladonna-lock' },
+          title: { const: 'original_landlord_account' },
+        } },
       instanceId: { type: 'string' },
       graph: { type: 'object', additionalProperties: false,
         required: ['id', 'version', 'season'], properties: {

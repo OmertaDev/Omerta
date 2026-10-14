@@ -631,6 +631,16 @@ const DISPOSITION = {
   company_production_receipts: 'metadata', // original producer receipts retain identity; exact historical replay grants no fresh heir production
   company_specializations: 'metadata', // policy stays bound to the original character and Depot; canonical estate closes that Depot and an heir cannot reuse the grant
   company_specialization_runs: 'metadata', // original producer cadence and spending history remain bound to the retired character and business
+  equipment_rental_requests: 'metadata', // original-account receipts retain the original actor and grant no fresh heir lease authority
+  equipment_rental_offers: 'special', // original landlord death cancels publication consent while preserving account-title tools and historical receipts
+  equipment_rental_leases: 'escrow', // actual estate returns physical title and burns dead borrower deposits or refunds only the surviving original borrower
+  equipment_maintenance_offers: 'metadata', // immutable original provider and owned Depot gates reject fresh heir use
+  equipment_maintenance_repairs: 'metadata', // actual material and paired payment histories preserve original payer/provider identities
+  commercial_negotiations: 'metadata', // original bilateral consent stays historical; canonical source and current-original gates reject heirs
+  service_subscriptions: 'escrow', // the canonical post-death/pre-heir hook burns the original payer's unused prepaid reserve
+  contract_auctions: 'metadata', // historical original buyer consent cannot authorize an heir award
+  contract_auction_bids: 'metadata', // original supplier bids and sealed history grant no fresh heir fulfillment authority
+  contract_auction_requests: 'metadata', // original actor request/ACK identity remains historical and never authorizes a fresh heir award
   game_employment_jobs: 'special', // canonical estate resolves the original employer reserve through loot/burn; history survives
   game_employment_assignments: 'metadata', // immutable original worker/commitment wage history grants heirs no new claim
   company_workflows: 'special', // canonical estate fails active original-owner chains; metadata holds no value
@@ -686,7 +696,7 @@ const charTables = new Set();
     // enumerating members: a suffix rule generalises, a list of five does not.
     // Portfolio history retains an original_lender character FK. Its metadata
     // disposition must remain checked even though it has no live claim authority.
-    if (/^\s*(character_id|[a-z0-9_]+_(character|char|fighter|lender)|hunter)\b/m.test(body)) charTables.add(mm[1]);
+    if (/(?:^|,)\s*(character_id|[a-z0-9_]+_(character|char|fighter|lender)|hunter)\b\s+(?:TEXT|VARCHAR|UUID|INT|INTEGER|BIGINT)\b/im.test(body)) charTables.add(mm[1]);
   }
 }
 // (a) every character_id table is classified; no stale classifications

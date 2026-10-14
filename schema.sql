@@ -4649,7 +4649,7 @@ CREATE TABLE IF NOT EXISTS item_events (
   UNIQUE (idempotency_key, event_key),
   CONSTRAINT item_event_key CHECK (char_length(event_key) BETWEEN 1 AND 200),
   CONSTRAINT item_event_kind CHECK (event_kind IN (
-    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'
+    'stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved','escrow_relayed'
   )),
   CONSTRAINT item_event_provenance_kind CHECK (
     provenance_kind IS NULL OR provenance_kind IN (
@@ -7020,7 +7020,7 @@ ALTER TABLE item_events ADD CONSTRAINT item_event_template_id CHECK (
   OR (event_branch<>'legacy' AND char_length(template_id) BETWEEN 1 AND 258));
 ALTER TABLE item_events DROP CONSTRAINT IF EXISTS item_event_kind;
 ALTER TABLE item_events ADD CONSTRAINT item_event_kind CHECK (
-  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved'))
+  (event_branch='legacy' AND event_kind IN ('stack_granted','stack_consumed','created','transferred','consumed','escrowed','released','stored','retrieved','escrow_relayed'))
   OR (event_branch='lot' AND event_kind IN ('lot_granted','lot_consumed','lot_split_debit','lot_split_output','lot_escrowed','lot_released','lot_escrow_consumed'))
   OR (event_branch='unique' AND event_kind IN ('unique_granted','unique_escrowed','unique_released','unique_transferred','unique_consumed'))
   OR (event_branch='observation' AND event_kind='migration_origin'));
@@ -8594,3 +8594,100 @@ CREATE TABLE IF NOT EXISTS item_durability_birth_quality (
  creation_event TEXT NOT NULL UNIQUE REFERENCES item_events(id), authority_account TEXT NOT NULL REFERENCES accounts(id),
  request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), recipe_identity JSONB NOT NULL,
  grade TEXT NOT NULL CHECK(grade='tempered'), maximum INT NOT NULL CHECK(maximum=150));
+
+CREATE TABLE IF NOT EXISTS equipment_maintenance_offers (
+ id TEXT PRIMARY KEY REFERENCES business_depots(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), revision INT NOT NULL CHECK(revision>=1),
+ enabled BOOLEAN NOT NULL, fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), expires_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS equipment_maintenance_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('offer','repair')),
+ identity JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS equipment_maintenance_repairs (
+ id TEXT PRIMARY KEY, payer_account TEXT NOT NULL REFERENCES accounts(id), payer_character TEXT NOT NULL REFERENCES characters(id),
+ provider_account TEXT NOT NULL REFERENCES accounts(id), provider_character TEXT NOT NULL REFERENCES characters(id),
+ offer_id TEXT NOT NULL REFERENCES equipment_maintenance_offers(id), offer_revision INT NOT NULL,
+ item_id TEXT NOT NULL REFERENCES item_instances(id), request_key TEXT NOT NULL, material_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), debit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ credit_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), condition_before INT NOT NULL, condition_after INT NOT NULL,
+ CHECK(condition_after>condition_before AND condition_after-condition_before<=10), UNIQUE(payer_account,request_key));
+
+CREATE TABLE IF NOT EXISTS commercial_negotiations (
+ id TEXT PRIMARY KEY, order_id TEXT NOT NULL UNIQUE, depot_id TEXT NOT NULL,
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), supplier_account TEXT NOT NULL REFERENCES accounts(id),
+ buyer_character TEXT NOT NULL REFERENCES characters(id), supplier_character TEXT NOT NULL REFERENCES characters(id),
+ revision INT NOT NULL CHECK(revision BETWEEN 1 AND 3), last_offer_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, terms_hash TEXT NOT NULL, source_hash TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('offered','accepted','withdrawn','expired')),
+ expires_at TIMESTAMPTZ NOT NULL, delivery_deadline TIMESTAMPTZ NOT NULL, created_at TIMESTAMPTZ NOT NULL,
+ commitment_id TEXT UNIQUE);
+CREATE TABLE IF NOT EXISTS commercial_negotiation_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, identity TEXT NOT NULL, receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS contract_auctions (
+ id TEXT PRIMARY KEY, depot_id TEXT NOT NULL REFERENCES business_depots(id), order_id TEXT NOT NULL,
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id),
+ quantity INT NOT NULL CHECK(quantity BETWEEN 1 AND 40), unit_price INT NOT NULL CHECK(unit_price>0),
+ quote_hash TEXT NOT NULL CHECK(char_length(quote_hash)=64), source_quote JSONB NOT NULL,
+ closes_at TIMESTAMPTZ NOT NULL, award_until TIMESTAMPTZ NOT NULL CHECK(award_until>closes_at),
+ state TEXT NOT NULL CHECK(state IN ('open','awarded','cancelled','buyer_dead')), winning_bid_id TEXT,
+ commitment_id TEXT UNIQUE, award_receipt JSONB,
+ CHECK((state='awarded' AND winning_bid_id IS NOT NULL AND commitment_id IS NOT NULL AND award_receipt IS NOT NULL) OR (state<>'awarded' AND winning_bid_id IS NULL AND commitment_id IS NULL AND award_receipt IS NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS contract_auction_one_open_order ON contract_auctions(order_id) WHERE state='open';
+CREATE TABLE IF NOT EXISTS contract_auction_bids (
+ id TEXT PRIMARY KEY, auction_id TEXT NOT NULL REFERENCES contract_auctions(id),
+ supplier_account TEXT NOT NULL REFERENCES accounts(id), supplier_character TEXT NOT NULL REFERENCES characters(id),
+ deadline_seconds INT NOT NULL CHECK(deadline_seconds BETWEEN 60 AND 21600), max_procurement_cash INT NOT NULL CHECK(max_procurement_cash BETWEEN 1 AND 100000),
+ quote_hash TEXT NOT NULL CHECK(char_length(quote_hash)=64), consent BOOLEAN NOT NULL CHECK(consent=true),
+ UNIQUE(auction_id,supplier_account));
+CREATE TABLE IF NOT EXISTS contract_auction_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), action TEXT NOT NULL CHECK(action IN ('create','bid','award','cancel')),
+ request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128), original_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,action,request_key));
+
+-- Equipment rentals retain original landlord title and real borrower deposits.
+CREATE TABLE IF NOT EXISTS equipment_rental_requests (
+ account_id TEXT NOT NULL, request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+ run_id TEXT NOT NULL UNIQUE, identity JSONB NOT NULL, receipt JSONB, account_ref TEXT REFERENCES accounts(id),
+ original_character TEXT REFERENCES characters(id), PRIMARY KEY(account_id,request_key),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL) OR
+ (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS equipment_rental_offers (
+ id TEXT PRIMARY KEY, item_id TEXT NOT NULL REFERENCES item_instances(id), landlord_account TEXT NOT NULL REFERENCES accounts(id),
+ landlord_character TEXT NOT NULL REFERENCES characters(id), rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000),
+ deposit_cash INT NOT NULL CHECK(deposit_cash BETWEEN 0 AND 100000), duration_seconds INT NOT NULL CHECK(duration_seconds BETWEEN 60 AND 3600),
+ published BOOLEAN NOT NULL, expires_at TIMESTAMPTZ NOT NULL, status TEXT NOT NULL CHECK(status IN ('open','leased','cancelled')));
+CREATE UNIQUE INDEX IF NOT EXISTS equipment_rental_one_open_offer ON equipment_rental_offers(item_id) WHERE status='open';
+CREATE TABLE IF NOT EXISTS equipment_rental_leases (
+ id TEXT PRIMARY KEY, offer_id TEXT NOT NULL UNIQUE REFERENCES equipment_rental_offers(id), item_id TEXT NOT NULL REFERENCES item_instances(id),
+ landlord_account TEXT NOT NULL REFERENCES accounts(id), landlord_character TEXT NOT NULL REFERENCES characters(id),
+ borrower_account TEXT NOT NULL REFERENCES accounts(id), borrower_character TEXT NOT NULL REFERENCES characters(id),
+ rent_cash INT NOT NULL CHECK(rent_cash BETWEEN 1 AND 100000), deposit_cash INT NOT NULL CHECK(deposit_cash BETWEEN 0 AND 100000),
+ deposit_remaining INT NOT NULL CHECK(deposit_remaining BETWEEN 0 AND deposit_cash), starts_at TIMESTAMPTZ NOT NULL, ends_at TIMESTAMPTZ NOT NULL CHECK(ends_at>starts_at),
+ status TEXT NOT NULL CHECK(status IN ('active','returned','death_ended')), ended_at TIMESTAMPTZ,
+ CHECK(landlord_account<>borrower_account AND landlord_character<>borrower_character),
+ CHECK((status='active' AND ended_at IS NULL) OR (status<>'active' AND ended_at IS NOT NULL AND deposit_remaining=0)));
+CREATE UNIQUE INDEX IF NOT EXISTS equipment_rental_one_live_tool ON equipment_rental_leases(item_id) WHERE status='active';
+
+
+-- Original-payer prepaid canonical equipment maintenance subscriptions.
+CREATE TABLE IF NOT EXISTS service_subscriptions (
+ id TEXT PRIMARY KEY, payer_account TEXT NOT NULL REFERENCES accounts(id), payer_character TEXT NOT NULL REFERENCES characters(id),
+ provider_account TEXT NOT NULL REFERENCES accounts(id), provider_character TEXT NOT NULL REFERENCES characters(id),
+ offer_id TEXT NOT NULL REFERENCES equipment_maintenance_offers(id), item_id TEXT NOT NULL REFERENCES item_instances(id),
+ fee_ceiling INT NOT NULL CHECK(fee_ceiling BETWEEN 1 AND 1000), max_cycles INT NOT NULL CHECK(max_cycles BETWEEN 1 AND 12),
+ interval_seconds INT NOT NULL CHECK(interval_seconds BETWEEN 300 AND 86400), cycles_completed INT NOT NULL DEFAULT 0,
+ expires_at TIMESTAMPTZ NOT NULL, next_run_at TIMESTAMPTZ NOT NULL, revision INT NOT NULL DEFAULT 1,
+ state TEXT NOT NULL CHECK(state IN ('active','closed')), close_reason TEXT,
+ initial_cash INT NOT NULL CHECK(initial_cash BETWEEN 1 AND 12000), escrow_cash INT NOT NULL CHECK(escrow_cash>=0),
+ spent_cash INT NOT NULL DEFAULT 0 CHECK(spent_cash>=0), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ burned_cash INT NOT NULL DEFAULT 0 CHECK(burned_cash>=0),
+ CHECK(cycles_completed BETWEEN 0 AND max_cycles), CHECK(initial_cash=escrow_cash+spent_cash+refunded_cash+burned_cash),
+ CHECK(state='active' OR escrow_cash=0));
+CREATE INDEX IF NOT EXISTS ix_service_subscriptions_due ON service_subscriptions(state,next_run_at);
+CREATE TABLE IF NOT EXISTS service_subscription_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL,
+ identity JSONB NOT NULL, receipt JSONB NOT NULL, PRIMARY KEY(account_id,request_key));
+CREATE TABLE IF NOT EXISTS service_subscription_cycles (
+ id TEXT PRIMARY KEY, subscription_id TEXT NOT NULL REFERENCES service_subscriptions(id), ordinal INT NOT NULL CHECK(ordinal BETWEEN 1 AND 12),
+ release_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), maintenance_key TEXT NOT NULL UNIQUE,
+ UNIQUE(subscription_id,ordinal));

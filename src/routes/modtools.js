@@ -29,6 +29,8 @@ import * as Store from '../store.js';
 import * as Router from '../router.js';
 import * as Vig from '../vig.js';
 import * as W from '../growth.js';
+import { withItemTransaction } from '../items.js';
+import { prelockEquipmentRentalDeathActors } from '../equipmentrentals.js';
 
 export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
   // AUDIT-full-system-v2 D-MED2: real-ETH revenue (vig/pol/rwa) is booked ONLY from the on-chain
@@ -65,14 +67,14 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
     app.post('/v1/mod/kill', { preHandler: modAuth }, async (req) => {
       // runs the §7.9 estate without a killer ("THE COMMISSION")
       const { characterId, reason } = req.body || {};
-      const client = await pool.connect();
       try {
-        await client.query('BEGIN');
-        const victim = (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [characterId])).rows[0];
+        const result = await withItemTransaction(pool, async client => {
+        const rentalDeath = await prelockEquipmentRentalDeathActors(client, [characterId]);
+        const victim = rentalDeath.characters.find(row => row.id === characterId && row.alive);
         if (!victim) throw new G.GameError('no_target', 'No living character by that id.');
         const victimAcct = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [victim.account_id])).rows[0];
         const victimOwned = await G.loadOwned(client, victim);
-        const h = { ledger: G.ledger, notify: G.notify, victimAcct, victimOwned };
+        const h = { ledger: G.ledger, notify: G.notify, victimAcct, victimOwned, rentalDeathScope: rentalDeath.scope };
         const estate = await S.runEstate(client, h, victim, 'THE COMMISSION'); // tracks the death itself
         // this hand-rolled txn isn't wrapped by persistAccount, so it must persist every account field
         // runEstate mutates in memory — ESTATE_ACCOUNT_FIELDS is that list, kept in game.js beside the
@@ -80,13 +82,13 @@ export function register(app, { pool, auth, modAuth, closeAccountSockets }) {
         // field runEstate starts touching tomorrow cannot silently drift §10.4 on a mod-kill.
         await G.persistAccountFields(client, victim.account_id, victimAcct, G.ESTATE_ACCOUNT_FIELDS);
         if (reason) await G.track(client, victim.account_id, 'mod_kill_reason', { reason });
-        await client.query('COMMIT');
-        closeAccountSockets(victim.account_id, 4009, 'gang_changed'); // R26 WS: the heir is gangless — cut the dead street's stale gang: feed
-        return { ok: true, heirId: estate.heirId };
+        return { accountId: victim.account_id, heirId: estate.heirId };
+        });
+        closeAccountSockets(result.accountId, 4009, 'gang_changed'); // post-commit: retire the dead street's socket
+        return { ok: true, heirId: result.heirId };
       // runEstate → removeMember can hit a war-partner AB-BA (40P01); this hand-rolled txn isn't
       // wrapped by withCharacter, so map it to a clean retry here too (audit MED) instead of a 500.
-      } catch (e) { await client.query('ROLLBACK'); throw G.deadlockToRetry(e); }
-      finally { client.release(); }
+      } catch (e) { throw G.deadlockToRetry(e); }
     });
     app.post('/v1/mod/confiscate', { preHandler: modAuth }, async (req) => {
       // seized cash recycles into the street-tax pool (next buyback)

@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
+import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -51,8 +52,17 @@ const featureManifest = Object.freeze({ supply_tenders: [8, 9], supply_tender_of
   business_seasons: [6, 9], business_season_entries: [8, 9],
   company_production_receipts: [8, 7], company_specializations: [10, 11],
   company_specialization_requests: [2, 4], company_specialization_runs: [5, 6],
-  item_durability_states: [5, 4], item_durability_uses: [7, 7], item_durability_birth_quality: [10, 8] });
+  item_durability_states: [5, 4], item_durability_uses: [7, 7], item_durability_birth_quality: [10, 8],
+  // Existing independently frozen e150 equipment catalog; never inferred from the upgraded backend.
+  equipment_rental_requests: [6, 4], equipment_rental_offers: [8, 10], equipment_rental_leases: [15, 13],
+  equipment_maintenance_offers: [6, 7], equipment_maintenance_requests: [3, 5], equipment_maintenance_repairs: [16, 15],
+  commercial_negotiations: [10, 16], commercial_negotiation_requests: [2, 4],
+  service_subscriptions: [19, 20], service_subscription_requests: [2, 5], service_subscription_cycles: [10, 7],
+  contract_auctions: [11, 12], contract_auction_bids: [9, 8], contract_auction_requests: [5, 6] });
 const featureTables = Object.keys(featureManifest).filter(table => Object.hasOwn(inventory.notNullColumns, table));
+assert.equal(EQUIPMENT_ECONOMY_MIGRATION_TABLES.length, 14);
+assert.deepEqual(EQUIPMENT_ECONOMY_MIGRATION_TABLES.filter(table => featureTables.includes(table)),
+  EQUIPMENT_ECONOMY_MIGRATION_TABLES, 'All fourteen reviewed equipment tables have explicit frozen bindings');
 const featureConstraints = inventory.added.filter(row => featureTables.includes(row.table_name))
   .sort((a, b) => `${a.table_name}.${a.name}`.localeCompare(`${b.table_name}.${b.name}`));
 for (const table of featureTables) {
@@ -165,9 +175,11 @@ try {
     'Director migration may not remove or alter any reviewed existing constraint');
   // The original complete oracle is unchanged. Only independently verified, pinned
   // gameplay additions/replacements are removed/restored before entering it.
-  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(rows, oldConstraints));
-  verifyCompletePreservedConstraints(upgradedConstraints);
   const gameplayMetadata = await readCityGameplayMigrationMetadata(pool);
+  const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+  const equipmentCatalog = equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata);
+  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(rows), oldConstraints));
+  verifyCompletePreservedConstraints(upgradedConstraints);
   gameplayCatalog.verifyMetadata(gameplayMetadata);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
   assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');
@@ -201,6 +213,19 @@ try {
     assert(index >= 0, `Causal constraint target ${table}.${name} exists`); change(rows, index); return rows;
   };
   const rejected = (verify, label, candidate) => assert.throws(() => verify(candidate), (error) => error?.code === 'ERR_ASSERTION', label);
+  rejected(verifyCompletePreservedConstraints, 'exact equipment event-kind predicate removed',
+    mutateConstraint('item_events', 'item_event_kind', (rows, index) => rows.splice(index, 1)));
+  rejected(verifyCompletePreservedConstraints, 'exact equipment event-kind predicate altered',
+    mutateConstraint('item_events', 'item_event_kind', (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+  rejected(verifyCompletePreservedConstraints, 'exact equipment event-kind predicate duplicated',
+    mutateConstraint('item_events', 'item_event_kind', (rows, index) => rows.push({ ...rows[index] })));
+  for (const change of [{ name: 'unexpected_kind' }, { type: 'f' }, { validated: false }]) {
+    rejected(equipmentCatalog.verifyMetadata, 'equipment event-kind identity/type/validation changed', {
+      ...gameplayMetadata, constraints: gameplayMetadata.constraints.map(row =>
+        row.table_name === 'item_events' && row.name === 'item_event_kind' ? { ...row, ...change } : row),
+    });
+  }
+  assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema + '\n-- unknown source\n', gameplayMetadata), error => error?.code === 'ERR_ASSERTION');
   rejected(verifyCompletePreservedConstraints, 'legacy character identity removed', mutateConstraint('characters', 'characters_pkey',
     (rows, index) => rows.splice(index, 1)));
   rejected(verifyCompletePreservedConstraints, 'legacy character identity altered', mutateConstraint('characters', 'characters_pkey',
@@ -304,6 +329,14 @@ try {
       featureNotNull.filter(row => row.table_name !== table || row.column_name !== column));
     rejected(verifyFeatureNotNull, `${table} unexpected required column`, [...featureNotNull,
       { table_name: table, column_name: 'unexpected_required_column' }]);
+  }
+  for (const constraint of featureConstraints.filter(row => EQUIPMENT_ECONOMY_MIGRATION_TABLES.includes(row.table_name))) {
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint removed', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.splice(index, 1)));
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint altered', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => { rows[index].definition = 'CHECK (true)'; }));
+    rejected(verifyFeatureConstraints, constraint.name + ' equipment constraint duplicated', mutateConstraint(constraint.table_name, constraint.name,
+      (rows, index) => rows.push({ ...rows[index] })));
   }
   rejected(verifyCompletePreservedConstraints, 'unknown feature table is not classified', [...upgradedConstraints,
     { table_name: 'supply_unreviewed_feature', name: 'unreviewed_pkey', definition: 'PRIMARY KEY (id)' }]);
@@ -455,7 +488,9 @@ try {
     'Second migration preserves populated Director definitions, campaigns, lifecycle, selections, intents and domain receipts');
   assert.deepEqual(await constraints(), upgradedConstraints);
   verifyCompletePreservedConstraints(await constraints());
-  gameplayCatalog.verifyMetadata(await readCityGameplayMigrationMetadata(pool));
+  const reappliedMetadata = await readCityGameplayMigrationMetadata(pool);
+  gameplayCatalog.verifyMetadata(reappliedMetadata);
+  equipmentCatalog.verifyMetadata(reappliedMetadata);
   assert.equal((await director.tick()).replayed, true);
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });

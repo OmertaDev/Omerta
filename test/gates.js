@@ -266,6 +266,9 @@ assert.equal(undeclared.length, 0,
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
 const COLLECT_EXEMPT = {
+  collectContractAuctionIssues: 'read-only canonical award/source binding oracle; no player collection, income or mutation authority',
+  collectEquipmentRentalIssues: 'read-only paid deposit/custody/title ledger oracle; no player collection, income or mutation authority',
+  collectServiceSubscriptionIssues: 'read-only prepaid cycle/repair/payment binding oracle; no player collection, income or mutation authority',
   collectItemConditionIssues: 'read-only physical-condition and manufacturing-witness ledger oracle; no player collection, income or mutation authority',
   collectDefinitionChecks: 'read-only offline Phase 2 registry audit inside the ledger snapshot; no player collection, income or mutation authority',
   collectContentSource: 'authored salvage emits only gameplay-inert exact-hash lots; the capability '
@@ -3436,6 +3439,7 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
     'test/companydemand-fixture.js': 'Import-only authenticated gameplay fixture used by the executed demand, forecast and discovery-contract suites; exports no standalone test runner.',
     'test/companyproduction-schema.js': 'Import-only frozen production DDL fixture; actual schema, constraints and canonical production execute in the memory/native production and migration suites.',
     'test/rc1-resident-restart.js':
@@ -3685,7 +3689,7 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3885,6 +3889,8 @@ scopedSocialContext = async function(db) {
     'mysteries.js:MYSTERY_NPC_AUTHORITY': 'cache: immutable locally branded NPC binding keyed by one mystery context; every mutation rechecks the authenticated living actor pair under sorted database locks',
     'mysteries.js:NPC_GRAPH_REGISTRIES': 'cache: deterministic set of NPC-bound graph identifiers keyed by an immutable validated registry; no actor state or durable authorization is stored here',
     'city-world-opportunities-contract.js:NPC_AUTHORITIES': 'cache: request-local authenticity marker for a frozen server-derived NPC binding; each process derives its own read snapshot and mutations recheck durable actor authority under database locks',
+    'equipmentrentals.js:deathScopes': 'cache: opaque proof bound to exact active client/transaction identity and prelocked original actor union; canonical SQL locks and fresh original sources provide cross-process authority, not this local marker',
+    'items.js:TRANSACTION_IDENTITIES': 'cache: opaque equality identity keyed by one active item transaction object; grants no mutation authority and fresh transactions cannot reuse prior scope identities',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',
@@ -4370,9 +4376,12 @@ scopedSocialContext = async function(db) {
   // not wall-clock counters. Mask only their exact local error calls; a real
   // SQL column or variable with the same name must still fail closed.
   const bucketSource = (file, source) => file === 'src/companyworkflows.js'
-    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '') : source;
+    ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
+    : file === 'src/commercialnegotiation.js' ? source.replace(/\bfail\('source_used'\)/g, '') : source;
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
+  assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
+  assert.deepEqual(bucketNames('src/commercialnegotiation.js', 'const source_used = 0;'), ['source_used']);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
     'Actual counter columns cannot hide behind same-named workflow refusal reasons');
   assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');

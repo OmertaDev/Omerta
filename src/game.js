@@ -25,6 +25,8 @@ import { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';
 import { businessesOf } from './business.js';
 import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
+import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
+import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -1111,12 +1113,34 @@ async function settleIfDue(pool, accountId) {
   } finally { client.release(); }
 }
 
+// Trusted source adapters can keep their private authority scope around prelocks and gameplay.
+// Their final source validation finishes before actor persistence, so a rejected scope never
+// persists an in-memory actor in the nontransactional memory driver. Item commit stays outside.
+async function runCharacterActionScope(client, accountId, execute, hook) {
+  if (hook == null) return execute();
+  if (typeof hook !== 'function') throw new GameError('action_scope', "Couldn't complete that action. Try again.");
+  let called = false, completed = false, failure = null, ownedResult;
+  const result = await hook(client, accountId, async () => {
+    if (called) {
+      failure = new GameError('action_scope', "Couldn't complete that action. Try again.");
+      throw failure;
+    }
+    called = true;
+    try { ownedResult = await execute(); completed = true; return ownedResult; }
+    catch (error) { failure ||= error; throw error; }
+  });
+  if (failure) throw failure;
+  if (!completed || result !== ownedResult) throw new GameError('action_scope', "Couldn't complete that action. Try again.");
+  assertItemTransactionHealthy(client);
+  return ownedResult;
+}
+
 export async function withCharacter(pool, accountId, fn, lockHooks = null) {
   await settleIfDue(pool, accountId); // phase one: what the clock did commits whether or not the action does
-  const client = await pool.connect();
-  let committed = false;
   try {
-    await client.query('BEGIN');
+    const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
+    try {
+    const action = await runCharacterActionScope(client, accountId, async () => {
     const prelockState = lockHooks?.beforeCharacterLock
       ? await lockHooks.beforeCharacterLock(client, accountId) : null;
     // THE DEATH RACE. Found by playing: get killed with the tab open and the very next request
@@ -1168,15 +1192,17 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     // against itself. Use `client` for everything that belongs to the action.
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId, pool };
     const result = await fn(ch, client, h);
-
-    if (ch.alive !== false) await persistCharacter(client, ch); // a killed row is finalized by the estate
-    await persistKitchen(client, ch, owned);
-    await persistAccount(client, accountId, acct);
-    await client.query('COMMIT');
+    assertItemTransactionHealthy(client);
+    return { ch, acct, owned, result };
+    }, lockHooks?.withActionScope);
+    if (action.ch.alive !== false) await persistCharacter(client, action.ch);
+    await persistKitchen(client, action.ch, action.owned);
+    await persistAccount(client, accountId, action.acct);
+    return action;
+    } catch (error) { throw deadlockToRetry(error); }
+    });
     // Hooks below use the pool themselves. Return this connection first: a saturated pool must
     // not wait for a second checkout while every committed action still holds its first one.
-    committed = true;
-    client.release();
     // §7.13 — qualification is re-checked after any action by a referred, unpaid account; it runs
     // in its OWN transaction so its two-party locks stay sorted. It is a POST-COMMIT side effect,
     // so it must NEVER fail the request (audit M1): if it threw here — a 40P01 on street_tax under
@@ -1207,8 +1233,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
     return { character, ...result };
-  } catch (e) { if (!committed) await client.query('ROLLBACK'); throw deadlockToRetry(e); }
-  finally { if (!committed) client.release(); }
+  } catch (e) { throw deadlockToRetry(e); }
 }
 
 // A pure-read GET does not need the write lock — but it cannot simply skip accrual either, because
@@ -1401,27 +1426,24 @@ export async function persistAccountFields(client, accountId, a, fields) {
 // granting the victim their number would reveal exactly what those mechanics sell as hidden
 // (AUDIT-street-life HIGH-1). The route declares covertness; every named/consensual action defaults in.
 // Player-targeting verbs opt into requireKnown; this sorted settlement helper also serves already-authorized commerce.
-export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false } = {}) {
+export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, { meet = true, requireKnown = false, withActionScope = null } = {}) {
   // phase one for BOTH parties (the actor by account, the target by their street's account) — each
   // its own transaction, each holding one character, so no sorted-pair lock is needed here
   await settleIfDue(pool, accountId);
   const tgt = await pool.query('SELECT account_id FROM characters WHERE id = $1 AND alive', [targetCharacterId]);
   if (tgt.rows.length && tgt.rows[0].account_id !== accountId) await settleIfDue(pool, tgt.rows[0].account_id);
-  const client = await pool.connect();
-  let committed = false;
   try {
-    await client.query('BEGIN');
+    const { ch, acct, owned, result } = await withItemTransaction(pool, async client => {
+    try {
+    const action = await runCharacterActionScope(client, accountId, async () => {
     const mine = await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [accountId]);
     if (!mine.rows.length) throw new GameError('no_character', 'Create a character first.');
     const myId = mine.rows[0].id;
     if (myId === targetCharacterId) throw new GameError('self', 'Not on yourself.');
 
-    const lockChar = async (id) =>
-      (await client.query('SELECT * FROM characters WHERE id=$1 AND alive FOR UPDATE', [id])).rows[0];
-    const [firstId, secondId] = [myId, targetCharacterId].sort();
-    const first = await lockChar(firstId), second = await lockChar(secondId);
-    const ch = firstId === myId ? first : second;
-    const victim = firstId === myId ? second : first;
+    const rentalDeath = await prelockEquipmentRentalDeathActors(client, [myId, targetCharacterId]);
+    const ch = rentalDeath.characters.find(row => row.id === myId && row.alive);
+    const victim = rentalDeath.characters.find(row => row.id === targetCharacterId && row.alive);
     if (!ch) throw new GameError('no_character', 'Create a character first.');
     if (!victim) throw new GameError('no_target', "They're gone — nobody by that name on the streets.");
     if (requireKnown && (victim.loc !== ch.loc || !meet)) await requireKnownPlayer(client, ch, victim.id);
@@ -1438,8 +1460,12 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     await accrueAndLedger(client, victim, victimAcct, victimOwned);
 
     const h = { ledger, rngLog, notify, track, bumpDaily, acct, owned, accountId,
-                victimAcct, victimOwned };
+                victimAcct, victimOwned, actorCh: ch, rentalDeathScope: rentalDeath.scope };
     const result = await fn(ch, victim, client, h);
+    assertItemTransactionHealthy(client);
+    return { ch, victim, acct, owned, victimOwned, accts, result };
+    }, withActionScope);
+    const { ch, victim, acct, owned, victimOwned, accts, result } = action;
 
     // STREET LIFE (the black book): a COMPLETED two-party action is a MEETING — both sides walk
     // away with the other's number (the founder's discoverability rule: numbers come from meeting
@@ -1462,10 +1488,10 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
       await persistKitchen(client, victim, victimOwned);
     }
     for (const [accId, a] of Object.entries(accts)) await persistAccount(client, accId, a);
-    await client.query('COMMIT');
+    return { ch, acct, owned, result };
+    } catch (error) { throw deadlockToRetry(error); }
+    });
     // Same ownership boundary as withCharacter: post-commit hooks acquire their own connections.
-    committed = true;
-    client.release();
     if (acct.referred_by && !acct.ref_paid && !acct.agent_flag) {
       try { await maybeSparkReferral(pool, accountId); } catch (e) { console.error('referral spark (post-commit, non-fatal)', e?.code || e); }
       // post-commit + non-fatal: a throw here (a 40P01 on the char/street_tax locks under load, any
@@ -1485,8 +1511,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     let character = null;
     try { character = view(ch, acct, owned); } catch (e) { console.error('view render (post-commit, non-fatal)', e?.code || e); }
     return { character, ...result };
-  } catch (e) { if (!committed) await client.query('ROLLBACK'); throw deadlockToRetry(e); }
-  finally { if (!committed) client.release(); }
+  } catch (e) { throw deadlockToRetry(e); }
 }
 
 async function persistCharacter(client, ch) {

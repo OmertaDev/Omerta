@@ -14,6 +14,8 @@ import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvaria
 import { logisticsHubInvariant } from './companylogisticshubsinvariants.js';
 import { runBuyerCooperativeInvariants } from './buyercooperativeinvariants.js';
 import { collectItemConditionIssues } from './itemdurability.js';
+import { collectEquipmentRentalIssues } from './equipmentrentals.js';
+import { collectServiceSubscriptionIssues } from './servicesubscriptions.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
 import { withItemRead } from './items.js';
@@ -49,7 +51,10 @@ const KNOWN_REASONS = {
     // `window:` not `exchange:` — the M3 cb/ammo barter board already owns that prefix.
     'window:',
     'gang:contract', 'bodyguard:', 'territory:', 'business:', 'depot:', 'warehouse:rent', 'coverage:reserve:', 'coverage:premium:', 'coverage:claim:', 'coverage:refund:', 'strategy:buy:', 'strategy:sell:', 'pilot:capital', 'path:', 'casino:', 'convoy:', 'market:', 'underworld:',
-    'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:',
+    'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
+    'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
+    'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
+    'subscription:reserve', 'subscription:release', 'subscription:refund',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
     // (the missions precedent — check (a) reconciles it per character).
@@ -698,6 +703,20 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
+  const rentalDeposits = await one(pool, 'SELECT COALESCE(SUM(deposit_remaining),0) s FROM equipment_rental_leases');
+  const rentalFunding = -(await sum(pool, "currency='cash' AND reason IN ('equipment_rental:deposit','equipment_rental:deposit_refund')"));
+  const rentalBurn = await sum(pool, "currency='cash' AND reason='equipment_rental:deposit_burn'");
+  push('equipment rental deposit custody', rentalDeposits, rentalFunding + rentalBurn, 0);
+  push('equipment rental rent transfers', 0, await sum(pool, "currency='cash' AND reason IN ('equipment_rental:rent_pay','equipment_rental:rent_receive')"), 0);
+  const rentalIssues = await collectEquipmentRentalIssues(pool);
+  push('equipment rental physical title', rentalIssues.length, 0, 0, { issues: rentalIssues });
+  push('equipment maintenance transfers', 0, await sum(pool, "currency='cash' AND reason IN ('maintenance:pay','maintenance:receive')"), 0);
+  const subscriptionEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM service_subscriptions');
+  const subscriptionFunding = -(await sum(pool, "currency='cash' AND reason IN ('subscription:reserve','subscription:release','subscription:refund')"));
+  const subscriptionBurn = await sum(pool, "currency='cash' AND reason='death:subscription'");
+  push('service subscription cash custody', subscriptionEscrow, subscriptionFunding + subscriptionBurn, 0);
+  const subscriptionIssues = await collectServiceSubscriptionIssues(pool);
+  push('service subscription repair bindings', subscriptionIssues.length, 0, 0, { issues: subscriptionIssues });
   push('strategy license bindings', await strategyLicenseFaults(pool), 0, 0);
   push('company succession bindings', await companySuccessionFaults(pool), 0, 0);
   push('strategy league bindings', await strategyLeagueFaults(pool), 0, 0);
@@ -1134,6 +1153,17 @@ async function collectLedgerChecks(pool, activationPolicy) {
           derivedState = 'escrowed';
           derivedOwner = to;
           escrow = { operationId: to.id, depositor: from };
+          break;
+        case 'escrow_relayed':
+          if (derivedState !== 'escrowed' || !escrow || !sameOwner(from, derivedOwner)
+            || from.scope !== 'operation' || from.id !== escrow.operationId
+            || to.scope !== 'operation' || typeof to.id !== 'string' || !to.id || sameOwner(from, to)
+            || event.provenance_kind !== 'used_in_mystery') {
+            issue('invalid_escrow_relay');
+            break;
+          }
+          derivedOwner = to;
+          escrow = { operationId: to.id, depositor: escrow.depositor };
           break;
         case 'released':
           if (derivedState !== 'escrowed' || !escrow

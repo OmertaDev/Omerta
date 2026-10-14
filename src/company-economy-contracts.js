@@ -60,7 +60,7 @@ export const COMPANY_ECONOMY_SCHEMAS = {
   CompanyInventoryForecast: object({ ...projection, type: { const: 'observed_inventory_forecast' }, scope: { const: 'owned_gin_depot_retail_history' }, asOf: { type: 'string', format: 'date-time' }, horizonHours, windowHours,
     status: { type: 'string' }, samples: cash, stockoutCensored: { type: 'boolean' }, method: { type: 'string' }, exposureHours: { type: 'number', minimum: 0 },
     scenarioRange: nullable(object({ min: cash, max: cash, notStatisticalConfidence: { const: true } })), capacityAvailable: cash, noFutureObservations: { const: true } }),
-  ItemDurabilityBoard: object({ character, items: array(object({ itemId: id, remaining: { ...cash, maximum: 150 }, maximum: { type: 'integer', enum: [100, 150] }, manufacturingGrade: { type: 'string', enum: ['standard', 'tempered'] }, revision: cash, creationQualityUnchanged: { const: true } })), repairAvailable: { const: false } }),
+  ItemDurabilityBoard: object({ character, items: array(object({ itemId: id, remaining: { ...cash, maximum: 150 }, maximum: { type: 'integer', enum: [100, 150] }, manufacturingGrade: { type: 'string', enum: ['standard', 'tempered'] }, revision: cash, creationQualityUnchanged: { const: true } })), repairAvailable: { const: true } }),
 };
 export const COMPANY_ECONOMY_CONTRACTS = {
   'GET /v1/company/production': { ...contract('getCompanyProduction', ref('CompanyProductionBoard')), requestParameters: [{ name: 'after', in: 'query', schema: key.schema }] },

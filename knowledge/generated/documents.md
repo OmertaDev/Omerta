@@ -324,6 +324,7 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
+| [docs/agent-economy-equipment-contracts-security-review.md](../../docs/agent-economy-equipment-contracts-security-review.md) | documentation | 44 | 2026-10-13 |
 | [docs/agent-economy-final-integrated-native-review.md](../../docs/agent-economy-final-integrated-native-review.md) | documentation | 23 | 2026-10-12 |
 | [docs/agent-economy-final-memory-review.md](../../docs/agent-economy-final-memory-review.md) | documentation | 66 | 2026-10-12 |
 | [docs/agent-economy-final-native-sql-review.md](../../docs/agent-economy-final-native-sql-review.md) | documentation | 16 | 2026-10-12 |
@@ -346,14 +347,14 @@
 | [docs/buyer-cooperative-migration-review.md](../../docs/buyer-cooperative-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
-| [docs/city-critique-gameplay-review.md](../../docs/city-critique-gameplay-review.md) | documentation | 108 | 2026-10-13 |
 | [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 164 | 2026-10-13 |
-| [docs/city-home-interactions-security-review.md](../../docs/city-home-interactions-security-review.md) | documentation | 53 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
 | [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
+| [docs/commercial-negotiation-hosted-replay-review.md](../../docs/commercial-negotiation-hosted-replay-review.md) | documentation | 14 | 2026-10-13 |
+| [docs/commercial-negotiation-security-review.md](../../docs/commercial-negotiation-security-review.md) | documentation | 32 | 2026-10-13 |
 | [docs/commercial-premises-integration-review.md](../../docs/commercial-premises-integration-review.md) | documentation | 54 | 2026-10-12 |
 | [docs/commercial-premises-literal-sql-review.md](../../docs/commercial-premises-literal-sql-review.md) | documentation | 14 | 2026-10-12 |
 | [docs/commercial-premises-migration-review.md](../../docs/commercial-premises-migration-review.md) | documentation | 12 | 2026-10-12 |
@@ -387,6 +388,8 @@
 | [docs/company-workflow-source-transfer-review.md](../../docs/company-workflow-source-transfer-review.md) | documentation | 130 | 2026-10-12 |
 | [docs/company-workflows-security-review.md](../../docs/company-workflows-security-review.md) | documentation | 121 | 2026-10-12 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
+| [docs/contract-auction-receipt-repair-review.md](../../docs/contract-auction-receipt-repair-review.md) | documentation | 20 | 2026-10-13 |
+| [docs/contract-auctions-security-review.md](../../docs/contract-auctions-security-review.md) | documentation | 42 | 2026-10-13 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md](../../docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md) | documentation | 8 | 2026-09-14 |
@@ -436,6 +439,14 @@
 | [docs/economy-recovery-fixture-review.md](../../docs/economy-recovery-fixture-review.md) | documentation | 29 | 2026-10-12 |
 | [docs/economy-recovery-hosted-triage.md](../../docs/economy-recovery-hosted-triage.md) | documentation | 29 | 2026-10-12 |
 | [docs/employment-accounting-graph-fix-review.md](../../docs/employment-accounting-graph-fix-review.md) | documentation | 16 | 2026-10-12 |
+| [docs/equipment-economy-contracts-security-review.md](../../docs/equipment-economy-contracts-security-review.md) | documentation | 101 | 2026-10-13 |
+| [docs/equipment-economy-migration-proposal-review.md](../../docs/equipment-economy-migration-proposal-review.md) | documentation | 89 | 2026-10-13 |
+| [docs/equipment-maintenance-review.md](../../docs/equipment-maintenance-review.md) | documentation | 28 | 2026-10-13 |
+| [docs/equipment-rental-estate-callers-review.md](../../docs/equipment-rental-estate-callers-review.md) | documentation | 34 | 2026-10-13 |
+| [docs/equipment-rental-primitive-review.md](../../docs/equipment-rental-primitive-review.md) | documentation | 24 | 2026-10-13 |
+| [docs/equipment-rentals-integration-design.md](../../docs/equipment-rentals-integration-design.md) | design | 33 | 2026-10-13 |
+| [docs/equipment-rentals-proposal-security-review.md](../../docs/equipment-rentals-proposal-security-review.md) | documentation | 133 | 2026-10-13 |
+| [docs/equipment-rentals-security-review.md](../../docs/equipment-rentals-security-review.md) | documentation | 41 | 2026-10-13 |
 | [docs/first-batch-source-transfer-review.md](../../docs/first-batch-source-transfer-review.md) | documentation | 36 | 2026-10-13 |
 | [docs/first-five-city-combined-source-transfer-review.md](../../docs/first-five-city-combined-source-transfer-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
@@ -472,7 +483,8 @@
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 52 | 2026-10-14 |
+| [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 108 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/evidence/graceful-shutdown/README.md](../../docs/release/evidence/graceful-shutdown/README.md) | documentation | 73 | 2026-09-20 |
 | [docs/release/evidence/security-operations/telemetry-regressions.md](../../docs/release/evidence/security-operations/telemetry-regressions.md) | documentation | 136 | 2026-09-19 |
@@ -552,6 +564,9 @@
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
+| [docs/second-batch-source-compatibility-proposal-review.md](../../docs/second-batch-source-compatibility-proposal-review.md) | documentation | 18 | 2026-10-13 |
+| [docs/service-subscriptions-integration-review.md](../../docs/service-subscriptions-integration-review.md) | documentation | 12 | 2026-10-13 |
+| [docs/service-subscriptions-review.md](../../docs/service-subscriptions-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/storefront-fulfillment-security-review.md](../../docs/storefront-fulfillment-security-review.md) | documentation | 202 | 2026-10-11 |
 | [docs/strategy-leagues-security-review.md](../../docs/strategy-leagues-security-review.md) | documentation | 33 | 2026-10-12 |
 | [docs/strategy-licenses-security-review.md](../../docs/strategy-licenses-security-review.md) | documentation | 17 | 2026-10-12 |
@@ -706,5 +721,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-14 |
+| [SPEC.md](../../SPEC.md) | documentation | 760 | 2026-10-13 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |
