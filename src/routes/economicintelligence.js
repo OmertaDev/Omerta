@@ -1,4 +1,5 @@
-import * as G from '../game.js';import * as E from '../economicintelligence.js';
+import * as G from '../game.js';
+import * as E from '../economicintelligence.js';
 export function register(app,{pool,auth}){
  app.get('/v1/company/intelligence/market',{preHandler:auth},req=>{if(Object.keys(req.query||{}).length)throw new G.GameError('economic_intelligence','terms');return E.economicIntelligenceMarket(pool);});
  app.get('/v1/company/intelligence/mine',{preHandler:auth},req=>{if(Object.keys(req.query||{}).length)throw new G.GameError('economic_intelligence','terms');return E.economicIntelligenceEntitlements(pool,req.user.sub);});
