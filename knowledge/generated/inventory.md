@@ -1,22 +1,22 @@
 # Generated repository inventory
 
-> Source: worktree at `5a0f0165c087`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `280762b07e66`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,868 |
-| Text lines | 1,619,927 |
-| Repository bytes inventoried | 821,174,201 |
-| Backend/route modules | 454 |
-| HTTP route registrations / unique routes | 997 / 997 |
-| Database tables | 493 |
-| Solidity declarations | 126 |
-| Git commits | 3,690 |
+| Current artifacts | 4,918 |
+| Text lines | 1,624,206 |
+| Repository bytes inventoried | 821,841,243 |
+| Backend/route modules | 469 |
+| HTTP route registrations / unique routes | 1,011 / 1,011 |
+| Database tables | 510 |
+| Solidity declarations | 127 |
+| Git commits | 3,815 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 13,086 / 53,083 |
+| Graph nodes / edges | 13,343 / 54,046 |
 
 ## Artifact kinds
 
@@ -24,16 +24,16 @@
 |---|---:|
 | media-asset | 1,204 |
 | artifact | 674 |
+| test-suite | 657 |
 | contract-project | 646 |
-| test-suite | 639 |
-| documentation | 544 |
-| backend-module | 377 |
-| engineering-harness | 237 |
-| contract-test | 111 |
-| contract-source | 105 |
+| documentation | 554 |
+| backend-module | 387 |
+| engineering-harness | 239 |
+| contract-test | 112 |
+| contract-source | 106 |
 | audit | 98 |
-| design | 85 |
-| route-module | 77 |
+| design | 88 |
+| route-module | 82 |
 | web-surface | 35 |
 | operations | 11 |
 | knowledge-base | 11 |
@@ -70,7 +70,7 @@
 | [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
 | [test/client.js](../../test/client.js) | 9,564 | test-suite | 2026-10-13 |
 | [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [schema.sql](../../schema.sql) | 8,861 | data-schema | 2026-10-13 |
+| [schema.sql](../../schema.sql) | 8,949 | data-schema | 2026-10-13 |
 | [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
 | [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
 | [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |

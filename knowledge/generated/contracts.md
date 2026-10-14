@@ -106,6 +106,7 @@
 | `OmertaStabilityControllerV2` | contract | [omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol:26](../../omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol#L26) | `ReentrancyGuard`, `IUnlockCallback` |
 | `OmertaTurfFeeBridgeV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol:12](../../omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol#L12) | `ReentrancyGuard` |
 | `OmertaTurfV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfV2.sol:15](../../omerta-contracts/src/market-v2/OmertaTurfV2.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
+| `OmertaWorkEscrowV2` | contract | [omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol:12](../../omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol#L12) | `ReentrancyGuard` |
 | `OMR` | contract | [omerta-contracts/src/OMR.sol:76](../../omerta-contracts/src/OMR.sol#L76) | `ERC20Permit`, `Ownable2Step` |
 | `OMRStaking` | contract | [omerta-contracts/src/OMRStaking.sol:15](../../omerta-contracts/src/OMRStaking.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
 | `OmrTwapOracle` | contract | [omerta-contracts/src/OmrTwapOracle.sol:49](../../omerta-contracts/src/OmrTwapOracle.sol#L49) | `IOmrOracle`, `Ownable2Step` |
