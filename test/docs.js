@@ -1050,7 +1050,12 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
       + 'at all. Keep the size table LAST.');
   // and the parse gate itself must stay free of it, or the split above buys nothing
-  assert(/run:\s*forge build(?: --threads 1)?\s*$/m.test(wf),
+  const parseBuildLines = new Set([
+    'run: forge build',
+    'run: forge build --threads 1',
+    `run: taskset --cpu-list "$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')" forge build --threads 1`,
+  ]);
+  assert(wf.split('\n').some((line) => parseBuildLines.has(line.trim())),
     ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
     + 'must be separate steps, or a size regression skips the suite again.');
 }
