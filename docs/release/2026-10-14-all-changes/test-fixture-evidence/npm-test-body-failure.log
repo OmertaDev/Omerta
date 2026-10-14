@@ -1,0 +1,87 @@
+
+> omerta-backend@1.5.0 test
+> node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agentturn.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city-gameplay && npm run test:company-workforce
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+player intel: discovery, stale observations, gossip, phone identity and historical sightings passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Player intel projections preserve earned identities and dated observations.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+player-intel-gates: unknown targets do not spend or leak, paid sightings are deliberate, and calls reveal identity only.
+resourceproviders: catalog, exact pricing, dispatch ambiguity, settlement binding, and webhook adversarial checks passed
+resourceauction: allocation, permutation, bounds, and commitment checks passed
+resourcepayments: signed binding, settlement, recovery, deduplication and freezing passed
+resourcecompute: reservations, authority, unknown recovery, auctions and credits passed
+resourcework: owner service authority, escrow conservation, private jobs, receipt proofs, disputes, expiry and capacity-filtered keyset discovery checks passed
+resourcelabor PASS (memory) funded award, refunds, privacy, authority, renewal and immutable replay
+resourcebusiness PASS (memory) read-only private bounded receipts and earnings reconciliation
+resourceoutcomes PASS (memory) private read-only attempts, selected binding, full totals and detail coverage
+resourcestorefront PASS (memory) publication privacy, capacity and read-only observations
+agentcompany PASS (memory) owner CAS, premises identity verification, privacy and metadata-only authority
+resourceoutcomeobserver PASS: account/projection checks, failed attempt aggregation, unknown latency hold, one GET, bounded bodies and credential isolation
+businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 400 pricing trials seed1947
+business-agent: finite read-only sampling, pacing, credential boundaries and bounded responses passed
+computeexperiment PASS: reproducible matched plans, exact rubric thresholds, failure/unknown/cost/latency/acceptance gates, duplicate/privacy rejection and100seed plans
+compute-experiment-cli: offline demo, bounded files, safe options and credential isolation passed
+computerouting PASS: raw evidence, scope/freshness/acceptance gates, baseline-first budgets and 1001 budget invariants
+computeoutcomes PASS: raw-plan binding, privacy, failed/unknown costs, coverage, mismatch and 201 reconciliation invariants
+compute-router-cli: strict offline options, bounded inputs and sanitized errors passed
+decisionproofs: PASS; adversarial validation/privacy/write-once/rollback-contract; seed 7331, 100 canonicalization cases (native transaction proof belongs to integration suite)
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+decision proofs API: auth, ownership, domain, native execution, exact retry, stale replay and privacy passed
+resource-agent: compute selection, bounded authority, observations, work recovery, and labor bids passed
+resource-worker: intake-off recovery, credit refunds, isolated frozen escrow, repeated ticks and liabilities passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+operating policies: separate owner authority, revision/replay, revocation, expiry, finite spend, priority, role isolation and outside-cost accounting passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Supply tenders: authenticated terms, competing immutable offers, native deadline/reservation, replay, stale quantity and no duplicate cash passed.
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+supply tender API: authentication, signed supplier consent, private boards, buyer-only award, exact retry and canonical reservation passed
+warehouseleases: PASS; bounds/24h/expiry/death reservations; seed1947 500 lifecycle/fee cases; native persistence and cargo/rent conservation not yet proven
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+warehouseleases actual memory domain: rent ledger/treasury + cargo/journal conservation, independent ownership, fixed term, duplicate claim rejection, landlord-closed retrieval PASS; native proof pending
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+warehouse API: rent/cargo replay, private custody, human/agent parity, canonical landlord/tenant estate and invariants passed
+crewlogistics: pure + fake-query consent/limits/privacy/current-state PASS; seed3919 200 cases; native membership/rejoin/lock races and canonical storage integration unproven
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+crewlogistics actual memory: canonical reference ownership, no-accrual GET, source write/lock guard, leave/kick rejoin revocation, death/generation/expiry privacy and member cap PASS; references do not prove tender funding or delivery execution
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Crew logistics API memory PASS: authenticated human/agent parity, own-source and cross-Crew privacy, exact field allowlists/retries, no-accrual GET, irreversible leave/rejoin revocation, boss display-only removal with native obligation rejection
+franchiselicenses: pure terms/expiry/cap/rounding PASS; seed1947 1000 partition cases; native settlement not yet proven
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+franchiselicenses canonical sale + invariant provenance/zero-half/recipient/source/expense/counter tamper detection PASS
+franchiselicenses memory domain PASS: consent/lifecycle, real buy/cargo/net journals, cumulative zero-pair replay, refreshed stock/cost, caps/expiry/death; root route integration separate
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+franchise API memory PASS: human/agent auth, foreign/private scope, both consents, owner policy, exact retries, native retail royalty, missing proof, income/profit once, ending and heir privacy
+{"status":"PASS","cases":9,"seededTrials":1000,"canonicalPublicSourceReads":1,"scope":"Pure terms, public projection and prediction scoring only; no fee execution, native persistence, model reasoning or financial activation"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"fixture":"owned forecast expiry row","database":"pg-mem","javascriptNow":"2026-10-14T21:00:00.000Z","databaseNow":"2026-10-14T21:00:00.000Z","verifiedDatabaseNow":"2026-10-14T21:00:00.000Z","createdAt":"2026-10-14T20:50:00.000Z","targetAt":"2026-10-14T21:00:30.000Z","reportLeadMs":60000,"sqlEligible":true,"javascriptEligible":true}
+{"status":"PASS","database":"pg-mem","serverVersion":null,"fixedFee":100,"houseTake":0,"scope":"Canonical wrappers/cash/escrow/replay/privacy/cancel/expiry/estate hook/sampling; temporal contexts translated by fixture SQL; actual full runEstate/API integration owned separately"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+intel API memory PASS: auth/private account history, human-agent fixed fractional cash, exact header/body replay, first sampled window/unknown late, funded buyer jail/safe, disabled recovery, canonical buyer estate loot/burn and reporter succession, invariant tamper controls, consent-owned quota; no external financial activation
+{"status":"PASS","files":4,"chunks":9,"negatives":38,"scope":"Complete frozen current/prior blobs, exact addition inverses and regression controls only; no new native or financial qualification"}
+loan marker compatibility PASS: whole reviewed new/old blobs, exact unique1chunk inverse, unchanged2historicalpins, missing/duplicate/output/accounting/suffix negatives; qualification scope unchanged
+{"status":"PASS","files":7,"chunks":18,"negatives":67,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"status":"PASS","cases":8,"seed":1947,"seededTrials":1500,"maxActiveLoans":1,"scope":"Pure bounded admission and canonical loan/delivery rounding quote only; no money, reserve, authority, debt or payout execution"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","serverVersion":null,"principal":5000,"actualGross":10000,"actualMarketTake":200,"actualNet":9800,"actualDebtPayment":5500,"actualVig":275,"scope":"Actual canonical loan offer/take/full cargo purchase/delivery/repayment, manual release and paper creditor; SQL-client permission lifetime; native race/rollback when postgres. Legacy take/delivery interception and full estate proofs require root shared hooks."}
+node:internal/modules/esm/resolve:271
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module 'C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\output\server-fixture.js' imported from C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\output\delivery-finance-guards-fixture.mjs
+    at finalizeResolution (node:internal/modules/esm/resolve:271:11)
+    at moduleResolve (node:internal/modules/esm/resolve:865:10)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:759:56)
+    at #resolve (node:internal/modules/esm/loader:683:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:35)
+    at node:internal/modules/esm/loader:632:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/output/server-fixture.js'
+}
+
+Node.js v24.19.0

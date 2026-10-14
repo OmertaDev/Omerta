@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","serverVersion":null,"principal":5000,"actualGross":10000,"actualMarketTake":200,"actualNet":9800,"actualDebtPayment":5500,"actualVig":275,"scope":"Actual canonical loan offer/take/full cargo purchase/delivery/repayment, manual release and paper creditor; SQL-client permission lifetime; native race/rollback when postgres. Actual canonical loan/delivery/lower-market guards exercised; no full HTTP or runEstate qualification."}
