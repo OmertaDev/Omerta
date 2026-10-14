@@ -25,7 +25,7 @@
 | `CurrencyLibrary` | library | [omerta-contracts/src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol:13](../../omerta-contracts/src/genesis-auction/vendor/cca/libraries/CurrencyLibrary.sol#L13) | — |
 | `DemandLib` | library | [omerta-contracts/src/genesis-auction/vendor/cca/libraries/DemandLib.sol:12](../../omerta-contracts/src/genesis-auction/vendor/cca/libraries/DemandLib.sol#L12) | — |
 | `Denari` | contract | [omerta-contracts/src/Denari.sol:44](../../omerta-contracts/src/Denari.sol#L44) | `ERC20`, `ERC20Permit`, `Ownable2Step` |
-| `DynastyNFT` | contract | [omerta-contracts/src/DynastyNFT.sol:49](../../omerta-contracts/src/DynastyNFT.sol#L49) | `ERC721`, `ERC2981`, `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
+| `DynastyNFT` | contract | [omerta-contracts/src/DynastyNFT.sol:50](../../omerta-contracts/src/DynastyNFT.sol#L50) | `ERC721`, `ERC2981`, `IERC5192`, `EIP712`, `Ownable2Step`, `Pausable`, `ReentrancyGuard` |
 | `FeeRevenueRouter` | contract | [omerta-contracts/src/FeeRevenueRouter.sol:28](../../omerta-contracts/src/FeeRevenueRouter.sol#L28) | `IFeeRevenueRouter`, `ReentrancyGuard` |
 | `FixedPoint96` | library | [omerta-contracts/src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol:7](../../omerta-contracts/src/genesis-auction/vendor/cca/libraries/FixedPoint96.sol#L7) | — |
 | `FixedPointMathLib` | library | [omerta-contracts/src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol:7](../../omerta-contracts/src/genesis-auction/vendor/solady/utils/FixedPointMathLib.sol#L7) | — |
@@ -48,6 +48,7 @@
 | `IContinuousClearingAuction` | interface | [omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol:31](../../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol#L31) | `ILBPInitializer`, `ICheckpointStorage`, `ITickStorage`, `IStepStorage`, `IAuctionStorage`, `IBidStorage` |
 | `IDistributor` | interface | [omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol:8](../../omerta-contracts/src/genesis-auction/vendor/launcher/src/interfaces/IDistributor.sol#L8) | — |
 | `IERC20Minimal` | interface | [omerta-contracts/src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol:5](../../omerta-contracts/src/genesis-auction/vendor/cca/interfaces/external/IERC20Minimal.sol#L5) | — |
+| `IERC5192` | interface | [omerta-contracts/src/DynastyNFT.sol:14](../../omerta-contracts/src/DynastyNFT.sol#L14) | — |
 | `IFeeRevenueRouter` | interface | [omerta-contracts/src/FeeRevenueRouter.sol:9](../../omerta-contracts/src/FeeRevenueRouter.sol#L9) | — |
 | `IGearVault` | interface | [omerta-contracts/src/VoucherClaim.sol:11](../../omerta-contracts/src/VoucherClaim.sol#L11) | — |
 | `IGenesisArbSys` | interface | [omerta-contracts/src/GenesisLifecycleController.sol:53](../../omerta-contracts/src/GenesisLifecycleController.sol#L53) | — |
@@ -64,6 +65,7 @@
 | `ILiquidityHealth` | interface | [omerta-contracts/src/interfaces/ILiquidityHealth.sol:5](../../omerta-contracts/src/interfaces/ILiquidityHealth.sol#L5) | — |
 | `IOmertaGenesisClaimGate` | interface | [omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol:9](../../omerta-contracts/src/genesis-auction/OmertaGuardedAuction.sol#L9) | — |
 | `IOmertaMarketStateV2` | interface | [omerta-contracts/src/market-v2/IOmertaMarketStateV2.sol:7](../../omerta-contracts/src/market-v2/IOmertaMarketStateV2.sol#L7) | — |
+| `IOmertaRestrictedOMRV2` | interface | [omerta-contracts/src/market-v2/IOmertaRestrictedOMRV2.sol:5](../../omerta-contracts/src/market-v2/IOmertaRestrictedOMRV2.sol#L5) | `IERC20` |
 | `IOmrHookObserver` | interface | [omerta-contracts/src/OmertaHook.sol:24](../../omerta-contracts/src/OmertaHook.sol#L24) | — |
 | `IOMRMintable` | interface | [omerta-contracts/src/OmertaBond.sol:16](../../omerta-contracts/src/OmertaBond.sol#L16) | — |
 | `IOmrOracle` | interface | [omerta-contracts/src/IOmrOracle.sol:18](../../omerta-contracts/src/IOmrOracle.sol#L18) | — |
@@ -72,6 +74,7 @@
 | `IProtocolGenesisController` | interface | [omerta-contracts/src/ProtocolLiquidityVault.sol:43](../../omerta-contracts/src/ProtocolLiquidityVault.sol#L43) | — |
 | `IProtocolInventoryExecutor` | interface | [omerta-contracts/src/ProtocolLiquidityVault.sol:31](../../omerta-contracts/src/ProtocolLiquidityVault.sol#L31) | — |
 | `IProtocolPositionManager` | interface | [omerta-contracts/src/ProtocolLiquidityVault.sol:25](../../omerta-contracts/src/ProtocolLiquidityVault.sol#L25) | `IPositionManager` |
+| `IRestrictedSettlementPolicyV2` | interface | [omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol:9](../../omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol#L9) | — |
 | `IRwaHealthOverlay` | interface | [omerta-contracts/src/interfaces/IRwaHealthOverlay.sol:5](../../omerta-contracts/src/interfaces/IRwaHealthOverlay.sol#L5) | — |
 | `ISettlementDataFeeSource` | interface | [omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol:3](../../omerta-contracts/src/interfaces/ISettlementDataFeeSource.sol#L3) | — |
 | `ISettlementGasPoolMigrationCandidate` | interface | [omerta-contracts/src/SettlementGasPool.sol:9](../../omerta-contracts/src/SettlementGasPool.sol#L9) | — |
@@ -102,8 +105,12 @@
 | `OmertaHookV2` | contract | [omerta-contracts/src/market-v2/OmertaHookV2.sol:28](../../omerta-contracts/src/market-v2/OmertaHookV2.sol#L28) | `IHooks`, `IInitializerHook`, `IOmrV4ObservationSource`, `ReentrancyGuard` |
 | `OmertaInventoryBondV2` | contract | [omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol:20](../../omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol#L20) | `ReentrancyGuard` |
 | `OmertaMarketStateV2` | contract | [omerta-contracts/src/market-v2/OmertaMarketStateV2.sol:14](../../omerta-contracts/src/market-v2/OmertaMarketStateV2.sol#L14) | `IOmertaMarketStateV2` |
+| `OmertaPoolManagerV2` | contract | [omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol:93](../../omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol#L93) | `IPoolManager`, `OmertaProtocolFeesV2`, `NoDelegateCall`, `ERC6909Claims`, `Extsload`, `Exttload` |
+| `OmertaProtocolFeesV2` | abstract contract | [omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol:37](../../omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol#L37) | `IProtocolFees`, `Owned` |
 | `OmertaReserveFundingV2` | contract | [omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol:12](../../omerta-contracts/src/market-v2/OmertaReserveFundingV2.sol#L12) | `ReentrancyGuard` |
+| `OmertaRestrictedOMRV2` | contract | [omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol:19](../../omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol#L19) | `ERC20Permit`, `Ownable2Step`, `IOmertaRestrictedOMRV2` |
 | `OmertaStabilityControllerV2` | contract | [omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol:26](../../omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol#L26) | `ReentrancyGuard`, `IUnlockCallback` |
+| `OmertaSwapRouterV2` | contract | [omerta-contracts/src/market-v2/OmertaSwapRouterV2.sol:16](../../omerta-contracts/src/market-v2/OmertaSwapRouterV2.sol#L16) | `IUnlockCallback`, `ReentrancyGuard` |
 | `OmertaTurfFeeBridgeV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol:12](../../omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol#L12) | `ReentrancyGuard` |
 | `OmertaTurfV2` | contract | [omerta-contracts/src/market-v2/OmertaTurfV2.sol:15](../../omerta-contracts/src/market-v2/OmertaTurfV2.sol#L15) | `Ownable2Step`, `ReentrancyGuard` |
 | `OMR` | contract | [omerta-contracts/src/OMR.sol:76](../../omerta-contracts/src/OMR.sol#L76) | `ERC20Permit`, `Ownable2Step` |
