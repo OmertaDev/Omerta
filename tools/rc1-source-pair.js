@@ -91,11 +91,11 @@ export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
 });
 export const THIRD_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "7cd8476ee7cf0b2dba66cb86928f43487cbfaa5f",
-  "reviewedCandidate": "752a5e54e70cfd3b45ab0e8d5180676b840abf28",
+  "reviewedCandidate": "9583e8ef4ca71112ff18efb2e74045756d390188",
   "predecessorTree": "5467d89cb23dcc88e35d68e6849a3555338c163b4784e3ac0db21ae0ddf5b3ae",
   "predecessorSchema": "0f84bd62550030d065621637241e62e21d8f51820a57bd6cfb1e0bc4182e609a",
   "predecessorCatalog": "e60fc7a581bb21276c5176a2851e96fbc1d6a6bf429485a4510f36819e3a44b2",
-  "candidateTree": "c91c2e3748f4adc23413ef073cb0f38c09e2ac95b3072cff7d8e9aef37ec2953",
+  "candidateTree": "525583c263db1d473f8f397b9bb758165d08f89de6efeae0874fa5ce3e9715d5",
   "candidateSchema": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd",
   "candidateCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
   "candidateTableCatalog": "9f282d4df739f9baeb5eca7e92ec17f148136d5a37b2bb2d3794d2831e43acdd",
@@ -121,12 +121,12 @@ export const THIRD_BATCH_ADDITIVE_PAIR = Object.freeze({
   ])
 });
 export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "3b4a222f7ead96c86b0eaa2d4d71a62c65fa709c",
-  "reviewedCandidate": "47da6e5153dc769c7ceb91a41e94ac115c7863dc",
-  "predecessorTree": "c91c2e3748f4adc23413ef073cb0f38c09e2ac95b3072cff7d8e9aef37ec2953",
+  "predecessor": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+  "reviewedCandidate": "5f40c8509f09fec3feb48c2517b89a6c925ac0dd",
+  "predecessorTree": "525583c263db1d473f8f397b9bb758165d08f89de6efeae0874fa5ce3e9715d5",
   "predecessorSchema": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd",
   "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
-  "candidateTree": "8f1163b71b88516b0532a713007dee4b99fbfcbbfa630b57d226ea2ad5ab508a",
+  "candidateTree": "f59c6239e37117fca06d0a99d897ce5fef658c4efa9ad0a40c8e492864140c69",
   "candidateSchema": "c24abb3e7a3863dabeecbb683671a12e95c447918a2b385b38cc36691fbb9dc9",
   "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
   "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",

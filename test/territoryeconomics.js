@@ -1,5 +1,24 @@
 import { installCommercialContractProof } from './lib/company-commercial-dto.js';
 import assert from 'node:assert/strict';
+
+// Exercise the genuine HTTP reservation while canonical actor locks are held.
+async function sameKeyRace(p,method,url,body,key,agent=false){
+  const held=await app.pool.connect(),deadline=Date.now()+10000;let pending;
+  const request=()=>app.inject({method,url,payload:body,headers:{authorization:'Bearer '+(agent?p.agent:p.token),'idempotency-key':key}});
+  const retry=async()=>{for(;;){const r=await request();if(r.statusCode===200)return r.json();assert.equal(r.statusCode,409,r.body);assert.equal(r.json().error,'in_progress');assert.equal(r.headers['retry-after'],'1');assert(Date.now()+1000<=deadline,'Original-key receipt exceeded finite fixture bound');await new Promise(resolve=>setTimeout(resolve,1000));}};
+  try{
+    await held.query('BEGIN');await held.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE',[p.id]);
+    const beforeCash=(await app.pool.query('SELECT id,cash,bank FROM characters ORDER BY id')).rows,beforeTransactions=(await app.pool.query('SELECT id FROM transactions ORDER BY id')).rows;
+    pending=retry();pending.catch(()=>{});
+    for(;;){const row=(await app.pool.query('SELECT status FROM idempotency WHERE account_id=$1 AND key=$2',[p.account,key])).rows[0];if(row){assert.equal(row.status,0);break;}assert(Date.now()<deadline,'Canonical request did not reserve its original key');await new Promise(resolve=>setTimeout(resolve,10));}
+    const transient=await request();assert.equal(transient.statusCode,409,transient.body);assert.equal(transient.json().error,'in_progress');assert.equal(transient.headers['retry-after'],'1');assert.throws(()=>assert.equal(transient.statusCode,200,transient.body),assert.AssertionError);
+    assert.deepEqual((await app.pool.query('SELECT id,cash,bank FROM characters ORDER BY id')).rows,beforeCash);assert.deepEqual((await app.pool.query('SELECT id FROM transactions ORDER BY id')).rows,beforeTransactions);
+    console.log('Retained former immediate-200 assertion failure: actual409/in_progress/Retry-After1; retrying identical original request.');
+    await new Promise(resolve=>setTimeout(resolve,1000));
+    const replay=retry();await held.query('COMMIT');return await Promise.all([pending,replay]);
+  }finally{await held.query('ROLLBACK');held.release();if(pending)await pending.catch(()=>{});}
+}
+
 const native=process.argv.includes('--postgres');let version='memory';assert(!process.env.DATABASE_URL,'Refuse ambient database endpoint');
 if(native){const url=new URL(process.env.TERRITORY_ECONOMICS_TEST_DATABASE_URL);assert(['postgres:','postgresql:'].includes(url.protocol));assert.equal(url.hostname,'127.0.0.1');
   const local=['35439','35449'].includes(url.port)&&url.username==='pilot_runner'&&!url.password,ci=url.port==='5432'&&url.username==='postgres'&&url.password==='pgcheck';assert(local||ci);assert(!url.search&&!url.hash);assert.match(url.pathname,/^\/territory_economics_test_[a-z0-9_]+$/);
@@ -66,7 +85,7 @@ try{
  await app.pool.query('DELETE FROM gang_members WHERE character_id=$1',[operator.id]);await refuse(operator,'POST',base+'/run',runBody);await app.pool.query("INSERT INTO gang_members(gang_id,character_id,role) VALUES($1,$2,'boss')",[gangId,operator.id]);
  await ok(customer,'POST',`/v1/depot/${operator.business}/buy`,{qty:1,maxUnitPrice:2000});
  const snapshot=await economic(),tx=(await app.pool.query("SELECT id,amount FROM transactions WHERE counterparty=$1 AND reason='depot:buy' ORDER BY id LIMIT 1",[operator.business])).rows[0];await app.pool.query('UPDATE transactions SET amount=amount - 1 WHERE id=$1',[tx.id]);assert.equal((await refuse(operator,'POST',base+'/run',runBody)).message,'source_unknown');assert((await T.collectTerritoryEconomicsIssues(app.pool)).some(x=>x.reason==='source_unknown'));await app.pool.query('UPDATE transactions SET amount=$2 WHERE id=$1',[tx.id,tx.amount]);assert.deepEqual(await economic(),snapshot);await books();
- if(native){const results=await Promise.all([ok(operator,'POST',base+'/run',runBody,'race-run',true),ok(operator,'POST',base+'/run',runBody,'race-run',true)]);assert.deepEqual(results[0],results[1]);assert.equal(results[0].paidCash,146);await books();
+ if(native){const results=await sameKeyRace(operator,'POST',base+'/run',runBody,'race-run',true);assert.deepEqual(results[0],results[1]);assert.equal(results[0].paidCash,146);await books();
    await ok(customer,'POST',`/v1/depot/${operator.business}/buy`,{qty:1,maxUnitPrice:2000});await app.pool.query('UPDATE territory_economics_profiles SET expires_at=$2 WHERE business_id=$1',[operator.business,new Date(Date.now()+1200)]);
    const held=await app.pool.connect();await held.query('BEGIN');await held.query("SELECT id FROM transactions WHERE counterparty=$1 AND reason='depot:buy' FOR UPDATE",[operator.business]);const prior=await economic(),promise=T.territoryEconomicsAction(app.pool,operator.account,'run',runBody,'postwait-expiry');const rejection=assert.rejects(promise,/expired/);await sleep(1600);await held.query('COMMIT');held.release();await rejection;assert.deepEqual(await economic(),prior);await books();await app.pool.query('UPDATE territory_economics_profiles SET expires_at=$2 WHERE business_id=$1',[operator.business,new Date(configured.expiresAt)]);
  }
