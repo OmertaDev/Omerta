@@ -106,8 +106,11 @@ try {
     const row = (await app.pool.query('SELECT id,generation,loc FROM characters WHERE account_id=$1 AND alive ORDER BY created_at DESC,id LIMIT 1', [who.account])).rows[0];
     return { characterId: row.id, generation: Number(row.generation), district: row.loc };
   };
-  const homePost = async (who, suffix, fields = {}, key = crypto.randomUUID(), board = null) => post(who, '/v1/city/home/' + suffix,
-    { ...anchors(board || await read(who)), ...fields }, key);
+  const homePost = async (who, suffix, fields = {}, key = crypto.randomUUID(), board = null) => {
+    const current = board || await read(who);
+    return post(who, '/v1/city/home/' + suffix, { ...anchors(current),
+      ...(suffix === 'layout' ? { expectedLayoutRevision: current.home.layoutRevision } : {}), ...fields }, key);
+  };
   const award = who => withItemTransaction(app.pool, client => createItem(client, { scope: 'account', id: who.account }, 'item:precision_lock_tool', 'awarded', crypto.randomUUID()));
   const snapshot = async () => ({
     characters: (await app.pool.query('SELECT id,alive,generation,loc,cash,bank,cb,ammo,health,energy,nerve,heat,respect FROM characters ORDER BY id')).rows,
@@ -138,6 +141,15 @@ try {
   const neutral = (await snapshot()).characters;
   ok(await homePost(owner, 'layout', { room: { furniture: [{ id: 'chair', x: 0, y: 0 }] } }));
   assert.deepEqual((await snapshot()).characters, neutral, 'Decorations grant no travel, cash, health, energy or stats.');
+  const layoutVersion = await owned(), layoutKey = crypto.randomUUID();
+  const savedLayout = ok(await homePost(owner, 'layout', { room: { furniture: [{ id: 'chair', x: 1, y: 0, rotation: 1 }] } }, layoutKey, layoutVersion));
+  const afterLayout = await snapshot();
+  assert.equal((await homePost(owner, 'layout', { room: { furniture: [] } }, undefined, layoutVersion)).json().error, 'home_layout_changed');
+  assert.deepEqual(await snapshot(), afterLayout, 'A stale room draft cannot overwrite a newer layout or close its activities.');
+  assert.deepEqual(ok(await homePost(owner, 'layout', { room: { furniture: [{ id: 'chair', x: 1, y: 0, rotation: 1 }] } }, layoutKey, layoutVersion)), savedLayout,
+    'An exact replay retains its issued old revision and immutable result.');
+  assert.equal((await post(owner, '/v1/city/home/layout', { ...anchors(await owned()), room: { furniture: [] } })).json().error, 'bad_home_request');
+  assert.deepEqual(await snapshot(), afterLayout, 'Omitting the layout revision cannot bypass optimistic concurrency.');
   for (const fields of [{ x: 10 }, { accountId: owner.account }, { generation: 999 }, { district: 'docks' }]) {
     const before = await snapshot(), reply = await homePost(owner, 'layout', { room: { furniture: [] }, ...fields });
     assert.notEqual(reply.statusCode, 200); assert.deepEqual(await snapshot(), before, 'Malformed/stale anchors cannot change home state.');
@@ -305,6 +317,49 @@ try {
   assert.equal((await read(guest)).activity.active.self.status, 'left');
   ok(await homePost(owner, 'activity/close', { activityId: opened.effect.activityId }));
   assert.deepEqual(ok(await get(guest, '/v1/city/home/activity-history')), ownHistory);
+  const coop = ok(await homePost(owner, 'activity/open', { puzzleId: 'two-voices-v1' }));
+  const joinCoop = async who => {
+    const action = (await read(who)).activity.active.actions.find(row => row.id === 'activity-join');
+    return ok(await post(who, action.path, { ...action.body, consent: true }));
+  };
+  await joinCoop(owner);
+  const soloCoop = (await owned()).activity.active;
+  assert.equal(soloCoop.capacity, 2); assert(soloCoop.cells.every(cell => !cell.action.available));
+  assert.equal((await post(owner, soloCoop.cells[0].action.path, soloCoop.cells[0].action.body)).json().error, 'home_puzzle_partner');
+  await joinCoop(guest);
+  let hostCoop = (await owned()).activity.active, guestCoop = (await read(guest)).activity.active;
+  assert(!hostCoop.self.clue.includes('sits')); assert(guestCoop.self.clue.includes('sits'), 'Only the guest receives the host’s first furnishing clue.');
+  assert(guestCoop.cells.every(cell => !cell.action.available));
+  const hostFirst = hostCoop.cells.find(cell => cell.furnishingId === 'chair').action, firstKey = crypto.randomUUID();
+  const firstCoop = ok(await post(owner, hostFirst.path, hostFirst.body, firstKey));
+  assert.deepEqual(ok(await post(owner, hostFirst.path, hostFirst.body, firstKey)), firstCoop);
+  hostCoop = (await owned()).activity.active; guestCoop = (await read(guest)).activity.active;
+  assert(hostCoop.self.clue.includes('meal')); assert(!guestCoop.self.clue.includes('meal'));
+  assert.equal((await post(owner, hostFirst.path, hostFirst.body)).json().error, 'home_puzzle_turn', 'One account cannot perform both roles.');
+  const guestMove = guestCoop.cells.find(cell => cell.furnishingId === 'table').action;
+  ok(await post(guest, guestMove.path, guestMove.body));
+  const finalMove = (await owned()).activity.active.cells.find(cell => cell.furnishingId === 'lamp').action;
+  const beforeCoopFinal = await snapshot(), finalKey = crypto.randomUUID(); let finalInterrupted = false;
+  await withPoolQueryFault(app.pool, (args) => {
+    if (!finalInterrupted && /^UPDATE idempotency SET status=\$3/.test(String(args[0])) && args[1]?.[1] === finalKey) {
+      finalInterrupted = true; throw new Error('late cooperative outcome receipt interruption');
+    }
+  }, async () => { assert.equal((await post(owner, finalMove.path, finalMove.body, finalKey)).statusCode, 503); });
+  assert(finalInterrupted); assert.deepEqual(await snapshot(), beforeCoopFinal, 'Late receipt failure rolls both consenting outcomes back.');
+  const together = ok(await post(owner, finalMove.path, finalMove.body, finalKey)); assert(together.effect.complete);
+  const hostHistory = ok(await get(owner, '/v1/city/home/activity-history'));
+  assert.equal(hostHistory.outcomes[0].outcome.puzzleId, 'two-voices-v1');
+  assert.deepEqual(ok(await get(guest, '/v1/city/home/activity-history')).outcomes[0].outcome, hostHistory.outcomes[0].outcome);
+  assert.deepEqual(ok(await post(owner, finalMove.path, finalMove.body, finalKey)), together);
+  ok(await homePost(owner, 'activity/close', { activityId: coop.effect.activityId }));
+  const consentCoop = ok(await homePost(owner, 'activity/open', { puzzleId: 'two-voices-v1' }));
+  await joinCoop(owner); await joinCoop(guest);
+  const waitingAnswer = (await owned()).activity.active.cells.find(cell => cell.furnishingId === 'chair').action;
+  const consentLeave = (await read(guest)).activity.active.actions.find(action => action.id === 'activity-leave');
+  ok(await post(guest, consentLeave.path, consentLeave.body)); const withdrawnParty = await snapshot();
+  assert.equal((await post(owner, waitingAnswer.path, waitingAnswer.body)).json().error, 'home_puzzle_partner');
+  assert.deepEqual(await snapshot(), withdrawnParty, 'Withdrawn consent cannot be used to advance a cooperative stage.');
+  ok(await homePost(owner, 'activity/close', { activityId: consentCoop.effect.activityId }));
   assert.deepEqual(await economic(), beforePuzzles, 'All puzzle actions change no cash, XP/respect, health, energy, inventory or ledger.');
   const closedLayoutBoard = await owned(), nextPuzzle = closedLayoutBoard.activity.catalog.find(row => row.id === 'lights-out').action;
   const layoutActivity = ok(await post(owner, nextPuzzle.path, nextPuzzle.body));
@@ -390,6 +445,10 @@ try {
 
   // Native contention retains every assertion; memory validates functional outcomes only.
   if (postgres) {
+    const racingLayout = await owned(), raceFields = { room: { furniture: [{ id: 'chair', x: 1, y: 1 }] } };
+    const raced = await Promise.all([homePost(owner, 'layout', raceFields, undefined, racingLayout), homePost(owner, 'layout', raceFields, undefined, racingLayout)]);
+    assert.deepEqual(raced.map(reply => reply.statusCode).sort(), [200,409], 'Two real same-revision layout writers have one winner.');
+    assert.equal((await owned()).home.layoutRevision, racingLayout.home.layoutRevision + 1);
     for (const entry of (await owned()).storage.items) ok(await homePost(owner, 'storage/retrieve', { itemId: entry.id }));
     const race = await award(owner), raceBoard = await owned(), sameKey = crypto.randomUUID();
     const duplicates = await Promise.all([homePost(owner, 'storage/store', { itemId: race.id }, sameKey, raceBoard), homePost(owner, 'storage/store', { itemId: race.id }, sameKey, raceBoard)]);

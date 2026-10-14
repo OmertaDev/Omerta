@@ -116,6 +116,15 @@ try {
     return { page, context, requests, releaseArt };
   };
   const state = page => page.evaluate(() => window.__worldHandles.at(-1).handle.getState());
+  const revealPlaces = async page => {
+    const overview = page.locator('.omerta-city__overview');
+    if (!await overview.isVisible() || await overview.getAttribute('open') !== null) return;
+    const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
+    for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+      const close = page.locator(selector); if (await close.isVisible()) await native(close);
+    }
+    await native(overview.locator('summary'));
+  };
   const frames = page => page.evaluate(() => new Promise(resolve => { let count = 0; const step = () => ++count >= 8 ? resolve() : requestAnimationFrame(step); requestAnimationFrame(step); }));
   const mutations = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method) && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
   const bounded = (promise, label) => new Promise((resolve, reject) => {
@@ -125,9 +134,15 @@ try {
   const dismissCine = async page => { if (await page.locator('#cine.on').count()) await page.locator('#cine.on').evaluate(node => node.click()); };
   const panel = async (page, kind) => {
     if (!await page.locator('.city-world__dock').isVisible()) await page.locator('[data-city-world-tools]').click();
+    if (await page.locator('.city-world__tabs').getAttribute('hidden') !== null) await page.locator('[data-city-world-back]').click();
     await page.locator(`[data-city-world-panel="${kind}"]`).click(); await frames(page);
   };
   const assertToolChoicesReturn = async (page, requests) => {
+    if (await page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+      if (page.viewportSize().width <= 680) await page.locator('[data-city-world-back]').tap();
+      else await page.locator('[data-city-world-back]').click();
+      await frames(page);
+    }
     const snapshot = () => page.evaluate(() => {
       const current = window.__worldHandles.at(-1).handle.getState();
       return { handles: window.__worldHandles.length, position: current.position, pathLength: current.pathLength,
@@ -231,11 +246,16 @@ try {
         right: (bounds.right - camera.worldView.x) * camera.zoom * box.width / camera.width }; });
       const tools = document.querySelector('[data-city-world-tools]'), guidance = document.querySelector('.omerta-city__next-move');
       const close = document.querySelector('[data-city-world-close]'), dock = document.querySelector('.city-world__dock');
+      const overlays = ['.omerta-city__world-hud', '.omerta-city__minimap', '.omerta-city__next-move',
+        '.omerta-city__controls', '.city-world__quick-nav', '.city-world__dock', '.omerta-city__actor-dock',
+        '.omerta-city__training', '.omerta-city__interaction', '.omerta-city__overview[open]', '#toast.show']
+        .map(selector => document.querySelector(selector)).filter(node => node && !node.hidden)
+        .map(rect).filter(bounds => bounds.width > 0 && bounds.height > 0);
       const bottom = ['bnav', 'toast'].map(id => document.getElementById(id)).filter(node => {
         const style = node && getComputedStyle(node), bounds = node?.getBoundingClientRect();
         return bounds?.height && ['fixed', 'sticky'].includes(style.position) && (node.id !== 'toast' || node.classList.contains('show'));
       }).reduce((limit, node) => Math.min(limit, node.getBoundingClientRect().top), innerHeight);
-      return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar,
+      return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar, overlays,
         header: rect(document.querySelector('#top')), tools: rect(tools), toolsHit: hit(tools), guidance: rect(guidance),
         close: close && !close.closest('[hidden]') ? { bounds: rect(close), hit: hit(close) } : null, dock: dock && !dock.hidden ? rect(dock) : null, width: innerWidth, height: innerHeight,
         overflow: document.documentElement.scrollWidth, tint: sprite.tintTopLeft, bottom,
@@ -248,12 +268,24 @@ try {
     const view = await inspectFrame(page), detail = JSON.stringify(view);
     assert(view.tools.height >= 44 && view.toolsHit && view.tools.top >= 0 && view.tools.bottom <= view.height, 'World tools stay visible in the global header: ' + detail);
     assert(view.overflow <= view.width + 1, 'The header does not widen the phone: ' + detail);
-    assert(view.hud.top >= view.header.bottom - 1 && view.canvas.bottom <= view.bottom + 1, 'HUD and map remain in the usable frame: ' + detail);
+    assert(view.hud.top >= view.header.bottom - 1 && Math.abs(view.canvas.top - view.header.bottom) <= 1
+      && Math.abs(view.canvas.bottom - view.height) <= 1 && view.canvas.left === 0 && Math.abs(view.canvas.width - view.width) <= 1,
+    'The map fills the browser below the real header; the HUD overlays it without shrinking the world: ' + detail);
     assert(Math.abs(view.canvas.height - view.engine.height) <= 1 && Math.abs(view.canvas.width - view.engine.width) <= 1, 'CSS and Phaser dimensions agree: ' + detail);
     assert(view.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= view.canvas.height + 1 && bounds.left >= -1 && bounds.right <= view.canvas.width + 1), 'Complete actual avatar/name stay visible: ' + detail);
+    assert(view.avatar.every(bounds => view.overlays.every(overlay =>
+      bounds.right + view.canvas.left <= overlay.left + 1 || bounds.left + view.canvas.left >= overlay.right - 1
+      || bounds.bottom + view.canvas.top <= overlay.top + 1 || bounds.top + view.canvas.top >= overlay.bottom - 1)),
+    'Actual avatar and full name remain clear of every HUD, activity and feedback overlay: ' + detail);
     if (view.close) assert(view.close.bounds.height >= 44 && view.close.hit, 'The world-panel close remains usable: ' + detail);
     if (view.dock) assert(view.dock.top >= view.header.bottom - 1 && view.dock.bottom <= view.bottom + 1, 'The entire bounded world dock stays above fixed chrome: ' + detail);
     return view;
+  };
+  const assertHudReadingTarget = async page => {
+    assert(await page.locator('.omerta-city__world-hud').evaluate(node => {
+      const overflow = node.scrollHeight > node.clientHeight;
+      return overflow ? node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll') : !node.hasAttribute('tabindex');
+    }), 'Only actual HUD overflow adds a keyboard reading target; closing a window does not discard unread resources.');
   };
 
   const assertPanelLoading = async (page, label) => {
@@ -264,16 +296,27 @@ try {
       const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
       const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
       return { copy: notice.textContent, busy: content.getAttribute('aria-busy'), outsideBusy: !content.contains(notice),
+        compact: dock.classList.contains('is-compact'), loading: dock.classList.contains('is-loading'),
         visible: bounds.height > 0 && bounds.top >= box.top && bounds.bottom <= box.bottom && (hit === title || title.contains(hit)) };
     });
     assert.equal(loading.copy, 'Loading ' + label + '…'); assert.equal(loading.busy, 'true');
+    assert.equal(loading.loading, true);
+    if (page.viewportSize().width === 320) assert.equal(loading.compact, true, 'The wider fallback exercises the compact loading title.');
     assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content.');
     await assertFrame(page);
   };
   const assertPanelReadFeedback = async viewport => {
-    const activate = (page, selector) => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    const activate = async (page, selector) => {
+      if (selector.startsWith('[data-city-world-panel') && await page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+        if (viewport.width <= 680) await page.locator('[data-city-world-back]').tap();
+        else await page.locator('[data-city-world-back]').click();
+      }
+      return viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    };
     for (const scenario of ['active', 'map', 'close']) {
       const fixture = await newPage(viewport, { noResizeObserver: viewport.width === 320 }), { page, requests } = fixture;
+      // The wider fallback forces the real HUD to reserve enough room for a compact dock.
+      if (viewport.width === 320) await page.addStyleTag({ content: '.omerta-city { --mono: "Courier New", monospace; }' });
       const handle = await page.evaluateHandle(() => window.__worldHandles.at(-1)), position = (await state(page)).position;
       const queues = new Map(), holds = [];
       const hold = url => {
@@ -288,6 +331,7 @@ try {
         await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false'
           && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
         assert.equal(await page.locator('.city-world__notice').textContent(), '');
+        assert.equal(await page.locator('.city-world__dock').evaluate(dock => dock.classList.contains('is-loading')), false);
       };
       try {
         for (const url of ['/v1/city/social', '/v1/worldgraph/inventory']) {
@@ -306,6 +350,13 @@ try {
         assert.equal(await page.locator('[data-city-outfit]').count(), 0);
         await assertPanelLoading(page, 'Style');
         if (scenario === 'active') {
+          if (viewport.width === 320) {
+            await page.locator('.city-world__dock').hover(); await page.mouse.wheel(0, 160);
+            await page.waitForFunction(() => document.querySelector('.city-world__dock').scrollTop > 0); await frames(page);
+            await assertPanelLoading(page, 'Style');
+            assert.equal(await page.locator('.city-world__dock-bar').evaluate(node => getComputedStyle(node).backgroundColor), 'rgb(24, 37, 40)',
+              'The compact loading title keeps an opaque background over content scrolled behind it.');
+          }
           if (process.env.CITY_WORLD_SHOTS) {
             fs.mkdirSync(process.env.CITY_WORLD_SHOTS, { recursive: true });
             await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-loading-' + viewport.width + '.png') });
@@ -370,7 +421,8 @@ try {
   const pose = (await state(page)).position, handles = await page.evaluate(() => window.__worldHandles.length), initial = requests.length;
   let view = await assertFrame(page);
   if (process.env.CITY_WORLD_SHOTS) { fs.mkdirSync(process.env.CITY_WORLD_SHOTS, { recursive: true }); await page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-entry-375.png') }); }
-  assert(view.guidance.top >= view.header.bottom - 1 && view.guidance.bottom <= view.canvas.top, 'A fresh player sees the issued NPC objective above the map: ' + JSON.stringify(view));
+  assert(view.guidance.height > 0 && view.guidance.top >= view.hud.bottom && view.guidance.bottom <= view.canvas.bottom,
+    'A fresh player sees the issued NPC objective below the HUD inside the open map: ' + JSON.stringify(view));
   assert.match(await page.locator('.omerta-city__next-move').textContent(), /Visit The Fixer/);
   assert.equal(requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0, 'Default-off chat makes no feed request.');
   await panel(page, 'bag');
@@ -430,15 +482,15 @@ try {
   await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0, undefined, { timeout: 15000 });
   assert.equal((await state(page)).selectedVenue, 'stories');
   await page.waitForFunction(() => [...document.querySelectorAll('.city-world__speech,.city-world__dialogue')]
-    .some(node => !node.hidden && node.textContent.includes('THE EDITOR')));
-  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /A clue is a lead/);
+    .some(node => !node.hidden && node.textContent.includes('ELENA SERRA')));
+  assert.match(await page.locator('.city-world__speech,.city-world__dialogue').allTextContents().then(text => text.join(' ')), /Ink stays longer than anger/);
   assert.deepEqual(mutations(requests.slice(beforeWaypoint)), []);
   await page.keyboard.press('Escape');
   let walkingPose = (await state(page)).position;
   await panel(page, 'skills');
   await page.locator('.city-world__stats').waitFor();
   await page.locator('[data-city-world-close]').click();
-  await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="streets"]').click();
+  await revealPlaces(page); await page.locator('[data-destination="training"]').click(); await page.locator('[data-city-action="streets"]').click();
   const muscleBefore = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
   const trained = await post(page, '[data-city-train="muscle"]', '/v1/train/muscle');
   const muscleAfter = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
@@ -628,7 +680,7 @@ try {
   console.log('world host: queued/sent/uncertain same-key actions, historical preferences, consent retirement and emote receipts passed');
   await app.pool.query('UPDATE characters SET respect=$2,nerve=10,last_accrued_at=$3 WHERE id=$1', [viewer.character.id, PACING.LEVEL_DIVISOR - 1, new Date(Date.now() + 600000)]);
   const beforeLevel = await refresh(page); assert.equal(beforeLevel.level, 1);
-  await page.locator('[data-destination="fixer"]').click(); await page.locator('[data-city-open]').click();
+  await revealPlaces(page); await page.locator('[data-destination="fixer"]').click(); await page.locator('[data-city-open]').click();
   const smallJob = rules.crimes.filter(job => job.lvl === 1).sort((a, b) => a.nerve - b.nerve)[0];
   await page.locator('[data-city-crime-select]').selectOption(smallJob.id);
   await page.route('**/v1/crimes/' + smallJob.id, async route => {
@@ -692,10 +744,18 @@ try {
         const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
         assert.equal(frameBeforeReading.header.height, 177.75);
         assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
-        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
-          'Resources and the complete warning are initially visible in the supported CI geometry.');
+        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.resources.bottom <= frameBeforeReading.hud.bottom,
+          'The current resource values are initially visible before reading the bounded HUD: ' + JSON.stringify(frameBeforeReading));
         assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
           'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
+        await hud.focus(); await page.keyboard.press('ArrowDown');
+        await page.waitForFunction(() => {
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
+          return warning.top >= hud.top && warning.bottom <= hud.bottom;
+        });
+        assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness,
+          'Native keyboard scrolling reveals the complete current warning without abbreviating it.');
+        await assertFrame(page);
         await hud.focus(); await readHudEnd();
         const feedbackVisible = () => {
           const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
@@ -711,10 +771,10 @@ try {
           if (values.length === 30) resolve(values); else requestAnimationFrame(sample);
         }; requestAnimationFrame(sample); }));
         assert(readingFrames.every(frame => frame.outer === reading.outer && frame.inner === reading.inner && frame.focused),
-          'Passive fitting preserves both reading positions and focus without ResizeObserver.');
+          'Passive fitting preserves both reading positions and focus without ResizeObserver: ' + JSON.stringify({ reading, readingFrames }));
         await page.locator('#toast.show').focus();
         await page.locator('[data-city-world-close]').click();
-        assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
+        await assertHudReadingTarget(page);
         await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
         await panel(page, 'map'); const pressure = await assertFrame(page);
         assert.equal(pressure.header.height, 215);
@@ -748,14 +808,21 @@ try {
         await page.waitForFunction(() => document.querySelector('#toast').scrollTop > 0);
         await new Promise(resolve => setTimeout(resolve, 3500));
         assert(await page.locator('#toast.show').isVisible(), 'The existing dismiss clock pauses while the player reads the focused toast.');
+        const panelBeforeDismissal = await page.locator('.city-world__dock').boundingBox();
         await page.keyboard.press('Escape');
         assert.equal(await page.locator('#toast.show').count(), 0); assert.equal((await state(page)).worldUI.panel, 'map', 'Dismissing the focused toast does not close the gameplay panel.');
+        await page.waitForFunction(before => {
+          const dock = document.querySelector('.city-world__dock').getBoundingClientRect();
+          return dock.bottom > before.bottom + 20 && dock.height > before.height;
+        }, { bottom: panelBeforeDismissal.y + panelBeforeDismissal.height, height: panelBeforeDismissal.height });
+        assert.deepEqual((await state(page)).position, walkingPose, 'Real toast dismissal restores window space without a resize event or player movement.');
+        await assertFrame(page);
         assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1 && !node.contains(document.activeElement)),
           'Escape retires the toast and all descendant focus targets.');
         await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
       }
       await page.locator('[data-city-world-close]').click();
-      assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
+      await assertHudReadingTarget(page);
       assert.deepEqual((await state(page)).position, walkingPose);
     }
   } finally { await restoreToastClock(); }
@@ -793,11 +860,17 @@ try {
   assert.equal(await page.evaluate(() => window.__toastActions), 1); assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1));
   const tiny = await newPage({ width: 320, height: 568 }, { noResizeObserver: true });
   const tinyStart = tiny.requests.length, tinyInitial = await assertFrame(tiny.page);
-  assert(tinyInitial.guidance.top >= tinyInitial.header.bottom - 1 && tinyInitial.guidance.bottom <= tinyInitial.canvas.top,
+  assert(tinyInitial.guidance.height > 0 && tinyInitial.guidance.top >= tinyInitial.hud.bottom && tinyInitial.guidance.bottom <= tinyInitial.canvas.bottom,
     'The first short-phone Player entry shows its issued objective with the map.');
   await panel(tiny.page, 'map'); await tiny.page.locator('[data-city-waypoint="stories"]').click();
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
-  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('THE EDITOR'));
+  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('ELENA SERRA'));
+  await tiny.page.locator('.omerta-city__world-hud').focus(); await tiny.page.keyboard.press('End');
+  await tiny.page.waitForFunction(() => {
+    const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), dialogue = document.querySelector('.city-world__dialogue').getBoundingClientRect();
+    return dialogue.top >= hud.top && dialogue.bottom <= hud.bottom;
+  });
+  assert(await tiny.page.locator('.city-world__speech').evaluate(node => node.hidden), 'World-first dialogue uses the readable HUD instead of a bubble obscured by it.');
   await assertFrame(tiny.page);
   assert.deepEqual(mutations(tiny.requests.slice(tinyStart)), [], 'Short-frame authored NPC dialogue/waypoints remain read-only.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-dialogue-320.png') });
@@ -821,7 +894,7 @@ try {
   await panel(fallback.page, 'bag'); await fallback.page.locator('[data-city-equip]').waitFor();
   assert.deepEqual(mutations(fallback.requests.slice(fallbackAt)), [], 'Engine failure preserves read-only World tools/inventory.');
   await fallback.page.locator('[data-city-world-close]').click();
-  await fallback.page.locator('[data-destination="training"]').click();
+  await revealPlaces(fallback.page); await fallback.page.locator('[data-destination="training"]').click();
   await fallback.page.locator('[data-city-open]').click();
   await fallback.page.locator('#tab-life.on').waitFor();
   assert.equal(await fallback.page.locator('[data-city-world-tools]').count(), 0, 'Fallback destination navigation retires its external Tools control.');
@@ -838,7 +911,7 @@ try {
   });
   assert(optionalFrames.every(frame => frame.inspecting === false && frame.hud === optionalFrames[0].hud && frame.canvas === optionalFrames[0].canvas),
     'Optional-module failure cannot toggle inspection styles or trigger a live resize loop: ' + JSON.stringify(optionalFrames));
-  await optional.page.locator('[data-destination="training"]').click(); await optional.page.locator('[data-city-open]').click();
+  await revealPlaces(optional.page); await optional.page.locator('[data-destination="training"]').click(); await optional.page.locator('[data-city-open]').click();
   assert.equal((await state(optional.page)).trainingOpen, true); assert.deepEqual((await state(optional.page)).position, optionalPose);
   assert.deepEqual(mutations(optional.requests.slice(optionalAt)), [], 'Optional tool failure preserves Core training and current pose.');
   await optional.context.close(); await page.bringToFront();
@@ -1001,6 +1074,7 @@ try {
     const joinedStyle = joinedLoader.page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
       && reply.status() === 200 && (await reply.json()).preferences.chatEnabled === true);
     await joinedLoader.page.locator('[data-city-world-tools]').tap();
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="style"]').tap(); await joinedStyle;
     await joinedLoader.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().worldUI.chatJoined
       && document.querySelectorAll('[data-city-outfit]').length === 4 && document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false');
@@ -1018,6 +1092,7 @@ try {
       assert((await reply.json()).messages.some(message => message.text === historyText));
       observedChat(); await chatGate; await route.fulfill({ response: reply });
     });
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap();
     await bounded(socialObserved, 'the joined Chat opening\'s actual Social200');
     assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0);
@@ -1047,6 +1122,7 @@ try {
     await joinedLoader.page.route('**/v1/city/social', async route => {
       const reply = await route.fetch(); assert.equal(reply.status(), 200); observedCached(); await cachedGate; await route.fulfill({ response: reply });
     });
+    if (await joinedLoader.page.locator('.city-world__tabs').getAttribute('hidden') !== null) await joinedLoader.page.locator('[data-city-world-back]').tap();
     await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap(); await bounded(cachedObserved, 'the complete-history cached Social refresh');
     assert.equal(await joinedLoader.page.locator('.city-world__content').getAttribute('aria-busy'), 'false');
     assert.equal(await joinedLoader.page.locator('.city-world__dock-bar strong').textContent(), 'Nearby chat');
@@ -1079,7 +1155,10 @@ try {
     [neighbor.character.id, new Date(Date.now() + 600000)]);
   const connected = await newPage(undefined, { actor: neighbor });
   const cityPage = connected.page, cityRequests = connected.requests;
-  const activate = control => cityPage.viewportSize().width <= 680 ? control.tap() : control.click();
+  const activate = async control => {
+    if (await control.getAttribute('data-city-world-map') !== null || await control.getAttribute('data-destination') !== null) await revealPlaces(cityPage);
+    return cityPage.viewportSize().width <= 680 ? control.tap() : control.click();
+  };
   const currentActor = async actor => (await app.pool.query('SELECT id,account_id,generation,loc,cash FROM characters WHERE account_id=$1 AND alive', [actor.character.account_id])).rows[0];
   const fares = async actor => (await app.pool.query("SELECT amount FROM transactions WHERE character_id=$1 AND currency='cash' AND reason='travel'", [(await currentActor(actor)).id])).rows.map(row => Number(row.amount));
   const recorded = async actor => (await app.inject({ url: '/v1/collection', headers: actor.headers })).json().categories.find(category => category.id === 'districts').items;
@@ -1087,6 +1166,7 @@ try {
     const control = await page.locator('[data-city-home-action="map"]').isVisible()
       ? page.locator('[data-city-home-action="map"]') : await page.locator('.city-world__dock').isVisible()
         ? page.locator('[data-city-map-view="world"]') : page.locator('[data-city-world-map]');
+    if (await control.getAttribute('data-city-world-map') !== null) await revealPlaces(page);
     await (page.viewportSize().width <= 680 ? control.tap() : control.click());
     await page.waitForFunction(() => document.querySelectorAll('[data-city-district]').length === 6
       && !document.querySelector('.city-world__content').textContent.includes('recorded visits are loading'));
@@ -1103,6 +1183,7 @@ try {
   const enterDeeds = async page => {
     const native = control => page.viewportSize().width <= 680 ? control.tap() : control.click();
     if (await page.locator('.city-world__dock').isVisible()) await native(page.locator('[data-city-world-close]'));
+    await revealPlaces(page);
     await native(page.locator('[data-destination="clubhouse"]'));
     await native(page.locator('[data-city-action="deeds"]'));
   };
@@ -1361,6 +1442,8 @@ try {
   const salePrice = deeds.json().market.minPrice;
   const listed = await app.inject({ method: 'POST', url: '/v1/deeds/list', headers: { ...viewer.headers, 'idempotency-key': crypto.randomUUID() }, payload: { price: salePrice } });
   assert.equal(listed.statusCode, 200, listed.body);
+  // The seller's assertions are complete; its renderer is not part of the buyer's journey.
+  await sellerPage.context.close();
   await cityPage.bringToFront(); await enterDeeds(cityPage); await cityPage.locator(`[data-buydeed="${seller.id}"]`).waitFor();
   const beforeBuy = await currentActor(neighbor), buyFares = await fares(neighbor), buyAt = cityRequests.length;
   const boughtDeed = cityPage.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/buy/' + seller.id);
@@ -1394,8 +1477,28 @@ try {
   const homeMoving = await state(cityPage), homePlot = homeMoving.homes.find(home => home.key === key);
   assert(Math.hypot(homeMoving.position.x - homePlot.entrance.x, homeMoving.position.y - homePlot.entrance.y) > 40,
     'A confirmed ride followed by the real home entry starts walking instead of teleporting to the property.');
-  await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
-    && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+  const homeWalkSnapshot = () => cityPage.evaluate(key => {
+    const entry = window.__worldHandles.at(-1), state = entry.handle.getState(), game = window.__worldGames.at(-1);
+    return { at: performance.now(), scene: window.__worldHandles.length, destroyed: entry.destroyed,
+      ready: state.ready, region: state.region.id, position: state.position, pathLength: state.pathLength,
+      selectedHome: state.selectedHome, home: state.homes.find(home => home.key === key), worldUI: state.worldUI,
+      focus: document.hasFocus(), visibility: document.visibilityState, active: document.activeElement?.tagName,
+      renderer: { frame: game.loop.frame, delta: game.loop.delta, actualFps: game.loop.actualFps, running: game.loop.running } };
+  }, key);
+  const homeWalkStart = await homeWalkSnapshot();
+  try {
+    await cityPage.waitForFunction(key => window.__worldHandles.at(-1).handle.getState().selectedHome === key
+      && window.__worldHandles.at(-1).handle.getState().pathLength === 0, key, { timeout: 15000 });
+  } catch (error) {
+    let diagnosticTimer;
+    const final = await Promise.race([
+      homeWalkSnapshot().catch(failure => ({ unavailable: failure.message })),
+      new Promise(resolve => { diagnosticTimer = setTimeout(() => resolve({ unavailable: 'snapshot exceeded 2000ms' }), 2000); }),
+    ]);
+    clearTimeout(diagnosticTimer);
+    console.error('world host: failed owned-home arrival', JSON.stringify({ key, start: homeWalkStart, final }));
+    throw error;
+  }
   const homeArrived = await state(cityPage);
   assert.equal(homeArrived.homes.filter(home => home.key === key).length, 1);
   assert(Math.hypot(homeArrived.position.x - homePlot.entrance.x, homeArrived.position.y - homePlot.entrance.y) < 42);
@@ -1469,7 +1572,7 @@ try {
     releasePrivateDeed(); releaseLogout();
     await cityPage.unroute('**/v1/deeds', holdPrivateDeed); await cityPage.unroute('**/v1/access/logout', holdLogout);
   }
-  await connected.context.close(); await sellerPage.context.close();
+  await connected.context.close();
   console.log('world host: canonical claim and same-parcel sale reveal fresh owned homes without fare, guarded deed focus, navigation cancellation and private teardown pass');
   }
   assert.deepEqual(errors, []);

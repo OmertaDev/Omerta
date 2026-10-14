@@ -62,6 +62,17 @@ export const FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
   tables: Object.freeze(['company_production_receipts', 'company_specialization_requests', 'company_specialization_runs',
     'company_specializations', 'item_durability_birth_quality', 'item_durability_states', 'item_durability_uses']),
 });
+// A separate complete-source profile preserves the original first-five pins.
+// Only the three owned files and closed derivative outputs are excluded.
+export const CRITIQUE_ECONOMY_ADDITIVE_PAIR = Object.freeze({
+  predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: '8209343646eea6c10012c5e1cf6484c27ee6b8b1',
+  predecessorTree: FIRST_FIVE_ADDITIVE_PAIR.predecessorTree, candidateTree: '771a131a1cc343ae27d91772f149ba460f0e24f9897dd4b8b43c2afd88daabea',
+  predecessorSchema: FIRST_FIVE_ADDITIVE_PAIR.predecessorSchema, candidateSchema: '58d8cc74253b4a63c63f3dbb73a4839dee035019f920050d9260b4b8310237cd',
+  predecessorCatalog: FIRST_FIVE_ADDITIVE_PAIR.predecessorCatalog,
+  candidateCatalog: FIRST_FIVE_ADDITIVE_PAIR.candidateCatalog,
+  candidateTableCatalog: FIRST_FIVE_ADDITIVE_PAIR.candidateTableCatalog,
+  tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
+});
 export const SECOND_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "18e28bda62759c4d18aaefea461a407b43c0b62f",
   "reviewedCandidate": "960e5ac8444313fdc2dfcd0930cccbb27dacc1fd",
@@ -140,7 +151,25 @@ export function sourcePairStateDifference(a, b) {
 // A source-pinned migration relation, not snapshot normalization. Raw snapshots and
 // their unequal hashes remain evidence; this grants no validity to new authority.
 export function qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) {
-  const pin = FIRST_FIVE_ADDITIVE_PAIR;
+  return qualifyAdditiveBootstrap(a, b, predecessor, candidate, FIRST_FIVE_ADDITIVE_PAIR);
+}
+
+export function qualifyCritiqueEconomyAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = CRITIQUE_ECONOMY_ADDITIVE_PAIR;
+  assert(/^[a-f0-9]{40}$/.test(pin.reviewedCandidate || '') && /^[a-f0-9]{64}$/.test(pin.candidateTree || '')
+    && /^[a-f0-9]{64}$/.test(pin.candidateSchema || ''), 'Combined additive source profile is not pinned');
+  return qualifyAdditiveBootstrap(a, b, predecessor, candidate, pin);
+}
+
+export function qualifyReviewedAdditiveBootstrap(a, b, predecessor, candidate) {
+  if (candidate.additiveSource?.tree === FIRST_FIVE_ADDITIVE_PAIR.candidateTree)
+    return { profile: 'first-five', ...qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) };
+  if (CRITIQUE_ECONOMY_ADDITIVE_PAIR.candidateTree && candidate.additiveSource?.tree === CRITIQUE_ECONOMY_ADDITIVE_PAIR.candidateTree)
+    return { profile: 'critique-economy', ...qualifyCritiqueEconomyAdditiveBootstrap(a, b, predecessor, candidate) };
+  assert.fail('Unrelated source changed outside the closed reviewed additive source profiles');
+}
+
+function qualifyAdditiveBootstrap(a, b, predecessor, candidate, pin) {
   assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
   assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
   for (const [identity, tree, schema, catalog] of [
@@ -355,6 +384,9 @@ export async function runSourcePair() {
     commandWindowPolicy: { ...SOURCE_PAIR_COMMAND_WINDOW, rule: 'FIRST board issuance waits for a real-clock scheduling window; actual stored board expiry bounds every subsequent replay and measured snapshot. No clock/TTL override or refreshed original board.',
       scope: 'Strict no-cache-write comparison only inside the same actual ten-minute command-board window. Expired-board ACK legitimately issues a new projection on both versions and is not qualified by this rehearsal; all rows/sequences remain strict.' },
     additiveBootstrapPolicy: { predecessor: FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate,
+      additionalProfile: { id: 'critique-economy', predecessor: CRITIQUE_ECONOMY_ADDITIVE_PAIR.predecessor,
+        reviewedCandidate: CRITIQUE_ECONOMY_ADDITIVE_PAIR.reviewedCandidate, candidateTree: CRITIQUE_ECONOMY_ADDITIVE_PAIR.candidateTree,
+        candidateSchema: CRITIQUE_ECONOMY_ADDITIVE_PAIR.candidateSchema },
       stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIRST_FIVE_ADDITIVE_PAIR.tables,
       sourceRule: 'All reviewed Git blobs remain frozen except this tool, its dedicated additive test/scoped review and the ten literal derivative knowledge outputs; full checkout inventories retain all bytes',
       derivativeEvidenceOutputs: ADDITIVE_KNOWLEDGE_OUTPUTS,
@@ -532,7 +564,7 @@ export async function runSourcePair() {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
       const qualified = predecessor.source === SECOND_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifySecondBatchAdditiveBootstrap(a, b, predecessor, candidate)
-        : qualifyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate);
+        : qualifyReviewedAdditiveBootstrap(a, b, predecessor, candidate);
       report.assertions.push({ id: label, status: 'PASS_ADDITIVE_BOOTSTRAP_ONLY', ...qualified }); update('result.json', report); return;
     }
     assert(canonicalJson(a) === canonicalJson(b), `${label}; added tables: ${delta.added.join(', ')}; removed tables: ${delta.removed.join(', ')}; changed tables: ${delta.changed.join(', ')}; changed sequences: ${delta.sequences.join(', ')}; sequence state equal: ${delta.sequenceStateEqual}`);

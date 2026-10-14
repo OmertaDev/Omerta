@@ -15,12 +15,18 @@ export const HOME_PUZZLES = Object.freeze([
     sequence: Object.freeze(['lamp','window','table']), clues: Object.freeze(['Start with the lamp nearest the top-left.', 'Check the window nearest the top-left.', 'Return to the table nearest the top-left.']) }),
   Object.freeze({ id: 'visitor-welcome', title: 'A visitor arrives',
     sequence: Object.freeze(['window','chair','table']), clues: Object.freeze(['Look through the window nearest the top-left.', 'Find the chair nearest the top-left.', 'Finish at the table nearest the top-left.']) }),
+  Object.freeze({ id: 'two-voices-v1', title: 'Two voices, one room', cooperative: true,
+    sequence: Object.freeze(['chair','table','lamp']), clues: Object.freeze([
+      'Tell your host: the first mark lies where a visitor sits, nearest the top-left.',
+      'Tell your guest: the second mark lies where a meal is shared, nearest the top-left.',
+      'Tell your host: the final mark lies where the room finds its light, nearest the top-left.',
+    ]) }),
 ]);
 export const HOME_ACTIVITY_CAPACITY = 4;
 const fail = () => { throw new GameError('bad_home_request', 'Use the current home action.'); };
 export const homeKey = value => typeof value === 'string' && value.length >= 1 && value.length <= 128 && !/[\x00-\x1f\x7f]/.test(value);
 const identifier = value => typeof value === 'string' && /^[!-~]{1,200}$/.test(value);
-const extra = Object.freeze({ activate: [], layout: ['room'], invite: ['targetCharacterId', 'rights'],
+const extra = Object.freeze({ activate: [], layout: ['room','expectedLayoutRevision'], invite: ['targetCharacterId', 'rights'],
   accept: ['grantId'], revoke: ['grantId'], leave: ['grantId'], store: ['itemId'], retrieve: ['itemId'], craft: ['recipeId'], recover: ['itemId'],
   activity_open: ['puzzleId'], activity_join: ['activityId','consent'], activity_answer: ['activityId','cellKey'],
   activity_close: ['activityId'], activity_leave: ['activityId'] });
@@ -38,8 +44,11 @@ export function validateHomeBody(kind, body) {
   validateCityViewer(body);
   if (!independent && (!homeKey(body.homeKey) || (kind === 'activate'
     ? body.authorityToken !== null && !identifier(body.authorityToken) : !identifier(body.authorityToken)))) fail();
-  for (const key of extra[kind]) if (!['room','rights','consent'].includes(key) && !identifier(body[key])) fail();
-  if (kind === 'layout') validateCityRoom(body.room);
+  for (const key of extra[kind]) if (!['room','rights','consent','expectedLayoutRevision'].includes(key) && !identifier(body[key])) fail();
+  if (kind === 'layout') {
+    validateCityRoom(body.room);
+    if (!Number.isSafeInteger(body.expectedLayoutRevision) || body.expectedLayoutRevision < 1) fail();
+  }
   if (kind === 'invite' && (!Array.isArray(body.rights) || body.rights.length < 1 || body.rights.length > 2
     || !body.rights.includes('visit') || new Set(body.rights).size !== body.rights.length
     || body.rights.some(right => !['visit', 'workbench'].includes(right)))) fail();
@@ -57,6 +66,7 @@ const fields = { room: { type: 'object', additionalProperties: false, required: 
   furniture: { type: 'array', maxItems: 12, items: { type: 'object', additionalProperties: false,
     required: ['id', 'x', 'y'], properties: { id: { type: 'string', enum: CITY_FURNITURE.map(entry => entry.id) }, x: { type: 'integer', minimum: 0, maximum: 5 },
       y: { type: 'integer', minimum: 0, maximum: 5 }, rotation: { type: 'integer', minimum: 0, maximum: 3 } } } } } },
+  expectedLayoutRevision: { type: 'integer', minimum: 1 },
   targetCharacterId: id, puzzleId: { type: 'string', enum: HOME_PUZZLES.map(puzzle => puzzle.id) }, activityId: id,
   consent: { type: 'boolean', const: true }, cellKey: { type: 'string', pattern: '^(chair|table|lamp|window):[0-5]:[0-5]$' },
   rights: { type: 'array', minItems: 1, maxItems: 2, uniqueItems: true,
@@ -121,9 +131,9 @@ export const CITY_HOME_SCHEMAS = Object.freeze({
   CityHomePuzzleOutcome: object({ puzzleId: fields.puzzleId, solvedAt: { type: 'string', format: 'date-time' } }),
   CityHomeActivityBoard: object({ catalog: array(object({ id: fields.puzzleId, title: text,
     requires: array({ type: 'string', enum: CITY_FURNITURE.map(entry => entry.id) }, 3),
-    action: { anyOf: [reference('CityHomeAction'), { type: 'null' }] } }), 3),
+    action: { anyOf: [reference('CityHomeAction'), { type: 'null' }] } }), 4),
     active: { anyOf: [{ type: 'null' }, object({ id, puzzleId: fields.puzzleId, title: text, layoutRevision: { type: 'integer', minimum: 1 },
-      capacity: { const: HOME_ACTIVITY_CAPACITY }, roster: array(object({ name: text }), HOME_ACTIVITY_CAPACITY),
+      capacity: { type: 'integer', enum: [2, HOME_ACTIVITY_CAPACITY] }, roster: array(object({ name: text }), HOME_ACTIVITY_CAPACITY),
       self: { anyOf: [{ type: 'null' }, object({ status: { type: 'string', enum: ['active','solved','left'] }, step: { type: 'integer', minimum: 0, maximum: 3 },
         clue: { anyOf: [text, { type: 'null' }] }, outcome: { anyOf: [reference('CityHomePuzzleOutcome'), { type: 'null' }] } })] },
       cells: array(object({ key: fields.cellKey, furnishingId: { type: 'string', enum: CITY_FURNITURE.map(entry => entry.id) }, label: text,

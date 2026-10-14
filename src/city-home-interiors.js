@@ -51,16 +51,26 @@ async function lockActors(client, actors) {
   }
   return locked;
 }
-async function homeAccess(client, accountId, key, { body = null, lock = false, targetId = null, activating = false } = {}) {
+async function homeAccess(client, accountId, key, { body = null, lock = false, targetId = null, activating = false, activityId = null } = {}) {
   const initial = (await client.query('SELECT * FROM street_deeds WHERE name_lc=$1', [key])).rows[0];
   if (external(initial)) fail();
-  let actor = await latestActor(client, accountId), host = await latestActor(client, initial.account_id), target;
+  let actor = await latestActor(client, accountId), host = await latestActor(client, initial.account_id), target, lockedActorIds;
   if (targetId) {
     target = (await client.query('SELECT id,account_id,name,generation,loc,alive,is_npc FROM characters WHERE id=$1 AND alive', [targetId])).rows[0];
     if (!target || target.account_id === accountId) fail();
   }
   if (lock) {
-    const locked = await lockActors(client, [actor, host, ...(target ? [target] : [])]);
+    const partners = [];
+    const activity = activityId ? (await client.query('SELECT puzzle_id FROM city_home_activities WHERE id=$1', [activityId])).rows[0] : null;
+    if (activity?.puzzle_id === 'two-voices-v1') {
+      const members = (await client.query("SELECT character_id FROM city_home_activity_members WHERE activity_id=$1 AND status IN ('active','solved')", [activityId])).rows;
+      for (const member of members) {
+        const partner = (await client.query('SELECT id,account_id,name,generation,loc,alive,is_npc FROM characters WHERE id=$1 AND alive', [member.character_id])).rows[0];
+        if (partner) partners.push(partner);
+      }
+    }
+    const locked = await lockActors(client, [actor, host, ...(target ? [target] : []), ...partners]);
+    lockedActorIds = new Set(locked.keys());
     actor = locked.get(actor.id); host = locked.get(host.id); if (target) target = locked.get(target.id);
   } else { await checkAccount(client, actor); await checkAccount(client, host); }
   if (body) current(actor, body);
@@ -90,7 +100,7 @@ async function homeAccess(client, accountId, key, { body = null, lock = false, t
     permission = grant;
   }
   if (body && body.authorityToken !== deed.home_authority_token) fail('home_authority_changed', 'Home ownership changed. Refresh before continuing.');
-  return { actor, host, target, deed, room, owner, rights, permission };
+  return { actor, host, target, deed, room, owner, rights, permission, lockedActorIds };
 }
 function baseBody(access) { return { ...viewerOf(access.actor), homeKey: access.deed.name_lc, authorityToken: access.deed.home_authority_token }; }
 async function completeReceipt(client, receipt, result) {
@@ -117,7 +127,8 @@ async function mutateHome(pool, accountId, kind, body, receipt, apply, options =
   validateHomeBody(kind, body); requireReceipt(accountId, receipt);
   return withItemTransaction(pool, async client => {
     const access = await homeAccess(client, accountId, body.homeKey, { body, lock: true,
-      targetId: options.target ? body.targetCharacterId : null, activating: kind === 'activate' });
+      targetId: options.target ? body.targetCharacterId : null, activating: kind === 'activate',
+      activityId: kind === 'activity_answer' ? body.activityId : null });
     if (options.owner && !access.owner) fail();
     if (kind !== 'activate' && !access.room) fail('home_not_active', 'Open your home before using its facilities.');
     const effect = await apply(client, access);
@@ -144,6 +155,7 @@ export function activateHome(pool, accountId, body, receipt) {
 }
 export function updateHomeLayout(pool, accountId, body, receipt) {
   return mutateHome(pool, accountId, 'layout', body, receipt, async (client, access) => {
+    if (body.expectedLayoutRevision !== Number(access.room.layout_revision)) fail('home_layout_changed', 'The furnishings changed. Refresh this room and review your draft before saving.');
     await closeActivities(client, access.deed, 'layout_changed');
     return { furniture: validateCityRoom(body.room).furniture, message: 'Home furnishings saved.' };
   }, { owner: true });
@@ -285,7 +297,7 @@ export async function homeInteriorBoard(pool, accountId, query, craftingContext 
           status: new Date(grant.expires_at).getTime() <= Date.now() ? 'expired' : grant.status, rights: decode(grant.rights_json),
           expiresAt: new Date(grant.expires_at).toISOString(), action: action('revoke:' + grant.id, 'Revoke', path('visitors/revoke'), { ...body, grantId: grant.id }) });
       }
-      actions.push(action('layout', 'Save home furnishings', path('layout'), body, [], ['room']));
+      actions.push(action('layout', 'Save home furnishings', path('layout'), { ...body, expectedLayoutRevision: Number(access.room.layout_revision) }, [], ['room']));
       actions.push(action('invite', 'Invite visitor', path('visitors/invite'), { ...body, rights: ['visit'] }, [], ['targetCharacterId', 'rights']));
     }
     const recipes = access.room && access.rights.includes('workbench') ? await homeRecipeCatalogForPlayer(client, accountId, craftingContext) : [];
@@ -418,6 +430,9 @@ export function joinHomeActivity(pool, accountId, body, receipt) {
     const existing = (await client.query('SELECT * FROM city_home_activity_members WHERE activity_id=$1 AND account_id=$2 FOR UPDATE', [activity.id,accountId])).rows[0];
     if (existing) fail('home_activity_joined', 'This participation is already recorded. Leave is final for this activity.');
     const members = (await client.query("SELECT account_id FROM city_home_activity_members WHERE activity_id=$1 AND status IN ('active','solved')", [activity.id])).rows;
+    if (puzzleOf(activity.puzzle_id).cooperative && !access.owner && members.some(member => member.account_id !== access.deed.account_id)) {
+      fail('home_activity_full', 'This puzzle pairs the host with one consenting guest.');
+    }
     if (members.length >= HOME_ACTIVITY_CAPACITY) fail('home_activity_full', 'This puzzle has four participants already.');
     registerItemTransactionUndo(client, () => client.query('DELETE FROM city_home_activity_members WHERE activity_id=$1 AND account_id=$2', [activity.id,accountId]));
     await client.query(`INSERT INTO city_home_activity_members(activity_id,account_id,character_id,generation,name_snapshot,step,status)
@@ -430,6 +445,7 @@ export function answerHomeActivity(pool, accountId, body, receipt) {
     const activity = await lockedActivity(client, access, body.activityId), puzzle = puzzleOf(activity.puzzle_id);
     const member = (await client.query('SELECT * FROM city_home_activity_members WHERE activity_id=$1 AND account_id=$2 FOR UPDATE', [activity.id,accountId])).rows[0];
     if (!member || member.status !== 'active' || member.character_id !== access.actor.id || Number(member.generation) !== Number(access.actor.generation)) fail('home_activity_unavailable');
+    if (puzzle.cooperative) return answerCooperativeHome(client, access, activity, member, puzzle, body);
     const expected = puzzleCells(puzzle, decode(activity.layout_json))[Number(member.step)];
     if (!expected || body.cellKey !== cellKey(expected)) fail('home_puzzle_clue', 'That furnishing is out of order. Follow your current clue.');
     const step = Number(member.step) + 1, complete = step === 3;
@@ -439,6 +455,39 @@ export function answerHomeActivity(pool, accountId, body, receipt) {
       WHERE activity_id=$1 AND account_id=$2`, [activity.id,accountId,step,complete ? 'solved' : 'active',solvedAt,outcome ? JSON.stringify(outcome) : null]);
     return { result: { activityId: activity.id,puzzleId: puzzle.id,step,complete,...(outcome ? { outcome } : {}) }, message: complete ? 'Puzzle complete. Your outcome is saved.' : 'Clue confirmed. Continue with the next furnishing.' };
   });
+}
+// Only the new two-voices definition uses shared stages. The original three solo definitions
+// retain their immutable per-participant sequence, receipts and outcome history.
+async function cooperativeParty(client, access, activity) {
+  const recorded = (await client.query("SELECT * FROM city_home_activity_members WHERE activity_id=$1 AND status IN ('active','solved') ORDER BY consent_at,account_id LIMIT 4", [activity.id])).rows;
+  const valid = [];
+  for (const member of recorded) {
+    try {
+      const peer = await homeAccess(client, member.account_id, access.deed.name_lc);
+      if (peer.actor.id === member.character_id && Number(peer.actor.generation) === Number(member.generation)
+        && peer.deed.home_authority_token === activity.authority_token) valid.push(member);
+    } catch (error) { if (!(error instanceof GameError)) throw error; }
+  }
+  return valid.length === 2 && valid.some(member => member.account_id === activity.host_account_id) ? valid : [];
+}
+async function answerCooperativeHome(client, access, activity, member, puzzle, body) {
+  const party = await cooperativeParty(client, access, activity);
+  if (party.length !== 2 || party.some(peer => peer.status !== 'active')) fail('home_puzzle_partner', 'The host and one consenting guest must both be here.');
+  if (party.some(peer => !access.lockedActorIds?.has(peer.character_id))) fail('contention', 'The room party changed. Refresh before continuing.');
+  const stage = party.reduce((sum, peer) => sum + Number(peer.step), 0);
+  if ((stage === 1) === access.owner) fail('home_puzzle_turn', 'It is your partner’s turn. Share your private clue.');
+  const expected = puzzleCells(puzzle, decode(activity.layout_json))[stage];
+  if (!expected || body.cellKey !== cellKey(expected)) fail('home_puzzle_clue', 'That furnishing does not match your partner’s clue.');
+  const complete = stage === 2, solvedAt = complete ? new Date() : null;
+  const outcome = complete ? { puzzleId: puzzle.id, solvedAt: solvedAt.toISOString() } : null;
+  for (const peer of complete ? party : [member]) {
+    restoreMember(client, peer);
+    await client.query(`UPDATE city_home_activity_members SET step=$3,status=$4,solved_at=$5,outcome_json=$6
+      WHERE activity_id=$1 AND account_id=$2`, [activity.id,peer.account_id,complete ? 3 : Number(peer.step) + 1,
+      complete ? 'solved' : 'active',solvedAt,outcome ? JSON.stringify(outcome) : null]);
+  }
+  return { result: { activityId: activity.id,puzzleId: puzzle.id,step: complete ? 3 : Number(member.step) + 1,complete,...(outcome ? { outcome } : {}) },
+    message: complete ? 'Together you solved the room. Both private histories are confirmed.' : 'Furnishing confirmed. Your partner now has the next move.' };
 }
 export function closeHomeActivity(pool, accountId, body, receipt) {
   return mutateHome(pool, accountId, 'activity_close', body, receipt, async (client, access) => {
@@ -480,17 +529,25 @@ async function activityBoard(client, access) {
     const actor = (await client.query('SELECT alive,generation FROM characters WHERE id=$1', [entry.character_id])).rows[0];
     if (actor?.alive && Number(actor.generation) === Number(entry.generation)) roster.push({ name: entry.name_snapshot });
   }
+  const party = puzzle.cooperative ? await cooperativeParty(client, access, row) : [];
+  const stage = party.reduce((sum, peer) => sum + Number(peer.step), 0);
+  const partnerReady = !puzzle.cooperative || party.length === 2;
+  const turn = !puzzle.cooperative || partnerReady && ((stage === 1) !== access.owner);
   const actions = [];
   if (access.owner) actions.push(action('activity-close', 'Close activity', path('activity/close'), { ...body,activityId: row.id }));
   if (!member) actions.push(action('activity-join', 'Join puzzle', path('activity/join'), { ...body,activityId: row.id },
-    recorded ? [{ code: 'home_activity_joined' }] : members.filter(entry => entry.status !== 'left').length >= HOME_ACTIVITY_CAPACITY ? [{ code: 'home_activity_full' }] : [], ['consent']));
+    recorded ? [{ code: 'home_activity_joined' }] : members.filter(entry => entry.status !== 'left').length >= HOME_ACTIVITY_CAPACITY
+      || puzzle.cooperative && !access.owner && members.some(entry => entry.account_id !== row.host_account_id) ? [{ code: 'home_activity_full' }] : [], ['consent']));
   else if (member.status !== 'left') actions.push(action('activity-leave', 'Leave activity', path('activity/leave'), { ...viewerOf(access.actor),activityId: row.id }));
-  const self = member ? { status: member.status,step: Number(member.step),clue: member.status === 'active' ? puzzle.clues[Number(member.step)] : null,
+  const clue = puzzle.cooperative ? !partnerReady ? 'Waiting for the host and one consenting guest to join in this district.'
+    : turn ? 'Your move: ask your partner for their private clue, then inspect a furnishing.' : puzzle.clues[stage] : puzzle.clues[Number(member?.step)];
+  const self = member ? { status: member.status,step: Number(member.step),clue: member.status === 'active' ? clue : null,
     outcome: member.outcome_json ? decode(member.outcome_json) : null } : null;
   const cells = decode(row.layout_json).map(cell => ({ key: cellKey(cell),furnishingId: cell.id,
     label: (CITY_FURNITURE.find(entry => entry.id === cell.id)?.name || cell.id) + `, row ${cell.y + 1}, column ${cell.x + 1}`,
-    action: member?.status === 'active' ? action('clue:' + cellKey(cell), 'Inspect furnishing', path('activity/answer'), { ...body,activityId: row.id,cellKey: cellKey(cell) }) : null }));
-  return { catalog,active: { id: row.id,puzzleId: puzzle.id,title: puzzle.title,layoutRevision: Number(row.layout_revision),capacity: HOME_ACTIVITY_CAPACITY,roster,self,cells,actions } };
+    action: member?.status === 'active' ? action('clue:' + cellKey(cell), 'Inspect furnishing', path('activity/answer'), { ...body,activityId: row.id,cellKey: cellKey(cell) },
+      !partnerReady ? [{ code: 'home_puzzle_partner' }] : !turn ? [{ code: 'home_puzzle_turn' }] : []) : null }));
+  return { catalog,active: { id: row.id,puzzleId: puzzle.id,title: puzzle.title,layoutRevision: Number(row.layout_revision),capacity: puzzle.cooperative ? 2 : HOME_ACTIVITY_CAPACITY,roster,self,cells,actions } };
 }
 export async function homeActivityHistory(pool, accountId) {
   return withItemRead(pool, async client => {

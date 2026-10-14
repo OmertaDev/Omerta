@@ -3,12 +3,12 @@
   'use strict';
   const PANELS = [['map', 'Map'], ['bag', 'Bag'], ['skills', 'Skills'], ['adventures', 'Adventures'], ['room', 'Hideout'], ['style', 'Style'], ['chat', 'Nearby chat']];
   const VOICES = {
-    fixer: ['THE FIXER', 'Every job carries a risk. Check your nerve before you step out.'],
-    training: ['THE TRAINER', 'Pick a skill. Put in the work. Catch your breath between sessions.'],
-    workshop: ['THE MECHANIC', 'Good equipment earns its place. Check what you are carrying.'],
-    clubhouse: ['THE DOORMAN', 'Your crew’s next move starts with a conversation.'],
-    stories: ['THE EDITOR', 'A clue is a lead. Follow it, then compare what you find.'],
-    waterfront: ['THE FERRYMAN', 'Check the travel board before you leave the district.']
+    fixer: ['NICO BELLINI', 'You can hear ten versions of a story on this corner. Bring me the one that holds together.'],
+    training: ['THE TRAINER', 'Shoulders down. Breathe. Show me one clean attempt before you ask for another.'],
+    workshop: ['ADA FERRI', 'Leave the rumors outside. Put the broken thing on my bench and tell me what you actually saw.'],
+    clubhouse: ['THE DOORMAN', 'I remember who keeps somebody waiting. If you have made a promise upstairs, see it through.'],
+    stories: ['ELENA SERRA', 'Ink stays longer than anger. Give me a date, a name and something I can check.'],
+    waterfront: ['THE FERRYMAN', 'A rope, a tide, a passenger still on the quay. That is how I measure time.']
   };
   const PATROLS = [
     [{ x: 875, y: 398 }, { x: 915, y: 398 }, { x: 915, y: 370 }, { x: 875, y: 370 }],
@@ -31,7 +31,8 @@
   function caption(value) { return String(value || '').replace(/[_-]/g, ' '); }
   function mount(root, input) {
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
-    let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
+    let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1, choicesShown = false;
+    let homeView = {}, renderedHomeScope = '', renderedHomeActivity = '', returnFocus = null;
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
@@ -49,8 +50,9 @@
     const bar = el('div', 'city-world__dock-bar');
     const back = el('button', 'city-world__back', 'Tools ↑'); back.type = 'button'; back.dataset.cityWorldBack = ''; back.setAttribute('aria-label', 'Back to world tool choices');
     const title = el('strong', '', 'World tools');
+    const scrollHint = el('span', 'city-world__scroll-hint', 'Scroll ↓'); scrollHint.hidden = true; scrollHint.setAttribute('aria-hidden', 'true');
     const closeButton = el('button', 'city-world__close', '×'); closeButton.type = 'button'; closeButton.dataset.cityWorldClose = ''; closeButton.setAttribute('aria-label', 'Close world tools');
-    bar.append(back, title, closeButton);
+    bar.append(back, title, scrollHint, closeButton);
     const navigation = el('nav', 'city-world__tabs'); navigation.setAttribute('aria-label', 'World tool panels');
     const tabs = new Map();
     for (const [id, label] of PANELS) {
@@ -64,12 +66,46 @@
     const speech = el('div', 'city-world__speech'); speech.hidden = true; speech.setAttribute('role', 'status'); speech.setAttribute('aria-live', 'polite');
     (options.mapLayer || root).append(speech);
     const on = (target, name, handler) => { target.addEventListener(name, handler); listeners.push(() => target.removeEventListener(name, handler)); };
+    const quickNav = el('nav', 'city-world__quick-nav'); quickNav.setAttribute('aria-label', 'Player tools');
+    const quickButtons = new Map();
+    const shortcuts = [
+      ['map', 'World', 'M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2V5zm6-2v16m6-14v16'],
+      ['bag', 'Bag', 'M5 8h14l2 13H3L5 8zm3 0V6a4 4 0 018 0v2'],
+      ['journal', 'Journal', 'M4 3h16v18H4V3zm4 0v18m3-13h6m-6 4h6m-6 4h4'],
+      ['skills', 'Skills', 'M12 2l3 7 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-7z'],
+      ['adventures', 'Quests', 'M6 22V3m0 1c5-5 8 5 14 0v10c-6 5-9-5-14 0'],
+      ['room', 'Home', 'M2 11l10-9 10 9M5 9v13h14V9m-10 13v-8h6v8'],
+      ['style', 'Style', 'M8 3l4 3 4-3 6 5-4 4v10H6V12L2 8l6-5z'],
+      ['chat', 'Chat', 'M3 3h18v14H9l-6 5V3zm4 5h10M7 12h7']
+    ];
+    for (const [id, label, drawing] of shortcuts) {
+      const control = el('button', 'city-world__shortcut'); control.type = 'button'; control.dataset.cityQuickPanel = id;
+      control.setAttribute('aria-label', id === 'map' ? 'World map and district travel' : label); control.setAttribute('aria-pressed', 'false');
+      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      icon.setAttribute('viewBox', '0 0 24 24'); icon.setAttribute('aria-hidden', 'true'); icon.setAttribute('focusable', 'false');
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'path'); line.setAttribute('d', drawing); icon.append(line);
+      control.append(icon, el('span', '', label)); quickNav.append(control); quickButtons.set(id, control);
+      on(control, 'click', () => panel === id && (id !== 'map' || mapView === 'world') ? close() : open(id, { world: id === 'map', focusReturn: control }));
+    }
+    (options.viewport || root).append(quickNav);
     const onRender = (target, name, handler) => { target.addEventListener(name, handler); renderListeners.push(() => target.removeEventListener(name, handler)); };
     function clearRenderedListeners() { renderListeners.splice(0).forEach(remove => remove()); }
     function button(label, action, className) {
       const node = el('button', className, label); node.type = 'button'; node.dataset.worldControl = label; onRender(node, 'click', action); return node;
     }
     function changed() { if (typeof options.onPanelChange === 'function') options.onPanelChange(); }
+    const compactTools = () => document.body.classList.contains('city-player-view') && (window.innerWidth <= 680 || root.classList.contains('is-world-first'));
+    function paintScrollHint() { scrollHint.hidden = !root.classList.contains('is-world-first') || dock.hidden || dock.scrollHeight - dock.scrollTop <= dock.clientHeight + 3; }
+    on(dock, 'scroll', paintScrollHint);
+    function paintChoices() {
+      navigation.hidden = compactTools() && !choicesShown;
+      back.setAttribute('aria-expanded', String(!navigation.hidden));
+      if (navigation.hidden && navigation.contains(document.activeElement)) back.focus({ preventScroll: true });
+    }
+    function revealChoices() {
+      choicesShown = true; paintChoices(); dock.scrollTo({ top: 0, behavior: 'instant' });
+      changed(); tabs.values().next().value.focus({ preventScroll: true });
+    }
     function setNotice(value) { notice = String(value || ''); paintReadState(); }
     function current(token, owner) { return !destroyed && token === opening && owner === scope && owner === identity(); }
     function paintReadState() {
@@ -84,9 +120,10 @@
         const marker = readPending[kind];
         return marker && current(marker.token, marker.owner) && marker.ticket === readTickets[kind];
       }));
-      const label = PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
+      const label = panel === 'journal' ? 'Case journal' : PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
       const heading = label + (loading ? ' · Loading…' : ''), busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
       const altered = title.textContent !== heading || content.getAttribute('aria-busy') !== busy || state.textContent !== copy;
+      dock.classList.toggle('is-loading', loading);
       if (title.textContent !== heading) title.textContent = heading;
       if (content.getAttribute('aria-busy') !== busy) content.setAttribute('aria-busy', busy);
       if (state.textContent !== copy) state.textContent = copy;
@@ -200,12 +237,16 @@
       } catch { if (current(token, owner)) setNotice('Confirmation is unavailable. Check the action receipt before trying a new choice.'); }
       finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) render(); } }
     }
-    function open(id = 'map', { world = false } = {}) {
-      if (destroyed || !tabs.has(id)) return;
+    function open(id = 'map', { world = false, choices = false, focusReturn = null } = {}) {
+      if (destroyed || !tabs.has(id) && id !== 'journal') return;
+      returnFocus = focusReturn || tools;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
       stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
+      choicesShown = choices; paintChoices();
       if (id === 'map') mapView = world ? 'world' : 'neighborhood';
-      setNotice(''); render(); changed(); content.focus({ preventScroll: true });
+      setNotice(''); render(); changed();
+      if (choices && compactTools()) tabs.values().next().value.focus({ preventScroll: true });
+      else content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
       if (id === 'adventures') { read('encounters'); read('opportunities'); }
       if (['room', 'style', 'chat'].includes(id)) read('social');
@@ -221,14 +262,26 @@
     function close(focus = true) {
       if (dock.hidden) return;
       clearSpeech();
+      homeView = {};
       stopPolling(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = ''; dock.hidden = true; clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren(); paintReadState();
-      tools.setAttribute('aria-expanded', 'false'); changed(); if (focus) tools.focus({ preventScroll: true });
+      tools.setAttribute('aria-expanded', 'false');
+      for (const control of quickButtons.values()) control.setAttribute('aria-pressed', 'false');
+      changed(); if (focus) (returnFocus?.isConnected && returnFocus.getClientRects().length ? returnFocus : tools).focus({ preventScroll: true });
       if (!destroyed && socialPreferences().chatEnabled === true) startPolling();
     }
-    on(tools, 'click', () => dock.hidden ? open('map') : close());
+    on(tools, 'click', () => dock.hidden ? open('map', { choices: true }) : close());
     on(closeButton, 'click', () => close());
-    on(back, 'click', () => { dock.scrollTo({ top: 0, behavior: 'instant' }); tabs.values().next().value.focus({ preventScroll: true }); });
-    on(navigation, 'click', event => { const tab = event.target.closest('[data-city-world-panel]'); if (tab && navigation.contains(tab)) open(tab.dataset.cityWorldPanel); });
+    on(back, 'click', () => {
+      if (compactTools() && choicesShown && dock.scrollTop === 0) {
+        choicesShown = false; paintChoices(); changed(); content.focus({ preventScroll: true });
+      } else revealChoices();
+    });
+    on(navigation, 'click', event => {
+      const tab = event.target.closest('[data-city-world-panel]');
+      if (!tab || !navigation.contains(tab)) return;
+      open(tab.dataset.cityWorldPanel);
+    });
+    on(window, 'resize', () => { paintChoices(); if (!dock.hidden) changed(); });
     on(dock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
     on(tracker, 'click', () => { close(false); if (typeof options.onOpenIntel === 'function') options.onOpenIntel(); });
     function stopPolling() { if (pollTimer !== null) { clearInterval(pollTimer); pollTimer = null; } }
@@ -366,6 +419,9 @@
         choose.setAttribute('aria-pressed', String(mapView === id)); modes.append(choose);
       }
       content.append(modes);
+      const resume = button('Your next move & accomplishments', () => read('continuity'));
+      resume.dataset.cityResume = ''; content.append(resume);
+      if (boards.continuity) renderContinuity(boards.continuity);
       if (mapView === 'world') { renderAtlas(); return; }
       heading(String(options.district?.name || 'Your neighborhood'), 'Choose a waypoint to walk there. People markers show approximate district presence.');
       const map = el('canvas', 'city-world__minimap'); map.width = 480; map.height = 320; map.dataset.cityMinimap = '';
@@ -388,6 +444,33 @@
         content.append(homes);
       }
       paintMap();
+    }
+    function renderContinuity(board) {
+      const recap = el('section', 'city-world__card'); recap.dataset.cityContinuity = '';
+      recap.append(el('h4', '', 'Pick up your thread'), el('p', 'city-world__hint', 'Your last checked private records. Use Your next move to check again. Continuing only opens the activity; joining, travel and spending still need your confirmation.'));
+      const cases = list(board.cases).filter(item => item.status === 'active');
+      const operations = list(board.operations).filter(item => ['forming', 'active'].includes(item.status));
+      for (const item of cases.slice(0, 3)) recap.append(button('Continue case · ' + String(item.title || 'Investigation'), async () => {
+        const owner = scope; close(false); const opened = await options.onContinueCase?.(item.graphId);
+        if (!destroyed && owner === scope && owner === identity() && opened !== true)
+          options.onNavigate?.('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
+      }));
+      if (operations.length) recap.append(button('Continue Crew · ' + String(operations[0].title || 'Your operation'), () => options.onCrew?.()));
+      for (const item of list(board.permissions).filter(item => item.status === 'active').slice(0, 3)) {
+        recap.append(button('Continue at ' + String(item.homeKey), () => { open('room'); read('home-interior', opening, { homeKey: item.homeKey }); }));
+      }
+      if (list(board.invitations).length) recap.append(button('Review ' + list(board.invitations).length + ' home invitation' + (list(board.invitations).length === 1 ? '' : 's'), () => open('room')));
+      if (!cases.length && !operations.length && !list(board.invitations).length && !list(board.permissions).some(item => item.status === 'active')) recap.append(el('p', '', 'No unfinished case, Crew run or accepted home invitation was found. Explore a venue to start your next story.'));
+      recap.append(el('h4', '', 'Saved accomplishments'));
+      const achievements = [
+        ...list(board.cases).filter(item => item.status === 'completed').map(item => ['Case closed', item.title]),
+        ...list(board.completedOperations).map(item => ['Crew run complete as ' + item.roleTitle, item.title]),
+        ...list(board.history).map(item => ['Puzzle solved', item.title]),
+        ...list(board.items).filter(item => item.state === 'active' && !item.escrowed).map(item => ['Owned item', String(item.title || item.templateId || 'Item').replace(/^[^:]+:/, '').replace(/[_-]+/g, ' ')]),
+      ].slice(0, 20);
+      for (const [kind, name] of achievements) recap.append(el('p', '', String(name || kind) + ' · ' + kind));
+      if (!achievements.length) recap.append(el('p', '', 'Your completed stories and owned keepsakes will appear here after confirmation.'));
+      content.append(recap);
     }
     function renderAtlas() {
       const districts = atlasDistricts(), category = list(boards.collection?.categories).find(item => item.id === 'districts');
@@ -514,6 +597,16 @@
     }
     function socialPreferences() { return boards.social?.preferences || {}; }
     function renderRoom() {
+      if (window.CityHomeUi) {
+        const home = el('section', 'city-world__home-tools'); home.dataset.cityHomeTools = '';
+        window.CityHomeUi.render(home, { board: boards['home-interior'], invitations: boards['home-invitations'],
+          recovery: boards['home-recovery'], history: boards['home-history'], homes: boards['home-list'], actors: options.actors, pending: pending || options.recovery === true,
+          state: homeView, onBind: onRender, onRead: (kind, input) => read(kind, opening, input),
+          onProperties: () => { close(false); options.onNavigate?.('deeds', { venueId: 'clubhouse', focus: 'owned-deed' }); },
+          onAction: (issued, fields) => action('home-action', { id: issued?.id, path: issued?.path, body: issued?.body, fields }) });
+        content.append(home);
+        if (boards['home-interior']?.home) return;
+      }
       const preferences = socialPreferences(), furniture = list(preferences.room?.furniture || preferences.furniture, 12);
       heading('Your hideout', 'Make this corner of the city yours. Furniture is cosmetic; your protection still follows the normal safehouse rules.');
       const room = el('div', 'city-world__room'); room.dataset.cityHideout = ''; room.setAttribute('role', 'group'); room.setAttribute('aria-label', 'Six by six hideout floor');
@@ -553,14 +646,6 @@
       const safe = number(options.character?.safeSeconds);
       content.append(el('p', 'city-world__hint', safe > 0 ? 'Safehouse protection: ' + Math.ceil(safe / 60) + ' minutes remaining.' : 'Decorating does not activate protection.'));
       content.append(button('Safehouse options →', () => { close(false); options.onNavigate?.('streets', { venueId: 'directory' }); }));
-      if (window.CityHomeUi) {
-        const home = el('section', 'city-world__home-tools'); home.dataset.cityHomeTools = '';
-        window.CityHomeUi.render(home, { board: boards['home-interior'], invitations: boards['home-invitations'],
-          recovery: boards['home-recovery'], history: boards['home-history'], homes: boards['home-list'], actors: options.actors, pending: pending || options.recovery === true,
-          onBind: onRender, onRead: (kind, input) => read(kind, opening, input),
-          onAction: (issued, fields) => action('home-action', { id: issued?.id, path: issued?.path, body: issued?.body, fields }) });
-        content.append(home);
-      }
     }
     function renderStyle() {
       const preferences = socialPreferences();
@@ -603,23 +688,33 @@
     }
     function render() {
       if (destroyed || !panel) return;
+      paintChoices();
       const scroll = dock.scrollTop, active = document.activeElement;
       const focused = content.contains(active) || receiptBox.contains(active);
       const focusKey = active?.dataset?.worldControl || active?.getAttribute('aria-label');
       const preserveDraft = renderedOpening === opening;
-      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
+      const home = boards['home-interior'];
+      const homeScope = JSON.stringify([scope, home?.viewer?.characterId, home?.viewer?.generation, home?.viewer?.district, home?.home?.key, home?.home?.authorityToken]);
+      const homeActivity = home?.activity?.active?.id || '';
+      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'))
+        .filter(field => !field.closest('[data-city-home-tools]') || renderedHomeScope === homeScope
+          && (!field.closest('[data-city-home-activity]') || renderedHomeActivity === homeActivity))
+        .map(field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
+      for (const [id, control] of quickButtons) control.setAttribute('aria-pressed', String(id === panel));
       if (panel === 'map') renderMap(); else if (panel === 'bag') renderBag(); else if (panel === 'skills') renderSkills();
       else if(panel==='adventures'&&window.CityAdventureUi)window.CityAdventureUi.render(content,{encounters:boards.encounters,index:boards.opportunities,
         detail:boards['opportunity-detail'],pending:pending||options.recovery===true,onBind:onRender,onRead:(kind,input)=>read(kind,opening,input),
         onAction:issued=>action('adventure-action',{id:issued.id,path:issued.path,body:{...issued.body}}),onCrew:()=>options.onCrew?.()});
+      else if (panel === 'journal') renderCaseJournal();
       else if (panel === 'room') renderRoom(); else if (panel === 'style') renderStyle(); else if (panel === 'chat') renderChat();
       for (const field of content.querySelectorAll('input,select')) if (drafts.has(field.getAttribute('aria-label'))) {
         const draft=drafts.get(field.getAttribute('aria-label'));field.value=draft.value;if(field.type==='checkbox')field.checked=draft.checked;
       }
       renderedOpening = opening;
+      renderedHomeScope = homeScope; renderedHomeActivity = homeActivity;
       paintReadState(); dock.scrollTop = scroll;
       if (options.receipt) {
         receiptBox.append(el('strong', '', options.receipt.label || 'World action'), el('p', '', options.receipt.summary || ''));
@@ -663,12 +758,65 @@
       for (const actor of list(state.actorMarkers, 24)) { context.fillStyle = actor.kind === 'agent' ? '#9ec5ef' : actor.kind === 'npc' ? '#c6b696' : '#a5d9c6'; context.fillRect(actor.x * sx - 2, actor.y * sy - 2, 4, 4); }
       const pose = state.position || state.player; if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(pose.x * sx, pose.y * sy, 5, 0, Math.PI * 2); context.fill(); }
     }
+    function renderCaseJournal() {
+      const journal = options.caseJournal;
+      heading('Your current case', 'Keep one thread in view. Reading, selecting and pinning a lead do not spend anything.');
+      if (!journal) { heading('The journal is unavailable', 'Use Refresh to request your current case record.'); return; }
+      const select = el('select'); select.setAttribute('aria-label', 'Tracked case'); select.dataset.cityCaseSelect = '';
+      for (const entry of list(journal.entries, 32)) { const option = el('option', '', entry.title + (entry.status === 'completed' ? ' · completed' : ''));
+        option.value = entry.graphId; option.selected = entry.graphId === journal.selected; select.append(option); }
+      select.disabled = pending || options.casePending || options.recovery;
+      onRender(select, 'change', () => { if (!select.disabled) options.onSelectCase?.(select.value); }); content.append(select);
+      heading(journal.title, journal.description);
+      const token = opening, owner = scope;
+      const lead = list(journal.leads).find(lead => list(lead.actions).some(action => action.available && !action.isCancel)) || list(journal.leads)[0];
+      const evidence = el('div', 'city-world__evidence'); evidence.dataset.cityCaseEvidence = '';
+      for (const clue of list(journal.evidence)) { const card = el('article', 'city-world__card');
+        card.append(el('strong', '', clue.title), el('p', '', clue.description)); evidence.append(card); }
+      if (evidence.childElementCount) { heading('Evidence you acquired'); content.append(evidence); }
+      if (lead) {
+        const beat = el('section', 'city-world__card'); beat.dataset.cityCaseBeat = lead.nodeId || 'offer';
+        beat.append(el('h4', '', lead.title), el('p', '', lead.dialogue));
+        const place = list(options.venues, 16).find(venue => venue.id === lead.venueId);
+        if (place) beat.append(button('Pin lead · ' + place.name, () => { if (!current(token, owner)) return; close(false); options.onWaypoint?.(place.id); }));
+        for (const action of list(lead.actions)) {
+          const act = button(action.label, async () => {
+            if (pending || options.casePending || options.recovery || !current(token, owner)) return;
+            pending = true; render();
+            try { await options.onCaseAction?.(lead.venueId, action.id, { beforeDispatch: () => current(token, owner) }); }
+            finally { if (!destroyed && owner === scope && owner === identity()) { pending = false; if (panel) { render(); changed(); } } }
+          });
+          act.dataset.cityCaseAction = action.id; act.disabled = !action.available || pending || options.casePending || options.recovery;
+          if (!action.available) { const copy = list(action.blockedBy).map(item => item.message || item.label || 'Follow the earlier evidence first.').join(' ');
+            beat.append(el('p', 'city-world__hint', copy)); }
+          beat.append(act);
+        }
+        content.append(beat);
+      } else if (journal.status === 'completed') {
+        heading(journal.selected === 'first-errand-case-v2' ? 'Elena kept your signed account' : 'Case completed', 'Nico has paying work. Read the actual nerve cost and risk, attempt a job, then check its confirmed receipt. A failed job may pay nothing.');
+        content.append(button('Ask Nico for a paying job', () => { if (current(token, owner)) { close(false); options.onJob?.(); } }));
+      } else heading('No current lead', 'The case may be closed. Choose another case or open the full archive.');
+      const discovered = list(journal.nodes).filter(node => node.venueId && node.status !== 'completed' && list(node.uiActions || node.actions).some(action => action.available));
+      if (discovered.length > 1) {
+        const choices = el('details'); choices.append(el('summary', '', 'Other visible leads'));
+        for (const node of discovered) { const place = list(options.venues, 16).find(venue => venue.id === node.venueId);
+          if (place) choices.append(button(node.title + ' · ' + place.name, () => { if (current(token, owner)) { close(false); options.onInspectVenue?.(place.id); } })); }
+        content.append(choices);
+      }
+      content.append(button('Full case archive & fieldwork →', () => { if (current(token, owner)) options.onNavigate?.('fieldwork', { venueId: 'directory', initialView: 'mysteries' }); }));
+    }
     function speak(venueId, now) {
       if (!VOICES[venueId]) return;
-      const [name, copy] = VOICES[venueId]; showSpeech(name + ' · NPC', copy, now);
+      const [name, greeting] = VOICES[venueId];
+      const completed = list(options.caseJournal?.entries).some(entry => entry.graphId === 'first-errand-case-v2' && entry.status === 'completed');
+      const memory = { fixer: 'Ada says Parcel 47 is back where it belongs. You checked before you pointed a finger. I have work for someone like that.',
+        workshop: 'Parcel 47. I remember. The motor is running again, and nobody had to wear a mistake that was not theirs.',
+        stories: 'Your signed correction is in the morning edition. Keep bringing me evidence with the dates intact.',
+        waterfront: 'You are the one who checked Valli’s signature. He read your correction before the first sailing.' };
+      showSpeech(name + ' · NPC', completed && memory[venueId] || greeting, now);
     }
     function showSpeech(name, copy, now) {
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      const roomy = !root.classList.contains('is-world-first') && (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
       const wasInline = !dialogue.hidden;
       speech.replaceChildren(el('strong', '', name), el('span', '', copy)); speech.hidden = !roomy;
       dialogue.textContent = name + ': ' + copy; dialogue.hidden = roomy; speechUntil = now + 6500;
@@ -677,7 +825,7 @@
     function clearSpeech() { const wasInline = !dialogue.hidden; speech.hidden = true; dialogue.hidden = true; speech.replaceChildren(); dialogue.textContent = ''; speechUntil = 0; if (wasInline) changed(); }
     function fitSpeech() {
       if (!speechUntil || !speech.childNodes.length) return;
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
+      const roomy = !root.classList.contains('is-world-first') && (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
       if (dialogue.hidden === roomy && speech.hidden === !roomy) return;
       speech.hidden = !roomy; dialogue.hidden = roomy; changed();
     }
@@ -702,7 +850,7 @@
           options.atlas = null; options.collection = null; options.homes = null;
           selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
           options.onHomes?.(null);
-          options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
+          options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {}; options.caseJournal = next.caseJournal || null;
           pending = false; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
           lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
         }
@@ -745,7 +893,7 @@
         }
         if (speechUntil && now > speechUntil) clearSpeech();
       },
-      open, close,
+      open, close, openJournal() { open('journal'); },
       openMapOverview(districtId) {
         const allowed = atlasDistricts().some(district => district.id === districtId)
           || list(options.rules?.districts).some(district => (district.id || district) === districtId);
@@ -758,9 +906,9 @@
       },
       isOpen: () => !dock.hidden,
       panelHeight: () => dock.hidden ? 0 : dock.getBoundingClientRect().height,
-      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); } },
+      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); paintScrollHint(); } },
       getState: () => ({ panel, opening, pending, scope, mapView, districtId: selectedDistrict, selectedHome, chatJoined: socialPreferences().chatEnabled === true }),
-      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
+      destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); quickNav.remove(); dock.remove(); speech.remove(); }
     };
     handle.update(input);
     return handle;

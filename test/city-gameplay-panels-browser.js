@@ -17,6 +17,8 @@ assert(executablePath);
 const app = await buildServer(), contexts = [], errors = [];
 const bindingInverse = process.argv.includes('--binding-inverse');
 const adventureBindingInverse = process.argv.includes('--adventure-binding-inverse');
+const crewPollingInverse = process.argv.includes('--crew-polling-inverse');
+const crewLoadingInverse = process.argv.includes('--crew-loading-inverse');
 let browser;
 const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
 const bounded = (promise, label) => new Promise((resolve, reject) => {
@@ -51,6 +53,18 @@ try {
   const base = 'http://127.0.0.1:' + app.server.address().port;
   browser = await chromium.launch({ executablePath, headless: true });
   const activate = async (fixture, control) => {
+    if ((await control.getAttribute('data-destination') !== null || await control.getAttribute('data-city-world-map') !== null)
+      && await fixture.page.locator('.omerta-city__overview').isVisible() && await fixture.page.locator('.omerta-city__overview').getAttribute('open') === null) {
+      for (const selector of ['[data-city-world-close]','[data-city-actor-close]','[data-city-training-close]','[data-city-close]']) {
+        const close = fixture.page.locator(selector); if (await close.isVisible()) { if (fixture.viewport.width <= 680) await close.tap(); else await close.click(); }
+      }
+      const summary = fixture.page.locator('.omerta-city__overview > summary');
+      if (fixture.viewport.width <= 680) await summary.tap(); else await summary.click();
+    }
+    if (await control.getAttribute('data-city-world-panel') !== null && await fixture.page.locator('.city-world__tabs').getAttribute('hidden') !== null) {
+      const choices = fixture.page.locator('[data-city-world-back]');
+      if (fixture.viewport.width <= 680) await choices.tap(); else await choices.click();
+    }
     const at = await fixture.page.evaluate(() => window.__panelPointers.length);
     if (fixture.viewport.width <= 680) await control.tap(); else await control.click();
     const pointer = await fixture.page.evaluate(at => window.__panelPointers.slice(at).at(-1), at);
@@ -97,6 +111,18 @@ try {
         + '    homeKey: _cityWorldData?.["home-interior"]?.home?.key || null,\n'
         + '    viewer: me ? { characterId: me.id, generation: me.generation, district: me.loc } : null });\n' + anchor) });
     });
+    if (crewPollingInverse) await page.route('**/world-fieldwork.js*', async route => {
+      const response = await route.fetch(), source = await response.text();
+      const trigger = "await load(['operations'], { background: true });";
+      assert.equal(source.split(trigger).length, 2, 'The inverse removes only the new timed Crew read.');
+      await route.fulfill({ response, body: source.replace(trigger, 'void 0;') });
+    });
+    if (crewLoadingInverse) await page.route('**/world-fieldwork.js*', async route => {
+      const response = await route.fetch(), source = await response.text();
+      const gate = 'backgroundLoading = background; loading = !background;';
+      assert.equal(source.split(gate).length, 2, 'The inverse restores only the invisible background action lock.');
+      await route.fulfill({ response, body: source.replace(gate, 'backgroundLoading = background; loading = true;') });
+    });
     await page.goto(base, { waitUntil: 'networkidle' }); await page.locator('#screen-main:not(.hidden)').waitFor();
     if (await page.locator('.modal-bg[data-managed-dialog]').count()) await page.keyboard.press('Escape');
     const fixture = { page, context, actor, viewport }; await activate(fixture, page.locator('#btn-player-view'));
@@ -119,12 +145,29 @@ try {
   };
   const adventureRevisionJourney = async viewport => {
     const actor = await create('Panel Revision Player ' + viewport.width), fixture = await newPage(actor, viewport);
+    await fixture.page.emulateMedia({ reducedMotion: viewport.width <= 680 ? 'reduce' : 'no-preference' });
+    await fixture.page.evaluate(() => { window.__drillAnimations = []; document.addEventListener('animationstart', event => {
+      if (event.animationName === 'city-drill-step') window.__drillAnimations.push(event.target.closest('[data-city-drill]')?.dataset.cityDrillRevision);
+    }); });
     const entry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), position = (await state(fixture)).position;
     await panel(fixture, 'adventures');
     const prepared = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/encounters/start');
     await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-patrol"]'));
     const preparation = await prepared; assert.equal(preparation.status(), 200);
     const initial = (await preparation.json()).encounter; assert.equal(initial.revision, 1); await settled(fixture);
+    const drill = fixture.page.locator('[data-city-drill]');
+    assert.equal(await drill.count(), 1);
+    assert.equal(await drill.locator('.city-drill__stage').getAttribute('data-intent'), initial.intent);
+    assert.deepEqual(await drill.locator('meter').evaluateAll(nodes => nodes.map(node => [node.value, node.max])),
+      [[initial.health,initial.maxHealth],[initial.stamina,10],[initial.enemyHealth,initial.enemyMaxHealth]]);
+    assert.equal(await drill.locator('.city-drill__stage img').count(), 2, 'Both drill participants are staged visibly without adding world actors.');
+    await fixture.page.waitForFunction(() => [...document.querySelectorAll('.city-drill__stage img')].length === 2
+      && [...document.querySelectorAll('.city-drill__stage img')].every(node => node.complete && node.naturalWidth > 0));
+    assert(await drill.locator('.city-drill__stage img').evaluateAll(nodes => nodes.every(node => node.complete && node.naturalWidth > 0)), 'Existing pixel art actually loads.');
+    assert((await fixture.page.locator('.city-drill__moves').textContent()).includes('momentum from guarding strengthens it'));
+    assert((await fixture.page.locator('.city-drill__moves').textContent()).includes('Recover stamina up to its cap'));
+    assert.equal(await drill.locator('.city-drill__result').textContent(), initial.last);
+    await same(fixture, entry, position);
     const turnPath = '/v1/city/encounters/' + encodeURIComponent(initial.id) + '/turn';
     const gate = deferred(), committed = deferred(), playerGate = deferred(), playerHeld = deferred();
     let playerOnce = false;
@@ -187,6 +230,16 @@ try {
       const refreshed = await refresh; assert.equal(refreshed.status(), 200); const current = (await refreshed.json()).active;
       assert.equal(current.revision, 3); await settled(fixture);
       await fixture.page.locator(`[data-city-encounter="${initial.id}"]`).getByText(/^Round 3\/12/).waitFor();
+      if (viewport.width > 680) await fixture.page.waitForFunction(() => window.__drillAnimations.includes('3'));
+      else assert.equal(await fixture.page.locator('.city-drill__player').evaluate(node => getComputedStyle(node).animationName), 'none', 'Reduced motion keeps the same tactical information without a move animation.');
+      const animations = await fixture.page.evaluate(() => window.__drillAnimations.length);
+      const unchangedRead = fixture.page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/city/encounters');
+      await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh encounters', exact: true }));
+      const unchanged = await unchangedRead; assert.equal(unchanged.status(), 200); assert.equal((await unchanged.json()).active.revision, 3);
+      await settled(fixture);
+      await fixture.page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      assert.equal(await fixture.page.evaluate(() => window.__drillAnimations.length), animations, 'Refreshing the same confirmed revision does not replay a move animation.');
+      assert.deepEqual(posts, [], 'Inspecting intent, previews and unchanged results never sends a gameplay action.');
       const fresh = current.actions.find(action => action.id === 'guard'); assert(fresh?.available); assert.equal(fresh.body.expectedRevision, 3);
       const accepted = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === turnPath);
       await activate(fixture, fixture.page.locator('[data-city-adventure-action="guard"]'));
@@ -302,6 +355,47 @@ try {
     await entry.dispose(); await fixture.context.close();
     console.log('NPC Adventures passed:', viewport.width, 'real resident; zero gameplay POST opening; native start/step/discovery/first favor; durable 1/3 with no money effects; exact receipt replay; current-body target/generation refusals; private detail retirement before held player GET; same scene/pose until identity publication');
   };
+  const cooperativeHomeJourney = async () => {
+    const host = await create('Room Pair Host'), guest = await create('Room Pair Guest');
+    await success(post(host,'/v1/deeds/claim',{name:'Two Voices Browser',district:'docks'}));
+    const key=(await get(host,'/v1/city/homes?district=docks')).myHome.key;
+    const interior=actor=>get(actor,'/v1/city/home/interior?homeKey='+encodeURIComponent(key));
+    const activateHome=(await interior(host)).actions.find(action=>action.id==='activate'); await success(post(host,activateHome.path,activateHome.body));
+    let board=await interior(host);const layout=board.actions.find(action=>action.id==='layout');
+    await success(post(host,layout.path,{...layout.body,room:{furniture:[{id:'chair',x:0,y:0},{id:'table',x:1,y:0},{id:'lamp',x:2,y:0}]}}));
+    const invite=(await interior(host)).actions.find(action=>action.id==='invite');
+    const invited=await success(post(host,invite.path,{...invite.body,targetCharacterId:guest.id}));
+    const permission=(await get(guest,'/v1/city/home/invitations')).invitations.find(row=>row.id===invited.effect.grantId).action;
+    await success(post(guest,permission.path,permission.body));
+    const a=await newPage(host,{width:1440,height:1000}),b=await newPage(guest,{width:375,height:812});
+    const snapshots=[];const writes=[];
+    for(const fixture of [a,b]){fixture.page.on('request',request=>{if(request.method()==='POST')writes.push(new URL(request.url()).pathname);});
+      snapshots.push({entry:await fixture.page.evaluateHandle(()=>window.__panelHandles.at(-1)),pose:(await state(fixture)).position});await panel(fixture,'room');}
+    await activate(a,a.page.getByRole('button',{name:'Enter Two Voices Browser',exact:true}));await settled(a);
+    await activate(b,b.page.getByRole('button',{name:'Enter home',exact:true}));await settled(b);
+    for(const fixture of [a,b])await activate(fixture,fixture.page.getByRole('button',{name:'Hosting',exact:true}));
+    assert.deepEqual(writes,[],'Entering a granted home and selecting Hosting do not imply puzzle consent.');
+    const send=async(fixture,control,path)=>{const reply=fixture.page.waitForResponse(response=>response.request().method()==='POST'&&new URL(response.url()).pathname===path);
+      await activate(fixture,control);assert.equal((await reply).status(),200);await settled(fixture);};
+    const refresh=async fixture=>{await activate(fixture,fixture.page.getByRole('button',{name:'Refresh this room',exact:true}));await settled(fixture);};
+    await send(a,a.page.locator('.city-world__card').filter({has:a.page.getByText('Two voices, one room',{exact:true})}).getByRole('button',{name:'Open puzzle',exact:true}),'/v1/city/home/activity/open');
+    for(const fixture of [a,b]){await refresh(fixture);await activate(fixture,fixture.page.getByLabel('Share my name and join this home puzzle',{exact:true}));
+      await send(fixture,fixture.page.getByRole('button',{name:'Join puzzle',exact:true}),'/v1/city/home/activity/join');}
+    await refresh(a);await refresh(b);
+    assert(!(await a.page.locator('[data-city-home-activity]').textContent()).includes('where a visitor sits'));
+    assert((await b.page.locator('[data-city-home-activity]').textContent()).includes('where a visitor sits'));
+    for(const [actor,fixture,furnishing]of [[host,a,'chair'],[guest,b,'table'],[host,a,'lamp']]){
+      await refresh(fixture);const cell=(await interior(actor)).activity.active.cells.find(cell=>cell.furnishingId===furnishing);
+      await send(fixture,fixture.page.getByRole('button',{name:cell.label,exact:true}),cell.action.path);
+    }
+    await refresh(b);assert((await b.page.locator('[data-city-home-activity]').textContent()).includes('Confirmed solved:'));
+    assert.equal((await get(host,'/v1/city/home/activity-history')).outcomes[0].outcome.puzzleId,'two-voices-v1');
+    assert.equal((await get(guest,'/v1/city/home/activity-history')).outcomes[0].outcome.puzzleId,'two-voices-v1');
+    for(const [index,fixture]of [a,b].entries()){await same(fixture,snapshots[index].entry,snapshots[index].pose);await snapshots[index].entry.dispose();await fixture.context.close();}
+    assert.deepEqual(writes,['/v1/city/home/activity/open','/v1/city/home/activity/join','/v1/city/home/activity/join',...Array(3).fill('/v1/city/home/activity/answer')]);
+    console.log('Home cooperative browser PASS: real desktop host/phone guest, explicit dual consent, private complementary clue, alternating issued actions, both confirmed histories and unchanged scene/pose');
+  };
+  await cooperativeHomeJourney();
   for (const viewport of [{ width: 375, height: 812 }, { width: 1440, height: 1000 }]) {
     await adventureRevisionJourney(viewport);
     await npcJourney(viewport);
@@ -321,11 +415,50 @@ try {
     await activate(fixture, fixture.page.getByRole('button', { name: activation.label, exact: true }));
     const activationReply = await activated; assert.equal(activationReply.status(), 200); await settled(fixture);
     await fixture.page.locator('[data-city-deed-room]').waitFor({ state: 'visible' });
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Workbench', exact: true }));
     const salvage = fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText('Strip a Wreck', { exact: true }) });
+    assert(await salvage.isVisible(), 'The workbench station exposes the real recipe controls.');
     assert((await salvage.textContent()).includes('1 × Car'), 'The real asset ingredient has a readable label.');
     assert((await salvage.textContent()).includes('Use Crafting for car salvage.'), 'The real salvage refusal explains where to continue.');
     assert(!(await fixture.page.locator('.city-world__content').textContent()).match(/undefined|recipe_location|recipe_owns_car|salvage_required/),
       'Home recipe presentation does not print missing fields or internal blocker codes.');
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Room & furniture', exact: true }));
+    const initialRoom = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
+    const draftEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), draftPose = (await state(fixture)).position;
+    const draftPosts = [], trackDraft = request => { if (request.method() === 'POST') draftPosts.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', trackDraft);
+    const previewCell = fixture.page.getByRole('button', { name: 'Preview column 2, row 2', exact: true });
+    const previewBounds = await previewCell.boundingBox(); assert(previewBounds.width >= 44 && previewBounds.height >= 44);
+    for (const label of ['Rotate preview', 'Place in draft', 'Undo last placement', 'Reset to confirmed room', 'Save furnishing', 'Refresh this room']) {
+      const control = fixture.page.getByRole('button', { name: label, exact: true });
+      const bounds = await control.boundingBox(); assert(bounds.height >= 44, label + ' retains a 44px touch target.');
+    }
+    await activate(fixture, previewCell); await activate(fixture, fixture.page.getByRole('button', { name: 'Rotate preview', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 1);
+    if(process.env.CITY_HOME_SHOTS){fs.mkdirSync(process.env.CITY_HOME_SHOTS,{recursive:true});await fixture.page.screenshot({path:process.env.CITY_HOME_SHOTS+'/home-draft-'+viewport.width+'.png'});}
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Undo last placement', exact: true }));
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 0);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert.equal(await fixture.page.getByRole('img', { name: /rotation 90 degrees/ }).count(), 1, 'Ordinary refresh preserves the unsent furnishing draft.');
+    assert.deepEqual(draftPosts, []); assert.deepEqual((await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey))).room.furniture, initialRoom.room.furniture);
+    const saveReply = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/home/layout');
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }));
+    const saved = await saveReply; assert.equal(saved.status(), 200); assert.equal(saved.request().postDataJSON().expectedLayoutRevision, initialRoom.home.layoutRevision); await settled(fixture);
+    assert.deepEqual(draftPosts, ['/v1/city/home/layout']);
+    await same(fixture, draftEntry, draftPose); fixture.page.off('request', trackDraft); await draftEntry.dispose();
+    const confirmed = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
+    assert.equal(confirmed.room.furniture[0].rotation, 1);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Preview column 3, row 2', exact: true }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Place in draft', exact: true }));
+    const externalLayout = confirmed.actions.find(action => action.id === 'layout');
+    await success(post(actor, externalLayout.path, { ...externalLayout.body, room: { furniture: [{ id: 'chair', x: 4, y: 4, rotation: 2 }] } }));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert(await fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }).isDisabled());
+    assert((await fixture.page.locator('[data-city-home-station="room"]').textContent()).includes('Your draft is kept'));
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Reset to confirmed room', exact: true }));
+    assert(await fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }).isEnabled());
     const privateBefore = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey));
     const furnishing = privateBefore.room.catalog[0].id;
     const occupied = new Set(privateBefore.room.furniture.filter(item => item.id !== furnishing).map(item => item.x + ':' + item.y));
@@ -371,7 +504,9 @@ try {
 
     await panel(fixture, 'adventures');
     const liveEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), livePose = (await state(fixture)).position;
-    const encounterBefore = await get(actor, '/v1/city/encounters'); assert.equal(encounterBefore.scenarios.length, 1); assert.equal(encounterBefore.active, null);
+    const encounterBefore = await get(actor, '/v1/city/encounters');
+    assert.deepEqual(encounterBefore.scenarios.map(scenario => scenario.id), ['docks-patrol', 'docks-mastery-v1']);
+    assert.equal(encounterBefore.active, null);
     const prepared = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/encounters/start');
     await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-patrol"]'));
     const prepareReply = await prepared; assert.equal(prepareReply.status(), 200); const prepareBody = await prepareReply.json();
@@ -407,6 +542,21 @@ try {
     }
     const completed = await get(actor, '/v1/city/encounters');
     assert.equal(completed.active, null); assert(completed.history.some(row => row.id === encounterId && row.status !== 'active'));
+
+    const masteryStarted = fixture.page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/v1/city/encounters/start');
+    await activate(fixture, fixture.page.locator('[data-city-adventure-action="start:docks-mastery-v1"]'));
+    const masteryResponse = await masteryStarted; assert.equal(masteryResponse.status(), 200);
+    const mastery = (await masteryResponse.json()).encounter; await settled(fixture);
+    assert.equal(mastery.scenarioId, 'docks-mastery-v1');
+    assert.match(await fixture.page.locator('[data-city-mastery="available"]').innerText(), /8 rounds.*half your drill health/);
+    const masteryRetreated = fixture.page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/v1/city/encounters/' + encodeURIComponent(mastery.id) + '/turn');
+    await activate(fixture, fixture.page.locator('[data-city-adventure-action="retreat"]'));
+    const masteryEndResponse = await masteryRetreated; assert.equal(masteryEndResponse.status(), 200);
+    const masteryEnd = (await masteryEndResponse.json()).encounter;
+    assert.equal(masteryEnd.status, 'retreated'); assert.equal(masteryEnd.mastery.achieved, false);
+    await settled(fixture); await same(fixture, liveEntry, livePose);
 
     const members = [actor, await create('Panel Lookout ' + viewport.width), await create('Panel Driver ' + viewport.width)];
     const crew = await success(post(actor, '/v1/crew', { name: 'Panel Crew ' + viewport.width }));
@@ -479,41 +629,83 @@ try {
     await crewOpen();
     const operationRoot = '/v1/worldgraph/operations/' + encodeURIComponent(opened.operationId);
     const roleAction = (await get(actor, operationRoot)).roles.find(role => role.roleId === 'planner').actions[0];
+    const pollGate = deferred(), pollObserved = deferred(); let pollOnce = false;
+    const heldPoll = async route => {
+      if (pollOnce) return route.continue(); pollOnce = true;
+      const response = await route.fetch(); assert.equal(response.status(), 200); pollObserved.resolve();
+      await pollGate.promise; await route.fulfill({ response });
+    };
+    await fixture.page.route(base + '/v1/worldgraph/operations', heldPoll);
+    await bounded(pollObserved.promise, 'the actual timed Crew catalogue read');
     const claimed = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === roleAction.path);
-    await activate(fixture, fixture.page.locator('[data-fieldwork-role="planner"]').getByRole('button', { name: roleAction.label, exact: true }));
+    claimed.catch(() => {});
+    try {
+      await activate(fixture, fixture.page.locator('[data-fieldwork-role="planner"]').getByRole('button', { name: roleAction.label, exact: true }));
+      await fixture.page.locator('#busy.on').waitFor();
+    } finally { pollGate.resolve(); }
+    await fixture.page.unroute(base + '/v1/worldgraph/operations', heldPoll);
     assert.equal((await claimed).status(), 200); await crewReady();
+    const switchGate = deferred(), switchObserved = deferred(); let switchOnce = false;
+    const heldSwitch = async route => {
+      if (switchOnce) return route.continue(); switchOnce = true;
+      const response = await route.fetch(); assert.equal(response.status(), 200); switchObserved.resolve();
+      await switchGate.promise; await route.fulfill({ response });
+    };
+    await fixture.page.route(base + '/v1/worldgraph/operations', heldSwitch);
     for (const [index, role] of ['lookout', 'driver'].entries()) {
       const member = members[index + 1], issued = (await get(member, operationRoot)).roles.find(entry => entry.roleId === role).actions[0];
       await success(post(member, issued.path, issued.body));
     }
+    await bounded(switchObserved.promise, 'the actual Crew handoff read before switching view');
+    await activate(fixture, fixture.page.locator('[data-fieldwork-view="inventory"]'));
+    const inventoryPane = await fixture.page.locator('.fieldwork-body').elementHandle();
+    const switchedRead = fixture.page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/worldgraph/operations');
+    switchGate.resolve(); await switchedRead;
+    await fixture.page.unroute(base + '/v1/worldgraph/operations', heldSwitch);
+    await fixture.page.evaluate(() => new Promise(done => requestAnimationFrame(() => requestAnimationFrame(done))));
+    assert(await inventoryPane.evaluate(node => node.isConnected), 'A retired Crew poll cannot redraw the new Inventory view or restore its old scroll/focus.');
+    await inventoryPane.dispose();
+    await activate(fixture, fixture.page.locator('[data-fieldwork-view="operations"]'));
+    await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'Your turn: Planner');
+    assert((await fixture.page.locator('[data-fieldwork-role="lookout"]').textContent()).includes('name not learned'));
+    await same(fixture, liveEntry, livePose);
     const steps = mission.nodes.filter(node => node.type === 'operation_step').sort((a, b) => a.metadata.order - b.metadata.order);
     for (const [index, step] of steps.entries()) {
       const participant = step.metadata.roleId === 'planner' ? actor : step.metadata.roleId === 'lookout' ? members[1] : members[2];
       const issued = (await get(participant, operationRoot + '/role')).nodes.find(node => node.id === step.id).actions[0]; assert(issued.available);
       if (participant === actor) {
-        await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+        await fixture.page.waitForFunction(label => [...document.querySelectorAll('.fieldwork-role button')].some(button => button.textContent === label && !button.disabled), issued.label);
+        await crewReady();
         const result = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === issued.path);
         await activate(fixture, fixture.page.locator('.fieldwork-role').getByRole('button', { name: issued.label, exact: true }));
         assert.equal((await result).status(), 200); await crewReady(); await same(fixture, liveEntry, livePose);
       } else await success(post(participant, issued.path, issued.body));
       if (index === 1) {
-        await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+        await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'Your turn: Planner');
+        await crewReady();
         const privateText = mission.nodes.find(node => node.id === 'evidence:quiet-pier-signal').metadata.privateEvidence;
         assert(!(await fixture.page.locator('[data-city-crew-board]').textContent()).includes(privateText), 'The planner never receives the lookout private clue.');
       }
     }
-    await activate(fixture, fixture.page.locator('[data-fieldwork-refresh]')); await crewReady();
+    await fixture.page.waitForFunction(() => document.querySelector('[data-fieldwork-handoff]')?.textContent === 'All contributions are in. The planner can close the run.');
+    await crewReady();
     const closing = (await get(actor, operationRoot)).actions.find(action => action.path.endsWith('/complete')); assert(closing.available);
     const closedResponse = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === closing.path);
     await activate(fixture, fixture.page.getByRole('button', { name: closing.label, exact: true }));
     if (closing.consequence) await activate(fixture, fixture.page.locator('.modal-bg[data-managed-dialog] [data-yes]').last());
     const closed = await closedResponse; assert.equal(closed.status(), 200); await crewReady(); await same(fixture, liveEntry, livePose);
     assert.equal((await get(actor, operationRoot)).status, 'completed');
+    assert((await fixture.page.locator('[data-fieldwork-achievements]').textContent()).includes('The Quiet Pier Run'));
     const closeReplay = await success(post(actor, closing.path, closed.request().postDataJSON(), closed.request().headers()['idempotency-key']));
     assert.deepEqual(closeReplay, await closed.json());
     const artifact = (await get(members[2], '/v1/worldgraph/inventory')).items.filter(item => item.templateId === 'item:quiet_pier_manifest');
     assert.equal(artifact.length, 1); assert.deepEqual(artifact[0].actions, []);
     assert.equal((await get(actor, '/v1/worldgraph/inventory')).items.filter(item => item.templateId === 'item:quiet_pier_manifest').length, 0);
+    const crewReads = [], noteRead = request => { if (request.method() === 'GET' && new URL(request.url()).pathname.startsWith('/v1/worldgraph/operations')) crewReads.push(request.url()); };
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Close crew missions', exact: true }));
+    fixture.page.on('request', noteRead); await fixture.page.waitForTimeout(5500); fixture.page.off('request', noteRead);
+    assert.deepEqual(crewReads, [], 'Closing the scoped Crew dock stops its five-second polling without remounting the scene.');
+    await same(fixture, liveEntry, livePose);
 
     // A real workbench action at A may finish after a readonly opening at B. Neither target may rebind the other's common action ID.
     await liveEntry.dispose();
@@ -531,6 +723,14 @@ try {
       const activation = interior.actions.find(action => action.id === 'activate');
       await success(post(host, activation.path, activation.body));
       interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
+      const layout = interior.actions.find(action => action.id === 'layout');
+      await success(post(host, layout.path, { ...layout.body, room: { furniture: [
+        { id: 'chair', x: 0, y: 0 }, { id: 'table', x: 1, y: 0 }, { id: 'lamp', x: 2, y: 0 },
+      ] } }));
+      interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
+      const puzzle = interior.activity.catalog.find(puzzle => puzzle.id === 'two-voices-v1').action;
+      await success(post(host, puzzle.path, puzzle.body));
+      interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
       const invite = interior.actions.find(action => action.id === 'invite');
       const invitation = await success(post(host, invite.path, { ...invite.body, targetCharacterId: actor.id, rights: index ? ['visit'] : ['visit', 'workbench'] }));
       const accept = (await get(actor, '/v1/city/home/invitations')).invitations.find(row => row.id === invitation.effect.grantId).action;
@@ -542,6 +742,21 @@ try {
     const visitControl = home => fixture.page.locator('.city-world__card').filter({ has: fixture.page.getByText(home.key, { exact: true }) })
       .getByRole('button', { name: 'Enter home', exact: true });
     await panel(fixture, 'room'); await activate(fixture, visitControl(homeA)); await settled(fixture);
+    const consentWrites = [], trackConsent = request => { if (request.method() === 'POST') consentWrites.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', trackConsent);
+    const puzzleConsent = () => fixture.page.getByLabel('Share my name and join this home puzzle', { exact: true });
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    await activate(fixture, puzzleConsent()); assert(await puzzleConsent().isChecked());
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Refresh this room', exact: true })); await settled(fixture);
+    assert(await puzzleConsent().isChecked(), 'A refresh of the same actual home and puzzle retains its unsubmitted consent choice.');
+    await activate(fixture, visitControl(homeB)); await settled(fixture);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await puzzleConsent().isChecked(), false, 'A different actual home cannot inherit prior identity-sharing consent.');
+    await activate(fixture, visitControl(homeA)); await settled(fixture);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await puzzleConsent().isChecked(), false, 'Returning to the prior home starts a new explicit consent choice.');
+    assert.deepEqual(consentWrites, []); fixture.page.off('request', trackConsent); await same(fixture, homeEntry, homePose);
+    await activate(fixture, fixture.page.getByRole('button', { name: 'Workbench', exact: true }));
     const visitA = await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeA.key));
     const recipe = visitA.workbench.recipes.find(row => row.id === 'recipe:hardened_steel'); assert(recipe?.action.available, JSON.stringify(recipe?.blockedBy));
     const cashBeforeCraft = Number((await app.pool.query('SELECT cash FROM characters WHERE id=$1', [actor.id])).rows[0].cash);
@@ -601,6 +816,29 @@ try {
     assert.equal((await app.pool.query('SELECT status FROM city_home_visitors WHERE id=$1', [homeB.grantId])).rows[0].status, 'revoked');
     assert.equal(await fixture.page.locator('[data-city-deed-room]').count(), 0, 'Confirmed withdrawal removes the old private B room.');
     await same(fixture, homeEntry, homePose);
+    await activate(fixture, fixture.page.locator('[data-city-world-close]'));
+    await activate(fixture, fixture.page.locator('#btn-dashboard-view'));
+    assert.equal(await fixture.page.evaluate(() => localStorage.getItem('omerta_game_view')), 'dashboard');
+    await activate(fixture, fixture.page.locator('#btn-player-view'));
+    assert.equal(await fixture.page.evaluate(() => localStorage.getItem('omerta_game_view')), 'player');
+    await fixture.page.reload();
+    await fixture.page.waitForFunction(() => document.querySelector('#btn-player-view')?.getAttribute('aria-pressed') === 'true'
+      && window.__panelHandles.at(-1)?.handle.getState().ready);
+    const resumed = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), resumedPose = (await state(fixture)).position;
+    const resumePosts = [], noteResume = request => { if (request.method() === 'POST' && !['/v1/screens','/v1/commands/observations'].includes(new URL(request.url()).pathname)) resumePosts.push(new URL(request.url()).pathname); };
+    fixture.page.on('request', noteResume);
+    await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
+    await activate(fixture, fixture.page.locator('[data-city-resume]'));
+    await fixture.page.locator('[data-city-continuity]').waitFor(); await settled(fixture);
+    const recap = fixture.page.locator('[data-city-continuity]');
+    const recapText = await recap.textContent();
+    assert(recapText.includes('The Quiet Pier Run · Crew run complete as Planner'));
+    assert(!mission.nodes.filter(node => node.type === 'evidence' && node.metadata.roleId === 'lookout')
+      .some(node => recapText.includes(node.metadata.privateEvidence)), 'A fresh recap never reveals another role’s private clue.');
+    await activate(fixture, recap.getByRole('button', { name: 'Continue at ' + homeA.street.toLowerCase(), exact: true }));
+    await fixture.page.getByRole('heading', { name: homeA.street + ' · Visiting', exact: true }).waitFor(); await settled(fixture);
+    fixture.page.off('request', noteResume); assert.deepEqual(resumePosts, [], 'Returning view and continuing an accepted home perform only authorized reads.');
+    await same(fixture, resumed, resumedPose); await resumed.dispose();
     await homeEntry.dispose(); await fixture.context.close();
     console.log('gameplay panels passed:', viewport.width, 'real Home authority retirement; tactical prepare/turn/replay; Crew queued/sent close, consenting roles/stages/private evidence/driver custody; two-home late cache zero-rebind/actual B withdrawal/private-room retirement');
   }

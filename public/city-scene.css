@@ -1,3 +1,33 @@
+/* World-first Player view keeps one canvas mounted behind its game controls. */
+body.city-player-view:has(.is-world-first) { overflow: hidden; }
+body.city-player-view:has(.is-world-first) #top {
+  min-height: 56px; padding: 5px 16px; gap: 16px; box-sizing: border-box;
+  background: #151917; border-bottom: 1px solid #6f603e; backdrop-filter: none;
+}
+body.city-player-view:has(.is-world-first) #top h1 { font-size: 19px; letter-spacing: 5px; }
+body.city-player-view:has(.is-world-first) #player-view-switch { border: 0; padding: 0; background: transparent; }
+body.city-player-view:has(.is-world-first) #player-view-switch button { border-radius: 2px; }
+body.city-player-view:has(.is-world-first) #whoami { font: 12px/1.4 var(--mono, monospace); }
+body.city-player-view:has(.is-world-first) #layout { padding: 0; gap: 0; }
+body.city-player-view:has(.is-world-first) #tabpanel { padding: 0; border: 0; }
+/* The dashboard's retained tab transform would make this fixed game surface
+   relative to an empty tab instead of the browser viewport. */
+body.city-player-view:has(.is-world-first) #tab-map { animation: none; transform: none; }
+body.city-player-view:has(.is-world-first) #introwrap,
+body.city-player-view:has(.is-world-first) #tab-map > .row,
+body.city-player-view:has(.is-world-first) .city-session-bar { display: none; }
+body.city-player-view:has(.is-world-first) #toast { bottom: 116px; z-index: 12; }
+@media (max-width: 680px) {
+  body.city-player-view:has(.is-world-first) #top { flex-wrap: nowrap; min-height: 54px; padding: 4px 8px; gap: 6px; }
+  body.city-player-view:has(.is-world-first) #top h1 { font-size: 12px; letter-spacing: 1px; min-width: 0; flex: 1; }
+  body.city-player-view:has(.is-world-first) #whoami { display: none; }
+  body.city-player-view:has(.is-world-first) #btn-refresh {
+    display: block; flex: 0 0 44px; width: 44px; min-height: 44px; padding: 0; font-size: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ebd7a6' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 7v5h-5M4 17v-5h5M19 11a7 7 0 0 0-12-4l-3 3m1 3a7 7 0 0 0 12 4l3-3'/%3E%3C/svg%3E");
+    background-position: center; background-size: 22px; background-repeat: no-repeat;
+  }
+  body.city-player-view:has(.is-world-first) #top #player-view-switch button { padding: 5px 7px; min-height: 44px; font-size: 10px; }
+}
 .omerta-city {
   --city-gold: var(--gold, #e8b34b);
   --city-paper: var(--ink, #dbd7c8);
@@ -526,6 +556,30 @@ body.city-player-view .omerta-city__viewport .omerta-city__canvas {
 }
 .omerta-city__control-actions button:disabled { color: #77766b; border-color: #38382e; cursor: default; }
 .omerta-city__control-actions span { color: var(--city-muted); font: 10px/1.4 var(--mono, monospace); }
+.omerta-city__overview > summary { min-height: 44px; padding: 12px; cursor: pointer; color: var(--city-gold); font: 11px/1.5 var(--mono, monospace); }
+.omerta-city__overview > summary:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
+@media (max-width: 680px) {
+  .omerta-city.is-play-shell { overflow: visible; }
+  .omerta-city.is-play-shell > .omerta-city__viewport { position: relative; }
+  .omerta-city.is-play-shell .omerta-city__controls { gap: 2px; padding: 0 2px; height: 45px; box-sizing: border-box; }
+  .omerta-city.is-play-shell .omerta-city__dpad { grid-template-columns: repeat(4, 44px); grid-template-rows: 44px; gap: 1px; }
+  .omerta-city.is-play-shell .omerta-city__move { grid-column: auto; grid-row: auto; }
+  .omerta-city.is-play-shell .omerta-city__control-actions { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 2px; width: 110px; }
+  .omerta-city.is-play-shell .omerta-city__control-actions button { padding: 2px; min-height: 44px; font-size: 10px; }
+  .omerta-city.is-play-shell .omerta-city__control-actions span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .omerta-city.is-play-shell.is-tight-frame .omerta-city__controls { display: none; }
+  .omerta-city.is-play-shell .omerta-city__resources--walking { grid-template-columns: repeat(var(--city-resource-columns, 4), minmax(0, 1fr)); }
+  .omerta-city.is-play-shell .omerta-city__resources--walking .omerta-city__resource { padding: 2px; }
+  .omerta-city.is-play-shell .omerta-city__resources--walking dt { margin-bottom: 0; }
+  .omerta-city.is-play-shell .omerta-city__resources--walking dd { font-size: 11px; line-height: 1.2; white-space: nowrap; overflow-wrap: normal; }
+  .omerta-city.is-play-shell .omerta-city__resource-meter { display: none; }
+  .omerta-city.is-play-shell .omerta-city__readiness { display: block; padding: 3px 8px; line-height: 1.3; }
+  .omerta-city.is-play-shell .omerta-city__readiness strong { margin-right: 6px; }
+  .omerta-city.is-play-shell .omerta-city__interaction { position: relative; inset: auto; width: 100%; max-height: var(--city-card-height, 180px); box-sizing: border-box; margin: 0; padding: 6px 52px 6px 10px; box-shadow: none; }
+  .omerta-city.is-play-shell .omerta-city__interaction-title { font-size: 15px; margin: 0 0 4px; }
+  .omerta-city.is-play-shell .omerta-city__interaction p { font-size: 11px; line-height: 1.4; margin-bottom: 6px; }
+  .omerta-city.is-play-shell .omerta-city__interaction [data-city-close] { right: -48px; }
+}
 .omerta-city__destination-number {
   flex: 0 0 25px;
   width: 25px;
@@ -586,3 +640,121 @@ body.city-player-view .omerta-city__viewport .omerta-city__canvas {
   .omerta-city__destination:last-child { grid-column: 1 / -1; }
   .omerta-city__instructions { padding: 10px 13px; }
 }
+
+/* Open-world layout. All gameplay and private data stay in their existing nodes. */
+body.city-player-view .omerta-city.is-world-first {
+  position: fixed; inset: var(--city-shell-top, 56px) 0 0; z-index: 2;
+  margin: 0; min-height: 0 !important; border: 0; border-radius: 0; overflow: hidden;
+  background: #202f2b; --city-paper: #eee5cf; --city-gold: #d4b777;
+}
+body.city-player-view .is-world-first > .omerta-city__viewport {
+  position: relative; width: 100%; max-width: none; height: var(--city-viewport-height, 100%); margin: 0;
+}
+body.city-player-view .is-world-first .omerta-city__map-layer { position: absolute; inset: 0; min-height: 96px; }
+body.city-player-view .is-world-first .omerta-city__canvas {
+  width: 100%; height: var(--city-map-height, 100%); min-height: 96px; max-height: none; margin: 0; aspect-ratio: auto;
+}
+body.city-player-view .is-world-first .omerta-city__world-hud {
+  position: absolute; z-index: 4; top: 16px; left: 16px; width: min(440px, calc(100% - 216px));
+  max-height: var(--city-hud-height, 142px); box-sizing: border-box; overflow: auto;
+  border: 1px solid #7d704e; border-radius: 3px; background: #18201ded; box-shadow: 0 4px 18px #0007;
+}
+.is-world-first .omerta-city__world-head { padding: 3px; }
+.is-world-first .omerta-city__resources--walking { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.is-world-first .omerta-city__resources--walking .omerta-city__resource { padding: 6px 8px; }
+.is-world-first .omerta-city__resources--walking dd { font-size: 12px; }
+.is-world-first .omerta-city__resources--walking dt { color: #b8ae90; }
+.is-world-first .omerta-city__world-hud .omerta-city__readiness { background: #111a17; padding: 5px 10px; }
+.is-world-first .omerta-city__presence-caption { padding: 4px 10px; font-size: 9px; }
+.is-world-first .omerta-city__world-map { display: none; }
+.is-world-first .omerta-city__minimap {
+  position: absolute; z-index: 4; right: 16px; top: 16px; width: 164px; padding: 6px;
+  box-sizing: border-box; background: #151c18ee; border: 1px solid #a58a51; border-radius: 3px;
+  color: #e9d5a4; font: 600 11px/1.4 var(--mono, monospace); text-align: center; box-shadow: 0 4px 18px #0007;
+}
+.is-world-first .omerta-city__minimap canvas { display: block; width: 100%; height: 112px; margin-top: 5px; image-rendering: pixelated; }
+.is-world-first > .omerta-city__next-move {
+  position: absolute; z-index: 4; top: var(--city-hud-bottom, 160px); left: 16px; width: min(330px, calc(100% - 216px));
+  padding: 8px 10px; gap: 8px; box-sizing: border-box; border: 0; border-left: 2px solid #b79854;
+  background: #142019e6; box-shadow: 0 4px 14px #0004;
+}
+.is-world-first > .omerta-city__next-move strong { font-size: 14px; }
+.is-world-first > .omerta-city__next-move p { font: 11px/1.4 var(--mono, monospace); }
+.is-world-first > .omerta-city__next-move .omerta-city__eyebrow { font-size: 9px; letter-spacing: 1px; }
+.is-world-first > .omerta-city__next-move button { min-height: 44px; padding: 5px 8px; font-size: 10px; }
+.is-world-first > .omerta-city__next-move .city-world__tracker { flex: 1; min-width: 0; width: auto; padding: 5px 0; border: 0; background: transparent; color: #e5c789; font-size: 11px; text-align: left; }
+body.city-player-view .is-world-first .omerta-city__controls {
+  position: absolute; z-index: 5; left: 16px; bottom: 16px; width: 264px; height: 48px;
+  padding: 2px; gap: 4px; border: 1px solid #6e6244; border-radius: 3px; background: #17201bee; box-sizing: border-box;
+}
+.is-world-first .omerta-city__dpad { display: none; }
+.is-world-first .omerta-city__control-actions { display: flex; gap: 4px; width: 100%; }
+.is-world-first .omerta-city__control-actions button { min-height: 42px; padding: 4px 10px; font-size: 11px; }
+.is-world-first .omerta-city__control-actions span { font: 10px/1.3 var(--mono, monospace); }
+body.city-player-view .is-world-first :is(.omerta-city__actor-dock, .omerta-city__training, .omerta-city__interaction, .city-world__dock) {
+  position: absolute; z-index: 6; right: 16px; left: auto; top: 172px; bottom: auto;
+  width: min(360px, calc(100% - 32px)); max-height: var(--city-world-panel-height, calc(100% - 172px - var(--city-world-panel-bottom, 96px)));
+  margin: 0; box-sizing: border-box; overflow: auto; overscroll-behavior: contain;
+  background: #1b221ff7; border: 1px solid #8c7850; border-radius: 3px; box-shadow: 0 8px 28px #0009;
+}
+body.city-player-view .is-world-first .omerta-city__interaction { padding: 10px 58px 14px 14px; }
+.is-world-first :is(.omerta-city__actor-controls, .omerta-city__training-controls) { top: 0; }
+.is-world-first.is-overlay-pressure [data-city-gameplay="fixer"] label[for="city-fixer-job"] { display: block; font-size: 10px; line-height: 12px; margin: 0; }
+.is-world-first .omerta-city__interaction [data-city-close] { right: -48px; }
+.is-world-first .omerta-city__interaction-title { font-size: 18px; }
+.is-world-first .omerta-city__interaction p { font-size: 13px; line-height: 1.5; }
+.is-world-first .city-world__dock-bar { background: #222b24; border-color: #78684b; }
+.is-world-first .city-world__card { background: transparent; border: 0; border-bottom: 1px solid #4a5141; border-radius: 0; padding: 10px 0; }
+.is-world-first .city-world__tabs { border-bottom: 1px solid #4a5141; }
+.is-world-first .city-world__content { font: 13px/1.5 var(--mono, monospace); }
+.is-world-first .city-world__content p { color: #cec8b6; }
+.is-world-first .city-world__content h4 { color: #ebd7a6; font-family: var(--display, Georgia, serif); font-size: 18px; }
+.is-world-first .omerta-city__overview {
+  position: absolute; z-index: 5; bottom: 16px; right: 16px; width: 164px;
+  max-height: calc(100% - 190px); overflow: auto; background: #17201bf5; border: 1px solid #776647; border-radius: 3px;
+}
+.is-world-first .omerta-city__overview[open] { z-index: 7; width: min(420px, calc(100% - 32px)); }
+.is-world-first .omerta-city__overview > summary { position: sticky; top: 0; z-index: 2; padding: 12px; background: #202b22; }
+.is-world-first .omerta-city__overview-body { padding: 8px; }
+.is-world-first .omerta-city__overview-body .omerta-city__world-map { display: block; width: 100%; }
+@media (max-width: 1100px) and (min-width: 681px) {
+  body.city-player-view .is-world-first .omerta-city__controls { width: 156px; }
+  .is-world-first .omerta-city__control-actions span { display: none; }
+  .is-world-first .omerta-city__overview { width: 114px; }
+}
+@media (max-width: 680px) {
+  body.city-player-view .is-world-first .omerta-city__world-hud { top: 8px; left: 8px; width: calc(100% - 112px); max-height: var(--city-hud-height, 128px); }
+  .is-world-first .omerta-city__resources--walking { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .is-world-first .omerta-city__world-hud .omerta-city__resources--walking .omerta-city__resource { padding: 3px 5px; }
+  .is-world-first .omerta-city__resources--walking dd { font-size: 11px; white-space: normal; overflow-wrap: anywhere; }
+  .is-world-first .omerta-city__world-hud .omerta-city__readiness { font-size: 9px; padding: 4px 7px; }
+  .is-world-first .omerta-city__presence-caption { padding: 3px 7px; font-size: 8px; }
+  .is-world-first .omerta-city__minimap { top: 8px; right: 8px; width: 88px; padding: 4px; font-size: 9px; }
+  .is-world-first .omerta-city__minimap canvas { height: 70px; margin-top: 3px; }
+  .is-world-first > .omerta-city__next-move { left: 8px; width: calc(100% - 112px); padding: 5px 7px; }
+  .is-world-first > .omerta-city__next-move p { display: none; }
+  .is-world-first > .omerta-city__next-move strong { font-size: 11px; }
+  .is-world-first > .omerta-city__next-move button { min-width: 44px; width: 44px; padding: 2px; }
+  body.city-player-view .is-world-first .omerta-city__controls { bottom: max(8px, env(safe-area-inset-bottom)); left: 8px; width: calc(100% - 16px); height: 46px; display: flex; gap: 2px; }
+  .is-world-first .omerta-city__dpad { display: grid; grid-template-columns: repeat(4, 44px); grid-template-rows: 44px; gap: 1px; }
+  .is-world-first .omerta-city__move { grid-column: auto; grid-row: auto; min-width: 44px; min-height: 44px; }
+  .is-world-first .omerta-city__control-actions { display: grid; grid-template-columns: minmax(44px, 1fr) 44px; width: auto; flex: 1; gap: 2px; }
+  .is-world-first .omerta-city__control-actions span { display: none; }
+  body.city-player-view .is-world-first :is(.omerta-city__actor-dock, .omerta-city__training, .omerta-city__interaction, .city-world__dock) {
+    top: auto; right: 8px; left: 8px; bottom: calc(var(--city-world-panel-bottom, 116px) + env(safe-area-inset-bottom)); width: auto;
+    max-height: var(--city-world-panel-height, 42%); border-radius: 4px;
+  }
+  body.city-player-view .is-world-first .omerta-city__interaction { padding: 6px 54px 10px 10px; }
+  .is-world-first .omerta-city__overview { right: 8px; top: 106px; bottom: auto; width: 88px; max-height: max(44px, calc(100% - 228px)); font-size: 9px; }
+  .is-world-first .omerta-city__overview > summary { font-size: 9px; padding: 7px 5px; }
+  .is-world-first .omerta-city__overview[open] { top: 8px; width: calc(100% - 16px); max-height: max(108px, calc(100% - 228px)); scroll-padding-top: 44px; }
+  .is-world-first.is-inspecting .omerta-city__overview { display: none; }
+  .is-world-first .city-world__content { font-size: 12px; }
+}
+
+/* A genuinely short usable frame folds optional overlays into existing tools. */
+body.city-player-view:has(.is-world-first.is-overlay-pressure) #toast { bottom: calc(54px + env(safe-area-inset-bottom)); }
+.is-world-first.is-overlay-pressure .omerta-city__minimap,
+.is-world-first.is-overlay-pressure .city-world__quick-nav { display: none; }
+.is-world-first.is-overlay-pressure .omerta-city__overview { top: 8px; }
+.is-world-first.is-overlay-pressure .omerta-city__overview-body > .omerta-city__next-move { margin: 0 0 8px; }

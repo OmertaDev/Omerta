@@ -55,6 +55,9 @@
 .fieldwork-progress { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; font-size: 12px; color: #5c6c47; }
 .fieldwork-progress progress { width: 180px; max-width: 100%; height: 8px; accent-color: #6d7b55; }
 .fieldwork-role { margin-top: 24px; }
+.fieldwork-handoff { padding: 12px; border-left: 3px solid #6f835e; background: #e0e6d8; color: #344a35; font-weight: 700; }
+.fieldwork-achievements { margin-top: 24px; border-top: 1px solid #c4b291; }
+.fieldwork-achievements li { margin: 10px 0; font-size: 13px; }
 .fieldwork-section-title { margin-top: 24px; }
 .fieldwork-confirm { position: absolute; inset: 0; z-index: 5; display: flex; justify-content: center; align-items: flex-start; padding: 60px 20px 20px; background: rgba(25, 26, 20, .78); }
 .fieldwork-confirm > div { width: 100%; max-width: 480px; padding: 24px; background: #f4e8ce; border-radius: 8px; box-shadow: 0 20px 60px #171813; }

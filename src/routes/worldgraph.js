@@ -615,7 +615,22 @@ export function register(app, { pool, auth }) {
         actions: [issuedAction('cancel:' + row.id, 'Close this operation and recover held items',
           '/v1/worldgraph/operations/' + segment(row.id) + '/cancel', {}, [],
           'Only its original opener can cancel. Held items return to their recorded depositors, even after crew or character changes.')] }));
-      return { operations, recoverableOperations };
+      const completedOperations = [];
+      const history = (await client.query(`SELECT operation.id,operation.operation_node_id,operation.completed_at,role.role_id
+        FROM world_operations operation JOIN world_operation_roles role ON role.operation_id=operation.id
+        WHERE role.account_id=$1 AND operation.status='completed'
+        ORDER BY operation.completed_at DESC,operation.id LIMIT 20`, [req.user.sub])).rows;
+      for (const record of history) {
+        const root = PHASE1_WORLD_GRAPH.nodes.get(record.operation_node_id);
+        const completed = (await client.query("SELECT node_id FROM world_operation_node_state WHERE operation_id=$1 AND state='completed'", [record.id])).rows;
+        const milestones = completed.map(row => PHASE1_WORLD_GRAPH.nodes.get(row.node_id))
+          .filter(node => node?.type === 'operation_step' && node.visibility === 'public')
+          .slice(0, 16).map(node => node.metadata?.title || node.id);
+        completedOperations.push({ operationId: record.id, title: root?.metadata?.title || 'Completed Crew run',
+          roleTitle: root?.metadata?.roles?.find(role => role.id === record.role_id)?.title || record.role_id,
+          completedAt: new Date(record.completed_at).toISOString(), milestones });
+      }
+      return { operations, recoverableOperations, completedOperations };
     }));
 
   app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),

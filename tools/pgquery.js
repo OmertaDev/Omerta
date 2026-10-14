@@ -59,12 +59,14 @@ for (const got of readable) {
 // ── 2. PREPARE ───────────────────────────────────────────────────────────────────────────────────
 const { makeDb } = await import('../src/db.js');
 const pool = await makeDb();           // applies schema.sql, so the tables exist to resolve against
-// The custody migration creates this temporary relation inside its own transaction.
-// Supply only its real native relation/type context for PREPARE's regclass lookup;
-// the separate current-source migration proof checks the actual predicates and lifecycle.
+// Custody, puzzle and encounter migrations create these temporary relations inside
+// their own transactions. Supply only their real native relation/type context for
+// PREPARE's regclass lookup; current-source proofs check predicates and lifecycle.
 // One checked-out client keeps this temporary context and prepared statements in one session.
 const prepareClient = await pool.connect();
 await prepareClient.query('CREATE TEMP TABLE city_home_storage_reference (state TEXT, owner_scope TEXT, definition_hash TEXT)');
+await prepareClient.query('CREATE TEMP TABLE city_home_puzzle_reference (puzzle_id TEXT)');
+await prepareClient.query('CREATE TEMP TABLE city_encounter_catalogue_reference (scenario_id TEXT)');
 
 const failures = [];
 let n = 0;

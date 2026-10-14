@@ -15,7 +15,7 @@
     recipe_cash: 'More cash is required.',
     salvage_required: 'Use Crafting for car salvage.',
   }[reason?.code] || 'A recipe requirement has not been met.');
-  function render(root, { board, invitations, recovery, history, homes, actors, pending, onRead, onAction, onBind }) {
+  function render(root, { board, invitations, recovery, history, homes, actors, pending, state = {}, onRead, onAction, onBind, onProperties }) {
     const bind = (element, name, handler) => onBind(element, name, handler);
     const button = (label, handler, disabled = false, readOnly = false) => {
       const control = node('button', label); control.type = 'button'; control.disabled = disabled || pending && !readOnly;
@@ -33,6 +33,7 @@
     const own = homes?.myHome;
     if (own?.key) directory.append(button('Enter ' + own.street, () => onRead('home-interior', { homeKey: own.key }),false,true));
     else paragraph('You have no published deed home in this district. Find your street in the World Map, or claim or purchase a deed through the property controls.');
+    if (onProperties) directory.append(button(own?.key ? 'Your deed & property controls' : 'Find or claim a deed home', onProperties, false, true));
     directory.append(button('Refresh homes', () => onRead('home-list'),false,true),
       button('Invitations & consent', () => onRead('home-invitations'),false,true),
       button('Recover stored belongings', () => onRead('home-recovery'),false,true),
@@ -64,29 +65,82 @@
     if (activate) root.append(issued(activate));
     const leave = actions.find(action => action.id === 'leave'); if (leave) root.append(issued(leave));
     if (!board.room?.active) return;
+    const scope = JSON.stringify([board.viewer?.characterId,board.viewer?.generation,board.viewer?.district,board.home.key,board.home.authorityToken]);
+    if (state.scope !== scope) { for (const key of Object.keys(state)) delete state[key]; state.scope = scope; }
+    const homeRoot = root, stations = {}, stationControls = {}, stationBar = node('nav', null, 'city-home__stations');
+    stationBar.setAttribute('aria-label', 'Home stations');
+    const showStation = id => {
+      state.station = id;
+      for (const [key, section] of Object.entries(stations)) {
+        section.hidden = key !== id; stationControls[key].setAttribute('aria-pressed', String(key === id));
+      }
+    };
+    for (const [id, label] of [['room','Room & furniture'],['storage','Storage'],['workbench','Workbench'],['hosting','Hosting']]) {
+      const section = node('section', null, 'city-home__station'); section.dataset.cityHomeStation = id;
+      section.setAttribute('aria-label', label); stations[id] = section;
+      const control = button(label, () => showStation(id), false, true); stationControls[id] = control; stationBar.append(control);
+    }
+    homeRoot.append(stationBar, ...Object.values(stations)); showStation(stations[state.station] ? state.station : 'room'); root = stations.room;
     const floor = node('div', null, 'city-world__room'); floor.dataset.cityDeedRoom = ''; floor.setAttribute('role', 'group'); floor.setAttribute('aria-label', 'Confirmed six by six deed room');
-    for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) {
-      const tile = node('span', null, 'city-world__floor'); tile.style.gridColumn = String(x + 1); tile.style.gridRow = String(y + 1); floor.append(tile);
-    }
     const catalog = list(board.room.catalog), furniture = list(board.room.furniture);
-    for (const item of furniture) {
-      const definition = catalog.find(entry => entry.id === item.id);
-      if (!definition || !['chair','table','lamp','window'].includes(item.id) || !Number.isInteger(item.x) || !Number.isInteger(item.y) || item.x < 0 || item.x > 5 || item.y < 0 || item.y > 5) continue;
-      const piece = node('span', null, 'city-world__furniture city-world__furniture--' + item.id);
-      piece.setAttribute('role', 'img'); piece.setAttribute('aria-label', definition.name || item.id);
-      piece.style.gridColumn = String(item.x + 1); piece.style.gridRow = String(item.y + 1); floor.append(piece);
-    }
-    root.append(floor);
     const layout = actions.find(action => action.id === 'layout');
+    const clone = value => value.map(item => ({ ...item, rotation: item.rotation || 0 }));
+    const sameLayout = (a, b) => JSON.stringify(clone(a)) === JSON.stringify(clone(b));
+    if (!state.draft || !state.draft.dirty || state.draft.saving && sameLayout(state.draft.furniture, furniture)) {
+      state.draft = { revision: board.home.layoutRevision, furniture: clone(furniture), dirty: false, undo: [] };
+    }
+    const draft = state.draft; let stale = draft.revision !== board.home.layoutRevision, saveControl;
+    const status = node('p', null, 'city-world__hint'); status.setAttribute('role', 'status');
+    let selected = catalog.find(item => item.id === state.selected)?.id || catalog[0]?.id;
+    let preview = state.preview || { x: 1, y: 1, rotation: 0 };
+    const controls = node('div', null, 'city-world__room-controls'), select = node('select'); select.setAttribute('aria-label', 'Home furnishing');
+    const x = input('number', 'Home column'), y = input('number', 'Home row');
+    for (const [field, value] of [[x,preview.x],[y,preview.y]]) { field.min = '1'; field.max = '6'; field.value = String(value + 1); }
+    const pieces = node('div', null, 'city-home__pieces');
+    const paint = () => {
+      pieces.replaceChildren();
+      for (const item of (layout ? draft.furniture : furniture)) {
+        const definition = catalog.find(entry => entry.id === item.id); if (!definition) continue;
+        const piece = node('span', null, 'city-world__furniture city-world__furniture--' + item.id);
+        piece.setAttribute('role','img'); piece.setAttribute('aria-label',(definition.name || item.id) + ', rotation ' + (item.rotation || 0) * 90 + ' degrees');
+        piece.style.gridColumn = String(item.x + 1); piece.style.gridRow = String(item.y + 1); piece.style.transform = 'rotate(' + (item.rotation || 0) * 90 + 'deg)'; pieces.append(piece);
+      }
+      if (layout && selected) {
+        const ghost = node('span', null, 'city-world__furniture city-world__furniture--' + selected + ' city-home__ghost'); ghost.dataset.cityHomeGhost = '';
+        ghost.setAttribute('aria-hidden','true'); ghost.style.gridColumn=String(preview.x+1);ghost.style.gridRow=String(preview.y+1);ghost.style.transform='rotate('+preview.rotation*90+'deg)';pieces.append(ghost);
+      }
+      status.textContent = stale ? 'This room changed while you were decorating. Your draft is kept; reset to the confirmed room before saving.'
+        : draft.dirty ? 'Unsaved layout. Save to confirm; closing discards this draft.' : 'Confirmed layout. Select a furnishing, then tap a square to preview its position.';
+      state.selected=selected;state.preview={...preview};
+      if(saveControl)saveControl.disabled=pending||layout.available!==true||stale;
+    };
+    const point = (column,row) => {
+      if (!Number.isInteger(column)||!Number.isInteger(row)||column<0||column>5||row<0||row>5) { status.textContent='Choose a row and column from 1 to 6.'; return; }
+      preview={...preview,x:column,y:row};x.value=String(column+1);y.value=String(row+1);paint();
+    };
+    for (let row=0;row<6;row++) for(let column=0;column<6;column++) {
+      const tile=layout ? button('Preview column '+(column+1)+', row '+(row+1),()=>point(column,row),false,true) : node('span');
+      tile.className='city-world__floor city-home__cell';tile.style.gridColumn=String(column+1);tile.style.gridRow=String(row+1);
+      if(layout){tile.setAttribute('aria-label',tile.textContent);tile.textContent='';}floor.append(tile);
+    }
+    floor.append(pieces);root.append(floor,status);
     if (layout) {
-      const controls = node('div', null, 'city-world__room-controls'), select = node('select'); select.setAttribute('aria-label', 'Home furnishing');
       for (const item of catalog) { const option = node('option', item.name || item.id); option.value = item.id; select.append(option); }
-      const x = input('number', 'Home column'), y = input('number', 'Home row');
-      for (const field of [x,y]) { field.min = '1'; field.max = '6'; field.value = '2'; }
-      controls.append(select, x, y, button('Save furnishing', () => onAction(layout, { room: { furniture:
-        furniture.filter(item => item.id !== select.value).concat({ id: select.value, x: Number(x.value) - 1, y: Number(y.value) - 1 }) } }), layout.available !== true));
+      select.value=selected;bind(select,'change',()=>{selected=select.value;paint();});
+      for(const field of [x,y])bind(field,'input',()=>point(Number(x.value)-1,Number(y.value)-1));
+      const stage = () => {
+        if(![x,y].every(field=>Number.isInteger(Number(field.value))&&Number(field.value)>=1&&Number(field.value)<=6)){status.textContent='Choose a row and column from 1 to 6.';return false;}
+        if(draft.furniture.some(item=>item.id!==selected&&item.x===preview.x&&item.y===preview.y)){status.textContent='That square is occupied. Choose an empty square.';return false;}
+        draft.undo.push(clone(draft.furniture));draft.undo=draft.undo.slice(-12);
+        draft.furniture=draft.furniture.filter(item=>item.id!==selected).concat({id:selected,...preview});draft.dirty=true;draft.saving=false;paint();return true;
+      };
+      saveControl=button('Save furnishing',()=>{if(stale)return;if(!draft.dirty&&!stage())return;draft.saving=true;onAction(layout,{room:{furniture:clone(draft.furniture)}});},layout.available!==true||stale);
+      controls.append(select,x,y,button('Rotate preview',()=>{preview.rotation=(preview.rotation+1)%4;paint();},false,true),
+        button('Place in draft',stage,false,true),button('Undo last placement',()=>{if(draft.undo.length){draft.furniture=draft.undo.pop();draft.dirty=!sameLayout(draft.furniture,furniture);paint();}},false,true),
+        button('Reset to confirmed room',()=>{Object.assign(draft,{revision:board.home.layoutRevision,furniture:clone(furniture),dirty:false,undo:[],saving:false});stale=false;paint();},false,true),saveControl);
       root.append(controls);
     }
+    paint(); root=stations.storage;
     if (board.storage) {
       heading('Private storage · ' + list(board.storage.items).length + '/' + board.storage.capacity);
       paragraph('Items keep their original account owner. Stored items cannot be spent or equipped; withdraw them first. After resale, recover your own archived contents.');
@@ -97,9 +151,10 @@
         const card = node('section', null, 'city-world__card'); card.append(node('strong', item.title || item.templateId), issued(item.action)); root.append(card);
       }
       if (!list(board.storage.availableItems).length) paragraph('No eligible durable account items are available. Character-bound keepsakes, exact lots and operation escrow stay in their existing custody.');
-    }
-    heading('Workbench');
+    } else paragraph('Storage belongs to the deed owner. Their belongings stay private.');
+    root=stations.workbench; heading('Workbench');
     paragraph('Craft using your own materials and the existing recipe, skill, location and cash requirements. Stored inputs must be withdrawn.');
+    if(!list(board.access?.rights).includes('workbench'))paragraph('Your invitation allows a visit. Ask the host for workbench permission to craft here.');
     for (const recipe of list(board.workbench?.recipes)) {
       const card = node('section', null, 'city-world__card'); card.append(node('strong', recipe.title || recipe.id));
       card.append(node('p', list(recipe.inputs).map(item => (item.quantity || item.qty || 1) + ' × ' + ingredientTitle(item)).join(', ')));
@@ -107,7 +162,7 @@
       if (list(recipe.blockedBy).length) card.append(node('p', recipe.blockedBy.map(recipeBlocker).join(' ')));
       card.append(issued(recipe.action)); root.append(card);
     }
-    const invite = actions.find(action => action.id === 'invite');
+    root=stations.hosting; const invite = actions.find(action => action.id === 'invite');
     if (invite) {
       heading('Visitor permissions');
       const target = node('select'); target.setAttribute('aria-label', 'Home visitor');
@@ -151,7 +206,7 @@
       const card=node('section',null,'city-world__card');card.append(node('strong',puzzle.title),node('p','Place '+list(puzzle.requires).join(', ')+' in your room before hosting.'));
       if(puzzle.action)card.append(issued(puzzle.action));root.append(card);
     }
-    root.append(button('Refresh this room', () => onRead('home-interior', { homeKey: board.home.key }),false,true));
+    homeRoot.append(button('Refresh this room', () => onRead('home-interior', { homeKey: board.home.key }),false,true));
   }
   window.CityHomeUi = Object.freeze({ render });
 })();

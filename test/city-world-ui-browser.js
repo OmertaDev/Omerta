@@ -158,6 +158,35 @@ try {
     await page.locator('[data-city-nearby-input]').evaluate(node => node.setSelectionRange(3, 3));
     await page.evaluate(() => window.__ui.update({ chat: { messages: [] } }));
     assert.deepEqual(await page.locator('[data-city-nearby-input]').evaluate(node => [node.value, node.selectionStart, document.activeElement === node]), ['A draft stays here', 3, true]);
+    if (viewport.width <= 680) {
+      await page.evaluate(() => { const meta = document.createElement('meta'); meta.name = 'viewport'; meta.content = 'width=device-width, initial-scale=1'; document.head.append(meta); });
+      await page.waitForFunction(width => window.innerWidth === width, viewport.width);
+      await page.evaluate(() => { document.body.classList.add('city-player-view'); window.__ui.update({}); });
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false, 'A phone activity reserves its sheet for the selected content.');
+      const focusedOpening = await page.evaluate(() => ({ opening: window.__ui.getState().opening, reads: window.__reads.length, sent: window.__sent.length }));
+      const draftNode = await page.locator('[data-city-nearby-input]').elementHandle();
+      await click('[data-city-world-back]');
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), true);
+      assert.equal(await page.locator('[data-city-world-back]').getAttribute('aria-expanded'), 'true');
+      assert.equal(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), true);
+      await click('[data-city-world-back]');
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false);
+      assert.equal(await page.locator('[data-city-world-back]').getAttribute('aria-expanded'), 'false');
+      assert.equal(await draftNode.evaluate(node => node === document.querySelector('[data-city-nearby-input]') && node.value === 'A draft stays here'), true,
+        'Choosing or leaving the tool chooser keeps the same draft DOM, not a reconstructed copy.');
+      assert.deepEqual(await page.evaluate(() => ({ opening: window.__ui.getState().opening, reads: window.__reads.length, sent: window.__sent.length })), focusedOpening,
+        'The responsive chooser does not reopen a panel, read private data or issue an action.');
+      await page.setViewportSize({ width: 1366, height: 768 });
+      await page.waitForFunction(() => window.innerWidth === 1366 && !document.querySelector('.city-world__tabs').hidden);
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), true, 'Desktop keeps its complete tool navigation.');
+      await page.locator('[data-city-world-panel="map"]').focus();
+      await page.setViewportSize(viewport);
+      await page.waitForFunction(width => window.innerWidth === width && document.querySelector('.city-world__tabs').hidden, viewport.width);
+      assert.equal(await page.locator('.city-world__tabs').isVisible(), false, 'Returning to phone restores focused content.');
+      assert.equal(await page.locator('[data-city-world-back]').evaluate(node => document.activeElement === node), true,
+        'A focused desktop tab moves to the visible chooser control when phone layout hides the row.');
+      await page.evaluate(() => { document.body.classList.remove('city-player-view'); document.querySelector('meta[name="viewport"]').remove(); window.__ui.update({}); });
+    }
     await page.locator('[data-city-world-back]').focus(); await page.keyboard.press('Enter');
     assert.equal(await page.locator('[data-city-nearby-input]').inputValue(), 'A draft stays here', 'Returning to the chooser leaves an unsent message draft intact.');
     assert.equal(await page.evaluate(() => window.__ui.getState().panel), 'chat');
@@ -559,6 +588,87 @@ try {
       assert(close.height >= 44 && close.hits.every(Boolean), 'The atlas keeps the existing compact Close control reachable.');
     }
     await page.evaluate(() => { window.__atlasUI.destroy(); document.querySelector('#atlas-launch').remove(); });
+    // Component-only DTO fixture: identity teardown must also retire a delayed private recap.
+    await page.evaluate(() => {
+      window.__continuityReads = []; window.__continued = [];
+      window.__resumeUI = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        ...window.__fixture, scopeKey: 'resume-owner', character: window.__character,
+        onRead: kind => new Promise(resolve => window.__continuityReads.push({ kind, resolve })),
+        onContinueCase: id => { window.__continued.push(id); return true; },
+      }); window.__resumeUI.open('map');
+    });
+    await click('[data-city-resume]');
+    await page.waitForFunction(() => window.__continuityReads.length === 1);
+    await page.evaluate(() => window.__continuityReads[0].resolve({ code: 200, body: {
+      cases: [{ graphId: 'private-case', title: '<img src=x onerror=window.__resumeXss=1>', status: 'active' }],
+      completedOperations: [{ title: 'Recorded crew win', roleTitle: 'Planner' }],
+      operations: [], invitations: [], permissions: [], items: [], history: [],
+    } }));
+    await page.locator('[data-city-continuity]').waitFor();
+    assert((await page.locator('[data-city-continuity]').textContent()).includes('<img src=x onerror=window.__resumeXss=1>'));
+    assert.equal(await page.locator('[data-city-continuity] img').count(), 0);
+    await page.getByRole('button', { name: 'Continue case · <img src=x onerror=window.__resumeXss=1>', exact: true }).click();
+    assert.deepEqual(await page.evaluate(() => window.__continued), ['private-case']);
+    await page.evaluate(() => window.__resumeUI.open('map')); await click('[data-city-resume]');
+    await page.waitForFunction(() => window.__continuityReads.length === 2);
+    await page.evaluate(() => {
+      window.__resumeUI.update({ scopeKey: 'resume-successor', character: { id: 'successor', generation: 2 } });
+      window.__continuityReads[1].resolve({ code: 200, body: { cases: [{ graphId: 'old-private', title: 'Retired private case', status: 'active' }] } });
+    });
+    await page.waitForTimeout(0);
+    assert.equal(await page.locator('[data-city-continuity]').count(), 0);
+    assert.equal(await page.locator('.city-world__dock').isVisible(), false);
+    await page.evaluate(() => window.__resumeUI.destroy());
+    // Component DTOs isolate form restoration; actual two-home consent reads are
+    // also exercised against the real server in the gameplay-panels journey.
+    await page.addScriptTag({ path: 'public/city-home-ui.js' });
+    await page.evaluate(() => {
+      window.__homeDraftActions = []; window.__homeAuthority = 1; window.__homeActivity = 1;
+      const board = key => ({ viewer: { characterId: 'home-viewer', generation: 1, district: 'docks' },
+        home: { key, street: 'Street ' + key, authorityToken: key + ':' + window.__homeAuthority, revision: 1, layoutRevision: 1 },
+        access: { role: 'owner', rights: ['visit'] }, room: { active: true, catalog: [{ id: 'chair', name: 'Chair' }, { id: 'lamp', name: 'Lamp' }], furniture: [] },
+        actions: [{ id: 'layout', label: 'Save layout', available: true }], activity: { active: {
+          id: key + ':' + window.__homeActivity, title: 'Puzzle ' + key, capacity: 4, roster: [],
+          actions: [{ id: 'join', label: 'Join puzzle', available: true, inputFields: ['consent'] }],
+        } } });
+      window.__homeDraftUI = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), {
+        ...window.__fixture, scopeKey: 'home-draft-owner', character: { id: 'home-viewer', generation: 1 }, district: { id: 'docks' },
+        onAction: (...args) => window.__homeDraftActions.push(args), onRead: async (kind, input) => ({ code: 200,
+          body: kind === 'home-interior' ? board(input.homeKey) : kind === 'home-invitations'
+            ? { permissions: [{ homeKey: 'A', status: 'active' }, { homeKey: 'B', status: 'active' }] } : {} }),
+      }); window.__homeDraftUI.open('room');
+    });
+    const native = locator => viewport.width <= 680 ? locator.tap() : locator.click();
+    const enter = async key => {
+      await native(page.getByText(key, { exact: true }).locator('..').getByRole('button', { name: 'Enter home', exact: true }));
+      await page.getByRole('heading', { name: 'Street ' + key + ' · Your home', exact: true }).waitFor();
+    };
+    const consent = () => page.getByLabel('Share my name and join this home puzzle', { exact: true });
+    const roomRefresh = async () => {
+      const oldControl = await page.getByRole('button', { name: 'Refresh this room', exact: true }).elementHandle();
+      await native(page.getByRole('button', { name: 'Refresh this room', exact: true }));
+      await page.waitForFunction(control => !control.isConnected, oldControl); await oldControl.dispose();
+    };
+    await enter('A');
+    await page.getByLabel('Home furnishing', { exact: true }).selectOption('lamp');
+    await page.getByLabel('Home column', { exact: true }).fill('5');
+    await native(page.getByRole('button', { name: 'Hosting', exact: true })); await native(consent());
+    await roomRefresh(); assert(await consent().isChecked(), 'Same home, authority and puzzle retain the unsubmitted consent choice.');
+    await native(page.getByRole('button', { name: 'Room & furniture', exact: true }));
+    assert.equal(await page.getByLabel('Home furnishing', { exact: true }).inputValue(), 'lamp');
+    assert.equal(await page.getByLabel('Home column', { exact: true }).inputValue(), '5');
+    await enter('B');
+    assert.equal(await page.getByLabel('Home furnishing', { exact: true }).inputValue(), 'chair');
+    assert.equal(await page.getByLabel('Home column', { exact: true }).inputValue(), '2');
+    await native(page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await consent().isChecked(), false, 'A different home cannot inherit identity-sharing consent.');
+    await native(consent()); await page.evaluate(() => window.__homeActivity++); await roomRefresh();
+    assert.equal(await consent().isChecked(), false, 'A replacement puzzle requires its own consent choice.');
+    await native(consent()); await page.evaluate(() => window.__homeAuthority++); await roomRefresh();
+    await native(page.getByRole('button', { name: 'Hosting', exact: true }));
+    assert.equal(await consent().isChecked(), false, 'Changed deed authority retires the prior form choice.');
+    assert.deepEqual(await page.evaluate(() => window.__homeDraftActions), []);
+    await page.evaluate(() => window.__homeDraftUI.destroy());
     assert.deepEqual(errors, []); await context.close();
   }
   console.log('City world UI PASS: map, equipment, queued/dispatched lifecycle, same-key receipt recovery, default-off chat/XSS, furniture targets, confirmed gains and owner teardown on phone/desktop.');

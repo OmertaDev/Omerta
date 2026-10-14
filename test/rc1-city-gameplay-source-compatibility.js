@@ -1,4 +1,4 @@
-import { firstBatchSourceBaseline, FIRST_BATCH_SOURCE_PREDECESSOR } from '../tools/rc1-first-batch-source-compatibility.js';
+import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
 import { PLAYER_INTEL_SOURCE_TRANSFER, assertPlayerIntelSourceTransfer } from '../tools/player-intel-source-compatibility.js';
 import { companyBankSourceBaseline } from '../tools/rc1-company-bank-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -59,7 +59,7 @@ for (const file of files) {
   }
   // Mutate each actual complete gameplay diff hunk. Full-file admission must reject removed, duplicated and altered hunks alike.
   for (const revision of [CITY_GAMEPLAY_SOURCE_LATEST_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_MAIN_PARENT_REVISIONS[0], CITY_GAMEPLAY_SOURCE_PARENT_REVISIONS[0]]) {
-    const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', revision, FIRST_BATCH_SOURCE_PREDECESSOR, '--', file));
+    const diff = normalize(git('diff', '--no-ext-diff', '--unified=3', revision + ':' + file, CITY_GAMEPLAY_SOURCE_CURRENT_BLOBS[file]));
     const hunks = []; let hunk;
     for (const line of diff.split('\n')) {
       if (line.startsWith('@@ ')) { hunk = ''; hunks.push({ current: '' }); continue; }

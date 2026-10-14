@@ -6,6 +6,7 @@
 // or transaction-ledger adapter.
 import crypto from 'node:crypto';
 import { dbCaps } from './db.js';
+import { readPlayerIntel } from './playerintel.js';
 import { GameError } from './game.js';
 import {
   awaitItemReadBarrier,
@@ -1578,6 +1579,7 @@ function boardNode(node, state) {
     id: node.id,
     type: node.type,
     title: node.metadata?.title || node.id,
+    ...(node.metadata?.description ? { description: node.metadata.description } : {}),
     status: state?.state || 'pending',
     completedAt: dateString(state?.completed_at),
   };
@@ -1740,7 +1742,7 @@ export async function operationUiActions(client, contextValue, operationIdValue,
   return { actions, roles, nodes };
 }
 
-/** Safe shared projection: role slots and public progress, never account/character/Crew identities. */
+/** Shared role slots and public progress; names come only from this viewer's earned notebook. No account/character/Crew IDs. */
 export async function operationBoard(client, contextValue, operationIdValue) {
   const context = contextOf(contextValue);
   await awaitItemReadBarrier(client);
@@ -1753,6 +1755,24 @@ export async function operationBoard(client, contextValue, operationIdValue) {
   )).rows;
   const countByRole = new Map(contributions.map((entry) => [entry.role_id, Number(entry.n)]));
   const states = stateMap(await stateRows(client, row.id));
+  const occupants = new Map();
+  for (const assignment of roles) {
+    // Taking a role does not grant a new sighting of the person who filled it.
+    const self = assignment.account_id === context.accountId;
+    const known = self ? null : await readPlayerIntel(client, context.accountId, assignment.character_id);
+    occupants.set(assignment.role_id, { self, name: known?.name || null,
+      observedAt: known ? dateString(known.observedAt) : null });
+  }
+  const nextRoles = new Set([...context.registry.nodes.values()].filter(node =>
+    row.status === 'active' && node.packageId === row.graph_id && node.type === 'operation_step'
+    && node.metadata?.operationId === root.id && !['completed', 'excluded'].includes(states.get(node.id)?.state)
+    && (node.requires || []).every(id => states.get(id)?.state === 'completed')
+    && (node.requiresAny || []).every(group => group.some(id => states.get(id)?.state === 'completed'))
+    && !(node.excludes || []).some(id => states.get(id)?.state === 'completed')
+    && (node.metadata?.order === undefined || ![...context.registry.nodes.values()].some(prior =>
+      prior.packageId === row.graph_id && prior.type === 'operation_step' && prior.metadata?.operationId === root.id
+      && Number.isInteger(prior.metadata?.order) && prior.metadata.order < node.metadata.order
+      && states.get(prior.id)?.state !== 'completed'))).map(node => node.metadata.roleId));
   const nodes = [...context.registry.nodes.values()].filter((node) => (
     node.packageId === row.graph_id && GRAPH_STATE_TYPES.has(node.type)
     && (node.id === root.id || node.metadata?.operationId === root.id)
@@ -1766,6 +1786,8 @@ export async function operationBoard(client, contextValue, operationIdValue) {
       title: role.title || role.id,
       filled: roles.some((assignment) => assignment.role_id === role.id),
       contributions: countByRole.get(role.id) || 0,
+      occupant: occupants.get(role.id) || null,
+      turn: nextRoles.has(role.id),
     })),
     filledRoleCount: roles.length,
     requiredRoleCount: rolesOf(root).length,

@@ -123,6 +123,20 @@ try {
   assert.equal(await panePage.locator('[data-fieldwork-case="' + NEIGHBORHOOD_QUEST_GRAPH_ID + '"] [data-fieldwork-action]').isEnabled(), true, 'Healthy Journal actions remain available after the failed refresh finishes.');
   await panePage.evaluate(() => window.__fieldwork.destroy()); await panePage.close();
 
+  // Headless Chromium keeps tabs visible; this controlled test-realm property tests the hidden-page gate.
+  const pollingPage = await context.newPage(); pollingPage.on('pageerror', error => errors.push(error.message));
+  await pollingPage.goto(base + '/fieldwork-browser-fixture'); await settled(pollingPage);
+  await pollingPage.locator('[data-fieldwork-view="operations"]').click(); await settled(pollingPage);
+  const initialPolls = await pollingPage.evaluate(() => window.__fieldworkReads.filter(url => url === '/v1/worldgraph/operations').length);
+  await pollingPage.waitForFunction(count => window.__fieldworkReads.filter(url => url === '/v1/worldgraph/operations').length > count, initialPolls);
+  await settled(pollingPage);
+  await pollingPage.evaluate(() => Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' }));
+  const hiddenReads = await pollingPage.evaluate(() => window.__fieldworkReads.length);
+  await pollingPage.waitForTimeout(5500);
+  assert.equal(await pollingPage.evaluate(() => window.__fieldworkReads.length), hiddenReads, 'A hidden Crew board makes no periodic reads.');
+  assert.deepEqual(await pollingPage.evaluate(() => window.__fieldworkCalls), [], 'Live handoffs never take roles or contribute automatically.');
+  await pollingPage.evaluate(() => window.__fieldwork.destroy()); await pollingPage.close();
+
   // Authentication and missing-character failures stop further reads and clear cached private data.
   for (const failure of [{ status: 401, error: 'token_revoked' }, { status: 400, error: 'no_character' }]) {
     const sessionPage = await context.newPage();

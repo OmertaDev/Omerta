@@ -5,6 +5,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { DISTRICT_STORY_ARCS } from '../src/content/district-story-arcs.js';
 import { CITY_QUEST_PRESENTATIONS } from '../src/content/city-quest-presentation.js';
+import { firstErrandProof } from './lib/first-errand-proof.js';
 import { DISTRICTS, skillOf } from '../src/rules.js';
 
 const postgres = process.argv.includes('--postgres');
@@ -87,8 +88,8 @@ try {
   const catalogue = await success(call(witness, 'GET', '/v1/worldgraph/mysteries'));
   assert(validateCatalogue(catalogue), JSON.stringify(validateCatalogue.errors));
   const city = catalogue.mysteries.filter(entry => entry.cityQuest);
-  assert.equal(city.length, 7);
-  assert.equal(CITY_QUEST_PRESENTATIONS.length, 7);
+  assert.equal(city.length, 8);
+  assert.equal(CITY_QUEST_PRESENTATIONS.length, 8);
   assert.deepEqual(DISTRICT_STORY_ARCS.map(story => story.presentation.districtId).sort(), DISTRICTS.map(district => district.id).sort());
   assert.equal(new Set(city.flatMap(entry => entry.actions.map(action => action.id))).size, city.length,
     'Simultaneous City quest offers have distinct issued action IDs.');
@@ -208,6 +209,7 @@ try {
   assert.equal(replacement.historicalInstances.filter(entry => entry.graphId.startsWith('district-')).length, 6);
   assert((await success(call(witness, 'GET', '/v1/worldgraph/inventory'))).currentCharacterItems.every(item => !item.templateId.startsWith('item:district_')),
     'The new living character receives no predecessor keepsake or quest progress.');
+  await firstErrandProof(app);
   console.log('city-district-arcs PASS: six actual districts, both permanent branches, native HTTP owner/location/learned-skill authority, hidden-node privacy, unique inert character keepsakes, unchanged currencies, exact replay and preserved Neighborhood action IDs' +
     (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));
 } finally {
