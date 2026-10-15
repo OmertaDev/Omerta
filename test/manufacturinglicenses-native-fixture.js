@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 
 export async function manufacturingLicenseNativeBackend() {
   assert.deepEqual(process.argv.slice(2), ['--postgres'], 'Explicit native invocation only');
@@ -198,7 +199,7 @@ export function assertNativeCraftRollback(before, after, attempts) {
 
 export function assertMetadataOnlyCancellation(before, after, licenseId, originalAccount, requestKey) {
   for (const [table, values] of Object.entries(before.tables)) {
-    if (!['manufacturing_licenses', 'manufacturing_license_requests'].includes(table)) assert.deepEqual(after.tables[table], values, table);
+    if (!['manufacturing_licenses', 'manufacturing_license_requests', 'idempotency'].includes(table)) assert.deepEqual(after.tables[table], values, table);
   }
   const expected = before.tables.manufacturing_licenses.map(text => {
     const row = JSON.parse(text);
@@ -212,5 +213,21 @@ export function assertMetadataOnlyCancellation(before, after, licenseId, origina
   assert.equal(additions.length, 1);
   assert.equal(additions[0].account_id, originalAccount);
   assert.equal(additions[0].request_key, requestKey);
+  const oldHttp = new Set(before.tables.idempotency);
+  assert.equal(after.tables.idempotency.length, oldHttp.size + 1, 'Exactly one successful HTTP acknowledgement is created');
+  for (const previous of oldHttp) assert(after.tables.idempotency.includes(previous), 'Every previous HTTP row remains exact');
+  const http = after.tables.idempotency.filter(text => !oldHttp.has(text)).map(JSON.parse);
+  assert.equal(http.length, 1);
+  assert.deepEqual(Object.keys(http[0]).sort(), ['account_id','key','status','body_hash','response','created_at'].sort());
+  assert.equal(http[0].account_id, originalAccount);
+  assert.equal(http[0].key, requestKey);
+  assert.equal(http[0].status, 200);
+  const original = before.tables.manufacturing_licenses.map(JSON.parse).find(row => row.id === licenseId);
+  assert(original);
+  const body = { licenseId, sourceHash: original.source_hash };
+  assert.equal(http[0].body_hash, crypto.createHash('sha256').update('POST\n/v1/company/manufacturing-licenses/cancel\n' + JSON.stringify(body)).digest('hex'));
+  assert.deepEqual(JSON.parse(http[0].response), additions[0].receipt, 'HTTP ACK is exactly the existing canonical cancellation receipt');
+  assert(Number.isFinite(Date.parse(http[0].created_at)));
+
   assert.deepEqual(after.sequences, before.sequences, 'Metadata recovery attempts no item allocator');
 }

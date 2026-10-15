@@ -1,0 +1,11 @@
+// Pure assertion controls only; these administrative snapshots prove no gameplay/native effect.
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import {assertMetadataOnlyCancellation as check} from './manufacturinglicenses-native-fixture.js';
+const encode=JSON.stringify,receipt={ok:true,licenseId:'license',status:'cancelled'},sourceHash='a'.repeat(64),old={id:'license',status:'accepted',source_hash:sourceHash};
+const before={tables:{manufacturing_licenses:[encode(old)],manufacturing_license_requests:[],idempotency:[encode({old:'exact'})],characters:[encode({id:'original',cash:100})]},sequences:[{sequence:'unchanged',last_value:'4'}]};
+const ack={account_id:'original-account',key:'cancel-key',status:200,body_hash:crypto.createHash('sha256').update('POST\n/v1/company/manufacturing-licenses/cancel\n'+encode({licenseId:'license',sourceHash})).digest('hex'),response:encode(receipt),created_at:'2026-10-15T00:00:00Z'};
+const after=structuredClone(before);after.tables.manufacturing_licenses=[encode({...old,status:'cancelled'})];after.tables.manufacturing_license_requests=[encode({account_id:'original-account',request_key:'cancel-key',receipt})];after.tables.idempotency.push(encode(ack));
+check(before,after,'license','original-account','cancel-key');
+const mutations=[x=>x.tables.idempotency.push(encode({...ack,key:'extra'})),x=>x.tables.idempotency[0]=encode({old:'drift'}),...['account_id','key','status','body_hash','response','created_at'].map(field=>x=>{const row=JSON.parse(x.tables.idempotency[1]);row[field]=field==='status'?500:field==='response'?encode({ok:false}):'invalid';x.tables.idempotency[1]=encode(row);}),x=>x.tables.characters=[encode({id:'original',cash:101})],x=>x.sequences[0].last_value='5',x=>x.tables.manufacturing_license_requests[0]=encode({account_id:'foreign',request_key:'cancel-key',receipt}),x=>x.tables.manufacturing_licenses[0]=encode({...old,status:'cancelled',source_hash:'b'.repeat(64)})];
+for(const mutate of mutations){const candidate=structuredClone(after);mutate(candidate);assert.throws(()=>check(before,candidate,'license','original-account','cancel-key'));}console.log('PASS12 causal metadata-only cancellation refusal controls; only exact canonical HTTP ACK and existing license/request metadata may change.');
