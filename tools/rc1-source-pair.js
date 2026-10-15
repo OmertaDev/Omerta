@@ -180,7 +180,7 @@ export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
 
 // Separate exact relation for autonomy after the reviewed main/commercial merge.
 export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "1dcd2b2dc33401225e89b179a269c6b98811f807",
+  "predecessor": "226f62c566280b8da59fd7f77b295707975f99eb",
   "reviewedCandidate": "a82f7f341f5c96ee94eb938f731bc4f3c13219f4",
   "predecessorTree": "66df6c4b0ffb3f88724b2e6682c2466d4fe9f73081ce5897022833db798cd8ce",
   "predecessorSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
