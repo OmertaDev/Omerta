@@ -981,10 +981,28 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
         } else if (char === ';' && stack.length === 0) break;
       }
       if (code[end] === ';' && stack.length === 0)
-        entries.push({ name: match[1], file, source, open: start, expression: source.slice(start, end) });
+        entries.push({ name: match[1], file, source, open: start, expression: source.slice(start, end), parameters: parametersOf(match[0]) });
     }
     return entries;
   };
+  // Only complete module-local bindings take precedence. Mutation/parameter
+  // uncertainty retains every legacy global candidate, never a handler waiver.
+  const moduleBinding = entry => {
+    const code = lexicalMask(entry.source), prefix = code.slice(0, entry.open);
+    if ([...prefix].reduce((depth, char) => depth + (char === '{' ? 1 : char === '}' ? -1 : 0), 0) !== 0) return false;
+    const name = entry.name.replaceAll('$', '\\$');
+    const writes = [...code.matchAll(new RegExp('(?<![.\\w$])' + name + '\\s*(?:[+*/%&|^-]?=(?!=|>)|\\+\\+|--)', 'g'))];
+    const declaration = entry.source.slice(0, entry.open).match(/(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*$/);
+    if (writes.length !== (declaration?.[1] === entry.name ? 1 : 0)) return false;
+    if (new RegExp('(?:\\[[^;\\]]*\\b' + name + '\\b[^;\\]]*\\]|\\{[^;}]*\\b' + name + '\\b[^;}]*\\})\\s*=').test(code)) return false;
+    return true;
+  };
+  const parametersOf = header => {
+    const start = header.indexOf('(');
+    return start >= 0 ? header.slice(start + 1, header.lastIndexOf(')'))
+      : header.match(/=\s*(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/)?.[1] ?? null;
+  };
+
   const crawlDeathSources = (index) => {
     const sources = [], names = new Set(), visited = new Set();
     const queue = [...(index.get('runEstate') || [])];
@@ -996,10 +1014,12 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
       sources.push({ name: entry.name, file: entry.file, body });
       for (const call of lexicalMask(body).matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
         const candidates = index.get(call[1]) || [];
-        const localConcise = candidates.filter(candidate => candidate.file === entry.file && candidate.expression !== undefined);
+        const shadowed = entry.parameters === null || (typeof entry.parameters === 'string'
+          && new RegExp('\\b' + call[1].replace(/[$]/g, '\\$&') + '\\b').test(entry.parameters));
+        const localBindings = shadowed ? [] : candidates.filter(candidate => candidate.file === entry.file && moduleBinding(candidate));
         // A proven module binding wins; unresolved/ambiguous legacy names still
         // traverse every definition, never a handler/table exemption.
-        queue.push(...(localConcise.length ? localConcise : candidates));
+        queue.push(...(localBindings.length ? localBindings : candidates));
       }
     }
     return { sources, names };
@@ -1045,7 +1065,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     for (const head of heads) {
       for (const match of code.matchAll(head)) {
         const open = code.indexOf('{', match.index + match[0].length - 1);
-        const entry = { name: match[1], file, source, open };
+        const entry = { name: match[1], file, source, open, parameters: parametersOf(match[0]) };
         (functionIndex.get(entry.name) || functionIndex.set(entry.name, []).get(entry.name)).push(entry);
       }
     }
@@ -1086,6 +1106,30 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     'tripwire:MERGE_INTO:operation_escrow',
   ], 'the death-policy source tripwire must detect Phase 1 INSERT and MERGE statements');
 
+  // Same source/body proof for named and block-arrow locals, with real historical mutations retained.
+  for (const newline of ['\n', '\r\n']) {
+    const localIndex = (kind, body, tail = '', parameters = '') => {
+      const text = (kind === 'named' ? 'function advance() {' + body + '}' : 'const advance = () => {' + body + '};') + newline + tail;
+      const head = kind === 'named' ? text.indexOf('{') : text.indexOf('{');
+      return new Map([
+        ['runEstate', [{ name:'runEstate', file:'ring.js', source:'function runEstate(' + parameters + ') { advance(); }', open:('function runEstate(' + parameters + ') ').length, parameters }]],
+        ['advance', [{ name:'advance', file:'ring.js', source:text, open:head, parameters:'' },
+          { name:'advance', file:'foreign.js', source:'function advance() { startMystery(); }', open:19, parameters:'' }]],
+        ['startMystery', [{name:'startMystery',file:'mysteries.js',source:'function startMystery() { client.query("INSERT INTO mystery_instances DEFAULT VALUES"); }',open:24,parameters:''}]],
+      ]);
+    };
+    for (const kind of ['named', 'arrow']) {
+      assert(!crawlDeathSources(localIndex(kind, ' return 1; ')).names.has('startMystery'), 'Pure real module binding must not reach a foreign same-name handler');
+      assert(crawlDeathSources(localIndex(kind, ' startMystery(); ')).names.has('startMystery'), 'A real local advance to startMystery remains reachable');
+      for (const body of [' startMystery(); ', ' client.query("INSERT INTO mystery_instances DEFAULT VALUES"); '])
+        assert.throws(() => assert.deepEqual(crawlDeathSources(localIndex(kind, body)).sources.flatMap(entry => mutationsFor(entry.name, entry.body)).filter(mutation => mutation.table === 'mystery_instances'), []), 'The unchanged SQL oracle must reject actual local or transitive historical mutations');
+      assert(crawlDeathSources(localIndex(kind, ' client.query("INSERT INTO mystery_instances DEFAULT VALUES"); ')).sources.some(entry => entry.name === 'advance' && /INSERT INTO mystery_instances/.test(entry.body)), 'Direct local body mutations remain in the SQL oracle');
+    }
+    assert(crawlDeathSources(localIndex('named', ' return 1; ', 'advance = foreignAdvance;')).names.has('startMystery'), 'Rebound named binding retains all global alternatives');
+    assert(crawlDeathSources(localIndex('named', ' return 1; ', '', 'advance')).names.has('startMystery'), 'A parameter cannot be substituted with a module helper');
+    const unknown = localIndex('named', ' return 1; '); unknown.get('advance')[0].file = 'elsewhere.js';
+    assert(crawlDeathSources(unknown).names.has('startMystery'), 'Unknown module binding retains full global fallback');
+  }
   const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
   const phase1DeathMutations = mutations
     .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
