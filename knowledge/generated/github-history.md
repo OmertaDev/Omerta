@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c58d645f0bf4`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f068b390946a`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3744 |
+| Commits in clone | 3748 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-15 — pin exact commercial native CI endpoint repair |
+| Latest commit | 2026-10-15 — Pin complete commercial CI-bound reviewed source |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2785 |
+| OmertaDev | 2789 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 114 |
@@ -30,11 +30,11 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 642 | historical |
-| knowledge/generated/graph-summary.md | 642 | historical |
-| knowledge/generated/graph.json | 642 | historical |
-| knowledge/generated/inventory.md | 642 | historical |
-| [SPEC.md](../../SPEC.md) | 519 | yes |
+| knowledge/generated/github-history.md | 643 | historical |
+| knowledge/generated/graph-summary.md | 643 | historical |
+| knowledge/generated/graph.json | 643 | historical |
+| knowledge/generated/inventory.md | 643 | historical |
+| [SPEC.md](../../SPEC.md) | 520 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 465 | yes |
 | [src/server.js](../../src/server.js) | 420 | yes |
@@ -54,7 +54,7 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
 | knowledge/generated/routes.md | 116 | historical |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 109 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 110 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 93 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 91 | yes |
