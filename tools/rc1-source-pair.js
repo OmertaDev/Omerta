@@ -212,6 +212,33 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
   ])
 });
 
+export const NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
+  "predecessor": "7f7602dd38ae9865dc1d71f1194cb50453c85211",
+  "reviewedCandidate": "9785bbf4c7e6f3ef15a0e54985c30bd1dc658329",
+  "predecessorTree": "606d73e3bbfba170e206b7eb40645c2c83a4df1b172afe43d02069f8f910f2ef",
+  "predecessorSchema": "38989e8533280ba5ef7998255712639083c883fa63f4e30fed4fbc74c24e67d1",
+  "predecessorCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
+  "candidateTree": "ec4cc4170c5a1beb0a12c03e9eadd4217d3ba9b3055c4c1e53ebd36b47b5c67e",
+  "candidateSchema": "e334badfba6c0b08bb13288fc702c6cd661546d47f460afbf38087a43ca52861",
+  "candidateCatalog": "301ebc59b074fb9e87f133e5b11cc5d467cd29d6848a7383a3969d982955bbe0",
+  "constraints": 90,
+  "notNull": 90,
+  "candidateTableCatalog": "31daecc82d671323eeb0e4026abb8f94faa231d73a2ece30c7500b657b49fa8c",
+  "tables": Object.freeze([
+    "atomic_barter_offers",
+    "atomic_barter_requests",
+    "commissioned_crafting_contracts",
+    "commissioned_crafting_requests",
+    "consignment_requests",
+    "consignments",
+    "freight_consolidation_acceptances",
+    "freight_consolidation_requests",
+    "freight_consolidations",
+    "picking_packing_jobs",
+    "picking_packing_requests"
+  ])
+});
+
 export const FIFTH_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "0c72a29748df6b1c6955ebcb648efe5f20fec6a1",
   "reviewedCandidate": "94ae0cf067939d05e18f997aef7ddd7b3fd18615",
@@ -282,6 +309,7 @@ export async function sourcePairIdentity(root) {
     thirdBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(THIRD_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     fourthBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(FOURTH_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     fifthBatchAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(FIFTH_BATCH_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
+    nextThirtyFirstFiveAdditiveSource: { tree: additiveSource.tree, schema: additiveSource.schema, catalog: additiveSource.catalog, catalogTables: catalog ? Object.fromEntries(NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.tables.map(name => [name, { constraints: catalog.added.filter(row => row.table_name === name), notNullColumns: catalog.notNullColumns[name] ?? null }])) : {} },
     lockfileSha256: sha256(await fs.readFile(path.join(root, 'package-lock.json'))) };
 }
 
@@ -531,6 +559,40 @@ export function qualifyAutonomyMainAdditiveBootstrap(a, b, predecessor, candidat
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
 }
 
+export function qualifyNextThirtyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.nextThirtyFirstFiveAdditiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
+    assert.equal(identity.nextThirtyFirstFiveAdditiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.nextThirtyFirstFiveAdditiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.nextThirtyFirstFiveAdditiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Eleven-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.nextThirtyFirstFiveAdditiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  assert.equal(Object.values(candidate.nextThirtyFirstFiveAdditiveSource.catalogTables).reduce((n, row) => n + row.constraints.length, 0), pin.constraints, 'Exact 90 native constraints required');
+  assert.equal(Object.values(candidate.nextThirtyFirstFiveAdditiveSource.catalogTables).reduce((n, row) => n + row.notNullColumns.length, 0), pin.notNull, 'Exact 90 NOT NULL bindings required');
+  for (const name of pin.tables) assert(Array.isArray(b.tables[name]), `New table snapshot type invalid: ${name}`);
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_NEXT_THIRTY_FIRST_ELEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
+}
+
 export function normalizeSourcePairBootstrap(snapshot, { schema, appVersion, predecessorSchema, candidateSchema }) {
   assert([predecessorSchema, candidateSchema].includes(schema), 'Snapshot schema is not one of the pinned source pair');
   const statement = 'ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB;';
@@ -692,6 +754,7 @@ export async function runSourcePair() {
     thirdBatchAdditiveBootstrapPolicy: { predecessor: THIRD_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: THIRD_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: THIRD_BATCH_ADDITIVE_PAIR.tables, constraints: 104, notNull: 121, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; all other complete source/catalog/schema bytes pinned', dataRule: 'Sixteen declared tables EMPTY; every prior/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'No populated authority, financial backing, deployed predecessor or full-world recovery qualification' },
     fourthBatchAdditiveBootstrapPolicy: { predecessor: FOURTH_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: FOURTH_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FOURTH_BATCH_ADDITIVE_PAIR.tables, constraints: 132, notNull: 114, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; whole RootIV runtime/schema/catalog/source frozen', dataRule: 'Thirteen declared tables EMPTY; every old/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'Provisional prerelease predecessor; no populated authority, backing, deployed predecessor or full-world recovery qualification' },
     autonomyMainAdditiveBootstrapPolicy: { predecessor: AUTONOMY_MAIN_ADDITIVE_PAIR.predecessor, reviewedCandidate: AUTONOMY_MAIN_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: AUTONOMY_MAIN_ADDITIVE_PAIR.tables, constraints: 105, notNull: 152, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; whole merged runtime/schema/catalog/source frozen', dataRule: 'Seventeen declared tables EMPTY; every old/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'No populated authority, backing, native validity, deployed predecessor or full-world recovery qualification' },
+    nextThirtyFirstFiveAdditiveBootstrapPolicy: { predecessor: NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.predecessor, reviewedCandidate: NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.tables, constraints: 90, notNull: 90, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; whole merged runtime/schema/catalog/source frozen', dataRule: 'Eleven declared tables EMPTY; every old/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'No populated authority, backing, native validity, deployed predecessor or full-world recovery qualification' },
     fifthBatchAdditiveBootstrapPolicy: { predecessor: FIFTH_BATCH_ADDITIVE_PAIR.predecessor, reviewedCandidate: FIFTH_BATCH_ADDITIVE_PAIR.reviewedCandidate, stages: ['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'], tables: FIFTH_BATCH_ADDITIVE_PAIR.tables, constraints: 105, notNull: 152, sourceRule: 'Unchanged three qualification files and closed ten derivative outputs only; whole RootV runtime/schema/catalog/source frozen', dataRule: 'Seventeen declared tables EMPTY; every old/unknown row/table and every sequence exact; rollback/replay/reupgrade strict full equality', excludedClaim: 'Provisional prerelease predecessor; no populated authority, backing, deployed predecessor or full-world recovery qualification' },
     coverageExclusions: ['Not deployed Render recovery', 'No worker or Linux application-signal rehearsal in this tool',
       'Two fixture accounts and mystery.start only; not full resource or journey coverage',
@@ -862,7 +925,9 @@ export async function runSourcePair() {
     const delta = sourcePairStateDifference(a, b);
     if (additive && canonicalJson(a) !== canonicalJson(b)) {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
-      const qualified = predecessor.source === AUTONOMY_MAIN_ADDITIVE_PAIR.predecessor
+      const qualified = predecessor.source === NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.predecessor
+        ? qualifyNextThirtyFirstFiveAdditiveBootstrap(a, b, predecessor, candidate)
+        : predecessor.source === AUTONOMY_MAIN_ADDITIVE_PAIR.predecessor
         ? qualifyAutonomyMainAdditiveBootstrap(a, b, predecessor, candidate)
         : predecessor.source === FIFTH_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifyFifthBatchAdditiveBootstrap(a, b, predecessor, candidate)

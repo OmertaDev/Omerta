@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
 import { FIRST_FIVE_ADDITIVE_PAIR as pin,qualifyFirstFiveAdditiveBootstrap,sourcePairStateDifference,sourcePairReviewedTreeHash,ADDITIVE_KNOWLEDGE_OUTPUTS } from '../tools/rc1-source-pair.js';
-const catalog=JSON.parse(await fs.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(nextFiveSourceBaseline('test/lib/phase2-architecture-upgrade-catalog.json',await fs.readFile(new URL('lib/phase2-architecture-upgrade-catalog.json',import.meta.url),'utf8')));
 const predecessor={source:pin.predecessor,additiveSource:{tree:pin.predecessorTree,schema:pin.predecessorSchema,catalog:pin.predecessorCatalog}},candidate={source:pin.reviewedCandidate,additiveSource:{tree:pin.candidateTree,schema:pin.candidateSchema,catalog:pin.candidateCatalog,catalogTables:Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]??null}]))}};
 const old={tables:{accounts:['{"id":"owned-source-pair-fixture"}'],characters:[],telemetry:[]},sequences:[{sequencename:'item_events_sequence_seq',last_value:'10'}]},fresh={tables:{...old.tables,...Object.fromEntries(pin.tables.map(name=>[name,[]]))},sequences:structuredClone(old.sequences)};
 const qualified=qualifyFirstFiveAdditiveBootstrap(old,fresh,predecessor,candidate);assert.equal(qualified.relation,'REVIEWED_SEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');assert.notEqual(qualified.beforeNormalizedSha256,qualified.afterNormalizedSha256);assert.deepEqual(qualified.addedEmptyTables,pin.tables);assert.deepEqual(sourcePairStateDifference(old,fresh).added,pin.tables);
@@ -281,4 +282,56 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
   assert.throws(() => qualify(fifthOld, fifthFresh, fifthPredecessor, fifthCandidate));
   assert.deepEqual(qualifyFifthBatchAdditiveBootstrap(fifthOld, fifthFresh, fifthPredecessor, fifthCandidate), fifthQualified);
   console.log(`rc1-source-pair autonomy/main: ${negatives} rejecting controls; five historical profiles unchanged; empty-bootstrap evidence only`);
+}
+
+// The next thirty's first five add exactly eleven empty tables. This does not
+// change any historical profile or the three-QA/ten-derivative exclusion set.
+{
+  const {NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR:pin,qualifyNextThirtyFirstFiveAdditiveBootstrap:qualify} = await import('../tools/rc1-source-pair.js');
+  const git=(...args)=>gitProof('git',args,{encoding:'utf8',maxBuffer:32*1024*1024});
+  const catalog=JSON.parse(git('show',pin.reviewedCandidate+':test/lib/phase2-architecture-upgrade-catalog.json'));
+  const catalogTables=Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]}]));
+  assert.equal(pin.tables.length,11);assert.equal(pin.constraints,90);assert.equal(pin.notNull,90);
+  const p={source:pin.predecessor,nextThirtyFirstFiveAdditiveSource:{}},c={source:pin.reviewedCandidate,nextThirtyFirstFiveAdditiveSource:{catalogTables}};
+  for(const[identity,side]of[[p,'predecessor'],[c,'candidate']]){
+    const revision=side==='predecessor'?pin.predecessor:pin.reviewedCandidate;
+    for(const field of['tree','schema','catalog'])identity.nextThirtyFirstFiveAdditiveSource[field]=pin[side+field[0].toUpperCase()+field.slice(1)];
+    assert.equal(sourcePairReviewedTreeHash(git('ls-tree','-r','-z',revision).split('\0').filter(Boolean)),pin[side+'Tree']);
+    assert.equal(hashProof(git('show',revision+':schema.sql')),pin[side+'Schema']);
+    assert.equal(hashProof(git('show',revision+':test/lib/phase2-architecture-upgrade-catalog.json')),pin[side+'Catalog']);
+  }
+  const before=structuredClone(fifthFresh),after=structuredClone(before);
+  for(const name of pin.tables){assert(!Object.hasOwn(before.tables,name));after.tables[name]=[];}
+  assert.equal(qualify(before,after,p,c).relation,'REVIEWED_NEXT_THIRTY_FIRST_ELEVEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');
+  let negatives=0;
+  const reject=mutate=>{
+    const a=structuredClone(before),b=structuredClone(after),previous=structuredClone(p),current=structuredClone(c);
+    mutate(a,b,previous,current);assert.throws(()=>qualify(a,b,previous,current));negatives++;
+  };
+  for(const name of pin.tables){
+    reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]={};});reject((_a,b)=>{b.tables[name]=['{"unreviewed":true}'];});
+    const evidence=catalogTables[name];
+    for(let i=0;i<evidence.constraints.length;i++){
+      for(const field of['table_name','name','definition','unknown'])
+        reject((_a,_b,_p,c)=>{c.nextThirtyFirstFiveAdditiveSource.catalogTables[name].constraints[i][field]='unreviewed';});
+      reject((_a,_b,_p,c)=>{c.nextThirtyFirstFiveAdditiveSource.catalogTables[name].constraints.splice(i,1);});
+      reject((_a,_b,_p,c)=>{c.nextThirtyFirstFiveAdditiveSource.catalogTables[name].constraints.push(c.nextThirtyFirstFiveAdditiveSource.catalogTables[name].constraints[i]);});
+    }
+    for(let i=0;i<evidence.notNullColumns.length;i++)for(const operation of['missing','renamed','duplicated'])
+      reject((_a,_b,_p,c)=>{const cols=c.nextThirtyFirstFiveAdditiveSource.catalogTables[name].notNullColumns;if(operation==='missing')cols.splice(i,1);else if(operation==='renamed')cols[i]+='__unreviewed';else cols.push(cols[i]);});
+  }
+  for(const side of['predecessor','candidate'])for(const field of['tree','schema','catalog'])
+    reject((_a,_b,p,c)=>{(side==='predecessor'?p:c).nextThirtyFirstFiveAdditiveSource[field]='0'.repeat(64);});
+  reject((_a,b)=>{b.tables.unreviewed_authority=[];});reject((_a,b)=>{b.tables.accounts=['{"replacement":true}'];});
+  reject((_a,b)=>{b.tables.unknown_existing_custody=['{"replacement":true}'];});reject((_a,b)=>{delete b.tables.unknown_existing_custody;});
+  reject((_a,b)=>{b.sequences[0].last_value='11';});reject((_a,b)=>{b.sequences.push({sequencename:'unreviewed',last_value:null});});
+  reject((_a,_b,p)=>{p.source='0'.repeat(40);});reject((_a,_b,_p,c)=>{c.source='unknown';});
+  reject((_a,_b,_p,c)=>{c.nextThirtyFirstFiveAdditiveSource.catalogTables.unreviewed={constraints:[],notNullColumns:[]};});
+  reject((_a,_b,_p,c)=>{delete c.nextThirtyFirstFiveAdditiveSource;});
+  assert.throws(()=>qualifyFifthBatchAdditiveBootstrap(before,after,p,c));
+  assert.throws(()=>qualify(fifthOld,fifthFresh,fifthPredecessor,fifthCandidate));
+  assert.deepEqual(qualifyFifthBatchAdditiveBootstrap(fifthOld,fifthFresh,fifthPredecessor,fifthCandidate),fifthQualified);
+  for(const file of['src/atomicbarter.js','src/commissionedcrafting.js','src/social/estate.js','tools/next-five-release-phase2-migration-catalog.js','.github/workflows/ci.yml','test/lib/phase2-architecture-upgrade-catalog.json'])
+    assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords,record(file)]),sourceHash,'No first-five implementation or helper exclusion');
+  console.log(`rc1-source-pair next thirty first-five: ${negatives} rejecting controls; 11empty/90constraints/90NN, strict old/unknown rows and sequences; original profiles/exclusions unchanged; no native or deployed clearance`);
 }
