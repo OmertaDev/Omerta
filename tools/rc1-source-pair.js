@@ -151,11 +151,11 @@ export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
 // Separate main-branch composition; all four historical profiles remain unchanged.
 export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "5c18acaaf47c84851729b82354340c4d56734dd9",
-  "reviewedCandidate": "f2aa1d99aaccca118f90592af8d5a9e6b7cb9e56",
+  "reviewedCandidate": "abc36fc30ac38c0d3b51ff7dd666525063f6a3aa",
   "predecessorTree": "c85dedb8f78e6e8c919bf779b9b011b73c6b3f52773312b97143364520f2de0f",
   "predecessorSchema": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
   "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
-  "candidateTree": "8658168bcbac6c6a40aaba64089e56dabcd9277d6d0ce0db474ddd053477eb3a",
+  "candidateTree": "f4678fc75addccb4452c39eeec76fb7a7c6d4d1447017279b0ede9cedee6e818",
   "candidateSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
   "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
@@ -180,12 +180,12 @@ export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
 
 // Separate exact relation for autonomy after the reviewed main/commercial merge.
 export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "c66c5f5280104aa4ae6dd0527d9d5ebff50cf110",
-  "reviewedCandidate": "f30e970e5e61035f8f519105c412ff05bc61f6e7",
-  "predecessorTree": "8658168bcbac6c6a40aaba64089e56dabcd9277d6d0ce0db474ddd053477eb3a",
+  "predecessor": "f43cd963e8af7b8ada65d7f908331ceb606868d5",
+  "reviewedCandidate": "91494d18723802c7590f5482c3a4ed2bed859da8",
+  "predecessorTree": "f4678fc75addccb4452c39eeec76fb7a7c6d4d1447017279b0ede9cedee6e818",
   "predecessorSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "predecessorCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
-  "candidateTree": "1de2c2356ef2e48c7e904f97f25f10b14b962127033b8d5400b63917b1401de3",
+  "candidateTree": "6b2b3f047efca32d85da0587b139bb227193135b4608fdbba29c247de28e22fb",
   "candidateSchema": "38989e8533280ba5ef7998255712639083c883fa63f4e30fed4fbc74c24e67d1",
   "candidateCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
   "candidateTableCatalog": "b9058463f72e0b694211f5d82ea0ea9eb39e117ce70edd4cf64ce44277a62b5d",
