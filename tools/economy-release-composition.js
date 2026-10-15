@@ -1,3 +1,4 @@
+import {nextFiveSourceBaseline} from './next-five-source-compatibility.js';
 // Closed reconstruction of the commercial and main source branches after their merge.
 // Historical pins remain immutable. This is source evidence, never native migration clearance.
 import assert from 'node:assert/strict';
@@ -618,6 +619,7 @@ export function assertEconomyReleaseComposition(profile, file, input) {
   return { baselineText, sourceRevision: COMPOSITION_REVISION, phase: COMPOSITION_PHASE };
 }
 export function economyReleaseSource(profile, file, input) {
+  input = nextFiveSourceBaseline(file, input);
   if (typeof input !== 'string' || !Object.hasOwn(COMPOSITION_PROFILES, profile)
       || !Object.hasOwn(COMPOSITION_PROFILES[profile], file) || !uniform(input)) return input;
   return hash(lf(input)) === COMPOSITION_PROFILES[profile][file].currentSha256
