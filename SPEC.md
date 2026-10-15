@@ -12,7 +12,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 
 | | |
 |---|---|
-| Backend modules | **504** files, **127740** lines (recursive source inventory) |
+| Backend modules | **504** files, **127747** lines (recursive source inventory) |
 | Test suites | **703** files, **174519** lines (recursive source inventory) |
 | HTTP routes | **1198** registrations (**1198** unique; 1133 under `/v1`) |
 | Database tables | **528** (`schema.sql`, 9122 lines) |
