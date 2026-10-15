@@ -1,5 +1,5 @@
 import {assertItemTransaction,itemTransactionIdentity} from './items.js';
-import {assertWorkshopFloorLease as workshopFloorLeaseAdmission} from './workshopfloor.js';
+async function workshopFloorLeaseAdmission(c,ctx,token){return (await import('./workshopfloor.js')).assertWorkshopFloorLease(c,ctx,token);}
 export {workshopFloorLeaseAdmission};
 import crypto from 'node:crypto';
 import { GameError } from './game.js';

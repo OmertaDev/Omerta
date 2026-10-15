@@ -1,6 +1,6 @@
 import {assertProductionSlotBeforeCraft as productionReservationAdmission} from './productionslots.js';
 export {productionReservationAdmission};
-import {assertWorkshopFloorBeforeCraft as workshopFloorAdmission} from './workshopfloor.js';
+async function workshopFloorAdmission(c,ctx,token){return (await import('./workshopfloor.js')).assertWorkshopFloorBeforeCraft(c,ctx,token);}
 export {workshopFloorAdmission};
 import crypto from 'node:crypto';
 import fs from 'node:fs';

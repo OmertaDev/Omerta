@@ -1,5 +1,5 @@
 import {withProductionSlotCommission,retireProductionSlotsForCommission} from './productionslots.js';
-import {assertWorkshopFloorService as workshopFloorServiceAdmission} from './workshopfloor.js';
+async function workshopFloorServiceAdmission(c,ctx,token){return (await import('./workshopfloor.js')).assertWorkshopFloorService(c,ctx,token);}
 export {workshopFloorServiceAdmission};
 import crypto from 'node:crypto';
 import fs from 'node:fs';

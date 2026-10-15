@@ -1,6 +1,5 @@
 import {collectCrossDockIssues} from './crossdocking.js';
 import {collectProductionSlotIssues} from './productionslots.js';
-import {collectWorkshopFloorIssues} from './workshopfloor.js';
 import {collectMerchantReturnIssues} from './merchantreturnsinvariants.js';
 import { collectMultiHopCourierIssues } from './multihopcourier.js';
 import { customerVaultAccounting } from './customervaults.js';
@@ -764,7 +763,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('cross docking canonical source and handoff history', crossDockIssues.length, 0, 0, {issues:crossDockIssues});
   const productionSlotIssues = await collectProductionSlotIssues(pool);
   push('production slot canonical reservation history', productionSlotIssues.length, 0, 0, {issues:productionSlotIssues});
-  const floorIssues=await collectWorkshopFloorIssues(pool);
+  const floorIssues=await (await import('./workshopfloor.js')).collectWorkshopFloorIssues(pool);
   push('workshop floor source and allocation history',floorIssues.length,0,0,{issues:floorIssues});
   const merchantReturnReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM merchant_return_rights');
   const merchantReturnNet = await sum(pool, "currency='cash' AND reason IN ('merchant_return:reserve','merchant_return:payout','merchant_return:refund')");
