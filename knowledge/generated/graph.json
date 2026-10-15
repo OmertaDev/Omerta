@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5966c27f76ad91ccfadce54be244003e831fae33",
+  "sourceRevision": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14692,
-    "edges": 57785,
+    "nodes": 14695,
+    "edges": 57799,
     "byNodeType": {
-      "Artifact": 6408,
+      "Artifact": 6409,
       "Command": 273,
-      "Commit": 3630,
+      "Commit": 3632,
       "Contract": 133,
       "Document": 899,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5029,
-      "CHANGED": 22572,
-      "CONTAINS": 6429,
+      "BELONGS_TO": 5030,
+      "CHANGED": 22582,
+      "CONTAINS": 6430,
       "DECLARES": 273,
       "DEFINED_IN": 1639,
       "DEPENDS_ON": 68,
       "EXECUTES": 964,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3630,
+      "HAS_COMMIT": 3632,
       "IMPLEMENTS": 124,
       "IMPORTS": 5822,
       "INHERITS": 45,
@@ -7514,6 +7514,29 @@
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
     },
     {
+      "key": "Artifact:.github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "type": "Artifact",
+      "id": ".github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "label": "browser-integration-retest-2026-10-15.json",
+      "path": ".github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 35049,
+      "lines": 806,
+      "version": "e2b75836c3c30577",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".github/ci-evidence/browser-integration-retest-2026-10-15.json",
+          "line": 1,
+          "version": "e2b75836c3c30577"
+        }
+      ],
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+    },
+    {
       "key": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
       "type": "Artifact",
       "id": ".github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
@@ -7682,20 +7705,20 @@
       "path": ".github/workflows/ci.yml",
       "kind": "workflow",
       "extension": ".yml",
-      "bytes": 55930,
-      "lines": 1110,
-      "version": "1d1bbe0b6a52912c",
+      "bytes": 56017,
+      "lines": 1111,
+      "version": "e5377035ae5b7285",
       "text": true,
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "1d1bbe0b6a52912c"
+          "version": "e5377035ae5b7285"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
     },
     {
       "key": "Artifact:.github/workflows/forge.yml",
@@ -115615,20 +115638,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1435623,
-      "lines": 15115,
-      "version": "eb516327096ccade",
+      "bytes": 1435717,
+      "lines": 15116,
+      "version": "52b7be8066c7808b",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "eb516327096ccade"
+          "version": "52b7be8066c7808b"
         }
       ],
-      "lastChangedAt": "2026-10-15T01:45:56.000Z",
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5966c27f76ad91ccfadce54be244003e831fae33"
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -129093,20 +129116,20 @@
       "path": "test/consigliere-recovery-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7011,
-      "lines": 101,
-      "version": "68de0d1d5b2be773",
+      "bytes": 7270,
+      "lines": 105,
+      "version": "3c26061b4e5cbbce",
       "text": true,
       "provenance": [
         {
           "file": "test/consigliere-recovery-browser.js",
           "line": 1,
-          "version": "68de0d1d5b2be773"
+          "version": "3c26061b4e5cbbce"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
     },
     {
       "key": "Artifact:test/content-api.js",
@@ -131809,18 +131832,18 @@
       "extension": ".js",
       "bytes": 311015,
       "lines": 4515,
-      "version": "903a15d99b135b9e",
+      "version": "77b6eaadadd7500b",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "903a15d99b135b9e"
+          "version": "77b6eaadadd7500b"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -143514,20 +143537,20 @@
       "path": "tools/mobile.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 67049,
-      "lines": 1074,
-      "version": "419c0427f3280e40",
+      "bytes": 67815,
+      "lines": 1084,
+      "version": "3f64ef5875496c7b",
       "text": true,
       "provenance": [
         {
           "file": "tools/mobile.js",
           "line": 1,
-          "version": "419c0427f3280e40"
+          "version": "3f64ef5875496c7b"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T02:32:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -187985,6 +188008,22 @@
       ]
     },
     {
+      "key": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "type": "Commit",
+      "id": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "label": "chore(knowledge): refresh verified header fix snapshot",
+      "title": "chore(knowledge): refresh verified header fix snapshot",
+      "date": "2026-10-15T01:48:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "provenance": [
+        {
+          "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+        }
+      ]
+    },
+    {
       "key": "Commit:a04694d8319c4f711f53317d1bea6110ca973655",
       "type": "Commit",
       "id": "a04694d8319c4f711f53317d1bea6110ca973655",
@@ -197565,6 +197604,22 @@
         {
           "commit": "cb0b5a1c93ee83e622843607341eae98fca8ec7d",
           "url": "https://github.com/OmertaDev/Omerta/commit/cb0b5a1c93ee83e622843607341eae98fca8ec7d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "type": "Commit",
+      "id": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "label": "fix(release): complete browser journeys and privacy checks",
+      "title": "fix(release): complete browser journeys and privacy checks",
+      "date": "2026-10-15T02:32:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "provenance": [
+        {
+          "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
         }
       ]
     },
@@ -227486,7 +227541,7 @@
         },
         {
           "file": "test/consigliere-recovery-browser.js",
-          "line": 5
+          "line": 6
         },
         {
           "file": "test/launch-invites-browser.js",
@@ -235308,6 +235363,9 @@
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
+          "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+        },
+        {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
         },
         {
@@ -237207,6 +237265,9 @@
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
         },
         {
+          "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+        },
+        {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
         },
         {
@@ -239104,6 +239165,9 @@
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
+          "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
@@ -241537,6 +241601,9 @@
         },
         {
           "commit": "a0320ce02b4c58b73576476ccea9fb66be65745c"
+        },
+        {
+          "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
         },
         {
           "commit": "a04a1ad41d94a41c7118e46b5d2ae249d27470bc"
@@ -254313,12 +254380,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5966c27f76ad91ccfadce54be244003e831fae33",
+      "revision": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
       "currentBranch": "codex/production-all-changes-20261014",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6408,
+      "currentArtifactCount": 6409,
       "provenance": [
         {
           "file": "README.md",
@@ -290987,13 +291054,13 @@
       "type": "TestSuite",
       "id": "test/consigliere-recovery-browser.js",
       "label": "test/consigliere-recovery-browser.js",
-      "lines": 101,
-      "version": "68de0d1d5b2be773",
+      "lines": 105,
+      "version": "3c26061b4e5cbbce",
       "provenance": [
         {
           "file": "test/consigliere-recovery-browser.js",
           "line": 1,
-          "version": "68de0d1d5b2be773"
+          "version": "3c26061b4e5cbbce"
         }
       ]
     },
@@ -292608,12 +292675,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4515,
-      "version": "903a15d99b135b9e",
+      "version": "77b6eaadadd7500b",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "903a15d99b135b9e"
+          "version": "77b6eaadadd7500b"
         }
       ]
     },
@@ -299132,13 +299199,13 @@
       "type": "Workflow",
       "id": ".github/workflows/ci.yml",
       "label": ".github/workflows/ci.yml",
-      "lines": 1110,
-      "version": "1d1bbe0b6a52912c",
+      "lines": 1111,
+      "version": "e5377035ae5b7285",
       "provenance": [
         {
           "file": ".github/workflows/ci.yml",
           "line": 1,
-          "version": "1d1bbe0b6a52912c"
+          "version": "e5377035ae5b7285"
         }
       ]
     },
@@ -299219,6 +299286,15 @@
     }
   ],
   "edges": [
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:.github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": ".github/ci-evidence/browser-integration-retest-2026-10-15.json",
+        "line": 1
+      }
+    },
     {
       "type": "BELONGS_TO",
       "from": "Artifact:.github/ci-evidence/forge-cpu-affinity-2026-10-14.json",
@@ -445730,6 +445806,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a04694d8319c4f711f53317d1bea6110ca973655",
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
@@ -487510,6 +487618,54 @@
       "to": "Artifact:test/deliveryfinance.js",
       "provenance": {
         "commit": "cb0b5a1c93ee83e622843607341eae98fca8ec7d"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:.github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:.github/workflows/ci.yml",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:test/consigliere-recovery-browser.js",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "to": "Artifact:tools/mobile.js",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
       }
     },
     {
@@ -543220,6 +543376,15 @@
       "to": "Artifact:.gitattributes",
       "provenance": {
         "file": ".gitattributes",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:.github/ci-evidence/browser-integration-retest-2026-10-15.json",
+      "provenance": {
+        "file": ".github/ci-evidence/browser-integration-retest-2026-10-15.json",
         "line": 1
       }
     },
@@ -636686,6 +636851,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "provenance": {
+        "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a04694d8319c4f711f53317d1bea6110ca973655",
       "provenance": {
         "commit": "a04694d8319c4f711f53317d1bea6110ca973655"
@@ -641473,6 +641646,14 @@
       "to": "Commit:cb0b5a1c93ee83e622843607341eae98fca8ec7d",
       "provenance": {
         "commit": "cb0b5a1c93ee83e622843607341eae98fca8ec7d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "provenance": {
+        "commit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
       }
     },
     {
@@ -670112,7 +670293,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/consigliere-recovery-browser.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -670121,7 +670302,7 @@
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/consigliere-recovery-browser.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -695798,7 +695979,7 @@
       "to": "Artifact:src/content/compiler.js",
       "provenance": {
         "file": "tools/mobile.js",
-        "line": 39
+        "line": 40
       }
     },
     {
@@ -695807,7 +695988,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/mobile.js",
-        "line": 38
+        "line": 39
       }
     },
     {
