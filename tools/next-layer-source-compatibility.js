@@ -1,15 +1,15 @@
 // Exact next-layer source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_LAYER_SOURCE_REVISION="80b2ce3c228cedf2e18f6c21cc34581a7e70e3fa";
-export const NEXT_LAYER_SOURCE_PREDECESSOR="2cddc4b824caed2ce0b9b67203569cb316aeb3bd";
+export const NEXT_LAYER_SOURCE_REVISION="93cc81977d16057dda2e8617e76627bbf8151cdf";
+export const NEXT_LAYER_SOURCE_PREDECESSOR="9a0e885487a0a740d8dcd0c9bf09f75563152ef3";
 export const NEXT_LAYER_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_LAYER_SOURCE_DOMAINS={
   "package.json": {
-    "currentSha256": "73a72b04430d720e459f2c6b6ed910260dd07bec87e0425a8fb339054997380b",
-    "currentBlob": "dc1401d798e8ed8a91d24ea0be7706210f24dd13",
-    "baselineSha256": "0fda440b5c92ddba310e95455d0faf42b7c3160de171397af2762b374185f1d8",
-    "baselineBlob": "a8bd2beba16335d455e635958f6f9fe014df062b",
+    "currentSha256": "1ad0b6b14d91182a6431e4bce111a1831e5bae0c68906e88a3a34795e8b1e802",
+    "currentBlob": "8e51b8ea6a170d2663b712a9533e07109f9985b5",
+    "baselineSha256": "4a39ded54ccb2f248fb24e41e6c6b3df0272505dff5b530f428234975b522a61",
+    "baselineBlob": "0734094efcdcdbe4fe5306fd0e4956bfbe9e43d6",
     "contextLines": 3,
     "inverses": [
       {
@@ -233,10 +233,10 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "test/gates.js": {
-    "currentSha256": "987a75a805e49d6f561978dadb4d116ca9ef0d2fd0d42385f95ed4749cc31626",
-    "currentBlob": "b9155697ba24b1228c08eaf9406450504d147839",
-    "baselineSha256": "e911521a9bba14e71e6bcb6fb91c474af8002bfe192050d4045710eb289d8161",
-    "baselineBlob": "201952c9fdc52dd0f273dcfbe53a616634c4c545",
+    "currentSha256": "b1fc7a48c2bdeef607cf4e3e05a8d569b302855e0ba195949d1f5c583b1c6fb1",
+    "currentBlob": "2a3a734d43e2c8a246fcf20613c0a2de992cb859",
+    "baselineSha256": "e2464e2bfcad56ea7b8778d8834c4b420fd3f22180e6f9eeed5fa8d354692770",
+    "baselineBlob": "1110e969d4321118bee62faaac34525c72b95c1a",
     "contextLines": 3,
     "inverses": [
       {
