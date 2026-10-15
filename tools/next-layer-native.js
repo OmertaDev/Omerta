@@ -233,6 +233,7 @@ export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
  "src/content/neighborhood-initiation.js",
  "src/content/neighborhood-initiation.json",
  "src/content/phase1-policy.js",
+ "src/content/neighborhood-broadcast.js",
  "src/content/phase1-validation.js",
  "src/content/phase1.js",
  "src/content/phase2-transactions.js",
