@@ -488,7 +488,7 @@ export async function createNextLayerReleasePhase2MigrationCatalog(pool, endpoin
   const canonical = Object.fromEntries(['relations','constraints','columns','indexes'].map(field => [field, sorted(current[field])]));
   const verifyMetadata = actual => {
     for (const field of ['relations','constraints','columns','indexes']) if (actual[field] !== current[field])
-      assert.deepEqual(sorted(actual[field]), canonical[field], `Complete actual C2 ${field}: no unknown, missing, altered or duplicate objects`);
+      assert(isDeepStrictEqual(sorted(actual[field]), canonical[field]), `Complete actual C2 ${field}: no unknown, missing, altered or duplicate objects`);
   };
   const actualMetadata = await readNextLayerReleasePhase2Metadata(pool);
   try { verifyMetadata(actualMetadata); }
