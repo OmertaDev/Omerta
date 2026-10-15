@@ -28,6 +28,9 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
+ const floor=(await c.query('SELECT business_id FROM workshop_floorplans WHERE business_id=$1 LIMIT 1',[depotId])).rows;
+ const floorHistory=(await c.query('SELECT run_id FROM workshop_floor_requests WHERE business_ref=$1 LIMIT 1',[depotId])).rows;
+ if(floor.length||floorHistory.length){const {collectWorkshopFloorIssues}=await import('./workshopfloor.js');if((await collectWorkshopFloorIssues(c)).length)fail('floor_history_changed');}
  const slots=(await c.query('SELECT * FROM production_slot_reservations WHERE (business_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
  if(slots.length){const {collectProductionSlotIssues}=await import('./productionslots.js');if((await collectProductionSlotIssues(c)).length)fail('slot_history_changed');}
  for(const row of slots){
