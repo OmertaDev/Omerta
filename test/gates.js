@@ -300,6 +300,8 @@ for(const bad of [
 const COLLECT_EXEMPT = {
   collectAtomicBarterIssues: 'read-only original-item transfer and receipt provenance oracle; no player collection or mutation authority',
   collectCommissionedCraftingIssues: 'read-only actual material, output, fee reserve and refund witness oracle; no player collection or mutation authority',
+  collectCustomerLayawayIssues: 'Read-only actual original seller/buyer escrow and installment/refund source oracle; no collection or mutation authority',
+  collectMultiHopCourierIssues: 'Read-only actual original-owner custody, earned fee, refund and travel source oracle; no collection or mutation authority',
   collectConsignmentIssues: 'read-only original seller title, buyer cash and host-fee source oracle; no player collection or mutation authority',
   collectFreightHistoryIssues: 'read-only transport-history structure oracle; canonical GIN and cash books remain independent authority',
   collectPickingPackingIssues: 'read-only real warehouse withdrawal and paired game-cash fee provenance; no player collection or mutation authority',
@@ -3595,11 +3597,22 @@ scopedSocialContext = async function(db) {
       covered.add(file);
     }
   }
+  if([...visited].some(name=>/node tools\/next-layer-native\.js(?:\s|$)/.test(scripts[name]||''))) {
+    const {NEXT_LAYER_NATIVE_PROOFS,assertNextLayerInventory}=await import('../tools/next-layer-native.js');
+    assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);assert.equal(NEXT_LAYER_NATIVE_PROOFS.length,17);
+    for(const[file]of NEXT_LAYER_NATIVE_PROOFS){assert(fs.existsSync(path.join(ROOT,'test/'+file+'.js')));covered.add('test/'+file+'.js');}
+  }
   for (const f of workflows.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
 
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/customerlayaway-fixture.js': 'Import-only actual original UID and customer-funded layaway fixture, executed by mandatory core/API/integration memory and native17 proofs.',
+    'test/customervaults-fixture.js': 'Import-only actual canonical account/Depot/cash vault fixture, executed by mandatory core/estate memory and native17 core/estate/lock proofs.',
+    'test/multihopcourier-fixture.js': 'Import-only actual canonical crafting/travel/custody courier fixture, executed by mandatory core/API/estate/recovery memory and native17 proofs.',
+    'test/decision-dependency-integration-fixture.js': 'Import-only authenticated F21 and genuinely funded GIN/delivery integration fixture; both mandatory observed-intelligence integration memory/native proofs execute it.',
+    'test/decisionreplay-fixture.js': 'Import-only closed SELECT-only query fixture for mandatory decision replay observation unit/guard proofs; genuine gameplay source is proved separately by the mandatory integration memory/native suite.',
+    'test/economicdependencymap-fixture.js': 'Import-only bounded SELECT-only query fixture for mandatory dependency-map unit/guard proofs; funded canonical sources are separately proved by mandatory integration memory/native tests.',
     'test/commissionedcrafting-fixture.js': 'Import-only actual funded commission/F01/F03 fixture; required commissioned-crafting core/API/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
     'test/freightconsolidation-fixture.js': 'Import-only actual funded orders and canonical delivery fixture; required freight core/security/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
     'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',
@@ -3915,7 +3928,7 @@ scopedSocialContext = async function(db) {
   const expectedNativeCommands = [
     'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:agent-economy-next-layer:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
