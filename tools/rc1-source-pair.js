@@ -151,11 +151,11 @@ export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
 // Separate main-branch composition; all four historical profiles remain unchanged.
 export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "5c18acaaf47c84851729b82354340c4d56734dd9",
-  "reviewedCandidate": "279dc5e93a246daf1e1c422de262e7f2a0a0b4d2",
+  "reviewedCandidate": "f2aa1d99aaccca118f90592af8d5a9e6b7cb9e56",
   "predecessorTree": "c85dedb8f78e6e8c919bf779b9b011b73c6b3f52773312b97143364520f2de0f",
   "predecessorSchema": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
   "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
-  "candidateTree": "66df6c4b0ffb3f88724b2e6682c2466d4fe9f73081ce5897022833db798cd8ce",
+  "candidateTree": "8658168bcbac6c6a40aaba64089e56dabcd9277d6d0ce0db474ddd053477eb3a",
   "candidateSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
   "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
@@ -180,12 +180,12 @@ export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
 
 // Separate exact relation for autonomy after the reviewed main/commercial merge.
 export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "226f62c566280b8da59fd7f77b295707975f99eb",
-  "reviewedCandidate": "63f96fff489418f8f4bb21f9235c7dcbc6b25ae0",
-  "predecessorTree": "66df6c4b0ffb3f88724b2e6682c2466d4fe9f73081ce5897022833db798cd8ce",
+  "predecessor": "c66c5f5280104aa4ae6dd0527d9d5ebff50cf110",
+  "reviewedCandidate": "f30e970e5e61035f8f519105c412ff05bc61f6e7",
+  "predecessorTree": "8658168bcbac6c6a40aaba64089e56dabcd9277d6d0ce0db474ddd053477eb3a",
   "predecessorSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "predecessorCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
-  "candidateTree": "606d73e3bbfba170e206b7eb40645c2c83a4df1b172afe43d02069f8f910f2ef",
+  "candidateTree": "1de2c2356ef2e48c7e904f97f25f10b14b962127033b8d5400b63917b1401de3",
   "candidateSchema": "38989e8533280ba5ef7998255712639083c883fa63f4e30fed4fbc74c24e67d1",
   "candidateCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
   "candidateTableCatalog": "b9058463f72e0b694211f5d82ea0ea9eb39e117ce70edd4cf64ce44277a62b5d",
@@ -213,12 +213,12 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 });
 
 export const NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "7f7602dd38ae9865dc1d71f1194cb50453c85211",
-  "reviewedCandidate": "9785bbf4c7e6f3ef15a0e54985c30bd1dc658329",
-  "predecessorTree": "606d73e3bbfba170e206b7eb40645c2c83a4df1b172afe43d02069f8f910f2ef",
+  "predecessor": "74e034aa635e5ee368a1e24a09ac842854422df8",
+  "reviewedCandidate": "99568f3596861246913b965cc74c7d8ac63cb283",
+  "predecessorTree": "1de2c2356ef2e48c7e904f97f25f10b14b962127033b8d5400b63917b1401de3",
   "predecessorSchema": "38989e8533280ba5ef7998255712639083c883fa63f4e30fed4fbc74c24e67d1",
   "predecessorCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
-  "candidateTree": "ec4cc4170c5a1beb0a12c03e9eadd4217d3ba9b3055c4c1e53ebd36b47b5c67e",
+  "candidateTree": "5f6d477c6794f279370ebed1a4cb83675fa0fe17eddff1768b4211dc9d8ab148",
   "candidateSchema": "e334badfba6c0b08bb13288fc702c6cd661546d47f460afbf38087a43ca52861",
   "candidateCatalog": "301ebc59b074fb9e87f133e5b11cc5d467cd29d6848a7383a3969d982955bbe0",
   "constraints": 90,
