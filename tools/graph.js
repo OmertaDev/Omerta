@@ -378,6 +378,37 @@ export function extractNextFiveHelperReconciliations(invariants,helpers){
  }return terms;
 }
 
+// Exact reviewed physical-trade metadata checks; these introduce no cash ledger reason.
+const NEXT_FIVE_METADATA_WITNESSES = [
+  {
+    "check": "atomic barter canonical two-item bindings",
+    "file": "src/atomicbarterinvariants.js",
+    "import": "import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';",
+    "call": "const barterIssues = await collectAtomicBarterIssues(pool);",
+    "binding": "push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });",
+    "sha256": "9b85aa69ac3841f569957f60f9965964cdda8f22bab81b8f04bfe95ec218b18c"
+  },
+  {
+    "check": "freight metadata history bindings",
+    "file": "src/freight-history.js",
+    "import": "import { collectFreightHistoryIssues } from './freight-history.js';",
+    "call": "const freightIssues = await collectFreightHistoryIssues(pool);",
+    "binding": "push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });",
+    "sha256": "48193e9c4c999bc8ab076fc2d4871d3e1fe88b0b4fb761dcdf7d9dec64538643"
+  }
+];
+export function extractNextFiveMetadataChecks(invariants,helpers){
+ invariants=normalizeText(invariants);
+ const once=literal=>invariants.split('\n').filter(line=>line.trim()===literal).length===1;
+ return NEXT_FIVE_METADATA_WITNESSES.filter(spec=>{
+  const raw=helpers[spec.file];if(typeof raw!=='string')return false;
+  return crypto.createHash('sha256').update(normalizeText(raw)).digest('hex')===spec.sha256
+   &&[spec.import,spec.call,spec.binding].every(once)
+   &&invariants.indexOf(spec.import)<invariants.indexOf(spec.call)
+   &&invariants.indexOf(spec.call)<invariants.indexOf(spec.binding);
+ }).map(spec=>spec.check);
+}
+
 export function isMainModule(moduleUrl, argvEntry) {
   if (!argvEntry) return false;
   try {
