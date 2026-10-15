@@ -3466,7 +3466,7 @@ scopedSocialContext = async function(db) {
   }
   if([...visited].some(name=>/node tools\/city-gameplay-native\.js(?:\s|$)/.test(scripts[name]||''))) {
     const {CITY_GAMEPLAY_NATIVE_PROOFS}=await import('../tools/city-gameplay-native.js');
-    assert.equal(CITY_GAMEPLAY_NATIVE_PROOFS.length,7,'The full City native runner has seven owned current-source proofs');
+    assert.equal(CITY_GAMEPLAY_NATIVE_PROOFS.length,8,'The full City native runner has eight owned current-source proofs');
     for(const[file,,args]of CITY_GAMEPLAY_NATIVE_PROOFS) {
       assert(fs.existsSync(path.join(ROOT,file)), 'Native proof must exist: '+file);
       assert(file==='test/city-home-migration.js'||args.includes('--postgres'),'Native runner must explicitly select real PostgreSQL: '+file);

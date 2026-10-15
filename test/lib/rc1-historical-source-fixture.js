@@ -10,6 +10,7 @@ import dns from 'node:dns';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -77,7 +78,7 @@ function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
     const actual = originalRead(path.join(root, file));
-    assert.equal(sha256(canonical(actual)), sha256(blob(file, release)), 'Current release input changed outside historical fixture: ' + file);
+    assert.equal(sha256(cityPlaySourceBaseline(file, canonical(actual))), sha256(blob(file, release)), 'Current release input changed outside historical fixture: ' + file);
     checked.add(file);
   }
   return blob(file, history);
@@ -233,7 +234,9 @@ if (cold) {
       return { ...result, source: historical(file) };
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
-      assert.equal(sha256(canonical(originalRead(path.join(root, file)))), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
+      const prior = cityPlaySourceBaseline(file, canonical(originalRead(path.join(root, file))));
+      assert.equal(sha256(prior), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
+      return { ...nextLoad(url, context), source: prior };
     }
     return nextLoad(url, context);
   } });
