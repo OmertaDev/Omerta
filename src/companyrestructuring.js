@@ -5,7 +5,7 @@ import { assertItemTransaction,poisonItemTransaction,registerItemTransactionUndo
 import { cancelDepotOrder,withdrawDepot,configureDepot,DEPOT } from './depot.js';
 import { latestPolicy,guardDelegatedControl } from './operatingpolicy.js';
 import { latestSupplyContract } from './supplycontracts.js';
-import { DEPOT_ACQUISITION_REFERENCES } from './depotacquisitionruntime.js';
+import { DEPOT_ACQUISITION_REFERENCES,assertDepotFeatureObligations } from './depotacquisitionruntime.js';
 import { BLACK_MARKET } from './rules.js';
 
 export const COMPANY_RESTRUCTURING=Object.freeze({steps:3,minimumSeconds:5,maximumSeconds:600,journalHistory:200,effect:'same_depot_capital_unwind_and_configuration'});
@@ -34,6 +34,7 @@ export async function replayCompanyRestructuring(c,account,action,planId,b,key){
 async function request(c,ch,action,planId,b,key,execute){assertItemTransaction(c);const prior=await replayCompanyRestructuring(c,ch.account_id,action,planId,b,key);if(prior)return prior;const t=requestTerms(action,planId,b),kh=hash([ch.account_id,key]),run=crypto.randomUUID();registerItemTransactionUndo(c,()=>c.query('DELETE FROM company_restructuring_requests WHERE account_id=$1 AND key_hash=$2 AND run_id=$3',[ch.account_id,kh,run]));await c.query('INSERT INTO company_restructuring_requests(account_id,key_hash,body_hash,run_id) VALUES($1,$2,$3,$4) ON CONFLICT(account_id,key_hash) DO NOTHING',[ch.account_id,kh,hash(t),run]);const r=(await c.query('SELECT body_hash,run_id,receipt FROM company_restructuring_requests WHERE account_id=$1 AND key_hash=$2 FOR UPDATE',[ch.account_id,kh])).rows[0];if(r.body_hash!==hash(t))fail('request_conflict');if(r.receipt)return r.receipt;if(r.run_id!==run)fail('in_progress');const value=await execute(t);const saved=await c.query('UPDATE company_restructuring_requests SET receipt=$4,account_ref=$1,actor_ref=$5 WHERE account_id=$1 AND key_hash=$2 AND run_id=$3 AND receipt IS NULL',[ch.account_id,kh,run,value,ch.id]);if(saved.rowCount!==1)fail('receipt_changed');return value;}
 async function liabilities(c,depotId){
  const refs=(await c.query("SELECT table_name,column_name FROM information_schema.columns WHERE table_schema='public' AND column_name IN ('depot_id','operator_depot_id','recipient_depot_id','business_id') ORDER BY table_name,column_name")).rows.map(x=>x.table_name+':'+x.column_name),allowed=[...DEPOT_ACQUISITION_REFERENCES,'company_restructuring_plans:depot_id'];if(refs.some(x=>!allowed.includes(x))||allowed.some(x=>!refs.includes(x)))fail('unsupported_schema');
+ await assertDepotFeatureObligations(c,depotId);
  if((await c.query('SELECT id FROM delivery_commitments WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('delivery');
  if((await c.query('SELECT r.id FROM delivery_loan_requests r JOIN market_listings o ON o.id=r.order_id WHERE o.depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('finance');
  if((await c.query("SELECT id FROM business_warehouse_leases WHERE depot_id=$1 AND (status NOT IN ('closed','tenant_dead') OR held_qty<>0) LIMIT 1",[depotId])).rows.length)fail('warehouse');
