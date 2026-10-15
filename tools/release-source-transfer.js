@@ -3,6 +3,7 @@ import { economyReleaseSource } from './economy-release-composition.js';
 // This grants no historical runtime, PostgreSQL, migration, financial, genesis or deployment qualification.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { cityPlaySourceBaseline } from './city-play-source-transfer.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -818,7 +819,7 @@ export function assertReleaseSourceTransfer(file, input) {
 
 // No runtime discovery or pin refresh: only the literal candidate bytes above have an alias.
 export function releaseSourceBaseline(file, input) {
-  input = economyReleaseSource('main', file, input);
+  input = economyReleaseSource('main', file, cityPlaySourceBaseline(file, input));
   if (!Object.hasOwn(RELEASE_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;
   return hash(lf(input)) === RELEASE_SOURCE_DOMAINS[file].currentSha256
     ? assertReleaseSourceTransfer(file, input).baselineText : input;

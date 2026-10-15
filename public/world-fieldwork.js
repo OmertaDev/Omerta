@@ -65,9 +65,10 @@
         if (!validAction(action)) return '';
         const key = String(++actionSequence);
         actions.set(key, { action, context });
-        return '<div class="fieldwork-action"><button type="button" data-fieldwork-action="' + key + '"'
+        const preview = consequence(action, context);
+        return '<div class="fieldwork-action">' + (preview ? '<p class="fieldwork-consequence" id="fieldwork-terms-' + key + '"><b>Before you choose</b> ' + escape(preview) + '</p>' : '')
+          + '<button type="button" data-fieldwork-action="' + key + '"' + (preview ? ' aria-describedby="fieldwork-terms-' + key + '"' : '')
           + (busy || loading || panes[view].error || sessionUnavailable || action.available === false ? ' disabled' : '') + '>' + escape(action.label || 'Continue') + '</button>'
-          + (action.consequence ? '<p class="fieldwork-consequence">' + escape(action.consequence) + '</p>' : '')
           + (action.available === false ? blockers(list(action.blockedBy).filter(blocker => !shown.has(blockerText(blocker)))) : '') + '</div>';
       }).join('');
     }
@@ -75,14 +76,14 @@
     function inventoryView() {
       const board = boards.inventory || {};
       const stackCards = list(board.stacks).map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◇</span><div><h3>' + escape(title(item)) + '</h3><p>' + count(item.qty ?? item.quantity) + ' held · ' + escape(words(item.quality || 'standard')) + '</p></div></article>').join('');
-      const itemCards = list(board.items).map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◆</span><div><h3>' + escape(title(item)) + '</h3><p>' + escape(words(item.state || 'active')) + (item.escrowed ? ' · committed to work' : '') + '</p>' + actionButtons(item, title(item)) + '</div></article>').join('');
+      const itemCards = list(board.items).map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◆</span><div><h3>' + escape(title(item)) + '</h3><p>' + escape(words(item.state || 'active')) + (item.escrowed ? ' · committed to work' : '') + '</p>' + (item.description ? '<p>' + escape(item.description) + '</p>' : '') + actionButtons(item, title(item)) + '</div></article>').join('');
       const assigned = list(board.currentCharacterItems || board.characterItems);
       const carriedStacks = list(board.currentCharacterStacks);
-      return '<div class="fieldwork-intro"><h2>Your inventory</h2><p>Materials stay with the account. Assigned tools belong to the life carrying them. Work and custody follow the server record.</p></div>'
+      return '<div class="fieldwork-intro"><h2>Your inventory</h2><p>Your materials, tools and keepsakes. Materials stay with your account; assigned tools belong to the character carrying them.</p></div>'
         + '<div class="fieldwork-grid">' + (stackCards + itemCards || empty('No materials or items are held yet. Visit Crafting for available sources.')) + '</div>'
         + (assigned.length || carriedStacks.length ? '<h2 class="fieldwork-section-title">Carried by this character</h2><div class="fieldwork-grid">'
           + carriedStacks.map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◇</span><div><h3>' + escape(title(item)) + '</h3><p>' + count(item.qty ?? item.quantity) + ' held</p></div></article>').join('')
-          + assigned.map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◆</span><div><h3>' + escape(title(item)) + '</h3><p>' + escape(words(item.state || 'active')) + '</p>' + actionButtons(item, title(item)) + '</div></article>').join('') + '</div>' : '')
+          + assigned.map(item => '<article class="fieldwork-item"><span class="fieldwork-item__mark" aria-hidden="true">◆</span><div><h3>' + escape(title(item)) + '</h3><p>' + escape(words(item.state || 'active')) + '</p>' + (item.description ? '<p>' + escape(item.description) + '</p>' : '') + actionButtons(item, title(item)) + '</div></article>').join('') + '</div>' : '')
         + actionButtons(board, 'Inventory');
     }
 
@@ -93,7 +94,7 @@
 
     function recipesView() {
       const recipes = list(boards.recipes && boards.recipes.recipes);
-      return '<div class="fieldwork-intro"><h2>The workbench</h2><p>Inspect the materials and costs before committing. Eligible sources and actions are issued by the server.</p></div><div class="fieldwork-grid">'
+      return '<div class="fieldwork-intro"><h2>The workbench</h2><p>Choose what to make. Each recipe shows the materials you need, the cost and what you will receive.</p></div><div class="fieldwork-grid">'
         + (recipes.map(recipe => '<article class="fieldwork-card" data-fieldwork-recipe="' + escape(recipe.id) + '"><header><h3>' + escape(title(recipe)) + '</h3>' + stamp(recipe.available ? 'ready' : 'requirements') + '</header>'
           + (recipe.description ? '<p>' + escape(recipe.description) + '</p>' : '') + ingredients(recipe.inputs, 'Consumes') + ingredients(recipe.outputs, 'Creates')
           + (recipe.cashCost ? '<p class="fieldwork-cost">Cost: $' + count(recipe.cashCost) + '</p>' : '') + blockers(recipe.blockedBy)
@@ -130,10 +131,17 @@
         + dialogue(item) + (item.instanceId ? '<button type="button" data-fieldwork-mystery="' + escape(item.graphId) + '">Read this journal</button>' : '')
         + actionButtons(item, item.title || 'Investigation') + '</article>').join('');
       const detail = mysteryDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>' + escape(cases.find(item => item.graphId === selectedMystery)?.title || 'Investigation') + '</h2>' + stamp(mysteryDetail.status) + '</div>'
-        + dialogue(mysteryDetail) + progress(mysteryDetail) + list(mysteryDetail.nodes).map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';
+        + dialogue(mysteryDetail) + progress(mysteryDetail) + nextLead(mysteryDetail) + list(mysteryDetail.nodes).map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';
       const historical = list(board.historicalInstances).map(instance => '<article class="fieldwork-card"><header><h3>' + escape(instance.title || words(instance.graphId)) + '</h3>' + stamp(instance.status) + '</header><p>Recorded work from a previous character. Custody and escrow stay attached to that history.</p>' + actionButtons(instance, 'Historical investigation') + '</article>').join('');
-      return '<div class="fieldwork-intro"><h2>Your journal</h2><p>Follow the people, places and evidence you have discovered. Choices and progress persist in the case record.</p></div><div class="fieldwork-grid">' + (index || empty('No investigations are issued yet.')) + '</div>'
-        + detail + (historical ? '<h2 class="fieldwork-section-title">Unfinished records</h2><div class="fieldwork-grid">' + historical + '</div>' : '');
+      return '<div class="fieldwork-intro"><h2>Your journal</h2><p>Follow a lead, make your choice, and see where the story takes you. Your progress is saved as you go.</p></div>' + detail
+        + (detail ? '<h2 class="fieldwork-section-title">Your stories</h2>' : '') + '<div class="fieldwork-grid">' + (index || empty('Meet The Fixer in your neighborhood to find your first lead.')) + '</div>'
+        + (historical ? '<h2 class="fieldwork-section-title">Unfinished records</h2><div class="fieldwork-grid">' + historical + '</div>' : '');
+    }
+
+    function nextLead(board) {
+      if (board.status === 'completed') return '<aside class="fieldwork-next-lead fieldwork-next-lead--complete"><span aria-hidden="true">✓</span><div><h3>Case closed</h3><p>Your choices and the outcome are recorded. Explore your inventory or pick another story below.</p><button type="button" data-fieldwork-keepsakes>View inventory &amp; keepsakes</button></div></aside>';
+      const next = list(board.nodes).find(node => list(node.uiActions || node.actions).some(action => validAction(action) && action.available));
+      return next ? '<aside class="fieldwork-next-lead"><div><h3>Your next lead</h3><p>' + escape(title(next)) + '</p><button type="button" data-fieldwork-lead="' + escape(next.id) + '">Review this step ↓</button></div></aside>' : '';
     }
 
     function operationsView() {
@@ -185,6 +193,11 @@
       root.querySelectorAll('[data-fieldwork-action]').forEach(button => { button.onclick = () => { const entry = actions.get(button.dataset.fieldworkAction); if (entry) run(entry); }; });
       root.querySelectorAll('[data-fieldwork-mystery]').forEach(button => { button.onclick = () => { selectedMystery = button.dataset.fieldworkMystery; mysteryDetail = null; load(['mysteries']); }; });
       root.querySelectorAll('[data-fieldwork-operation]').forEach(button => { button.onclick = () => { selectedOperation = button.dataset.fieldworkOperation; operationDetail = roleDetail = null; load(['operations']); }; });
+      root.querySelector('[data-fieldwork-keepsakes]')?.addEventListener('click', () => selectView('inventory'));
+      root.querySelector('[data-fieldwork-lead]')?.addEventListener('click', event => {
+        const card = [...root.querySelectorAll('[data-fieldwork-node]')].find(node => node.dataset.fieldworkNode === event.currentTarget.dataset.fieldworkLead);
+        if (card) { card.tabIndex = -1; card.scrollIntoView({ block: 'center', behavior: 'instant' }); card.focus({ preventScroll: true }); }
+      });
     }
 
     function selectView(nextView) {
@@ -249,7 +262,8 @@
             if (fields.some(field => !Array.isArray(board[field]))) throw new Error('The record is incomplete. Retry to read it again.');
             boards[key] = board;
             if (key === 'mysteries') {
-              if (!selectedMystery) selectedMystery = board.mysteries.find(item => item.instanceId)?.graphId || '';
+              if (!selectedMystery) selectedMystery = (board.mysteries.find(item => item.instanceId && item.status === 'active')
+                || board.mysteries.find(item => item.instanceId))?.graphId || '';
               if (selectedMystery && board.mysteries.some(item => item.graphId === selectedMystery && item.instanceId)) {
                 const detail = await read('/v1/worldgraph/mysteries/' + encodeURIComponent(selectedMystery), token);
                 if (!detail) return;
@@ -310,7 +324,13 @@
         cancelConfirmation = () => finish(false);
         panel.querySelector('[data-fieldwork-cancel]').onclick = () => finish(false);
         panel.querySelector('[data-fieldwork-confirm]').onclick = () => finish(true);
-        panel.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); finish(false); } });
+        panel.addEventListener('keydown', event => {
+          if (event.key === 'Escape') { event.preventDefault(); finish(false); }
+          if (event.key === 'Tab') {
+            const buttons = [...panel.querySelectorAll('button')], index = buttons.indexOf(document.activeElement);
+            event.preventDefault(); buttons[(index + (event.shiftKey ? buttons.length - 1 : 1)) % buttons.length].focus();
+          }
+        });
         panel.querySelector('[data-fieldwork-cancel]').focus();
       });
     }

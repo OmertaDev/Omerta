@@ -21,6 +21,7 @@ export const PHASE1_PACKAGE_IDS = Object.freeze([
   'staged-crew-missions', 'city-neighbor-favors', 'city-shutter-lock', 'city-loading-route',
   'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',
   'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',
+  'neighborhood-broadcast',
 ]);
 
 export function phase1CraftReason(recipeId) {

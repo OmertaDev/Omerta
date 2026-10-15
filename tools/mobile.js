@@ -47,6 +47,16 @@ const VIEWPORTS = [
 const MIN_TAP = 44;          // px. Primary navigation is touched constantly; enforce the full floor.
 const SHOTS = process.env.MOBILE_SHOTS || '';   // set a directory to keep screenshots for eyeballing
 
+async function clickTab(page, id) {
+  // A group can remember Map as its last screen and enter Player view immediately. Use the
+  // visible Dashboard switch and operation picker to reach the group's next intended screen.
+  if (await page.locator('body.city-player-view').count()) {
+    await page.click('#btn-dashboard-view');
+    await page.click('#btn-jump');
+    await page.click(`#jump-list [data-jump="${id}"]`);
+  } else await page.click(`#tabs [data-tab="${id}"]`);
+}
+
 // ── finding a browser ───────────────────────────────────────────────────────────────────────────
 // playwright-core deliberately downloads nothing (a browser per `npm ci` is a heavy tax on a repo
 // where most work never touches the client). So we resolve one from the environment, in order of
@@ -248,7 +258,8 @@ for (const vp of VIEWPORTS) {
   await page.fill('#new-name', 'Probe ' + Math.random().toString(36).slice(2, 8));
   await page.click('#btn-create');
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
-  // THE FIRST ACTION — the tour must hand this disposable local player to the REAL crime control.
+  // THE FIRST ACTION — the tour walks this disposable player to The Fixer, then the player
+  // explicitly opens the venue and chooses the real job. Arrival must never submit the action.
   let firstJobHandoff = false;
   if (!(await page.locator('#welcome:not(.hidden)').count())) {
     fail('(first action)', vp, 'a fresh character never received the first-session tour');
@@ -260,37 +271,54 @@ for (const vp of VIEWPORTS) {
       action: document.querySelector('#tour-next')?.textContent || '',
       dots: document.querySelectorAll('#tour-dots i').length,
     }));
-    firstJobHandoff = step2.title === 'THE STREETS' && /PULL YOUR FIRST JOB/.test(step2.action) && step2.dots === 2;
+    firstJobHandoff = step2.title === 'YOUR FIRST MOVE' && /MEET THE FIXER/.test(step2.action) && step2.dots === 2;
     if (!firstJobHandoff) {
-      fail('(first action)', vp, `step two must be the playable Streets handoff — ${JSON.stringify(step2)}`);
+      fail('(first action)', vp, `step two must hand the player to The Fixer — ${JSON.stringify(step2)}`);
     } else {
       await check(page, 'the tour (first job)', vp);
+      const jobRequests = [];
+      const observeJobs = request => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/crimes/')) jobRequests.push(request);
+      };
+      page.on('request', observeJobs);
       await page.click('#tour-next');
       await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
-      await page.waitForFunction(() => document.querySelector('#tab-streets')?.classList.contains('on')
+      await page.waitForFunction(() => document.querySelector('#tab-map')?.classList.contains('on')
         && localStorage.getItem('omerta_tour2') === '1'
-        && document.activeElement?.matches?.('#tab-streets .verbrow .prime')
-        && document.activeElement?.classList?.contains('spotlit'), { timeout: 5000 });
+        && document.querySelector('[data-city-open]')?.textContent === 'Open The Fixer →', { timeout: 20000 });
       const handoff = await page.evaluate(() => ({
-        streets: document.querySelector('#tab-streets')?.classList.contains('on') || false,
+        neighborhood: document.querySelector('#tab-map')?.classList.contains('on') || false,
+        player: document.body.classList.contains('city-player-view'),
         completed: localStorage.getItem('omerta_tour2') === '1',
-        target: document.activeElement?.matches?.('#tab-streets .verbrow .prime') || false,
-        lit: document.activeElement?.classList?.contains('spotlit') || false,
+        destination: document.querySelector('[data-city-open]')?.textContent || '',
       }));
-      if (!handoff.streets || !handoff.completed || !handoff.target || !handoff.lit)
-        fail('(first action)', vp, `tour did not land on the focused real crime control — ${JSON.stringify(handoff)}`);
+      if (!handoff.neighborhood || !handoff.player || !handoff.completed || handoff.destination !== 'Open The Fixer →')
+        fail('(first action)', vp, `tour did not arrive at The Fixer in the neighborhood — ${JSON.stringify(handoff)}`);
 
-      const crime = page.locator('#tab-streets .verbrow .prime').first();
+      await page.locator('[data-city-open]').tap();
+      const crime = page.locator('[data-city-approach="standard"]');
+      await crime.waitFor({ state: 'visible', timeout: 5000 });
+      if (!(await page.getByRole('complementary', { name: 'Your first job' }).isVisible()))
+        fail('(first action)', vp, 'opening The Fixer did not show the first-job guide');
+      if (jobRequests.length)
+        fail('(first action)', vp, `arrival or opening submitted ${jobRequests.length} job(s) before the player chose an approach`);
+
       const random = Math.random;
       Math.random = () => 0; // pin the in-process server's crime die; the browser has its own realm
       try {
         const crimeResponse = page.waitForResponse((response) =>
           response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
-        await Promise.all([crime.click(), crimeResponse]);
+        const [, response] = await Promise.all([crime.tap(), crimeResponse]);
+        if (!response.ok() || response.request().postDataJSON()?.approach !== 'standard')
+          fail('(first action)', vp, `the chosen standard job was not confirmed (${response.status()})`);
         await page.waitForTimeout(2200); // action response + vignette expiry + refresh
       } finally {
         Math.random = random;
+        page.off('request', observeJobs);
       }
+      if (jobRequests.length !== 1 || !(await page.locator('[data-city-fixer-result]').isVisible())
+        || await page.getByRole('complementary', { name: 'Your first job' }).count())
+        fail('(first action)', vp, `the confirmed job must show its result and finish the guide after one explicit action (${jobRequests.length} requests)`);
       // ONE AT A TIME, exactly as the client does it. api() queues every authed call on _authQueue
       // because each runs through withCharacter, which takes `SELECT … FOR UPDATE` on the character
       // row — so same-account calls serialize at the database whether or not we fire them together.
@@ -322,6 +350,17 @@ for (const vp of VIEWPORTS) {
       if (!played.firstJobReady || played.coach !== 'Claim your first-job reward'
         || played.coachTab !== 'start' || played.tourOpen)
         fail('(first action)', vp, `visible crime did not hand the player back to the ready reward — ${JSON.stringify(played)}`);
+
+      // The remaining release checks exercise Dashboard controls through the visible view switch.
+      await page.click('#btn-dashboard-view');
+      if (await page.locator('#btn-dashboard-view').getAttribute('aria-pressed') !== 'true')
+        fail('(view switch)', vp, 'The first-job flow did not restore Dashboard navigation through the visible control.');
+      // Dashboard initially opens Start Here. Begin elsewhere so a no-op coach cannot pass the
+      // handback assertion merely because its intended destination was already open.
+      await page.click('#bnav [data-go="streets"]');
+      await page.waitForSelector('#tab-streets.on', { state: 'visible', timeout: 5000 });
+      if (await page.locator('#tab-start.on').count())
+        fail('(first reward)', vp, 'the coach handback must begin outside Start Here');
 
       // THE HANDBACK — do not navigate to Start Here by hand. That masked the live defect: the
       // first-job reward was ready, but the primary coach skipped straight to level 5, and short
@@ -394,7 +433,7 @@ for (const vp of VIEWPORTS) {
   for (const g of groups) {
     await page.click(`#grouprail [data-group="${g}"]`);
     await page.waitForTimeout(200);
-    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').all();
+    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').evaluateAll(els => els.map(el => el.dataset.tab));
     // A ONE-SCREEN group (profile, deck) shows no sub-row at all, so the loop below runs zero
     // times and the screen was NAVIGATED to but never CHECKED — walked-but-unchecked is exactly
     // the silent coverage hole this harness exists to prevent. Check the landing screen directly.
@@ -403,9 +442,8 @@ for (const vp of VIEWPORTS) {
       await page.evaluate(() => window.scrollTo(0, 0));
       await check(page, g, vp, { contentMustShow: true });
     }
-    for (const t of subs) {
-      const id = await t.getAttribute('data-tab');
-      await t.click();
+    for (const id of subs) {
+      await clickTab(page, id);
       walked.push(id);
       await page.evaluate(() => window.scrollTo(0, 0));   // judge the fold from the top, as a player arrives
       await check(page, id, vp, { contentMustShow: true });
@@ -622,6 +660,9 @@ for (const vp of VIEWPORTS) {
   await page.fill('#new-name', 'Restart Probe');
   await page.click('#btn-create');
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.evaluate(() => {
+    localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
+  });
 
   await page.route('**/v1/projections/player', (r) => r.fulfill({ status: 503, contentType: 'application/json',
     body: JSON.stringify({ error: 'db_down', message: 'unreachable' }) }));
@@ -649,11 +690,13 @@ for (const vp of VIEWPORTS) {
     await page.click('#btn-down-retry');
     await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
     await page.waitForTimeout(600);
+    await page.click('#btn-dashboard-view');
     const back = await page.evaluate(() => ({
       tabs: document.querySelectorAll('#tabs [data-tab]').length,
-      bnav: document.querySelectorAll('#bnav button').length,
+      bnav: [...document.querySelectorAll('#bnav button')].filter(button => button.getClientRects().length).length,
+      dashboard: document.querySelector('#btn-dashboard-view')?.getAttribute('aria-pressed') === 'true',
     }));
-    if (back.tabs < 5 || back.bnav < 3)
+    if (!back.dashboard || back.tabs < 5 || back.bnav < 3)
       fail('(server recovered)', vp, `the app did not come back usable after the retry — ${JSON.stringify(back)}`);
     screensChecked++;
   }
@@ -736,6 +779,7 @@ for (const vp of VIEWPORTS) {
     localStorage.setItem('omerta_tour2', '1'); localStorage.setItem('omerta_welcomed', '1');
     document.querySelectorAll('.modal-bg:not(.hidden)').forEach((m) => m.classList.add('hidden'));
   });
+  await page.click('#btn-dashboard-view');
   await page.waitForTimeout(3000);   // let the landing fan-out settle, so the baseline is really quiet
   // THE CROSSING HAPPENS UP TO A FULL TICK BEFORE NOMINAL EXPIRY, and the window has to allow for
   // it. The ticker reads `Math.floor((until - now) / 1000)`, so the moment fewer than 1000ms remain
@@ -839,6 +883,7 @@ for (const vp of VIEWPORTS) {
   errs.length = 0;
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.click('#btn-dashboard-view');
   await page.click('#bnav [data-go="start"]');
   await page.waitForSelector('#tab-start [data-explore-next]', { state: 'visible', timeout: 20000 });
   const rendered = await page.evaluate(() => {
@@ -1008,6 +1053,7 @@ for (const vp of VIEWPORTS) {
   errs.length = 0;
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.waitForSelector('#screen-main:not(.hidden)', { timeout: 20000 });
+  await page.click('#btn-dashboard-view');
   await page.waitForTimeout(1500);
   if (await page.locator('#tabs-more:not(.hidden)').count()) await page.click('#tabs-more');
   await page.waitForTimeout(300);
@@ -1041,11 +1087,10 @@ for (const vp of VIEWPORTS) {
   for (const g of groups) {
     await page.click(`#grouprail [data-group="${g}"]`);
     await page.waitForTimeout(200);
-    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').all();
+    const subs = await page.locator('#tabs [data-tab]:not(.hidden)').evaluateAll(els => els.map(el => el.dataset.tab));
     if (!subs.length) await probeScreen(g);
-    for (const t of subs) {
-      const id = await t.getAttribute('data-tab');
-      await t.click();
+    for (const id of subs) {
+      await clickTab(page, id);
       await probeScreen(id);
       if (id === 'map' && await page.locator('body.city-player-view').count()) {
         await page.click('#btn-dashboard-view');

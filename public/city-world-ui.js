@@ -33,6 +33,7 @@
     let options = { ...input }, destroyed = false, panel = '', opening = 0, readTickets = Object.create(null), readPending = Object.create(null), pending = false, pollTimer = null;
     let boards = Object.create(null), notice = '', lastFrame = null, lastMapPaint = 0, lastSpeech = '', speechUntil = 0, lastChatId = '', lastChatAt = 0, renderedOpening = -1;
     let mapView = 'neighborhood', selectedDistrict = '', selectedHome = '', homeDistrict = '', homeRows = [], homeCursor = null, homeTotal = 0, pinnedHome = null, lastHomesInput = null, lastHomesHydration = null, homePaged = false, localHomesBoard = null, localHomesPaged = false;
+    let trackedObjectiveId = '', roomDraft = null, chatUnread = 0;
     const listeners = [], renderListeners = [];
     const identity = () => [String(options.scopeKey || ''), options.character?.id, options.character?.generation, options.district?.id].join(':');
     let scope = identity(), lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
@@ -40,8 +41,9 @@
     const tools = el('button', 'city-world__tools', 'World tools ▾'); tools.type = 'button'; tools.dataset.cityWorldTools = '';
     const tracker = el('button', 'city-world__tracker'); tracker.type = 'button'; tracker.dataset.cityObjectiveTracker = '';
     const gains = el('span', 'city-world__gains'); gains.setAttribute('role', 'status'); gains.setAttribute('aria-live', 'polite');
-    const dialogue = el('span', 'city-world__dialogue'); dialogue.hidden = true; dialogue.setAttribute('role', 'status');
-    toolbar.append(tools, tracker, gains, dialogue);
+    const dialogue = el('summary', 'city-world__dialogue'); dialogue.hidden = true;
+    const speech = el('details', 'city-world__speech'); speech.hidden = true; speech.append(dialogue);
+    toolbar.append(tools, tracker, gains, speech);
     (options.toolbar || root).append(toolbar);
     if (options.toolsHost) { options.toolsHost.append(tools); tools.textContent = String(options.toolsLabel || 'World tools'); tools.setAttribute('aria-label', 'Open world tools: map, bag, skills, adventures, hideout, style and nearby chat'); }
     if (options.trackerHost) options.trackerHost.append(tracker);
@@ -52,17 +54,19 @@
     const closeButton = el('button', 'city-world__close', '×'); closeButton.type = 'button'; closeButton.dataset.cityWorldClose = ''; closeButton.setAttribute('aria-label', 'Close world tools');
     bar.append(back, title, closeButton);
     const navigation = el('nav', 'city-world__tabs'); navigation.setAttribute('aria-label', 'World tool panels');
+    const panelSelect = el('select', 'city-world__panel-select'); panelSelect.setAttribute('aria-label', 'Choose a world tool'); panelSelect.dataset.cityPanelSelect = '';
     const tabs = new Map();
     for (const [id, label] of PANELS) {
       const button = el('button', '', label); button.type = 'button'; button.dataset.cityWorldPanel = id; button.setAttribute('aria-pressed', 'false');
       tabs.set(id, button); navigation.append(button);
+      const option = el('option', '', label); option.value = id; panelSelect.append(option);
     }
+    navigation.prepend(panelSelect);
     const content = el('div', 'city-world__content'); content.tabIndex = -1;
     const state = el('p', 'city-world__notice'); state.setAttribute('role', 'status'); state.setAttribute('aria-live', 'polite');
+    const refreshPanel = el('button', 'city-world__refresh', 'Refresh panel'); refreshPanel.type = 'button'; refreshPanel.hidden = true; refreshPanel.dataset.cityPanelRefresh = '';
     const receiptBox = el('section', 'city-world__receipt'); receiptBox.setAttribute('aria-label', 'World action receipt');
-    dock.append(bar, navigation, content, state, receiptBox); (options.viewport || root).append(dock);
-    const speech = el('div', 'city-world__speech'); speech.hidden = true; speech.setAttribute('role', 'status'); speech.setAttribute('aria-live', 'polite');
-    (options.mapLayer || root).append(speech);
+    dock.append(bar, navigation, state, refreshPanel, receiptBox, content); (options.viewport || root).append(dock);
     const on = (target, name, handler) => { target.addEventListener(name, handler); listeners.push(() => target.removeEventListener(name, handler)); };
     const onRender = (target, name, handler) => { target.addEventListener(name, handler); renderListeners.push(() => target.removeEventListener(name, handler)); };
     function clearRenderedListeners() { renderListeners.splice(0).forEach(remove => remove()); }
@@ -85,14 +89,39 @@
         return marker && current(marker.token, marker.owner) && marker.ticket === readTickets[kind];
       }));
       const label = PANELS.find(([id]) => id === panel)?.[1] || 'World tools';
-      const heading = label + (loading ? ' · Loading…' : ''), busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
+      const heading = label, busy = String(loading), copy = notice || (loading ? 'Loading ' + label + '…' : '');
       const altered = title.textContent !== heading || content.getAttribute('aria-busy') !== busy || state.textContent !== copy;
       if (title.textContent !== heading) title.textContent = heading;
       if (content.getAttribute('aria-busy') !== busy) content.setAttribute('aria-busy', busy);
       if (state.textContent !== copy) state.textContent = copy;
+      refreshPanel.hidden = !notice || !/refresh|reopen|try again/i.test(notice); refreshPanel.disabled = pending;
       return altered;
     }
     function resultBody(result) { return result?.body && typeof result.body === 'object' ? result.body : {}; }
+    function actionFailure(result) {
+      const code = resultBody(result).error;
+      if (result?.code === 499) return 'That panel closed before your choice was sent. Open it again to continue.';
+      if (result?.code >= 500) return 'Confirmation is unavailable. Check the action receipt before trying a new choice.';
+      const messages = {
+        city_adventure_refresh_required: 'This adventure changed. Refresh it before making your choice.',
+        city_npc_unavailable: 'That person has left. Refresh Adventures to find a current contact.',
+        city_npc_binding_changed: 'That contact changed. Refresh Adventures and choose them again.',
+        city_opportunity_unavailable: 'This lead changed. Refresh Adventures to see the available choices.',
+        city_social_identity_changed: 'Your character or district changed. Reopen this panel before continuing.',
+        city_opportunity_identity_changed: 'Your character changed. Reopen Adventures before continuing.',
+        city_chat_opt_in_required: 'Join nearby chat before sending a message or emote.',
+        bad_city_room: 'Choose a catalog decoration and an empty square within the six-by-six floor.',
+        bad_city_outfit: 'Choose one of the free outfits shown in Style.',
+        slow_down: 'Give the room a moment, then send your next message.',
+        empty: 'Write a message before sending it.',
+        unauthorized: 'Your session expired. Sign in again before continuing.',
+        no_character: 'Choose a living character before continuing.',
+        home_authority_changed: 'The deed changed. Refresh the home before entering.',
+        idempotency_required: 'This choice needs to be refreshed. Check the action receipt before trying again.',
+        contention: 'Another change is still finishing. Check the action receipt, then refresh this panel.'
+      };
+      return messages[code] || 'Your choice could not be completed. Refresh this panel, then check the available options.';
+    }
     async function read(kind, token = opening, input = {}) {
       if (typeof options.onRead !== 'function') return null;
       const owner = scope, socialAtStart = boards.social, ticket = (readTickets[kind] || 0) + 1; readTickets[kind] = ticket;
@@ -149,7 +178,7 @@
       if (options.recovery === true) { setNotice('Resolve your pending action receipt before making another choice.'); return; }
       const owner = scope, token = opening;
       const opportunityAtStart=boards['opportunity-detail'], homeAtStart=boards['home-interior'];
-      pending = true; setNotice('Confirming your choice…'); render();
+      pending = true; setNotice('Confirming your choice…'); render(); dock.scrollTop = 0;
       try {
         const result = await options.onAction(kind, payload, {
           beforeDispatch: () => current(token, owner) && !!panel,
@@ -175,13 +204,11 @@
           if(kind==='adventure-action'&&['city_npc_unavailable','city_npc_binding_changed','city_opportunity_unavailable'].includes(resultBody(result).error)) {
             if(boards['opportunity-detail']===opportunityAtStart)delete boards['opportunity-detail']; if(current(token,owner))await read('opportunities',token);
           }
-          if (current(token, owner)) setNotice(result.code === 499 ? 'That opening was closed before the choice was sent.'
-            : result.code >= 500 ? 'Confirmation is unavailable. Check the action receipt before trying a new choice.'
-            : resultBody(result).error === 'city_adventure_refresh_required' ? 'This adventure changed. Refresh it before making your choice.'
-            : caption(resultBody(result).error || 'Your choice could not be applied.'));
+          if (current(token, owner)) setNotice(actionFailure(result));
           return;
         }
         if (current(token, owner)) {
+          if (kind === 'room') roomDraft = null;
           if (kind === 'send-chat') { const field = content.querySelector('[data-city-nearby-input]'); if (field) field.value = ''; }
           setNotice(kind === 'send-chat' ? 'Message delivered to this district.' : kind === 'emote' ? 'Emote shared with your nearby room.' : 'Your choice is saved.');
           if (kind === 'send-chat' || kind === 'emote') showChatMessage(resultBody(result).message, true);
@@ -203,7 +230,7 @@
     function open(id = 'map', { world = false } = {}) {
       if (destroyed || !tabs.has(id)) return;
       if (typeof options.onBeforeOpen === 'function') options.onBeforeOpen();
-      stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
+      stopPolling(); clearSpeech(); opening++; readTickets = Object.create(null); readPending = Object.create(null); panel = id; roomDraft = null; chatUnread = 0; dock.hidden = false; dock.scrollTop = 0; tools.setAttribute('aria-expanded', 'true');
       if (id === 'map') mapView = world ? 'world' : 'neighborhood';
       setNotice(''); render(); changed(); content.focus({ preventScroll: true });
       if (id === 'bag') read('inventory');
@@ -227,7 +254,10 @@
     }
     on(tools, 'click', () => dock.hidden ? open('map') : close());
     on(closeButton, 'click', () => close());
-    on(back, 'click', () => { dock.scrollTo({ top: 0, behavior: 'instant' }); tabs.values().next().value.focus({ preventScroll: true }); });
+    on(refreshPanel, 'click', () => open(panel, { world: panel === 'map' && mapView === 'world' }));
+    on(speech, 'toggle', changed);
+    on(back, 'click', () => { dock.scrollTo({ top: 0, behavior: 'instant' }); (panelSelect.getBoundingClientRect().height ? panelSelect : tabs.values().next().value).focus({ preventScroll: true }); });
+    on(panelSelect, 'change', () => open(panelSelect.value));
     on(navigation, 'click', event => { const tab = event.target.closest('[data-city-world-panel]'); if (tab && navigation.contains(tab)) open(tab.dataset.cityWorldPanel); });
     on(dock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
     on(tracker, 'click', () => { close(false); if (typeof options.onOpenIntel === 'function') options.onOpenIntel(); });
@@ -237,12 +267,34 @@
       pollTimer = setInterval(() => { if (!destroyed && !document.hidden && socialPreferences().chatEnabled === true && !pending) read('chat'); }, 5000);
     }
     function renderTracker() {
-      const objectives = list(options.objectives);
-      const next = objectives.find(objective => objective && !['complete', 'completed', 'locked'].includes(objective.status));
+      const objectives = list(options.objectives), available = trackableObjectives();
+      if (options.trackedObjectiveId === null) trackedObjectiveId = '';
+      if (typeof options.trackedObjectiveId === 'string' && available.some(objective => objective.id === options.trackedObjectiveId)) trackedObjectiveId = options.trackedObjectiveId;
+      if (trackedObjectiveId && !available.some(objective => objective.id === trackedObjectiveId)) { trackedObjectiveId = ''; options.trackedObjectiveId = null; options.onTrackObjective?.(null, null); }
+      const next = available.find(objective => objective.id === trackedObjectiveId) || available[0];
       tracker.textContent = next ? '◆ ' + String(next.title || 'Your next objective') : objectives.length ? '✓ Intel objectives complete' : '◆ Meet someone · collect your first clue';
       tracker.title = next?.description || 'Open your intel journal and objectives';
       tracker.setAttribute('aria-label', tracker.textContent + '. Open intel journal');
       tracker.hidden = options.trackerVisible === false;
+    }
+    function trackableObjectives() { return list(options.objectives).filter(objective => objective && typeof objective.id === 'string' && objective.available !== false && !['complete', 'completed', 'locked', 'unavailable'].includes(objective.status)); }
+    function renderObjectiveChoice() {
+      const objectives = trackableObjectives(); if (!objectives.length) return;
+      const label = el('label', 'city-world__objective-choice', 'Track an objective');
+      const select = el('select'); select.setAttribute('aria-label', 'Tracked objective'); select.dataset.cityTrackedObjective = '';
+      const automatic = el('option', '', 'Follow the current next move'); automatic.value = ''; select.append(automatic);
+      for (const objective of objectives) { const option = el('option', '', objective.title || 'Current objective'); option.value = objective.id; select.append(option); }
+      select.value = trackedObjectiveId;
+      onRender(select, 'change', () => {
+        if (!select.value) { trackedObjectiveId = ''; options.trackedObjectiveId = null; options.onTrackObjective?.(null, null); renderTracker(); render(); return; }
+        const objective = trackableObjectives().find(item => item.id === select.value); if (!objective) return;
+        if (options.onTrackObjective?.(objective.id, objective.venueId) === false) { select.value = trackedObjectiveId; setNotice('That objective changed. Refresh this panel before tracking it.'); return; }
+        trackedObjectiveId = objective.id; options.trackedObjectiveId = objective.id;
+        renderTracker(); render();
+      });
+      label.append(select); content.append(label);
+      const selected = objectives.find(objective => objective.id === trackedObjectiveId);
+      if (selected?.description) content.append(el('p', 'city-world__hint', selected.description));
     }
     function heading(text, copy) { content.append(el('h4', '', text)); if (copy) content.append(el('p', 'city-world__hint', copy)); }
     function catalogName(id, catalog) { return list(catalog).find(item => item?.id === id)?.name || caption(id); }
@@ -361,16 +413,18 @@
     }
     function renderMap() {
       const modes = el('div', 'city-world__map-modes');
-      for (const [id, label] of [['neighborhood', 'Neighborhood'], ['world', 'World overview']]) {
+      for (const [id, label] of [['neighborhood', 'Neighborhood · walk'], ['world', 'Districts · travel']]) {
         const choose = button(label, () => open('map', { world: id === 'world' })); choose.dataset.cityMapView = id;
         choose.setAttribute('aria-pressed', String(mapView === id)); modes.append(choose);
       }
       content.append(modes);
       if (mapView === 'world') { renderAtlas(); return; }
+      renderObjectiveChoice();
       heading(String(options.district?.name || 'Your neighborhood'), 'Choose a waypoint to walk there. People markers show approximate district presence.');
       const map = el('canvas', 'city-world__minimap'); map.width = 480; map.height = 320; map.dataset.cityMinimap = '';
       map.setAttribute('role', 'img'); map.setAttribute('aria-label', 'Neighborhood minimap with venue waypoints and your local walking position. Accessible destinations follow.');
       content.append(map);
+      content.append(el('p', 'city-world__map-legend', '● You · ◆ Tracked objective · ▪ Venues · ━ Walking route'));
       const grid = el('div', 'city-world__destination-grid');
       for (const venue of list(options.venues, 16)) {
         const go = button(venue.name, () => { close(false); options.onWaypoint?.(venue.id); });
@@ -478,7 +532,16 @@
       content.append(equipment);
       for (const id of owned) {
         const row = el('article', 'city-world__item');
-        row.append(el('strong', '', catalogName(id, rules.guns)));
+        const copy = el('div'), gun = list(rules.guns).find(item => item.id === id), currentGun = list(rules.guns).find(item => item.id === character.gun);
+        copy.append(el('strong', '', catalogName(id, rules.guns)));
+        if (typeof gun?.fp === 'number' && Number.isFinite(gun.fp)) {
+          const baseline = character.gun ? currentGun?.fp : 0, delta = gun.fp - baseline;
+          const comparison = character.gun === id ? ' · Equipped' : typeof baseline === 'number' && Number.isFinite(baseline)
+            ? ' · ' + (delta > 0 ? '+' : '') + delta + ' vs ' + (character.gun ? 'equipped' : 'unarmed') : '';
+          copy.append(el('p', 'city-world__item-copy', 'Firepower ' + gun.fp + comparison));
+        }
+        if (gun?.desc) copy.append(el('p', 'city-world__hint', gun.desc));
+        row.append(copy);
         const equip = button(character.gun === id ? 'Put away' : 'Equip', () => action('equip', { id: character.gun === id ? null : id }));
         equip.dataset.cityEquip = id; equip.disabled = pending || options.recovery === true || !options.onAction; row.append(equip); content.append(row);
       }
@@ -517,8 +580,12 @@
       const preferences = socialPreferences(), furniture = list(preferences.room?.furniture || preferences.furniture, 12);
       heading('Your hideout', 'Make this corner of the city yours. Furniture is cosmetic; your protection still follows the normal safehouse rules.');
       const room = el('div', 'city-world__room'); room.dataset.cityHideout = ''; room.setAttribute('role', 'group'); room.setAttribute('aria-label', 'Six by six hideout floor');
+      const editable = list(boards.social?.furnitureCatalog || boards.social?.furniture, 12);
+      const tiles = [];
       for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) {
-        const tile = el('span', 'city-world__floor'); tile.style.gridColumn = String(x + 1); tile.style.gridRow = String(y + 1); room.append(tile);
+        const tile = el(editable.length ? 'button' : 'span', 'city-world__floor'); tile.style.gridColumn = String(x + 1); tile.style.gridRow = String(y + 1);
+        if (editable.length) { tile.type = 'button'; tile.dataset.cityRoomTile = x + ',' + y; tile.setAttribute('aria-label', 'Place at column ' + (x + 1) + ', row ' + (y + 1)); tile.disabled = pending || options.recovery === true; }
+        tiles.push(tile); room.append(tile);
       }
       const roomPlayer = el('img', 'city-world__room-player'); roomPlayer.src = '/art/city-player-down-v2.png'; roomPlayer.alt = 'Your character in the hideout'; roomPlayer.style.gridColumn = '4'; roomPlayer.style.gridRow = '5'; room.append(roomPlayer);
       const furnitureLabels = { chair: 'Chair', table: 'Table', lamp: 'Lamp', window: 'Window' };
@@ -535,20 +602,40 @@
         }); useControls.append(use);
       }
       content.append(room, useControls);
-      const editable = list(boards.social?.furnitureCatalog || boards.social?.furniture, 12);
       if (editable.length) {
+        content.append(el('p', 'city-world__hint', 'Choose furniture, then tap a floor square to preview it. Save when it feels right.'));
         const controls = el('div', 'city-world__room-controls');
         const select = el('select'); select.setAttribute('aria-label', 'Furniture to place');
         for (const item of editable) { const option = el('option', '', item.name || caption(item.id)); option.value = item.id; select.append(option); }
         const x = el('input'), y = el('input');
         for (const [field, label] of [[x, 'Furniture column'], [y, 'Furniture row']]) { field.type = 'number'; field.min = '1'; field.max = '6'; field.value = '2'; field.setAttribute('aria-label', label); }
-        controls.append(select, x, y);
-        const place = button('Place furniture', () => {
+        if (roomDraft && editable.some(item => item.id === roomDraft.id)) { select.value = roomDraft.id; x.value = String(roomDraft.x + 1); y.value = String(roomDraft.y + 1); }
+        const preview = el('span', 'city-world__furniture city-world__room-preview'); preview.hidden = true; preview.setAttribute('aria-label', 'Placement preview'); room.append(preview);
+        const previewStatus = el('p', 'city-world__hint'); previewStatus.dataset.cityRoomPreview = ''; previewStatus.setAttribute('role', 'status');
+        function previewPlacement() {
+          const column = Number(x.value) - 1, row = Number(y.value) - 1;
+          const valid = Number.isInteger(column) && Number.isInteger(row) && column >= 0 && column <= 5 && row >= 0 && row <= 5;
+          roomDraft = { id: select.value, x: column, y: row };
+          const occupied = furniture.some(item => item.id !== select.value && item.x === column && item.y === row);
+          preview.hidden = !valid;
+          preview.className = 'city-world__furniture city-world__room-preview city-world__furniture--' + select.value;
+          preview.classList.toggle('is-blocked', occupied);
+          preview.style.gridColumn = String(column + 1); preview.style.gridRow = String(row + 1);
+          for (const tile of tiles) tile.setAttribute('aria-pressed', String(valid && tile.dataset.cityRoomTile === column + ',' + row));
+          previewStatus.textContent = !valid ? 'Choose a row and column from 1 to 6.' : occupied ? 'That square is occupied. Choose an empty square.' : 'Preview: ' + catalogName(select.value, editable) + ' at column ' + (column + 1) + ', row ' + (row + 1) + '. Save to keep it.';
+        }
+        onRender(select, 'change', previewPlacement); onRender(x, 'input', previewPlacement); onRender(y, 'input', previewPlacement);
+        for (const tile of tiles) onRender(tile, 'click', () => { const [column, row] = tile.dataset.cityRoomTile.split(',').map(Number); x.value = String(column + 1); y.value = String(row + 1); previewPlacement(); });
+        controls.append(select);
+        for (const [field, label] of [[x, 'Column'], [y, 'Row']]) { const wrap = el('label', '', label); wrap.append(field); controls.append(wrap); }
+        const place = button('Save placement', () => {
           const column = Number(x.value) - 1, row = Number(y.value) - 1;
           if (!Number.isInteger(column) || !Number.isInteger(row) || column < 0 || column > 5 || row < 0 || row > 5) { setNotice('Choose a row and column from 1 to 6.'); return; }
+          if (furniture.some(item => item.id !== select.value && item.x === column && item.y === row)) { setNotice('That square is occupied. Choose an empty square.'); return; }
           const updated = furniture.filter(item => item.id !== select.value).concat({ id: select.value, x: column, y: row });
           action('room', { furniture: updated });
-        }); place.disabled = pending || options.recovery === true || !options.onAction; controls.append(place); content.append(controls);
+        }); place.dataset.cityRoomSave = ''; place.disabled = pending || options.recovery === true || !options.onAction; controls.append(place); content.append(controls, previewStatus);
+        if (roomDraft) previewPlacement();
       }
       const safe = number(options.character?.safeSeconds);
       content.append(el('p', 'city-world__hint', safe > 0 ? 'Safehouse protection: ' + Math.ceil(safe / 60) + ' minutes remaining.' : 'Decorating does not activate protection.'));
@@ -590,11 +677,23 @@
       join.dataset.cityChatConsent = ''; join.disabled = pending || options.recovery === true || !options.onAction; content.append(join);
       if (preferences.chatEnabled !== true) { content.append(el('p', 'city-world__hint', 'You have not joined. No nearby messages are loaded until you opt in.')); return; }
       const feed = el('ol', 'city-world__chat-feed'); feed.dataset.cityNearbyFeed = '';
+      feed.setAttribute('aria-label', 'Nearby messages'); feed.tabIndex = 0;
+      let previous = null;
       for (const message of list(boards.chat?.messages, 50)) {
-        const row = el('li'); row.append(el('strong', '', String(message.who || message.name || message.sender?.name || 'Someone')), document.createTextNode(' · ' + String(message.text || message.body || ''))); feed.append(row);
+        const name = String(message.who || message.name || message.sender?.name || 'Someone'), at = typeof message.at === 'number' ? message.at : Date.parse(message.at);
+        const sameSender = previous && message.characterId && message.characterId === previous.characterId && message.generation === previous.generation;
+        const grouped = sameSender && Number.isFinite(at) && at >= previous.at && at - previous.at < 5 * 60 * 1000;
+        const row = el('li'); row.dataset.cityMessageId = String(message.id || ''); row.classList.toggle('is-grouped', !!grouped);
+        if (!grouped) row.append(el('strong', '', name));
+        if (Number.isFinite(at)) { const time = el('time', '', new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })); time.dateTime = new Date(at).toISOString(); time.title = new Date(at).toLocaleString(); row.append(time); }
+        row.append(el('span', 'city-world__message-text', String(message.text || message.body || ''))); feed.append(row);
+        previous = { characterId: message.characterId, generation: message.generation, at };
       }
       if (!feed.children.length) feed.append(el('li', 'city-world__hint', Object.hasOwn(boards, 'chat') ? 'The room is quiet. Say hello.' : 'Messages have not loaded yet.'));
       content.append(feed);
+      const unread = button('New messages ↓', () => { feed.scrollTop = feed.scrollHeight; chatUnread = 0; unread.hidden = true; feed.focus({ preventScroll: true }); });
+      unread.dataset.cityChatUnread = ''; unread.hidden = true; unread.setAttribute('aria-live', 'polite'); content.append(unread);
+      onRender(feed, 'scroll', () => { if (feed.scrollHeight - feed.scrollTop - feed.clientHeight < 12) { chatUnread = 0; unread.hidden = true; } });
       const form = el('form', 'city-world__chat-form'), text = el('input');
       text.type = 'text'; text.maxLength = 240; text.autocomplete = 'off'; text.placeholder = 'Say something to the neighborhood…'; text.setAttribute('aria-label', 'Message to nearby chat'); text.dataset.cityNearbyInput = '';
       const send = el('button', '', 'Send'); send.type = 'submit'; send.dataset.worldControl = 'send-chat'; send.disabled = pending || options.recovery === true; form.append(text, send);
@@ -604,12 +703,18 @@
     function render() {
       if (destroyed || !panel) return;
       const scroll = dock.scrollTop, active = document.activeElement;
+      const oldFeed = content.querySelector('[data-city-nearby-feed]'), feedScroll = oldFeed?.scrollTop || 0;
+      const followChat = !oldFeed || oldFeed.scrollHeight - feedScroll - oldFeed.clientHeight < 12;
+      const seenMessages = new Set(oldFeed ? Array.from(oldFeed.querySelectorAll('[data-city-message-id]'), row => row.dataset.cityMessageId) : []);
+      const anchorRow = oldFeed && !followChat ? Array.from(oldFeed.querySelectorAll('[data-city-message-id]')).find(row => row.getBoundingClientRect().bottom > oldFeed.getBoundingClientRect().top + 2) : null;
+      const chatAnchor = anchorRow ? { id: anchorRow.dataset.cityMessageId, offset: anchorRow.getBoundingClientRect().top - oldFeed.getBoundingClientRect().top } : null;
       const focused = content.contains(active) || receiptBox.contains(active);
       const focusKey = active?.dataset?.worldControl || active?.getAttribute('aria-label');
       const preserveDraft = renderedOpening === opening;
-      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select'), field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
+      const drafts = new Map(preserveDraft ? Array.from(content.querySelectorAll('input,select:not([data-city-tracked-objective])'), field => [field.getAttribute('aria-label'), { value: field.value, checked: field.checked }]) : []);
       const selection = preserveDraft && active?.matches('input[type="text"]') ? [active.selectionStart, active.selectionEnd] : null;
       clearRenderedListeners(); content.replaceChildren(); receiptBox.replaceChildren();
+      panelSelect.value = panel;
       for (const [id, tab] of tabs) tab.setAttribute('aria-pressed', String(id === panel));
       if (panel === 'map') renderMap(); else if (panel === 'bag') renderBag(); else if (panel === 'skills') renderSkills();
       else if(panel==='adventures'&&window.CityAdventureUi)window.CityAdventureUi.render(content,{encounters:boards.encounters,index:boards.opportunities,
@@ -636,8 +741,22 @@
           }); retry.disabled = pending; retry.dataset.cityWorldRetry = ''; receiptBox.append(retry);
         }
       }
+      receiptBox.hidden = !options.receipt;
+      receiptBox.classList.toggle('is-recovering', options.recovery === true);
+      const feed = content.querySelector('[data-city-nearby-feed]'), unread = content.querySelector('[data-city-chat-unread]');
+      if (feed) {
+        if (followChat) { feed.scrollTop = feed.scrollHeight; chatUnread = 0; }
+        else {
+          feed.scrollTop = feedScroll;
+          const anchor = chatAnchor && Array.from(feed.querySelectorAll('[data-city-message-id]')).find(row => row.dataset.cityMessageId === chatAnchor.id);
+          if (anchor) feed.scrollTop += anchor.getBoundingClientRect().top - feed.getBoundingClientRect().top - chatAnchor.offset;
+          chatUnread += Array.from(feed.querySelectorAll('[data-city-message-id]')).filter(row => row.dataset.cityMessageId && !seenMessages.has(row.dataset.cityMessageId)).length;
+        }
+        unread.hidden = chatUnread === 0; unread.textContent = chatUnread + ' new message' + (chatUnread === 1 ? '' : 's') + ' ↓';
+      }
+      dock.scrollTop = scroll;
       if (focused) {
-        const target = (focusKey ? Array.from(dock.querySelectorAll('button,input,select')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) : null) || content;
+        const target = (focusKey ? Array.from(dock.querySelectorAll('button,input,select,[data-city-nearby-feed]')).find(node => !node.disabled && (node.dataset.worldControl || node.getAttribute('aria-label')) === focusKey) : null) || content;
         target.focus({ preventScroll: true }); if (selection && target.matches('input[type="text"]')) target.setSelectionRange(...selection);
       }
       changed();
@@ -652,35 +771,42 @@
       if (Array.isArray(state.roads)) for (const road of list(state.roads, 96)) context.fillRect(road.x * sx, road.y * sy, road.width * sx, road.height * sy);
       else { context.fillRect(0, 96, canvas.width, 72); context.fillRect(145, 0, 55, canvas.height); }
       for (const obstacle of list(state.obstacles, 160)) { context.fillStyle = '#927854'; context.fillRect(obstacle.x * sx, obstacle.y * sy, obstacle.width * sx, obstacle.height * sy); }
+      const route = list(state.route, 300).filter(point => Number.isFinite(point?.x) && Number.isFinite(point?.y));
+      const pose = state.position || state.player;
+      if (route.length && pose) {
+        context.strokeStyle = '#d7e8bc'; context.lineWidth = 3; context.setLineDash([5, 3]); context.beginPath(); context.moveTo(pose.x * sx, pose.y * sy);
+        for (const point of route) context.lineTo(point.x * sx, point.y * sy);
+        context.stroke(); context.setLineDash([]);
+      }
+      const objective = trackableObjectives().find(item => item.id === trackedObjectiveId);
+      const targetId = state.questVenueId || objective?.venueId;
       for (const home of list(state.homes)) if (currentHomes(localHomesBoard) && localHomesBoard.homes.some(item => item.key === home.key) && home.entrance) {
         context.fillStyle = home.mine ? '#b1d88f' : '#b0b8a7'; context.fillRect(home.entrance.x * sx - 3, home.entrance.y * sy - 3, 6, 6);
       }
       for (const exit of list(state.exits, 16)) { context.fillStyle = '#9fc4da'; context.fillRect(exit.x * sx - 3, exit.y * sy - 3, 6, 6); }
       for (const venue of list(options.venues, 16)) {
         context.fillStyle = '#e7b65d'; context.fillRect(venue.x * sx - 4, venue.y * sy - 4, 8, 8);
+        if (venue.id === targetId) {
+          context.strokeStyle = '#fff0a0'; context.lineWidth = 2; context.beginPath();
+          context.moveTo(venue.x * sx, venue.y * sy - 11); context.lineTo(venue.x * sx + 11, venue.y * sy); context.lineTo(venue.x * sx, venue.y * sy + 11); context.lineTo(venue.x * sx - 11, venue.y * sy); context.closePath(); context.stroke();
+        }
         context.fillStyle = '#eae1c3'; context.font = '10px monospace'; context.fillText(String(venue.name || '').slice(0, 14), Math.max(2, Math.min(canvas.width - 86, venue.x * sx - 30)), venue.y * sy + 17);
       }
       for (const actor of list(state.actorMarkers, 24)) { context.fillStyle = actor.kind === 'agent' ? '#9ec5ef' : actor.kind === 'npc' ? '#c6b696' : '#a5d9c6'; context.fillRect(actor.x * sx - 2, actor.y * sy - 2, 4, 4); }
-      const pose = state.position || state.player; if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(pose.x * sx, pose.y * sy, 5, 0, Math.PI * 2); context.fill(); }
+      if (pose) { context.fillStyle = '#fff4bf'; context.beginPath(); context.arc(pose.x * sx, pose.y * sy, 5, 0, Math.PI * 2); context.fill(); }
+      const target = list(options.venues, 16).find(venue => venue.id === targetId), destination = list(options.venues, 16).find(venue => venue.id === state.selectedVenue);
+      canvas.setAttribute('aria-label', 'Neighborhood minimap with your position and venue waypoints.' + (target ? ' Tracked objective: ' + target.name + '.' : '') + (route.length ? ' Walking route' + (destination ? ' to ' + destination.name : '') + ' shown.' : '') + ' Accessible destinations follow.');
     }
     function speak(venueId, now) {
       if (!VOICES[venueId]) return;
       const [name, copy] = VOICES[venueId]; showSpeech(name + ' · NPC', copy, now);
     }
     function showSpeech(name, copy, now) {
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
-      const wasInline = !dialogue.hidden;
-      speech.replaceChildren(el('strong', '', name), el('span', '', copy)); speech.hidden = !roomy;
-      dialogue.textContent = name + ': ' + copy; dialogue.hidden = roomy; speechUntil = now + 6500;
-      if (!roomy || wasInline) changed();
+      dialogue.textContent = name + ': ' + copy; dialogue.hidden = false; dialogue.title = 'Expand this conversation';
+      const body = el('span', 'city-world__speech-copy', copy);
+      speech.replaceChildren(dialogue, body); speech.hidden = false; speech.open = false; speechUntil = now + 6500; changed();
     }
-    function clearSpeech() { const wasInline = !dialogue.hidden; speech.hidden = true; dialogue.hidden = true; speech.replaceChildren(); dialogue.textContent = ''; speechUntil = 0; if (wasInline) changed(); }
-    function fitSpeech() {
-      if (!speechUntil || !speech.childNodes.length) return;
-      const roomy = (options.mapLayer?.getBoundingClientRect().height || 0) >= 220;
-      if (dialogue.hidden === roomy && speech.hidden === !roomy) return;
-      speech.hidden = !roomy; dialogue.hidden = roomy; changed();
-    }
+    function clearSpeech() { const visible = !speech.hidden; speech.hidden = true; speech.open = false; dialogue.hidden = true; dialogue.textContent = ''; speech.replaceChildren(dialogue); speechUntil = 0; if (visible) changed(); }
     function showChatMessage(message, own = false) {
       if (!message?.id || message.id === lastChatId || socialPreferences().chatEnabled !== true) return;
       const source = list(boards.chat?.participants, 40).find(actor => actor.id === message.characterId && actor.generation === message.generation);
@@ -703,14 +829,15 @@
           selectedDistrict = ''; selectedHome = ''; homeDistrict = ''; homeRows = []; homeCursor = null; homeTotal = 0; pinnedHome = null; lastHomesInput = null; lastHomesHydration = null; homePaged = false; localHomesBoard = null; localHomesPaged = false; lastFrame = null;
           options.onHomes?.(null);
           options.objectives = next.objectives || []; options.intel = next.intel || []; options.actors = next.actors || []; options.npcQuests = next.npcQuests || {};
-          pending = false; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
+          pending = false; trackedObjectiveId = ''; options.trackedObjectiveId = next.trackedObjectiveId || ''; roomDraft = null; chatUnread = 0; gains.textContent = ''; lastSpeech = ''; lastChatId = ''; lastChatAt = 0; clearSpeech(); options.onLook?.('classic');
           lastCharacter = { ...options.character, stats: { ...options.character?.stats } };
         }
         else {
           const character = options.character || {}, changes = [];
-          for (const key of ['muscle', 'cunning', 'speed']) { const gain = number(character.stats?.[key]) - number(lastCharacter.stats?.[key]); if (gain > 0) changes.push(caption(key) + ' +' + gain); }
-          if (number(character.level) > number(lastCharacter.level)) changes.push('Level ' + character.level + ' reached');
-          if (changes.length) { gains.textContent = changes.join(' · '); gains.dataset.celebrate = String(Date.now()); }
+          for (const key of ['muscle', 'cunning', 'speed']) { const before = lastCharacter.stats?.[key], after = character.stats?.[key]; if (Number.isFinite(before) && Number.isFinite(after) && after > before) changes.push(caption(key) + ' +' + (after - before)); }
+          for (const key of ['respect', 'cash']) { const before = lastCharacter[key], after = character[key]; if (Number.isFinite(before) && Number.isFinite(after) && after > before) changes.push(caption(key) + ' +' + (after - before)); }
+          if (typeof lastCharacter.level === 'number' && typeof character.level === 'number' && character.level > lastCharacter.level) changes.push('Level ' + character.level + ' reached');
+          if (changes.length) { gains.textContent = changes.join(' · '); gains.dataset.celebrate = String(Date.now()); gains.classList.toggle('has-motion', options.reducedMotion !== true); changed(); }
           lastCharacter = { ...character, stats: { ...character.stats } };
         }
         if (Object.hasOwn(next, 'social')) {
@@ -734,7 +861,6 @@
       },
       frame(frame) {
         if (destroyed) return; lastFrame = frame;
-        fitSpeech();
         const now = performance.now();
         if (panel === 'map' && now - lastMapPaint > 100) { lastMapPaint = now; paintMap(); }
         const pose = frame?.position || frame?.player;
@@ -743,7 +869,7 @@
           if (venue && lastSpeech !== venue.id && now >= speechUntil) { lastSpeech = venue.id; speak(venue.id, now); }
           if (!venue) lastSpeech = '';
         }
-        if (speechUntil && now > speechUntil) clearSpeech();
+        if (speechUntil && now > speechUntil && !speech.open) clearSpeech();
       },
       open, close,
       openMapOverview(districtId) {
@@ -758,8 +884,8 @@
       },
       isOpen: () => !dock.hidden,
       panelHeight: () => dock.hidden ? 0 : dock.getBoundingClientRect().height,
-      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); } },
-      getState: () => ({ panel, opening, pending, scope, mapView, districtId: selectedDistrict, selectedHome, chatJoined: socialPreferences().chatEnabled === true }),
+      setHeight(value) { if (Number.isFinite(value)) { dock.style.setProperty('--city-world-height', Math.max(64, value) + 'px'); dock.classList.toggle('is-compact', value < 112); dock.classList.toggle('has-short-receipt', value < 200); } },
+      getState: () => ({ panel, opening, pending, scope, mapView, districtId: selectedDistrict, selectedHome, trackedObjectiveId, chatJoined: socialPreferences().chatEnabled === true }),
       destroy() { if (destroyed) return; close(false); destroyed = true; stopPolling(); readTickets = Object.create(null); boards = Object.create(null); homeRows = []; pinnedHome = null; localHomesBoard = null; localHomesPaged = false; lastHomesHydration = null; lastHomesInput = null; homeCursor = null; homeDistrict = ''; selectedHome = ''; options.homes = null; lastFrame = null; options.onHomes?.(null); clearRenderedListeners(); listeners.forEach(remove => remove()); tools.remove(); tracker.remove(); toolbar.remove(); dock.remove(); speech.remove(); }
     };
     handle.update(input);

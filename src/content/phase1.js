@@ -8,6 +8,7 @@ import { COMPANY_PRODUCTION_QUALITY_PACKAGE } from './company-production-quality
 import { DISTRICT_STORY_ARC_PACKAGES } from './district-story-arcs.js';
 import { STAGED_CREW_MISSIONS_PACKAGE } from './staged-crew-missions.js';
 import { CITY_WORLD_OPPORTUNITY_PACKAGES } from './city-world-opportunities.js';
+import { NEIGHBORHOOD_BROADCAST_PACKAGE } from './neighborhood-broadcast.js';
 
 export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   CORE_MATERIALS_PACKAGE,
@@ -18,4 +19,5 @@ export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   ...DISTRICT_STORY_ARC_PACKAGES,
   STAGED_CREW_MISSIONS_PACKAGE,
   ...CITY_WORLD_OPPORTUNITY_PACKAGES,
+  NEIGHBORHOOD_BROADCAST_PACKAGE,
 ]);

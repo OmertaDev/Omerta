@@ -231,7 +231,9 @@ try {
   };
   const worldRecovery = async fixture => {
     await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
-    await activate(fixture, fixture.page.locator('[data-city-world-panel="bag"]'));
+    const panelSelect = fixture.page.locator('[data-city-panel-select]');
+    if (await panelSelect.isVisible()) await panelSelect.selectOption('bag');
+    else await activate(fixture, fixture.page.locator('[data-city-world-panel="bag"]'));
     await fixture.page.waitForFunction(() => window.__arcReads.every(read => read.settled));
     const retry = fixture.page.locator('[data-city-world-retry]'); await retry.waitFor({ state: 'visible' });
     return retry;

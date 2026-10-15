@@ -54,7 +54,8 @@ try {
       if(window.__failNextResponse){window.__failNextResponse=false;return{code:503,body:{error:'offline',message:'The response was interrupted. Its outcome is uncertain.'}};}
       return result;
     }
-    window.__fieldwork=OmertaFieldwork.mount(document.getElementById('fieldwork'),{api,act,refresh:()=>api('GET','/v1/me'),character:{id:${JSON.stringify(players[0].characterId)}},onNavigate:tab=>window.__navigate.push(tab),isActive:()=>true});
+    window.__mountFieldwork=(initialView='inventory')=>OmertaFieldwork.mount(document.getElementById('fieldwork'),{api,act,refresh:()=>api('GET','/v1/me'),character:{id:${JSON.stringify(players[0].characterId)}},onNavigate:tab=>window.__navigate.push(tab),isActive:()=>true,initialView});
+    window.__fieldwork=window.__mountFieldwork();
   </script></body></html>`));
   const call = async (method, url, player, payload, key) => {
     const response = await app.inject({ method, url, payload, headers: {
@@ -259,6 +260,10 @@ try {
   await page.locator('[data-fieldwork-view="mysteries"]').click();
   await activate('[data-fieldwork-case="belladonna-demo"] [data-fieldwork-action]');
   assert(!(await page.locator('.fieldwork-case').innerHTML()).includes('mystery:belladonna-lock'), 'Hidden lead identity is absent before discovery.');
+  const leadCalls = await page.evaluate(() => window.__fieldworkCalls.length);
+  await page.locator('[data-fieldwork-lead]').click();
+  assert.equal(await page.evaluate(() => document.activeElement?.dataset.fieldworkNode), 'mystery:belladonna-trace', 'Next lead moves keyboard focus to an issued visible step.');
+  assert.equal(await page.evaluate(() => window.__fieldworkCalls.length), leadCalls, 'Reviewing a lead never performs its action.');
   const trace = page.locator('[data-fieldwork-node="mystery:belladonna-trace"] [data-fieldwork-action]');
   await trace.click(); await idle();
   assert.equal(await page.locator('[data-fieldwork-node="mystery:belladonna-lock"]').count(), 1, 'Completing evidence reveals the authored lead without guessing its identity.');
@@ -270,6 +275,9 @@ try {
     else { await page.getByRole('button', { name: 'Investigate the next lead', exact: true }).click(); await idle(); }
   }
   assert.equal(await page.locator('.fieldwork-case__heading .fieldwork-stamp').textContent(), 'completed', 'The real investigation completes through issued visible steps.');
+  assert(await page.getByRole('heading', { name: 'Case closed', exact: true }).isVisible(), 'Confirmed completion has an explicit outcome milestone.');
+  await page.locator('[data-fieldwork-keepsakes]').click();
+  assert(await page.getByRole('heading', { name: 'Your inventory', exact: true }).isVisible(), 'The completion milestone opens the real inventory.');
 
   // Seed the other participants' conserved tools; player zero crafted and carried theirs through UI.
   const precision = recipes.recipes.find(recipe => recipe.id === 'recipe:precision_lock_tool').outputs[0].templateId;
@@ -351,8 +359,22 @@ try {
   // An old active instance can be cancelled using its exact issued ID after character replacement.
   await page.locator('[data-fieldwork-view="mysteries"]').click();
   await activate('[data-fieldwork-case="' + NEIGHBORHOOD_QUEST_GRAPH_ID + '"] [data-fieldwork-action]');
+  const resumeBoard = await call('GET', '/v1/worldgraph/mysteries', players[0]);
+  assert.equal(resumeBoard.mysteries.find(item => item.instanceId).status, 'completed', 'The resume fixture has a completed story before the active one.');
+  const resumeCalls = await page.evaluate(() => window.__fieldworkCalls.length);
+  await page.evaluate(() => { window.__fieldwork.destroy(); window.__fieldwork = window.__mountFieldwork('mysteries'); }); await idle();
+  assert.equal(await page.locator('.fieldwork-case__heading .fieldwork-stamp').textContent(), 'active', 'Reopening the journal resumes the active story before completed history.');
+  assert.equal(await page.locator('[data-fieldwork-node="mystery:neighborhood-fixer"]').count(), 1);
+  assert.equal(await page.evaluate(() => window.__fieldworkCalls.length), resumeCalls, 'Resuming the journal only reads progress.');
   await page.locator('[data-fieldwork-node="mystery:neighborhood-fixer"] [data-fieldwork-action]').click(); await idle();
-  await page.locator('[data-fieldwork-node="choice:neighborhood-approach"] [data-fieldwork-action]').first().click(); await confirm();
+  const choiceButton = page.locator('[data-fieldwork-node="choice:neighborhood-approach"] [data-fieldwork-action]').first();
+  assert(await choiceButton.getAttribute('aria-describedby'), 'Choice consequences are linked before committing.');
+  await choiceButton.click();
+  await page.keyboard.press('Shift+Tab');
+  assert(await page.locator('[data-fieldwork-confirm]').evaluate(node => document.activeElement === node), 'Reverse Tab stays in the confirmation.');
+  await page.keyboard.press('Tab');
+  assert(await page.locator('[data-fieldwork-cancel]').evaluate(node => document.activeElement === node), 'Forward Tab wraps to Cancel.');
+  await confirm();
   await page.locator('[data-fieldwork-node="mystery:neighborhood-listen"] [data-fieldwork-action]').click(); await idle();
   assert(!(await page.locator('.fieldwork-case').innerHTML()).includes('mystery:neighborhood-newsroom'), 'Eligible hidden lead identity is absent before explicit investigation.');
   await page.getByRole('button', { name: 'Investigate the next lead', exact: true }).click(); await idle();

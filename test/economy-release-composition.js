@@ -9,7 +9,7 @@ const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer
 const lf = text => text.replaceAll('\r\n', '\n');
 assert.match(COMPOSITION_REVISION, /^[a-f0-9]{40}$/);
 assert.equal(COMPOSITION_PHASE, 'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(COMPOSITION_PROFILES), ['commercial', 'main']);
+assert.deepEqual(Object.keys(COMPOSITION_PROFILES), ['commercial', 'main', 'city']);
 let domains = 0, negatives = 0;
 for (const [profile, files] of Object.entries(COMPOSITION_PROFILES)) {
   for (const [file, pin] of Object.entries(files)) {
