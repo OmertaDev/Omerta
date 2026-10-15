@@ -698,6 +698,7 @@ export const MARKET_OPERATIONS_NATIVE_FILES=Object.freeze([
  "tools/market-operations-graph-helpers.js",
  "tools/market-operations-source-compatibility.js",
  "test/market-operations-source-compatibility.js",
+ "src/content/neighborhood-broadcast.js",
  "test/market-operations-native-guard.js",
  "test/market-operations-release-phase2-migration-catalog.js",
  "test/merchantreturns-api.js",
