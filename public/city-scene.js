@@ -7,15 +7,15 @@
   const PLAYER_RADIUS = 7;
   const SPEED = 176;
   const ART = {
-    'city-art-background': '/art/city-neighborhood-v1.png',
-    'city-art-player-down': '/art/city-player-down-v1.png',
-    'city-art-player-up': '/art/city-player-up-v1.png',
-    'city-art-player-left': '/art/city-player-left-v1.png',
-    'city-art-player-right': '/art/city-player-right-v1.png',
-    'city-art-player-step': '/art/city-player-step-v1.png',
-    'city-art-fixer': '/art/city-fixer-v1.png',
-    'city-art-worker': '/art/city-worker-v1.png',
-    'city-art-neighbor': '/art/city-neighbor-v1.png'
+    'city-art-background': '/art/city-neighborhood-v2.png',
+    'city-art-player-down': '/art/city-player-down-v2.png',
+    'city-art-player-up': '/art/city-player-up-v2.png',
+    'city-art-player-left': '/art/city-player-left-v2.png',
+    'city-art-player-right': '/art/city-player-right-v2.png',
+    'city-art-player-step': '/art/city-player-step-v2.png',
+    'city-art-fixer': '/art/city-fixer-v2.png',
+    'city-art-worker': '/art/city-worker-v2.png',
+    'city-art-neighbor': '/art/city-neighbor-v2.png'
   };
   const VENUES = [
     { id: 'fixer', name: 'The Fixer', detail: 'Find a job', tab: 'streets', x: 144, y: 224,

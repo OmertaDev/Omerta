@@ -4,7 +4,7 @@
 .world-fieldwork button:hover { background: #fff5df; border-color: #76512c; }
 .world-fieldwork button:focus-visible { outline: 3px solid #825c2e; outline-offset: 3px; }
 .world-fieldwork button:disabled { opacity: .55; cursor: default; }
-.fieldwork-mast { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 26px; min-height: 210px; background: linear-gradient(0deg, rgba(20, 28, 28, .93), rgba(20, 28, 28, .26)), url('/art/city-neighborhood-v1.png') center 46% / cover; color: #f5ecd7; }
+.fieldwork-mast { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 26px; min-height: 210px; background: linear-gradient(0deg, rgba(20, 28, 28, .93), rgba(20, 28, 28, .26)), url('/art/city-neighborhood-v2.png') center 46% / cover; color: #f5ecd7; }
 .fieldwork-mast span { color: #e8bc72; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 700; }
 .fieldwork-mast h1 { font: 36px/1.1 Georgia, serif; margin: 9px 0 8px; color: #fff2d8; }
 .fieldwork-mast p { margin: 0; max-width: 420px; color: #e3dac6; font-size: 13px; }

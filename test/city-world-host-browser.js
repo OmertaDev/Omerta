@@ -88,7 +88,7 @@ try {
     let releaseArt;
     if (pendingEntry) {
       const artGate = new Promise(resolve => { releaseArt = resolve; });
-      await context.route('**/art/city-neighborhood-v1.png*', async route => {
+      await context.route('**/art/city-neighborhood-v2.png*', async route => {
         const response = await route.fetch(); await artGate; await route.fulfill({ response });
       });
     }

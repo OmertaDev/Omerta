@@ -520,7 +520,7 @@
       for (let y = 0; y < 6; y++) for (let x = 0; x < 6; x++) {
         const tile = el('span', 'city-world__floor'); tile.style.gridColumn = String(x + 1); tile.style.gridRow = String(y + 1); room.append(tile);
       }
-      const roomPlayer = el('img', 'city-world__room-player'); roomPlayer.src = '/art/city-player-down-v1.png'; roomPlayer.alt = 'Your character in the hideout'; roomPlayer.style.gridColumn = '4'; roomPlayer.style.gridRow = '5'; room.append(roomPlayer);
+      const roomPlayer = el('img', 'city-world__room-player'); roomPlayer.src = '/art/city-player-down-v2.png'; roomPlayer.alt = 'Your character in the hideout'; roomPlayer.style.gridColumn = '4'; roomPlayer.style.gridRow = '5'; room.append(roomPlayer);
       const furnitureLabels = { chair: 'Chair', table: 'Table', lamp: 'Lamp', window: 'Window' };
       const useControls = el('div', 'city-world__emotes');
       for (const item of furniture) {
@@ -568,7 +568,7 @@
       const looks = el('div', 'city-world__looks');
       for (const outfit of list(boards.social?.outfits, 12)) {
         const choose = button(outfit.name || caption(outfit.id), () => action('outfit', { outfit: outfit.id }), 'city-world__look');
-        const preview = el('img'); preview.src = '/art/city-player-down-v1.png'; preview.alt = '';
+        const preview = el('img'); preview.src = '/art/city-player-down-v2.png'; preview.alt = '';
         if (typeof outfit.color === 'string' && /^#[0-9a-f]{6}$/i.test(outfit.color)) choose.style.setProperty('--look-color', outfit.color);
         choose.prepend(preview); choose.dataset.cityOutfit = outfit.id; choose.setAttribute('aria-pressed', String(preferences.outfit === outfit.id)); choose.disabled = pending || options.recovery === true || !options.onAction; looks.append(choose);
       }
