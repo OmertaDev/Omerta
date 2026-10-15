@@ -107,7 +107,7 @@
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/campaign-network.js](../../src/content/campaign-network.js) | 200 | platform-core | 7 / 8 | 0 | 0 | 2 |
 | [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 40 | 0 | 0 | 9 |
-| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 30 | platform-core | 2 / 2 | 0 | 0 | 1 |
+| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 34 | platform-core | 2 / 2 | 0 | 0 | 1 |
 | [src/content/city-world-opportunities.js](../../src/content/city-world-opportunities.js) | 139 | platform-core | 0 / 5 | 0 | 1 | 2 |
 | [src/content/company-production-quality.js](../../src/content/company-production-quality.js) | 22 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 15 | 0 | 0 | 10 |
@@ -125,10 +125,11 @@
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 1 | 0 | 6 | 1 |
 | [src/content/furnace-ledger.js](../../src/content/furnace-ledger.js) | 151 | platform-core | 7 / 15 | 0 | 1 | 12 |
 | [src/content/json-source.js](../../src/content/json-source.js) | 337 | platform-core | 0 / 7 | 0 | 0 | 2 |
+| [src/content/neighborhood-broadcast.js](../../src/content/neighborhood-broadcast.js) | 83 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/content/neighborhood-initiation.js](../../src/content/neighborhood-initiation.js) | 38 | platform-core | 0 / 4 | 0 | 0 | 2 |
-| [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 167 | world-graph | 0 / 3 | 0 | 1 | 1 |
+| [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 168 | world-graph | 0 / 3 | 0 | 1 | 1 |
 | [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 5 | 0 | 0 | 1 |
-| [src/content/phase1.js](../../src/content/phase1.js) | 22 | world-graph | 8 / 13 | 0 | 0 | 8 |
+| [src/content/phase1.js](../../src/content/phase1.js) | 24 | world-graph | 9 / 13 | 0 | 0 | 8 |
 | [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 138 | platform-core | 2 / 15 | 0 | 0 | 6 |
 | [src/content/progression-admission.js](../../src/content/progression-admission.js) | 274 | platform-core | 9 / 3 | 0 | 1 | 1 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 3 | 9 | 12 | 1 |
