@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b35b9decc90c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `cc803f0c54bd`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3890 |
+| Commits in clone | 3897 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-15 — pin autonomy graph repair source tree |
+| Latest commit | 2026-10-15 — pin autonomy to corrected commercial CI dependency |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2931 |
+| OmertaDev | 2938 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 114 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 648 | historical |
-| knowledge/generated/graph-summary.md | 648 | historical |
-| knowledge/generated/graph.json | 648 | historical |
-| knowledge/generated/inventory.md | 648 | historical |
+| knowledge/generated/github-history.md | 650 | historical |
+| knowledge/generated/graph-summary.md | 650 | historical |
+| knowledge/generated/graph.json | 650 | historical |
+| knowledge/generated/inventory.md | 650 | historical |
 | [SPEC.md](../../SPEC.md) | 525 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 465 | yes |
@@ -54,7 +54,7 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | knowledge/generated/routes.md | 119 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 108 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 110 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 93 | yes |
 | [public/wiki.html](../../public/wiki.html) | 93 | yes |
