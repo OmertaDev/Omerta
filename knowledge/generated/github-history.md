@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `fa3e83b901c3`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `15e7c13cffb6`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3949 |
+| Commits in clone | 3993 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-15 — Freeze first-five CI fixes against reviewed autonomy predecessor |
+| Latest commit | 2026-10-15 — Freeze exact next-layer source and predecessor upgrade relation |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2990 |
+| OmertaDev | 3034 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 114 |
@@ -30,37 +30,37 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 657 | historical |
-| knowledge/generated/graph-summary.md | 657 | historical |
-| knowledge/generated/graph.json | 657 | historical |
-| knowledge/generated/inventory.md | 657 | historical |
-| [SPEC.md](../../SPEC.md) | 531 | yes |
+| knowledge/generated/github-history.md | 658 | historical |
+| knowledge/generated/graph-summary.md | 658 | historical |
+| knowledge/generated/graph.json | 658 | historical |
+| knowledge/generated/inventory.md | 658 | historical |
+| [SPEC.md](../../SPEC.md) | 532 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 465 | yes |
-| [src/server.js](../../src/server.js) | 429 | yes |
-| [schema.sql](../../schema.sql) | 361 | yes |
+| [src/server.js](../../src/server.js) | 433 | yes |
+| [schema.sql](../../schema.sql) | 364 | yes |
 | knowledge/generated/documents.md | 327 | historical |
-| [package.json](../../package.json) | 316 | yes |
+| [package.json](../../package.json) | 317 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 233 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | knowledge/generated/graph.mmd | 180 | historical |
-| [test/gates.js](../../test/gates.js) | 165 | yes |
-| [src/invariants.js](../../src/invariants.js) | 157 | yes |
+| [test/gates.js](../../test/gates.js) | 166 | yes |
+| [src/invariants.js](../../src/invariants.js) | 160 | yes |
 | [src/worker.js](../../src/worker.js) | 140 | yes |
 | [test/client.js](../../test/client.js) | 130 | yes |
 | knowledge/generated/schema.md | 129 | historical |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | knowledge/generated/routes.md | 120 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 112 | yes |
+| [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 113 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 94 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 95 | yes |
 | [public/wiki.html](../../public/wiki.html) | 93 | yes |
+| [src/agentgateway.js](../../src/agentgateway.js) | 88 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
-| [src/agentgateway.js](../../src/agentgateway.js) | 84 | yes |
-| [test/migrate.js](../../test/migrate.js) | 83 | yes |
+| [test/migrate.js](../../test/migrate.js) | 87 | yes |
 | [test/growth.js](../../test/growth.js) | 83 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 81 | yes |
 | [test/hardening.js](../../test/hardening.js) | 69 | yes |
@@ -69,7 +69,7 @@
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
 | [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 59 | yes |
-| [test/docs.js](../../test/docs.js) | 57 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 57 | yes |
 
 ## Pull requests
 
