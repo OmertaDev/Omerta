@@ -1,3 +1,4 @@
+import { register as registerCustomerVaults } from './routes/customervaults.js';
 import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
 import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
@@ -2479,6 +2480,8 @@ export async function buildServer() {
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
   registerCustomerLayaway(app, { pool, auth });
+  // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
+  registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
   registerCommissionedCrafting(app, { pool, auth });
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });

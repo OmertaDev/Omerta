@@ -1,3 +1,4 @@
+import { customerVaultAccounting } from './customervaults.js';
 import { collectCustomerLayawayIssues } from './customerlayaway.js';
 import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
 import { collectFreightHistoryIssues } from './freight-history.js';
@@ -726,6 +727,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
+  const vault = await customerVaultAccounting(pool);
+  push('customer vault reserved custody', vault.reserve, -vault.ledgerDelta, 0);
+  push('customer vault canonical funding', vault.issues.length, 0, 0, { issues: vault.issues });
   const rentalDeposits = await one(pool, 'SELECT COALESCE(SUM(deposit_remaining),0) s FROM equipment_rental_leases');
   const rentalFunding = -(await sum(pool, "currency='cash' AND reason IN ('equipment_rental:deposit','equipment_rental:deposit_refund')"));
   const rentalBurn = await sum(pool, "currency='cash' AND reason='equipment_rental:deposit_burn'");
@@ -1352,7 +1356,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!prefixes.some((p) => r.reason === p || r.reason.startsWith(p))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 

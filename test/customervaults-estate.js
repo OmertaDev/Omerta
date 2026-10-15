@@ -38,5 +38,5 @@ try{
     const rejected=await runLedgerInvariants(pool,{alert:false});assert.equal(rejected.checks.find(v=>v.name==='reason vocabulary').ok,false,'Neither suffix nor foreign-currency variants enter the five exact game-cash reasons');await pool.query('DELETE FROM transactions WHERE id=$1 OR id=$2',[one,two]);
   }
   assert.deepEqual((await runLedgerInvariants(pool,{alert:false})).checks.filter(v=>!v.ok),[]);
-  console.log('Customer vault '+(f.native?'native18.4':'memory')+' PROPOSED shared estate integration PASS: genuine sealed preactor union and estate-start; three living principal refunds, acting killer DELTA retained, customer principal included in exact death sink, no heir title/double release; all '+global.checks.length+' actual global book checks. Requires exact off-repo shared hook proposal until root integration.');
+  console.log('Customer vault '+(f.native?'native18.4':'memory')+' actual shared estate integration PASS: genuine sealed preactor union and estate-start; three living principal refunds, acting killer DELTA retained, customer principal included in exact death sink, no heir title/double release; all '+global.checks.length+' actual global book checks. Actual canonical root preactor and estate-start hooks are exercised.');
 }finally{await f.close();}

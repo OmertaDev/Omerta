@@ -1,3 +1,4 @@
+import { customerVaultDeathCounterparts } from './customervaults.js';
 import { customerLayawayDeathCounterparts } from './customerlayaway.js';
 import { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';
 import crypto from 'node:crypto';
@@ -221,9 +222,10 @@ export async function prelockEquipmentRentalDeathActors(client, characterIds) {
   for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);
-  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking + 4 accepted layaway originals = 46.
+  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking + 4 accepted layaway + 4 vault originals = 50.
   for (const subject of subjects) for (const counterpart of await customerLayawayDeathCounterparts(client, subject)) ids.add(counterpart);
-  if (ids.size > subjects.length * 46) fail('death_limit');
+  for (const subject of subjects) for (const counterpart of await customerVaultDeathCounterparts(client, subject)) ids.add(counterpart);
+  if (ids.size > subjects.length * 50) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -259,6 +261,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await pickingPackingCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Picking counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await customerVaultDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Vault counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

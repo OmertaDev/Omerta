@@ -158,7 +158,7 @@ export async function customerVaultDeathCounterparts(c,character) {
   if(rows.length>4)fail('death_capacity');return [...new Set(rows.flatMap(r=>[r.operator_character,r.customer_character]).filter(v=>v!==character))].sort();
 }
 /** Root must call BEFORE exactCash, with its genuine preactor and estate-resolution witnesses. */
-export async function recoverCustomerVaultsAtEstateStart(c,victim,h) {
+export async function recoverCustomerVaultsAtEstateStart(c,victim,h,{killerCh}={}) {
   assertItemTransaction(c);try {
     const estate=await assertEstateResolutionScope(c,victim.id,h?.estateResolutionScope),locked=await assertEquipmentRentalDeathScope(c,victim.id,h?.rentalDeathScope);
     if(estate.accountId!==victim.account_id||!victim.alive)fail('death_scope');if((await customerVaultDeathCounterparts(c,victim.id)).some(v=>!locked.ids.has(v)))fail('death_scope_changed');
@@ -170,7 +170,7 @@ export async function recoverCustomerVaultsAtEstateStart(c,victim,h) {
     for(const r of rows){await funding(c,r);const customer=(await c.query('SELECT id,account_id,alive,cash FROM characters WHERE id=$1',[r.customer_character])).rows[0];if(!customer?.alive||customer.account_id!==r.customer_account)fail('customer_estate_unrecovered');const amount=Number(r.principal),before=Number(customer.cash);
       registerItemTransactionUndo(c,()=>c.query('UPDATE characters SET cash=$2 WHERE id=$1',[customer.id,before]));const updated=await c.query('UPDATE characters SET cash=cash+$2 WHERE id=$1 AND alive RETURNING cash',[customer.id,amount]);if(updated.rowCount!==1)fail('death_scope');
       const credit=await G.ledger(c,{characterId:customer.id,currency:'cash',amount,reason:'customer_vault:estate_refund',counterparty:r.id},{beforeInsert:tx=>registerItemTransactionUndo(c,()=>c.query('DELETE FROM transactions WHERE id=$1',[tx]))});
-      for(const actor of new Set([victim,h.actorCh].filter(v=>v?.id===customer.id))){const old=Number(actor.cash);registerItemTransactionUndo(c,()=>{actor.cash=old;});actor.cash=old+amount;}
+      for(const actor of new Set([victim,h.actorCh,killerCh].filter(v=>v?.id===customer.id))){const old=Number(actor.cash);registerItemTransactionUndo(c,()=>{actor.cash=old;});actor.cash=old+amount;}
       const next=await release(c,r,customer,'estate_refunded',credit);results.push({positionId:r.id,customerCharacter:customer.id,refunded:amount,releaseCredit:next.release_credit});
     }
     const services=(await c.query("SELECT id,state,closed_at FROM customer_vault_services WHERE operator_character=$1 AND state IN ('open','draining') ORDER BY id FOR UPDATE",[victim.id])).rows;

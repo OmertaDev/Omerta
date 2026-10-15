@@ -1,3 +1,4 @@
+import { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';
 import { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';
 import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
 import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
@@ -185,6 +186,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  await recoverCustomerVaultsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });
   const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);

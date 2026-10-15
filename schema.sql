@@ -9143,3 +9143,23 @@ CREATE TABLE IF NOT EXISTS customer_layaway_requests (
  account_id TEXT NOT NULL,key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),run_id TEXT NOT NULL UNIQUE,
  receipt JSONB,account_ref TEXT REFERENCES accounts(id),original_character TEXT REFERENCES characters(id),PRIMARY KEY(account_id,key_hash),
  CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL) OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)));
+
+-- Fully reserved customer game-cash vaults.
+CREATE TABLE IF NOT EXISTS customer_vault_services (
+ id TEXT PRIMARY KEY,depot_id TEXT NOT NULL REFERENCES business_depots(id),operator_account TEXT NOT NULL REFERENCES accounts(id),
+ operator_character TEXT NOT NULL REFERENCES characters(id),fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 0 AND 1000),
+ source_hash TEXT NOT NULL,policy_hash TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('open','draining','closed')),created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+ expires_at TIMESTAMPTZ NOT NULL,closed_at TIMESTAMPTZ,CHECK(expires_at>created_at));
+CREATE UNIQUE INDEX IF NOT EXISTS customer_vault_one_service ON customer_vault_services(operator_account) WHERE state IN ('open','draining');
+CREATE TABLE IF NOT EXISTS customer_vault_positions (
+ id TEXT PRIMARY KEY,service_id TEXT NOT NULL REFERENCES customer_vault_services(id),operator_account TEXT NOT NULL REFERENCES accounts(id),
+ operator_character TEXT NOT NULL REFERENCES characters(id),customer_account TEXT NOT NULL REFERENCES accounts(id),customer_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL,principal INT NOT NULL CHECK(principal BETWEEN 1 AND 100000),remaining INT NOT NULL CHECK(remaining BETWEEN 0 AND principal),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 0 AND 1000),reserve_debit TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ fee_debit TEXT UNIQUE REFERENCES transactions(id),fee_credit TEXT UNIQUE REFERENCES transactions(id),release_credit TEXT UNIQUE REFERENCES transactions(id),
+ state TEXT NOT NULL CHECK(state IN ('funded','withdrawn','estate_refunded')),created_at TIMESTAMPTZ NOT NULL DEFAULT now(),released_at TIMESTAMPTZ,
+ CHECK(operator_account<>customer_account),CHECK((state='funded' AND remaining=principal AND released_at IS NULL AND release_credit IS NULL) OR (state<>'funded' AND remaining=0 AND released_at IS NOT NULL AND release_credit IS NOT NULL)),
+ CHECK((fee_cash=0 AND fee_debit IS NULL AND fee_credit IS NULL) OR (fee_cash>0 AND fee_debit IS NOT NULL AND fee_credit IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS customer_vault_one_position ON customer_vault_positions(customer_account) WHERE state='funded';
+CREATE TABLE IF NOT EXISTS customer_vault_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
