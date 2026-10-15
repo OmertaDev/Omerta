@@ -99,6 +99,8 @@ import { register as registerCustomerLayaway } from './routes/customerlayaway.js
 import { register as registerConsignments } from './routes/consignments.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerPickingPacking } from './routes/pickingpacking.js';
+import { register as registerDecisionReplay } from './routes/decisionreplay.js';
+import { register as registerEconomicDependencyMap } from './routes/economicdependencymap.js';
 import { register as registerFreightConsolidation } from './routes/freightconsolidation.js';
 import { register as registerInfrastructureConcessions } from './routes/infrastructureconcessions.js';
 import { register as registerTerritoryEconomics } from './routes/territoryeconomics.js';
@@ -2481,6 +2483,8 @@ export async function buildServer() {
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });
   registerFreightConsolidation(app, { pool, auth });
+  registerDecisionReplay(app, { pool, auth });
+  registerEconomicDependencyMap(app, { pool, auth });
   registerInfrastructureConcessions(app, { pool, auth });
   registerTerritoryEconomics(app, { pool, auth });
   registerEquipmentRentals(app, { pool, auth, relayEscrowCustody });
