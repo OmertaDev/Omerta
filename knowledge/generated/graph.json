@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+  "sourceRevision": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14698,
-    "edges": 57809,
+    "nodes": 14701,
+    "edges": 57823,
     "byNodeType": {
-      "Artifact": 6410,
+      "Artifact": 6411,
       "Command": 273,
-      "Commit": 3634,
+      "Commit": 3636,
       "Contract": 133,
       "Document": 899,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5031,
-      "CHANGED": 22588,
-      "CONTAINS": 6431,
+      "BELONGS_TO": 5032,
+      "CHANGED": 22598,
+      "CONTAINS": 6432,
       "DECLARES": 273,
       "DEFINED_IN": 1639,
       "DEPENDS_ON": 68,
       "EXECUTES": 964,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3634,
+      "HAS_COMMIT": 3636,
       "IMPLEMENTS": 124,
       "IMPORTS": 5822,
       "INHERITS": 45,
@@ -7627,6 +7627,29 @@
       "lastChangedAt": "2026-10-15T01:45:56.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "5966c27f76ad91ccfadce54be244003e831fae33"
+    },
+    {
+      "key": "Artifact:.github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "type": "Artifact",
+      "id": ".github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "label": "legal-profile-deferral-2026-10-15.json",
+      "path": ".github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7265,
+      "lines": 165,
+      "version": "8e290c62d043d96c",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+          "line": 1,
+          "version": "8e290c62d043d96c"
+        }
+      ],
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:.github/ci-evidence/native-and-lifecycle-b12-2026-10-14.json",
@@ -116052,20 +116075,20 @@
       "path": "render.yaml",
       "kind": "operations",
       "extension": ".yaml",
-      "bytes": 20589,
-      "lines": 284,
-      "version": "442ff76c588420b4",
+      "bytes": 20800,
+      "lines": 288,
+      "version": "f9c429dcdca5afd6",
       "text": true,
       "provenance": [
         {
           "file": "render.yaml",
           "line": 1,
-          "version": "442ff76c588420b4"
+          "version": "f9c429dcdca5afd6"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:schema.sql",
@@ -122722,20 +122745,20 @@
       "path": "src/preflight.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 38457,
-      "lines": 522,
-      "version": "791fe890e56a0666",
+      "bytes": 39421,
+      "lines": 538,
+      "version": "628b6319d49cf912",
       "text": true,
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "791fe890e56a0666"
+          "version": "628b6319d49cf912"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:src/primetime.js",
@@ -132842,20 +132865,20 @@
       "path": "test/legal-security.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6512,
-      "lines": 88,
-      "version": "e9d4ae0af7d5c62a",
+      "bytes": 7301,
+      "lines": 99,
+      "version": "1a4b232325dd431d",
       "text": true,
       "provenance": [
         {
           "file": "test/legal-security.js",
           "line": 1,
-          "version": "e9d4ae0af7d5c62a"
+          "version": "1a4b232325dd431d"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:test/levers.js",
@@ -135050,20 +135073,20 @@
       "path": "test/preflight.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 35048,
-      "lines": 505,
-      "version": "7e96c05cf32fa1db",
+      "bytes": 38583,
+      "lines": 554,
+      "version": "c1d182ac9b6cfbc0",
       "text": true,
       "provenance": [
         {
           "file": "test/preflight.js",
           "line": 1,
-          "version": "7e96c05cf32fa1db"
+          "version": "c1d182ac9b6cfbc0"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:test/primetime.js",
@@ -143948,20 +143971,20 @@
       "path": "tools/preflight.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 2058,
+      "bytes": 2094,
       "lines": 38,
-      "version": "f28bc34d1b7730cf",
+      "version": "f5b4369ed420dcdf",
       "text": true,
       "provenance": [
         {
           "file": "tools/preflight.js",
           "line": 1,
-          "version": "f28bc34d1b7730cf"
+          "version": "f5b4369ed420dcdf"
         }
       ],
-      "lastChangedAt": "2026-07-25T02:54:18.000Z",
-      "lastChangedBy": "crvydev",
-      "lastChangedCommit": "60dfba1ec6d5a49f2f1b789317ddc3c4669c9e54"
+      "lastChangedAt": "2026-10-15T04:35:47.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
     },
     {
       "key": "Artifact:tools/public-ui.js",
@@ -165195,6 +165218,22 @@
         {
           "commit": "3d9d87bf7541bcfb5893f58d81b483868392cc05",
           "url": "https://github.com/OmertaDev/Omerta/commit/3d9d87bf7541bcfb5893f58d81b483868392cc05"
+        }
+      ]
+    },
+    {
+      "key": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "type": "Commit",
+      "id": "3da5328053c2fe92122a46eed30a333993208683",
+      "label": "chore(knowledge): snapshot territory view correction",
+      "title": "chore(knowledge): snapshot territory view correction",
+      "date": "2026-10-15T03:02:44.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/3da5328053c2fe92122a46eed30a333993208683",
+      "provenance": [
+        {
+          "commit": "3da5328053c2fe92122a46eed30a333993208683",
+          "url": "https://github.com/OmertaDev/Omerta/commit/3da5328053c2fe92122a46eed30a333993208683"
         }
       ]
     },
@@ -201919,6 +201958,22 @@
       ]
     },
     {
+      "key": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "type": "Commit",
+      "id": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "label": "fix(deploy): allow explicit deferral of absent legal profile",
+      "title": "fix(deploy): allow explicit deferral of absent legal profile",
+      "date": "2026-10-15T04:35:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "provenance": [
+        {
+          "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+        }
+      ]
+    },
+    {
       "key": "Commit:dfa5d6ae750df870b9716cfc44325bb5645f8b46",
       "type": "Commit",
       "id": "dfa5d6ae750df870b9716cfc44325bb5645f8b46",
@@ -226280,7 +226335,7 @@
         },
         {
           "file": "test/legal-security.js",
-          "line": 78
+          "line": 89
         }
       ]
     },
@@ -234659,6 +234714,9 @@
           "commit": "3d5cd1866ed34f16a93897bec1efb095b42678fe"
         },
         {
+          "commit": "3da5328053c2fe92122a46eed30a333993208683"
+        },
+        {
           "commit": "3e825926d8d78aad8634bb865ee12dbc99fef2e6"
         },
         {
@@ -236564,6 +236622,9 @@
           "commit": "3d5cd1866ed34f16a93897bec1efb095b42678fe"
         },
         {
+          "commit": "3da5328053c2fe92122a46eed30a333993208683"
+        },
+        {
           "commit": "3e825926d8d78aad8634bb865ee12dbc99fef2e6"
         },
         {
@@ -238467,6 +238528,9 @@
         },
         {
           "commit": "3d5cd1866ed34f16a93897bec1efb095b42678fe"
+        },
+        {
+          "commit": "3da5328053c2fe92122a46eed30a333993208683"
         },
         {
           "commit": "3e825926d8d78aad8634bb865ee12dbc99fef2e6"
@@ -240906,6 +240970,9 @@
         },
         {
           "commit": "3d5cd1866ed34f16a93897bec1efb095b42678fe"
+        },
+        {
+          "commit": "3da5328053c2fe92122a46eed30a333993208683"
         },
         {
           "commit": "3e825926d8d78aad8634bb865ee12dbc99fef2e6"
@@ -248672,13 +248739,13 @@
       "type": "Module",
       "id": "src/preflight.js",
       "label": "src/preflight.js",
-      "lines": 522,
-      "version": "791fe890e56a0666",
+      "lines": 538,
+      "version": "628b6319d49cf912",
       "provenance": [
         {
           "file": "src/preflight.js",
           "line": 1,
-          "version": "791fe890e56a0666"
+          "version": "628b6319d49cf912"
         }
       ]
     },
@@ -254447,12 +254514,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "revision": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
       "currentBranch": "codex/production-all-changes-20261014",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6410,
+      "currentArtifactCount": 6411,
       "provenance": [
         {
           "file": "README.md",
@@ -293386,13 +293453,13 @@
       "type": "TestSuite",
       "id": "test/legal-security.js",
       "label": "test/legal-security.js",
-      "lines": 88,
-      "version": "e9d4ae0af7d5c62a",
+      "lines": 99,
+      "version": "1a4b232325dd431d",
       "provenance": [
         {
           "file": "test/legal-security.js",
           "line": 1,
-          "version": "e9d4ae0af7d5c62a"
+          "version": "1a4b232325dd431d"
         }
       ]
     },
@@ -294811,13 +294878,13 @@
       "type": "TestSuite",
       "id": "test/preflight.js",
       "label": "test/preflight.js",
-      "lines": 505,
-      "version": "7e96c05cf32fa1db",
+      "lines": 554,
+      "version": "c1d182ac9b6cfbc0",
       "provenance": [
         {
           "file": "test/preflight.js",
           "line": 1,
-          "version": "7e96c05cf32fa1db"
+          "version": "c1d182ac9b6cfbc0"
         }
       ]
     },
@@ -299395,6 +299462,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": ".github/ci-evidence/header-wrap-logout-retest-2026-10-15.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:.github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": ".github/ci-evidence/legal-profile-deferral-2026-10-15.json",
         "line": 1
       }
     },
@@ -383454,6 +383530,38 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "3d9d87bf7541bcfb5893f58d81b483868392cc05"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "3da5328053c2fe92122a46eed30a333993208683"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "3da5328053c2fe92122a46eed30a333993208683"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "3da5328053c2fe92122a46eed30a333993208683"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "3da5328053c2fe92122a46eed30a333993208683"
       }
     },
     {
@@ -502754,6 +502862,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:.github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:render.yaml",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:src/preflight.js",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:test/legal-security.js",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:test/preflight.js",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "to": "Artifact:tools/preflight.js",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:dfa5d6ae750df870b9716cfc44325bb5645f8b46",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -543545,6 +543701,15 @@
       "to": "Artifact:.github/ci-evidence/header-wrap-logout-retest-2026-10-15.json",
       "provenance": {
         "file": ".github/ci-evidence/header-wrap-logout-retest-2026-10-15.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:.github/ci-evidence/legal-profile-deferral-2026-10-15.json",
+      "provenance": {
+        "file": ".github/ci-evidence/legal-profile-deferral-2026-10-15.json",
         "line": 1
       }
     },
@@ -625568,6 +625733,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:3da5328053c2fe92122a46eed30a333993208683",
+      "provenance": {
+        "commit": "3da5328053c2fe92122a46eed30a333993208683"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:3dab1d8416ef6722867c7793167d2ed3b3a7846b",
       "provenance": {
         "commit": "3dab1d8416ef6722867c7793167d2ed3b3a7846b"
@@ -643923,6 +644096,14 @@
       "to": "Commit:df88c628165106b6fe1636246d157cbeb14e394d",
       "provenance": {
         "commit": "df88c628165106b6fe1636246d157cbeb14e394d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:df9f640426ecd75db955f0d6e5f8d44d8e6a56a3",
+      "provenance": {
+        "commit": "df9f640426ecd75db955f0d6e5f8d44d8e6a56a3"
       }
     },
     {
@@ -677147,7 +677328,7 @@
       "to": "ExternalDependency:/vendor/walletconnect.js",
       "provenance": {
         "file": "test/legal-security.js",
-        "line": 78
+        "line": 89
       }
     },
     {
@@ -680693,7 +680874,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 405
+        "line": 454
       }
     },
     {
@@ -680702,7 +680883,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 429
+        "line": 478
       }
     },
     {
@@ -680711,7 +680892,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 492
+        "line": 541
       }
     },
     {
@@ -680720,7 +680901,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 371
+        "line": 420
       }
     },
     {
@@ -680729,7 +680910,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 430
+        "line": 479
       }
     },
     {
@@ -764609,7 +764790,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 405
+        "line": 454
       }
     },
     {
@@ -764618,7 +764799,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 429
+        "line": 478
       }
     },
     {
@@ -764627,7 +764808,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 492
+        "line": 541
       }
     },
     {
@@ -764636,7 +764817,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 371
+        "line": 420
       }
     },
     {
@@ -764645,7 +764826,7 @@
       "to": "Artifact:src/vig.js",
       "provenance": {
         "file": "test/preflight.js",
-        "line": 430
+        "line": 479
       }
     },
     {
@@ -785282,7 +785463,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 324
+        "line": 340
       }
     },
     {
@@ -785291,7 +785472,7 @@
       "to": "Table:bond_reserve",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 171
+        "line": 180
       }
     },
     {
@@ -785300,7 +785481,7 @@
       "to": "Table:bonds",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 134
+        "line": 143
       }
     },
     {
@@ -785309,7 +785490,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 338
+        "line": 354
       }
     },
     {
@@ -785318,7 +785499,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 104
+        "line": 113
       }
     },
     {
@@ -785327,7 +785508,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 256
+        "line": 265
       }
     },
     {
@@ -785336,7 +785517,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/preflight.js",
-        "line": 123
+        "line": 132
       }
     },
     {

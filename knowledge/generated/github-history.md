@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `28c6fc307ef9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `df9f640426ec`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3634 |
+| Commits in clone | 3636 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-15 — fix(ui): reveal view controls when leaving City for territory |
+| Latest commit | 2026-10-15 — fix(deploy): allow explicit deferral of absent legal profile |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2676 |
+| OmertaDev | 2678 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 632 | historical |
-| knowledge/generated/graph-summary.md | 632 | historical |
-| knowledge/generated/graph.json | 632 | historical |
-| knowledge/generated/inventory.md | 632 | historical |
+| knowledge/generated/github-history.md | 633 | historical |
+| knowledge/generated/graph-summary.md | 633 | historical |
+| knowledge/generated/graph.json | 633 | historical |
+| knowledge/generated/inventory.md | 633 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [SPEC.md](../../SPEC.md) | 510 | yes |
 | [public/index.html](../../public/index.html) | 464 | yes |
@@ -64,7 +64,7 @@
 | [src/agentgateway.js](../../src/agentgateway.js) | 76 | yes |
 | [test/migrate.js](../../test/migrate.js) | 74 | yes |
 | [test/hardening.js](../../test/hardening.js) | 69 | yes |
-| [src/preflight.js](../../src/preflight.js) | 66 | yes |
+| [src/preflight.js](../../src/preflight.js) | 67 | yes |
 | [tools/sim.js](../../tools/sim.js) | 61 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |

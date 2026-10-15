@@ -288,7 +288,7 @@
 | [src/portfolio.js](../../src/portfolio.js) | 51 | economy-ledger | 1 / 3 | 9 | 4 | 1 |
 | [src/portrait-access.js](../../src/portrait-access.js) | 34 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/portrait.js](../../src/portrait.js) | 341 | engagement-growth | 4 / 7 | 0 | 6 | 4 |
-| [src/preflight.js](../../src/preflight.js) | 522 | platform-core | 0 / 8 | 0 | 7 | 4 |
+| [src/preflight.js](../../src/preflight.js) | 538 | platform-core | 0 / 8 | 0 | 7 | 4 |
 | [src/primetime.js](../../src/primetime.js) | 292 | engagement-growth | 2 / 6 | 4 | 5 | 1 |
 | [src/projection-events.js](../../src/projection-events.js) | 179 | platform-core | 1 / 3 | 0 | 13 | 2 |
 | [src/push.js](../../src/push.js) | 226 | engagement-growth | 2 / 4 | 2 | 6 | 1 |
