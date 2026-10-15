@@ -1,6 +1,7 @@
 // Test-only C2 native catalog proof. This grants no financial, seed-DML, payment,
 // deployment, or historical qualification. Historical native helpers stay separate.
 import assert from 'node:assert/strict';
+import { isDeepStrictEqual } from 'node:util';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -657,8 +658,14 @@ export async function verifyCombinedNativeBranches(pool, endpoint) {
       `All original IV NOT NULL columns remain exact: ${table}`);
   }
   assert.equal(required, 356);
+  const canonical = Object.fromEntries(['relations', 'columns', 'constraints', 'indexes']
+    .map(field => [field, sorted(current[field])]));
   const verify = metadata => {
-    for (const field of ['relations', 'columns', 'constraints', 'indexes']) same(metadata[field], current[field], `Complete combined ${field}`);
+    for (const field of ['relations', 'columns', 'constraints', 'indexes']) {
+      assert(Array.isArray(metadata[field]), `Complete combined ${field} must be an array`);
+      if (metadata[field] !== current[field])
+        assert(isDeepStrictEqual(sorted(metadata[field]), canonical[field]), `Complete combined ${field}`);
+    }
   };
   // Every added table in both branches receives full-field remove/change/unknown controls.
   let causal = 0;

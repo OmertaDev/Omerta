@@ -108,6 +108,7 @@ async function parent(url) {
           encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
         });
         process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
+        if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));
         assert.equal(result.status,0,`isolated ${mode} child must pass (status ${result.status}, signal ${result.signal}, spawn ${result.error?.code ?? 'none'})`);
       } finally { await admin.query(`DROP SCHEMA "${ownedName(name)}" CASCADE`); }
     }
