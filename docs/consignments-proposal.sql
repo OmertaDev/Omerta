@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS consignments (
  buyer_character TEXT REFERENCES characters(id), settlement JSONB,
  CHECK(owner_account<>host_account AND owner_character<>host_character),
  CHECK((status='sold' AND buyer_character IS NOT NULL AND buyer_character<>owner_character AND buyer_character<>host_character AND settlement IS NOT NULL) OR (status<>'sold' AND buyer_character IS NULL AND settlement IS NULL)));
-CREATE UNIQUE INDEX IF NOT EXISTS consignment_live_item ON consignments(item_id) WHERE status IN ('offered','active');
+CREATE UNIQUE INDEX IF NOT EXISTS consignment_active_item ON consignments(item_id) WHERE status='active';
+CREATE UNIQUE INDEX IF NOT EXISTS consignment_owner_offer ON consignments(owner_account,item_id) WHERE status IN ('offered','active');
 CREATE TABLE IF NOT EXISTS consignment_requests (
  account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), run_id TEXT NOT NULL UNIQUE,
  receipt JSONB, account_ref TEXT REFERENCES accounts(id), original_character TEXT REFERENCES characters(id), PRIMARY KEY(account_id,key_hash),

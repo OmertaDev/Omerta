@@ -69,10 +69,9 @@ async function create(c,account,terms,run){
   const owner=rows.find(r=>r.id===ownerId),host=rows.find(r=>r.id===hostId);if(owner.account_id!==account||host.account_id!==terms.hostAccountId)fail('original_actor');
   if(jailed(owner)||safeHoused(owner))fail('mobile');
   if((await c.query("SELECT id FROM consignments WHERE owner_account=$1 AND status IN ('offered','active') LIMIT 8",[account])).rows.length>=8)fail('owner_limit');
-  if((await c.query("SELECT id FROM consignments WHERE host_account=$1 AND status IN ('offered','active') LIMIT 16",[host.account_id])).rows.length>=16)fail('host_limit');
   await assertEquipmentUsable(c,{itemId:terms.itemId,owner:title(account)});const now=await clock(c),expires=new Date(+now+terms.lifetimeSeconds*1000);
+  if((await c.query("SELECT id FROM consignments WHERE item_id=$1 AND owner_account=$2 AND status IN ('offered','active')",[terms.itemId,account])).rows.length)fail('item_offer');
   const row={id:run,item_id:terms.itemId,owner_account:account,owner_character:owner.id,host_account:host.account_id,host_character:host.id,price:terms.price,host_fee_bps:terms.hostFeeBps,expires_at:expires,status:'offered'};row.source_hash=hash(source(row));
-  await withItemMutation(c,title(account),'operation_action','consignment:'+run+':deposit',{consignmentId:run,itemId:terms.itemId,itemAuthority:{operations:[run]}},m=>escrowItem(c,title(account),run,terms.itemId,'consignment original-owner custody',m,'used_in_operation'));
   registerItemTransactionUndo(c,()=>c.query('DELETE FROM consignments WHERE id=$1',[run]));
   await c.query("INSERT INTO consignments(id,item_id,owner_account,owner_character,host_account,host_character,price,host_fee_bps,expires_at,source_hash,status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'offered')",[run,terms.itemId,account,owner.id,host.account_id,host.id,terms.price,terms.hostFeeBps,expires,row.source_hash]);
   if(+await clock(c)>=+expires)fail('expired');
@@ -85,7 +84,13 @@ async function execute(c,account,terms,run){
   if(!caller||row.owner_character!==hint.owner_character||row.host_character!==hint.host_character)fail('original_actor');
   const owner=rows.find(r=>r.id===row.owner_character),host=rows.find(r=>r.id===row.host_character);if(owner?.account_id!==row.owner_account||host?.account_id!==row.host_account)fail('original_actor');
   if(!['offered','active'].includes(row.status))fail('closed');
-  if(terms.action==='accept'){live(rows);if(caller.id!==host.id||row.status!=='offered')fail('host');await custody(c,row);if(+await clock(c)>=+new Date(row.expires_at))fail('expired');await change(c,row,'active');return {actorId:caller.id,receipt:{ok:true,...dto({...row,status:'active'})}};}
+  if(terms.action==='accept'){
+    live(rows);if(caller.id!==host.id||row.status!=='offered')fail('host');
+    if((await c.query("SELECT id FROM consignments WHERE host_account=$1 AND status='active' LIMIT 16",[host.account_id])).rows.length>=16)fail('host_limit');
+    await assertEquipmentUsable(c,{itemId:row.item_id,owner:title(row.owner_account)});if(+await clock(c)>=+new Date(row.expires_at))fail('expired');
+    await withItemMutation(c,title(row.owner_account),'operation_action','consignment:'+run+':deposit',{consignmentId:row.id,itemId:row.item_id,itemAuthority:{operations:[row.id]}},m=>escrowItem(c,title(row.owner_account),row.id,row.item_id,'mutually consented consignment original-owner custody',m,'used_in_operation'));
+    if(+await clock(c)>=+new Date(row.expires_at))fail('expired');await change(c,row,'active');return {actorId:caller.id,receipt:{ok:true,...dto({...row,status:'active'})}};
+  }
   if(terms.action==='buy'){
     live(rows);if(rows.length!==3||[owner.account_id,host.account_id].includes(account)||row.status!=='active')fail('buyer');if(jailed(caller)||safeHoused(caller)||caller.loc!==host.loc)fail('pickup');
     const condition=await custody(c,row);if(+await clock(c)>=+new Date(row.expires_at))fail('expired');const fee=Math.floor(Number(row.price)*Number(row.host_fee_bps)/10000);
@@ -100,7 +105,7 @@ async function execute(c,account,terms,run){
   }
   if(![owner.id,host.id].includes(caller.id)||!caller.alive)fail('original_actor');
   if(terms.action==='expire'&&+await clock(c)<+new Date(row.expires_at))fail('not_expired');
-  const status=terms.action==='expire'?'expired':'cancelled';await returnTool(c,row,run);await change(c,row,status);return {actorId:caller.id,receipt:{ok:true,...dto({...row,status})}};
+  const status=terms.action==='expire'?'expired':'cancelled';if(row.status==='active')await returnTool(c,row,run);await change(c,row,status);return {actorId:caller.id,receipt:{ok:true,...dto({...row,status})}};
 }
 async function returnTool(c,row,run){
   // Return does not require usable condition; recovery must not strand a damaged tool.
@@ -119,7 +124,7 @@ export async function consignmentBoard(c,account,after=''){
 }
 // Root estate integration must compose this discovery with ALL other pre-actor unions.
 export async function consignmentDeathCounterparts(c,characterId){
-  assertItemTransaction(c);const rows=(await c.query("SELECT owner_character,host_character FROM consignments WHERE status IN ('offered','active') AND (owner_character=$1 OR host_character=$1) ORDER BY id LIMIT 25",[id(characterId)])).rows;if(rows.length>24)fail('death_limit');return [...new Set(rows.flatMap(r=>[r.owner_character,r.host_character]))].sort();
+  assertItemTransaction(c);const rows=(await c.query("SELECT owner_character,host_character FROM consignments WHERE status='active' AND (owner_character=$1 OR host_character=$1) ORDER BY id LIMIT 25",[id(characterId)])).rows;if(rows.length>24)fail('death_limit');return [...new Set(rows.flatMap(r=>[r.owner_character,r.host_character]))].sort();
 }
 const deathScopes=new WeakMap();
 export async function prelockConsignmentDeath(c,characterId){
@@ -132,15 +137,15 @@ export async function recoverConsignmentsAtDeath(c,characterId,scope){
   assertItemTransaction(c);try{const locked=deathScopes.get(scope);if(!locked||locked.c!==c||locked.transaction!==itemTransactionIdentity(c)||locked.characterId!==characterId)fail('death_scope');
     if((await c.query('SELECT alive FROM characters WHERE id=$1',[characterId])).rows[0]?.alive!==false)fail('death_required');
     if((await consignmentDeathCounterparts(c,characterId)).some(key=>!locked.ids.includes(key)))fail('death_scope_changed');
-    const rows=(await c.query("SELECT * FROM consignments WHERE status IN ('offered','active') AND (owner_character=$1 OR host_character=$1) ORDER BY id LIMIT 25 FOR UPDATE",[characterId])).rows;if(rows.length>24)fail('death_limit');
-    for(const row of rows){await returnTool(c,row,'death:'+row.id);await change(c,row,'party_dead');}return rows.map(r=>r.id);
+    const rows=(await c.query("SELECT * FROM consignments WHERE (status='active' AND (owner_character=$1 OR host_character=$1)) OR (status='offered' AND owner_character=$1) ORDER BY id LIMIT 25 FOR UPDATE",[characterId])).rows;if(rows.length>24)fail('death_limit');
+    for(const row of rows){if(row.status==='active')await returnTool(c,row,'death:'+row.id);await change(c,row,'party_dead');}return rows.map(r=>r.id);
   }catch(error){poisonItemTransaction(c,error);throw error;}
 }
 export async function collectConsignmentIssues(c){
   const issues=[],rows=(await c.query('SELECT * FROM consignments ORDER BY id')).rows;
   for(const row of rows){
     if(hash(source(row))!==row.source_hash)issues.push({id:row.id,reason:'source_hash'});
-    if(['offered','active'].includes(row.status)){
+    if(row.status==='active'){
       const item=(await c.query('SELECT owner_scope,owner_id,state FROM item_instances WHERE id=$1',[row.item_id])).rows[0];
       const deposit=(await c.query('SELECT depositor_scope,depositor_id FROM operation_escrow WHERE item_id=$1 AND operation_id=$2',[row.item_id,row.id])).rows[0];
       if(item?.owner_scope!=='operation'||item.owner_id!==row.id||item.state!=='escrowed'||deposit?.depositor_scope!=='account'||deposit.depositor_id!==row.owner_account)issues.push({id:row.id,reason:'custody'});

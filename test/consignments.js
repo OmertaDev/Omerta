@@ -4,11 +4,14 @@ const f=await fixture(),{pool,tx,I,C,native,tool,terms,ref,invoke,state}=f;
 try{
 const item=await tool(),offer=await invoke('createConsignment','owner',terms(item),'offer');
 let invalidIndex=0;for(const invalid of [{...terms(item),price:0},{...terms(item),price:1000001},{...terms(item),hostFeeBps:2001},{...terms(item),lifetimeSeconds:59},{...terms(item),unknown:true}])await assert.rejects(invoke('createConsignment','owner',invalid,'invalid-'+(++invalidIndex)),/terms/);
-assert.equal((await pool.query('SELECT owner_id,state FROM item_instances WHERE id=$1',[item])).rows[0].owner_id,offer.consignmentId);
-assert.equal((await pool.query('SELECT depositor_id FROM operation_escrow WHERE item_id=$1',[item])).rows[0].depositor_id,'owner');
+assert.equal((await pool.query('SELECT owner_id,state FROM item_instances WHERE id=$1',[item])).rows[0].owner_id,'owner');
+assert.equal((await pool.query('SELECT item_id FROM operation_escrow WHERE item_id=$1',[item])).rows.length,0);
+await assert.rejects(invoke('createConsignment','owner',terms(item),'duplicate-offer'),/item_offer/);
 await assert.rejects(invoke('buyConsignment','buyer',ref(offer),'premature'),/buyer/);
 await assert.rejects(invoke('acceptConsignment','other',ref(offer),'foreign-host'),/original_actor/);
 await invoke('acceptConsignment','host',ref(offer),'accept');
+assert.equal((await pool.query('SELECT owner_id,state FROM item_instances WHERE id=$1',[item])).rows[0].owner_id,offer.consignmentId);
+assert.equal((await pool.query('SELECT depositor_id FROM operation_escrow WHERE item_id=$1',[item])).rows[0].depositor_id,'owner');
 await assert.rejects(invoke('buyConsignment','owner',ref(offer),'self'),/buyer/);
 const before=await state();await assert.rejects(tx(async c=>{await C.buyConsignment(c,'buyer',ref(offer),'latefault');throw Error('late failure');}),/late failure/);assert.deepEqual(await state(),before);
 await assert.rejects(tx(async c=>{try{await C.buyConsignment(c,'buyer',{...ref(offer),sourceHash:'0'.repeat(64)},'caught');}catch{}return 'must not commit';}),/source/);assert.deepEqual(await state(),before);
@@ -24,7 +27,7 @@ const expired=await invoke('createConsignment','owner',terms(await tool()),'expi
 await pool.query('UPDATE consignments SET expires_at=$2 WHERE id=$1',[expired.consignmentId,new Date(0)]);await assert.rejects(invoke('acceptConsignment','host',ref(expired),'changed-expiry'),/source/);
 // Restore the deliberately corrupted negative fixture; no expiry backdating is a positive proof.
 await pool.query('UPDATE consignments SET expires_at=$2 WHERE id=$1',[expired.consignmentId,new Date(expired.expiresAt)]);
-const dead=await invoke('createConsignment','owner',terms(await tool()),'death');
+const dead=await invoke('createConsignment','owner',terms(await tool()),'death');await invoke('acceptConsignment','host',ref(dead),'death-accept');
 await tx(async c=>{const scope=await C.prelockConsignmentDeath(c,'host-actor');await c.query('UPDATE characters SET alive=false WHERE id=$1',['host-actor']);await C.recoverConsignmentsAtDeath(c,'host-actor',scope);});
 assert.equal((await pool.query('SELECT status FROM consignments WHERE id=$1',[dead.consignmentId])).rows[0].status,'party_dead');await assert.rejects(invoke('acceptConsignment','host',ref(dead),'dead-host'),/original_actor/);
 await pool.query("INSERT INTO characters(id,account_id,name,season,loc,cash) VALUES('host-heir','host','Host heir',1,'foundry',500)");await assert.rejects(invoke('acceptConsignment','host',ref(dead),'heir-host'),/original_actor/);
@@ -34,6 +37,13 @@ const race=await invoke('createConsignment','owner',terms(await tool()),'race');
 if(native){const result=await Promise.allSettled([invoke('buyConsignment','buyer',ref(race),'buyer-race'),invoke('buyConsignment','other',ref(race),'other-race')]);assert.equal(result.filter(r=>r.status==='fulfilled').length,1);}else{await invoke('buyConsignment','buyer',ref(race),'buyer-race');await assert.rejects(invoke('buyConsignment','other',ref(race),'other-race'),/closed/);}
 const duplicate=await invoke('createConsignment','owner',terms(await tool()),'duplicate');await invoke('acceptConsignment','host',ref(duplicate),'duplicate-accept');const replies=native?await Promise.all([invoke('buyConsignment','buyer',ref(duplicate),'same-key'),invoke('buyConsignment','buyer',ref(duplicate),'same-key')]):[await invoke('buyConsignment','buyer',ref(duplicate),'same-key'),await invoke('buyConsignment','buyer',ref(duplicate),'same-key')];assert.deepEqual(replies[0],replies[1]);
 assert.deepEqual(await C.collectConsignmentIssues(pool),[]);
+// Sixteen unaccepted offers from two other original owners claim no host slots or death locks.
+for(const account of ['buyer','other'])for(let n=0;n<8;n++)await invoke('createConsignment',account,terms(await tool(account)),account+'-unsolicited-'+n);
+const activeBefore=(await pool.query("SELECT id FROM consignments WHERE host_account='host' AND status='active'")).rows.length;
+const legitimate=await invoke('createConsignment','owner',terms(await tool()),'after-offer-flood');await invoke('acceptConsignment','host',ref(legitimate),'after-offer-flood-accept');
+assert.equal((await pool.query("SELECT id FROM consignments WHERE host_account='host' AND status='active'")).rows.length,activeBefore+1);
+const counterparts=await tx(c=>C.consignmentDeathCounterparts(c,'host-actor'));assert(!counterparts.includes('buyer-actor'));assert(!counterparts.includes('other-actor'));
+await invoke('cancelConsignment','owner',ref(legitimate),'after-offer-flood-return');
 if(native){
   const expiring=await invoke('createConsignment','owner',terms(await tool()),'real-expiry');await invoke('acceptConsignment','host',ref(expiring),'real-expiry-accept');
   // Real sixty-second source lifetime; only the final two seconds contend, retaining normal8s lock timeout.
