@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "5e55f408e0371a7923b87240c0a817c5611dc770",
+  "sourceRevision": "26fb5c0559c6f1084c128948055be14c471a06fa",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15423,
-    "edges": 60870,
+    "nodes": 15432,
+    "edges": 60939,
     "byNodeType": {
-      "Artifact": 6568,
+      "Artifact": 6569,
       "Command": 284,
-      "Commit": 4002,
+      "Commit": 4009,
       "Contract": 134,
       "Document": 924,
       "Domain": 13,
@@ -60,27 +60,27 @@
       "Route": 1035,
       "Subsystem": 8,
       "Table": 528,
-      "TestSuite": 823,
+      "TestSuite": 824,
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5177,
-      "CHANGED": 23576,
-      "CONTAINS": 6589,
+      "BELONGS_TO": 5178,
+      "CHANGED": 23599,
+      "CONTAINS": 6590,
       "DECLARES": 284,
       "DEFINED_IN": 1697,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1023,
+      "EXECUTES": 1025,
       "HANDLED_BY": 917,
-      "HAS_COMMIT": 4002,
+      "HAS_COMMIT": 4009,
       "IMPLEMENTS": 124,
-      "IMPORTS": 6436,
+      "IMPORTS": 6454,
       "INHERITS": 45,
       "REFERENCES": 3705,
-      "REPRESENTS": 2258,
-      "TESTS": 2046,
+      "REPRESENTS": 2259,
+      "TESTS": 2058,
       "TRACKS": 126,
-      "USES_TABLE": 2796
+      "USES_TABLE": 2800
     }
   },
   "nodes": [
@@ -39861,18 +39861,18 @@
       "extension": ".md",
       "bytes": 53053,
       "lines": 178,
-      "version": "46f07259ac44c80b",
+      "version": "2cf2342c568c6f92",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "46f07259ac44c80b"
+          "version": "2cf2342c568c6f92"
         }
       ],
-      "lastChangedAt": "2026-10-15T20:55:54.000Z",
+      "lastChangedAt": "2026-10-15T21:43:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5e55f408e0371a7923b87240c0a817c5611dc770"
+      "lastChangedCommit": "26fb5c0559c6f1084c128948055be14c471a06fa"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -86727,20 +86727,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 52289,
+      "bytes": 52370,
       "lines": 315,
-      "version": "4a39ded54ccb2f24",
+      "version": "8c8438e751ee5ed4",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "4a39ded54ccb2f24"
+          "version": "8c8438e751ee5ed4"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:38:28.000Z",
+      "lastChangedAt": "2026-10-15T21:42:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d789b5b1d320d4768d3a97f51ee9256da95c590c"
+      "lastChangedCommit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
     },
     {
       "key": "Artifact:Procfile",
@@ -117066,18 +117066,18 @@
       "extension": ".md",
       "bytes": 57050,
       "lines": 760,
-      "version": "9fa4bec7c8fdb4af",
+      "version": "062ea58b438ebaa5",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9fa4bec7c8fdb4af"
+          "version": "062ea58b438ebaa5"
         }
       ],
-      "lastChangedAt": "2026-10-15T20:55:53.000Z",
+      "lastChangedAt": "2026-10-15T21:42:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4c08593f0effa441b365e0bd04cd353f577b7ab3"
+      "lastChangedCommit": "e29e463f562ffb552b71736e02c72cf2b2632a09"
     },
     {
       "key": "Artifact:src/access.js",
@@ -119203,20 +119203,20 @@
       "path": "src/companyrestructuring.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 24624,
-      "lines": 78,
-      "version": "42786bda087c1d11",
+      "bytes": 24703,
+      "lines": 79,
+      "version": "267ed6b320ae62dd",
       "text": true,
       "provenance": [
         {
           "file": "src/companyrestructuring.js",
           "line": 1,
-          "version": "42786bda087c1d11"
+          "version": "267ed6b320ae62dd"
         }
       ],
-      "lastChangedAt": "2026-10-13T19:56:25.000Z",
+      "lastChangedAt": "2026-10-15T21:29:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cb0a7f00cfedd9c9a7741ebd3f967a61015342b7"
+      "lastChangedCommit": "88a6921c7b0545faac98897724874a35f344d1d3"
     },
     {
       "key": "Artifact:src/companyspecialization.js",
@@ -120997,20 +120997,20 @@
       "path": "src/depotacquisitionruntime.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 18540,
-      "lines": 94,
-      "version": "d692b905737f6615",
+      "bytes": 20745,
+      "lines": 122,
+      "version": "7d3f12e5201db260",
       "text": true,
       "provenance": [
         {
           "file": "src/depotacquisitionruntime.js",
           "line": 1,
-          "version": "d692b905737f6615"
+          "version": "7d3f12e5201db260"
         }
       ],
-      "lastChangedAt": "2026-10-13T18:47:23.000Z",
+      "lastChangedAt": "2026-10-15T21:42:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "6d20477794c53ba17f48ce08cede2b1e3ae2f260"
+      "lastChangedCommit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
     },
     {
       "key": "Artifact:src/depotbook.js",
@@ -132812,6 +132812,29 @@
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
     },
     {
+      "key": "Artifact:test/depotacquisition-next-five.js",
+      "type": "Artifact",
+      "id": "test/depotacquisition-next-five.js",
+      "label": "depotacquisition-next-five.js",
+      "path": "test/depotacquisition-next-five.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 15233,
+      "lines": 95,
+      "version": "41ce18365cceb5f9",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/depotacquisition-next-five.js",
+          "line": 1,
+          "version": "41ce18365cceb5f9"
+        }
+      ],
+      "lastChangedAt": "2026-10-15T21:29:39.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "88a6921c7b0545faac98897724874a35f344d1d3"
+    },
+    {
       "key": "Artifact:test/depotacquisitionruntime.js",
       "type": "Artifact",
       "id": "test/depotacquisitionruntime.js",
@@ -137145,18 +137168,18 @@
       "extension": ".js",
       "bytes": 6369,
       "lines": 18,
-      "version": "1eb4b0d3813795a5",
+      "version": "8a4e82d6b3dfb59e",
       "text": true,
       "provenance": [
         {
           "file": "test/next-five-native-guard.js",
           "line": 1,
-          "version": "1eb4b0d3813795a5"
+          "version": "8a4e82d6b3dfb59e"
         }
       ],
-      "lastChangedAt": "2026-10-15T14:31:41.000Z",
+      "lastChangedAt": "2026-10-15T21:29:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9df0e13732a381611cb90091f4a3f7781e909ce6"
+      "lastChangedCommit": "88a6921c7b0545faac98897724874a35f344d1d3"
     },
     {
       "key": "Artifact:test/next-five-release-phase2-migration-catalog.js",
@@ -137189,20 +137212,20 @@
       "path": "test/next-five-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4490,
+      "bytes": 4553,
       "lines": 47,
-      "version": "78972afd94535b42",
+      "version": "5c4168d13e237f2c",
       "text": true,
       "provenance": [
         {
           "file": "test/next-five-source-compatibility.js",
           "line": 1,
-          "version": "78972afd94535b42"
+          "version": "5c4168d13e237f2c"
         }
       ],
-      "lastChangedAt": "2026-10-15T18:46:32.000Z",
+      "lastChangedAt": "2026-10-15T21:29:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d2859dea4491a6e3d4ee0c9a8a29248d20149b08"
+      "lastChangedCommit": "88a6921c7b0545faac98897724874a35f344d1d3"
     },
     {
       "key": "Artifact:test/nft-art.js",
@@ -147102,20 +147125,20 @@
       "path": "tools/next-five-native.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 11013,
-      "lines": 42,
-      "version": "297a950d68d1c6d6",
+      "bytes": 11480,
+      "lines": 47,
+      "version": "8088a91fdb117a38",
       "text": true,
       "provenance": [
         {
           "file": "tools/next-five-native.js",
           "line": 1,
-          "version": "297a950d68d1c6d6"
+          "version": "8088a91fdb117a38"
         }
       ],
-      "lastChangedAt": "2026-10-15T14:31:41.000Z",
+      "lastChangedAt": "2026-10-15T21:42:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9df0e13732a381611cb90091f4a3f7781e909ce6"
+      "lastChangedCommit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
     },
     {
       "key": "Artifact:tools/next-five-release-phase2-migration-catalog.js",
@@ -147148,20 +147171,20 @@
       "path": "tools/next-five-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 79285,
-      "lines": 188,
-      "version": "5a468c965f294ca1",
+      "bytes": 90183,
+      "lines": 218,
+      "version": "9a64f1bba3dfb189",
       "text": true,
       "provenance": [
         {
           "file": "tools/next-five-source-compatibility.js",
           "line": 1,
-          "version": "5a468c965f294ca1"
+          "version": "9a64f1bba3dfb189"
         }
       ],
-      "lastChangedAt": "2026-10-15T20:22:40.000Z",
+      "lastChangedAt": "2026-10-15T21:42:20.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9a0e885487a0a740d8dcd0c9bf09f75563152ef3"
+      "lastChangedCommit": "6cb485fd7154051c6e2cb44d1fa011253f7c7065"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -149999,18 +150022,18 @@
       "extension": ".js",
       "bytes": 79878,
       "lines": 1043,
-      "version": "b2d281b0dcf9c584",
+      "version": "bcdeab2f8c507df8",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "b2d281b0dcf9c584"
+          "version": "bcdeab2f8c507df8"
         }
       ],
-      "lastChangedAt": "2026-10-15T20:55:54.000Z",
+      "lastChangedAt": "2026-10-15T21:43:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "5e55f408e0371a7923b87240c0a817c5611dc770"
+      "lastChangedCommit": "26fb5c0559c6f1084c128948055be14c471a06fa"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -152184,7 +152207,7 @@
       "type": "Command",
       "id": "npm:test:agent-economy-next-five",
       "label": "npm run test:agent-economy-next-five",
-      "command": "node test/next-five-source-compatibility.js && node test/next-five-release-phase2-migration-catalog.js && node test/next-five-native-guard.js && node test/next-five-graph-helpers.js && node test/consignments.js && node test/consignments-api.js && node test/consignments-estate.js && node test/consignments-integration-gaps.js && node test/atomicbarter.js && node test/atomicbarter-integration.js && node test/commissionedcrafting.js && node test/commissionedcrafting-api.js && node test/commissionedcrafting-integration.js && node test/freightconsolidation.js && node test/freightconsolidation-security.js && node test/freightconsolidation-integration.js && node test/pickingpacking.js && node test/pickingpacking-integration.js && node test/pickingpacking-api.js",
+      "command": "node test/next-five-source-compatibility.js && node test/next-five-release-phase2-migration-catalog.js && node test/next-five-native-guard.js && node test/next-five-graph-helpers.js && node test/consignments.js && node test/consignments-api.js && node test/consignments-estate.js && node test/consignments-integration-gaps.js && node test/atomicbarter.js && node test/atomicbarter-integration.js && node test/commissionedcrafting.js && node test/commissionedcrafting-api.js && node test/commissionedcrafting-integration.js && node test/freightconsolidation.js && node test/freightconsolidation-security.js && node test/freightconsolidation-integration.js && node test/pickingpacking.js && node test/pickingpacking-integration.js && node test/pickingpacking-api.js && node test/depotacquisition-next-five.js && node test/worldgraph-validation.js",
       "provenance": [
         {
           "file": "package.json",
@@ -164656,6 +164679,22 @@
       ]
     },
     {
+      "key": "Commit:26fb5c0559c6f1084c128948055be14c471a06fa",
+      "type": "Commit",
+      "id": "26fb5c0559c6f1084c128948055be14c471a06fa",
+      "label": "Freeze first-five additive relation against final autonomy revision",
+      "title": "Freeze first-five additive relation against final autonomy revision",
+      "date": "2026-10-15T21:43:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/26fb5c0559c6f1084c128948055be14c471a06fa",
+      "provenance": [
+        {
+          "commit": "26fb5c0559c6f1084c128948055be14c471a06fa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/26fb5c0559c6f1084c128948055be14c471a06fa"
+        }
+      ]
+    },
+    {
       "key": "Commit:270e080030e7aa076a5d5473c780cfb2d50d2655",
       "type": "Commit",
       "id": "270e080030e7aa076a5d5473c780cfb2d50d2655",
@@ -167084,6 +167123,22 @@
         {
           "commit": "3177ea17ec50dbef0a84a8d67b85c2b1ed1931b0",
           "url": "https://github.com/OmertaDev/Omerta/commit/3177ea17ec50dbef0a84a8d67b85c2b1ed1931b0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "type": "Commit",
+      "id": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "label": "Refresh final first-five generated knowledge",
+      "title": "Refresh final first-five generated knowledge",
+      "date": "2026-10-15T20:58:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "provenance": [
+        {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+          "url": "https://github.com/OmertaDev/Omerta/commit/317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
         }
       ]
     },
@@ -179744,6 +179799,22 @@
       ]
     },
     {
+      "key": "Commit:63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+      "type": "Commit",
+      "id": "63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+      "label": "Pin ten actual source domains for business transfer compatibility",
+      "title": "Pin ten actual source domains for business transfer compatibility",
+      "date": "2026-10-15T21:29:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+      "provenance": [
+        {
+          "commit": "63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+          "url": "https://github.com/OmertaDev/Omerta/commit/63eaa31bfe9c44ea247f7af4f42a3714001f37ff"
+        }
+      ]
+    },
+    {
       "key": "Commit:63edacd003b6b355f2927cb92b3c0e97c667e938",
       "type": "Commit",
       "id": "63edacd003b6b355f2927cb92b3c0e97c667e938",
@@ -181852,6 +181923,22 @@
         {
           "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
           "url": "https://github.com/OmertaDev/Omerta/commit/6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+      "type": "Commit",
+      "id": "6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+      "label": "Pin corrected cold import and acquisition source",
+      "title": "Pin corrected cold import and acquisition source",
+      "date": "2026-10-15T21:42:20.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+      "provenance": [
+        {
+          "commit": "6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6cb485fd7154051c6e2cb44d1fa011253f7c7065"
         }
       ]
     },
@@ -189452,6 +189539,22 @@
         {
           "commit": "889cb9fbcc17cd65ed3d4676b901720dc6f4d707",
           "url": "https://github.com/OmertaDev/Omerta/commit/889cb9fbcc17cd65ed3d4676b901720dc6f4d707"
+        }
+      ]
+    },
+    {
+      "key": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "type": "Commit",
+      "id": "88a6921c7b0545faac98897724874a35f344d1d3",
+      "label": "Preserve live commission and packing obligations during business transfers",
+      "title": "Preserve live commission and packing obligations during business transfers",
+      "date": "2026-10-15T21:29:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/88a6921c7b0545faac98897724874a35f344d1d3",
+      "provenance": [
+        {
+          "commit": "88a6921c7b0545faac98897724874a35f344d1d3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/88a6921c7b0545faac98897724874a35f344d1d3"
         }
       ]
     },
@@ -202288,6 +202391,22 @@
       ]
     },
     {
+      "key": "Commit:ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "type": "Commit",
+      "id": "ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "label": "Defer accounting collectors to preserve cold game graph validation",
+      "title": "Defer accounting collectors to preserve cold game graph validation",
+      "date": "2026-10-15T21:42:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "provenance": [
+        {
+          "commit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ba05a361cca34d3ecaf60172ef3f74acbea032b7"
+        }
+      ]
+    },
+    {
       "key": "Commit:ba0b5072e9e855215102c4c20acd02e514bb410f",
       "type": "Commit",
       "id": "ba0b5072e9e855215102c4c20acd02e514bb410f",
@@ -211692,6 +211811,22 @@
         {
           "commit": "e29d3c7494741c80a93325bcdef1f8c27ce138b5",
           "url": "https://github.com/OmertaDev/Omerta/commit/e29d3c7494741c80a93325bcdef1f8c27ce138b5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:e29e463f562ffb552b71736e02c72cf2b2632a09",
+      "type": "Commit",
+      "id": "e29e463f562ffb552b71736e02c72cf2b2632a09",
+      "label": "Refresh first-five city-preserving release census",
+      "title": "Refresh first-five city-preserving release census",
+      "date": "2026-10-15T21:42:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e29e463f562ffb552b71736e02c72cf2b2632a09",
+      "provenance": [
+        {
+          "commit": "e29e463f562ffb552b71736e02c72cf2b2632a09",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e29e463f562ffb552b71736e02c72cf2b2632a09"
         }
       ]
     },
@@ -230764,12 +230899,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 178,
-      "version": "46f07259ac44c80b",
+      "version": "2cf2342c568c6f92",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "46f07259ac44c80b"
+          "version": "2cf2342c568c6f92"
         }
       ]
     },
@@ -235836,12 +235971,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "9fa4bec7c8fdb4af",
+      "version": "062ea58b438ebaa5",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "9fa4bec7c8fdb4af"
+          "version": "062ea58b438ebaa5"
         }
       ]
     },
@@ -236721,6 +236856,10 @@
           "line": 3
         },
         {
+          "file": "test/depotacquisition-next-five.js",
+          "line": 25
+        },
+        {
           "file": "test/depotacquisitionruntime.js",
           "line": 25
         },
@@ -237114,6 +237253,10 @@
         },
         {
           "file": "test/deliveryfinance-api.js",
+          "line": 11
+        },
+        {
+          "file": "test/depotacquisition-next-five.js",
           "line": 11
         },
         {
@@ -243767,6 +243910,9 @@
           "commit": "30e090e119d3b089415d8f56f3d628cb25c03af5"
         },
         {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -244977,6 +245123,9 @@
         },
         {
           "commit": "312c091169631302650cfcaecdd9eb7c9d3bcf44"
+        },
+        {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -246995,6 +247144,9 @@
           "commit": "312c091169631302650cfcaecdd9eb7c9d3bcf44"
         },
         {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -249011,6 +249163,9 @@
           "commit": "312c091169631302650cfcaecdd9eb7c9d3bcf44"
         },
         {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+        },
+        {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
         },
         {
@@ -250724,6 +250879,9 @@
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
         },
         {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+        },
+        {
           "commit": "35ce534753f640ac5191bf183aaf6f284762a1f9"
         },
         {
@@ -251583,6 +251741,9 @@
         },
         {
           "commit": "312c091169631302650cfcaecdd9eb7c9d3bcf44"
+        },
+        {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
         },
         {
           "commit": "321545aac27830f82c6dfa174389ab1726f57fcc"
@@ -253337,6 +253498,9 @@
           "commit": "30aea4ee96874dc3136e95eb6ccadbb7a7c600e2"
         },
         {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+        },
+        {
           "commit": "35ce534753f640ac5191bf183aaf6f284762a1f9"
         },
         {
@@ -254355,6 +254519,9 @@
         },
         {
           "commit": "2f19b3b70987f779e849dc0e6eac283d8ff2f7b5"
+        },
+        {
+          "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
         },
         {
           "commit": "35ce534753f640ac5191bf183aaf6f284762a1f9"
@@ -256730,13 +256897,13 @@
       "type": "Module",
       "id": "src/companyrestructuring.js",
       "label": "src/companyrestructuring.js",
-      "lines": 78,
-      "version": "42786bda087c1d11",
+      "lines": 79,
+      "version": "267ed6b320ae62dd",
       "provenance": [
         {
           "file": "src/companyrestructuring.js",
           "line": 1,
-          "version": "42786bda087c1d11"
+          "version": "267ed6b320ae62dd"
         }
       ]
     },
@@ -257885,13 +258052,13 @@
       "type": "Module",
       "id": "src/depotacquisitionruntime.js",
       "label": "src/depotacquisitionruntime.js",
-      "lines": 94,
-      "version": "d692b905737f6615",
+      "lines": 122,
+      "version": "7d3f12e5201db260",
       "provenance": [
         {
           "file": "src/depotacquisitionruntime.js",
           "line": 1,
-          "version": "d692b905737f6615"
+          "version": "7d3f12e5201db260"
         }
       ]
     },
@@ -266090,12 +266257,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "5e55f408e0371a7923b87240c0a817c5611dc770",
+      "revision": "26fb5c0559c6f1084c128948055be14c471a06fa",
       "currentBranch": "codex/consignments-integration-oct15",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6568,
+      "currentArtifactCount": 6569,
       "provenance": [
         {
           "file": "README.md",
@@ -304977,6 +305144,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/depotacquisition-next-five.js",
+      "type": "TestSuite",
+      "id": "test/depotacquisition-next-five.js",
+      "label": "test/depotacquisition-next-five.js",
+      "lines": 95,
+      "version": "41ce18365cceb5f9",
+      "provenance": [
+        {
+          "file": "test/depotacquisition-next-five.js",
+          "line": 1,
+          "version": "41ce18365cceb5f9"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/depotacquisitionruntime.js",
       "type": "TestSuite",
       "id": "test/depotacquisitionruntime.js",
@@ -307637,12 +307819,12 @@
       "id": "test/next-five-native-guard.js",
       "label": "test/next-five-native-guard.js",
       "lines": 18,
-      "version": "1eb4b0d3813795a5",
+      "version": "8a4e82d6b3dfb59e",
       "provenance": [
         {
           "file": "test/next-five-native-guard.js",
           "line": 1,
-          "version": "1eb4b0d3813795a5"
+          "version": "8a4e82d6b3dfb59e"
         }
       ]
     },
@@ -307667,12 +307849,12 @@
       "id": "test/next-five-source-compatibility.js",
       "label": "test/next-five-source-compatibility.js",
       "lines": 47,
-      "version": "78972afd94535b42",
+      "version": "5c4168d13e237f2c",
       "provenance": [
         {
           "file": "test/next-five-source-compatibility.js",
           "line": 1,
-          "version": "78972afd94535b42"
+          "version": "5c4168d13e237f2c"
         }
       ]
     },
@@ -343108,6 +343290,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/depot.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
         "line": 1
       }
     },
@@ -382407,6 +382598,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:26fb5c0559c6f1084c128948055be14c471a06fa",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "26fb5c0559c6f1084c128948055be14c471a06fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:26fb5c0559c6f1084c128948055be14c471a06fa",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "26fb5c0559c6f1084c128948055be14c471a06fa"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:270e080030e7aa076a5d5473c780cfb2d50d2655",
       "to": "Artifact:AUDIT-redteam-loop.md",
       "provenance": {
@@ -390339,6 +390546,70 @@
       "to": "Artifact:omerta-contracts/test/OmertaBond.t.sol",
       "provenance": {
         "commit": "3177ea17ec50dbef0a84a8d67b85c2b1ed1931b0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
       }
     },
     {
@@ -423495,6 +423766,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+      "to": "Artifact:tools/next-five-source-compatibility.js",
+      "provenance": {
+        "commit": "63eaa31bfe9c44ea247f7af4f42a3714001f37ff"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:63edacd003b6b355f2927cb92b3c0e97c667e938",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -429819,6 +430098,14 @@
       "to": "Artifact:test/intelforecastjobs.js",
       "provenance": {
         "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+      "to": "Artifact:tools/next-five-source-compatibility.js",
+      "provenance": {
+        "commit": "6cb485fd7154051c6e2cb44d1fa011253f7c7065"
       }
     },
     {
@@ -449515,6 +449802,62 @@
       "to": "Artifact:docs/commercial-reputation-source-transfer-review.md",
       "provenance": {
         "commit": "889cb9fbcc17cd65ed3d4676b901720dc6f4d707"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:src/companyrestructuring.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:src/depotacquisitionruntime.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:test/depotacquisition-next-five.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:test/next-five-native-guard.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:test/next-five-source-compatibility.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "to": "Artifact:tools/next-five-native.js",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
       }
     },
     {
@@ -495847,6 +496190,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "to": "Artifact:src/depotacquisitionruntime.js",
+      "provenance": {
+        "commit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "to": "Artifact:tools/next-five-native.js",
+      "provenance": {
+        "commit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ba0b5072e9e855215102c4c20acd02e514bb410f",
       "to": "Artifact:test/rc1-native-world-workload.js",
       "provenance": {
@@ -526315,6 +526682,14 @@
       "to": "Artifact:src/agentgateway.js",
       "provenance": {
         "commit": "e29d3c7494741c80a93325bcdef1f8c27ce138b5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e29e463f562ffb552b71736e02c72cf2b2632a09",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "e29e463f562ffb552b71736e02c72cf2b2632a09"
       }
     },
     {
@@ -580561,6 +580936,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/depotacquisition-next-five.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/depotacquisitionruntime.js",
       "provenance": {
         "file": "test/depotacquisitionruntime.js",
@@ -625287,7 +625671,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 332
+      "weight": 334
     },
     {
       "type": "DEPENDS_ON",
@@ -625299,7 +625683,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:enterprise-logistics",
-      "weight": 82
+      "weight": 83
     },
     {
       "type": "DEPENDS_ON",
@@ -625311,7 +625695,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1516
+      "weight": 1524
     },
     {
       "type": "DEPENDS_ON",
@@ -625329,7 +625713,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 210
+      "weight": 211
     },
     {
       "type": "DEPENDS_ON",
@@ -628037,6 +628421,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:agent-economy-next-five",
+      "to": "Artifact:test/depotacquisition-next-five.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:agent-economy-next-five",
       "to": "Artifact:test/freightconsolidation-integration.js",
       "provenance": {
         "file": "package.json",
@@ -628119,6 +628512,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:agent-economy-next-five",
       "to": "Artifact:test/pickingpacking.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:agent-economy-next-five",
+      "to": "Artifact:test/worldgraph-validation.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -648941,6 +649343,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:26fb5c0559c6f1084c128948055be14c471a06fa",
+      "provenance": {
+        "commit": "26fb5c0559c6f1084c128948055be14c471a06fa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:270e080030e7aa076a5d5473c780cfb2d50d2655",
       "provenance": {
         "commit": "270e080030e7aa076a5d5473c780cfb2d50d2655"
@@ -650152,6 +650562,14 @@
       "to": "Commit:3177ea17ec50dbef0a84a8d67b85c2b1ed1931b0",
       "provenance": {
         "commit": "3177ea17ec50dbef0a84a8d67b85c2b1ed1931b0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:317b0ddfa7d38f00288a770bd0dfcd1c2d038606",
+      "provenance": {
+        "commit": "317b0ddfa7d38f00288a770bd0dfcd1c2d038606"
       }
     },
     {
@@ -656485,6 +656903,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:63eaa31bfe9c44ea247f7af4f42a3714001f37ff",
+      "provenance": {
+        "commit": "63eaa31bfe9c44ea247f7af4f42a3714001f37ff"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:63edacd003b6b355f2927cb92b3c0e97c667e938",
       "provenance": {
         "commit": "63edacd003b6b355f2927cb92b3c0e97c667e938"
@@ -657536,6 +657962,14 @@
       "to": "Commit:6cafa6e6ac2ca2acbca3e39ce64400d405a849d0",
       "provenance": {
         "commit": "6cafa6e6ac2ca2acbca3e39ce64400d405a849d0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:6cb485fd7154051c6e2cb44d1fa011253f7c7065",
+      "provenance": {
+        "commit": "6cb485fd7154051c6e2cb44d1fa011253f7c7065"
       }
     },
     {
@@ -661336,6 +661770,14 @@
       "to": "Commit:889cb9fbcc17cd65ed3d4676b901720dc6f4d707",
       "provenance": {
         "commit": "889cb9fbcc17cd65ed3d4676b901720dc6f4d707"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:88a6921c7b0545faac98897724874a35f344d1d3",
+      "provenance": {
+        "commit": "88a6921c7b0545faac98897724874a35f344d1d3"
       }
     },
     {
@@ -667757,6 +668199,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ba05a361cca34d3ecaf60172ef3f74acbea032b7",
+      "provenance": {
+        "commit": "ba05a361cca34d3ecaf60172ef3f74acbea032b7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ba0b5072e9e855215102c4c20acd02e514bb410f",
       "provenance": {
         "commit": "ba0b5072e9e855215102c4c20acd02e514bb410f"
@@ -672456,6 +672906,14 @@
       "to": "Commit:e29d3c7494741c80a93325bcdef1f8c27ce138b5",
       "provenance": {
         "commit": "e29d3c7494741c80a93325bcdef1f8c27ce138b5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:e29e463f562ffb552b71736e02c72cf2b2632a09",
+      "provenance": {
+        "commit": "e29e463f562ffb552b71736e02c72cf2b2632a09"
       }
     },
     {
@@ -682536,6 +682994,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Artifact:src/commissionedcrafting.js",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 32
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/depotacquisitionruntime.js",
       "to": "Artifact:src/company-commercial-invariants.js",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
@@ -682567,6 +683034,15 @@
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
         "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Artifact:src/pickingpackinginvariants.js",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 43
       }
     },
     {
@@ -703572,6 +704048,150 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/depot.js",
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/businesspartnerships.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/company-middle-five-runtime.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/companyacquisitions.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/companygovernance.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/depot.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 79
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/depotacquisitionruntime.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 66
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 24
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/warehouseleases.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 66
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:test/lib/company-middle-five-fixture-schema.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "ExternalDependency:fastify",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
         "line": 11
       }
     },
@@ -784226,6 +784846,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/depotacquisition-next-five.js",
+      "to": "Artifact:test/depotacquisition-next-five.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/depotacquisitionruntime.js",
       "to": "Artifact:test/depotacquisitionruntime.js",
       "provenance": {
@@ -794500,6 +795129,114 @@
       "provenance": {
         "file": "test/depot.js",
         "line": 14
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/businesspartnerships.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/company-middle-five-runtime.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/companyacquisitions.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/companygovernance.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/depot.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 79
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/depotacquisitionruntime.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 25
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/economy.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 66
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 22
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 24
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/items.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 23
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/depotacquisition-next-five.js",
+      "to": "Artifact:src/warehouseleases.js",
+      "provenance": {
+        "file": "test/depotacquisition-next-five.js",
+        "line": 66
       }
     },
     {
@@ -813138,7 +813875,7 @@
       "to": "Table:business_depot_journal",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 56
+        "line": 57
       }
     },
     {
@@ -813156,7 +813893,7 @@
       "to": "Table:business_partnerships",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 42
+        "line": 43
       }
     },
     {
@@ -813165,7 +813902,7 @@
       "to": "Table:business_warehouse_leases",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 39
+        "line": 40
       }
     },
     {
@@ -813183,7 +813920,7 @@
       "to": "Table:commercial_negotiations",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 51
+        "line": 52
       }
     },
     {
@@ -813192,7 +813929,7 @@
       "to": "Table:commercial_premises_leases",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 48
+        "line": 49
       }
     },
     {
@@ -813201,7 +813938,7 @@
       "to": "Table:commercial_premises_offers",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 47
+        "line": 48
       }
     },
     {
@@ -813210,7 +813947,7 @@
       "to": "Table:company_governance",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 43
+        "line": 44
       }
     },
     {
@@ -813219,7 +813956,7 @@
       "to": "Table:company_logistics_hubs",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 49
+        "line": 50
       }
     },
     {
@@ -813228,7 +813965,7 @@
       "to": "Table:company_operators",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 54
+        "line": 55
       }
     },
     {
@@ -813255,7 +813992,7 @@
       "to": "Table:company_specializations",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 54
+        "line": 55
       }
     },
     {
@@ -813264,7 +814001,7 @@
       "to": "Table:company_workflows",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 46
+        "line": 47
       }
     },
     {
@@ -813273,7 +814010,7 @@
       "to": "Table:contract_auctions",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 52
+        "line": 53
       }
     },
     {
@@ -813282,7 +814019,7 @@
       "to": "Table:delivery_commitments",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 37
+        "line": 38
       }
     },
     {
@@ -813291,7 +814028,7 @@
       "to": "Table:delivery_loan_requests",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 38
+        "line": 39
       }
     },
     {
@@ -813300,7 +814037,7 @@
       "to": "Table:depot_brand_licenses",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 41
+        "line": 42
       }
     },
     {
@@ -813309,7 +814046,7 @@
       "to": "Table:game_employment_assignments",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 45
+        "line": 46
       }
     },
     {
@@ -813318,7 +814055,7 @@
       "to": "Table:game_employment_jobs",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 44
+        "line": 45
       }
     },
     {
@@ -813327,7 +814064,7 @@
       "to": "Table:logistics_coverage_policies",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 50
+        "line": 51
       }
     },
     {
@@ -813336,7 +814073,7 @@
       "to": "Table:market_listings",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 38
+        "line": 39
       }
     },
     {
@@ -813345,7 +814082,7 @@
       "to": "Table:supply_tenders",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 40
+        "line": 41
       }
     },
     {
@@ -813354,7 +814091,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/companyrestructuring.js",
-        "line": 63
+        "line": 64
       }
     },
     {
@@ -815991,7 +816728,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 69
+        "line": 97
       }
     },
     {
@@ -816018,7 +816755,7 @@
       "to": "Table:business_depots",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 70
+        "line": 98
       }
     },
     {
@@ -816081,7 +816818,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 67
+        "line": 95
       }
     },
     {
@@ -816123,10 +816860,28 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Table:commissioned_crafting_contracts",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 27
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Table:commissioned_crafting_requests",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 36
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/depotacquisitionruntime.js",
       "to": "Table:company_acquisition_requests",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 80
+        "line": 108
       }
     },
     {
@@ -816144,7 +816899,7 @@
       "to": "Table:company_governance",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 54
+        "line": 82
       }
     },
     {
@@ -816252,7 +817007,7 @@
       "to": "Table:delivery_loan_requests",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 45
+        "line": 73
       }
     },
     {
@@ -816288,7 +817043,7 @@
       "to": "Table:equipment_maintenance_offers",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 39
+        "line": 67
       }
     },
     {
@@ -816306,7 +817061,7 @@
       "to": "Table:game_employment_assignments",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 56
+        "line": 84
       }
     },
     {
@@ -816348,10 +817103,28 @@
     {
       "type": "USES_TABLE",
       "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Table:picking_packing_jobs",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 27
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/depotacquisitionruntime.js",
+      "to": "Table:picking_packing_requests",
+      "provenance": {
+        "file": "src/depotacquisitionruntime.js",
+        "line": 47
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/depotacquisitionruntime.js",
       "to": "Table:service_subscriptions",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 40
+        "line": 68
       }
     },
     {
@@ -816387,7 +817160,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/depotacquisitionruntime.js",
-        "line": 81
+        "line": 109
       }
     },
     {

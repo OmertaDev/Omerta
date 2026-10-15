@@ -112,8 +112,8 @@
 | `commission_ticker_votes_v2` | [L3851](../../schema.sql#L3851) | [commission.js](../../src/commission.js), [db.js](../../src/db.js), [social/gangs.js](../../src/social/gangs.js) |
 | `commission_vetoes` | [L1459](../../schema.sql#L1459) | [commission.js](../../src/commission.js) |
 | `commission_votes` | [L1446](../../schema.sql#L1446) | [commission.js](../../src/commission.js), [social/gangs.js](../../src/social/gangs.js) |
-| `commissioned_crafting_contracts` | [L9057](../../schema.sql#L9057) | [commissionedcrafting.js](../../src/commissionedcrafting.js), [invariants.js](../../src/invariants.js) |
-| `commissioned_crafting_requests` | [L9069](../../schema.sql#L9069) | [commissionedcrafting.js](../../src/commissionedcrafting.js) |
+| `commissioned_crafting_contracts` | [L9057](../../schema.sql#L9057) | [commissionedcrafting.js](../../src/commissionedcrafting.js), [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js), [invariants.js](../../src/invariants.js) |
+| `commissioned_crafting_requests` | [L9069](../../schema.sql#L9069) | [commissionedcrafting.js](../../src/commissionedcrafting.js), [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js) |
 | `community_revenue` | [L4328](../../schema.sql#L4328) | [community.js](../../src/community.js), [liquidityaccounting.js](../../src/liquidityaccounting.js), [router.js](../../src/router.js) |
 | `company_acquisition_requests` | [L8843](../../schema.sql#L8843) | [companyacquisitions.js](../../src/companyacquisitions.js), [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js) |
 | `company_acquisitions` | [L8835](../../schema.sql#L8835) | [company-middle-five-invariants.js](../../src/company-middle-five-invariants.js), [companyacquisitions.js](../../src/companyacquisitions.js), [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js) |
@@ -355,8 +355,8 @@
 | `pen_breaks` | [L1296](../../schema.sql#L1296) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_contraband` | [L1286](../../schema.sql#L1286) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
 | `pen_talks` | [L3218](../../schema.sql#L3218) | [pen.js](../../src/pen.js), [social/estate.js](../../src/social/estate.js) |
-| `picking_packing_jobs` | [L9075](../../schema.sql#L9075) | [pickingpacking.js](../../src/pickingpacking.js), [pickingpackinginvariants.js](../../src/pickingpackinginvariants.js) |
-| `picking_packing_requests` | [L9083](../../schema.sql#L9083) | [pickingpacking.js](../../src/pickingpacking.js), [pickingpackinginvariants.js](../../src/pickingpackinginvariants.js) |
+| `picking_packing_jobs` | [L9075](../../schema.sql#L9075) | [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js), [pickingpacking.js](../../src/pickingpacking.js), [pickingpackinginvariants.js](../../src/pickingpackinginvariants.js) |
+| `picking_packing_requests` | [L9083](../../schema.sql#L9083) | [depotacquisitionruntime.js](../../src/depotacquisitionruntime.js), [pickingpacking.js](../../src/pickingpacking.js), [pickingpackinginvariants.js](../../src/pickingpackinginvariants.js) |
 | `player_command_boards` | [L7391](../../schema.sql#L7391) | [player-commands.js](../../src/player-commands.js), [projection-events.js](../../src/projection-events.js) |
 | `player_intel` | [L3283](../../schema.sql#L3283) | [city-presence.js](../../src/city-presence.js), [playerintel.js](../../src/playerintel.js) |
 | `poker_entries` | [L1214](../../schema.sql#L1214) | [casino.js](../../src/casino.js) |
