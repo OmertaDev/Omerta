@@ -1,4 +1,5 @@
 import {collectCrossDockIssues} from './crossdocking.js';
+const collectBusinessRelocationIssues=async(c)=>(await import('./businessrelocationhistory.js')).collectBusinessRelocationIssues(c);
 import {collectProductionSlotIssues} from './productionslots.js';
 import {collectMerchantReturnIssues} from './merchantreturnsinvariants.js';
 import { collectMultiHopCourierIssues } from './multihopcourier.js';
@@ -761,6 +762,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const relocationIssues=await collectBusinessRelocationIssues(pool);
+  push('business relocation history',relocationIssues.length,0,0,{issues:relocationIssues});
   const crossDockIssues = await collectCrossDockIssues(pool);
   push('cross docking canonical source and handoff history', crossDockIssues.length, 0, 0, {issues:crossDockIssues});
   const productionSlotIssues = await collectProductionSlotIssues(pool);

@@ -4,6 +4,7 @@ import {register as registerProductionSlots} from './routes/productionslots.js';
 import {register as registerMerchantReturns} from './routes/merchantreturns.js';
 import { register as registerMultiHopCourier } from './routes/multihopcourier.js';
 import { register as registerCustomerVaults } from './routes/customervaults.js';
+import {register as registerBusinessRelocations} from './businessrelocationroutes.js';
 import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
 import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
@@ -2500,6 +2501,7 @@ export async function buildServer() {
   registerMultiHopCourier(app, { pool, auth });
   // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
   registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
+  registerBusinessRelocations(app,{pool,auth});
   registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });

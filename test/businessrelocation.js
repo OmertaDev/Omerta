@@ -1,3 +1,4 @@
+import {ensureComponentDDL} from './lib/company-middle-five-fixture-schema.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -11,11 +12,11 @@ for(const action of ['unknown','deposit','return','travel'])assert.throws(()=>R.
 assert.deepEqual(R.businessRelocationAvailability(),{available:false,effect:'same_depot_settled_stock_paid_travel'});
 const pool=await makeDb();
 try{
- await pool.query(fs.readFileSync(new URL('../docs/business-relocation-proposal.sql',import.meta.url),'utf8'));
+ await ensureComponentDDL(pool,fs.readFileSync(new URL('../docs/business-relocation-proposal.sql',import.meta.url),'utf8'),['business_relocation_plans','business_relocation_requests']);
  const ch={id:'original-owner',account_id:'owner-account',alive:true,is_npc:false};
  const before=async()=>({requests:(await pool.query('SELECT * FROM business_relocation_requests')).rows,plans:(await pool.query('SELECT * FROM business_relocation_plans')).rows,transactions:(await pool.query('SELECT * FROM transactions')).rows});
  const initial=await before();
- await assert.rejects(R.runBusinessRelocation(pool,ch.account_id,'create',good,'fresh',{agent:false}),e=>e.code==='business_relocation'&&e.message==='canonical_leaf_unavailable');
+ await assert.rejects(R.runBusinessRelocation(pool,ch.account_id,'create',good,'fresh',{agent:false}),e=>e.code==='business_relocation'&&e.message==='transactional_backend_required');
  assert.deepEqual(await before(),initial);
  await assert.rejects(I.withItemTransaction(pool,c=>R.voidBusinessRelocationsInEstate(c,ch.id,{})),e=>e.code==='estate_scope');
  assert.deepEqual(await before(),initial);
@@ -32,7 +33,7 @@ try{
  await pool.query('UPDATE business_relocation_requests SET receipt=$1,account_ref=$2,actor_ref=$3',[historical,ch.account_id,ch.id]);
  assert.deepEqual(await R.runBusinessRelocation(pool,ch.account_id,'create',good,'old',{agent:true}),historical);
  await assert.rejects(R.runBusinessRelocation(pool,ch.account_id,'create',{...good,durationSeconds:61},'old',{agent:false}),e=>e.code==='business_relocation');
- await assert.rejects(R.runBusinessRelocation(pool,'foreign-account','create',good,'old',{agent:false}),e=>e.code==='business_relocation'&&e.message==='canonical_leaf_unavailable');
+ await assert.rejects(R.runBusinessRelocation(pool,'foreign-account','create',good,'old',{agent:false}),e=>e.code==='business_relocation'&&e.message==='transactional_backend_required');
  await pool.query('DELETE FROM business_relocation_requests');
  assert.deepEqual((await I.withItemRead(pool,c=>R.businessRelocationBoard(c,ch.account_id))).plans,[]);
  console.log('Business relocation terms, private empty board, pending conflict and missing canonical leaf fail-closed PASS; no positive canonical relocation claim.');

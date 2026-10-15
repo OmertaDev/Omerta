@@ -1,3 +1,4 @@
+import {recordBusinessRelocationWithdrawal} from './depotrelocationruntime.js';
 import {assertItemTransaction,itemTransactionIdentity} from './items.js';
 import {assertWorkshopFloorStorage as workshopFloorStorageAdmission} from './workshopfloor-admission.js';
 export {workshopFloorStorageAdmission};
@@ -195,7 +196,9 @@ export async function withdrawDepotStock(ch, id, quantity, client, h) {
   if (quantity > Number(row.stock)) throw new GameError('stock', 'Not enough business stock.');
   const cargo = h.owned.cargo;
   if (Object.values(cargo).reduce((n, q) => n + Number(q), 0) + quantity > trunkCap(h)) throw new GameError('cargo', 'No room in the trunk.');
-  await bookDepot(client, row, 'inventory_withdrawal', { stock: -quantity, cost: -Math.ceil(Number(row.stock_cost) * quantity / Number(row.stock)) });
+  const withdrawnCost=Math.ceil(Number(row.stock_cost)*quantity/Number(row.stock));
+  const withdrawalJournalId=await bookDepot(client,row,'inventory_withdrawal',{stock:-quantity,cost:-withdrawnCost});
+  recordBusinessRelocationWithdrawal(client,{businessId:row.id,characterId:ch.id,journalId:withdrawalJournalId,quantity,cost:withdrawnCost});
   cargo[DEPOT.good] = Number(cargo[DEPOT.good] || 0) + quantity;
   await client.query('DELETE FROM character_cargo WHERE character_id=$1 AND good_id=$2', [ch.id, DEPOT.good]);
   await client.query('INSERT INTO character_cargo (character_id,good_id,qty) VALUES ($1,$2,$3)', [ch.id, DEPOT.good, cargo[DEPOT.good]]);
@@ -265,3 +268,5 @@ export async function depotBoard(client) {
 const workshopScopes=new WeakMap();
 async function workshopCheck(c,ctx){const token=Object.freeze({}),scope={c,transaction:itemTransactionIdentity(c),ctx,active:true};workshopScopes.set(token,scope);try{return await workshopFloorStorageAdmission(c,ctx,token);}finally{scope.active=false;}}
 export function assertWorkshopFloorStorageScope(c,ctx,token){assertItemTransaction(c);const scope=workshopScopes.get(token);if(!scope?.active||scope.c!==c||scope.transaction!==itemTransactionIdentity(c)||scope.ctx!==ctx)throw new GameError('workshop_floor','canonical_storage_scope');return true;}
+
+export {canonicalDepotRelocationRuntime} from './depotrelocationruntime.js';

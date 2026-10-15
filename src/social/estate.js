@@ -40,6 +40,7 @@ import { recoverBuyerCooperativesAtDeath } from '../buyercooperativecustody.js';
 import { assertItemTransaction, registerItemTransactionUndo, poisonItemTransaction, itemTransactionIdentity } from '../items.js';
 import { assertEquipmentRentalDeathScope, recoverEquipmentRentalsAtDeath } from '../equipmentrentals.js';
 import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';
+const voidBusinessRelocationsInEstate=async(c,characterId,estateScope)=>(await import('../businessrelocation.js')).voidBusinessRelocationsInEstate(c,characterId,estateScope);
 import { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';
 import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
 import { recoverConsignmentsInEstate } from '../consignments.js';
@@ -496,6 +497,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   victim.alive = false;
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
   await voidCompanyRestructuringAtDeath(client, victim);
+  await voidBusinessRelocationsInEstate(client,victim.id,estateScope);
   await voidCommercialDisputesAtDeath(client, victim);
   await voidFreightConsolidationsAtDeath(client, victim);
   await recoverEquipmentInsuranceAtDeath(client, h, victim);
