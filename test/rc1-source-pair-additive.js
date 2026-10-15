@@ -335,3 +335,86 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
     assert.notEqual(sourcePairReviewedTreeHash([...sourceRecords,record(file)]),sourceHash,'No first-five implementation or helper exclusion');
   console.log(`rc1-source-pair next thirty first-five: ${negatives} rejecting controls; 11empty/90constraints/90NN, strict old/unknown rows and sequences; original profiles/exclusions unchanged; no native or deployed clearance`);
 }
+
+// Next-layer source/EMPTY-bootstrap relation only. No populated or native authority.
+{
+  const A=(await import('node:assert/strict')).default,F=(await import('node:fs/promises')).default;
+  const {execFileSync}=await import('node:child_process');
+  const {canonicalJson,sha256}=await import('../tools/rc1-native-proof.js');
+  const M=await import('../tools/rc1-source-pair.js'),pin=M.NEXT_LAYER_ADDITIVE_PAIR,qualify=M.qualifyNextLayerAdditiveBootstrap;
+  const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32*1024*1024});
+  const catalog=JSON.parse(git('show',pin.reviewedCandidate+':test/lib/phase2-architecture-upgrade-catalog.json'));
+  const parentCatalog=JSON.parse(git('show',pin.predecessor+':test/lib/phase2-architecture-upgrade-catalog.json'));
+  A.equal(parentCatalog.added.length,1243);A.equal(catalog.added.length,1332);A.deepEqual(catalog.added.slice(0,1243),parentCatalog.added);
+  const restoredCatalog={...catalog,added:catalog.added.slice(0,1243),notNullColumns:{...catalog.notNullColumns}};
+  for(const name of pin.tables){A(!Object.hasOwn(parentCatalog.notNullColumns,name));delete restoredCatalog.notNullColumns[name];}
+  A.deepEqual(restoredCatalog,parentCatalog,'Complete genuine1243 parent catalog prefix and every old property/map retained');
+  const catalogTables=Object.fromEntries(pin.tables.map(name=>[name,{constraints:catalog.added.filter(row=>row.table_name===name),notNullColumns:catalog.notNullColumns[name]}]));
+  A.equal(pin.tables.length,8);A.equal(pin.constraints,89);A.equal(pin.notNull,78);
+  const p={source:pin.predecessor,nextLayerAdditiveSource:{}},c={source:pin.reviewedCandidate,nextLayerAdditiveSource:{catalogTables}};
+  for(const[identity,side]of[[p,'predecessor'],[c,'candidate']]){
+    const revision=side==='predecessor'?pin.predecessor:pin.reviewedCandidate;
+    for(const field of['tree','schema','catalog'])identity.nextLayerAdditiveSource[field]=pin[side+field[0].toUpperCase()+field.slice(1)];
+    A.equal(M.sourcePairReviewedTreeHash(git('ls-tree','-r','-z',revision).split('\0').filter(Boolean)),pin[side+'Tree']);
+    A.equal(sha256(git('show',revision+':schema.sql')),pin[side+'Schema']);
+    A.equal(sha256(git('show',revision+':test/lib/phase2-architecture-upgrade-catalog.json')),pin[side+'Catalog']);
+  }
+  const before={tables:{accounts:['{"id":"preserved-original"}'],characters:[],unknown_existing_custody:['{"id":"opaque-a"}','{"id":"opaque-b"}']},sequences:[{sequencename:'item_events_sequence_seq',last_value:'10',is_called:true,start_value:'1',increment_by:'1',min_value:'1',max_value:'9223372036854775807',cache_size:'1',cycle:false}]};
+  for(const name of M.NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR.tables)before.tables[name]=['{"old_acknowledged_fixture":true}'];
+  const after=structuredClone(before);for(const name of pin.tables){A(!Object.hasOwn(before.tables,name));after.tables[name]=[];}
+  const qualified=qualify(before,after,p,c);A.equal(qualified.relation,'REVIEWED_NEXT_LAYER_EIGHT_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');
+  A.deepEqual(qualified.addedEmptyTables,pin.tables);A(qualified.predecessorRowsExact&&qualified.allSequencesExact);
+  let negatives=0;const reject=mutate=>{const a=structuredClone(before),b=structuredClone(after),previous=structuredClone(p),current=structuredClone(c);mutate(a,b,previous,current);A.throws(()=>qualify(a,b,previous,current),e=>e?.code==='ERR_ASSERTION');negatives++;};
+  for(const name of pin.tables){
+    reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]={};});reject((_a,b)=>{b.tables[name]=['{"unreviewed":true}'];});
+    const evidence=catalogTables[name];
+    for(let i=0;i<evidence.constraints.length;i++){
+      for(const field of['table_name','name','definition','unknown'])reject((_a,_b,_p,c)=>{c.nextLayerAdditiveSource.catalogTables[name].constraints[i][field]='unreviewed';});
+      reject((_a,_b,_p,c)=>{c.nextLayerAdditiveSource.catalogTables[name].constraints.splice(i,1);});
+      reject((_a,_b,_p,c)=>{c.nextLayerAdditiveSource.catalogTables[name].constraints.push(c.nextLayerAdditiveSource.catalogTables[name].constraints[i]);});
+    }
+    for(let i=0;i<evidence.notNullColumns.length;i++)for(const op of['missing','renamed','duplicated'])reject((_a,_b,_p,c)=>{const cols=c.nextLayerAdditiveSource.catalogTables[name].notNullColumns;if(op==='missing')cols.splice(i,1);else if(op==='renamed')cols[i]+='__unknown';else cols.push(cols[i]);});
+  }
+  for(const side of['predecessor','candidate'])for(const field of['tree','schema','catalog'])reject((_a,_b,p,c)=>{(side==='predecessor'?p:c).nextLayerAdditiveSource[field]='0'.repeat(64);});
+  reject((_a,b)=>{b.tables.unreviewed_authority=[];});reject((_a,b)=>{b.tables.accounts=['{"replacement":true}'];});
+  reject((_a,b)=>{b.tables.unknown_existing_custody=['{"replacement":true}'];});reject((_a,b)=>{delete b.tables.unknown_existing_custody;});
+  reject((_a,b)=>{b.sequences[0].last_value='11';});reject((_a,b)=>{b.sequences.push({sequencename:'unreviewed',last_value:null});});
+  reject((_a,_b,p)=>{p.source='0'.repeat(40);});reject((_a,_b,_p,c)=>{c.source='unknown';});
+  reject((_a,_b,_p,c)=>{c.nextLayerAdditiveSource.catalogTables.unreviewed={constraints:[],notNullColumns:[]};});reject((_a,_b,_p,c)=>{delete c.nextLayerAdditiveSource;});
+  for(const name of Object.keys(before.tables)){
+    reject((_a,b)=>{delete b.tables[name];});reject((_a,b)=>{b.tables[name]=[...b.tables[name],'{"old_row_changed":true}'];});
+  }
+  for(const field of Object.keys(before.sequences[0])){reject((_a,b)=>{delete b.sequences[0][field];});reject((_a,b)=>{b.sequences[0][field]='unreviewed';});}
+  const families=[
+    ['NEXT_LAYER_ADDITIVE_PAIR','qualifyNextLayerAdditiveBootstrap'],
+    ['NEXT_THIRTY_FIRST_FIVE_ADDITIVE_PAIR','qualifyNextThirtyFirstFiveAdditiveBootstrap'],
+    ['AUTONOMY_MAIN_ADDITIVE_PAIR','qualifyAutonomyMainAdditiveBootstrap'],
+    ['FIFTH_BATCH_ADDITIVE_PAIR','qualifyFifthBatchAdditiveBootstrap'],
+    ['COMMERCIAL_MAIN_ADDITIVE_PAIR','qualifyCommercialMainAdditiveBootstrap'],
+    ['FOURTH_BATCH_ADDITIVE_PAIR','qualifyFourthBatchAdditiveBootstrap'],
+    ['THIRD_BATCH_ADDITIVE_PAIR','qualifyThirdBatchAdditiveBootstrap'],
+    ['SECOND_BATCH_ADDITIVE_PAIR','qualifySecondBatchAdditiveBootstrap'],
+    ['FIRST_FIVE_ADDITIVE_PAIR','qualifyFirstFiveAdditiveBootstrap']
+  ];
+  for(const[name,fn]of families.slice(1)){A.throws(()=>M[fn](before,after,p,c),e=>e?.code==='ERR_ASSERTION');A.throws(()=>qualify(before,after,{...p,source:M[name].predecessor},c),e=>e?.code==='ERR_ASSERTION');}
+  const pairSource=(await F.readFile(new URL('../tools/rc1-source-pair.js',import.meta.url),'utf8')).replaceAll('\r\n','\n');
+  const eqStart=pairSource.indexOf('  const equal = (a, b, label, additive = false) => {'),eqEnd=pairSource.indexOf('\n  try {',eqStart);A(eqStart>0&&eqEnd>eqStart);const equalBody=pairSource.slice(eqStart,eqEnd),symbols=families.flat();
+  const buildEqual=(source,spy,calls)=>new Function('assert','sourcePairStateDifference','canonicalJson','report','update','predecessor','candidate',...symbols,equalBody+'\nreturn equal;')(
+    A,M.sourcePairStateDifference,canonicalJson,{assertions:[]},()=>{}, {...p,source},c,...families.flatMap(([name,fn])=>[M[name],spy?()=>{calls.push(fn);return{selectorOnly:true};}:M[fn]]));
+  let dispatch=0,strict=0;
+  for(const[name,fn]of families)for(const label of['upgrade preserves acknowledged state','upgrade replay creates no new effect']){
+    const calls=[],equal=buildEqual(M[name].predecessor,true,calls);equal(before,after,label,true);A.deepEqual(calls,[fn]);dispatch++;
+  }
+  const equal=buildEqual(pin.predecessor,false,[]);
+  for(const label of['upgrade preserves acknowledged state','upgrade replay creates no new effect']){equal(before,after,label,true);A.throws(()=>equal(before,after,label,false),e=>e?.code==='ERR_ASSERTION');strict++;}
+  for(const label of['rollback preserves acknowledged state','rollback replay creates no new effect','second upgrade preserves acknowledged state']){
+    equal(after,structuredClone(after),label,false);A.throws(()=>equal(before,after,label,true),e=>e?.code==='ERR_ASSERTION');strict++;
+    for(const name of Object.keys(after.tables)){const changed=structuredClone(after);changed.tables[name]=[...changed.tables[name],'{"phase_drift":true}'];A.throws(()=>equal(after,changed,label,false),e=>e?.code==='ERR_ASSERTION');strict++;}
+    for(const field of Object.keys(after.sequences[0])){const changed=structuredClone(after);changed.sequences[0][field]='phase_drift';A.throws(()=>equal(after,changed,label,false),e=>e?.code==='ERR_ASSERTION');strict++;}
+    const unknown=structuredClone(after);unknown.tables.unknown_after_rollback=[];A.throws(()=>equal(after,unknown,label,false),e=>e?.code==='ERR_ASSERTION');strict++;
+  }
+  const records=['100644 blob '+ '1'.repeat(40)+'\tsrc/existing.js'],baseHash=M.sourcePairReviewedTreeHash(records),record=f=>'100644 blob '+ '2'.repeat(40)+'\t'+f;
+  for(const name of['src/customerlayaway.js','src/customervaults.js','src/multihopcourier.js','tools/next-layer-release-phase2-migration-catalog.js','tools/next-layer-native.js','.github/workflows/ci.yml','schema.sql','package.json','test/lib/phase2-architecture-upgrade-catalog.json'])A.notEqual(M.sourcePairReviewedTreeHash([...records,record(name)]),baseHash,'No implementation/native/helper/CI/schema/catalog exclusion');
+  for(const name of['tools/rc1-source-pair.js','test/rc1-source-pair-additive.js','docs/rc1-source-pair-additive-review.md',...M.ADDITIVE_KNOWLEDGE_OUTPUTS])A.equal(M.sourcePairReviewedTreeHash([...records,record(name)]),baseHash,'Only existing exact QA and derivative exclusions retained');
+  console.log('rc1-source-pair next-layer proposal PASS: '+negatives+' EMPTY/source/catalog/old-state refusals; '+dispatch+' exact selector routes; '+strict+' strict phase refusals; 8empty/89structural/78NN, genuine1243→1332 prefix; no native/financial/deployed clearance');
+}

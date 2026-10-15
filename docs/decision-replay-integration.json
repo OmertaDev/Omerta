@@ -425,6 +425,12 @@
             "forecast_memory"
           ]
         },
+        "kindName": {
+          "enum": [
+            "Intelligence purchases",
+            "Forecast memory"
+          ]
+        },
         "candidates": {
           "type": "array",
           "maxItems": 20,
@@ -482,6 +488,7 @@
       },
       "required": [
         "kind",
+        "kindName",
         "candidates",
         "next",
         "windowDays",
