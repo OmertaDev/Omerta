@@ -37,10 +37,24 @@ try {
   };
   if (native) {
     const original = await canonicalDatabaseSnapshot(pool);
+    let attemptedEvents;
     await assert.rejects(G.withTwoCharacters(pool, 'buyer', 'host-actor', async (...args) => {
-      await resolve(...args); throw Error('after-canonical-estate');
+      await resolve(...args);
+      attemptedEvents = Number((await args[2].query('SELECT COUNT(*) AS n FROM item_events')).rows[0].n)
+        - original.tables.item_events.length;
+      assert.equal(attemptedEvents, 2, 'Rental and consignment recovery each append one canonical event');
+      throw Error('after-canonical-estate');
     }, { meet: false }), /after-canonical-estate/);
-    assert.deepEqual(await canonicalDatabaseSnapshot(pool), original, 'Late estate failure restores every canonical row and sequence');
+    const restored = await canonicalDatabaseSnapshot(pool);
+    assert.deepEqual(restored.tables, original.tables, 'Late estate failure restores every canonical row');
+    assert.deepEqual(restored.sequences.map(row => row.sequencename), original.sequences.map(row => row.sequencename));
+    for (const [index, before] of original.sequences.entries()) {
+      const after = restored.sequences[index];
+      if (before.sequencename === 'item_events_sequence_seq') {
+        assert.equal(BigInt(after.last_value) - BigInt(before.last_value), BigInt(attemptedEvents),
+          'PostgreSQL consumes exactly the two attempted event sequence values despite row rollback');
+      } else assert.deepEqual(after, before, 'No other sequence advances: ' + before.sequencename);
+    }
   }
   await G.withTwoCharacters(pool, 'buyer', 'host-actor', resolve, { meet: false });
   assert.equal((await pool.query('SELECT alive FROM characters WHERE id=$1', ['host-actor'])).rows[0].alive, false);
@@ -51,5 +65,5 @@ try {
   await assert.rejects(invoke('acceptConsignment', 'host', ref(quote), 'heir-fresh'), /original_actor/);
   assert.deepEqual(await invoke('acceptConsignment', 'host', ref(quote), 'estate-host'), { ok: true, ...quote, status: 'active' });
   await books();
-  console.log(`Consignments canonical estate ${native ? 'PostgreSQL18.4' : 'memory'} PASS: mixed rental/consignment actor union, private scope, actual death, original title return, heir refusal, historical ACK and complete global books${native ? ', full late-failure row/sequence rollback' : ''}.`);
+  console.log(`Consignments canonical estate ${native ? 'PostgreSQL18.4' : 'memory'} PASS: mixed rental/consignment actor union, private scope, actual death, original title return, heir refusal, historical ACK and complete global books${native ? ', every late-failure row restored and exact attempted event sequence consumption accounted' : ''}.`);
 } finally { await pool.end(); }
