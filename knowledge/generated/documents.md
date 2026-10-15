@@ -313,7 +313,7 @@
 | [AUDIT-world-uprising.md](../../AUDIT-world-uprising.md) | audit | 80 | 2026-07-22 |
 | [AUDIT.md](../../AUDIT.md) | audit | 52 | 2026-07-14 |
 | [BALANCE.md](../../BALANCE.md) | documentation | 6860 | 2026-09-25 |
-| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 437 | 2026-10-14 |
+| [CHAIN-AUDIT-PACKET-O1.md](../../CHAIN-AUDIT-PACKET-O1.md) | documentation | 442 | 2026-10-14 |
 | [CHAIN-AUDIT-PACKET.md](../../CHAIN-AUDIT-PACKET.md) | documentation | 322 | 2026-09-25 |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | operations | 2030 | 2026-10-06 |
 | [CLAUDE.md](../../CLAUDE.md) | documentation | 52 | 2026-09-25 |
@@ -324,6 +324,7 @@
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
 | [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
+| [docs/agent-economy-autonomy-release-review.md](../../docs/agent-economy-autonomy-release-review.md) | documentation | 122 | 2026-10-14 |
 | [docs/agent-economy-commercial-release-review.md](../../docs/agent-economy-commercial-release-review.md) | documentation | 88 | 2026-10-14 |
 | [docs/agent-economy-equipment-contracts-security-review.md](../../docs/agent-economy-equipment-contracts-security-review.md) | documentation | 44 | 2026-10-13 |
 | [docs/agent-economy-final-integrated-native-review.md](../../docs/agent-economy-final-integrated-native-review.md) | documentation | 23 | 2026-10-12 |
@@ -352,6 +353,7 @@
 | [docs/agent-gateway-review/README.md](../../docs/agent-gateway-review/README.md) | documentation | 102 | 2026-10-14 |
 | [docs/agent-gateway-review/ui-recovery-retest.md](../../docs/agent-gateway-review/ui-recovery-retest.md) | documentation | 33 | 2026-10-14 |
 | [docs/agent-labor-security-review.md](../../docs/agent-labor-security-review.md) | documentation | 146 | 2026-10-11 |
+| [docs/agent-operating-memory-security-review.md](../../docs/agent-operating-memory-security-review.md) | documentation | 50 | 2026-10-13 |
 | [docs/agent-resource-economy.md](../../docs/agent-resource-economy.md) | documentation | 54 | 2026-10-10 |
 | [docs/aggression-public-attemptability-review.md](../../docs/aggression-public-attemptability-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/ART.md](../../docs/ART.md) | documentation | 238 | 2026-08-14 |
@@ -389,6 +391,7 @@
 | [docs/commercial-reputation-source-transfer-review.md](../../docs/commercial-reputation-source-transfer-review.md) | documentation | 18 | 2026-10-12 |
 | [docs/company-acquisitions-seam-design.md](../../docs/company-acquisitions-seam-design.md) | design | 31 | 2026-10-13 |
 | [docs/company-acquisitions-security-review.md](../../docs/company-acquisitions-security-review.md) | documentation | 14 | 2026-10-13 |
+| [docs/company-autonomy-lock-order-proposal.md](../../docs/company-autonomy-lock-order-proposal.md) | documentation | 24 | 2026-10-13 |
 | [docs/company-bank-hosted-native-triage.md](../../docs/company-bank-hosted-native-triage.md) | documentation | 16 | 2026-10-12 |
 | [docs/company-bank-migration-review.md](../../docs/company-bank-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/company-bank-portfolio-integration-review.md](../../docs/company-bank-portfolio-integration-review.md) | documentation | 47 | 2026-10-12 |
@@ -396,6 +399,7 @@
 | [docs/company-bank-source-transfer-review.md](../../docs/company-bank-source-transfer-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/company-demand-forecast-security-review.md](../../docs/company-demand-forecast-security-review.md) | documentation | 28 | 2026-10-13 |
 | [docs/company-governance-security-review.md](../../docs/company-governance-security-review.md) | documentation | 16 | 2026-10-13 |
+| [docs/company-late-five-integration-proposal-review.md](../../docs/company-late-five-integration-proposal-review.md) | documentation | 46 | 2026-10-13 |
 | [docs/company-logistics-hub-source-transfer-review.md](../../docs/company-logistics-hub-source-transfer-review.md) | documentation | 24 | 2026-10-12 |
 | [docs/company-logistics-hubs-integration-review.md](../../docs/company-logistics-hubs-integration-review.md) | documentation | 58 | 2026-10-12 |
 | [docs/company-logistics-hubs-security-review.md](../../docs/company-logistics-hubs-security-review.md) | documentation | 39 | 2026-10-12 |
@@ -466,6 +470,7 @@
 | [docs/delivery-finance-security-review.md](../../docs/delivery-finance-security-review.md) | documentation | 41 | 2026-10-11 |
 | [docs/depot-acquisition-runtime-security-review.md](../../docs/depot-acquisition-runtime-security-review.md) | documentation | 64 | 2026-10-13 |
 | [docs/earning-receipts-security-review.md](../../docs/earning-receipts-security-review.md) | documentation | 129 | 2026-10-11 |
+| [docs/economic-intelligence-security-review.md](../../docs/economic-intelligence-security-review.md) | documentation | 22 | 2026-10-13 |
 | [docs/economy-native-time-budget-review.md](../../docs/economy-native-time-budget-review.md) | documentation | 9 | 2026-10-12 |
 | [docs/economy-pilot.md](../../docs/economy-pilot.md) | documentation | 68 | 2026-10-08 |
 | [docs/economy-recovery-fixture-review.md](../../docs/economy-recovery-fixture-review.md) | documentation | 29 | 2026-10-12 |
@@ -486,6 +491,9 @@
 | [docs/first-batch-source-transfer-review.md](../../docs/first-batch-source-transfer-review.md) | documentation | 36 | 2026-10-13 |
 | [docs/first-five-city-combined-source-transfer-review.md](../../docs/first-five-city-combined-source-transfer-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/franchise-licenses-security-review.md](../../docs/franchise-licenses-security-review.md) | documentation | 78 | 2026-10-11 |
+| [docs/funded-external-work-control-review.md](../../docs/funded-external-work-control-review.md) | documentation | 20 | 2026-10-13 |
+| [docs/funded-external-work-provenance-design.md](../../docs/funded-external-work-provenance-design.md) | design | 24 | 2026-10-13 |
+| [docs/funded-work-escrow-source-review.md](../../docs/funded-work-escrow-source-review.md) | documentation | 52 | 2026-10-13 |
 | [docs/game-employment-integration-review.md](../../docs/game-employment-integration-review.md) | documentation | 51 | 2026-10-12 |
 | [docs/game-employment-migration-review.md](../../docs/game-employment-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/game-employment-security-review.md](../../docs/game-employment-security-review.md) | documentation | 58 | 2026-10-12 |
@@ -507,6 +515,8 @@
 | [docs/logistics-coverage-security-review.md](../../docs/logistics-coverage-security-review.md) | documentation | 25 | 2026-10-12 |
 | [docs/logistics-hub-lock-order-review.md](../../docs/logistics-hub-lock-order-review.md) | documentation | 18 | 2026-10-12 |
 | [docs/logistics-hub-migration-review.md](../../docs/logistics-hub-migration-review.md) | documentation | 12 | 2026-10-12 |
+| [docs/management-teams-design.md](../../docs/management-teams-design.md) | design | 26 | 2026-10-13 |
+| [docs/management-teams-security-review.md](../../docs/management-teams-security-review.md) | documentation | 18 | 2026-10-13 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
@@ -519,13 +529,14 @@
 | [docs/rc1-ci-envelope.md](../../docs/rc1-ci-envelope.md) | documentation | 145 | 2026-09-21 |
 | [docs/rc1-coordinated-alliance.md](../../docs/rc1-coordinated-alliance.md) | documentation | 30 | 2026-09-21 |
 | [docs/rc1-family-cash-ammo-journal.md](../../docs/rc1-family-cash-ammo-journal.md) | documentation | 28 | 2026-09-21 |
+| [docs/rc1-fifth-batch-source-transfer-review.md](../../docs/rc1-fifth-batch-source-transfer-review.md) | documentation | 30 | 2026-10-13 |
 | [docs/rc1-fourth-batch-source-transfer-review.md](../../docs/rc1-fourth-batch-source-transfer-review.md) | documentation | 28 | 2026-10-13 |
 | [docs/rc1-knowledge-choice-authority.md](../../docs/rc1-knowledge-choice-authority.md) | documentation | 113 | 2026-09-21 |
 | [docs/rc1-multifamily-conflict.md](../../docs/rc1-multifamily-conflict.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 154 | 2026-10-15 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 176 | 2026-10-15 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
@@ -614,6 +625,8 @@
 | [docs/service-subscriptions-integration-review.md](../../docs/service-subscriptions-integration-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/service-subscriptions-review.md](../../docs/service-subscriptions-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/storefront-fulfillment-security-review.md](../../docs/storefront-fulfillment-security-review.md) | documentation | 202 | 2026-10-11 |
+| [docs/strategy-laboratories-integration-design.md](../../docs/strategy-laboratories-integration-design.md) | design | 21 | 2026-10-13 |
+| [docs/strategy-laboratories-security-review.md](../../docs/strategy-laboratories-security-review.md) | documentation | 62 | 2026-10-13 |
 | [docs/strategy-leagues-security-review.md](../../docs/strategy-leagues-security-review.md) | documentation | 33 | 2026-10-12 |
 | [docs/strategy-licenses-security-review.md](../../docs/strategy-licenses-security-review.md) | documentation | 17 | 2026-10-12 |
 | [docs/superpowers/plans/2026-08-23-discovery-integrity.md](../../docs/superpowers/plans/2026-08-23-discovery-integrity.md) | documentation | 65 | 2026-08-24 |
