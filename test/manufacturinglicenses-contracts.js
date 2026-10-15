@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {fixture} from './manufacturinglicenses-integration-fixture.js';
+import {MANUFACTURING_LICENSE_CONTRACTS as contracts,MANUFACTURING_LICENSE_SCHEMAS as schemas} from '../src/manufacturinglicenses-contracts.js';
+const f=await fixture(),{app,pool,ajv,base,call,ok,action,player,materials,published,ref,books}=f;
+try{
+ const api=await ok(null,'GET','/openapi.json');assert.equal(Object.keys(contracts).length,5);
+ for(const [route,c]of Object.entries(contracts)){const [method,path]=route.split(' '),op=api.paths[path]?.[method.toLowerCase()];assert.equal(op?.operationId,c.operationId);assert.deepEqual(op.security,[{bearerAuth:[]}]);assert.deepEqual(op.responses['200'].content['application/json'].schema,c.responseSchema);if(c.requestSchema){assert.deepEqual(op.requestBody.content['application/json'].schema,c.requestSchema);assert.deepEqual(op.parameters,c.requestParameters);}assert.equal((await call(null,method,path,c.requestSchema?{}:undefined)).statusCode,401);}
+ const owner=await player(),buyer=await player(),foreign=await player(),offer=await published(owner,buyer);await materials(buyer);
+ assert.equal((await call(foreign,'POST',base+'/accept',{...ref(offer),businessId:foreign.business,consent:true})).statusCode,400);
+ const accepted=await action(buyer,'accept',{...ref(offer),businessId:buyer.business,consent:true},'bound-consent',true);assert.equal(accepted.status,'accepted');
+ const result=await action(buyer,'run',ref(offer),'genuine-licensed-run',true);assert.equal(result.royaltyPaid,25);assert.equal(result.production.totalCrafts,1);assert.equal((await pool.query('SELECT owner_id FROM item_instances WHERE id=$1',[result.production.outputItemId])).rows[0].owner_id,buyer.account);
+ assert.deepEqual(await action(buyer,'run',ref(offer),'genuine-licensed-run'),result);
+ const validate=ajv.compile(contracts['POST '+base+'/run'].responseSchema);for(const extra of [{royaltyAudit:{productionKey:'private'}},{accountId:owner.account},{payTransactionId:'private'},{receiveTransactionId:'private'},{status:'offered'},{status:'exhausted'},{completedRuns:3}])assert(!validate({...result,...extra}));
+ for(const key of Object.keys(result)){const missing={...result};delete missing[key];assert(!validate(missing),'Required run DTO field '+key);}
+ const board=await ok(buyer,'GET',base),validBoard=ajv.compile({$ref:'#/components/schemas/ManufacturingLicenseBoard'});assert(validBoard(board),JSON.stringify(validBoard.errors));assert.deepEqual(await ok(buyer,'GET',base,undefined,undefined,true),board);assert.deepEqual((await ok(foreign,'GET',base)).licenses,[]);
+ const raw=JSON.stringify(board);assert(!raw.includes(owner.account)&&!raw.includes('royaltyAudit')&&!raw.includes('genuine-license-source'));
+ assert.equal((await call(buyer,'POST',base+'/run?unknown=1',ref(offer))).statusCode,400);assert.equal((await call(buyer,'POST',base+'/run',{...ref(offer),agent:false})).statusCode,400);assert.equal((await call(buyer,'POST',base+'/run',ref(offer),null)).statusCode,400);assert.equal((await call(buyer,'POST',base+'/accept',{...ref(offer),businessId:buyer.business,consent:true},'genuine-licensed-run')).statusCode,422);
+ const cancelled=await action(buyer,'cancel',ref(offer),'cancel-partial');assert.equal(cancelled.completedRuns,1);assert.equal(cancelled.status,'cancelled');assert.deepEqual(await action(buyer,'run',ref(offer),'genuine-licensed-run'),result);await books();
+ const publishSchema=ajv.compile(contracts['POST '+base+'/publish'].requestSchema),row=(await pool.query('SELECT production_key FROM manufacturing_licenses WHERE id=$1',[offer.licenseId])).rows[0],body={businessId:owner.business,productionKey:row.production_key,licenseeCharacterId:foreign.id,feeCash:25,maximumRuns:2,lifetimeSeconds:60,consent:true};assert(publishSchema(body));for(const bad of [{...body,feeCash:0},{...body,consent:false},{...body,productionKey:' leading'},{...body,productionKey:'trailing\n'},{...body,maximumRuns:9},{...body,lifetimeSeconds:59},{...body,recipeId:'invented'}])assert(!publishSchema(bad));
+ assert.equal(Object.keys(schemas).length,4);console.log('N15 registered five-route contracts/JWT human-agent, actual source/production/25 royalty, closed key/query/DTO/privacy and partial-cancel historical replay memory PASS.');
+}finally{await app.close();}
