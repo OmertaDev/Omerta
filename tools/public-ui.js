@@ -449,6 +449,11 @@ try {
   await mobile.click('#btn-create');
   await mobile.waitForSelector('#screen-main:not(.hidden)');
   if (await mobile.locator('#welcome:not(.hidden)').count()) await mobile.click('#tour-skip');
+  await mobile.waitForSelector('.omerta-city__viewport');
+  check(await mobile.locator('#btn-player-view').getAttribute('aria-pressed') === 'true',
+    'The first-job welcome opens the neighborhood.');
+  await mobile.locator('#btn-dashboard-view').click();
+  await mobile.locator('#tabs [data-tab="streets"]').evaluate(button => button.click());
   const operationDesk = await mobile.evaluate(() => {
     const desk = document.querySelector('#operation-desk');
     const primary = desk?.querySelector('[data-operation-primary]');

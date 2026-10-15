@@ -113,7 +113,7 @@ console.log('rc1-source-pair-additive FOURTH FINAL PASS: '+fourthNegatives+' neg
 // The current main branch has additional gateway/legal work. Its separate exact
 // source relation retains that work and the four historical qualification pins.
 const { COMMERCIAL_MAIN_ADDITIVE_PAIR: commercialMainPin, qualifyCommercialMainAdditiveBootstrap } = await import('../tools/rc1-source-pair.js');
-assert.equal(commercialMainPin.predecessor, '5c18acaaf47c84851729b82354340c4d56734dd9');
+assert.equal(commercialMainPin.predecessor, '23f115c6f142321e1796e272bea406e1feb137ba');
 assert.deepEqual(commercialMainPin.tables, fourthPin.tables);
 const commercialMainPredecessor = structuredClone(fourthPredecessor);
 const commercialMainCandidate = structuredClone(fourthCandidate);
@@ -233,7 +233,7 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
 {
   const { AUTONOMY_MAIN_ADDITIVE_PAIR: pin, qualifyAutonomyMainAdditiveBootstrap: qualify } = await import('../tools/rc1-source-pair.js');
   const git = (...args) => gitProof('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
-  assert.equal(pin.predecessor, 'f0af97fef55614bb333dd30e32c7b1a791cd812f');
+  assert.equal(pin.predecessor, 'c1a7ccea5dd27cdf1512055003d622cd63324750');
   assert.deepEqual(pin.tables, fifthPin.tables);
   const p = structuredClone(fifthPredecessor), c = structuredClone(fifthCandidate);
   p.source = pin.predecessor; c.source = pin.reviewedCandidate;

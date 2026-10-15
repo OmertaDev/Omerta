@@ -33,13 +33,20 @@ try {
     const page = await context.newPage(); activePage = page; page.on('pageerror', (error) => errors.push(error.message));
     await page.goto(origin, { waitUntil: 'networkidle' });
     await page.locator('#btn-guest').click();
+    await page.locator('#age-date').fill('1990-01-01');
+    await page.getByRole('dialog', { name: 'Your birth date' }).getByRole('button', { name: 'Continue', exact: true }).click();
     await page.locator('#screen-create:not(.hidden)').waitFor();
     await page.locator('#new-name').fill(`RC1 Phone ${viewport.width}`);
     await page.locator('#btn-create').click();
     await page.locator('#screen-main:not(.hidden)').waitFor();
-    await page.locator('#tour-next').click(); await page.locator('#tour-next').click();
+    await page.locator('#tour-next').click();
+    assert.match(await page.locator('#tour-next').innerText(), /MEET THE FIXER/);
+    await page.locator('#tour-next').click();
     await page.locator('#welcome.hidden').waitFor({ state: 'attached' });
-    const crime = page.locator('#tab-streets .verbrow .prime').first();
+    const enterFixer = page.getByRole('button', { name: 'Open The Fixer →', exact: true });
+    await enterFixer.waitFor({ state: 'visible' });
+    await enterFixer.click();
+    const crime = page.locator('[data-city-approach="standard"]');
     await crime.waitFor({ state: 'visible' });
     const firstResponse = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
     await crime.click(); const first = await firstResponse;
@@ -55,6 +62,7 @@ try {
     }
     assert.equal(await page.locator('.modal-bg[data-managed-dialog]:visible').count(), 0,
       'all first-action result/onboarding dialogs must have a real dismissal control');
+    if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
     await page.locator('#bnav [data-go="family"]').click();
     await page.locator('#tabs [data-tab="world"]').click();
     await page.locator('#tab-world .world-summary').waitFor();
@@ -82,6 +90,7 @@ try {
     if (overflow) findings.push(`${viewport.width}: Command Center page overflows horizontally`);
     await page.screenshot({ path: path.join(directory, `command-center-${viewport.width}.png`), fullPage: true });
     await page.reload({ waitUntil: 'networkidle' });
+    if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
     await page.locator('#bnav [data-go="family"]').click();
     await page.locator('#tabs [data-tab="world"]').click();
     await page.locator('#tab-world .world-summary').waitFor();
