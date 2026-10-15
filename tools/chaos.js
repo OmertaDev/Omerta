@@ -414,9 +414,11 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
 {
   const child = spawn('node', ['src/server.js'],
     { env: { ...process.env, PORT: '0', DRAIN_MS: '8000' }, stdio: ['ignore', 'pipe', 'pipe'] });
-  const childOut = [];
-  child.stdout.on('data', (d) => childOut.push(String(d)));
-  child.stderr.on('data', (d) => childOut.push(String(d)));
+  const childOut = [], childStdout = [];
+  child.stdout.setEncoding('utf8');
+  child.stderr.setEncoding('utf8');
+  child.stdout.on('data', (d) => { childOut.push(d); childStdout.push(d); });
+  child.stderr.on('data', (d) => childOut.push(d));
   // The OS chooses a port atomically; a random number can collide with an outgoing DB socket.
   let cbase = null;
   // A WALL-CLOCK deadline, not an iteration count. The first cut polled 100 times with a 150ms
@@ -429,7 +431,7 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
   const bootT0 = Date.now();
   let up = false;
   while (!up && Date.now() - bootT0 < BOOT_DEADLINE_MS) {
-    const listening = childOut.join('').match(/OMERTÀ backend \(M1–M5\) listening on :([1-9][0-9]*)/);
+    const listening = childStdout.join('').match(/OMERTÀ backend \(M1–M5\) listening on :([1-9][0-9]*)\r?\n/);
     if (listening) {
       const boundPort = Number(listening[1]);
       if (!Number.isInteger(boundPort) || boundPort > 65535) throw new Error('Invalid child listener port');
