@@ -1,3 +1,4 @@
+import { collectMultiHopCourierIssues } from './multihopcourier.js';
 import { customerVaultAccounting } from './customervaults.js';
 import { collectCustomerLayawayIssues } from './customerlayaway.js';
 import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
@@ -73,6 +74,7 @@ const KNOWN_REASONS = {
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'picking_packing:pay', 'picking_packing:receive',
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
+    'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
@@ -727,6 +729,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
+  const courierReserve = await one(pool, 'SELECT COALESCE(SUM(reserved_cash),0) s FROM multi_hop_couriers');
+  const courierNet = await sum(pool, "currency='cash' AND reason IN ('multi_hop_courier:reserve','multi_hop_courier:fee','multi_hop_courier:refund')");
+  push('multi-hop courier reserved fees', courierReserve, -courierNet, 0);
+  const courierIssues = await collectMultiHopCourierIssues(pool);
+  push('multi-hop courier custody and fee source', courierIssues.length, 0, 0, { issues: courierIssues });
   const vault = await customerVaultAccounting(pool);
   push('customer vault reserved custody', vault.reserve, -vault.ledgerDelta, 0);
   push('customer vault canonical funding', vault.issues.length, 0, 0, { issues: vault.issues });

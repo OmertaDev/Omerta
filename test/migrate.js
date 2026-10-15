@@ -631,6 +631,8 @@ const DISPOSITION = {
   company_production_receipts: 'metadata', // original producer receipts retain identity; exact historical replay grants no fresh heir production
   company_specializations: 'metadata', // policy stays bound to the original character and Depot; canonical estate closes that Depot and an heir cannot reuse the grant
   company_specialization_runs: 'metadata', // original producer cadence and spending history remain bound to the retired character and business
+  multi_hop_couriers: 'escrow', // original title and unearned fees recovered at estate-start
+  multi_hop_courier_requests: 'ledger', // historical original-only ACK; no fresh heir grant
   customer_vault_services: 'escrow', // original operator service closes at estate-start
   customer_vault_positions: 'escrow', // same original customer principal recovered before exactCash
   customer_layaways: 'escrow', // private estate-start refunds original buyer cash, returns original seller account title
