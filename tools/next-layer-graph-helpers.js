@@ -62,7 +62,7 @@ export const NEXT_LAYER_HELPER_PROFILES=Object.freeze([
     0
    ]
   ],
-  "sha256": "89eaaeaea0a7f39595f56422b6c27c3385bec72e42d395fa44bb053d832dab99"
+  "sha256": "e1291c68e1589ce99c7f33c22b7c44507a459235b45e1b1e94d1f0ead97c6ffc"
  },
  {
   "file": "src/customervaults.js",

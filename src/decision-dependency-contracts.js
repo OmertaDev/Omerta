@@ -427,6 +427,12 @@ export const DECISION_DEPENDENCY_SCHEMAS = {
           "forecast_memory"
         ]
       },
+      "kindName": {
+        "enum": [
+          "Intelligence purchases",
+          "Forecast memory"
+        ]
+      },
       "candidates": {
         "type": "array",
         "maxItems": 20,
@@ -484,6 +490,7 @@ export const DECISION_DEPENDENCY_SCHEMAS = {
     },
     "required": [
       "kind",
+      "kindName",
       "candidates",
       "next",
       "windowDays",

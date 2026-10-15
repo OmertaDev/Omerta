@@ -62,7 +62,8 @@ async function forecast(c,account,key,ctx){
 export async function decisionReplay(pool,account,kind,key){id(key);if(!DECISION_REPLAY.kinds.includes(kind))fail('unsupported_kind');return readSnapshot(pool,async c=>{const ctx=await context(c,account);return kind==='intelligence_purchase'?purchase(c,account,key,ctx):forecast(c,account,key,ctx);});}
 export async function decisionReplayBoard(pool,account,query){
  if(!exact(query,['kind'])&&!exact(query,['kind','after']))fail('terms');if(!DECISION_REPLAY.kinds.includes(query.kind))fail('unsupported_kind');const after=query.after===undefined?'':id(query.after);
+ const kindName=query.kind==='intelligence_purchase'?'Intelligence purchases':'Forecast memory';
  return readSnapshot(pool,async c=>{const ctx=await context(c,account),rows=query.kind==='intelligence_purchase'?(await c.query('SELECT id,purchased_at AS at FROM economic_intelligence_purchases WHERE buyer_account=$1 AND purchased_at>=$2 AND purchased_at<=$3 AND id>$4 ORDER BY id LIMIT 21',[account,new Date(ctx.start),new Date(ctx.at),after])).rows:(await c.query("SELECT id,source_at AS at FROM agent_operating_memory_facts WHERE account_id=$1 AND source_kind='forecast' AND source_at>=$2 AND source_at<=$3 AND id>$4 ORDER BY id LIMIT 21",[account,new Date(ctx.start),new Date(ctx.at),after])).rows;
-  return{kind:query.kind,candidates:rows.slice(0,20).map(r=>({id:r.id,occurredAt:new Date(date(r.at)).toISOString(),verification:'detail_required'})),next:rows.length>20?rows[19].id:null,windowDays:30,readOnly:true,unsupportedKinds:['production'],performanceClaim:'none'};
+  return{kind:query.kind,kindName,candidates:rows.slice(0,20).map(r=>({id:r.id,occurredAt:new Date(date(r.at)).toISOString(),verification:'detail_required'})),next:rows.length>20?rows[19].id:null,windowDays:30,readOnly:true,unsupportedKinds:['production'],performanceClaim:'none'};
  });
 }
