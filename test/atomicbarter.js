@@ -81,6 +81,32 @@ try {
   assert.equal((await items(drift)).find(x=>x.id===drift.y).owner_id,drift.b.account);
   const cap=await pair();const caps=[];for(let n=0;n<3;n++)caps.push(await act(cap.a,'create',body(cap),'cap-'+n));
   await assert.rejects(act(cap.a,'create',body(cap),'cap-over'),/active_limit/);await act(cap.a,'cancel',{offerId:caps[0].offerId},'cap-close');
+  assert.deepEqual(await B.atomicBarterCounterparts(pool,cap.b.id),[],'Unaccepted incoming offers cannot add actor locks');
+  const targetOffer=await act(cap.b,'create',{counterpartyCharacter:cap.a.id,offeredItemId:cap.y,requestedItemId:cap.x,expiresInSeconds:600},'target-own-offer');
+  assert.deepEqual(await B.atomicBarterCounterparts(pool,cap.b.id),[cap.a.id]);
+  const incoming=[];
+  for(let n=0;n<5;n++){
+    const maker=await player(),item=await tool(maker);
+    incoming.push(await act(maker,'create',{counterpartyCharacter:cap.b.id,offeredItemId:item,requestedItemId:cap.y,expiresInSeconds:600},'incoming-'+n));
+  }
+  assert.deepEqual(await B.atomicBarterCounterparts(pool,cap.b.id),[cap.a.id],'Unsolicited senders cannot expand finite death scope');
+  await G.withTwoCharacters(pool,foreign.account,cap.b.id,async(_observer,victim,c,h)=>{
+    await runEstate(c,h,victim,'barter unsolicited-target death');
+  },{meet:false});
+  for(const pending of [...caps.slice(1),targetOffer,...incoming])
+    assert.equal((await pool.query('SELECT state FROM atomic_barter_offers WHERE id=$1',[pending.offerId])).rows[0].state,'party_dead','All incoming metadata retires without extra actor locks');
+  assert.deepEqual(await act(cap.b,'create',{counterpartyCharacter:cap.a.id,offeredItemId:cap.y,requestedItemId:cap.x,expiresInSeconds:600},'target-own-offer'),targetOffer,'Original receipt remains an ACK after death');
+  await assert.rejects(act(cap.a,'accept',accept(targetOffer),'dead-target-accept'),/original_party/);
+  if(native){
+    const timed=await pair(),offered=[];const started=Date.now();
+    for(let n=0;n<3;n++)offered.push(await act(timed.a,'create',{...body(timed),expiresInSeconds:60},'timed-slot-'+n));
+    await assert.rejects(act(timed.a,'create',body(timed),'timed-slot-over'),/active_limit/);
+    await new Promise(resolve=>setTimeout(resolve,Math.max(0,Math.max(...offered.map(row=>+new Date(row.expiresAt)))-Date.now())+100));
+    assert(Date.now()-started>=60000,'Expiry slot release uses the actual sixty-second deadline, with no row mutation');
+    assert.deepEqual(await B.atomicBarterCounterparts(pool,timed.a.id),[]);
+    await act(timed.a,'create',body(timed),'timed-slot-reopened');
+    assert.deepEqual(await act(timed.a,'create',{...body(timed),expiresInSeconds:60},'timed-slot-0'),offered[0],'Expired receipt remains exact without fresh authority');
+  }
   const death=await pair(),deathOffer=await act(death.a,'create',body(death),'death-offer');
   await assert.rejects(tx(c=>B.voidAtomicBartersAtDeath(c,{id:death.a.id,account_id:death.a.account})),/death_required/);
   await G.withTwoCharacters(pool,foreign.account,death.a.id,async(_observer,victim,c,h)=>{

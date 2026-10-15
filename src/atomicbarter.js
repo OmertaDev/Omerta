@@ -93,10 +93,10 @@ export async function atomicBarterCommand(client, accountId, action, body, key) 
       const target = people.find(row => row.id === normalized.counterpartyCharacter);
       offer = { id: crypto.randomUUID(), maker_account: accountId, taker_account: target.account_id, maker_character: caller.id,
         taker_character: target.id, offered_item: normalized.offeredItemId, requested_item: normalized.requestedItemId, state: 'offered', receipt: null };
-      for (const person of people) {
-        const active = (await client.query("SELECT id FROM atomic_barter_offers WHERE (maker_character=$1 OR taker_character=$1) AND state='offered' ORDER BY id LIMIT 4", [person.id])).rows;
-        if (active.length >= ATOMIC_BARTER.activeLimit) fail('active_limit');
-      }
+      // Only the author spends a slot. An unsolicited offer grants no custody
+      // and cannot consume the target's authority or finite death lock scope.
+      const active = (await client.query("SELECT id FROM atomic_barter_offers WHERE maker_character=$1 AND state='offered' AND expires_at>clock_timestamp() ORDER BY id LIMIT 4", [caller.id])).rows;
+      if (active.length >= ATOMIC_BARTER.activeLimit) fail('active_limit');
       await tools(client, offer); offer.expires_at = new Date(+await clock(client) + normalized.expiresInSeconds * 1000);
       Items.registerItemTransactionUndo(client, () => client.query('DELETE FROM atomic_barter_offers WHERE id=$1', [offer.id]));
       await client.query("INSERT INTO atomic_barter_offers(id,maker_account,taker_account,maker_character,taker_character,offered_item,requested_item,expires_at,state) VALUES($1,$2,$3,$4,$5,$6,$7,$8,'offered')", [offer.id,accountId,target.account_id,caller.id,target.id,offer.offered_item,offer.requested_item,offer.expires_at]);
@@ -138,7 +138,7 @@ export async function ownAtomicBarterBoard(pool, accountId) {
   return Items.withItemRead(pool, async client => ({ offers: (await client.query('SELECT * FROM atomic_barter_offers WHERE maker_account=$1 OR taker_account=$1 ORDER BY id LIMIT 50', [accountId])).rows.map(dto) }));
 }
 export async function atomicBarterCounterparts(pool, characterId) {
-  id(characterId); const rows = (await pool.query("SELECT maker_character,taker_character FROM atomic_barter_offers WHERE (maker_character=$1 OR taker_character=$1) AND state='offered' ORDER BY id LIMIT 4", [characterId])).rows;
+  id(characterId); const rows = (await pool.query("SELECT maker_character,taker_character FROM atomic_barter_offers WHERE maker_character=$1 AND state='offered' AND expires_at>clock_timestamp() ORDER BY id LIMIT 4", [characterId])).rows;
   if (rows.length > ATOMIC_BARTER.activeLimit) fail('active_limit');
   return rows.flatMap(row => [row.maker_character,row.taker_character]).filter((value,index,all) => value !== characterId && all.indexOf(value) === index).sort();
 }
@@ -147,8 +147,9 @@ export async function voidAtomicBartersAtDeath(client, victim) {
   try {
     const dead = (await client.query('SELECT alive,account_id FROM characters WHERE id=$1', [id(victim.id)])).rows[0];
     if (!dead || dead.alive !== false || dead.account_id !== victim.account_id) fail('death_required');
-    const rows = (await client.query("SELECT * FROM atomic_barter_offers WHERE (maker_character=$1 OR taker_character=$1) AND state='offered' ORDER BY id LIMIT 4 FOR UPDATE", [victim.id])).rows;
-    if (rows.length > ATOMIC_BARTER.activeLimit) fail('active_limit');
+    // Incoming offers hold no assets and require no maker actor lock. Retire
+    // their metadata after the victim lock, without an attacker-controlled cap.
+    const rows = (await client.query("SELECT * FROM atomic_barter_offers WHERE (maker_character=$1 OR taker_character=$1) AND state='offered' ORDER BY id FOR UPDATE", [victim.id])).rows;
     for (const row of rows) { restore(client,row); await client.query("UPDATE atomic_barter_offers SET state='party_dead' WHERE id=$1", [row.id]); }
     return { retired: rows.length };
   } catch (error) { Items.poisonItemTransaction(client,error); throw error; }
