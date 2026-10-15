@@ -876,6 +876,13 @@ jobs:
           COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
         run: npm run test:company-autonomy:postgres
 
+      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          RESOURCE_ECONOMY: 'off'
+          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+        run: npm run test:agent-economy-next-five:postgres
+
       - name: Nonempty loan expiry process recovery (real PostgreSQL)
         if: '!cancelled()'
         env:

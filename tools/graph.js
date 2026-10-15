@@ -290,6 +290,94 @@ export function extractAutonomyObservationChecks(invariants, helpers) {
 
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
+// Source-bound physical-commerce money witnesses. Unknown helper bytes/shapes yield no inferred coverage.
+export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
+  {
+    "file": "src/consignments.js",
+    "fn": "collectConsignmentIssues",
+    "check": "consignment sale books",
+    "variable": "consignmentIssues",
+    "reasons": [
+      "consignment:purchase",
+      "consignment:proceeds",
+      "consignment:host_fee"
+    ],
+    "anchors": [
+      "['consignment:host_fee',row.host_character,fee]",
+      "['consignment:proceeds',row.owner_character,Number(row.price)-fee]",
+      "['consignment:purchase',row.buyer_character,-Number(row.price)]",
+      "legs[i]?.currency!=='cash'",
+      "Number(legs[i]?.amount)!==amount"
+    ],
+    "sha256": "a922fc2b2017838aba0fdfc65b20355809673bd5d33a27b6c4b98d1262cf539f",
+    "import": "import { collectConsignmentIssues } from './consignments.js';",
+    "call": "const consignmentIssues = await collectConsignmentIssues(pool);",
+    "push": "push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });",
+    "sql": "SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee') ORDER BY reason",
+    "extraBindings": [
+      "const consignmentNet = await sum(pool, \"currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')\");"
+    ]
+  },
+  {
+    "file": "src/commissionedcrafting.js",
+    "fn": "collectCommissionedCraftingIssues",
+    "check": "commissioned crafting canonical sources",
+    "variable": "commissionIssues",
+    "reasons": [
+      "commissioned_crafting:reserve",
+      "commissioned_crafting:fee",
+      "commissioned_crafting:refund"
+    ],
+    "anchors": [
+      "reserve[0].character_id!==row.customer_character",
+      "Number(reserve[0].amount)!==-Number(row.fee_total)",
+      "t.character_id!==row.maker_character:t.character_id!==row.customer_character",
+      "Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)"
+    ],
+    "sha256": "42ec4cfa9e3ba75417dd674e430381772bc7cd40528ec373f78c84d81d962899",
+    "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
+    "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
+    "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",
+    "sql": "SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id",
+    "extraBindings": []
+  },
+  {
+    "file": "src/pickingpackinginvariants.js",
+    "fn": "collectPickingPackingIssues",
+    "check": "picking packing paid custody books",
+    "variable": "pickingIssues",
+    "reasons": [
+      "picking_packing:pay",
+      "picking_packing:receive"
+    ],
+    "anchors": [
+      "debit.character_id!==job.tenant_character",
+      "credit.character_id!==job.provider_character",
+      "debit.account_id!==job.tenant_account",
+      "credit.account_id!==job.provider_account",
+      "Number(debit.amount)!==-Number(job.fee_cash)",
+      "Number(credit.amount)!==Number(job.fee_cash)"
+    ],
+    "sha256": "0f6f6576f2de6403b7375d1d65ce12f1e7d740f59f75d4cbe5a793fe6acb1baa",
+    "import": "import { collectPickingPackingIssues } from './pickingpackinginvariants.js';",
+    "call": "const pickingIssues = await collectPickingPackingIssues(pool);",
+    "push": "push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });",
+    "sql": "SELECT * FROM transactions WHERE reason IN ('picking_packing:pay','picking_packing:receive') ORDER BY id",
+    "extraBindings": [
+      "const pickingNet = await sum(pool, \"currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')\");"
+    ]
+  }
+].map(p=>Object.freeze({...p,reasons:Object.freeze(p.reasons),anchors:Object.freeze(p.anchors),extraBindings:Object.freeze(p.extraBindings)})));
+export function extractNextFiveHelperReconciliations(invariants,helpers){
+ invariants=normalizeText(invariants);if(!helpers||typeof helpers!=='object'||Object.keys(helpers).some(file=>!NEXT_FIVE_HELPER_PROFILES.some(p=>p.file===file)))return[];
+ const lines=invariants.split('\n'),terms=[],exact=statement=>lines.flatMap((line,i)=>line.trim()===statement?[i]:[]);
+ for(const p of NEXT_FIVE_HELPER_PROFILES){if(typeof helpers[p.file]!=='string')continue;const helper=normalizeText(helpers[p.file]);if(crypto.createHash('sha256').update(helper).digest('hex')!==p.sha256)continue;
+  const imports=exact(p.import),calls=exact(p.call),pushes=exact(p.push);if(imports.length!==1||calls.length!==1||pushes.length!==1||imports[0]>=calls[0]||calls[0]>=pushes[0]||p.extraBindings.some(s=>exact(s).length!==1||exact(s)[0]>=pushes[0]))continue;
+  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;const body=helper.slice(start),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;
+  for(const reason of p.reasons)terms.push({check:p.check,reason,file:p.file,line:helper.slice(0,start+query).split('\n').length,bindingLine:pushes[0]+1,sourceSha256:p.sha256});
+ }return terms;
+}
+
 export function isMainModule(moduleUrl, argvEntry) {
   if (!argvEntry) return false;
   try {
@@ -539,6 +627,12 @@ export function build() {
     const prov = {file:term.file,line:term.line,hash:sha(autonomyHelpers[term.file]),binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);
     edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractNextFiveHelperReconciliations(inv,nextFiveHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(nextFiveHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 
   // ── Suites: what they cover, what they pin ─────────────────────────────────────────────────────
