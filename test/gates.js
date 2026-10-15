@@ -3602,7 +3602,7 @@ scopedSocialContext = async function(db) {
   }
   if([...visited].some(name=>/node tools\/next-layer-native\.js(?:\s|$)/.test(scripts[name]||''))) {
     const {NEXT_LAYER_NATIVE_PROOFS,assertNextLayerInventory}=await import('../tools/next-layer-native.js');
-    assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);assert.equal(NEXT_LAYER_NATIVE_PROOFS.length,17);
+    assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);assert.equal(NEXT_LAYER_NATIVE_PROOFS.length,18);
     for(const[file]of NEXT_LAYER_NATIVE_PROOFS){assert(fs.existsSync(path.join(ROOT,'test/'+file+'.js')));covered.add('test/'+file+'.js');}
   }
   if([...visited].some(name=>/node tools\/market-operations-native\.js(?:\s|$)/.test(scripts[name]||''))) {
