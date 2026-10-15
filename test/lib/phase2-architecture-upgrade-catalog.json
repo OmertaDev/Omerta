@@ -6660,6 +6660,356 @@
       "table_name": "multi_hop_couriers",
       "name": "multi_hop_couriers_status_check",
       "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'ready'::text, 'first_leg'::text, 'second_leg'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_check",
+      "definition": "CHECK (owner_account <> first_account AND owner_account <> second_account AND first_account <> second_account)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_check1",
+      "definition": "CHECK (owner_character <> first_character AND owner_character <> second_character AND first_character <> second_character)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_check2",
+      "definition": "CHECK (status <> 'active'::text OR first_consent AND second_consent)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_check3",
+      "definition": "CHECK ((status = 'completed'::text) = (completion IS NOT NULL))"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_first_account_fkey",
+      "definition": "FOREIGN KEY (first_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_first_character_fkey",
+      "definition": "FOREIGN KEY (first_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_hub_id_fkey",
+      "definition": "FOREIGN KEY (hub_id) REFERENCES company_logistics_hubs(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_network_id_fkey",
+      "definition": "FOREIGN KEY (network_id) REFERENCES multi_hop_couriers(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_network_source_hash_check",
+      "definition": "CHECK (char_length(network_source_hash) = 64)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_second_account_fkey",
+      "definition": "FOREIGN KEY (second_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_second_character_fkey",
+      "definition": "FOREIGN KEY (second_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "cross_dock_links",
+      "name": "cross_dock_links_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'completed'::text, 'released'::text, 'expired'::text, 'void'::text]))"
+    },
+    {
+      "table_name": "cross_dock_requests",
+      "name": "cross_dock_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "cross_dock_requests",
+      "name": "cross_dock_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "cross_dock_requests",
+      "name": "cross_dock_requests_link_id_fkey",
+      "definition": "FOREIGN KEY (link_id) REFERENCES cross_dock_links(id)"
+    },
+    {
+      "table_name": "cross_dock_requests",
+      "name": "cross_dock_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "cross_dock_requests",
+      "name": "cross_dock_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_check",
+      "definition": "CHECK (account_ref IS NULL OR account_ref = account_id)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_check1",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND return_ref IS NULL OR receipt IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL AND return_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_return_ref_fkey",
+      "definition": "FOREIGN KEY (return_ref) REFERENCES merchant_return_rights(id)"
+    },
+    {
+      "table_name": "merchant_return_requests",
+      "name": "merchant_return_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check",
+      "definition": "CHECK (seller_account <> buyer_account)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check1",
+      "definition": "CHECK (seller_character <> buyer_character)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check2",
+      "definition": "CHECK (refund_cash = (escrow_cash + paid_cash + refunded_cash))"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check3",
+      "definition": "CHECK ((state = ANY (ARRAY['offered'::text, 'accepted'::text])) AND escrow_cash = refund_cash AND settlement IS NULL OR (state <> ALL (ARRAY['offered'::text, 'accepted'::text])) AND escrow_cash = 0 AND settlement IS NOT NULL)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check4",
+      "definition": "CHECK (state = 'returned'::text AND paid_cash = refund_cash AND refunded_cash = 0 OR state <> 'returned'::text AND paid_cash = 0)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_check5",
+      "definition": "CHECK ((state <> ALL (ARRAY['accepted'::text, 'returned'::text, 'waived'::text])) OR accepted_at IS NOT NULL)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_condition_floor_check",
+      "definition": "CHECK (condition_floor >= 10 AND condition_floor <= 150)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_refund_cash_check",
+      "definition": "CHECK (refund_cash >= 1 AND refund_cash <= 1000000)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_reserve_journal_fkey",
+      "definition": "FOREIGN KEY (reserve_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_reserve_journal_key",
+      "definition": "UNIQUE (reserve_journal)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_sale_id_fkey",
+      "definition": "FOREIGN KEY (sale_id) REFERENCES consignments(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "merchant_return_rights",
+      "name": "merchant_return_rights_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'returned'::text, 'waived'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "production_slot_requests",
+      "name": "production_slot_requests_reservation_id_fkey",
+      "definition": "FOREIGN KEY (reservation_id) REFERENCES production_slot_reservations(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_check",
+      "definition": "CHECK (maker_account <> customer_account AND maker_character <> customer_character)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_check1",
+      "definition": "CHECK (ready_at < deadline)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_check2",
+      "definition": "CHECK ((status = 'consumed'::text) = (completion IS NOT NULL))"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_commission_id_fkey",
+      "definition": "FOREIGN KEY (commission_id) REFERENCES commissioned_crafting_contracts(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_commission_source_hash_check",
+      "definition": "CHECK (char_length(commission_source_hash) = 64)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_customer_account_fkey",
+      "definition": "FOREIGN KEY (customer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_customer_character_fkey",
+      "definition": "FOREIGN KEY (customer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_maker_account_fkey",
+      "definition": "FOREIGN KEY (maker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_maker_character_fkey",
+      "definition": "FOREIGN KEY (maker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_profile_revision_check",
+      "definition": "CHECK (profile_revision >= 1)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "production_slot_reservations",
+      "name": "production_slot_reservations_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'consumed'::text, 'released'::text, 'expired'::text, 'void'::text]))"
     }
   ],
   "removed": [
@@ -8621,6 +8971,84 @@
       "original_character",
       "network_id",
       "receipt"
+    ],
+    "cross_dock_links": [
+      "id",
+      "network_id",
+      "network_source_hash",
+      "hub_id",
+      "hub_source",
+      "item_id",
+      "owner_account",
+      "owner_character",
+      "first_account",
+      "first_character",
+      "second_account",
+      "second_character",
+      "source_hash",
+      "expires_at",
+      "first_consent",
+      "second_consent",
+      "status"
+    ],
+    "cross_dock_requests": [
+      "account_id",
+      "request_key",
+      "body_hash",
+      "original_character",
+      "link_id",
+      "receipt"
+    ],
+    "production_slot_reservations": [
+      "id",
+      "commission_id",
+      "commission_source_hash",
+      "business_id",
+      "maker_account",
+      "maker_character",
+      "customer_account",
+      "customer_character",
+      "profile_revision",
+      "profile_source",
+      "observed_at",
+      "ready_at",
+      "deadline",
+      "source_hash",
+      "status"
+    ],
+    "production_slot_requests": [
+      "account_id",
+      "request_key",
+      "body_hash",
+      "original_character",
+      "reservation_id",
+      "receipt"
+    ],
+    "merchant_return_rights": [
+      "id",
+      "sale_id",
+      "sale_hash",
+      "item_id",
+      "seller_account",
+      "seller_character",
+      "buyer_account",
+      "buyer_character",
+      "refund_cash",
+      "escrow_cash",
+      "paid_cash",
+      "refunded_cash",
+      "condition_floor",
+      "expires_at",
+      "source_hash",
+      "reserve_journal",
+      "state"
+    ],
+    "merchant_return_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "request_json"
     ]
   }
 }
