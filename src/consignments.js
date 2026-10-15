@@ -89,6 +89,7 @@ async function execute(c,account,terms,run){
   if(terms.action==='buy'){
     live(rows);if(rows.length!==3||[owner.account_id,host.account_id].includes(account)||row.status!=='active')fail('buyer');if(jailed(caller)||safeHoused(caller)||caller.loc!==host.loc)fail('pickup');
     const condition=await custody(c,row);if(+await clock(c)>=+new Date(row.expires_at))fail('expired');const fee=Math.floor(Number(row.price)*Number(row.host_fee_bps)/10000);
+    for(const [actor,delta] of [[caller,-Number(row.price)],[owner,Number(row.price)-fee],[host,fee]])if(!Number.isSafeInteger(Number(actor.cash))||!Number.isSafeInteger(Number(actor.cash)+delta)||Number(actor.cash)+delta<0)fail('cash');
     const result=await withItemMutation(c,title(row.owner_account),'operation_action','consignment:'+run+':sale',{consignmentId:row.id,sourceHash:row.source_hash,buyerAccount:account,itemAuthority:{operations:[row.id],destinations:[title(row.owner_account),title(account)]}},async mutation=>{
       await releaseEscrow(c,row.id,title(row.owner_account),row.item_id,'consignment original depositor sale release',mutation);
       await transferItem(c,title(row.owner_account),title(account),row.item_id,'consignment buyer title transfer',mutation);
