@@ -25,6 +25,7 @@ import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
 import { collectConsignmentIssues } from './consignments.js';
 import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
+import { collectPickingPackingIssues } from './pickingpackinginvariants.js';
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -67,6 +68,7 @@ const KNOWN_REASONS = {
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
+    'picking_packing:pay', 'picking_packing:receive',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
@@ -739,6 +741,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const pickingIssues = await collectPickingPackingIssues(pool);
+  const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
+  push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);

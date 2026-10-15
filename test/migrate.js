@@ -637,6 +637,8 @@ const DISPOSITION = {
   atomic_barter_requests: 'ledger', // original two-item request identities and completed ACKs grant no heir authority
   commissioned_crafting_contracts: 'escrow', // actual estate refunds original materials and fee before estate cash, then preserves closed provenance
   commissioned_crafting_requests: 'ledger', // immutable original request receipts remain historical ACKs
+  picking_packing_jobs: 'special', // actual estate retires original pending consent without moving tenant goods or fees
+  picking_packing_requests: 'ledger', // original paired custody-service receipts remain historical only
   equipment_rental_requests: 'metadata', // original-account receipts retain the original actor and grant no fresh heir lease authority
   equipment_rental_offers: 'special', // original landlord death cancels publication consent while preserving account-title tools and historical receipts
   equipment_rental_leases: 'escrow', // actual estate returns physical title and burns dead borrower deposits or refunds only the surviving original borrower

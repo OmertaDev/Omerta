@@ -40,6 +40,7 @@ import { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';
 import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
 import { recoverConsignmentsInEstate } from '../consignments.js';
 import { recoverAtomicBartersInEstate } from '../atomicbarter.js';
+import { recoverPickingPackingInEstate } from '../pickingpacking.js';
 import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
 import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -500,6 +501,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
+  await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);
   const commissionRecovery = await recoverCommissionedCraftingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   for (const receipt of commissionRecovery) {
     for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {
