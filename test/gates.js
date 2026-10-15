@@ -3649,8 +3649,13 @@ scopedSocialContext = async function(db) {
 
   const timeouts = (block) => [...block.matchAll(/^    timeout-minutes:\s*(\d+)\s*$/gm)]
     .map((m) => Number(m[1]));
-  assert.deepEqual(timeouts(suites), [75],
-    'the `suites` job must have exactly one 75-minute HANG bound for the measured full lifecycle');
+  assert.deepEqual(timeouts(suites), [120],
+    'the `suites` job must retain exactly one finite 120-minute HANG bound after the observed75m commercial timeout');
+  for(const invalid of ['0','60','75','90','121','${{ inputs.suites_timeout }}','unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: '+invalid)),[120]),'Unknown suites wall bound must reject');
+  }
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace(/^    timeout-minutes: 120\r?\n/m,'')),[120]),'Missing suites wall bound must reject');
+  assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: 120\n    timeout-minutes: 120')),[120]),'Duplicate suites wall bound must reject');
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [90],
@@ -3920,7 +3925,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at 75m, browser at 25m and FOURTH pgcheck at 90m, with every lane intact');
+  console.log('  ✓ CI keeps suites at finite120m, browser at 25m and FOURTH pgcheck at 90m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
