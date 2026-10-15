@@ -9906,7 +9906,11 @@
       </div><div id="map-neighborhood"><div id="city-scene-host"></div></div>
       <div id="map-territory-board" hidden></div>`;
       $('#map-mode-walk').onclick = event => enterNeighborhood(event.currentTarget);
-      $('#map-mode-territory').onclick = () => { _mapMode = 'territory'; syncMapMode(); };
+      $('#map-mode-territory').onclick = () => {
+        const leavingPlayer = document.body.classList.contains('city-player-view');
+        _mapMode = 'territory'; syncMapMode();
+        if (leavingPlayer) $('#player-view-switch').scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+      };
       $('#city-travel-open').onclick = () => setTab('city');
     }
     $('#map-territory-board').innerHTML = reply.code >= 400
