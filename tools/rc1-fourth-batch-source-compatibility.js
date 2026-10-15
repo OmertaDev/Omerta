@@ -245,4 +245,5 @@ export function assertFourthBatchSourceTransfer(file,input){
 }
 // Unknown representations remain byte-exact for the original rejecting guard.
 export function fourthBatchSourceBaseline(file,input){input=economyReleaseSource('commercial',file,input);assert.equal(typeof input,'string');const text=lf(input),d=FOURTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer(file,input).baselineText:input;}
-export function fourthBatchMigrationSchema(input){return fourthBatchSourceBaseline('schema.sql',input);}
+// Native admission must not inherit the outer source-only merge envelope.
+export function fourthBatchMigrationSchema(input){assert.equal(typeof input,'string');const text=lf(input),d=FOURTH_BATCH_SOURCE_DOMAINS['schema.sql'];return hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer('schema.sql',input).baselineText:input;}

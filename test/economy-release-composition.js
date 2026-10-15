@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { COMPOSITION_REVISION, COMPOSITION_PHASE, COMPOSITION_PROFILES,
   assertEconomyReleaseComposition, economyReleaseSource } from '../tools/economy-release-composition.js';
+import { fourthBatchMigrationSchema, fourthBatchSourceBaseline } from '../tools/rc1-fourth-batch-source-compatibility.js';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 const lf = text => text.replaceAll('\r\n', '\n');
@@ -52,3 +53,8 @@ for (const [profile, file] of [['unknown', 'schema.sql'], ['main', 'src/unknown.
   negatives++;
 }
 console.log(`economy release composition: ${domains} complete source domains, ${negatives} rejecting controls; source only`);
+const mergedSchema = git('show', COMPOSITION_REVISION + ':schema.sql');
+for (const text of [mergedSchema, mergedSchema.replaceAll('\n', '\r\n')]) {
+  assert.notEqual(fourthBatchSourceBaseline('schema.sql', text), text, 'Exact source reconstruction is available');
+  assert.equal(fourthBatchMigrationSchema(text), text, 'Source reconstruction never grants historical native schema admission');
+}
