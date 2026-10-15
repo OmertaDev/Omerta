@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `3d375c187b8b`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `202e1320b012`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3882 |
+| Commits in clone | 3886 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-15 — test: pin final merged autonomy source pair without changing older relations |
+| Latest commit | 2026-10-15 — test: bind autonomy rehearsal to corrected commercial dependency |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2923 |
+| OmertaDev | 2927 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 114 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 645 | historical |
-| knowledge/generated/graph-summary.md | 645 | historical |
-| knowledge/generated/graph.json | 645 | historical |
-| knowledge/generated/inventory.md | 645 | historical |
+| knowledge/generated/github-history.md | 647 | historical |
+| knowledge/generated/graph-summary.md | 647 | historical |
+| knowledge/generated/graph.json | 647 | historical |
+| knowledge/generated/inventory.md | 647 | historical |
 | [SPEC.md](../../SPEC.md) | 524 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 465 | yes |
 | [src/server.js](../../src/server.js) | 424 | yes |
 | [schema.sql](../../schema.sql) | 356 | yes |
-| knowledge/generated/documents.md | 325 | historical |
+| knowledge/generated/documents.md | 326 | historical |
 | [package.json](../../package.json) | 311 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 232 | historical |
