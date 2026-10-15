@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 733 | 2026-10-14 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 741 | 2026-10-15 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -541,7 +541,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 181 | 2026-10-15 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 180 | 2026-10-15 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
