@@ -1,4 +1,3 @@
-import { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';
 import crypto from 'node:crypto';
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
@@ -7,6 +6,13 @@ import { assertEquipmentUsable } from './itemdurability.js';
 import { consignmentDeathCounterparts } from './consignments.js';
 import { atomicBarterCounterparts } from './atomicbarter.js';
 import { pickingPackingCounterparts } from './pickingpacking.js';
+
+// Commission recovery depends on crafting, whose default graph is validated at module load.
+// Defer this reader inside the existing async death hooks to avoid an initialization cycle.
+async function commissionedCraftingDeathCounterparts(client, characterId) {
+  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');
+  return discover(client, characterId);
+}
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
 export const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (

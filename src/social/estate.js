@@ -1,4 +1,3 @@
-import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
 import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
 import { retireManagementTeamsAtDeath } from '../managementteams.js';
@@ -184,6 +183,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  // Commission recovery loads after module initialization, using the existing estate scope.
+  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
   for (const receipt of commissionStart) {
     if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');
