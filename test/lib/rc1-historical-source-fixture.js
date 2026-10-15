@@ -12,6 +12,7 @@ import dns from 'node:dns';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -25,7 +26,7 @@ const composedHistoricalHelperPins = Object.freeze({
   "tools/rc1-first-batch-source-compatibility.js": Object.freeze({"sha256":"41ca8a1a01a1d1d456d0f19643e8634bdf5d6169b4d9acd91e391ca714c7b258","blob":"562619d11db7f42397d577fc247695dc6b12b2e3"}),
   "tools/rc1-second-batch-source-compatibility.js": Object.freeze({"sha256":"e8a81539af29d3f1c7662141bb32c61b211881ee954f900bf7bb03e173d5d2f8","blob":"8fda1bc4a43c0ce906a3e0b48986963e9eaba026"}),
   "tools/rc1-third-batch-source-compatibility.js": Object.freeze({"sha256":"a2040f0c71187914b91c10826a026ba6ba2cc669bbe10d07b554966ce6daad47","blob":"e46e3056591d37bf611727f834f06a4f603764e8"}),
-  "tools/release-source-transfer.js": Object.freeze({"sha256":"6ef0d46f581c88c18b95ea365e8845c486110268bb31fe4e064a607943d71eac","blob":"9f6156529def34110a97c8562b2ad20d90297453"}),
+  "tools/release-source-transfer.js": Object.freeze({"sha256":"7024f1267fc392189111beb9cf1fa328490f81ae227fd7fe17fc2c030f3facef","blob":"7a74deb2e809c3ab2c70a962f1efc4f2c0547a29"}),
 });
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
@@ -88,7 +89,7 @@ function historical(file) {
   if (!checked.has(file)) {
     const actual = originalRead(path.join(root, file)), expected = blob(file, release);
     // Reconstruct only recognized current bytes; the frozen b12 tool graph stays separate.
-    let reviewed = economyReleaseSource('main', file, String(actual));
+    let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, String(actual)));
     if (sha256(canonical(reviewed)) !== sha256(expected)) reviewed = fourthBatchSourceBaseline(file, reviewed);
     assert.equal(sha256(canonical(reviewed)), sha256(expected), 'Current release input changed outside historical fixture: ' + file);
     assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);
