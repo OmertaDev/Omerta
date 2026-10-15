@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "569296be60e8cdcfd66fa88b8439184475e5a107",
+  "sourceRevision": "b34a3677b7763d4bc4506f8240aafcb305d254d1",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14722,
-    "edges": 57927,
+    "nodes": 14724,
+    "edges": 57940,
     "byNodeType": {
       "Artifact": 6423,
       "Command": 273,
-      "Commit": 3643,
+      "Commit": 3645,
       "Contract": 133,
       "Document": 899,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5044,
-      "CHANGED": 22660,
+      "CHANGED": 22671,
       "CONTAINS": 6444,
       "DECLARES": 273,
       "DEFINED_IN": 1639,
       "DEPENDS_ON": 68,
       "EXECUTES": 965,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3643,
+      "HAS_COMMIT": 3645,
       "IMPLEMENTS": 124,
       "IMPORTS": 5828,
       "INHERITS": 45,
@@ -137120,20 +137120,20 @@
       "path": "test/rc1-mobile-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7512,
-      "lines": 103,
-      "version": "85028cdc549072be",
+      "bytes": 8177,
+      "lines": 112,
+      "version": "c43d539cdc7c6bbb",
       "text": true,
       "provenance": [
         {
           "file": "test/rc1-mobile-postgres.js",
           "line": 1,
-          "version": "85028cdc549072be"
+          "version": "c43d539cdc7c6bbb"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-10-15T15:58:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
     },
     {
       "key": "Artifact:test/rc1-mod-ingress-postgres.js",
@@ -143859,20 +143859,20 @@
       "path": "tools/mobile.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 67815,
-      "lines": 1084,
-      "version": "3f64ef5875496c7b",
+      "bytes": 70968,
+      "lines": 1129,
+      "version": "96a4083a426bc31f",
       "text": true,
       "provenance": [
         {
           "file": "tools/mobile.js",
           "line": 1,
-          "version": "3f64ef5875496c7b"
+          "version": "96a4083a426bc31f"
         }
       ],
-      "lastChangedAt": "2026-10-15T02:32:39.000Z",
+      "lastChangedAt": "2026-10-15T15:58:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      "lastChangedCommit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -145374,20 +145374,20 @@
       "path": "tools/rc1-mobile-journeys.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 22493,
+      "bytes": 22592,
       "lines": 311,
-      "version": "327cc1025527d723",
+      "version": "bd06221331960a80",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-mobile-journeys.js",
           "line": 1,
-          "version": "327cc1025527d723"
+          "version": "bd06221331960a80"
         }
       ],
-      "lastChangedAt": "2026-09-21T08:16:19.000Z",
+      "lastChangedAt": "2026-10-15T15:58:26.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4fcfb570172e49f420171f0824177d77ece18ebe"
+      "lastChangedCommit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
     },
     {
       "key": "Artifact:tools/rc1-mystery-policies.js",
@@ -192762,6 +192762,22 @@
       ]
     },
     {
+      "key": "Commit:b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "type": "Commit",
+      "id": "b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "label": "test(mobile): follow neighborhood onboarding and navigation",
+      "title": "test(mobile): follow neighborhood onboarding and navigation",
+      "date": "2026-10-15T15:58:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "provenance": [
+        {
+          "commit": "b34a3677b7763d4bc4506f8240aafcb305d254d1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b34a3677b7763d4bc4506f8240aafcb305d254d1"
+        }
+      ]
+    },
+    {
       "key": "Commit:b34c79f9e43bd2960801f3ecc9a3426af5907d3a",
       "type": "Commit",
       "id": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a",
@@ -206102,6 +206118,22 @@
         {
           "commit": "f14924b211be5639608d945349eb23b6c8bb95ec",
           "url": "https://github.com/OmertaDev/Omerta/commit/f14924b211be5639608d945349eb23b6c8bb95ec"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "type": "Commit",
+      "id": "f15e073320afd9762ab6402a44af6159d7287bbf",
+      "label": "chore(knowledge): refresh for neighborhood play improvements",
+      "title": "chore(knowledge): refresh for neighborhood play improvements",
+      "date": "2026-10-15T15:46:26.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f15e073320afd9762ab6402a44af6159d7287bbf",
+      "provenance": [
+        {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f15e073320afd9762ab6402a44af6159d7287bbf"
         }
       ]
     },
@@ -234554,6 +234586,9 @@
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+        },
+        {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
         },
         {
@@ -236409,6 +236444,9 @@
         },
         {
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
+        },
+        {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
@@ -238328,6 +238366,9 @@
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+        },
+        {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
         },
         {
@@ -240245,6 +240286,9 @@
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+        },
+        {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
         },
         {
@@ -240861,6 +240905,9 @@
         },
         {
           "commit": "eda810aa3522f9fb2e83d7aa852738e16126dd1b"
+        },
+        {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
@@ -242696,6 +242743,9 @@
           "commit": "f06e261603161ca8131996e8bfc9b8dc177663c4"
         },
         {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+        },
+        {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
         },
         {
@@ -243450,6 +243500,9 @@
         },
         {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
+        },
+        {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
@@ -244212,6 +244265,9 @@
         },
         {
           "commit": "ef0949bc74a2cc87773e018676f008b8e0d47ec7"
+        },
+        {
+          "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
         },
         {
           "commit": "f195e802627dab1d82f95736004ccc79d661d558"
@@ -254960,7 +255016,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "569296be60e8cdcfd66fa88b8439184475e5a107",
+      "revision": "b34a3677b7763d4bc4506f8240aafcb305d254d1",
       "currentBranch": "codex/city-play-experience-20261015",
       "defaultBranch": "main",
       "visibility": "public",
@@ -296509,13 +296565,13 @@
       "type": "TestSuite",
       "id": "test/rc1-mobile-postgres.js",
       "label": "test/rc1-mobile-postgres.js",
-      "lines": 103,
-      "version": "85028cdc549072be",
+      "lines": 112,
+      "version": "c43d539cdc7c6bbb",
       "provenance": [
         {
           "file": "test/rc1-mobile-postgres.js",
           "line": 1,
-          "version": "85028cdc549072be"
+          "version": "c43d539cdc7c6bbb"
         }
       ]
     },
@@ -455767,6 +455823,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "to": "Artifact:test/rc1-mobile-postgres.js",
+      "provenance": {
+        "commit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "to": "Artifact:tools/mobile.js",
+      "provenance": {
+        "commit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "to": "Artifact:tools/rc1-mobile-journeys.js",
+      "provenance": {
+        "commit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:b34c79f9e43bd2960801f3ecc9a3426af5907d3a",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -514139,6 +514219,70 @@
       "to": "Artifact:tools/rc1-native-determinism.js",
       "provenance": {
         "commit": "f14924b211be5639608d945349eb23b6c8bb95ec"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
       }
     },
     {
@@ -640547,6 +640691,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:b34a3677b7763d4bc4506f8240aafcb305d254d1",
+      "provenance": {
+        "commit": "b34a3677b7763d4bc4506f8240aafcb305d254d1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:b34c79f9e43bd2960801f3ecc9a3426af5907d3a",
       "provenance": {
         "commit": "b34c79f9e43bd2960801f3ecc9a3426af5907d3a"
@@ -647214,6 +647366,14 @@
       "to": "Commit:f14924b211be5639608d945349eb23b6c8bb95ec",
       "provenance": {
         "commit": "f14924b211be5639608d945349eb23b6c8bb95ec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f15e073320afd9762ab6402a44af6159d7287bbf",
+      "provenance": {
+        "commit": "f15e073320afd9762ab6402a44af6159d7287bbf"
       }
     },
     {
