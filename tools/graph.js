@@ -231,6 +231,63 @@ export function extractCommercialHelperReconciliations(invariants, helpers) {
   return terms;
 }
 
+// Reviewed V imported witnesses: real paired cash versus recorded observation provenance.
+// Complete normalized helper pins bind SQL, amount/party checks, and bounded UNKNOWN behavior.
+const AUTONOMY_GRAPH_WITNESSES = [
+  {
+    "check": "economic intelligence paired provenance",
+    "file": "src/economicintelligence.js",
+    "fn": "economicIntelligenceTransferBooks",
+    "variable": "intelligenceBooks",
+    "import": "import { economicIntelligenceTransferBooks } from './economicintelligence.js';",
+    "call": "const intelligenceBooks = await economicIntelligenceTransferBooks(pool);",
+    "binding": "push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });",
+    "sha256": "6d93a9c38e7543fad2158a2939c832be21c043d4b5a6f7a0b7a61a5ab7a5571e",
+    "reasons": [
+      "economic_intelligence:pay",
+      "economic_intelligence:receive"
+    ]
+  },
+  {
+    "check": "strategy laboratory canonical observations",
+    "file": "src/strategylaboratories.js",
+    "fn": "collectStrategyLaboratoryIssues",
+    "variable": "labIssues",
+    "import": "import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';",
+    "call": "const labIssues = await collectStrategyLaboratoryIssues(pool);",
+    "binding": "push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });",
+    "sha256": "ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9",
+    "reasons": []
+  }
+];
+function autonomyWitness(invariants, helpers, spec) {
+  invariants = normalizeText(invariants);
+  const raw = helpers[spec.file];
+  if (typeof raw !== 'string') return null;
+  const source = normalizeText(raw), once = literal => invariants.split('\n').filter(line => line.trim() === literal).length === 1;
+  if (crypto.createHash('sha256').update(source).digest('hex') !== spec.sha256
+      || !once(spec.import) || !once(spec.call) || !once(spec.binding)
+      || invariants.indexOf(spec.import) > invariants.indexOf(spec.call)
+      || invariants.indexOf(spec.call) > invariants.indexOf(spec.binding)) return null;
+  return { source, bindingLine: invariants.slice(0,invariants.indexOf(spec.binding)).split('\n').length };
+}
+export function extractAutonomyHelperReconciliations(invariants, helpers) {
+  const terms = [];
+  for (const spec of AUTONOMY_GRAPH_WITNESSES) {
+    const witness = autonomyWitness(invariants,helpers,spec);
+    if (!witness) continue;
+    for (const reason of spec.reasons) {
+      const index = witness.source.indexOf("'"+reason+"'", witness.source.indexOf('export async function '+spec.fn+'('));
+      if (index < 0) continue;
+      terms.push({check:spec.check,reason,file:spec.file,line:witness.source.slice(0,index).split('\n').length,bindingLine:witness.bindingLine});
+    }
+  }
+  return terms;
+}
+export function extractAutonomyObservationChecks(invariants, helpers) {
+  return AUTONOMY_GRAPH_WITNESSES.filter(spec => spec.reasons.length === 0 && autonomyWitness(invariants,helpers,spec)).map(spec => spec.check);
+}
+
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
 export function isMainModule(moduleUrl, argvEntry) {
@@ -475,6 +532,13 @@ export function build() {
       binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
     node('Reason', term.reason, {}, prov);
     edge('RECONCILES', 'Check:' + term.check, 'Reason:' + term.reason, prov);
+  }
+
+  const autonomyHelpers = Object.fromEntries(AUTONOMY_GRAPH_WITNESSES.map(spec=>spec.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for (const term of extractAutonomyHelperReconciliations(inv,autonomyHelpers)) {
+    const prov = {file:term.file,line:term.line,hash:sha(autonomyHelpers[term.file]),binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);
+    edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 
   // ── Suites: what they cover, what they pin ─────────────────────────────────────────────────────

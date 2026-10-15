@@ -16,6 +16,8 @@ import { spawnSync } from 'node:child_process';
 import {
   build,
   extractCommercialHelperReconciliations,
+  extractAutonomyHelperReconciliations,
+  extractAutonomyObservationChecks,
   checkGraph,
   QUERIES,
   census,
@@ -83,6 +85,7 @@ assert.deepEqual(inv.mute.sort(), [
   'physical equipment condition provenance',
   'reason vocabulary',
   'service subscription repair bindings',
+  'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
   'warehouse journal ownership',
@@ -100,6 +103,7 @@ for (const [check, reasons] of [
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ['equipment rental physical title', 'exact physical custody/title and original paid lease bindings'],
   ['service subscription repair bindings', 'original consent, actual repair and exact cycle payment bindings'],
+  ['strategy laboratory canonical observations', 'recorded canonical observation amounts, sources and exposure; no payout or currency custody'],
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
@@ -336,6 +340,35 @@ for (const spec of commercialControls) {
  absent(invariantSource,{...commercialHelpers,[spec.file]:undefined});
 }
 console.log('✓ imported commercial accounting:12 actual monetary reason edges, LF/CRLF, '+commercialNegativeControls+' causal unknown/import/call/result/amount/reason/party controls');
+
+
+// V imported paired cash must not become a mute; observation provenance has no ledger effect.
+const autonomyHelpers = Object.fromEntries(['src/economicintelligence.js','src/strategylaboratories.js'].map(file=>[file,fs.readFileSync(new URL('../'+file,import.meta.url),'utf8')]));
+const autonomyTerms = extractAutonomyHelperReconciliations(invariantSource,autonomyHelpers);
+assert.deepEqual(autonomyTerms.map(t=>[t.check,t.reason]),[["economic intelligence paired provenance","economic_intelligence:pay"],["economic intelligence paired provenance","economic_intelligence:receive"]]);
+assert.deepEqual(extractAutonomyObservationChecks(invariantSource,autonomyHelpers),['strategy laboratory canonical observations']);
+assert.deepEqual(extractAutonomyHelperReconciliations(normalizeText(invariantSource).replaceAll('\n','\r\n'),Object.fromEntries(Object.entries(autonomyHelpers).map(([f,s])=>[f,normalizeText(s).replaceAll('\n','\r\n')]))),autonomyTerms);
+for(const term of autonomyTerms){
+ assert(!inv.mute.includes(term.check));
+ assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+term.check&&e.to==='Reason:'+term.reason&&e.prov.file===term.file&&e.prov.binding.file==='src/invariants.js'));
+}
+let autonomyNegativeControls=0;
+const autonomySpecs=[{"check":"economic intelligence paired provenance","file":"src/economicintelligence.js","fn":"economicIntelligenceTransferBooks","variable":"intelligenceBooks","import":"import { economicIntelligenceTransferBooks } from './economicintelligence.js';","call":"const intelligenceBooks = await economicIntelligenceTransferBooks(pool);","binding":"push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });","sha256":"6d93a9c38e7543fad2158a2939c832be21c043d4b5a6f7a0b7a61a5ab7a5571e","reasons":["economic_intelligence:pay","economic_intelligence:receive"]},{"check":"strategy laboratory canonical observations","file":"src/strategylaboratories.js","fn":"collectStrategyLaboratoryIssues","variable":"labIssues","import":"import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';","call":"const labIssues = await collectStrategyLaboratoryIssues(pool);","binding":"push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });","sha256":"ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9","reasons":[]}];
+for(const spec of autonomySpecs){
+ const absent=(source,helpers)=>{assert.equal(extractAutonomyHelperReconciliations(source,helpers).some(t=>t.check===spec.check),false);assert.equal(extractAutonomyObservationChecks(source,helpers).includes(spec.check),false);autonomyNegativeControls++;};
+ for(const literal of [spec.import,spec.call,spec.binding]){
+  assert(invariantSource.includes(literal));
+  absent(invariantSource.replace(literal,literal+' /* changed */'),autonomyHelpers);
+  absent(invariantSource.replace(literal,''),autonomyHelpers);
+  absent(invariantSource.replace(literal,literal+'\n'+literal),autonomyHelpers);
+ }
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:undefined});
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:autonomyHelpers[spec.file]+'\n// unknown shape'});
+ const source=autonomyHelpers[spec.file];
+ const anchors=spec.reasons.length?["-Number(p.price)","Number(p.price),'economic_intelligence:receive'","j.character_id!==character","j.currency!=='cash'","Number(j.amount)!==amount","j.reason!==reason","j.counterparty!==p.id","ids.has(journal)","ids.size!==legs.length","status:'unknown'","publication.terms_hash!==publicationHash(publication)","p.buyer_account===p.seller_account"]:["digest(l.terms)!==l.terms_hash","digest(frame)!==a.baseline.hash","a.baseline.ids.includes(sourceId)","r.depot_id!==l.business_id","customer.account_id===l.original_account","net+=Number(r.cash_delta)+Number(r.cost_delta)","net-=Number(r.expense)","net!==Number(view.observedProfitCash)","cost!==Number(l.observed_cost)","!view.noGuaranteedIncome","reason:'unbound_source'"];
+ for(const literal of anchors){assert(source.includes(literal),literal);absent(invariantSource,{...autonomyHelpers,[spec.file]:source.replace(literal,literal+' /* altered */')});}
+}
+console.log('✓ autonomy graph: 2 actual intelligence monetary terms; source-bound observation provenance; '+autonomyNegativeControls+' causal refusals');
 
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
