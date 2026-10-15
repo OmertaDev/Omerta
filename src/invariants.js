@@ -1,3 +1,4 @@
+import { collectCustomerLayawayIssues } from './customerlayaway.js';
 import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
 import { collectFreightHistoryIssues } from './freight-history.js';
 import { economicIntelligenceTransferBooks } from './economicintelligence.js';
@@ -70,6 +71,7 @@ const KNOWN_REASONS = {
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'picking_packing:pay', 'picking_packing:receive',
+    'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
@@ -745,6 +747,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const pickingIssues = await collectPickingPackingIssues(pool);
   const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
   push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
+  const layawayReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM customer_layaways');
+  const layawayNet = await sum(pool, "currency='cash' AND reason IN ('customer_layaway:reserve','customer_layaway:proceeds','customer_layaway:refund')");
+  push('customer layaway reserved cash', layawayReserve, -layawayNet, 0);
+  const layawayIssues = await collectCustomerLayawayIssues(pool);
+  push('customer layaway source history', layawayIssues.length, 0, 0);
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);

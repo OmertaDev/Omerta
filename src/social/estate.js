@@ -1,3 +1,4 @@
+import { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';
 import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
 import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
@@ -184,6 +185,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
+  for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
   for (const receipt of commissionStart) {
     if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');
@@ -504,6 +507,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
   await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);
+  const layawayRecovery=await recoverCustomerLayawayInEstate(client,victim.id,h.rentalDeathScope,estateScope);
+  for(const receipt of layawayRecovery)for(const actor of new Set([h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.buyerCharacter||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   const commissionRecovery = await recoverCommissionedCraftingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   for (const receipt of commissionRecovery) {
     for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {

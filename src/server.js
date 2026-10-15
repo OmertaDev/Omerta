@@ -95,6 +95,7 @@ import { register as registerEquipmentMaintenance } from './routes/equipmentmain
 import { register as registerCommercialDisputes } from './routes/commercialdisputes.js';
 import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 import { register as registerEquipmentInsurance } from './routes/equipmentinsurance.js';
+import { register as registerCustomerLayaway } from './routes/customerlayaway.js';
 import { register as registerConsignments } from './routes/consignments.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerPickingPacking } from './routes/pickingpacking.js';
@@ -2475,6 +2476,7 @@ export async function buildServer() {
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
+  registerCustomerLayaway(app, { pool, auth });
   registerCommissionedCrafting(app, { pool, auth });
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });

@@ -1,0 +1,4 @@
+import * as L from '../customerlayaway.js';
+import {GameError} from '../game.js';
+import {withItemRead,withItemTransaction} from '../items.js';
+export function register(app,{pool,auth}){if(typeof pool?.connect!=='function'||typeof auth!=='function')throw Error('Layaway requires canonical transactions and authentication.');app.get('/v1/customer/layaway',{preHandler:auth},req=>{if(Object.keys(req.query||{}).some(k=>k!=='after'))throw new GameError('customer_layaway','terms');return withItemRead(pool,c=>L.customerLayawayBoard(c,req.user.sub,req.query?.after??''));});for(const [name,fn]of [['offer',L.offerCustomerLayaway],['pay',L.payCustomerLayaway],['cancel',L.cancelCustomerLayaway],['expire',L.expireCustomerLayaway]])app.post('/v1/customer/layaway/'+name,{preHandler:auth},req=>withItemTransaction(pool,c=>fn(c,req.user.sub,req.body,req.headers['idempotency-key'])));}
