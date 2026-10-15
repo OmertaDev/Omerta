@@ -23,4 +23,4 @@ for(const key of ['NODE_OPTIONS','node_options','NODE_PATH','Node_Path'])for(con
 assert(files.includes('public/genesis-snapshot-rpc.js'));
 for(const file of ['docs/decision-replay-integration.json','docs/economic-dependency-map-integration.json'])assert(files.includes(file));
 for(const flags of [['--require','unreviewed'],['--import','unreviewed'],['--loader','unreviewed'],['--inspect'],['--input-type=module']])reject(()=>assertMarketOperationsMode(['node','runner'],{},flags));
-console.log('Next-layer strict endpoint/inventory/completion guard unit PASS: '+controls+' causal refusals; synthetic completion records confer NO native qualification.');
+console.log('Market operations strict endpoint/inventory/completion guard unit PASS: '+controls+' causal refusals; synthetic completion records confer NO native qualification.');
