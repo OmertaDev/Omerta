@@ -1,15 +1,15 @@
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_FIVE_SOURCE_REVISION="8ed4694f36256c6223ded39cc2b0e371c14473df";
-export const NEXT_FIVE_SOURCE_PREDECESSOR="266b9f7684b5b4d4313b40451bb840e005e53428";
+export const NEXT_FIVE_SOURCE_REVISION="2fb6f565ce04e93df1b85b634466eed43b146325";
+export const NEXT_FIVE_SOURCE_PREDECESSOR="7303e906a8fa510d607c3e770716e48848f3c74a";
 export const NEXT_FIVE_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_FIVE_SOURCE_DOMAINS={
   "package.json": {
-    "currentSha256": "0fda440b5c92ddba310e95455d0faf42b7c3160de171397af2762b374185f1d8",
-    "currentBlob": "a8bd2beba16335d455e635958f6f9fe014df062b",
-    "baselineSha256": "b09453a3e51a5ea41d5c42724cfb399cd490069d509c8a8bbeca1fce56a00e97",
-    "baselineBlob": "9a686063725d94a57c51485dc220fc434e02dcf7",
+    "currentSha256": "4a39ded54ccb2f248fb24e41e6c6b3df0272505dff5b530f428234975b522a61",
+    "currentBlob": "0734094efcdcdbe4fe5306fd0e4956bfbe9e43d6",
+    "baselineSha256": "e04200cee7a6ba41241a485c049ff28403dd545bde1e656dfe58d1b7423c156f",
+    "baselineBlob": "2a832077be4bf66574bd1de3cf019e24ccdb45ee",
     "contextLines": 3,
     "inverses": [
       {
