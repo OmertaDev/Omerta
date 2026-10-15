@@ -1,4 +1,5 @@
 import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
+import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
 import { retireManagementTeamsAtDeath } from '../managementteams.js';
 import { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';
@@ -483,6 +484,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
   await voidCompanyRestructuringAtDeath(client, victim);
   await voidCommercialDisputesAtDeath(client, victim);
+  await voidFreightConsolidationsAtDeath(client, victim);
   await recoverEquipmentInsuranceAtDeath(client, h, victim);
   await voidInfrastructureConcessionsAtDeath(client, victim);
   await voidTerritoryEconomicsAtDeath(client, victim.id);

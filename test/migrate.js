@@ -639,6 +639,8 @@ const DISPOSITION = {
   commissioned_crafting_requests: 'ledger', // immutable original request receipts remain historical ACKs
   picking_packing_jobs: 'special', // actual estate retires original pending consent without moving tenant goods or fees
   picking_packing_requests: 'ledger', // original paired custody-service receipts remain historical only
+  freight_consolidations: 'special', // canonical estate retires live original freight consent and leaves ordinary order recovery authoritative
+  freight_consolidation_acceptances: 'ledger', // original buyer consent history never grants fresh heir authority
   equipment_rental_requests: 'metadata', // original-account receipts retain the original actor and grant no fresh heir lease authority
   equipment_rental_offers: 'special', // original landlord death cancels publication consent while preserving account-title tools and historical receipts
   equipment_rental_leases: 'escrow', // actual estate returns physical title and burns dead borrower deposits or refunds only the surviving original borrower

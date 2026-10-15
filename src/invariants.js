@@ -1,4 +1,5 @@
 import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
+import { collectFreightHistoryIssues } from './freight-history.js';
 import { economicIntelligenceTransferBooks } from './economicintelligence.js';
 import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
@@ -749,6 +750,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
   const commissionIssues = await collectCommissionedCraftingIssues(pool);
   push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });
+  const freightIssues = await collectFreightHistoryIssues(pool);
+  push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });
   const consignmentIssues = await collectConsignmentIssues(pool);
   const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
   push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });
