@@ -2,15 +2,15 @@ import {nextLayerSourceBaseline} from './next-layer-source-compatibility.js';
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_FIVE_SOURCE_REVISION="31ff3ecbb215d0e359649d89f1075bab60ac116b";
-export const NEXT_FIVE_SOURCE_PREDECESSOR="301e3f79c53525fbfacb3affe76415b8dcd6cbab";
+export const NEXT_FIVE_SOURCE_REVISION="2fb6f565ce04e93df1b85b634466eed43b146325";
+export const NEXT_FIVE_SOURCE_PREDECESSOR="7303e906a8fa510d607c3e770716e48848f3c74a";
 export const NEXT_FIVE_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_FIVE_SOURCE_DOMAINS={
   "package.json": {
-    "currentSha256": "0fda440b5c92ddba310e95455d0faf42b7c3160de171397af2762b374185f1d8",
-    "currentBlob": "a8bd2beba16335d455e635958f6f9fe014df062b",
-    "baselineSha256": "b09453a3e51a5ea41d5c42724cfb399cd490069d509c8a8bbeca1fce56a00e97",
-    "baselineBlob": "9a686063725d94a57c51485dc220fc434e02dcf7",
+    "currentSha256": "4a39ded54ccb2f248fb24e41e6c6b3df0272505dff5b530f428234975b522a61",
+    "currentBlob": "0734094efcdcdbe4fe5306fd0e4956bfbe9e43d6",
+    "baselineSha256": "e04200cee7a6ba41241a485c049ff28403dd545bde1e656dfe58d1b7423c156f",
+    "baselineBlob": "2a832077be4bf66574bd1de3cf019e24ccdb45ee",
     "contextLines": 3,
     "inverses": [
       {
@@ -57,6 +57,27 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
       }
     ]
   },
+  "src/equipmentrentals.js": {
+    "currentSha256": "bb146289be66666e3a957da7bf28d94c872e68a80d73fe6fdec6d5ac9de02303",
+    "currentBlob": "5e7f68e664a53004271de2a8891200fb45197dc6",
+    "baselineSha256": "1e6dec8001cea6f528b1fbde255dca5170893e5799dced0b0875b24efd96423c",
+    "baselineBlob": "5a848d9b9b1b400d367b98aa95457feb9d3d5b10",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\nimport { consignmentDeathCounterparts } from './consignments.js';\nimport { atomicBarterCounterparts } from './atomicbarter.js';\nimport { pickingPackingCounterparts } from './pickingpacking.js';\n\n// Commission recovery depends on crafting, whose default graph is validated at module load.\n// Defer this reader inside the existing async death hooks to avoid an initialization cycle.\nasync function commissionedCraftingDeathCounterparts(client, characterId) {\n  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');\n  return discover(client, characterId);\n}\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n",
+        "baseline": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n"
+      },
+      {
+        "current": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);\n  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking originals.\n  if (ids.size > subjects.length * 42) fail('death_limit');\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n",
+        "baseline": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n"
+      },
+      {
+        "current": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await atomicBarterCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await commissionedCraftingDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Commission counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await pickingPackingCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Picking counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n",
+        "baseline": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n"
+      }
+    ]
+  },
   "src/invariants.js": {
     "currentSha256": "5aca27f9fabbe43cd89c00cc9e2a12e467d5a6a480f472e583d79551f56f1029",
     "currentBlob": "a2fc7732d104b4c30e7edf234464d79f1c8a0e28",
@@ -83,10 +104,10 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
     ]
   },
   "src/server.js": {
-    "currentSha256": "971ca5467b516ac2b91ad44742a2a34d87b2120614dba5156970f886569526c6",
-    "currentBlob": "d8c16b25831550c3f5d2a8e5cd14fadd66a1a4f2",
-    "baselineSha256": "929ac11847c68f10312801f9ee3c31fc07e9621075a2cf7136867c3929dc2ad1",
-    "baselineBlob": "a8a4a282f681cb816d47df85846b6e50cd3b6f00",
+    "currentSha256": "d8fa6c7f0e1a9d60ab5390ace43da80ab51f78796e09bf0756df8107bfe38d0b",
+    "currentBlob": "7c232b848784a587426682f9a8010f10fafefd8e",
+    "baselineSha256": "d2694a1f22bdc783cdd645be343e226d120c4af41dec48f72e6162bdb49051d9",
+    "baselineBlob": "13f157465e671e87d9a1d179bb02121996e69c1e",
     "contextLines": 3,
     "inverses": [
       {
@@ -104,14 +125,14 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
     ]
   },
   "src/social/estate.js": {
-    "currentSha256": "10b381e317fd0f97aae749fbe65344ce03813e12eec7074a9397f0ab5674f2c5",
-    "currentBlob": "d3142d63395f89911119677ddcfd6d7e9fcc8d1e",
+    "currentSha256": "06210f75f1cd20be147dbcd682f358e49e36b9f79c6a0a4db504350a7e30790d",
+    "currentBlob": "d3f146af5a0f1bccf7db04505e99adc08d7764fd",
     "baselineSha256": "8201033b665a9ff191a8328f230ed125a893c3abd6168f1e8568b231ebe2b4cd",
     "baselineBlob": "5aaee0dc1a9f2a0dc7c802930fafbe9492e3fa5e",
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';\nimport { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n",
+        "current": "import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n",
         "baseline": "import { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n"
       },
       {
@@ -119,7 +140,7 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
         "baseline": "import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';\nimport { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';\nimport { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';\nimport { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';\nimport { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';\nimport { wipeSpeakeasyAtDeath } from '../speakeasy.js';\n"
       },
       {
-        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n    const before = Number(victim.cash);\n    registerItemTransactionUndo(client, () => { victim.cash = before; });\n    victim.cash = before + receipt.refundedFee;\n  }\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n",
+        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  // Commission recovery loads after module initialization, using the existing estate scope.\n  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n    const before = Number(victim.cash);\n    registerItemTransactionUndo(client, () => { victim.cash = before; });\n    victim.cash = before + receipt.refundedFee;\n  }\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n",
         "baseline": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n"
       },
       {

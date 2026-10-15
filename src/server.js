@@ -3838,7 +3838,7 @@ if (process.argv[1] && process.argv[1].endsWith('server.js')) {
   await Chain.assertChainId();
   const port = Number(process.env.PORT || 8787);
   await app.listen({ port, host: '0.0.0.0' });
-  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);
+  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);
 
   // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and
   // Node's default handler is immediate exit — every in-flight request dies with a connection reset

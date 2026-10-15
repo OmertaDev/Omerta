@@ -1,15 +1,15 @@
 // Exact next-layer source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_LAYER_SOURCE_REVISION="02bb40d9422a4f45832cd4e9200035d2a7114311";
-export const NEXT_LAYER_SOURCE_PREDECESSOR="fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9";
+export const NEXT_LAYER_SOURCE_REVISION="93cc81977d16057dda2e8617e76627bbf8151cdf";
+export const NEXT_LAYER_SOURCE_PREDECESSOR="9a0e885487a0a740d8dcd0c9bf09f75563152ef3";
 export const NEXT_LAYER_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_LAYER_SOURCE_DOMAINS={
   "package.json": {
-    "currentSha256": "73a72b04430d720e459f2c6b6ed910260dd07bec87e0425a8fb339054997380b",
-    "currentBlob": "dc1401d798e8ed8a91d24ea0be7706210f24dd13",
-    "baselineSha256": "0fda440b5c92ddba310e95455d0faf42b7c3160de171397af2762b374185f1d8",
-    "baselineBlob": "a8bd2beba16335d455e635958f6f9fe014df062b",
+    "currentSha256": "1ad0b6b14d91182a6431e4bce111a1831e5bae0c68906e88a3a34795e8b1e802",
+    "currentBlob": "8e51b8ea6a170d2663b712a9533e07109f9985b5",
+    "baselineSha256": "4a39ded54ccb2f248fb24e41e6c6b3df0272505dff5b530f428234975b522a61",
+    "baselineBlob": "0734094efcdcdbe4fe5306fd0e4956bfbe9e43d6",
     "contextLines": 3,
     "inverses": [
       {
@@ -57,15 +57,15 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "src/equipmentrentals.js": {
-    "currentSha256": "6cdb7a23fab1e039e078e2e7e3ecd9bb3d5724611955ec7eca50d71c9144f260",
-    "currentBlob": "4234b0759de01c619f1ed2576113e0ac1cccb5c0",
-    "baselineSha256": "041fca76249cbe7cd1f68986bff27714f357e1ed56d3514bfe776aa75d21c1d8",
-    "baselineBlob": "028d978317736e3b4c5b33b08780e2f4f7be9b8a",
+    "currentSha256": "784a2033bebd1a9f3713d967b10f9e539462828a9bab383ce91af8a2d062d3e6",
+    "currentBlob": "a21af4c9de7ae286975faca010109addcc64ff61",
+    "baselineSha256": "bb146289be66666e3a957da7bf28d94c872e68a80d73fe6fdec6d5ac9de02303",
+    "baselineBlob": "5e7f68e664a53004271de2a8891200fb45197dc6",
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import {multiHopCourierOriginals,multiHopCourierScopeSource,multiHopCourierDeathCounterparts} from './multihopcourier.js';\nimport { customerVaultDeathCounterparts } from './customervaults.js';\nimport { customerLayawayDeathCounterparts } from './customerlayaway.js';\nimport { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';\nimport crypto from 'node:crypto';\nimport { GameError, ledger } from './game.js';\n",
-        "baseline": "import { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';\nimport crypto from 'node:crypto';\nimport { GameError, ledger } from './game.js';\n"
+        "current": "import {multiHopCourierOriginals,multiHopCourierScopeSource,multiHopCourierDeathCounterparts} from './multihopcourier.js';\nimport { customerVaultDeathCounterparts } from './customervaults.js';\nimport { customerLayawayDeathCounterparts } from './customerlayaway.js';\nimport crypto from 'node:crypto';\nimport { GameError, ledger } from './game.js';\nimport { jailed, safeHoused } from './rules.js';\n",
+        "baseline": "import crypto from 'node:crypto';\nimport { GameError, ledger } from './game.js';\nimport { jailed, safeHoused } from './rules.js';\n"
       },
       {
         "current": "export async function prelockEquipmentRentalDeathActors(client, characterIds) {\n  assertItemTransaction(client);\n  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  return prelockCourierAwareSubjects(client,characterIds);\n}\nasync function prelockCourierAwareSubjects(client,characterIds) {\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);\n  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking + 4 accepted layaway + 4 vault + 4 courier originals = 54.\n  for (const subject of subjects) for (const counterpart of await customerLayawayDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await customerVaultDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await multiHopCourierDeathCounterparts(client, subject)) ids.add(counterpart);\n  if (ids.size > subjects.length * 54) fail('death_limit');\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n",
@@ -111,10 +111,10 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "src/server.js": {
-    "currentSha256": "6942112b774f84587d936878e402925108e438c50c6ab968fd717ee655180250",
-    "currentBlob": "327ce0ad47bafecf1792fbb830ec1d08521e4edd",
-    "baselineSha256": "971ca5467b516ac2b91ad44742a2a34d87b2120614dba5156970f886569526c6",
-    "baselineBlob": "d8c16b25831550c3f5d2a8e5cd14fadd66a1a4f2",
+    "currentSha256": "7647459f9c99c23c224e22439a9d79fe4f4e608eb91622e840d538308ce01419",
+    "currentBlob": "06baca87fc653ce4c3fc03326b1a89e2b7aa6cea",
+    "baselineSha256": "d8fa6c7f0e1a9d60ab5390ace43da80ab51f78796e09bf0756df8107bfe38d0b",
+    "baselineBlob": "7c232b848784a587426682f9a8010f10fafefd8e",
     "contextLines": 3,
     "inverses": [
       {
@@ -132,19 +132,19 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "src/social/estate.js": {
-    "currentSha256": "8a36a69345be82d08a58d658cc6c6c29c9f448fa5a97ade132572d953d9189cd",
-    "currentBlob": "467f499fd244b6694ca0a60ea6358abc8515d6fd",
-    "baselineSha256": "10b381e317fd0f97aae749fbe65344ce03813e12eec7074a9397f0ab5674f2c5",
-    "baselineBlob": "d3142d63395f89911119677ddcfd6d7e9fcc8d1e",
+    "currentSha256": "36375b7eee7393facf64b2667cb36a05f0a0b6591e1237823de13cabe485ab18",
+    "currentBlob": "f178c2a47d254ac43b6b0a956d0e5727e7923f76",
+    "baselineSha256": "06210f75f1cd20be147dbcd682f358e49e36b9f79c6a0a4db504350a7e30790d",
+    "baselineBlob": "d3f146af5a0f1bccf7db04505e99adc08d7764fd",
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';\nimport { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';\nimport { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';\nimport { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';\nimport { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\n",
-        "baseline": "import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';\nimport { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\n"
+        "current": "import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';\nimport { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';\nimport { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';\nimport { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\n",
+        "baseline": "import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\n"
       },
       {
-        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);\n  for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}\n  await assertMultiHopCourierEstateCleared(client,victim.id);\n  await recoverCustomerVaultsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });\n  const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);\n  for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n",
-        "baseline": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n"
+        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);\n  for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}\n  await assertMultiHopCourierEstateCleared(client,victim.id);\n  await recoverCustomerVaultsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });\n  const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);\n  for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}\n  // Commission recovery loads after module initialization, using the existing estate scope.\n  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n",
+        "baseline": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  // Commission recovery loads after module initialization, using the existing estate scope.\n  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n"
       },
       {
         "current": "  await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);\n  await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);\n  await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);\n  const layawayRecovery=await recoverCustomerLayawayInEstate(client,victim.id,h.rentalDeathScope,estateScope);\n  for(const receipt of layawayRecovery)for(const actor of new Set([h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.buyerCharacter||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}\n  const commissionRecovery = await recoverCommissionedCraftingInEstate(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionRecovery) {\n    for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {\n",
@@ -195,18 +195,22 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "test/director-migration.js": {
-    "currentSha256": "a6ea441159a4f463c55548616d117c357eadbef4a3daa5e57442df0daa777c65",
-    "currentBlob": "bbb0df40dc890371e297a7a6c45ac5061e3bb41a",
+    "currentSha256": "8a40ccfc3660957aaa49a287e4814f5f12296724319fdbe7537c87c37d6178a8",
+    "currentBlob": "c25828cb6685827b89c461f9bcda86c9c6ef7ac7",
     "baselineSha256": "3c7c6fb6e657e36fff82741cb5a8b55914259588e5f9a82959092076cf123d47",
     "baselineBlob": "f8428d256086f0f3b17056eac61b8788bf112cae",
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createNextLayerReleasePhase2MigrationCatalog, readNextLayerReleasePhase2Metadata,\n  verifyNextLayerReleasePhase2CausalNegatives } from '../tools/next-layer-release-phase2-migration-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\nimport { boostCar } from '../src/economy.js';\n",
+        "current": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createNextLayerReleasePhase2MigrationCatalog, readNextLayerReleasePhase2Metadata,\n  verifyNextLayerReleasePhase2CausalNegatives, NEXT_LAYER_NATIVE_TABLES } from '../tools/next-layer-release-phase2-migration-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\nimport { boostCar } from '../src/economy.js';\n",
         "baseline": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createReleasePhase2MigrationCatalog, readReleasePhase2Metadata,\n  verifyReleasePhase2CausalNegatives } from '../tools/next-five-release-phase2-migration-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\nimport { boostCar } from '../src/economy.js';\n"
       },
       {
-        "current": "  const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\n  assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata), error => error?.code === 'ERR_ASSERTION',\n    'The source-only C2 envelope does not confer historical native admission');\n  const releaseCatalog = await createNextLayerReleasePhase2MigrationCatalog(pool, address, equipmentSchema,\n    { includeNotNull: false, legacyProfile: 'director' });\n  const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);\n  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(releaseCatalog.normalize(rows)), oldConstraints));\n  verifyCompletePreservedConstraints(upgradedConstraints);\n  await verifyNextLayerReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);\n  gameplayCatalog.verifyMetadata(gameplayMetadata);\n  const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');\n  assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');\n",
+        "current": "const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;\nconst admin = new pg.Pool({ connectionString: endpoint.toString() });\nlet pool, created = false;\nconst nextLayerInventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\nconst nextLayerCatalogBlob = execFileSync('git', ['show', '9376c5a4553bc1b95d3e74f9c7f0d88b794933d6:test/lib/phase2-architecture-upgrade-catalog.json']);\nassert.equal(crypto.createHash('sha256').update(nextLayerCatalogBlob).digest('hex'), '24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522', 'Reviewed next-layer full catalog bytes changed');\nassert.deepEqual(nextLayerInventory, JSON.parse(nextLayerCatalogBlob), 'Current complete next-layer catalog source is frozen');\nconst inventory = { ...nextLayerInventory,\n  added: nextLayerInventory.added.filter(row => !NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),\n  notNullColumns: Object.fromEntries(Object.entries(nextLayerInventory.notNullColumns).filter(([table]) => !NEXT_LAYER_NATIVE_TABLES.includes(table))) };\nassert.equal(NEXT_LAYER_NATIVE_TABLES.length, 8);\nassert.equal(nextLayerInventory.added.length - inventory.added.length, 89);\nassert.equal(NEXT_LAYER_NATIVE_TABLES.reduce((n, table) => n + nextLayerInventory.notNullColumns[table].length, 0), 78);\nconst directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();\nconst economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];\n// Optional stacked features are recognized only by explicit identity and frozen\n",
+        "baseline": "const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;\nconst admin = new pg.Pool({ connectionString: endpoint.toString() });\nlet pool, created = false;\nconst inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\nconst directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();\nconst economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];\n// Optional stacked features are recognized only by explicit identity and frozen\n"
+      },
+      {
+        "current": "  const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\n  assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata), error => error?.code === 'ERR_ASSERTION',\n    'The source-only C2 envelope does not confer historical native admission');\n  const releaseCatalog = await createNextLayerReleasePhase2MigrationCatalog(pool, address, equipmentSchema,\n    { includeNotNull: false, legacyProfile: 'director' });\n  const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);\n  const normalizeNextLayerConstraints = rows => {\n    assert.deepEqual(rows.filter(row => NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),\n      nextLayerInventory.added.filter(row => NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),\n      'All eighty-nine pinned next-layer structural definitions remain exact before the historical Director oracle');\n    return rows.filter(row => !NEXT_LAYER_NATIVE_TABLES.includes(row.table_name));\n  };\n  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(normalizeNextLayerConstraints(releaseCatalog.normalize(rows))), oldConstraints));\n  verifyCompletePreservedConstraints(upgradedConstraints);\n  await verifyNextLayerReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);\n  gameplayCatalog.verifyMetadata(gameplayMetadata);\n  const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');\n  assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');\n",
         "baseline": "  const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\n  assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata), error => error?.code === 'ERR_ASSERTION',\n    'The source-only C2 envelope does not confer historical native admission');\n  const releaseCatalog = await createReleasePhase2MigrationCatalog(pool, address, equipmentSchema,\n    { includeNotNull: false, legacyProfile: 'director' });\n  const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);\n  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(releaseCatalog.normalize(rows)), oldConstraints));\n  verifyCompletePreservedConstraints(upgradedConstraints);\n  await verifyReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);\n  gameplayCatalog.verifyMetadata(gameplayMetadata);\n  const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');\n  assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');\n"
       },
       {
@@ -229,10 +233,10 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   "test/gates.js": {
-    "currentSha256": "987a75a805e49d6f561978dadb4d116ca9ef0d2fd0d42385f95ed4749cc31626",
-    "currentBlob": "b9155697ba24b1228c08eaf9406450504d147839",
-    "baselineSha256": "e911521a9bba14e71e6bcb6fb91c474af8002bfe192050d4045710eb289d8161",
-    "baselineBlob": "201952c9fdc52dd0f273dcfbe53a616634c4c545",
+    "currentSha256": "b1fc7a48c2bdeef607cf4e3e05a8d569b302855e0ba195949d1f5c583b1c6fb1",
+    "currentBlob": "2a3a734d43e2c8a246fcf20613c0a2de992cb859",
+    "baselineSha256": "e2464e2bfcad56ea7b8778d8834c4b420fd3f22180e6f9eeed5fa8d354692770",
+    "baselineBlob": "1110e969d4321118bee62faaac34525c72b95c1a",
     "contextLines": 3,
     "inverses": [
       {

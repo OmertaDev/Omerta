@@ -16,7 +16,7 @@ try {
     const page = await context.newPage(), errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.route('http://world-ui.test/art/**', route => route.fulfill({ contentType: 'image/png', body: fs.readFileSync(path.resolve('public/art', path.basename(new URL(route.request().url()).pathname))) }));
-    await page.setContent('<base href="http://world-ui.test"><header id="tools-host"></header><section class="omerta-city"><div id="guidance"></div><div id="toolbar"></div><div id="viewport"><div id="map"></div></div></section>');
+    await page.setContent('<meta name="viewport" content="width=device-width, initial-scale=1"><base href="http://world-ui.test"><header id="tools-host"></header><section class="omerta-city"><div id="guidance"></div><div id="toolbar"></div><div id="viewport"><div id="map"></div></div></section>');
     await page.addStyleTag({ content: '.omerta-city{width:calc(100% - 32px);max-width:960px;margin:12px auto;background:#172626;color:#eadfc4;font-family:Arial}#map{height:280px;position:relative}button{background:#26352f;color:#efe4c6;border:1px solid #85785c;padding:6px}button:not([data-city-map-view]){min-height:44px}button:focus{outline:2px solid #e9b85b}' });
     await page.addStyleTag({ path: 'public/city-world-ui.css' });
     await page.addScriptTag({ path: 'public/city-world-ui.js' });
@@ -33,9 +33,9 @@ try {
         viewport: document.querySelector('#viewport'), mapLayer: document.querySelector('#map'), toolbar: document.querySelector('#toolbar'),
         toolsHost: document.querySelector('#tools-host'), trackerHost: document.querySelector('#guidance'),
         venues: [{ id: 'training', name: 'Training Room', x: 606, y: 504 }, { id: 'fixer', name: 'The Fixer', x: 144, y: 224 }],
-        rules: { guns: [{ id: 'starter', name: 'Starter pistol' }] }, objectives: [{ id: 'meet', title: 'Meet a different face', status: 'active' }],
+        rules: { guns: [{ id: 'starter', name: 'Starter pistol', fp: 3 }, { id: 'pocket', name: 'Pocket pistol', fp: 5 }] }, objectives: [{ id: 'meet', title: 'Meet a different face', status: 'active', venueId: 'fixer' }, { id: 'train', title: 'Learn a new skill', status: 'available', venueId: 'training' }, { id: 'retired', title: 'An unavailable lead', status: 'unavailable', venueId: 'fixer' }],
         getState: () => ({ world: { width: 960, height: 640 }, position: { x: 430, y: 366 }, obstacles: [] }),
-        onWaypoint: id => window.__waypoints.push(id), onLook: id => window.__looks.push(id), onOpenIntel: () => { window.__intelOpened = true; },
+        onWaypoint: id => window.__waypoints.push(id), onTrackObjective: (id, venueId) => { if (window.__rejectTracking) return false; window.__tracked = { id, venueId }; }, onLook: id => window.__looks.push(id), onOpenIntel: () => { window.__intelOpened = true; },
         onPanelChange: () => { if (window.__captureConsent && window.__ui) window.__observedConsent.push(window.__ui.getState().chatJoined); },
         onRead: async kind => { window.__reads.push(kind);
           if (window.__heldReads) {
@@ -55,6 +55,7 @@ try {
           if (window.__queue) await new Promise(resolve => { window.__releaseQueue = resolve; });
           if (!guards.beforeDispatch()) return { code: 499, ignored: true, body: {} };
           window.__sent.push({ kind, payload });
+          if (window.__actionReply) return window.__actionReply;
           if (kind === 'chat-consent') window.__social.preferences.chatEnabled = payload.enabled;
           if (kind === 'outfit') window.__social.preferences.outfit = payload.outfit;
           if (kind === 'room') window.__social.preferences.room.furniture = payload.furniture;
@@ -65,7 +66,11 @@ try {
       };
       window.__ui = window.OmertaCityWorldUI.mount(document.querySelector('.omerta-city'), window.__fixture);
     });
-    const click = async selector => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    const click = async selector => {
+      const panel = /^\[data-city-world-panel="([^"]+)"\]$/.exec(selector)?.[1];
+      if (panel && await page.locator('[data-city-panel-select]').isVisible()) return page.locator('[data-city-panel-select]').selectOption(panel);
+      return viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    };
     assert.equal(await page.locator('[data-city-objective-tracker]').innerText(), '◆ Meet a different face');
     assert.equal(await page.locator('#tools-host [data-city-world-tools]').count(), 1);
     await page.evaluate(() => window.__ui.update({ trackerVisible: false }));
@@ -73,6 +78,23 @@ try {
     await page.evaluate(() => window.__ui.update({ trackerVisible: true }));
     await click('[data-city-world-tools]');
     assert.equal(await page.locator('[data-city-minimap]').count(), 1);
+    if (viewport.width <= 680) {
+      assert.equal(await page.locator('[data-city-panel-select]').isVisible(), true);
+      assert.equal(await page.locator('.city-world__dock-bar > strong').innerText(), 'Map');
+      assert(await page.locator('[data-city-panel-select]').evaluate(node => node.getBoundingClientRect().height >= 44));
+    }
+    await page.locator('[data-city-tracked-objective]').selectOption('train');
+    assert.deepEqual(await page.evaluate(() => window.__tracked), { id: 'train', venueId: 'training' });
+    assert.equal(await page.locator('[data-city-tracked-objective] option[value="retired"]').count(), 0);
+    await page.evaluate(() => { window.__rejectTracking = true; });
+    await page.locator('[data-city-tracked-objective]').selectOption('meet');
+    assert.equal(await page.locator('[data-city-tracked-objective]').inputValue(), 'train', 'A rejected scene selection retains the confirmed tracked objective.');
+    await page.evaluate(() => { window.__rejectTracking = false; });
+    await page.evaluate(() => window.__ui.update({}));
+    assert.equal(await page.locator('[data-city-objective-tracker]').innerText(), '◆ Learn a new skill');
+    await page.evaluate(() => window.__ui.frame({ world: { width: 960, height: 640 }, position: { x: 430, y: 366 }, route: [{ x: 430, y: 504 }, { x: 606, y: 504 }], selectedVenue: 'training', questVenueId: 'training' }));
+    await page.waitForFunction(() => document.querySelector('[data-city-minimap]').getAttribute('aria-label').includes('Walking route to Training Room shown.'));
+    assert.match(await page.locator('[data-city-minimap]').getAttribute('aria-label'), /Tracked objective: Training Room/);
     await page.locator('.city-world__content').focus();
     await page.evaluate(() => window.__ui.update({}));
     assert.equal(await page.locator('.city-world__content').evaluate(node => document.activeElement === node), true, 'A passive update retains anonymous content focus rather than choosing an unrelated unkeyed tab.');
@@ -84,12 +106,17 @@ try {
     await page.evaluate(() => { window.__ui.frame({ position: { x: 606, y: 504 } }); window.__ui.close(false); });
     assert.match(await page.locator('.city-world__speech').innerText(), /THE TRAINER/, 'Closing an already hidden tool panel does not erase an arrival dialogue.');
     await page.evaluate(() => { document.querySelector('#map').style.height = '96px'; window.__ui.frame({ position: { x: 606, y: 504 } }); });
-    assert.equal(await page.locator('.city-world__speech').isVisible(), false);
-    assert.match(await page.locator('.city-world__dialogue').innerText(), /THE TRAINER/, 'An active cue moves outside a newly short map instead of obscuring the avatar.');
+    assert.equal(await page.locator('.city-world__speech').isVisible(), true);
+    assert.equal(await page.locator('#map .city-world__speech').count(), 0, 'Dialogue stays outside the walking canvas at every height.');
+    assert.match(await page.locator('.city-world__dialogue').innerText(), /THE TRAINER/);
     await page.evaluate(() => { document.querySelector('#map').style.height = '280px'; });
 
     await page.evaluate(() => window.__ui.open('bag'));
     await page.waitForFunction(() => window.__reads.includes('inventory'));
+    await page.evaluate(() => window.__ui.update({ character: { ...window.__character, gun: 'starter', guns: ['starter', 'pocket'] } }));
+    assert.match(await page.locator('.city-world__content').innerText(), /Firepower 5 · \+2 vs equipped/);
+    assert.match(await page.locator('.city-world__content').innerText(), /Firepower 3 · Equipped/);
+    await page.evaluate(() => window.__ui.update({ character: window.__character }));
     await page.evaluate(() => { window.__social.preferences.chatEnabled = true; window.__ui.update({ social: window.__social }); window.__holdInventory = true; window.__ui.open('bag'); });
     await page.waitForFunction(() => !!window.__releaseInventory);
     assert.equal((await page.locator('.city-world__content').innerText()).includes('notebook'), false);
@@ -114,8 +141,22 @@ try {
     assert.equal(await page.evaluate(() => window.__sent.length), 1, 'A dispatched action is not canceled or resent by closing.');
 
     await page.evaluate(() => { window.__ui.update({ receipt: { label: 'Equip', summary: 'Confirmation pending', recovery: { sameKey: true } }, recovery: true }); window.__ui.open('bag'); });
+    assert(await page.locator('.city-world__receipt').evaluate(node => !!(node.compareDocumentPosition(document.querySelector('.city-world__content')) & Node.DOCUMENT_POSITION_FOLLOWING)), 'The receipt and recovery appear before panel actions.');
     assert.equal(await page.locator('[data-city-equip="starter"]').isDisabled(), true);
+    await page.evaluate(() => window.__ui.setHeight(144));
+    await page.locator('[data-city-world-retry]').scrollIntoViewIfNeeded();
+    assert(await page.locator('[data-city-world-retry]').evaluate(node => {
+      const box = node.getBoundingClientRect(), dock = node.closest('.city-world__dock').getBoundingClientRect();
+      return box.height >= 44 && box.top >= dock.top && box.bottom <= dock.bottom && [box.top + 2, box.bottom - 2].every(y => document.elementFromPoint(box.left + box.width / 2, y) === node);
+    }), 'Recovery remains a fully reachable 44px action in a 144px dock.');
+    await page.evaluate(() => window.__ui.setHeight(240));
     await click('[data-city-world-retry]'); assert.equal(await page.evaluate(() => window.__recoveries), 1);
+    await page.evaluate(() => { window.__actionReply = { code: 409, body: { error: 'unknown_backend_rejection' } }; });
+    await click('[data-city-equip="starter"]');
+    await page.waitForFunction(() => !window.__ui.getState().pending);
+    assert.match(await page.locator('.city-world__notice').innerText(), /Refresh this panel/);
+    assert.equal((await page.locator('.city-world__notice').innerText()).includes('unknown_backend_rejection'), false, 'Internal error identifiers are replaced with an actionable fallback.');
+    await page.evaluate(() => { window.__actionReply = null; });
     await page.evaluate(() => window.__ui.setHeight(64));
     await page.locator('[data-city-equip="starter"]').scrollIntoViewIfNeeded();
     const controlFits = () => page.locator('[data-city-equip="starter"]').evaluate(node => {
@@ -151,9 +192,44 @@ try {
     await click('[data-city-chat-consent]');
     await page.waitForFunction(() => !!document.querySelector('[data-city-nearby-feed]'));
     await page.waitForFunction(() => document.querySelector('[data-city-nearby-feed]').textContent.includes('<img'));
-    assert.equal(await page.locator('[data-city-nearby-feed] li').first().innerText(), 'Public neighbor · Earlier message');
+    assert.match(await page.locator('[data-city-nearby-feed] li').first().innerText(), /Public neighbor[\s\S]*Earlier message/);
+    assert.equal(await page.locator('[data-city-nearby-feed] time').count(), 2);
+    assert.equal(await page.locator('[data-city-nearby-feed] li.is-grouped').count(), 1);
+    assert(await page.locator('[data-city-nearby-feed] time').first().getAttribute('datetime'));
     assert.match(await page.locator('.city-world__speech').innerText(), /<img/, 'The bubble uses the newest item of the actual oldest-first DTO convention.');
     assert.equal(await page.locator('[data-city-nearby-feed] img').count(), 0); assert.equal(await page.evaluate(() => window.__xss), undefined);
+    await page.evaluate(() => {
+      window.__chatHistory = Array.from({ length: 24 }, (_, index) => ({ id: 'history-' + index, who: 'Neighbor', text: 'Earlier line ' + index,
+        characterId: 'neighbor', generation: 1, at: new Date(Date.now() - (24 - index) * 6000).toISOString() }));
+      window.__ui.update({ chat: { messages: window.__chatHistory } });
+    });
+    assert(await page.locator('[data-city-nearby-feed]').evaluate(node => node.scrollHeight > node.clientHeight));
+    await page.locator('[data-city-nearby-feed]').evaluate(node => { node.scrollTop = 24; });
+    const readingPosition = await page.locator('[data-city-nearby-feed]').evaluate(node => node.scrollTop);
+    await page.evaluate(() => window.__ui.update({ chat: { messages: [...window.__chatHistory, { id: 'latest-line', who: 'Neighbor', text: 'A new line', characterId: 'neighbor', generation: 1, at: new Date().toISOString() }] } }));
+    assert.equal(await page.locator('[data-city-nearby-feed]').evaluate(node => node.scrollTop), readingPosition, 'New messages retain the reader’s history position.');
+    assert.equal(await page.locator('[data-city-chat-unread]').innerText(), '1 new message ↓');
+    await click('[data-city-chat-unread]');
+    assert.equal(await page.locator('[data-city-chat-unread]').isVisible(), false);
+    assert(await page.locator('[data-city-nearby-feed]').evaluate(node => node.scrollHeight - node.scrollTop - node.clientHeight < 12));
+    await page.evaluate(() => {
+      window.__chatHistory = Array.from({ length: 50 }, (_, index) => ({ id: 'window-' + index, who: 'Neighbor', text: 'History line ' + index,
+        characterId: 'neighbor', generation: 1, at: new Date(Date.now() - (50 - index) * 6000).toISOString() }));
+      window.__ui.update({ chat: { messages: window.__chatHistory } });
+      const feed = document.querySelector('[data-city-nearby-feed]'); feed.scrollTop = 200; feed.focus({ preventScroll: true });
+    });
+    const readingAnchor = () => page.locator('[data-city-nearby-feed]').evaluate(feed => {
+      const row = [...feed.querySelectorAll('[data-city-message-id]')].find(row => row.getBoundingClientRect().bottom > feed.getBoundingClientRect().top + 2);
+      return { id: row.dataset.cityMessageId, offset: row.getBoundingClientRect().top - feed.getBoundingClientRect().top };
+    });
+    const beforeRollover = await readingAnchor();
+    await page.evaluate(() => window.__ui.update({ chat: { messages: [...window.__chatHistory.slice(1), { id: 'rollover-line', who: 'Neighbor', text: 'Newest in a full room', characterId: 'neighbor', generation: 1, at: new Date().toISOString() }] } }));
+    const afterRollover = await readingAnchor();
+    assert.equal(afterRollover.id, beforeRollover.id, 'The visible message stays anchored when the 50-message window drops its oldest row.');
+    assert(Math.abs(afterRollover.offset - beforeRollover.offset) < 1, 'The message keeps its reading offset within scroll-pixel rounding.');
+    assert(await page.locator('[data-city-nearby-feed]').evaluate(node => document.activeElement === node), 'Polling retains keyboard focus on the scrollable history.');
+    assert.equal(await page.locator('[data-city-chat-unread]').innerText(), '1 new message ↓');
+    await click('[data-city-chat-unread]');
     await page.locator('[data-city-nearby-input]').fill('A draft stays here');
     await page.locator('[data-city-nearby-input]').evaluate(node => node.setSelectionRange(3, 3));
     await page.evaluate(() => window.__ui.update({ chat: { messages: [] } }));
@@ -196,17 +272,26 @@ try {
     assert.equal(await page.locator('[data-city-nearby-feed]').count(), 0);
 
     await page.evaluate(() => window.__ui.open('room'));
-    await page.waitForFunction(() => document.querySelectorAll('.city-world__furniture').length === 2);
+    await page.waitForFunction(() => document.querySelectorAll('.city-world__furniture:not(.city-world__room-preview)').length === 2);
     await click('button:has-text("Use Chair")');
     assert.equal(await page.locator('.city-world__room-player').evaluate(node => node.style.gridColumn), '2');
     const useTargets = await page.locator('.city-world__emotes button').evaluateAll(nodes => nodes.map(node => ({ width: node.getBoundingClientRect().width, height: node.getBoundingClientRect().height })));
     assert(useTargets.every(bounds => bounds.width >= 44 && bounds.height >= 44), 'Usable furniture has accessible 44px controls outside miniature art.');
-    await page.locator('[aria-label="Furniture column"]').fill('5');
-    await page.locator('[aria-label="Furniture row"]').fill('6');
-    await click('button:has-text("Place furniture")');
+    const beforePlacement = await page.evaluate(() => window.__sent.length);
+    await click('[data-city-room-tile="3,2"]');
+    await click('[data-city-room-save]');
+    assert.equal(await page.evaluate(() => window.__sent.length), beforePlacement, 'An occupied preview never dispatches.');
+    assert.match(await page.locator('.city-world__notice').innerText(), /occupied/);
+    await click('[data-city-room-tile="4,5"]');
+    assert.equal(await page.locator('.city-world__room-preview').isVisible(), true);
+    assert.equal(await page.locator('[aria-label="Furniture column"]').inputValue(), '5');
+    assert.equal(await page.locator('[aria-label="Furniture row"]').inputValue(), '6');
+    assert.equal(await page.evaluate(() => window.__sent.length), beforePlacement, 'A visual preview is local until Save placement.');
+    await click('[data-city-room-save]');
     await page.waitForFunction(() => window.__social.preferences.room.furniture.some(item => item.id === 'chair' && item.x === 4 && item.y === 5));
     await page.evaluate(() => { window.__ui.update({ character: { ...window.__character, stats: { muscle: 6, cunning: 5, speed: 5 }, level: 2 } }); });
     assert.match(await page.locator('.city-world__gains').innerText(), /muscle \+1.*Level 2 reached/);
+    assert.equal(await page.locator('.city-world__gains').evaluate(node => getComputedStyle(node).animationName), 'none', 'Confirmed gains respect reduced motion.');
 
     await page.evaluate(() => { window.__social.preferences.chatEnabled = true; window.__ui.open('chat'); });
     await page.waitForFunction(() => document.querySelector('.city-world__speech').textContent.includes('Public neighbor'));
@@ -262,7 +347,7 @@ try {
     await click('[data-city-world-tools]');
     await click('[data-city-world-panel="bag"]');
     const firstInventory = await heldRead('inventory');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag · Loading…', notice: 'Loading Bag…' }, 'The first held read identifies the panel and announces loading before a reply exists.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag', notice: 'Loading Bag…' }, 'The first held read identifies the panel and announces loading before a reply exists.');
     assert.equal(await page.locator('.city-world__notice').getAttribute('role'), 'status');
     assert.equal(await page.locator('.city-world__notice').getAttribute('aria-live'), 'polite');
     assert.equal(await page.locator('.city-world__dock-bar').evaluate(node => getComputedStyle(node).position), 'sticky');
@@ -283,7 +368,7 @@ try {
 
     await click('[data-city-world-panel="style"]');
     const firstSocial = await heldRead('social');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Style · Loading…', notice: 'Loading Style…' });
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Style', notice: 'Loading Style…' });
     await click('[data-city-world-panel="map"]');
     assert.deepEqual(await readState(), { busy: 'false', title: 'Map', notice: '' }, 'A local panel switch retires the former loader.');
     await settleRead(firstSocial, { code: 503, body: {} });
@@ -292,18 +377,18 @@ try {
 
     await click('[data-city-world-panel="chat"]');
     const chatSocial = await heldRead('social');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' });
     const joinedSocial = await page.evaluate(() => ({ ...structuredClone(window.__social), preferences: { ...structuredClone(window.__social.preferences), chatEnabled: true } }));
     await settleRead(chatSocial, { code: 200, body: joinedSocial });
     const olderChat = await heldRead('chat');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' });
     assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.', 'An unanswered history request never claims that a loaded room is quiet.');
     const chatOpening = await page.evaluate(() => window.__ui.getState().opening);
     await click('button:has-text("Refresh messages")');
     const newerChat = await heldRead('chat');
     assert.equal(await page.evaluate(() => window.__ui.getState().opening), chatOpening, 'Both chat requests belong to the same opening.');
     await settleRead(olderChat, null, true);
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'An older rejection cannot replace or clear the newer pending read.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' }, 'An older rejection cannot replace or clear the newer pending read.');
     await settleRead(newerChat, { code: 200, body: { messages: [{ id: 'winning-read', who: 'Neighbor', text: 'Current room reply.' }], participants: [] } });
     assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: '' });
     assert.match(await page.locator('[data-city-nearby-feed]').innerText(), /Current room reply\./);
@@ -311,7 +396,7 @@ try {
     await page.evaluate(() => window.__ui.update({ chat: null }));
     await click('[data-city-world-panel="chat"]');
     const partialSocialError = await heldRead('social');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'Cached joined consent still waits for the current social dependency when history is missing.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' }, 'Cached joined consent still waits for the current social dependency when history is missing.');
     assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.');
     assert.equal(await page.locator('[data-city-nearby-input]').isEnabled(), true);
     await settleRead(partialSocialError, { code: 503, body: { error: 'db_down' } });
@@ -319,16 +404,16 @@ try {
     assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.', 'A failed read leaves history unloaded rather than inventing an empty room.');
     await click('[data-city-world-panel="chat"]');
     const partialSocial = await heldRead('social');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' });
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' });
     await settleRead(partialSocial, { code: 200, body: joinedSocial });
     const partialChatError = await heldRead('chat');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Loading Nearby chat…' }, 'Loading remains active across the social-to-history handoff.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Loading Nearby chat…' }, 'Loading remains active across the social-to-history handoff.');
     await settleRead(partialChatError, null, true);
     assert.deepEqual(await readState(), { busy: 'false', title: 'Nearby chat', notice: 'Could not refresh this panel. Try again.' });
     assert.equal(await page.locator('[data-city-nearby-feed]').innerText(), 'Messages have not loaded yet.');
     await click('button:has-text("Refresh messages")');
     const loadedEmptyChat = await heldRead('chat');
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat · Loading…', notice: 'Could not refresh this panel. Try again.' }, 'An ongoing retry retains the current error ahead of the loading status.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Nearby chat', notice: 'Could not refresh this panel. Try again.' }, 'An ongoing retry retains the current error ahead of the loading status.');
     await settleRead(loadedEmptyChat, { code: 200, body: { messages: [], participants: [] } });
     assert.equal((await readState()).busy, 'false');
     assert.equal((await readState()).title, 'Nearby chat');
@@ -370,7 +455,7 @@ try {
     await click('[data-city-world-tools]'); await click('[data-city-world-panel="bag"]');
     const newOwnerInventory = await heldRead('inventory');
     await settleRead(oldOwnerSocial, null, true);
-    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag · Loading…', notice: 'Loading Bag…' }, 'Old-owner settlement cannot clear the successor pending read.');
+    assert.deepEqual(await readState(), { busy: 'true', title: 'Bag', notice: 'Loading Bag…' }, 'Old-owner settlement cannot clear the successor pending read.');
     assert.equal(await page.locator('.city-world__receipt').innerText(), '');
     await click('[data-city-world-close]');
     assert.deepEqual(await readState(), { busy: 'false', title: 'World tools', notice: '' }, 'Closing retires loading indicators before the response settles.');
