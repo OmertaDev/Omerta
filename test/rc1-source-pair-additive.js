@@ -112,7 +112,7 @@ console.log('rc1-source-pair-additive FOURTH FINAL PASS: '+fourthNegatives+' neg
 // The current main branch has additional gateway/legal work. Its separate exact
 // source relation retains that work and the four historical qualification pins.
 const { COMMERCIAL_MAIN_ADDITIVE_PAIR: commercialMainPin, qualifyCommercialMainAdditiveBootstrap } = await import('../tools/rc1-source-pair.js');
-assert.equal(commercialMainPin.predecessor, '5c18acaaf47c84851729b82354340c4d56734dd9');
+assert.equal(commercialMainPin.predecessor, '23f115c6f142321e1796e272bea406e1feb137ba');
 assert.deepEqual(commercialMainPin.tables, fourthPin.tables);
 const commercialMainPredecessor = structuredClone(fourthPredecessor);
 const commercialMainCandidate = structuredClone(fourthCandidate);
