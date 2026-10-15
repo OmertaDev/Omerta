@@ -53,9 +53,15 @@ try {
     const observed = +new Date((await client.query('SELECT clock_timestamp() AS now')).rows[0].now);
     assert(observed < Date.parse(expires.expiresAt), 'Actual completed ACK is visible before the real deadline');
     console.log('Native manufacturing final-ACK real deadline wait milliseconds', Date.parse(expires.expiresAt) - observed);
-    while (Date.now() < Date.parse(expires.expiresAt) + 100) {
-      await new Promise(resolve => setTimeout(resolve, Math.min(10000, Date.parse(expires.expiresAt) + 100 - Date.now())));
+    let databaseClock = observed, keepalives = 0;
+    const actualDeadline = Date.parse(expires.expiresAt) + 100;
+    while (databaseClock < actualDeadline) {
+      await new Promise(resolve => setTimeout(resolve, Math.min(1000, actualDeadline - databaseClock)));
+      databaseClock = +new Date((await client.query('SELECT clock_timestamp() AS now')).rows[0].now);
+      keepalives++;
     }
+    assert(databaseClock >= actualDeadline, 'The same live transaction crosses the genuine database deadline');
+    assert(keepalives > 0, 'Read-only same-client queries preserve the transaction during the real wait');
   });
   await assert.rejects(M.manufacturingLicenseAction(delayed, ttlBuyer.account, 'run', ref(expires), 'native-final-ack-expiry'),
     error => error.code === 'manufacturing_license' && error.message === 'expired');
