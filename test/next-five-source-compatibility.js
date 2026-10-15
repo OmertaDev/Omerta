@@ -7,7 +7,7 @@ import {fifthBatchMigrationSchema} from '../tools/rc1-fifth-batch-source-compati
 import {equipmentEconomyMigrationProjection} from './lib/equipment-economy-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32e6});
 assert.equal(NEXT_FIVE_SOURCE_PHASE,'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json']);
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
  const current=git('show',NEXT_FIVE_SOURCE_REVISION+':'+file),prior=git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file);

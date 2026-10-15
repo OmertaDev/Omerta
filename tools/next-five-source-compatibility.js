@@ -1,7 +1,7 @@
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_FIVE_SOURCE_REVISION="0a11b2f03173f9d238a4e9826f03c02a2334d649";
+export const NEXT_FIVE_SOURCE_REVISION="149af21461cd542a9660360c6967022ca3431488";
 export const NEXT_FIVE_SOURCE_PREDECESSOR="301e3f79c53525fbfacb3affe76415b8dcd6cbab";
 export const NEXT_FIVE_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_FIVE_SOURCE_DOMAINS={
@@ -53,6 +53,27 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
       {
         "current": "  ...EQUIPMENT_ECONOMY_SCHEMAS,\n  ...COMPANY_WORKFORCE_SCHEMAS,\n  ...COMPANY_COMMERCIAL_SCHEMAS,\n  ...CONSIGNMENT_SCHEMAS,\n  ...COMMISSION_SCHEMAS,\n  ...ATOMIC_BARTER_SCHEMAS,\n  ...PICKING_PACKING_SCHEMAS,\n  ...FREIGHT_SCHEMAS,\n  ...COMPANY_AUTONOMY_SCHEMAS,\n  ...CITY_SOCIAL_SCHEMAS,\n  ...CITY_ENCOUNTER_SCHEMAS,\n",
         "baseline": "  ...EQUIPMENT_ECONOMY_SCHEMAS,\n  ...COMPANY_WORKFORCE_SCHEMAS,\n  ...COMPANY_COMMERCIAL_SCHEMAS,\n  ...COMPANY_AUTONOMY_SCHEMAS,\n  ...CITY_SOCIAL_SCHEMAS,\n  ...CITY_ENCOUNTER_SCHEMAS,\n"
+      }
+    ]
+  },
+  "src/equipmentrentals.js": {
+    "currentSha256": "bb146289be66666e3a957da7bf28d94c872e68a80d73fe6fdec6d5ac9de02303",
+    "currentBlob": "5e7f68e664a53004271de2a8891200fb45197dc6",
+    "baselineSha256": "1e6dec8001cea6f528b1fbde255dca5170893e5799dced0b0875b24efd96423c",
+    "baselineBlob": "5a848d9b9b1b400d367b98aa95457feb9d3d5b10",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\nimport { consignmentDeathCounterparts } from './consignments.js';\nimport { atomicBarterCounterparts } from './atomicbarter.js';\nimport { pickingPackingCounterparts } from './pickingpacking.js';\n\n// Commission recovery depends on crafting, whose default graph is validated at module load.\n// Defer this reader inside the existing async death hooks to avoid an initialization cycle.\nasync function commissionedCraftingDeathCounterparts(client, characterId) {\n  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');\n  return discover(client, characterId);\n}\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n",
+        "baseline": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n"
+      },
+      {
+        "current": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);\n  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking originals.\n  if (ids.size > subjects.length * 42) fail('death_limit');\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n",
+        "baseline": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n"
+      },
+      {
+        "current": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await atomicBarterCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await commissionedCraftingDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Commission counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await pickingPackingCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Picking counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n",
+        "baseline": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n"
       }
     ]
   },
