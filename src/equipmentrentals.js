@@ -1,3 +1,4 @@
+import { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';
 import crypto from 'node:crypto';
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
@@ -216,8 +217,9 @@ export async function prelockEquipmentRentalDeathActors(client, characterIds) {
   for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
-  // Per subject: self + 3 rental + 24 consignment + 3 barter originals.
-  if (ids.size > subjects.length * 31) fail('death_limit');
+  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
+  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission originals.
+  if (ids.size > subjects.length * 39) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -244,6 +246,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await atomicBarterCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await commissionedCraftingDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Commission counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

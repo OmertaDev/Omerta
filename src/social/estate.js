@@ -1,3 +1,4 @@
+import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
 import { retireManagementTeamsAtDeath } from '../managementteams.js';
 import { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';
@@ -181,6 +182,13 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of commissionStart) {
+    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');
+    const before = Number(victim.cash);
+    registerItemTransactionUndo(client, () => { victim.cash = before; });
+    victim.cash = before + receipt.refundedFee;
+  }
   await closeWarehouseClaimsAtDeath(client, victim.id);
   const acct = h.victimAcct;
   const lvl = levelOf(Number(victim.respect));
@@ -492,6 +500,15 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
+  const commissionRecovery = await recoverCommissionedCraftingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of commissionRecovery) {
+    for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {
+      if (actor.id !== receipt.customerCharacter || !actor.alive || !receipt.refundedFee) continue;
+      const before = Number(actor.cash);
+      registerItemTransactionUndo(client, () => { actor.cash = before; });
+      actor.cash = before + receipt.refundedFee;
+    }
+  }
   for (const receipt of rentalRecovery) {
     // The canonical refund already updated SQL. G subsequently persists its
     // original actor object, which may also hold unpersisted loot: merge DELTA.

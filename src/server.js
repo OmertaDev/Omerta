@@ -1,3 +1,4 @@
+import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
 import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
@@ -2466,6 +2467,7 @@ export async function buildServer() {
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
+  registerCommissionedCrafting(app, { pool, auth });
   registerAtomicBarter(app, { pool, auth });
   registerInfrastructureConcessions(app, { pool, auth });
   registerTerritoryEconomics(app, { pool, auth });

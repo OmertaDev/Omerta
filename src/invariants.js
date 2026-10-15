@@ -1,3 +1,4 @@
+import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
 import { economicIntelligenceTransferBooks } from './economicintelligence.js';
 import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
@@ -66,6 +67,7 @@ const KNOWN_REASONS = {
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
+    'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
@@ -737,6 +739,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
+  const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
+  push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
+  const commissionIssues = await collectCommissionedCraftingIssues(pool);
+  push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });
   const consignmentIssues = await collectConsignmentIssues(pool);
   const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
   push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });

@@ -1,0 +1,4 @@
+import * as C from '../commissionedcrafting.js';
+import { GameError } from '../game.js';
+import { withItemRead, withItemTransaction } from '../items.js';
+export function register(app,{pool,auth}){if(typeof pool?.connect!=='function'||typeof auth!=='function')throw Error('Commissioned crafting requires authenticated canonical Items transactions.');app.get('/v1/company/commissions',{preHandler:auth},req=>{if(Object.keys(req.query||{}).some(k=>k!=='after'))throw new GameError('commissioned_crafting','terms');return withItemRead(pool,c=>C.commissionedCraftingBoard(c,req.user.sub,req.query?.after??''));});for(const [name,fn]of [['fund',C.fundCommission],['accept',C.acceptCommission],['complete',C.completeCommission],['refund',C.refundCommission]])app.post('/v1/company/commissions/'+name,{preHandler:auth},req=>withItemTransaction(pool,c=>fn(c,req.user.sub,req.body,req.headers['idempotency-key'],{agentCredential:req.user.agent===true})));}
