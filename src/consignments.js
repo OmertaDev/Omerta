@@ -37,11 +37,11 @@ async function request(c, account, action, body, key, execute) {
 }
 async function current(c,account){const rows=(await c.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[account])).rows;if(rows.length!==1)fail('original_actor');return rows[0].id;}
 // Feature-specific finite ordering: original characters, accounts, listing, physical UID.
-export async function lockConsignmentParties(c, ids) {
+export async function lockConsignmentParties(c, ids, returning=false) {
   assertItemTransaction(c); if(!Array.isArray(ids)||ids.length<1||ids.length>3)fail('parties');const rows=[];
   for(const actor of [...new Set(ids.map(id))].sort()){const row=(await c.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE',[actor])).rows[0];if(!row||row.is_npc)fail('original_actor');rows.push(row);}
   if(new Set(rows.map(r=>r.account_id)).size!==rows.length)fail('self');
-  for(const account of rows.map(r=>r.account_id).sort())if((await c.query('SELECT status FROM accounts WHERE id=$1 FOR UPDATE',[account])).rows[0]?.status!=='active')fail('account');
+  for(const account of rows.map(r=>r.account_id).sort()){const status=(await c.query('SELECT status FROM accounts WHERE id=$1 FOR UPDATE',[account])).rows[0]?.status;if(!status||(!returning&&status!=='active'))fail('account');}
   return rows;
 }
 function live(rows){if(rows.some(r=>!r.alive))fail('original_actor');}
@@ -70,7 +70,7 @@ async function create(c,account,terms,run){
   if(jailed(owner)||safeHoused(owner))fail('mobile');
   if((await c.query("SELECT id FROM consignments WHERE owner_account=$1 AND status IN ('offered','active') LIMIT 8",[account])).rows.length>=8)fail('owner_limit');
   await assertEquipmentUsable(c,{itemId:terms.itemId,owner:title(account)});const now=await clock(c),expires=new Date(+now+terms.lifetimeSeconds*1000);
-  if((await c.query("SELECT id FROM consignments WHERE item_id=$1 AND owner_account=$2 AND status IN ('offered','active')",[terms.itemId,account])).rows.length)fail('item_offer');
+  if((await c.query("SELECT id FROM consignments WHERE (item_id=$1) IS TRUE AND (owner_account=$2) IS TRUE AND status IN ('offered','active')",[terms.itemId,account])).rows.length)fail('item_offer');
   const row={id:run,item_id:terms.itemId,owner_account:account,owner_character:owner.id,host_account:host.account_id,host_character:host.id,price:terms.price,host_fee_bps:terms.hostFeeBps,expires_at:expires,status:'offered'};row.source_hash=hash(source(row));
   registerItemTransactionUndo(c,()=>c.query('DELETE FROM consignments WHERE id=$1',[run]));
   await c.query("INSERT INTO consignments(id,item_id,owner_account,owner_character,host_account,host_character,price,host_fee_bps,expires_at,source_hash,status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'offered')",[run,terms.itemId,account,owner.id,host.account_id,host.id,terms.price,terms.hostFeeBps,expires,row.source_hash]);
@@ -80,8 +80,10 @@ async function create(c,account,terms,run){
 async function execute(c,account,terms,run){
   const hint=(await c.query('SELECT owner_character,host_character FROM consignments WHERE id=$1',[terms.consignmentId])).rows[0];if(!hint)fail('source');
   const callerId=await current(c,account), ids=[hint.owner_character,hint.host_character];if(terms.action==='buy')ids.push(callerId);
-  const rows=await lockConsignmentParties(c,ids), row=await listing(c,terms),caller=rows.find(r=>r.id===callerId&&r.account_id===account);
+  const returning=terms.action==='cancel'||terms.action==='expire';
+  const rows=await lockConsignmentParties(c,ids,returning), row=await listing(c,terms),caller=rows.find(r=>r.id===callerId&&r.account_id===account);
   if(!caller||row.owner_character!==hint.owner_character||row.host_character!==hint.host_character)fail('original_actor');
+  if(returning&&(await c.query('SELECT status FROM accounts WHERE id=$1',[account])).rows[0]?.status!=='active')fail('account');
   const owner=rows.find(r=>r.id===row.owner_character),host=rows.find(r=>r.id===row.host_character);if(owner?.account_id!==row.owner_account||host?.account_id!==row.host_account)fail('original_actor');
   if(!['offered','active'].includes(row.status))fail('closed');
   if(terms.action==='accept'){
