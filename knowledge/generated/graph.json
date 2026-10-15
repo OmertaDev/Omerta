@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+  "sourceRevision": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14695,
-    "edges": 57799,
+    "nodes": 14698,
+    "edges": 57809,
     "byNodeType": {
-      "Artifact": 6409,
+      "Artifact": 6410,
       "Command": 273,
-      "Commit": 3632,
+      "Commit": 3634,
       "Contract": 133,
       "Document": 899,
       "Domain": 13,
@@ -64,15 +64,15 @@
       "Workflow": 6
     },
     "byEdgeType": {
-      "BELONGS_TO": 5030,
-      "CHANGED": 22582,
-      "CONTAINS": 6430,
+      "BELONGS_TO": 5031,
+      "CHANGED": 22588,
+      "CONTAINS": 6431,
       "DECLARES": 273,
       "DEFINED_IN": 1639,
       "DEPENDS_ON": 68,
       "EXECUTES": 964,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3632,
+      "HAS_COMMIT": 3634,
       "IMPLEMENTS": 124,
       "IMPORTS": 5822,
       "INHERITS": 45,
@@ -7696,6 +7696,29 @@
       "lastChangedAt": "2026-10-15T01:07:10.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "cff145882d9e84c575587699ef97821d26677d77"
+    },
+    {
+      "key": "Artifact:.github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "type": "Artifact",
+      "id": ".github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "label": "territory-view-switch-fix-2026-10-15.json",
+      "path": ".github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "kind": "artifact",
+      "extension": ".json",
+      "bytes": 7560,
+      "lines": 167,
+      "version": "ad0b0a5617e53919",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+          "line": 1,
+          "version": "ad0b0a5617e53919"
+        }
+      ],
+      "lastChangedAt": "2026-10-15T02:59:11.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049"
     },
     {
       "key": "Artifact:.github/workflows/ci.yml",
@@ -115638,20 +115661,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1435717,
-      "lines": 15116,
-      "version": "52b7be8066c7808b",
+      "bytes": 1435945,
+      "lines": 15120,
+      "version": "5184307e6cecae67",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "52b7be8066c7808b"
+          "version": "5184307e6cecae67"
         }
       ],
-      "lastChangedAt": "2026-10-15T02:32:39.000Z",
+      "lastChangedAt": "2026-10-15T02:59:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54"
+      "lastChangedCommit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049"
     },
     {
       "key": "Artifact:public/invite.html",
@@ -157912,6 +157935,22 @@
       ]
     },
     {
+      "key": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "type": "Commit",
+      "id": "1dc184c17069b4aa36687f124b642254c502330f",
+      "label": "chore(knowledge): snapshot final browser release fixes",
+      "title": "chore(knowledge): snapshot final browser release fixes",
+      "date": "2026-10-15T02:35:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1dc184c17069b4aa36687f124b642254c502330f",
+      "provenance": [
+        {
+          "commit": "1dc184c17069b4aa36687f124b642254c502330f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1dc184c17069b4aa36687f124b642254c502330f"
+        }
+      ]
+    },
+    {
       "key": "Commit:1dcc1d27223f94811482c7ec8aaf38c0cae0983b",
       "type": "Commit",
       "id": "1dcc1d27223f94811482c7ec8aaf38c0cae0983b",
@@ -160100,6 +160139,22 @@
         {
           "commit": "289d806926b5674e597c34027b813313727ca217",
           "url": "https://github.com/OmertaDev/Omerta/commit/289d806926b5674e597c34027b813313727ca217"
+        }
+      ]
+    },
+    {
+      "key": "Commit:28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "type": "Commit",
+      "id": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "label": "fix(ui): reveal view controls when leaving City for territory",
+      "title": "fix(ui): reveal view controls when leaving City for territory",
+      "date": "2026-10-15T02:59:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "provenance": [
+        {
+          "commit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+          "url": "https://github.com/OmertaDev/Omerta/commit/28c6fc307ef9568845d7764b5e1e1479f7f5d049"
         }
       ]
     },
@@ -234355,6 +234410,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -236257,6 +236315,9 @@
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
         },
         {
+          "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+        },
+        {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
         },
         {
@@ -238157,6 +238218,9 @@
         },
         {
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
+        },
+        {
+          "commit": "1dc184c17069b4aa36687f124b642254c502330f"
         },
         {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
@@ -240593,6 +240657,9 @@
         },
         {
           "commit": "1d868547fb310e02e7dfe7daa7a11315d85b6b29"
+        },
+        {
+          "commit": "1dc184c17069b4aa36687f124b642254c502330f"
         },
         {
           "commit": "1e5fa26a6816ba6f6f97b8a6c08fa3c6dfe8445a"
@@ -254380,12 +254447,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "cb3dad55bc1531641a9cb49bc05bb57f8a1e2b54",
+      "revision": "28c6fc307ef9568845d7764b5e1e1479f7f5d049",
       "currentBranch": "codex/production-all-changes-20261014",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 6409,
+      "currentArtifactCount": 6410,
       "provenance": [
         {
           "file": "README.md",
@@ -299355,6 +299422,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": ".github/ci-evidence/rc1-historical-source-fixtures-2026-10-14.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:.github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": ".github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
         "line": 1
       }
     },
@@ -362702,6 +362778,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:1dcc1d27223f94811482c7ec8aaf38c0cae0983b",
       "to": "Artifact:output/deed-rwa-upgrades/release-source-pin-fix.json",
       "provenance": {
@@ -368626,6 +368734,22 @@
       "to": "Artifact:package.json",
       "provenance": {
         "commit": "289d806926b5674e597c34027b813313727ca217"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "to": "Artifact:.github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "provenance": {
+        "commit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049"
       }
     },
     {
@@ -543454,6 +543578,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:.github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+      "provenance": {
+        "file": ".github/ci-evidence/territory-view-switch-fix-2026-10-15.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:.gitignore",
       "provenance": {
         "file": ".gitignore",
@@ -621803,6 +621936,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1dc184c17069b4aa36687f124b642254c502330f",
+      "provenance": {
+        "commit": "1dc184c17069b4aa36687f124b642254c502330f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:1dcc1d27223f94811482c7ec8aaf38c0cae0983b",
       "provenance": {
         "commit": "1dcc1d27223f94811482c7ec8aaf38c0cae0983b"
@@ -622894,6 +623035,14 @@
       "to": "Commit:289d806926b5674e597c34027b813313727ca217",
       "provenance": {
         "commit": "289d806926b5674e597c34027b813313727ca217"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:28c6fc307ef9568845d7764b5e1e1479f7f5d049",
+      "provenance": {
+        "commit": "28c6fc307ef9568845d7764b5e1e1479f7f5d049"
       }
     },
     {
