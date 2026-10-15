@@ -1,3 +1,5 @@
+import {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';
+// Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
@@ -6,11 +8,11 @@ import {NEXT_LAYER_SOURCE_REVISION,NEXT_LAYER_SOURCE_PREDECESSOR,NEXT_LAYER_SOUR
 import {releasePhase2MigrationPredecessor,nextFiveNativePredecessor} from '../tools/next-five-release-phase2-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32e6});
 assert.equal(NEXT_LAYER_SOURCE_PHASE,'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json','test/phase2-postgres.js','test/director-migration.js','.github/workflows/ci.yml','test/gates.js']);
+assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/depotacquisitionruntime.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json','test/phase2-postgres.js','test/director-migration.js','.github/workflows/ci.yml','test/gates.js']);
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
   const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
+  assert.equal(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;
@@ -34,7 +36,7 @@ for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
 for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){
   const text='unknown\r\nbytes\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;
 }
-const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(fs.readFileSync(file,'utf8'));
+const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')));
 const prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));
 assert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);
 assert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);
@@ -44,4 +46,4 @@ assert.equal(added.length,8);assert.equal(added.reduce((n,name)=>n+current.notNu
 const schema=fs.readFileSync('schema.sql','utf8');
 assert.throws(()=>releasePhase2MigrationPredecessor(schema),'Raw536 source does not enter the old528 native profile');
 assert.throws(()=>nextFiveNativePredecessor(schema),'Source transfer never creates historical native admission');
-console.log(`Next-layer source-only proof PASS:12 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);
+console.log(`Next-layer source-only proof PASS:13 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);

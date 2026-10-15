@@ -68,13 +68,11 @@ try {
       return layout;
     };
     const openTab = async (tabId) => {
-      if (await page.locator('#tabs-more:not(.hidden)').count()) await page.locator('#tabs-more').click();
-      const groups = await page.locator('#grouprail [data-group]').evaluateAll((elements) => elements.map((entry) => entry.dataset.group));
-      for (const group of groups) {
-        await page.locator(`#grouprail [data-group="${group}"]`).click();
-        const target = page.locator(`[data-tab="${tabId}"]`);
-        if (await target.isVisible()) { await target.click(); break; }
-      }
+      if (await page.locator('body.city-player-view').count()) await page.locator('#btn-dashboard-view').click();
+      const destination = { world: 'family', garage: 'streets' }[tabId];
+      assert(destination, 'The mobile journey uses a known bottom-navigation destination');
+      await page.locator(`#bnav [data-go="${destination}"]`).click();
+      await page.locator(`#tabs [data-tab="${tabId}"]`).click();
       await page.waitForSelector(`#tab-${tabId}.on`);
     };
     const openWorld = async () => { await openTab('world'); await page.waitForSelector('#tab-world.on .world-summary'); };
@@ -125,12 +123,14 @@ try {
     try {
       await page.goto(origin, { waitUntil: 'networkidle' });
       await page.locator('#btn-guest').click();
+      await page.locator('#age-date').fill('1990-01-01');
+      await page.getByRole('dialog', { name: 'Your birth date' }).getByRole('button', { name: 'Continue', exact: true }).click();
       await page.waitForSelector('#screen-create:not(.hidden)');
       await page.locator('#new-name').fill(`RC1 Mobile ${width}`);
       await page.locator('#btn-create').click();
       await page.waitForSelector('#welcome:not(.hidden)');
       await page.locator('#tour-next').click();
-      assert.match(await page.locator('#tour-next').innerText(), /PULL YOUR FIRST JOB/);
+      assert.match(await page.locator('#tour-next').innerText(), /MEET THE FIXER/);
       await page.locator('#tour-next').click();
       await page.waitForSelector('#welcome.hidden', { state: 'attached' });
       await openWorld();

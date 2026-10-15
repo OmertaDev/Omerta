@@ -206,7 +206,7 @@ try {
     assert(Math.abs(geometry.engine.width - geometry.canvas.width) <= 1 && Math.abs(geometry.engine.height - geometry.canvas.height) <= 1, 'CSS and Phaser share actual viewport geometry: ' + detail);
     assert.equal(geometry.name, geometry.expectedName, 'Keeping the label visible must preserve the complete player name.');
     assert(geometry.avatar.every(bounds => bounds.top >= -1 && bounds.bottom <= geometry.canvas.height + 1 && bounds.left >= -1 && bounds.right <= geometry.canvas.width + 1), 'The complete actual avatar and name remain in the map: ' + detail);
-    assert(geometry.viewport.width <= 960 && Math.abs(geometry.viewport.left - (page.viewportSize().width - geometry.viewport.width) / 2) <= 1, 'Wide Player maps are centered at the world width: ' + detail);
+    assert(geometry.viewport.width <= 1200 && Math.abs(geometry.viewport.left - (page.viewportSize().width - geometry.viewport.width) / 2) <= 1, 'Wide Player maps use the centered 1200px presentation cap: ' + detail);
     assert(geometry.canvas.width <= geometry.worldWidth + 1 && Math.abs(geometry.canvas.left - (page.viewportSize().width - geometry.canvas.width) / 2) <= 1, 'The centered canvas does not extend into empty space beyond the world: ' + detail);
     return geometry;
   };
@@ -290,41 +290,69 @@ try {
     const roster = await page.locator('.omerta-city__actor-list').textContent();
     for (const viewport of [{ width: 1440, height: 1000 }, { width: 375, height: 812 }]) {
       await page.setViewportSize(viewport); await page.locator('#btn-player-view').click(); await frames(page);
-      const samples = await page.evaluate(() => new Promise(resolve => {
+      const samples = await page.evaluate(() => new Promise((resolve, reject) => {
         const values = [], next = () => {
+          try {
           const canvas = document.querySelector('.omerta-city__canvas canvas');
           const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
           const name = live.data.get('playerName'), bounds = name.getBounds(), gap = 2 / live.cameras.main.zoom;
-          const labels = ['THE CLUBHOUSE', 'DOORMAN · NPC', 'MECHANIC · NPC'].map(text => {
-            const node = live.children.list.find(node => node.type === 'Text' && node.text === text), other = node.getBounds();
-            return { text, visible: node.visible, overlap: other.right > bounds.left - gap && other.left < bounds.right + gap
+          const labels = [['venueId', 'clubhouse', 'The Clubhouse'], ['npcVenue', 'clubhouse', 'Doorman'], ['npcVenue', 'workshop', 'Mechanic']].map(([key, id, text]) => {
+            const node = live.children.list.find(node => node.type === 'Text' && node.getData(key) === id);
+            if (!node) throw new Error('Missing current city label: ' + key + '=' + id);
+            if (node.text !== text) throw new Error('Unexpected current city label: ' + node.text);
+            const other = node.getBounds();
+            return { text: node.text, visible: node.visible, overlap: other.right > bounds.left - gap && other.left < bounds.right + gap
               && other.bottom > bounds.top - gap && other.top < bounds.bottom + gap };
           });
           values.push({ position: window.__presenceHandles.at(-1).handle.getState().position, name: name.text, visible: name.visible, labels });
           if (values.length < 30) requestAnimationFrame(next); else resolve(values);
+          } catch (error) { reject(error); }
         }; requestAnimationFrame(next);
       }));
       for (const sample of samples) {
         assert.deepEqual(sample.position, arrival); assert.equal(sample.name, 'Presence Viewer LongName'); assert(sample.visible);
+        assert(sample.labels.slice(0, 2).some(label => label.overlap), 'The real Clubhouse arrival exercises an actual label collision: ' + JSON.stringify({ viewport, sample }));
         for (const label of sample.labels.slice(0, 2)) {
-          assert(label.overlap, 'The real Clubhouse arrival exercises an actual label collision: ' + JSON.stringify({ viewport, sample }));
-          assert.equal(label.visible, false, 'Crowded canvas labels must yield to the complete player name: ' + JSON.stringify({ viewport, sample }));
+          assert.equal(label.visible, !label.overlap, 'Nearby labels yield only while they collide with the complete player name: ' + JSON.stringify({ viewport, sample }));
         }
-        assert.equal(sample.labels[2].overlap, false); assert.equal(sample.labels[2].visible, true, 'Unrelated NPC labels stay visible.');
+        assert.equal(sample.labels[2].overlap, false); assert.equal(sample.labels[2].visible, false, 'Unrelated NPC labels stay quiet while the nearby contact remains contextual.');
       }
       assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
       assert.equal(await page.locator('.omerta-city__actor-list').textContent(), roster, 'Decluttering retains the full accessible roster names and types.');
     }
     await page.locator('.omerta-city__canvas canvas').focus(); await page.keyboard.down('ArrowDown');
-    try { await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().position.y >= 280, undefined, { timeout: 3000 }); }
+    try { await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().position.y >= 238, undefined, { timeout: 3000 }); }
     finally { await page.keyboard.up('ArrowDown'); }
-    const clear = (await state(page)).position; assert.notDeepEqual(clear, arrival);
+    assert.notDeepEqual((await state(page)).position, arrival);
     await frames(page);
-    assert(await page.evaluate(() => {
+    const contextualLabels = () => page.evaluate(() => {
       const canvas = document.querySelector('.omerta-city__canvas canvas');
       const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
-      return ['THE CLUBHOUSE', 'DOORMAN · NPC'].every(text => live.children.list.find(node => node.type === 'Text' && node.text === text).visible);
-    }), 'Venue and NPC titles reappear after real walking clears the player name.');
+      const current = window.__presenceHandles.at(-1).handle.getState(), name = live.data.get('playerName'), bounds = name.getBounds(), gap = 2 / live.cameras.main.zoom;
+      const labels = [['venueId', 'clubhouse'], ['npcVenue', 'clubhouse']].map(([key, id]) => {
+        const node = live.children.list.find(node => node.type === 'Text' && node.getData(key) === id);
+        if (!node) throw new Error('Missing contextual city label: ' + key + '=' + id);
+        const other = node.getBounds();
+        return { text: node.text, visible: node.visible, overlap: other.right > bounds.left - gap && other.left < bounds.right + gap
+          && other.bottom > bounds.top - gap && other.top < bounds.bottom + gap };
+      });
+      return { position: current.position, nearby: current.nearbyVenue, name: name.text, labels };
+    });
+    const below = await contextualLabels();
+    assert.equal(below.nearby, 'clubhouse', JSON.stringify(below));
+    assert.equal(below.labels[0].overlap, false, JSON.stringify(below));
+    assert.equal(below.labels[0].visible, true, 'The venue title reappears after actual walking clears the name: ' + JSON.stringify(below));
+    assert.equal(below.labels[1].overlap, true, 'The nearby contact now exercises an actual NPC-name collision: ' + JSON.stringify(below));
+    assert.equal(below.labels[1].visible, false, JSON.stringify(below));
+    await page.keyboard.down('ArrowUp');
+    try { await page.waitForFunction(() => window.__presenceHandles.at(-1).handle.getState().position.y <= 210, undefined, { timeout: 3000 }); }
+    finally { await page.keyboard.up('ArrowUp'); }
+    await frames(page);
+    const above = await contextualLabels(), clear = above.position;
+    assert.equal(above.nearby, 'clubhouse', JSON.stringify(above));
+    assert.equal(above.labels[1].overlap, false, JSON.stringify(above));
+    assert.equal(above.labels[1].visible, true, 'The nearby NPC title reappears when real walking clears the name: ' + JSON.stringify(above));
+    assert.equal(above.name, 'Presence Viewer LongName');
     assert.equal(await page.locator('.omerta-city__actor-list').textContent(), roster);
     await page.setViewportSize({ width: 1440, height: 1400 }); await page.locator('#btn-player-view').click(); await frames(page);
     assert.deepEqual((await state(page)).position, clear); assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
@@ -382,6 +410,7 @@ try {
       const deadline = performance.now() + 15000;
       let previous = null;
       const observe = () => {
+        try {
         const current = window.__presenceHandles.at(-1).handle.getState(), pose = current.position;
         if (current.pathLength === 0 && previous?.pathLength === 0
             && pose.x === previous.position.x && pose.y === previous.position.y
@@ -389,6 +418,7 @@ try {
         if (performance.now() >= deadline) return reject(new Error('Touch-gesture walking did not become stationary before the resize test.'));
         previous = { pathLength: current.pathLength, position: { ...pose } };
         requestAnimationFrame(observe);
+        } catch (error) { reject(error); }
       };
       requestAnimationFrame(observe);
     }));
@@ -416,8 +446,9 @@ try {
     await page.locator('#btn-player-view').click(); await inspect(page, actorId); await assertDockFrame(page);
     assert.equal(await page.evaluate(() => window.__presenceHandles.length), handles);
     assert.deepEqual((await state(page)).position, edge, 'Phone inspection keeps the real edge arrival pose.');
-    const samples = await page.evaluate(() => new Promise(resolve => {
+    const samples = await page.evaluate(() => new Promise((resolve, reject) => {
       const values = [], next = () => {
+        try {
         const canvas = document.querySelector('.omerta-city__canvas canvas'), box = canvas.getBoundingClientRect();
         const game = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length), live = game.scene.getScenes(true)[0];
         const camera = live.cameras.main, name = live.data.get('playerName'), bounds = name.getBounds();
@@ -425,6 +456,7 @@ try {
           left: (bounds.left - camera.worldView.x) * camera.zoom * box.width / camera.width,
           right: (bounds.right - camera.worldView.x) * camera.zoom * box.width / camera.width });
         if (values.length < 30) requestAnimationFrame(next); else resolve(values);
+        } catch (error) { reject(error); }
       }; requestAnimationFrame(next);
     }));
     for (const sample of samples) {
@@ -769,15 +801,35 @@ try {
     assert.equal(mutations(mobile.requests).length, beforeNavigation, 'Marker navigation setup performs no gameplay POST.');
     const beforeTouch = mutations(mobile.requests).length;
     const opening = current.actorOpening;
+    const tapTargets = await phone.evaluate(marker => {
+      const canvas = document.querySelector('.omerta-city__canvas canvas');
+      const live = window.__presenceGames.findLast(game => game.canvas === canvas && game.scene?.getScenes(true).length).scene.getScenes(true)[0];
+      const point = { x: marker.x, y: marker.y - 15 }, zoom = live.cameras.main.zoom;
+      return window.__presenceHandles.at(-1).handle.getState().actorMarkers.map(actor => {
+        const sprite = live.children.list.find(node => node.type === 'Sprite' && node.x === actor.x && node.y === actor.y);
+        if (!sprite) throw new Error('Missing real actor sprite for tap: ' + actor.id);
+        const bounds = sprite.getBounds(), extra = Math.max(8, (44 / zoom - bounds.width) / 2);
+        return { id: actor.id, x: actor.x, y: actor.y, point, bodyHit: bounds.contains(point.x, point.y),
+          bounds: { left: bounds.left, top: bounds.top, right: bounds.right, bottom: bounds.bottom },
+          expanded: { left: bounds.left - extra, top: bounds.top - 6, right: bounds.right + extra, bottom: bounds.bottom + 10 },
+          expandedHit: point.x >= bounds.left - extra && point.x <= bounds.right + extra && point.y >= bounds.top - 6 && point.y <= bounds.bottom + 10 };
+      }).filter(actor => actor.expandedHit);
+    }, marker);
     await phone.locator('.omerta-city__canvas canvas').tap({ position: { x: (marker.x - current.camera.x) * current.camera.zoom, y: (marker.y - 15 - current.camera.y) * current.camera.zoom } });
-    await phone.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, marker.id, { timeout: 15000 });
+    try { await phone.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, marker.id, { timeout: 15000 }); }
+    catch (error) {
+      const after = await state(phone);
+      error.message += '\nActual sprite tap diagnostics: ' + JSON.stringify({ viewport, expected: marker, tapTargets,
+        selected: after.selectedActor, pathLength: after.pathLength, position: after.position, camera: after.camera });
+      throw error;
+    }
     assert.equal((await state(phone)).actorOpening, opening + 1, 'One real tap opens exactly one inspector.');
     if (viewport.width === 375) await assertDockFrame(phone);
     assert.equal(mutations(mobile.requests).length, beforeTouch, 'Touch movement/inspection performs no gameplay POST.');
     await phone.locator('[data-city-actor-close]').click();
     await phone.keyboard.press('e');
     await phone.waitForFunction(id => window.__presenceHandles.at(-1).handle.getState().selectedActor === id, marker.id);
-    assert.equal(await phone.locator('[data-city-interact]').textContent(), 'Interact');
+    assert.equal(await phone.locator('[data-city-interact]').textContent(), 'Talk to ' + await phone.locator('.omerta-city__actor-body h4').first().textContent());
     await phone.keyboard.press('Escape');
     await phone.waitForFunction(() => document.activeElement === document.querySelector('.omerta-city__canvas canvas'));
     await phone.keyboard.press('Enter');

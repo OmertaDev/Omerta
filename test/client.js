@@ -175,12 +175,12 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     'the mandatory tour is arrival + first job; later lessons belong to state-driven tips');
   assert(tour.includes("action: 'first_job'"),
     'the Streets step declares the first-job handoff rather than behaving like generic prose');
-  assert(tour.includes("'PULL YOUR FIRST JOB →'"),
+  assert(tour.includes("'MEET THE FIXER →'"),
     'the final primary action tells the player what happens next');
   assert(/closeTour\(\{ play: true \}\)/.test(tour),
     'the final action takes both first-run and replay users to play');
   assert(/closeTour\(\{ play: !tourReplay \}\)/.test(tour),
-    'first-run skip opens Streets while replay close returns to its captured screen');
+    'first-run skip opens the neighborhood while replay close returns to its captured screen');
   assert(/tourReturnTab\s*=\s*currentTab/.test(tour) && /setTab\(tourReturnTab\)/.test(tour),
     'replay captures and restores the screen it interrupted');
   assert(/tourReplayOpener\s*=\s*document\.activeElement/.test(tour),
@@ -193,8 +193,8 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     'replay fallback gathers restored-tab candidates before its tab control last');
   assert(/fallbackCandidates\.find\(\(el\)\s*=>\s*el\?\.isConnected\s*&&\s*el\.getClientRects\(\)\.length\s*&&\s*typeof el\.focus === 'function'\)/.test(tour),
     'replay fallback skips disconnected, hidden, and unfocusable candidates');
-  assert(/setTab\('streets'\)[\s\S]*?spotlight\(SPOT\.streets, true\)/.test(tour),
-    'the play handoff opens Streets and opts into focus on the real crime control');
+  assert(/beginCityFirstJob\(\)/.test(tour),
+    'the play handoff starts the neighborhood guide; the real Fixer controls own gameplay');
   assert(!/\b(?:api|act)\s*\(/.test(tour),
     'tour code must not make API or action calls; the real Streets control owns gameplay');
   assert(!/\/v1\/crimes\//.test(tour),

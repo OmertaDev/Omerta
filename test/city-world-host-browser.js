@@ -123,9 +123,14 @@ try {
     promise.then(value => { clearTimeout(timer); resolve(value); }, error => { clearTimeout(timer); reject(error); });
   });
   const dismissCine = async page => { if (await page.locator('#cine.on').count()) await page.locator('#cine.on').evaluate(node => node.click()); };
+  const choosePanel = async (page, kind) => {
+    const selector = page.locator('[data-city-panel-select]');
+    if (await selector.isVisible()) await selector.selectOption(kind);
+    else await page.locator(`[data-city-world-panel="${kind}"]`).click();
+  };
   const panel = async (page, kind) => {
     if (!await page.locator('.city-world__dock').isVisible()) await page.locator('[data-city-world-tools]').click();
-    await page.locator(`[data-city-world-panel="${kind}"]`).click(); await frames(page);
+    await choosePanel(page, kind); await frames(page);
   };
   const assertToolChoicesReturn = async (page, requests) => {
     const snapshot = () => page.evaluate(() => {
@@ -140,8 +145,8 @@ try {
       const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
       const hit = node => { const rect = node.getBoundingClientRect(), target = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
         return rect.top >= box.top && rect.bottom <= box.bottom && node.contains(target); };
-      const back = dock.querySelector('[data-city-world-back]');
-      return { scroll: dock.scrollTop, visible: [...dock.querySelectorAll('[data-city-world-panel]')].filter(hit).length,
+      const back = dock.querySelector('[data-city-world-back]'), selector = dock.querySelector('[data-city-panel-select]');
+      return { scroll: dock.scrollTop, visible: selector?.getBoundingClientRect().height ? (hit(selector) ? selector.options.length : 0) : [...dock.querySelectorAll('[data-city-world-panel]')].filter(hit).length,
         backHit: hit(back), backHeight: back.getBoundingClientRect().height };
     });
     await page.waitForFunction(() => window.__worldReadResults.every(read => read.settled));
@@ -169,7 +174,7 @@ try {
       }
       await page.waitForFunction(() => {
         const dock = document.querySelector('.city-world__dock'), box = dock.getBoundingClientRect();
-        return dock.scrollTop > 0 && [...dock.querySelectorAll('[data-city-world-panel]')].every(node => node.getBoundingClientRect().bottom < box.top);
+        return dock.scrollTop > 0 && dock.querySelector('.city-world__tabs').getBoundingClientRect().bottom < box.top;
       });
       const scrolled = await choices();
       assert.equal(scrolled.visible, 0, 'Actual content scrolling takes all seven choices out of view.');
@@ -186,7 +191,10 @@ try {
       await frames(page);
       const returned = await choices();
       assert.equal(returned.scroll, 0); assert.equal(returned.visible, 7, 'Returning exposes every real panel choice.');
-      assert(await page.locator('[data-city-world-panel="map"]').evaluate(node => document.activeElement === node), 'Return focuses the first choice without selecting it.');
+      assert(await page.evaluate(() => {
+        const select = document.querySelector('[data-city-panel-select]');
+        return document.activeElement === (select?.getBoundingClientRect().height ? select : document.querySelector('[data-city-world-panel="map"]'));
+      }), 'Return focuses the panel choices without selecting another panel.');
       assert.deepEqual(await snapshot(), before, 'Return retains the actual panel, opening, pose, scene, drafts, receipt and outer scroll.');
       assert.equal(await page.evaluate(() => window.__worldReads.length), reads, 'Return does not start a world read.');
       assert.deepEqual(requests.slice(at).filter(request => request.path.startsWith('/v1/')
@@ -258,7 +266,7 @@ try {
 
   const assertPanelLoading = async (page, label) => {
     await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'true'
-      && document.querySelector('.city-world__dock-bar strong').textContent === label + ' · Loading…', label);
+      && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
     const loading = await page.locator('.city-world__dock').evaluate(dock => {
       const title = dock.querySelector('.city-world__dock-bar strong'), content = dock.querySelector('.city-world__content');
       const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
@@ -271,7 +279,10 @@ try {
     await assertFrame(page);
   };
   const assertPanelReadFeedback = async viewport => {
-    const activate = (page, selector) => viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    const activate = (page, selector) => {
+      const choice = selector.match(/^\[data-city-world-panel="([a-z]+)"\]$/);
+      return choice ? choosePanel(page, choice[1]) : viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
+    };
     for (const scenario of ['active', 'map', 'close']) {
       const fixture = await newPage(viewport, { noResizeObserver: viewport.width === 320 }), { page, requests } = fixture;
       const handle = await page.evaluateHandle(() => window.__worldHandles.at(-1)), position = (await state(page)).position;
@@ -390,7 +401,7 @@ try {
   await assertFrame(page);
   await page.locator('select[aria-label="Furniture to place"]').selectOption('lamp');
   await page.getByLabel('Furniture column', { exact: true }).fill('6'); await page.getByLabel('Furniture row', { exact: true }).fill('6');
-  await post(page, '[data-world-control="Place furniture"]', '/v1/city/social/preferences');
+  await post(page, '[data-city-room-save]', '/v1/city/social/preferences');
   social = (await app.inject({ method: 'GET', url: '/v1/city/social', headers: viewer.headers })).json();
   assert(social.preferences.room.furniture.some(item => item.id === 'lamp' && item.x === 5 && item.y === 5));
   const room = page.locator('.city-world__room'); await room.evaluate(node => {
@@ -461,7 +472,7 @@ try {
   };
   await send('First nearby message'); await new Promise(resolve => setTimeout(resolve, 2100)); await send('Newest nearby message');
   await page.locator('[data-city-world-close]').click();
-  await page.waitForFunction(() => document.querySelector('.city-world__speech').textContent.includes('Newest nearby message') || document.querySelector('.city-world__dialogue').textContent.includes('Newest nearby message'), undefined, { timeout: 12000 });
+  await page.waitForFunction(() => document.querySelector('.city-world__speech')?.textContent.includes('Newest nearby message') || document.querySelector('.city-world__dialogue')?.textContent.includes('Newest nearby message'), undefined, { timeout: 12000 });
   await panel(page, 'chat');
   const transcript = await page.locator('.city-world__chat-feed').textContent();
   assert(transcript.indexOf('First nearby message') < transcript.indexOf('Newest nearby message'), 'Real nearby messages render oldest-first while the bubble uses the newest.');
@@ -691,7 +702,10 @@ try {
         assert.match(gainCopy, /Level 2 reached/);
         const captionCopy = await page.locator('.omerta-city__presence-caption').textContent(), frameBeforeReading = await assertFrame(page);
         assert.equal(frameBeforeReading.header.height, 177.75);
-        assert(frameBeforeReading.warning.height >= 32, 'The wider fallback font wraps the full real readiness warning.');
+        assert(await page.locator('.omerta-city__readiness').evaluate(node => {
+          const style = getComputedStyle(node), contentHeight = node.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+          return contentHeight >= parseFloat(style.lineHeight) * 2 - 1;
+        }), 'The wider fallback font wraps the full real readiness warning into at least two lines.');
         assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
           'Resources and the complete warning are initially visible in the supported CI geometry.');
         assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
@@ -714,17 +728,36 @@ try {
           'Passive fitting preserves both reading positions and focus without ResizeObserver.');
         await page.locator('#toast.show').focus();
         await page.locator('[data-city-world-close]').click();
-        assert(await hud.evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')));
+        await assertFrame(page);
+        assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight
+          ? node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll') : !node.hasAttribute('tabindex')),
+        'Returning to walking retains keyboard access only when the short-frame HUD still overflows.');
         await shortFont.evaluate(node => { node.textContent = node.textContent.replace('177.75px', '215px'); });
         await panel(page, 'map'); const pressure = await assertFrame(page);
         assert.equal(pressure.header.height, 215);
         assert(await hud.evaluate(node => Math.abs(node.getBoundingClientRect().height - 51) < 1), 'The cap is derived from real chrome, never a second minimum-height floor.');
         await hud.focus(); await readHudEnd(); await page.waitForFunction(feedbackVisible);
-        await page.keyboard.press('ArrowUp');
-        await page.waitForFunction(() => {
+        const warningVisible = () => {
           const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), warning = document.querySelector('.omerta-city__readiness').getBoundingClientRect();
           return warning.top >= hud.top && warning.bottom <= hud.bottom;
-        });
+        };
+        const warningScrolls = [];
+        for (let step = 0; step < 12 && !await page.evaluate(warningVisible); step++) {
+          const previous = await hud.evaluate(node => node.scrollTop);
+          if (previous <= 0) break;
+          await hud.evaluate(node => {
+            node.__arrowSettled = new Promise(resolve => node.addEventListener('scrollend', resolve, { once: true }));
+          });
+          await page.keyboard.press('ArrowUp');
+          await bounded(hud.evaluate(node => node.__arrowSettled), 'native HUD ArrowUp scroll settlement');
+          const current = await hud.evaluate(node => node.scrollTop);
+          warningScrolls.push({ previous, current });
+          assert(current < previous, 'ArrowUp scrolls the focused HUD toward the readiness warning.');
+        }
+        assert(await page.evaluate(warningVisible), 'Native keyboard scrolling reveals the complete readiness warning after wrapped feedback: ' + JSON.stringify({
+          steps: warningScrolls, layout: await hud.evaluate(node => ({ scroll: node.scrollTop, client: node.clientHeight, height: node.scrollHeight,
+            hud: node.getBoundingClientRect().toJSON(), warning: node.querySelector('.omerta-city__readiness').getBoundingClientRect().toJSON() }))
+        }));
         assert.equal(await page.locator('.omerta-city__readiness').textContent(), frameBeforeReading.readiness, 'The complete warning remains keyboard-readable when all rows cannot fit simultaneously.');
         assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
         assert.equal(await page.locator('.omerta-city__presence-caption').textContent(), captionCopy);
@@ -755,7 +788,14 @@ try {
         await page.keyboard.press('Tab'); assert.equal(await page.locator('#toast').evaluate(node => node.contains(document.activeElement)), false);
       }
       await page.locator('[data-city-world-close]').click();
-      assert(await page.locator('.omerta-city__world-hud').evaluate(node => !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex')), 'Closing or leaving phone inspection retires the cap and keyboard-only reading target.');
+      await assertFrame(page);
+      assert(await page.locator('.omerta-city__world-hud').evaluate(node => {
+        if (innerWidth > 680 || !node.closest('.omerta-city').classList.contains('is-short-frame')) {
+          return !node.style.getPropertyValue('--city-hud-height') && !node.hasAttribute('tabindex');
+        }
+        return node.scrollHeight > node.clientHeight
+          ? node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll') : !node.hasAttribute('tabindex');
+      }), 'Walking retains keyboard reading only for an overflowing short-phone HUD and retires the cap on desktop.');
       assert.deepEqual((await state(page)).position, walkingPose);
     }
   } finally { await restoreToastClock(); }
@@ -795,9 +835,16 @@ try {
   const tinyStart = tiny.requests.length, tinyInitial = await assertFrame(tiny.page);
   assert(tinyInitial.guidance.top >= tinyInitial.header.bottom - 1 && tinyInitial.guidance.bottom <= tinyInitial.canvas.top,
     'The first short-phone Player entry shows its issued objective with the map.');
+  const tinyControls = await tiny.page.locator('.omerta-city__controls').evaluate(node => ({ bounds: node.getBoundingClientRect().toJSON(),
+    usable: [...node.querySelectorAll('button')].filter(button => button.getBoundingClientRect().height).every(button => {
+      const box = button.getBoundingClientRect();
+      return box.width >= 44 && box.height >= 44 && button.contains(document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2));
+    }) }));
+  assert(tinyControls.usable && tinyControls.bounds.top >= tinyInitial.canvas.bottom - 1 && tinyControls.bounds.bottom <= tinyInitial.bottom,
+    'Short-phone entry keeps every visible walking control usable below the map and above fixed chrome: ' + JSON.stringify(tinyControls));
   await panel(tiny.page, 'map'); await tiny.page.locator('[data-city-waypoint="stories"]').click();
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
-  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__dialogue').hidden && document.querySelector('.city-world__dialogue').textContent.includes('THE EDITOR'));
+  await tiny.page.waitForFunction(() => !document.querySelector('.city-world__speech')?.hidden && document.querySelector('.city-world__dialogue')?.textContent.includes('THE EDITOR'));
   await assertFrame(tiny.page);
   assert.deepEqual(mutations(tiny.requests.slice(tinyStart)), [], 'Short-frame authored NPC dialogue/waypoints remain read-only.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-dialogue-320.png') });
@@ -806,7 +853,8 @@ try {
   assert.equal((await state(tiny.page)).worldUI.panel, 'map', 'The visible 44px Tools control opens with an actual phone tap.');
   if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-map-320.png') });
   const beforeTap = await state(tiny.page), tapCanvas = await tiny.page.locator('.omerta-city__canvas canvas').boundingBox();
-  const tapGoal = { x: beforeTap.position.x + 48, y: beforeTap.position.y };
+  // The Editor's enlarged target sits to the right of this doorway; use clear street.
+  const tapGoal = { x: beforeTap.position.x - 48, y: beforeTap.position.y };
   await tiny.page.touchscreen.tap(tapCanvas.x + (tapGoal.x - beforeTap.camera.x) * beforeTap.camera.zoom,
     tapCanvas.y + (tapGoal.y - beforeTap.camera.y) * beforeTap.camera.zoom);
   await tiny.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().pathLength === 0);
@@ -1001,7 +1049,7 @@ try {
     const joinedStyle = joinedLoader.page.waitForResponse(async reply => new URL(reply.url()).pathname === '/v1/city/social'
       && reply.status() === 200 && (await reply.json()).preferences.chatEnabled === true);
     await joinedLoader.page.locator('[data-city-world-tools]').tap();
-    await joinedLoader.page.locator('[data-city-world-panel="style"]').tap(); await joinedStyle;
+    await choosePanel(joinedLoader.page, 'style'); await joinedStyle;
     await joinedLoader.page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().worldUI.chatJoined
       && document.querySelectorAll('[data-city-outfit]').length === 4 && document.querySelector('.city-world__content').getAttribute('aria-busy') === 'false');
     assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0,
@@ -1018,7 +1066,7 @@ try {
       assert((await reply.json()).messages.some(message => message.text === historyText));
       observedChat(); await chatGate; await route.fulfill({ response: reply });
     });
-    await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap();
+    await choosePanel(joinedLoader.page, 'chat');
     await bounded(socialObserved, 'the joined Chat opening\'s actual Social200');
     assert.equal(joinedLoader.requests.filter(request => request.path === '/v1/city/nearby-chat').length, 0);
     await assertPanelLoading(joinedLoader.page, 'Nearby chat');
@@ -1036,7 +1084,7 @@ try {
     releaseSocial(); await bounded(chatObserved, 'the dependent actual Chat200');
     await assertPanelLoading(joinedLoader.page, 'Nearby chat');
     const handoff = await joinedLoader.page.evaluate(() => { window.__chatLoaderObserver.disconnect(); return window.__chatLoaderTrace; });
-    assert(handoff.length > 0 && handoff.every(frame => frame.busy === 'true' && frame.title === 'Nearby chat · Loading…'
+    assert(handoff.length > 0 && handoff.every(frame => frame.busy === 'true' && frame.title === 'Nearby chat'
       && frame.feed === 'Messages have not loaded yet.' && !frame.cleared), 'The real Social-to-Chat handoff never becomes quiet or falsely complete: ' + JSON.stringify(handoff));
     releaseChat();
     await joinedLoader.page.waitForFunction(text => document.querySelector('[data-city-nearby-feed]')?.textContent.includes(text)
@@ -1047,7 +1095,7 @@ try {
     await joinedLoader.page.route('**/v1/city/social', async route => {
       const reply = await route.fetch(); assert.equal(reply.status(), 200); observedCached(); await cachedGate; await route.fulfill({ response: reply });
     });
-    await joinedLoader.page.locator('[data-city-world-panel="chat"]').tap(); await bounded(cachedObserved, 'the complete-history cached Social refresh');
+    await choosePanel(joinedLoader.page, 'chat'); await bounded(cachedObserved, 'the complete-history cached Social refresh');
     assert.equal(await joinedLoader.page.locator('.city-world__content').getAttribute('aria-busy'), 'false');
     assert.equal(await joinedLoader.page.locator('.city-world__dock-bar strong').textContent(), 'Nearby chat');
     assert((await joinedLoader.page.locator('[data-city-nearby-feed]').textContent()).includes(historyText));
@@ -1471,6 +1519,53 @@ try {
   }
   await connected.context.close(); await sellerPage.context.close();
   console.log('world host: canonical claim and same-parcel sale reveal fresh owned homes without fare, guarded deed focus, navigation cancellation and private teardown pass');
+  }
+  {
+    const learner = await create('Neighborhood Learner');
+    const tutorial = await newPage({ width: 375, height: 812 }, { actor: learner });
+    const page = tutorial.page, beforeGuide = tutorial.requests.length;
+    await page.evaluate(() => { document.getElementById('btn-player-view').focus(); window.openTour(); });
+    await page.locator('#tour-next').click();
+    assert.equal(await page.locator('#tour-next').textContent(), 'MEET THE FIXER →');
+    await page.locator('#tour-next').click();
+    try {
+      await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().selectedVenue === 'fixer');
+    } catch (error) {
+      console.error('First-job arrival diagnostic:', JSON.stringify(await page.evaluate(() => {
+        const records = window.__worldHandles, current = records.at(-1)?.handle.getState();
+        return { scope: window.__worldReadScope?.(), ready: current?.ready, position: current?.position, pathLength: current?.pathLength,
+          routeVenueId: current?.routeVenueId, selectedVenue: current?.selectedVenue, gameDock: current?.gameDock,
+          mapVisible: !!document.querySelector('#tab-map.on'), handles: records.map(record => ({ destroyed: record.destroyed, ready: record.handle.getState().ready })),
+          tourVisible: !document.querySelector('#welcome').classList.contains('hidden'), tourDisplay: getComputedStyle(document.querySelector('#welcome')).display,
+          visibility: document.visibilityState, focused: document.hasFocus(), active: { tag: document.activeElement?.tagName, id: document.activeElement?.id },
+          games: window.__worldGames.map(game => ({ booted: game.isBooted, running: game.isRunning, fps: game.loop?.actualFps })) };
+      })));
+      throw error;
+    }
+    assert.equal(await page.locator('[data-city-open]').textContent(), 'Open The Fixer →');
+    await page.locator('[data-city-open]').click();
+    await page.locator('[data-city-approach="standard"]').waitFor({ state: 'visible' });
+    assert.equal(mutations(tutorial.requests.slice(beforeGuide)).length, 0, 'Walking to and opening The Fixer submits no job; the player owns the action.');
+    assert(await page.getByRole('complementary', { name: 'Your first job' }).isVisible());
+    const keys = []; let interrupted = true;
+    await page.route('**/v1/crimes/*', async route => {
+      keys.push(route.request().headers()['idempotency-key']);
+      if (interrupted) { interrupted = false; await route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ error: 'offline', message: 'The result could not be confirmed.' }) }); }
+      else await route.continue();
+    });
+    await page.locator('[data-city-approach="standard"]').click();
+    await page.locator('[data-city-fixer-retry]').waitFor({ state: 'visible' });
+    assert(await page.getByRole('complementary', { name: 'Your first job' }).isVisible(), 'An uncertain result does not complete the first-job guide.');
+    await page.locator('[data-city-fixer-retry]').click();
+    await page.locator('[data-city-fixer-story]').waitFor({ state: 'visible' });
+    assert.equal(keys.length, 2); assert(keys[0]); assert.equal(keys[0], keys[1], 'The first-job retry retains the exact logical action key.');
+    assert.equal(await page.getByRole('complementary', { name: 'Your first job' }).count(), 0, 'Only a confirmed action finishes the guide.');
+    await dismissCine(page);
+    await page.locator('[data-city-fixer-story]').click();
+    await page.locator('[data-fieldwork-view="mysteries"][aria-pressed="true"]').waitFor();
+    assert.equal(keys.length, 2, 'The next-story handoff never submits another job.');
+    await tutorial.context.close();
+    console.log('world host: neighborhood first-job guide, explicit choice, uncertain-result recovery, same-key retry and journal handoff pass');
   }
   assert.deepEqual(errors, []);
   for (const context of contexts) await context.close();

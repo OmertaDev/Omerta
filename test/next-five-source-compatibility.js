@@ -8,7 +8,7 @@ import {fifthBatchMigrationSchema} from '../tools/rc1-fifth-batch-source-compati
 import {equipmentEconomyMigrationProjection} from './lib/equipment-economy-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32e6});
 assert.equal(NEXT_FIVE_SOURCE_PHASE,'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/companyrestructuring.js','src/depotacquisitionruntime.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json']);
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
  const current=git('show',NEXT_FIVE_SOURCE_REVISION+':'+file),prior=git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file);
@@ -44,4 +44,4 @@ assert.equal(added.length,11);assert.equal(added.reduce((n,name)=>n+currentCatal
 const schema=fs.readFileSync('schema.sql','utf8');
 assert.equal(fifthBatchMigrationSchema(schema),schema,'Source-only reconstruction never admits raw new source to historical native entry');
 assert.throws(()=>equipmentEconomyMigrationProjection(schema,{constraints:[]}),'Actual new native adapter must prove all eleven new tables first');
-console.log(`First-five exact source-only envelope PASS: 7 full domains, ${hunks} immutable inverse hunks, ${negatives} rejecting controls; historical1153 retained plus90/90 literal catalog bindings; no native/release/activation clearance`);
+console.log(`First-five exact source-only envelope PASS: ${Object.keys(NEXT_FIVE_SOURCE_DOMAINS).length} full domains, ${hunks} immutable inverse hunks, ${negatives} rejecting controls; historical1153 retained plus90/90 literal catalog bindings; no native/release/activation clearance`);

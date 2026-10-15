@@ -279,7 +279,9 @@ try {
         const before = await state(page), venue = before.destinations.find(destination => destination.id === 'clubhouse');
         assert(Math.hypot(before.player.x - venue.x, before.player.y - venue.y) > 42, 'A distant actual waypoint exercises transit feedback.');
         await activate(page.locator('[data-city-world-tools]'));
-        await activate(page.locator('[data-city-world-panel="map"]'));
+        const panelSelect = page.locator('[data-city-panel-select]');
+        if (await panelSelect.isVisible()) await panelSelect.selectOption('map');
+        else await activate(page.locator('[data-city-world-panel="map"]'));
         await activate(page.locator('[data-city-waypoint="clubhouse"]'));
         await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
         const moving = await state(page);
@@ -472,6 +474,20 @@ try {
     assert.equal(await page.locator('.omerta-city__readiness').getAttribute('aria-atomic'), 'true');
     for (const field of ['cash', 'health', 'energy', 'nerve', 'heat', 'level']) assert.equal(await page.locator(`[data-city-resource="${field}"]`).count(), 1, field + ' has one projection-backed value.');
   };
+  const assertResourceHelp = async page => {
+    const trigger = page.getByRole('button', { name: 'Energy help', exact: true });
+    await trigger.click();
+    assert.equal(await trigger.getAttribute('aria-expanded'), 'true');
+    assert.equal(await trigger.getAttribute('aria-controls'), await page.locator('.omerta-city__resource-help').getAttribute('id'));
+    assert(await page.locator('.omerta-city__resource-help button').first().evaluate(node => {
+      const bounds = node.getBoundingClientRect(), hud = node.closest('.omerta-city__world-hud').getBoundingClientRect();
+      return document.activeElement === node && bounds.top >= hud.top - 1 && bounds.bottom <= hud.bottom + 1;
+    }), 'Resource help focuses an action visible inside the bounded HUD.');
+    await page.keyboard.press('Escape');
+    assert.equal(await trigger.getAttribute('aria-expanded'), 'false');
+    assert(await trigger.evaluate(node => document.activeElement === node), 'Closing help restores its resource trigger.');
+    assert(await page.locator('.omerta-city__resource-help').isHidden());
+  };
   const gameplayRequests = requests => requests.filter(request => !['GET', 'HEAD'].includes(request.method)
     && !['/v1/screens', '/v1/commands/observations'].includes(request.path));
 
@@ -638,12 +654,14 @@ try {
       await assertHud(entry, warningPlayer?.character || warningPlayer);
       await waitForFrames(entry, 3);
       assert.match(await entry.locator('.omerta-city__readiness').textContent(), /SAFEHOUSE.*Offense and payouts are restricted/);
-      assert((await state(entry)).camera.height < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver: ' + JSON.stringify(await entry.evaluate(initial => ({
+      const warningHeight = (await state(entry)).camera.height;
+      assert(initialHeight <= 99 ? warningHeight === 96 : warningHeight < initialHeight - 3, 'A longer winning-projection warning resizes the live camera without ResizeObserver while preserving its 96px floor: ' + JSON.stringify(await entry.evaluate(initial => ({
         initial, camera: window.__cityHandles.at(-1).handle.getState().camera, classes: document.querySelector('.omerta-city').className,
         hud: document.querySelector('.omerta-city__world-hud').getBoundingClientRect().toJSON(), hudText: document.querySelector('.omerta-city__world-hud').textContent,
         chrome: ['top', 'vitals', 'bnav', 'toast'].map(id => ({ id, ...document.getElementById(id).getBoundingClientRect().toJSON() }))
       }), initialHeight)));
       await assertWorldHud(entry);
+      await assertResourceHelp(entry);
       await assertPosition(entry, beforeWarning, 'Live warning wrapping retains the player pose');
       assert.equal(await entry.evaluate(() => window.__cityHandles.length), entryHandles, 'A HUD resize keeps the existing Phaser game.');
     }
@@ -804,6 +822,35 @@ try {
     if (expected.alpha) assert(delivered.transparent > 0, expected.file + ' is a real transparent sprite cutout.');
     else assert.equal(delivered.transparent, 0, 'The neighborhood background is opaque.');
   }
+
+  const sceneControlsStart = requests.length, controlsPose = (await state(page)).position;
+  await page.locator('[data-city-recenter]').click();
+  await assertPosition(page, controlsPose, 'Find me preserves the player pose');
+  await assertEntered(page);
+  await assertResourceHelp(page);
+  await page.evaluate(() => {
+    const entry = window.__cityHandles.at(-1);
+    window.__originalObjectives = entry.options.objectives;
+    entry.handle.update({ objectives: [{ id: 'scene-track-fixture', title: 'Track this confirmed lead', status: 'available', venueId: 'fixer' }] });
+    entry.handle.walkToVenue('workshop');
+  });
+  await waitForInput(page, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
+  await page.locator('[data-city-world-tools]').click();
+  assert.equal((await state(page)).routeActive, false, 'Opening tools stops active walking.');
+  assert.equal((await state(page)).routeVenueId, 'workshop', 'The inspected map retains its routed destination across canvas blur.');
+  assert((await state(page)).route.length > 0, 'The map retains an inactive route preview across the tool focus transition.');
+  await page.locator('[data-city-tracked-objective]').selectOption('scene-track-fixture');
+  assert.equal((await state(page)).questVenueId, 'fixer');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ objectives: [{ id: 'scene-track-fixture', title: 'Track this confirmed lead', status: 'available', venueId: 'workshop' }] }));
+  assert.equal((await state(page)).questVenueId, 'workshop', 'A confirmed objective destination change updates the current marker.');
+  await page.evaluate(() => window.__cityHandles.at(-1).handle.update({ objectives: [{ id: 'scene-track-fixture', title: 'Finished lead', status: 'complete', venueId: 'workshop' }] }));
+  assert.equal((await state(page)).trackedObjectiveId, null, 'A completed objective stops being tracked.');
+  await page.locator('[data-city-world-close]').click();
+  await page.evaluate(() => {
+    const entry = window.__cityHandles.at(-1); entry.handle.cancelNavigation(); entry.handle.update({ objectives: window.__originalObjectives });
+  });
+  assert.equal((await state(page)).route.length, 0, 'Cancel navigation clears the inactive preview.');
+  assert.deepEqual(gameplayRequests(requests.slice(sceneControlsStart)), [], 'Recenter, resource help, route inspection and tracking issue no gameplay POST.');
 
   // Only issued, available actions at known venues can replace the coach. Updates must not
   // repeatedly announce an unchanged objective or expose unavailable leads in the banner.
