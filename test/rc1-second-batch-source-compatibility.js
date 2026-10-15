@@ -33,6 +33,6 @@ for(const [file,d] of Object.entries(O.SECOND_BATCH_SOURCE_DOMAINS)){
  if(d.inverses.length>1){const a=d.inverses[0].current,b=d.inverses[1].current;reject(file,current.replace(a,'@@second-batch-test@@').replace(b,a).replace('@@second-batch-test@@',b));}
 }
 for(const file of ['src/unknown.js','src/equipment-economy-contracts.js','src/equipmentrentals.js','package.json.unreviewed','test/lib/phase2-architecture-upgrade-catalog.json','src/generated.js','src/server.js.extra']){
- const text=fs.existsSync(file)?lf(fs.readFileSync(file,'utf8')):'unknown';reject(file,text);
+ const raw=fs.existsSync(file)?lf(fs.readFileSync(file,'utf8')):'unknown';const text=thirdBatchSourceBaseline(file,raw);reject(file,text);
 }
 console.log(`Second-batch source compatibility PASS: ${files.length} literal domains, ${texts} full-text/${hashes} SHA256/${blobs} Gitblob comparisons, ${hunks} actual inverse hunks, ${negatives} negative controls; source transfer only`);
