@@ -1524,11 +1524,24 @@ try {
     const learner = await create('Neighborhood Learner');
     const tutorial = await newPage({ width: 375, height: 812 }, { actor: learner });
     const page = tutorial.page, beforeGuide = tutorial.requests.length;
-    await page.evaluate(() => window.openTour());
+    await page.evaluate(() => { document.getElementById('btn-player-view').focus(); window.openTour(); });
     await page.locator('#tour-next').click();
     assert.equal(await page.locator('#tour-next').textContent(), 'MEET THE FIXER →');
     await page.locator('#tour-next').click();
-    await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().selectedVenue === 'fixer');
+    try {
+      await page.waitForFunction(() => window.__worldHandles.at(-1).handle.getState().selectedVenue === 'fixer');
+    } catch (error) {
+      console.error('First-job arrival diagnostic:', JSON.stringify(await page.evaluate(() => {
+        const records = window.__worldHandles, current = records.at(-1)?.handle.getState();
+        return { scope: window.__worldReadScope?.(), ready: current?.ready, position: current?.position, pathLength: current?.pathLength,
+          routeVenueId: current?.routeVenueId, selectedVenue: current?.selectedVenue, gameDock: current?.gameDock,
+          mapVisible: !!document.querySelector('#tab-map.on'), handles: records.map(record => ({ destroyed: record.destroyed, ready: record.handle.getState().ready })),
+          tourVisible: !document.querySelector('#welcome').classList.contains('hidden'), tourDisplay: getComputedStyle(document.querySelector('#welcome')).display,
+          visibility: document.visibilityState, focused: document.hasFocus(), active: { tag: document.activeElement?.tagName, id: document.activeElement?.id },
+          games: window.__worldGames.map(game => ({ booted: game.isBooted, running: game.isRunning, fps: game.loop?.actualFps })) };
+      })));
+      throw error;
+    }
     assert.equal(await page.locator('[data-city-open]').textContent(), 'Open The Fixer →');
     await page.locator('[data-city-open]').click();
     await page.locator('[data-city-approach="standard"]').waitFor({ state: 'visible' });
