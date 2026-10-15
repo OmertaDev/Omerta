@@ -181,11 +181,11 @@ export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Separate exact relation for autonomy after the reviewed main/commercial merge.
 export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "226f62c566280b8da59fd7f77b295707975f99eb",
-  "reviewedCandidate": "a82f7f341f5c96ee94eb938f731bc4f3c13219f4",
+  "reviewedCandidate": "63f96fff489418f8f4bb21f9235c7dcbc6b25ae0",
   "predecessorTree": "66df6c4b0ffb3f88724b2e6682c2466d4fe9f73081ce5897022833db798cd8ce",
   "predecessorSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "predecessorCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
-  "candidateTree": "926db0ffa23ecfdeee2f3a2e78caba1772ff79264cfe381e5eb131dd2a60e04f",
+  "candidateTree": "606d73e3bbfba170e206b7eb40645c2c83a4df1b172afe43d02069f8f910f2ef",
   "candidateSchema": "38989e8533280ba5ef7998255712639083c883fa63f4e30fed4fbc74c24e67d1",
   "candidateCatalog": "bd9e9a5ba67d706ccf3b5892fbf61a0c1edb1d850e82ae8bc8511fb3948b0d8e",
   "candidateTableCatalog": "b9058463f72e0b694211f5d82ea0ea9eb39e117ce70edd4cf64ce44277a62b5d",
