@@ -351,6 +351,14 @@ activated version may start independently while the old immutable row remains
 available only through its exact `instanceId` for release-only cancellation;
 retiring the old package cannot strand its escrow.
 
+The City's **The Block's Last Broadcast** case follows **A Name Worth Remembering**.
+Bring the character-owned Neighborhood Notebook to Nico, then choose to restore
+the live transmitter or recover his old recording. Three stages lead to distinct
+endings and either the Brass Tuning Dial or Signed First Reel. The route is permanent;
+each character receives its chosen cosmetic keepsake once, with no currency reward.
+The additive `neighborhood-broadcast` version 1 package leaves existing case definitions
+and their pinned instances unchanged.
+
 After the individual graph opens its Crew gate, use
 `GET /v1/worldgraph/operations`, open the listed operation, read the shared
 board and your assigned `/role` board, claim one graph-defined role, contribute

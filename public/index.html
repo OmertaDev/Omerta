@@ -129,6 +129,9 @@
   body.city-player-view #grouprail, body.city-player-view #tabs,
   body.city-player-view #tabart, body.city-player-view #bnav { display: none; }
   body.city-player-view #layout { grid-template-columns: minmax(0, 1fr); padding-bottom: 14px; }
+  .city-first-job { padding: 12px 14px; margin: 10px 0; border: 1px solid #806944; border-radius: 8px; background: #302a20; color: #f4e6c9; font: 14px/1.5 system-ui, sans-serif; }
+  .city-first-job p { margin: 6px 0; }
+  .city-first-job > b { color: #ecd08b; }
 
   /* the phone-only vitals strip: desktop keeps the full sheet in its own column and needs no summary */
   #vitals { display: none; }
@@ -1282,9 +1285,9 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261011-world-1">
-<link rel="stylesheet" href="/city-world-ui.css?v=20261012-gameplay-1">
-<link rel="stylesheet" href="/world-fieldwork.css?v=20261015-art-2">
+<link rel="stylesheet" href="/city-scene.css?v=20261015-play-1">
+<link rel="stylesheet" href="/city-world-ui.css?v=20261015-play-1">
+<link rel="stylesheet" href="/world-fieldwork.css?v=20261015-play-1">
 <style id="district-refresh-style">
 .landing .hero h1{color:#eee8db;letter-spacing:clamp(6px,1.1vw,12px)}
 .district-atlas{margin:64px 0;padding:34px 0;border-block:1px solid var(--line)}
@@ -6627,10 +6630,10 @@
   const TOUR = [
     { art: 'hero-poster-640.webp', title: 'WELCOME TO THE CITY', body:
       `<p>You start in the Docks. Jobs earn cash and respect, and other players can become allies or enemies.</p>
-       <p>Pull a job, bank the take, then follow the suggested move on your sheet.</p>` },
-    { art: 'interior-streets.jpg', title: 'THE STREETS', action: 'first_job', body:
-      `<p><b style="color:var(--neon)">First goal: pull one job.</b> Jobs pay cash and respect; respect raises your level and opens the city.</p>
-       <p class="dim">Jobs spend <b>nerve</b>, which refills over time. Start with the standard approach, then compare the odds and costs of quiet and loud jobs.</p>` },
+       <p>Meet your neighbors, choose a job, and follow the stories that open around you.</p>` },
+    { art: 'city-neighborhood-v2.png', title: 'YOUR FIRST MOVE', action: 'first_job', body:
+      `<p><b style="color:var(--neon)">Meet The Fixer in your neighborhood.</b> Pick a street job, compare its approaches, then read what changed.</p>
+       <p class="dim">Jobs spend <b>nerve</b>, which refills over time. Check the cost and possible outcome before choosing. After your first move, open your journal for a story.</p>` },
   ];
   let tourAt = 0, tourReplay = false, tourReturnTab = 'streets', tourReplayOpener = null;
   function tourStep(i) {
@@ -6642,7 +6645,7 @@
     $('#tour-back').style.visibility = tourAt ? 'visible' : 'hidden';
     $('#tour-skip').textContent = tourReplay ? 'close' : 'skip';
     $('#tour-skip').style.display = last && !tourReplay ? 'none' : '';
-    $('#tour-next').textContent = s.action === 'first_job' ? 'PULL YOUR FIRST JOB →' : 'next →';
+    $('#tour-next').textContent = s.action === 'first_job' ? 'MEET THE FIXER →' : 'next →';
   }
   function openTour() {
     tourReplay = !!localStorage.getItem('omerta_tour2');
@@ -6656,9 +6659,9 @@
     localStorage.setItem('omerta_tour2', '1');
     localStorage.setItem('omerta_welcomed', '1');
     $('#welcome').classList.add('hidden');
+    syncStaticModal($('#welcome'));
     if (play || !tourReplay) {
-      setTab('streets');
-      spotlight(SPOT.streets, true);
+      beginCityFirstJob();
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
@@ -7659,6 +7662,7 @@
     if (!TABS[id]) return;
     if (id === 'map' && currentTab !== 'map' && _mapMode === 'walk') rememberDashboardView();
     cancelCityEntry();
+    if (id !== 'map') _cityFirstJobEntry = null;
     if (id !== 'map') destroyCityScene();
     if (id !== 'fieldwork') destroyFieldwork();
     characterCheckoutOnly = id === 'portfolio' && characterOnly;
@@ -9013,6 +9017,31 @@
     window.scrollTo({ top: previous?.scroll || 0, behavior: 'instant' });
   };
   let _fieldwork = null, _fieldworkEpoch = 0, _fieldworkEntryView = 'inventory';
+  let _cityFirstJobEntry = null;
+  const _cityFirstJobGuides = new Map();
+  function cityFirstJobKey() { return me?.id ? `omerta_first_job:${me.id}:${me.generation}` : ''; }
+  function cityFirstJobActive() {
+    const key = cityFirstJobKey();
+    if (!key) return false;
+    if (_cityFirstJobGuides.has(key)) return _cityFirstJobGuides.get(key);
+    try { return localStorage.getItem(key) === 'active'; } catch { return false; }
+  }
+  function setCityFirstJobActive(active) {
+    const key = cityFirstJobKey();
+    if (!key) return;
+    _cityFirstJobGuides.set(key, active);
+    try { if (active) localStorage.setItem(key, 'active'); else localStorage.removeItem(key); } catch { /* The guide also works for this session. */ }
+  }
+  function beginCityFirstJob() {
+    setCityFirstJobActive(true);
+    _cityFirstJobEntry = cityFirstJobKey();
+    _mapMode = 'walk'; setTab('map');
+    fulfillCityFirstJobEntry();
+  }
+  function fulfillCityFirstJobEntry() {
+    if (!_cityFirstJobEntry || _cityFirstJobEntry !== cityFirstJobKey() || currentTab !== 'map' || _mapMode !== 'walk') return;
+    if (_cityScene?.walkToVenue?.('fixer') === true) _cityFirstJobEntry = null;
+  }
   const CITY_VENUE_TABS = {
     fixer: ['streets', 'scores', 'pvp', 'law', 'pen', 'wire'],
     workshop: ['garage', 'market', 'kitchen', 'empire', 'fieldwork'],
@@ -9055,9 +9084,9 @@
     const model = coreTrainingMarkup({ termsId: 'city-gym-terms', compact: true });
     const receipt = _cityTrainingReceipt?.key === key && projections.current(_cityTrainingReceipt.stamp) ? _cityTrainingReceipt.receipt : null;
     const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
-    const html = `${model.terms}<div class="omerta-city__training-stats">${model.train || '<span role="status">Core training is unavailable. Refresh to check your session.</span>'}</div>
-      ${readableReceipt ? `<div tabindex="-1" data-city-training-result role="region" aria-label="Training result">${operationReceiptMarkup(readableReceipt)}
+    const html = `${readableReceipt ? `<div tabindex="-1" data-city-training-result role="region" aria-label="Training result">${operationReceiptMarkup(readableReceipt)}
         ${receipt.recovery?.sameKey === true && receipt.recovery?.run ? `<button class="act" data-city-training-retry>${esc(receipt.recovery.label || 'Check the move')}</button>` : ''}</div>` : ''}
+      ${model.terms}<div class="omerta-city__training-stats">${model.train || '<span role="status">Core training is unavailable. Refresh to check your session.</span>'}</div>
       <button class="act omerta-city__training-full" data-city-training-full>Full gym &amp; regimen →</button>`;
     if (host.dataset.trainingContent !== html) {
       const focused = host.contains(document.activeElement), stat = document.activeElement?.dataset.cityTrain;
@@ -9121,18 +9150,22 @@
     const active = control => ownerCurrent() && host.isConnected && !host.closest('.omerta-city__gameplay')?.hidden
       && host.closest('.omerta-city__gameplay')?.dataset.cityGameplay === 'fixer' && (!control || control.isConnected && host.contains(control));
     const crimes = (rules?.crimes || []).filter(crime => /^[a-z0-9_]+$/.test(crime.id)).sort((a, b) => a.lvl - b.lvl);
+    const guided = cityFirstJobActive();
+    const eligible = crimes.filter(crime => crime.lvl <= Number(me?.level || 1));
     const crime = crimes.find(crime => crime.id === host.dataset.fixerCrime)
-      || crimes.filter(crime => crime.lvl <= Number(me?.level || 1)).at(-1) || crimes[0];
+      || (guided ? eligible[0] : eligible.at(-1)) || crimes[0];
     if (crime) host.dataset.fixerCrime = crime.id;
     const model = crime ? coreCrimeMarkup(crime, { termsId: 'city-fixer-terms', compact: true }) : null;
     const receipt = _cityFixerReceipt?.key === key && projections.current(_cityFixerReceipt.stamp) ? _cityFixerReceipt.receipt : null;
     const recovery = receipt?.recovery?.sameKey === true && typeof receipt.recovery.run === 'function';
     const readableReceipt = receipt && { ...receipt, recovery: receipt.recovery ? { ...receipt.recovery, run: null, tab: null } : null };
-    const html = `<label class="d" for="city-fixer-job">Street job</label><select id="city-fixer-job" data-city-crime-select>${crimes.map(entry =>
+    const html = `${guided ? '<aside class="city-first-job" aria-label="Your first job"><b>Your first move</b><p>1. Meet The Fixer ✓ · 2. Choose an approach · 3. Read your result</p><p>Start with this job. Review the nerve cost and possible outcomes, then choose how to approach it.</p></aside>' : ''}
+      ${readableReceipt ? `<div tabindex="-1" data-city-fixer-result role="region" aria-label="Job result">${operationReceiptMarkup(readableReceipt)}
+        ${recovery ? `<button class="act" data-city-fixer-retry>${esc(receipt.recovery.label)}</button>` : ''}
+        ${receipt.state === 'success' ? '<div class="city-first-job"><b>Your move is recorded.</b><p>Review the changes above. Your journal has people to meet, clues to follow, and choices that shape your story.</p><button class="act" data-city-fixer-story>Find a story →</button></div>' : ''}</div>` : ''}
+      <label class="d" for="city-fixer-job">Street job</label><select id="city-fixer-job" data-city-crime-select>${crimes.map(entry =>
       `<option value="${entry.id}"${entry.id === crime?.id ? ' selected' : ''}>${esc(entry.name)} · level ${entry.lvl}</option>`).join('')}</select>
       ${model ? `${model.terms}<div class="omerta-city__training-stats">${model.choices}</div>` : '<p role="status">Job terms are unavailable. Refresh to check your session.</p>'}
-      ${readableReceipt ? `<div tabindex="-1" data-city-fixer-result role="region" aria-label="Job result">${operationReceiptMarkup(readableReceipt)}
-        ${recovery ? `<button class="act" data-city-fixer-retry>${esc(receipt.recovery.label)}</button>` : ''}</div>` : ''}
       <button class="act omerta-city__training-full" data-city-fixer-full>All street jobs &amp; hustle →</button>`;
     if (host.dataset.fixerContent !== html) {
       const focused = host.contains(document.activeElement), approach = document.activeElement?.dataset.cityApproach;
@@ -9151,6 +9184,8 @@
     });
     const retry = host.querySelector('[data-city-fixer-retry]');
     if (retry) { retry.disabled = host.dataset.fixerPending === '1'; retry.onclick = () => run(retry, null); }
+    const story = host.querySelector('[data-city-fixer-story]');
+    if (story) story.onclick = event => { if (active(event.currentTarget)) navigateFromCity('fieldwork', { venueId: 'fixer', initialView: 'mysteries' }); };
     host.querySelector('[data-city-fixer-full]').onclick = event => { if (active(event.currentTarget)) navigateFromCity('streets', { venueId: 'fixer' }); };
     async function run(button, approach) {
       if (!active(button) || button.disabled || host.dataset.fixerPending === '1') return;
@@ -9163,7 +9198,7 @@
       try {
         if (approach) await act('POST', '/v1/crimes/' + encodeURIComponent(crime.id), { approach }, { label: crime.name + ': ' + approach,
           beforeDispatch: () => retryCurrent() && active() && host.dataset.fixerOpening === opening && host.dataset.fixerCrime === crime.id, retryBeforeDispatch: retryCurrent, isCurrent: retryCurrent,
-          onReceipt: receipt => { if (retryCurrent()) { _cityFixerReceipt = { key, stamp, receipt }; if (_citySceneKey === key) _cityScene?.update?.({}); } } });
+          onReceipt: receipt => { if (retryCurrent()) { _cityFixerReceipt = { key, stamp, receipt }; if (receipt.state === 'success') setCityFirstJobActive(false); if (_citySceneKey === key) _cityScene?.update?.({}); } } });
         else await receipt.recovery.run();
       } finally {
         delete host.dataset.fixerPending;
@@ -9556,7 +9591,7 @@
     const epoch = ++_fieldworkEpoch, identity = cityIdentity();
     host.innerHTML = '<div class="card" role="status">Opening your inventory and quest journal…</div>';
     try {
-      await loadCityScript('/world-fieldwork.js?v=20261013-ui-1', () => !!window.OmertaFieldwork);
+      await loadCityScript('/world-fieldwork.js?v=20261015-play-1', () => !!window.OmertaFieldwork);
       if (epoch !== _fieldworkEpoch || currentTab !== 'fieldwork' || identity !== cityIdentity()) return;
       _fieldwork = window.OmertaFieldwork.mount(host, options);
     } catch {
@@ -9649,12 +9684,12 @@
   function loadCityAssets() {
     if (!_citySceneAssets) {
       _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261015-art-2', () => !!window.OmertaCityScene),
+        loadCityScript('/city-scene.js?v=20261015-play-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
-        loadCityScript('/city-world-ui.js?v=20261015-art-2', () => !!window.OmertaCityWorldUI),
+        loadCityScript('/city-world-ui.js?v=20261015-play-1', () => !!window.OmertaCityWorldUI),
         loadCityScript('/city-home-ui.js?v=20261013-ui-1', () => !!window.CityHomeUi),
         loadCityScript('/city-adventure-ui.js?v=20261012-gameplay-1', () => !!window.CityAdventureUi),
-        loadCityScript('/world-fieldwork.js?v=20261013-ui-1', () => !!window.OmertaFieldwork),
+        loadCityScript('/world-fieldwork.js?v=20261015-play-1', () => !!window.OmertaFieldwork),
       ]).then(([scene, engine, world, home, adventure, fieldwork]) => {
         if (scene.status === 'rejected') throw scene.reason;
         if ([engine,world,home,adventure,fieldwork].some(result => result.status === 'rejected')) _citySceneAssets = null;
@@ -9701,6 +9736,7 @@
     if (_cityScene && _citySceneKey === key) {
       _cityScene.update?.({ ...options, character: { ...me }, progress: cityProgress() });
       fulfillCityHomeEntry();
+      fulfillCityFirstJobEntry();
       readCityWorld('homes', { districtId: me.loc }).catch(() => {});
       return;
     }
@@ -9720,6 +9756,7 @@
         onWorldRead: readCityWorld, onWorldAction: performCityWorld, onWorldRetry: retryCityWorld, onWorldTravel: travelFromCity });
       _citySceneKey = key;
       fulfillCityHomeEntry();
+      fulfillCityFirstJobEntry();
       readCityWorld('homes', { districtId: me.loc }).catch(() => {});
     } catch {
       if (epoch !== _citySceneEpoch || currentTab !== 'map' || !host.isConnected) return;

@@ -87,8 +87,8 @@ try {
   const catalogue = await success(call(witness, 'GET', '/v1/worldgraph/mysteries'));
   assert(validateCatalogue(catalogue), JSON.stringify(validateCatalogue.errors));
   const city = catalogue.mysteries.filter(entry => entry.cityQuest);
-  assert.equal(city.length, 7);
-  assert.equal(CITY_QUEST_PRESENTATIONS.length, 7);
+  assert.equal(city.length, 8);
+  assert.equal(CITY_QUEST_PRESENTATIONS.length, 8);
   assert.deepEqual(DISTRICT_STORY_ARCS.map(story => story.presentation.districtId).sort(), DISTRICTS.map(district => district.id).sort());
   assert.equal(new Set(city.flatMap(entry => entry.actions.map(action => action.id))).size, city.length,
     'Simultaneous City quest offers have distinct issued action IDs.');

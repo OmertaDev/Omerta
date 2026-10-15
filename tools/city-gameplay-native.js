@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 export const CITY_GAMEPLAY_NATIVE_PROOFS=Object.freeze([
   ['test/city-home-migration.js','CITY_HOME_TEST_DATABASE_URL',[]],
   ['test/city-district-arcs.js','CITY_DISTRICT_ARCS_TEST_DATABASE_URL',['--postgres']],
+  ['test/city-neighborhood-broadcast.js','CITY_DISTRICT_ARCS_TEST_DATABASE_URL',['--postgres']],
   ['test/staged-crew-missions-api.js','STAGED_CREW_MISSIONS_TEST_DATABASE_URL',['--postgres']],
   ['test/city-home-interiors-api.js','CITY_HOME_INTERIORS_TEST_DATABASE_URL',['--postgres']],
   ['test/city-encounters.js','CITY_ENCOUNTERS_TEST_DATABASE_URL',['--postgres']],
@@ -31,6 +32,6 @@ for(const[file,key,args]of CITY_GAMEPLAY_NATIVE_PROOFS){
   assert.equal(status.signal,null,file+' interrupted');assert.equal(status.code,0,file+' failed');
   console.log(JSON.stringify({proof:file,sourceSha256:hash,state:'passed',elapsedMs:Date.now()-start}));
 }
-console.log('City gameplay native: all seven current-source proofs passed; no partial qualification');
+console.log('City gameplay native: all eight current-source proofs passed; no partial qualification');
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await run();
