@@ -1,5 +1,3 @@
-import {collectCommissionedCraftingIssues} from './commissionedcrafting.js';
-import {collectPickingPackingIssues} from './pickingpackinginvariants.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -31,7 +29,7 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
  const commissions=(await c.query('SELECT * FROM commissioned_crafting_contracts WHERE business_id=$1 ORDER BY id',[depotId])).rows;
- if(commissions.length&&(await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');
+ if(commissions.length){const {collectCommissionedCraftingIssues}=await import('./commissionedcrafting.js');if((await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');}
  for(const row of commissions){
   if(!['funded','accepted','completed','refunded'].includes(row.status))fail('commission_history_changed');
   if(row.status==='accepted'){
@@ -42,7 +40,7 @@ export async function assertDepotFeatureObligations(c,depotId){assertItemTransac
   if(['completed','refunded'].includes(row.status)&&Number(row.fee_remaining)!==0)fail('commission_history_changed');
  }
  const jobs=(await c.query('SELECT * FROM picking_packing_jobs WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
- if(jobs.length&&(await collectPickingPackingIssues(c)).length)fail('picking_history_changed');
+ if(jobs.length){const {collectPickingPackingIssues}=await import('./pickingpackinginvariants.js');if((await collectPickingPackingIssues(c)).length)fail('picking_history_changed');}
  for(const row of jobs){
   if(!['requested','accepted','fulfilled','cancelled','party_dead'].includes(row.state))fail('picking_history_changed');
   if(row.state==='accepted'){
