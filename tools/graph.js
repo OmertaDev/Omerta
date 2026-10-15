@@ -39,6 +39,7 @@
 //   node tools/graph.js query <name> [arg]    see QUERIES below
 import fs from 'node:fs';
 import {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';
+import {MARKET_OPERATIONS_HELPER_PROFILES,extractMarketOperationsHelperReconciliations} from './market-operations-graph-helpers.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -664,6 +665,12 @@ export function build() {
   const nextLayerHelpers=Object.fromEntries(NEXT_LAYER_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
   for(const term of extractNextLayerHelperReconciliations(inv,nextLayerHelpers)){
     const prov={file:term.file,line:term.line,hash:sha(nextLayerHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const marketOperationsHelpers=Object.fromEntries(MARKET_OPERATIONS_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractMarketOperationsHelperReconciliations(inv,marketOperationsHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(marketOperationsHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 
