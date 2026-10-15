@@ -2,8 +2,8 @@ import {nextLayerSourceBaseline} from './next-layer-source-compatibility.js';
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_FIVE_SOURCE_REVISION="0a11b2f03173f9d238a4e9826f03c02a2334d649";
-export const NEXT_FIVE_SOURCE_PREDECESSOR="301e3f79c53525fbfacb3affe76415b8dcd6cbab";
+export const NEXT_FIVE_SOURCE_REVISION="8ed4694f36256c6223ded39cc2b0e371c14473df";
+export const NEXT_FIVE_SOURCE_PREDECESSOR="266b9f7684b5b4d4313b40451bb840e005e53428";
 export const NEXT_FIVE_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_FIVE_SOURCE_DOMAINS={
   "package.json": {
@@ -57,6 +57,27 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
       }
     ]
   },
+  "src/equipmentrentals.js": {
+    "currentSha256": "bb146289be66666e3a957da7bf28d94c872e68a80d73fe6fdec6d5ac9de02303",
+    "currentBlob": "5e7f68e664a53004271de2a8891200fb45197dc6",
+    "baselineSha256": "1e6dec8001cea6f528b1fbde255dca5170893e5799dced0b0875b24efd96423c",
+    "baselineBlob": "5a848d9b9b1b400d367b98aa95457feb9d3d5b10",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\nimport { consignmentDeathCounterparts } from './consignments.js';\nimport { atomicBarterCounterparts } from './atomicbarter.js';\nimport { pickingPackingCounterparts } from './pickingpacking.js';\n\n// Commission recovery depends on crafting, whose default graph is validated at module load.\n// Defer this reader inside the existing async death hooks to avoid an initialization cycle.\nasync function commissionedCraftingDeathCounterparts(client, characterId) {\n  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');\n  return discover(client, characterId);\n}\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n",
+        "baseline": "import { jailed, safeHoused } from './rules.js';\nimport { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';\nimport { assertEquipmentUsable } from './itemdurability.js';\n\nexport const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });\nexport const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (\n"
+      },
+      {
+        "current": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);\n  for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);\n  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking originals.\n  if (ids.size > subjects.length * 42) fail('death_limit');\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n",
+        "baseline": "  if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');\n  const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);\n  for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);\n  const ordered = [...ids].sort(), locked = [];\n  for (const characterId of ordered) {\n    const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];\n"
+      },
+      {
+        "current": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await atomicBarterCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await commissionedCraftingDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Commission counterpart changed; retry the whole action.');\n  }\n  for (const counterpart of await pickingPackingCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Picking counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n",
+        "baseline": "  for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {\n    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');\n  }\n  return state;\n  } catch (error) { poisonItemTransaction(client, error); throw error; }\n}\n"
+      }
+    ]
+  },
   "src/invariants.js": {
     "currentSha256": "5aca27f9fabbe43cd89c00cc9e2a12e467d5a6a480f472e583d79551f56f1029",
     "currentBlob": "a2fc7732d104b4c30e7edf234464d79f1c8a0e28",
@@ -83,10 +104,10 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
     ]
   },
   "src/server.js": {
-    "currentSha256": "971ca5467b516ac2b91ad44742a2a34d87b2120614dba5156970f886569526c6",
-    "currentBlob": "d8c16b25831550c3f5d2a8e5cd14fadd66a1a4f2",
-    "baselineSha256": "929ac11847c68f10312801f9ee3c31fc07e9621075a2cf7136867c3929dc2ad1",
-    "baselineBlob": "a8a4a282f681cb816d47df85846b6e50cd3b6f00",
+    "currentSha256": "d8fa6c7f0e1a9d60ab5390ace43da80ab51f78796e09bf0756df8107bfe38d0b",
+    "currentBlob": "7c232b848784a587426682f9a8010f10fafefd8e",
+    "baselineSha256": "d2694a1f22bdc783cdd645be343e226d120c4af41dec48f72e6162bdb49051d9",
+    "baselineBlob": "13f157465e671e87d9a1d179bb02121996e69c1e",
     "contextLines": 3,
     "inverses": [
       {
