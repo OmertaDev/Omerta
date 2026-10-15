@@ -95,6 +95,8 @@ export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
  ".github/workflows/liquidity-postgres.yml",
  ".github/workflows/publish-mcp.yml",
  ".github/workflows/rc1-recovery.yml",
+ "docs/decision-replay-integration.json",
+ "docs/economic-dependency-map-integration.json",
  "package-lock.json",
  "package.json",
  "public/genesis-snapshot-rpc.js",

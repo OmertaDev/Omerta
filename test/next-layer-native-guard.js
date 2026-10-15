@@ -21,5 +21,6 @@ const overtime=structuredClone(rows);overtime[0].durationMs=310001;reject(()=>as
 assertNextLayerBackend({role:'pilot_runner',database:'postgres',directory:'C:/Users/Jorge/AppData/Local/Temp/omerta-employment-pg184-proof'.replaceAll('/',String.fromCharCode(92)),version:'18.4'},local);
 for(const key of ['NODE_OPTIONS','node_options','NODE_PATH','Node_Path'])for(const value of ['',undefined,'--require=/unreviewed-preload.cjs']){const env={[key]:value};reject(()=>assertNextLayerExecutionEnv(env));reject(()=>assertNextLayerMode(['node','runner'],env));reject(()=>nextLayerChildEnv(env,'MULTI_HOP_COURIER_TEST_DATABASE_URL','postgresql://pilot_runner@127.0.0.1:35449/multi_hop_courier_test_abcdef123456'));}
 assert(files.includes('public/genesis-snapshot-rpc.js'));
+for(const file of ['docs/decision-replay-integration.json','docs/economic-dependency-map-integration.json'])assert(files.includes(file));
 for(const flags of [['--require','unreviewed'],['--import','unreviewed'],['--loader','unreviewed'],['--inspect'],['--input-type=module']])reject(()=>assertNextLayerMode(['node','runner'],{},flags));
 console.log('Next-layer strict endpoint/inventory/completion guard unit PASS: '+controls+' causal refusals; synthetic completion records confer NO native qualification.');
