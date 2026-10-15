@@ -201,6 +201,23 @@ for (const f of walkSrc('src', { exclude: ['src/preflight.js'] }))
 for (const key of injectedLiquidityEnvReads(fs.readFileSync('src/liquiditykeeper.js', 'utf8'),
   fs.readFileSync('src/liquidityautomation.js', 'utf8'))) used.add(key);
 
+// This one switch is consumed by the classifier itself. Admit only a real read
+// from its unmodified process.env default, never the required-field declarations.
+const preflightTree = parse(fs.readFileSync('src/preflight.js', 'utf8'), { ecmaVersion: 'latest', sourceType: 'module' });
+const preflightFunction = preflightTree.body.find(n => n.type === 'ExportNamedDeclaration' && n.declaration?.id?.name === 'preflight').declaration;
+const defaultEnv = preflightFunction.params[0];
+assert.equal(defaultEnv.type, 'AssignmentPattern');
+assert.equal(defaultEnv.left.name, 'env');
+assert.equal(defaultEnv.right.object?.name, 'process');
+assert.equal(defaultEnv.right.property?.name, 'env');
+assertEnvNamesUnchanged(preflightFunction.body, new Set(['env']), 'preflight environment');
+let readsLegalDefer = false;
+walkEnvAst(preflightFunction.body, node => {
+  if (node.type === 'MemberExpression' && !node.computed && node.object.name === 'env' && node.property.name === 'LEGAL_PROFILE_DEFER') readsLegalDefer = true;
+});
+assert(readsLegalDefer, 'the classified legal deferral switch has a real production preflight consumer');
+used.add('LEGAL_PROFILE_DEFER');
+
 const unclassified = [...used].filter((v) => !CLASSIFIED.has(v)).sort();
 assert.deepEqual(unclassified, [],
   `unclassified environment variable(s): ${unclassified.join(', ')}. Add each to src/preflight.js — ` +
@@ -247,6 +264,38 @@ for (const key of Object.keys(REQUIRED_ENV)) {
 }
 
 // the dev fallbacks are worse than absent — they LOOK configured
+const legalKeys = ['LEGAL_OPERATOR_NAME', 'LEGAL_POSTAL_ADDRESS', 'PRIVACY_CONTACT_EMAIL',
+  'DMCA_AGENT_NAME', 'DMCA_AGENT_EMAIL', 'DMCA_AGENT_ADDRESS', 'DMCA_AGENT_PHONE',
+  'DMCA_AGENT_REGISTERED', 'PAYMENT_REFUND_POLICY'];
+const deferred = { ...GOOD, LEGAL_PROFILE_DEFER: 'on' };
+for (const key of legalKeys) delete deferred[key];
+assert.deepEqual(preflight(deferred).errors, [], 'explicit deferral admits an absent legal profile');
+assert.equal(preflight(deferred).warnings.filter(w => /LEGAL_PROFILE_DEFER=on/.test(w)).length, 9);
+for (const key of legalKeys) {
+  const missing = { ...GOOD, LEGAL_PROFILE_DEFER: 'on' }; delete missing[key];
+  assert.deepEqual(preflight(missing).errors, [], `${key} alone can be deferred`);
+  assert(preflight(missing).warnings.some(w => w.startsWith(`${key} is absent`)));
+  for (const invalid of key === 'DMCA_AGENT_REGISTERED' ? ['', 'false', 'TRUE', false, 1] : ['', '   ', false, 1])
+    assert(preflight({ ...deferred, [key]: invalid }).errors.some(e => e.includes(key)), `${key} supplied invalid value is never deferred`);
+}
+for (const key of ['PRIVACY_CONTACT_EMAIL', 'DMCA_AGENT_EMAIL'])
+  assert(preflight({ ...deferred, [key]: 'invalid' }).errors.some(e => e.includes(key)), `${key} must still be a valid email`);
+for (const key of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) {
+  const missing = { ...deferred }; delete missing[key];
+  assert(preflight(missing).errors.some(e => e.startsWith(`${key} must be set`)), `${key} cannot be deferred`);
+}
+for (const key of ['JWT_SECRET', 'MARKET_SEED'])
+  assert(preflight({ ...deferred, [key]: 'short' }).errors.some(e => e.startsWith(`${key} is too weak`)), `${key} entropy guard survives deferral`);
+for (const key of TEST_ONLY_ENV)
+  assert(preflight({ ...deferred, [key]: '1' }).errors.some(e => /Test-only/.test(e)), `${key} stays forbidden under legal deferral`);
+for (const invalid of ['', 'true', 'ON', ' on ', false, 1])
+  assert(preflight({ ...GOOD, LEGAL_PROFILE_DEFER: invalid }).errors.some(e => e.startsWith('LEGAL_PROFILE_DEFER must')), 'invalid deferral setting fails closed');
+for (const value of [undefined, 'off']) {
+  const strict = { ...deferred, LEGAL_PROFILE_DEFER: value };
+  for (const key of legalKeys)
+    assert(preflight(strict).errors.some(e => e.startsWith(`${key} must be set`)), 'removing or disabling deferral restores every required legal field');
+}
+
 assert(preflight({ ...GOOD, JWT_SECRET: 'dev-secret-change-me' }).errors.some((e) => /forge a token/.test(e)),
   'the public dev JWT secret is refused');
 assert(preflight({ ...GOOD, MARKET_SEED: 'omerta-server-seed' }).errors.some((e) => /predictable/.test(e)),

@@ -43,6 +43,10 @@ databases:
 envVarGroups:
   - name: omerta-secrets         # shared by BOTH processes so MARKET_SEED matches (the draws must agree)
     envVars:
+      # Explicit temporary opt-in for absent legal fields only. Policies stay
+      # unavailable until complete; marketing still requires a postal address.
+      - key: LEGAL_PROFILE_DEFER
+        value: 'off'
       # Required legal profile. Supply real operator details; registration happens
       # with the Copyright Office before setting DMCA_AGENT_REGISTERED=true.
       - key: LEGAL_OPERATOR_NAME

@@ -70,6 +70,14 @@ export const REQUIRED_ENV = {
   MOD_KEY: 'the only credential on the mod perimeter; unset means every mod route 401s and the admin dashboard is unusable',
 };
 
+// A deliberate operator opt-in can defer only these absent profile fields. Supplied
+// invalid details still fail; policy readiness and marketing keep their own guards.
+const DEFERRABLE_LEGAL_ENV = new Set([
+  'LEGAL_OPERATOR_NAME', 'LEGAL_POSTAL_ADDRESS', 'PRIVACY_CONTACT_EMAIL',
+  'DMCA_AGENT_NAME', 'DMCA_AGENT_EMAIL', 'DMCA_AGENT_ADDRESS', 'DMCA_AGENT_PHONE',
+  'DMCA_AGENT_REGISTERED', 'PAYMENT_REFUND_POLICY',
+]);
+
 // ── MUST BE STATED in production. These have a default that is correct for a dev box and WRONG for a
 //    live one, so production must choose explicitly rather than inherit it. (Setting the value the
 //    default would have given is fine — the point is that a human decided.)
@@ -83,6 +91,7 @@ export const EXPLICIT_ENV = {
 // ── Everything else, classified so nothing can be added without a decision. `test/preflight.js`
 //    fails on any src/ env var missing from this file entirely.
 export const OPERATIONAL_ENV = [
+  'LEGAL_PROFILE_DEFER',
   'RESOURCE_ECONOMY', 'RESOURCE_PAYMENTS_MODE', 'RESOURCE_COMPUTE_ENABLED',
   'RESOURCE_COMPUTE_CATALOG', 'RESOURCE_OPENAI_API_KEY', 'RESOURCE_STRIPE_SECRET_KEY',
   'RESOURCE_STRIPE_WEBHOOK_SECRET', 'RESOURCE_SCARCE_PROVIDER_IDS', 'RESOURCE_COMPUTE_DAILY_SLOTS',
@@ -290,6 +299,9 @@ export function normalizeRwaReviewerConfig(env = process.env) {
 export function preflight(env = process.env) {
   const errors = [], warnings = [];
   if (!isHardened(env)) return { errors, warnings };  // dev/CI keeps the convenient fallbacks
+  const deferLegal = env.LEGAL_PROFILE_DEFER === 'on';
+  if (env.LEGAL_PROFILE_DEFER != null && !['on', 'off'].includes(env.LEGAL_PROFILE_DEFER))
+    errors.push('LEGAL_PROFILE_DEFER must be on or off when supplied.');
   if (env.RESOURCE_ECONOMY === 'on') {
     if (!['test', 'live'].includes(env.RESOURCE_PAYMENTS_MODE)) errors.push('RESOURCE_PAYMENTS_MODE must explicitly select test or live before resource intake.');
     for (const key of ['RESOURCE_STRIPE_SECRET_KEY', 'RESOURCE_STRIPE_WEBHOOK_SECRET'])
@@ -307,14 +319,18 @@ export function preflight(env = process.env) {
     }
   }
 
-  for (const [key, why] of Object.entries(REQUIRED_ENV))
-    if (!env[key]) errors.push(`${key} must be set for a real deployment — ${why}.`);
+  for (const [key, why] of Object.entries(REQUIRED_ENV)) {
+    if (deferLegal && DEFERRABLE_LEGAL_ENV.has(key) && env[key] == null)
+      warnings.push(`${key} is absent under LEGAL_PROFILE_DEFER=on — legal policies remain unavailable until the profile is complete.`);
+    else if (!env[key]) errors.push(`${key} must be set for a real deployment — ${why}.`);
+  }
 
   for (const key of ['LEGAL_OPERATOR_NAME', 'LEGAL_POSTAL_ADDRESS', 'PRIVACY_CONTACT_EMAIL', 'DMCA_AGENT_NAME', 'DMCA_AGENT_EMAIL', 'DMCA_AGENT_ADDRESS', 'DMCA_AGENT_PHONE', 'PAYMENT_REFUND_POLICY'])
-    if (env[key] && (typeof env[key] !== 'string' || !env[key].trim())) errors.push(`${key} must contain real operator information.`);
-  if (env.DMCA_AGENT_REGISTERED !== 'true') errors.push('DMCA_AGENT_REGISTERED must be true after external registration is verified.');
+    if (env[key] != null && (typeof env[key] !== 'string' || !env[key].trim())) errors.push(`${key} must contain real operator information.`);
+  if (env.DMCA_AGENT_REGISTERED !== 'true' && !(deferLegal && env.DMCA_AGENT_REGISTERED == null))
+    errors.push('DMCA_AGENT_REGISTERED must be true after external registration is verified.');
   for (const key of ['PRIVACY_CONTACT_EMAIL', 'DMCA_AGENT_EMAIL'])
-    if (env[key] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env[key])) errors.push(`${key} must be a valid contact email.`);
+    if (env[key] != null && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env[key])) errors.push(`${key} must be a valid contact email.`);
   // the dev JWT fallback and the public seed are worse than absent: they LOOK configured
   if (env.JWT_SECRET === 'dev-secret-change-me')
     errors.push('JWT_SECRET is still the public dev fallback — anyone could forge a token for any account.');

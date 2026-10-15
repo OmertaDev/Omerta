@@ -14,12 +14,23 @@ const profile = {
   DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Test Street, Example City',
   DMCA_AGENT_PHONE: '+1 202 555 0100', DMCA_AGENT_REGISTERED: 'true', PAYMENT_REFUND_POLICY: 'Requests are assessed under applicable law.',
 };
-const previous = Object.fromEntries(Object.keys(profile).map(key => [key, process.env[key]]));
+const previous = Object.fromEntries([...Object.keys(profile), 'LEGAL_PROFILE_DEFER'].map(key => [key, process.env[key]]));
 const app = await buildServer();
 try {
   for (const key of Object.keys(profile)) delete process.env[key];
   assert.equal((await app.inject('/privacy')).statusCode, 503, 'missing operator details cannot publish a pretend policy');
   assert.equal(digestConfigured(), false, 'no postal address means no marketing sends');
+  process.env.LEGAL_PROFILE_DEFER = 'on';
+  assert.deepEqual(new Set(legalReadiness()), new Set(Object.keys(profile)), 'startup deferral does not make missing operator information ready');
+  for (const path of ['/privacy', '/terms', '/dmca']) {
+    const page = await app.inject(path);
+    assert.equal(page.statusCode, 503, `${path} remains unavailable under startup deferral`);
+    assert.equal(page.headers['cache-control'], 'no-store');
+    assert(page.body.includes('This policy is not yet available.'));
+  }
+  assert.equal((await app.inject('/resources')).statusCode, 200);
+  assert.equal(digestConfigured(), false, 'startup deferral does not enable marketing without a postal address');
+  delete process.env.LEGAL_PROFILE_DEFER;
   Object.assign(process.env, profile);
   assert.deepEqual(legalReadiness(), []);
   for (const path of ['/privacy', '/terms', '/dmca', '/resources']) {
@@ -78,7 +89,7 @@ try {
   assert(client.includes("import('/vendor/walletconnect.js')"));
   assert(!client.includes('https://esm.sh/'));
   assert(client.includes('telemetryEnabled: false'));
-  console.log('legal-security: PASS — configured public policies, fail-closed launch, no optional analytics, local vendor inventory');
+  console.log('legal-security: PASS — configured public policies, strict default and bounded startup deferral, no optional analytics, local vendor inventory');
 } finally {
   for (const [key, value] of Object.entries(previous)) {
     if (value === undefined) delete process.env[key]; else process.env[key] = value;
