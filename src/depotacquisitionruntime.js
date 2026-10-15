@@ -1,3 +1,6 @@
+import {collectCommissionedCraftingIssues} from './commissionedcrafting.js';
+import {collectPickingPackingIssues} from './pickingpackinginvariants.js';
+import {customerVaultAccounting} from './customervaults.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -24,8 +27,44 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+
+// Closed new-feature relationships; canonical recoveries retain all original histories.
+export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
+ const commissions=(await c.query('SELECT * FROM commissioned_crafting_contracts WHERE business_id=$1 ORDER BY id',[depotId])).rows;
+ if(commissions.length&&(await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');
+ for(const row of commissions){
+  if(!['funded','accepted','completed','refunded'].includes(row.status))fail('commission_history_changed');
+  if(row.status==='accepted'){
+   const consent=(await c.query('SELECT receipt FROM commissioned_crafting_requests WHERE account_id=$1 AND original_character=$2 ORDER BY run_id',[row.maker_account,row.maker_character])).rows;
+   if(!consent.some(q=>q.receipt?.commissionId===row.id&&q.receipt?.status==='accepted'&&q.receipt?.sourceHash===row.source_hash))fail('commission_history_changed');
+   fail('commission_accepted');
+  }
+  if(['completed','refunded'].includes(row.status)&&Number(row.fee_remaining)!==0)fail('commission_history_changed');
+ }
+ const jobs=(await c.query('SELECT * FROM picking_packing_jobs WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
+ if(jobs.length&&(await collectPickingPackingIssues(c)).length)fail('picking_history_changed');
+ for(const row of jobs){
+  if(!['requested','accepted','fulfilled','cancelled','party_dead'].includes(row.state))fail('picking_history_changed');
+  if(row.state==='accepted'){
+   const consent=(await c.query('SELECT receipt FROM picking_packing_requests WHERE job_id=$1 AND account_id=$2 AND actor_ref=$3 ORDER BY request_key',[row.id,row.provider_account,row.provider_character])).rows;
+   if(!consent.some(q=>q.receipt?.jobId===row.id&&q.receipt?.state==='accepted'&&q.receipt?.sourceHash===row.source_hash))fail('picking_history_changed');
+   fail('picking_accepted');
+  }
+ }
+ const services=(await c.query('SELECT * FROM customer_vault_services WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
+ if(services.length&&(await customerVaultAccounting(c)).issues.length)fail('vault_history_changed');
+ for(const row of services){
+  const expected=crypto.createHash('sha256').update(JSON.stringify(['customer-vault-service-v1',row.id,row.depot_id,row.operator_account,row.operator_character,Number(row.fee_cash),row.policy_hash,+new Date(row.created_at),+new Date(row.expires_at)])).digest('hex');
+  if(!['open','draining','closed'].includes(row.state)||row.source_hash!==expected)fail('vault_history_changed');
+  const positions=(await c.query('SELECT * FROM customer_vault_positions WHERE service_id=$1 ORDER BY id',[row.id])).rows;
+  if(row.state!=='closed'||positions.some(p=>p.state==='funded'||Number(p.remaining)!==0))fail('customer_vault_obligation');
+ }
+
+}
+
 async function assertNoObligations(c,depotId){
+ await assertDepotFeatureObligations(c,depotId);
  if((await c.query('SELECT id FROM agent_operating_memory_facts WHERE business_id=$1 LIMIT 1',[depotId])).rows.length)fail('operating_memory_archive_required');
  if((await c.query('SELECT id FROM economic_intelligence_publications WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('intelligence_archive_required');
  if((await c.query('SELECT id FROM funded_external_work_jobs WHERE depot_id=$1 LIMIT 1',[depotId])).rows.length)fail('external_work_archive_required');
