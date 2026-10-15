@@ -31,6 +31,7 @@ import { collectWorkerTrainingIssues } from './workertraining.js';
 import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
 import { collectConsignmentIssues } from './consignments.js';
+const collectMobileShopIssues = async (...args) => (await import('./mobileshops.js')).collectMobileShopIssues(...args);
 import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
 import { collectPickingPackingIssues } from './pickingpackinginvariants.js';
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
@@ -789,6 +790,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });
   const freightIssues = await collectFreightHistoryIssues(pool);
   push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });
+  const mobileShopIssues = await collectMobileShopIssues(pool);
+  push('mobile shop canonical source/history', mobileShopIssues.length, 0, 0, { issues: mobileShopIssues });
   const consignmentIssues = await collectConsignmentIssues(pool);
   const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
   push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });
