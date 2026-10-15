@@ -44,4 +44,4 @@ assert.equal(added.length,8);assert.equal(added.reduce((n,name)=>n+current.notNu
 const schema=fs.readFileSync('schema.sql','utf8');
 assert.throws(()=>releasePhase2MigrationPredecessor(schema),'Raw536 source does not enter the old528 native profile');
 assert.throws(()=>nextFiveNativePredecessor(schema),'Source transfer never creates historical native admission');
-console.log(`Next-layer source-only proof PASS:12 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);
+console.log(`Next-layer source-only proof PASS:13 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);

@@ -627,6 +627,7 @@ export const NEXT_LAYER_NATIVE_FILES=Object.freeze([
  "src/worldgraph.js",
  "test/agent-economy-next-layer-estate.js",
  "test/depotacquisition-vaults.js",
+ "test/depotacquisition-next-five.js",
  "test/auth-fixture.js",
  "test/businesspartnerships-fixture.js",
  "test/commercialnegotiation-fixture.js",
