@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createNextLayerReleasePhase2MigrationCatalog, readNextLayerReleasePhase2Metadata,
-  verifyNextLayerReleasePhase2CausalNegatives } from '../tools/next-layer-release-phase2-migration-catalog.js';
+  verifyNextLayerReleasePhase2CausalNegatives, NEXT_LAYER_NATIVE_TABLES } from '../tools/next-layer-release-phase2-migration-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -30,7 +30,16 @@ const endpoint = cityGameplayMigrationEndpoint(address);
 const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;
 const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
-const inventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
+const nextLayerInventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
+const nextLayerCatalogBlob = execFileSync('git', ['show', '9376c5a4553bc1b95d3e74f9c7f0d88b794933d6:test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.equal(crypto.createHash('sha256').update(nextLayerCatalogBlob).digest('hex'), '24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522', 'Reviewed next-layer full catalog bytes changed');
+assert.deepEqual(nextLayerInventory, JSON.parse(nextLayerCatalogBlob), 'Current complete next-layer catalog source is frozen');
+const inventory = { ...nextLayerInventory,
+  added: nextLayerInventory.added.filter(row => !NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),
+  notNullColumns: Object.fromEntries(Object.entries(nextLayerInventory.notNullColumns).filter(([table]) => !NEXT_LAYER_NATIVE_TABLES.includes(table))) };
+assert.equal(NEXT_LAYER_NATIVE_TABLES.length, 8);
+assert.equal(nextLayerInventory.added.length - inventory.added.length, 89);
+assert.equal(NEXT_LAYER_NATIVE_TABLES.reduce((n, table) => n + nextLayerInventory.notNullColumns[table].length, 0), 78);
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];
 // Optional stacked features are recognized only by explicit identity and frozen
