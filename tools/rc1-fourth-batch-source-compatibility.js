@@ -1,4 +1,4 @@
-import { fifthBatchSourceBaseline } from './rc1-fifth-batch-source-compatibility.js';
+import { fifthBatchSourceBaseline, fifthBatchMigrationSchema } from './rc1-fifth-batch-source-compatibility.js';
 import { economyReleaseSource } from './economy-release-composition.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -246,4 +246,5 @@ export function assertFourthBatchSourceTransfer(file,input){
 }
 // Unknown representations remain byte-exact for the original rejecting guard.
 export function fourthBatchSourceBaseline(file,input){input=economyReleaseSource('commercial',file,input);assert.equal(typeof input,'string');const outer=fifthBatchSourceBaseline(file,input),text=lf(outer),d=FOURTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(outer===text||outer===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer(file,outer).baselineText:outer;}
-export function fourthBatchMigrationSchema(input){return fourthBatchSourceBaseline('schema.sql',input);}
+// Native reconstruction composes only the old frozen native profiles, never source-only merge aliases.
+export function fourthBatchMigrationSchema(input){input=fifthBatchMigrationSchema(input);assert.equal(typeof input,'string');const text=lf(input),d=FOURTH_BATCH_SOURCE_DOMAINS['schema.sql'];return hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer('schema.sql',input).baselineText:input;}

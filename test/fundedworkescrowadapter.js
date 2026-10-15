@@ -17,7 +17,7 @@ assert.equal(crypto.createHash('sha256').update(fs.readFileSync('omerta-contract
 const forbidden=new Proxy({}, {get(){throw Error('Missing deployment must not access provider');}});
 assert.equal((await observeWorkEscrowSource(forbidden,null,forbidden,forbidden,forbidden,forbidden)).available,false);
 Object.assign(process.env,{RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',INVITE_MODE:'off',DEPOT_PILOT:'on',JWT_SECRET:'funded-work-source-fixture',MARKET_SEED:'funded-work-source-fixture',MOD_KEY:'funded-work-source-fixture-mod'});
-const{buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js');
+const{buildServer}=await import('./server-fixture.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js');
 const app=await buildServer(),pool=app.pool;let serial=0;
 const ok=async(p,method,url,payload)=>{const r=await app.inject({method,url,payload,headers:p?{authorization:'Bearer '+p.token,'idempotency-key':'funded-work-fixture-'+(++serial)}:{}});assert.equal(r.statusCode,200,r.body);return r.json();};
 // Public deterministic test accounts only; no actual wallet/key/RPC is used.

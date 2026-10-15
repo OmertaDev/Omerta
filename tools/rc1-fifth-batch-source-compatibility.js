@@ -144,4 +144,4 @@ export function assertFifthBatchSourceTransfer(file,input){
 }
 // Unknown representations remain byte-exact for the original rejecting guard.
 export function fifthBatchSourceBaseline(file,input){assert.equal(typeof input,'string');const text=lf(input),d=FIFTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFifthBatchSourceTransfer(file,input).baselineText:input;}
-export function fifthBatchMigrationSchema(input){return fifthBatchSourceBaseline('schema.sql',input);}
+export function fifthBatchMigrationSchema(input){assert.equal(typeof input,'string');const text=lf(input),d=FIFTH_BATCH_SOURCE_DOMAINS['schema.sql'];return hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFifthBatchSourceTransfer('schema.sql',input).baselineText:input;}
