@@ -598,7 +598,7 @@ export async function verifyReleasePhase2CausalNegatives(pool, catalog, rows, ve
       catalog.verifyMetadata(await readReleasePhase2Metadata(client));
     }
   } finally { client.release(); }
-  console.log(`release Phase2 native catalog: exact C2/fe4 three-block source, 7 tables/60 columns/${catalog.addedConstraints.length} constraints/15 indexes; ${negatives} causal controls including ${cases.length} real transactional DDL rereads PASS`);
+  console.log(`combined native catalog: exact merged/commercial three-block source, 7 tables/60 columns/${catalog.addedConstraints.length} constraints/15 indexes; ${negatives} causal controls including ${cases.length} real transactional DDL rereads PASS`);
   return negatives;
 }
 
