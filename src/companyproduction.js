@@ -1,9 +1,11 @@
 import {assertProductionSlotBeforeCraft as productionReservationAdmission} from './productionslots.js';
 export {productionReservationAdmission};
+import {assertWorkshopFloorBeforeCraft as workshopFloorAdmission} from './workshopfloor.js';
+export {workshopFloorAdmission};
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { GameError } from './game.js';
-import { assertItemTransaction, registerItemTransactionUndo, poisonItemTransaction } from './items.js';
+import { assertItemTransaction, itemTransactionIdentity, registerItemTransactionUndo, poisonItemTransaction } from './items.js';
 import { craftWorldGraphRecipe, recipeCatalog, DEFAULT_CRAFTING_CONTEXT } from './crafting.js';
 import { nodeOf } from './worldgraph.js';
 import { canonicalBytes } from './content/canonical.js';
@@ -85,8 +87,10 @@ async function runProduction(client, accountId, body, requestKey, options) {
     const recipeCashCost = declared.get(step.recipeId).cashCost;
     const context = Object.freeze({ accountId, originalCharacter, businessId: business.id, requestKey, recipeId: step.recipeId,
       ordinal, totalCrafts: normalized.totalCrafts, agent: options.agentCredential, totalCashCost, recipeCashCost });
+    const floorAdmission = await workshopCheck(client, context);
     const slotAdmission = await productionReservationAdmission(client, context);
-    const admission = await options.beforeCraft(client, context);
+    const rawAdmission = await options.beforeCraft(client, context);
+    const admission = floorAdmission ? {...rawAdmission,workshopFloor:floorAdmission} : rawAdmission;
     if (options.agentCredential && admission?.productionAuthorized !== true) {
       await guardDelegatedControl(client, business.id, true);
       fail('production_consent');
@@ -139,3 +143,7 @@ export async function companyProductionBoard(client, accountId, after = null) {
   return { recipes: companyProductionRecipes(), receipts: page.map(row => ({ requestKey: row.request_key, receipt: row.receipt })),
     nextCursor: rows.length > COMPANY_PRODUCTION.receiptPage ? page.at(-1).request_key : null, limits: COMPANY_PRODUCTION };
 }
+
+const workshopScopes=new WeakMap();
+async function workshopCheck(c,ctx){const token=Object.freeze({}),scope={c,transaction:itemTransactionIdentity(c),ctx,active:true};workshopScopes.set(token,scope);try{return await workshopFloorAdmission(c,ctx,token);}finally{scope.active=false;}}
+export function assertWorkshopFloorProductionScope(c,ctx,token){assertItemTransaction(c);const scope=workshopScopes.get(token);if(!scope?.active||scope.c!==c||scope.transaction!==itemTransactionIdentity(c)||scope.ctx!==ctx)throw new GameError('workshop_floor','canonical_production_scope');return true;}

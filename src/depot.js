@@ -1,3 +1,6 @@
+import {assertItemTransaction,itemTransactionIdentity} from './items.js';
+import {assertWorkshopFloorStorage as workshopFloorStorageAdmission} from './workshopfloor.js';
+export {workshopFloorStorageAdmission};
 import crypto from 'node:crypto';
 import { BLACK_MARKET, jailed, safeHoused } from './rules.js';
 import { GameError, trunkCap } from './game.js';
@@ -106,6 +109,7 @@ export function procurementQuote(row, h, policy = null, reservedUnits = 0) {
 export async function restockDepot(ch, id, client, h, { automated = false, policyId = null } = {}) {
   intake(); mobile(ch);
   const row = await own(ch, id, client); atDock(ch, row);
+  await workshopCheck(client,Object.freeze({businessId:row.id,operation:'restock',originalCharacter:row.owner_character}));
   const policy = automated ? await requirePolicy(client, row, policyId, 'restock') : null;
   const cadence = automated ? await requireSupplyContract(client, row, policy.id) : null;
   if ((await pending(client, id)).length) throw new GameError('pending_order', 'Receive or cancel the previous procurement first.');
@@ -257,3 +261,7 @@ export async function depotBoard(client) {
   const rows = (await client.query("SELECT d.id,d.owner_character,d.district,d.stock,d.sale_price,c.name FROM business_depots d JOIN characters c ON c.id=d.owner_character WHERE d.status='open' AND c.alive AND d.stock>0 ORDER BY d.created_at LIMIT 100")).rows;
   return rows.map((r) => ({ id: r.id, owner: r.name, district: r.district, good: DEPOT.good, stock: Number(r.stock), unitPrice: Number(r.sale_price) }));
 }
+
+const workshopScopes=new WeakMap();
+async function workshopCheck(c,ctx){const token=Object.freeze({}),scope={c,transaction:itemTransactionIdentity(c),ctx,active:true};workshopScopes.set(token,scope);try{return await workshopFloorStorageAdmission(c,ctx,token);}finally{scope.active=false;}}
+export function assertWorkshopFloorStorageScope(c,ctx,token){assertItemTransaction(c);const scope=workshopScopes.get(token);if(!scope?.active||scope.c!==c||scope.transaction!==itemTransactionIdentity(c)||scope.ctx!==ctx)throw new GameError('workshop_floor','canonical_storage_scope');return true;}

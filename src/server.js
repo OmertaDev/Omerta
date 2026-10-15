@@ -92,6 +92,7 @@ import { register as registerMarketFeed } from './routes/marketfeed.js';
 import { register as registerStrategyLeagues } from './routes/strategyleagues.js';
 import { register as registerCompanyOperators } from './routes/companyoperators.js';
 import { register as registerCompanyProduction } from './routes/companyproduction.js';
+import {registerWorkshopFloor} from './workshopfloor-api.js';
 import { register as registerCompanyDemand } from './routes/companydemand.js';
 import { register as registerCompanyForecast } from './routes/companyforecast.js';
 import { register as registerCompanySpecialization } from './routes/companyspecialization.js';
@@ -2475,6 +2476,7 @@ export async function buildServer() {
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
   registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft, sourceScope: withInfrastructureProductionScope });
+  registerWorkshopFloor(app,{pool,auth});
   registerCompanyDemand(app, { pool, auth });
   registerCompanyForecast(app, { pool, auth });
   registerCompanySpecialization(app, { pool, auth });

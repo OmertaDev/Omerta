@@ -1,3 +1,6 @@
+import {assertItemTransaction,itemTransactionIdentity} from './items.js';
+import {assertWorkshopFloorLease as workshopFloorLeaseAdmission} from './workshopfloor.js';
+export {workshopFloorLeaseAdmission};
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
 
@@ -159,6 +162,7 @@ export async function leasePremises(ch,landlord,offerId,body,key,client,h) {
   const tenant=(await client.query("SELECT id FROM commercial_premises_leases WHERE tenant_account=$1 AND state='active' AND expires_at>$2",[ch.account_id,new Date(now)])).rows;
   if (tenant.length>=COMMERCIAL_PREMISES.tenantLeases) fail('tenant_limit');
   const leaseId=crypto.randomUUID(), end=new Date(now+row.duration_seconds*1000);
+  await workshopCheck(client,Object.freeze({landlordAccount:landlord.account_id,landlordCharacter:landlord.id,slot:terms.slot,premises:{kind:row.premises_kind,key:row.premises_key,district:row.premises_district}}));
   await transfer(ch,landlord,Number(row.rent_cash),client,h,leaseId);
   await client.query(`INSERT INTO commercial_premises_leases(id,offer_id,slot,landlord_character,landlord_account,tenant_character,tenant_account,
     offer_revision,depot_id,premises_kind,premises_key,premises_district,rent_cash,starts_at,expires_at)
@@ -258,3 +262,7 @@ export async function voidCommercialPremisesAtDeath(client,victim) {
   for (const row of leases) await client.query('UPDATE commercial_premises_leases SET state=$2,revision=revision+1 WHERE id=$1',[row.id,row.landlord_character===victim.id?'landlord_dead':'tenant_dead']);
   return { closedOffers:offers.length,closedLeases:leases.length,refundCash:0 };
 }
+
+const workshopScopes=new WeakMap();
+async function workshopCheck(c,ctx){const token=Object.freeze({}),scope={c,transaction:itemTransactionIdentity(c),ctx,active:true};workshopScopes.set(token,scope);try{return await workshopFloorLeaseAdmission(c,ctx,token);}finally{scope.active=false;}}
+export function assertWorkshopFloorLeaseScope(c,ctx,token){assertItemTransaction(c);const scope=workshopScopes.get(token);if(!scope?.active||scope.c!==c||scope.transaction!==itemTransactionIdentity(c)||scope.ctx!==ctx)throw new GameError('workshop_floor','canonical_lease_scope');return true;}
