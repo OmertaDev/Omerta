@@ -2,7 +2,7 @@
 // Historical pins remain immutable. This is source evidence, never native migration clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const COMPOSITION_REVISION = '301e3f79c53525fbfacb3affe76415b8dcd6cbab';
+export const COMPOSITION_REVISION = '266b9f7684b5b4d4313b40451bb840e005e53428';
 export const COMPOSITION_PHASE = 'exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const COMPOSITION_PROFILES = {
   "commercial": {
@@ -135,8 +135,8 @@ export const COMPOSITION_PROFILES = {
       ]
     },
     "src/server.js": {
-      "currentSha256": "929ac11847c68f10312801f9ee3c31fc07e9621075a2cf7136867c3929dc2ad1",
-      "currentBlob": "a8a4a282f681cb816d47df85846b6e50cd3b6f00",
+      "currentSha256": "d2694a1f22bdc783cdd645be343e226d120c4af41dec48f72e6162bdb49051d9",
+      "currentBlob": "13f157465e671e87d9a1d179bb02121996e69c1e",
       "baselineSha256": "fd2286039f1941fb8fcff31743045a99222c9eb68b13297199cca1ba14ff4d8f",
       "baselineBlob": "d08f5e8ded37055ed98baaaecac65f5b8b8241f3",
       "contextLines": 3,
@@ -232,6 +232,10 @@ export const COMPOSITION_PROFILES = {
         {
           "current": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). The current identity\n  // is soulbound; its account entitlement and evolving portrait remain with the originating account.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n",
           "baseline": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). A transferable trophy:\n  // the `minted` entitlement stays account-bound and never travels with the token.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n"
+        },
+        {
+          "current": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n",
+          "baseline": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n"
         }
       ]
     },
@@ -339,8 +343,8 @@ export const COMPOSITION_PROFILES = {
       ]
     },
     "src/server.js": {
-      "currentSha256": "929ac11847c68f10312801f9ee3c31fc07e9621075a2cf7136867c3929dc2ad1",
-      "currentBlob": "a8a4a282f681cb816d47df85846b6e50cd3b6f00",
+      "currentSha256": "d2694a1f22bdc783cdd645be343e226d120c4af41dec48f72e6162bdb49051d9",
+      "currentBlob": "13f157465e671e87d9a1d179bb02121996e69c1e",
       "baselineSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
       "baselineBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f",
       "contextLines": 3,
@@ -360,6 +364,10 @@ export const COMPOSITION_PROFILES = {
         {
           "current": "  registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });\n  registerBusinessPartnerships(app, { pool, auth });\n  registerCompanyGovernance(app, { pool, auth });\n  registerEconomicIntelligence(app, { pool, auth });\n  registerManagementTeams(app, { pool, auth, currentTeamTurn: managementTeamTurnRegistrar });\n  registerStrategyLaboratories(app, { pool, auth });\n  registerAgentOperatingMemory(app, { pool, auth, readAuthorizedAgentTurn: account => readAgentTurn(account) });\n  registerFundedExternalWork(app, { pool, auth });\n  registerCompanyRestructuring(app, { pool, auth });\n  registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n",
           "baseline": "  registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });\n  registerBusinessPartnerships(app, { pool, auth });\n  registerCompanyGovernance(app, { pool, auth });\n  registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n"
+        },
+        {
+          "current": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n",
+          "baseline": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n"
         }
       ]
     },
@@ -457,8 +465,8 @@ export const COMPOSITION_PROFILES = {
       ]
     },
     "src/server.js": {
-      "currentSha256": "929ac11847c68f10312801f9ee3c31fc07e9621075a2cf7136867c3929dc2ad1",
-      "currentBlob": "a8a4a282f681cb816d47df85846b6e50cd3b6f00",
+      "currentSha256": "d2694a1f22bdc783cdd645be343e226d120c4af41dec48f72e6162bdb49051d9",
+      "currentBlob": "13f157465e671e87d9a1d179bb02121996e69c1e",
       "baselineSha256": "e5e2d70cb2f1e233f6b3877be257454b20aabe8264706bf6adb11e7a097828af",
       "baselineBlob": "6af081ad5184e28154ee2a0d9507737bbbfae131",
       "contextLines": 3,
@@ -546,6 +554,10 @@ export const COMPOSITION_PROFILES = {
         {
           "current": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). The current identity\n  // is soulbound; its account entitlement and evolving portrait remain with the originating account.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n",
           "baseline": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). A transferable trophy:\n  // the `minted` entitlement stays account-bound and never travels with the token.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n"
+        },
+        {
+          "current": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n",
+          "baseline": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n"
         }
       ]
     },
