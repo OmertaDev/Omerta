@@ -1,0 +1,1670 @@
+[
+  {
+    "id": "F01",
+    "mechanic": "Core gameplay",
+    "status": "Implemented; release blocked",
+    "supportedClaim": "Browser mafia RPG: choose actions, manage resources/heat, acquire assets, cooperate/compete. New world progression requires real group authority; never imply a fresh solo player can instantly finish it.",
+    "evidence": "`README.md:16–29,65–72`; RC1:69–83",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B01",
+        "start": 0,
+        "end": 4
+      }
+    ]
+  },
+  {
+    "id": "F02",
+    "mechanic": "World Graph",
+    "status": "Gated; component-ready",
+    "supportedClaim": "Connects actual player, Crew, Family, territory, inventory, information and operations. Translate as “the city remembers” for committed world changes, not omniscience.",
+    "evidence": "CORE:16–29,33–45",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B03",
+        "start": 8,
+        "end": 12
+      }
+    ]
+  },
+  {
+    "id": "F03",
+    "mechanic": "Living World Director",
+    "status": "Gated",
+    "supportedClaim": "Observes canonical conditions, selects authored situations, tracks committed consequences. Cannot invent evidence/assets, resolve an operation or move money. No generative infinite story claim.",
+    "evidence": "DIRECTOR:7–11,27–35; `src/director/config.js:19–25`",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B14",
+        "start": 52,
+        "end": 56
+      }
+    ]
+  },
+  {
+    "id": "F04",
+    "mechanic": "Campaign Network",
+    "status": "Gated",
+    "supportedClaim": "Missing Shipment → diverted depot → Black Market → exposure → Informant is implemented. Branches require actual prerequisites.",
+    "evidence": "NETWORK:3–17; RC1:59–66",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B02",
+        "start": 4,
+        "end": 8
+      },
+      {
+        "film": "03",
+        "beat": "C3-B15",
+        "start": 56,
+        "end": 60
+      }
+    ]
+  },
+  {
+    "id": "F05",
+    "mechanic": "Opportunities",
+    "status": "Gated",
+    "supportedClaim": "Prioritized, authorized next moves with known preparation, collaborators and genuine deadlines. Hidden work is not leaked; “related business” is not always proven causation.",
+    "evidence": "FEED:3–17,39–46",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B16",
+        "start": 60,
+        "end": 64
+      }
+    ]
+  },
+  {
+    "id": "F06",
+    "mechanic": "Player Commands",
+    "status": "Gated; component-ready",
+    "supportedClaim": "Player chooses server-issued actions; current authority and requirements are checked at execution; consequential actions show confirmation.",
+    "evidence": "CMD:7–38",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B12",
+        "start": 44,
+        "end": 48
+      }
+    ]
+  },
+  {
+    "id": "F07",
+    "mechanic": "Coordination Engine",
+    "status": "Gated",
+    "supportedClaim": "Family operations implement roles, promises versus contributions, knowledge, escrow, approval and resolution. Old Phase 0-only README is superseded by the newer component record.",
+    "evidence": "CORE:78–90",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B08",
+        "start": 28,
+        "end": 32
+      }
+    ]
+  },
+  {
+    "id": "F08",
+    "mechanic": "Crews",
+    "status": "Implemented; new world adapters gated",
+    "supportedClaim": "Current members contribute their own items/intelligence. Same-Crew requirements are definition-specific. Membership is not a permanent authorization grant.",
+    "evidence": "CORE:19,78–90; NETSRC:136–152; `src/crew.js`",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B08",
+        "start": 28,
+        "end": 32
+      }
+    ]
+  },
+  {
+    "id": "F09",
+    "mechanic": "Families / hierarchy",
+    "status": "Implemented; world authority gated",
+    "supportedClaim": "Boss/underboss permissions matter; individual contributions require the owner's action. Four-person Foundry operation is a real pilot, not a requirement for every operation.",
+    "evidence": "CORE:21,78–90; `src/social.js`",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B09",
+        "start": 32,
+        "end": 36
+      }
+    ]
+  },
+  {
+    "id": "F10",
+    "mechanic": "Territory",
+    "status": "Implemented; new world control gated",
+    "supportedClaim": "Existing district seizure/war differs from control of a route/object. A successful authorized operation can change canonical control/state. Neither implies ownership of LP principal.",
+    "evidence": "`README.md:69,108`; CORE:21–23; NETWORK:9–17",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B09",
+        "start": 32,
+        "end": 36
+      }
+    ]
+  },
+  {
+    "id": "F11",
+    "mechanic": "Markets",
+    "status": "Implemented; campaign market gated",
+    "supportedClaim": "Existing goods/escrow Exchange coexist with Canal market infrastructure. Canal establishment does not mint vendor stock or automatically move token price.",
+    "evidence": "`src/economy.js`; `src/social.js`; NETWORK:12–17",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B07",
+        "start": 24,
+        "end": 28
+      }
+    ]
+  },
+  {
+    "id": "F12",
+    "mechanic": "Crafting",
+    "status": "Implemented; knowledge-gated progression gated",
+    "supportedClaim": "Inputs are consumed; knowledge/location can unlock a recipe. Canal Cargo Seal uses salvage inputs at Foundry. No automatic OMR reward from crafting.",
+    "evidence": "CORE:25–27,41; NETSRC:49–59; `src/crafting.js:936–970`",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F13",
+    "mechanic": "Inventory",
+    "status": "Implemented",
+    "supportedClaim": "Real custody, owned unique items and fungible resource balances. UI can show only the authorized owner's inventory or deliberately contributed resources.",
+    "evidence": "CORE:27–29; `src/items.js:970–1069`",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F14",
+    "mechanic": "Item provenance",
+    "status": "Implemented",
+    "supportedClaim": "A game item has creation/custody/use history. Eligible car/boat/gear extraction is a separate, capped onchain rail; provenance alone is not NFT export.",
+    "evidence": "src/items.js; src/nft.js; src/chain.js",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F15",
+    "mechanic": "Materials",
+    "status": "Implemented",
+    "supportedClaim": "Scrap steel, wire, salvage parts and other admitted materials are physical game resources. OMR is separate.",
+    "evidence": "`src/content/core-materials.js`; `src/content/automotive-salvage.js`; NETSRC:56–59",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B04",
+        "start": 12,
+        "end": 16
+      }
+    ]
+  },
+  {
+    "id": "F16",
+    "mechanic": "Salvage",
+    "status": "Implemented",
+    "supportedClaim": "Consumes a real owned eligible vehicle through salvage service; outputs enter custody. Do not portray arbitrary stolen scenery as an eligible asset.",
+    "evidence": "`src/crafting.js:970`; CORE:41; HANDOFF:49",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B04",
+        "start": 12,
+        "end": 16
+      }
+    ]
+  },
+  {
+    "id": "F17",
+    "mechanic": "Facilities",
+    "status": "Gated bounded content",
+    "supportedClaim": "Foundry Archive and Canal Supply Depot have states, location, requirements and control. Not an unlimited facility-building sandbox.",
+    "evidence": "CORE:21–23,41; NETSRC:81–87",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B07",
+        "start": 24,
+        "end": 28
+      }
+    ]
+  },
+  {
+    "id": "F18",
+    "mechanic": "Professions",
+    "status": "Broader item-profession system planned",
+    "supportedClaim": "Skill specializations and ten use-XP trades are implemented. The broader World Graph profession/blueprint ladder remains a design; do not equate the two.",
+    "evidence": "src/skills.js; src/mastery.js; src/rules.tail.js MASTERY; docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B03",
+        "start": 8,
+        "end": 12
+      }
+    ]
+  },
+  {
+    "id": "F19",
+    "mechanic": "Durability / tool economy",
+    "status": "Bounded implementation; broader plan",
+    "supportedClaim": "Authored content crafting has tool durability/repair state. Do not generalize to every World Graph item or the whole proposed Phase 2c system.",
+    "evidence": "`src/content/crafting.js:124–140,261–281`; `src/content/compiler.js:684–691`; Phase 2c design",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F20",
+    "mechanic": "Mysteries",
+    "status": "Gated bounded content",
+    "supportedClaim": "Investigations use actual knowledge, item provenance, location and operation receipts; evidence can reveal an irreversible branch. Not an endless procedural murder generator.",
+    "evidence": "CORE:120–154; NETSRC:88–121",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B01",
+        "start": 0,
+        "end": 4
+      }
+    ]
+  },
+  {
+    "id": "F21",
+    "mechanic": "Evidence",
+    "status": "Gated",
+    "supportedClaim": "Independent original evidence can corroborate a public disclosure. Duplicate forwarded claims do not become independent proof.",
+    "evidence": "NETSRC:122–132; CORE:25,144",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F22",
+    "mechanic": "Asymmetric information",
+    "status": "Gated",
+    "supportedClaim": "Own/private/shared/public views differ; hidden requirements stay hidden. A public object does not expose its private past.",
+    "evidence": "DIRECTOR:55; FEED:18–32",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B01",
+        "start": 0,
+        "end": 4
+      }
+    ]
+  },
+  {
+    "id": "F23",
+    "mechanic": "Knowledge systems",
+    "status": "Gated",
+    "supportedClaim": "Authentic discoveries and deliberate sharing grant access; revocation or membership loss can remove it. No AI access to all secrets.",
+    "evidence": "CORE:25,144; FEED:26–31",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B04",
+        "start": 12,
+        "end": 16
+      },
+      {
+        "film": "03",
+        "beat": "C3-B06",
+        "start": 20,
+        "end": 24
+      }
+    ]
+  },
+  {
+    "id": "F24",
+    "mechanic": "Logistics",
+    "status": "Implemented; new campaigns gated",
+    "supportedClaim": "Existing convoys/port systems; buyer-owned bulk cargo ships from the buyer’s trunk. Partial ambushes respect capacity; a funded destination toll requires another Family’s territory. New canonical shipment-route states require materials and group actions. No magical teleport from trade to warehouse inventory.",
+    "evidence": "`src/market.js:314–333`; `src/convoy.js:70–99,254–266,327–347`; `src/port.js`; NETWORK:9–15",
+    "primaryFilm": 1,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B07",
+        "start": 24,
+        "end": 28
+      }
+    ]
+  },
+  {
+    "id": "F25",
+    "mechanic": "Law pressure",
+    "status": "Implemented; Director use bounded",
+    "supportedClaim": "Heat, law and court systems exist. Director can observe authored pressure; it does not automatically summon an arrest for every suspicious event.",
+    "evidence": "`src/law.js`; NETWORK:25–29",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F26",
+    "mechanic": "Dynamic world state",
+    "status": "Gated persistent objects",
+    "supportedClaim": "Actions commit state and events together. Distinct recovery/interception/destruction/exposure outcomes persist.",
+    "evidence": "CORE:21–23; NETWORK:11–15",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F27",
+    "mechanic": "Persistent consequences",
+    "status": "Gated; demonstrated in seeded journeys",
+    "supportedClaim": "History survives restart/replay; UI filters visibility. “Remembers this consequence,” not “remembers every betrayal forever.” Some tested branches did not produce follow-up opportunities.",
+    "evidence": "RC1:59–66,85–97; FEED:18–46",
+    "primaryFilm": 3,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F28",
+    "mechanic": "Seasonal systems",
+    "status": "Implemented; funding/chain gates separate",
+    "supportedClaim": "Existing rollover, modifiers, objectives/rewards. Do not promise a payout to all participants or assert new world pilots emit OMR.",
+    "evidence": "`src/worker.js`; `src/season.js`; `src/server.js:1940–1951`",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B16",
+        "start": 60,
+        "end": 64
+      }
+    ]
+  },
+  {
+    "id": "F29",
+    "mechanic": "OMR",
+    "status": "Implemented ledger; chain rails gated/dormant",
+    "supportedClaim": "OMR, internal gameplay cash and real ETH have distinct custody and purpose. Cash cannot buy OMR; the funded Window permits one-way OMR-to-game-cash redemption. DNR is separate again.",
+    "evidence": "src/economy.js swap; src/exchange.js redeem; src/chain.js; omerta-contracts/docs/market-v2/DESIGN.md",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B01",
+        "start": 0,
+        "end": 4.166666666666667
+      },
+      {
+        "film": "02",
+        "beat": "C2-B17",
+        "start": 66.66666666666667,
+        "end": 70.83333333333333
+      }
+    ]
+  },
+  {
+    "id": "F30",
+    "mechanic": "OMR sources",
+    "status": "Implemented/configured; economic and chain gates",
+    "supportedClaim": "Account-once mission rewards; fund-bounded daily completion transfers; backed prize/season/pass payments; eligible genesis drop; purchased Desk inventory; funded City distribution; PvP loot, loan collateral settlement and trades are transfers. No recurring Street Wage or referral OMR. World Graph operations do not mint OMR.",
+    "evidence": "src/growth.js; src/pass.js; src/drop.js; src/bank.js; src/desk.js; src/invariants.js; src/emission.js",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B02",
+        "start": 4.166666666666667,
+        "end": 8.333333333333334
+      }
+    ]
+  },
+  {
+    "id": "F31",
+    "mechanic": "OMR sinks",
+    "status": "Implemented ledger paths",
+    "supportedClaim": "Most OMR spends RECYCLE to Desk inventory, then can be sold as existing inventory. Vanity, status, respec, counter-intelligence, eligible PLEX/Store uses, upgrades and specified services are not a universal deflationary burn. Withdrawal is the explicit recycle exclusion.",
+    "evidence": "src/desk.js:1-40; src/rules.tail.js:3508-3546; src/vig.js payPlex; src/store.js; src/vanity.js",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B03",
+        "start": 8.333333333333334,
+        "end": 12.5
+      }
+    ]
+  },
+  {
+    "id": "F32",
+    "mechanic": "Escrow",
+    "status": "Implemented; new Family operations gated",
+    "supportedClaim": "Different custody systems: game-cash bounties/loans/Family-operation capital; OMR auction bids and collateral; item contributions; chain-funded Turf siege escrow. Never draw them as one interchangeable pot.",
+    "evidence": "src/social/contracts.js; src/loans.js; src/auction.js; src/operations.js; omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B11",
+        "start": 40,
+        "end": 44
+      },
+      {
+        "film": "02",
+        "beat": "C2-B11",
+        "start": 41.666666666666664,
+        "end": 45.833333333333336
+      }
+    ]
+  },
+  {
+    "id": "F33",
+    "mechanic": "Bounties",
+    "status": "Implemented",
+    "supportedClaim": "Funded player/Family contracts, expiry/refund and claim rules. No invented automated AI assassination or fixed return.",
+    "evidence": "`README.md:110–112`; `src/social/contracts.js:15–19,114–139`",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F34",
+    "mechanic": "Bonds",
+    "status": "Legacy deployed dormant / V2 candidate",
+    "supportedClaim": "Use Market V2 inventory bonds in the future release: ETH purchases existing prefunded OMR with bounded terms and linear vesting. They cannot mint OMR. Legacy OmertaBond minting is a separate dormant design and must not be spliced into this flow.",
+    "evidence": "src/bonds.js; omerta-contracts/docs/market-v2/DESIGN.md; omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B12",
+        "start": 45.833333333333336,
+        "end": 50
+      }
+    ]
+  },
+  {
+    "id": "F35",
+    "mechanic": "Treasuries",
+    "status": "Gameplay implemented; chain policy separate",
+    "supportedClaim": "Distinguish Family game-cash treasury, Family OMR reserve, protocol ETH/OMR reserves and RWA units. Game-cash contracts/upkeep use authorized Family funds. Standing-weighted Family OMR distributions use funded pools; Turf credits use their own chain rail.",
+    "evidence": "src/territory.js; src/social/contracts.js; src/exchange.js; src/community.js; omerta-contracts/docs/market-v2/DESIGN.md",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B06",
+        "start": 20.833333333333332,
+        "end": 25
+      }
+    ]
+  },
+  {
+    "id": "F36",
+    "mechanic": "Protocol-owned liquidity",
+    "status": "Deployed dormant legacy / V2 candidate",
+    "supportedClaim": "Protocol custody of liquidity. Under L02–L03, Core funding and separately configured seasonal Turf ranges operate; designated Turf LP fees can support Family credits while principal stays protocol-owned.",
+    "evidence": "`omerta-contracts/deployments/4663/manifest.json:3,255–262`; market-v2 design",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B09",
+        "start": 33.333333333333336,
+        "end": 37.5
+      }
+    ]
+  },
+  {
+    "id": "F37",
+    "mechanic": "Uniswap v4 / OMERTÀ Hook",
+    "status": "Implemented candidate, not established active",
+    "supportedClaim": "At the assumed full release, show the canonical Hook operating under L02. Use an actual settled receipt. Its POL fee allocation funds Core; designated seasonal Turf LP fees follow a separate bridge.",
+    "evidence": "`omerta-contracts/docs/market-v2/DESIGN.md`; `docs/WIKI.md`; deployment manifest",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B07",
+        "start": 25,
+        "end": 28.766666666666666
+      },
+      {
+        "film": "02",
+        "beat": "C2-B08",
+        "start": 28.766666666666666,
+        "end": 33.333333333333336
+      }
+    ]
+  },
+  {
+    "id": "F38",
+    "mechanic": "Liquidity territory",
+    "status": "Candidate/gated",
+    "supportedClaim": "Turf rights concern future funded LP fees, not withdrawal/ownership of pool principal. Keep this separate from game district control.",
+    "evidence": "`omerta-contracts/docs/market-v2/DESIGN.md:48,95–103`; `omerta-contracts/src/market-v2/OmertaTurfV2.sol:11–13`",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B10",
+        "start": 37.5,
+        "end": 41.666666666666664
+      }
+    ]
+  },
+  {
+    "id": "F39",
+    "mechanic": "NFT-compatible / provenanced items",
+    "status": "Provenance implemented; export readiness distinct",
+    "supportedClaim": "Item compatibility is specific. Cars/boats use deterministic OMR rarity upgrades and eligible GearVault extraction; equipment has capped mint rails. The Canal Cargo Seal is explicitly non-exportable.",
+    "evidence": "src/nft.js; src/chain.js; src/content/campaign-network.js; omerta-contracts/src/GearVault.sol",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B14",
+        "start": 54.166666666666664,
+        "end": 58.333333333333336
+      }
+    ]
+  },
+  {
+    "id": "F40",
+    "mechanic": "NFT rails",
+    "status": "Deployed/gated, not universal item ownership",
+    "supportedClaim": "Identity NFT, eligible gear/car/boat NFTs and Street Deed NFTs are different objects with different rights. An extracted Street Deed can have a token-bound account. Holding identity alone does not confer every entitlement.",
+    "evidence": "src/nft.js; src/deeds.js; src/stockdeliver.js; omerta-contracts/DEPLOYMENT.md",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B14",
+        "start": 54.166666666666664,
+        "end": 58.333333333333336
+      }
+    ]
+  },
+  {
+    "id": "F41",
+    "mechanic": "RWA integrations",
+    "status": "Implemented bounded acquisition/allocation/delivery machinery; chain and compliance/activation gates; production operation unverified",
+    "supportedClaim": "Approved real acquisitions can fund activity-weighted Brokers allocations for eligible NFT holders. Eligible extracted Street Deeds provide the ERC-6551 delivery target. Allocation is not delivery. The old fictional ticker Portfolio is retired; the ETH Vault is allocation-only and separate. Include in future-release film only with actual activated rail/capture, never fabricated stock performance.",
+    "evidence": "src/brokers.js:1-27; src/treasury.js:1-44; src/stockdeliver.js:1-47; src/rwastockkeeper.js; src/stockcatalogv2.js; src/portfolio.js",
+    "primaryFilm": 2,
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B15",
+        "start": 58.333333333333336,
+        "end": 62.5
+      }
+    ]
+  },
+  {
+    "id": "F42",
+    "mechanic": "Onchain settlement",
+    "status": "Implemented/devnet proof; dormant manifest",
+    "supportedClaim": "Wallet/voucher/watcher paths exist. Requires configured, funded, activated rails; in-game event persistence is not a blockchain transaction.",
+    "evidence": "`README.md:31–48,76–80`; deployment manifest",
+    "primaryFilm": 2,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B14",
+        "start": 54.166666666666664,
+        "end": 58.333333333333336
+      }
+    ]
+  },
+  {
+    "id": "F43",
+    "mechanic": "AI Agents / Agent Turn",
+    "status": "Implemented, bounded",
+    "supportedClaim": "Can expose permitted state and allowed actions. Deep City exploration is read-only; World Graph actions are excluded from autonomous Agent Act.",
+    "evidence": "`src/agentgateway.js:1705–1707,1725–1727`",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F44",
+    "mechanic": "Consigliere adviser",
+    "status": "LOCAL experimental",
+    "supportedClaim": "Scoped adviser, staged proposals and official human confirmation. Not proved deployed/integrated at inspection; L04 explicitly assumes the same released world/command integration for the launch film. No specific Muse interoperability claim.",
+    "evidence": "LOCAL `docs/agent-gateway-capabilities.md:11–31,48–52`; `docs/agent-gateway-review/README.md:95–101`",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F45",
+    "mechanic": "Autonomous / semi-autonomous agents",
+    "status": "Bounded implementation",
+    "supportedClaim": "Agent Alpha has limited permitted actions; excludes wallet, mint, withdrawal, PvP and borrowing automation. Do not label all agent actions approval-per-click if bounded automation exists.",
+    "evidence": "`src/agentgateway.js:1705–1707`; LOCAL gateway capabilities",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B11",
+        "start": 40,
+        "end": 44
+      }
+    ]
+  },
+  {
+    "id": "F46",
+    "mechanic": "Human approval",
+    "status": "Implemented boundaries",
+    "supportedClaim": "New player commands revalidate confirmation/authorization; local adviser proposals need human confirmation; contributions require each owner. No officer/AI silently spends a teammate's inventory.",
+    "evidence": "CMD:19,27–38; CORE:82–86; LOCAL capabilities:48–52",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B09",
+        "start": 32,
+        "end": 36
+      },
+      {
+        "film": "03",
+        "beat": "C3-B12",
+        "start": 44,
+        "end": 48
+      }
+    ]
+  },
+  {
+    "id": "F47",
+    "mechanic": "Betrayal / social history",
+    "status": "Events implemented; guilt inference unsupported",
+    "supportedClaim": "A participant notebook can prove their own disclosure action; it does not establish whether it was authorized or betrayal. No psychic rat detection.",
+    "evidence": "NETSRC:107,120,166–173; NETWORK:13–15",
+    "primaryFilm": 3,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B06",
+        "start": 20,
+        "end": 24
+      }
+    ]
+  },
+  {
+    "id": "F48",
+    "mechanic": "Other current mechanics",
+    "status": "Implemented; per-system gates",
+    "supportedClaim": "Expanded below into individually assigned mechanic families; coverage means named or demonstrated, not every API endpoint explained.",
+    "evidence": "F49-F96 below",
+    "primaryFilm": 1,
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B17",
+        "start": 64,
+        "end": 68
+      }
+    ]
+  },
+  {
+    "id": "F49",
+    "primaryFilm": 1,
+    "mechanic": "Crime, energy, nerve, heat and respect",
+    "status": "Implemented",
+    "supportedClaim": "Actions consume resources, carry consequences and advance respect/levels; cash progression is not OMR conversion.",
+    "evidence": "src/game.js; src/rules.js; src/growth.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B02",
+        "start": 4,
+        "end": 8
+      }
+    ]
+  },
+  {
+    "id": "F50",
+    "primaryFilm": 1,
+    "mechanic": "Skills, careers and trade mastery",
+    "status": "Implemented",
+    "supportedClaim": "Build specializations and repeated actions develop trades; mastery XP is not currency; character skills and account legends have different death rules.",
+    "evidence": "src/skills.js; src/mastery.js; src/career.js; src/rules.tail.js MASTERY",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B03",
+        "start": 8,
+        "end": 12
+      }
+    ]
+  },
+  {
+    "id": "F51",
+    "primaryFilm": 1,
+    "mechanic": "Garage, tuning, repair and armory",
+    "status": "Implemented",
+    "supportedClaim": "Own, tune, repair, fence or salvage eligible assets; weapons/ammo/armor support bounded game actions.",
+    "evidence": "src/economy.js; src/races.js; src/crafting.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B04",
+        "start": 12,
+        "end": 16
+      }
+    ]
+  },
+  {
+    "id": "F52",
+    "primaryFilm": 1,
+    "mechanic": "Businesses, rackets and operating upkeep",
+    "status": "Implemented",
+    "supportedClaim": "Buy and upgrade businesses, collect bounded game-cash income, pay wages/upkeep; rivals can shakedown/heist/take over eligible assets.",
+    "evidence": "src/business.js; src/economy.js; src/territory.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B06",
+        "start": 20,
+        "end": 24
+      }
+    ]
+  },
+  {
+    "id": "F53",
+    "primaryFilm": 1,
+    "mechanic": "Kitchen, labs, trade ranks and hired sellers",
+    "status": "Implemented",
+    "supportedClaim": "Inputs -> cooking -> inventory -> sale; equipment and worker costs create recurring expenses. Display as fictional game commerce.",
+    "evidence": "src/kitchen.js; src/rules.tail.js KITCHEN",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B06",
+        "start": 20,
+        "end": 24
+      }
+    ]
+  },
+  {
+    "id": "F54",
+    "primaryFilm": 1,
+    "mechanic": "Crew heists and informants",
+    "status": "Implemented",
+    "supportedClaim": "Named seats use distinct capabilities; members join, leader executes, success/failure is shared; a rat can cause a specific heist to fail. This is separate from AI guessing guilt.",
+    "evidence": "src/heists.js; src/crew.js",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B08",
+        "start": 28,
+        "end": 32
+      }
+    ]
+  },
+  {
+    "id": "F55",
+    "primaryFilm": 1,
+    "mechanic": "PvP, hitmen, protection and loss",
+    "status": "Implemented",
+    "supportedClaim": "Rivalries, funded contracts, bodyguards, hospitalization and lethal loss affect what players risk. Loot moves existing assets.",
+    "evidence": "src/social.js; src/social/contracts.js; src/soldiers.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F56",
+    "primaryFilm": 1,
+    "mechanic": "Death, heirs, bloodlines and legacy",
+    "status": "Implemented",
+    "supportedClaim": "Character death can destroy or redistribute character assets; account legacy, defined inheritance and vendettas persist. Not everything survives.",
+    "evidence": "src/social.js; src/bloodline.js; src/dynasty.js; src/estate.js",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B14",
+        "start": 52,
+        "end": 56
+      }
+    ]
+  },
+  {
+    "id": "F57",
+    "primaryFilm": 1,
+    "mechanic": "Family wars, diplomacy and coalitions",
+    "status": "Implemented",
+    "supportedClaim": "Territory control, pacts, oathbreaking and coalitions affect conflict rules; a treaty is not a token distribution.",
+    "evidence": "src/social.js; src/diplomacy.js; src/territory.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B09",
+        "start": 32,
+        "end": 36
+      }
+    ]
+  },
+  {
+    "id": "F58",
+    "primaryFilm": 1,
+    "mechanic": "Commission politics and decrees",
+    "status": "Implemented",
+    "supportedClaim": "Qualified Families vote on bounded city rules with public political records. Decrees do not conjure funds.",
+    "evidence": "src/commission.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F59",
+    "primaryFilm": 1,
+    "mechanic": "NPC relationships and favor networks",
+    "status": "Implemented",
+    "supportedClaim": "Named contacts, standings, favors and grudges respond to authored player actions; benefits and inheritance are bounded.",
+    "evidence": "src/underworld.js; src/favors.js; src/contacts.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F60",
+    "primaryFilm": 1,
+    "mechanic": "Law, investigations, juries and counter-pressure",
+    "status": "Implemented",
+    "supportedClaim": "Heat and lawful consequences create costs and constraints; specified OMR services alter bounded conditions, never blanket immunity.",
+    "evidence": "src/law.js; src/rules.tail.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F61",
+    "primaryFilm": 1,
+    "mechanic": "Port, boats and shipping",
+    "status": "Implemented",
+    "supportedClaim": "Own eligible boats, undertake shipping and manage cargo/risk; convoy goods originate in custody, never a free material faucet.",
+    "evidence": "src/port.js; src/convoy.js; src/shipment.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B07",
+        "start": 24,
+        "end": 28
+      }
+    ]
+  },
+  {
+    "id": "F62",
+    "primaryFilm": 1,
+    "mechanic": "Races, fight management and duels",
+    "status": "Implemented",
+    "supportedClaim": "Vehicle races, managed boxers and ranked duels are separate competitive loops; stake currency and consent rules differ by activity.",
+    "evidence": "src/races.js; src/boxing.js; src/duels.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B12",
+        "start": 44,
+        "end": 48
+      }
+    ]
+  },
+  {
+    "id": "F63",
+    "primaryFilm": 1,
+    "mechanic": "Gambling, poker and table escrow",
+    "status": "Implemented",
+    "supportedClaim": "Fictional game-cash tables and escrow; the Den does not accept or pay OMR. Keep distinct from tokenomics.",
+    "evidence": "src/casino.js; src/ring.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B12",
+        "start": 44,
+        "end": 48
+      }
+    ]
+  },
+  {
+    "id": "F64",
+    "primaryFilm": 1,
+    "mechanic": "Loans and collateral",
+    "status": "Implemented",
+    "supportedClaim": "Funded player-to-player game-cash loans can use permitted collateral; repayment/default transfers existing balances/items, with specified fees.",
+    "evidence": "src/loans.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B11",
+        "start": 40,
+        "end": 44
+      }
+    ]
+  },
+  {
+    "id": "F65",
+    "primaryFilm": 1,
+    "mechanic": "Player markets and auction house",
+    "status": "Implemented",
+    "supportedClaim": "P2P cars/goods and separate OMR auction custody. Sale receipts, bid refunds and house fees are distinct flows.",
+    "evidence": "src/market.js; src/social/exchange.js; src/auction.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B07",
+        "start": 24,
+        "end": 28
+      }
+    ]
+  },
+  {
+    "id": "F66",
+    "primaryFilm": 1,
+    "mechanic": "Street Deeds, compounds and collections",
+    "status": "Implemented; export gated",
+    "supportedClaim": "Mapped property, named deeds, compound status and collections support legacy. In-game ownership is not automatically extracted NFT custody.",
+    "evidence": "src/deeds.js; src/estate.js; src/collection.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B15",
+        "start": 56,
+        "end": 60
+      }
+    ]
+  },
+  {
+    "id": "F67",
+    "primaryFilm": 1,
+    "mechanic": "Dynastic ties and honor",
+    "status": "Implemented",
+    "supportedClaim": "Marriages, bloodline ties, public honor and sworn consequences survive or change under their own rules. Not invulnerability.",
+    "evidence": "src/dynasty.js; src/honor.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B15",
+        "start": 56,
+        "end": 60
+      }
+    ]
+  },
+  {
+    "id": "F68",
+    "primaryFilm": 1,
+    "mechanic": "City megaprojects",
+    "status": "Implemented",
+    "supportedClaim": "Players contribute actual cash, OMR or goods toward a bounded monument; completion and contributor records persist. OMR follows the recycle policy.",
+    "evidence": "src/megaproject.js; src/rules.tail.js DESK",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B16",
+        "start": 60,
+        "end": 64
+      }
+    ]
+  },
+  {
+    "id": "F69",
+    "primaryFilm": 2,
+    "mechanic": "OMR spending -> Desk recycling -> sale",
+    "status": "Implemented; real ETH sale requires chain wiring",
+    "supportedClaim": "Specified spends move to a finite Desk shelf; sales transfer inventory to a buyer. No automatic burn, guaranteed revenue or mint.",
+    "evidence": "src/desk.js; src/game.js ledger; src/rules.tail.js DESK",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B04",
+        "start": 12.5,
+        "end": 16.666666666666668
+      }
+    ]
+  },
+  {
+    "id": "F70",
+    "primaryFilm": 2,
+    "mechanic": "One-way Window and city cash pool",
+    "status": "Implemented",
+    "supportedClaim": "OMR redemption draws game cash from a funded, capped pool. A dry pool refuses without taking OMR. Family share and Desk recycling are separate destinations.",
+    "evidence": "src/exchange.js; src/rules.tail.js EXCHANGE/FAMILY_YIELD",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B05",
+        "start": 16.666666666666668,
+        "end": 20.833333333333332
+      }
+    ]
+  },
+  {
+    "id": "F71",
+    "primaryFilm": 2,
+    "mechanic": "OMR staking, commitments and Made status",
+    "status": "Implemented",
+    "supportedClaim": "Staking changes custody/exposure and supports status laddders. Optional time commitments alter effective stake. Personal yield is retired; locked stake is not immune to PvP loot.",
+    "evidence": "src/economy.js stake/lockStake/unstake; src/made.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B03",
+        "start": 8.333333333333334,
+        "end": 12.5
+      }
+    ]
+  },
+  {
+    "id": "F72",
+    "primaryFilm": 2,
+    "mechanic": "Vig, revenue buybacks and funded prizes",
+    "status": "Implemented; real swap/chain gates",
+    "supportedClaim": "Qualifying real revenue funds actual OMR buybacks; reserve and prize accounting are bounded by received assets. Source-specific splits apply; mint revenue is excluded from Vig.",
+    "evidence": "src/vig.js; src/fees.js; src/invariants.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B06",
+        "start": 20.833333333333332,
+        "end": 25
+      }
+    ]
+  },
+  {
+    "id": "F73",
+    "primaryFilm": 2,
+    "mechanic": "The Bank and activity-weighted City distribution",
+    "status": "Implemented; funding/chain gates",
+    "supportedClaim": "A designated protocol-profit leg buys OMR for qualified game activity distribution. It is not an unlimited faucet or a promised return. DNR/credit machinery is a separate denomination.",
+    "evidence": "src/bank.js; omerta-contracts/README.md",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B06",
+        "start": 20.833333333333332,
+        "end": 25
+      }
+    ]
+  },
+  {
+    "id": "F74",
+    "primaryFilm": 2,
+    "mechanic": "Family yield and community buybacks",
+    "status": "Implemented; source-specific activation",
+    "supportedClaim": "Seasonal standing distributes a funded OMR pool to Family reserves. Community revenue buybacks and Window cuts are distinct inflows. A Family reserve is not a personal ETH wallet.",
+    "evidence": "src/community.js; src/exchange.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B06",
+        "start": 20.833333333333332,
+        "end": 25
+      }
+    ]
+  },
+  {
+    "id": "F75",
+    "primaryFilm": 2,
+    "mechanic": "Withdrawal, backing and settlement",
+    "status": "Implemented; chain gates",
+    "supportedClaim": "Link an authorized wallet; reserve-backed withdrawal/voucher rails and confirmation apply. In-game OMR debits pair with hard token release; do not recycle withdrawn units.",
+    "evidence": "src/chain.js; src/watcher.js; src/defi.js; src/rules.tail.js DESK.NOT_RECYCLED",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B14",
+        "start": 54.166666666666664,
+        "end": 58.333333333333336
+      }
+    ]
+  },
+  {
+    "id": "F76",
+    "primaryFilm": 2,
+    "mechanic": "Hook fee routing and opening policy",
+    "status": "Implemented V2 candidate",
+    "supportedClaim": "Canonical pool sells have 9% base Hook fee split 2% developer / 1.6% RWA / 2.4% community / 3% POL; additional sell pressure is 0-1% to stability. Pool LP fees are extra; opening buy rules separate.",
+    "evidence": "omerta-contracts/src/market-v2/OmertaHookV2.sol; omerta-contracts/docs/market-v2/DESIGN.md",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B07",
+        "start": 25,
+        "end": 28.766666666666666
+      }
+    ]
+  },
+  {
+    "id": "F77",
+    "primaryFilm": 2,
+    "mechanic": "Finite stability inventory and War Chest",
+    "status": "Implemented V2 candidate",
+    "supportedClaim": "Core, Lower Cushion/Garrison, Upper Cushion/Desk and Turf use separate bounded inventory. War Chest funds eligible regeneration; price recovery does not create reserves or guarantee a floor.",
+    "evidence": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol; omerta-contracts/docs/market-v2/DESIGN.md",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B09",
+        "start": 33.333333333333336,
+        "end": 37.5
+      }
+    ]
+  },
+  {
+    "id": "F78",
+    "primaryFilm": 2,
+    "mechanic": "Turf syndicates, sieges and seasonal rights",
+    "status": "Implemented V2 candidate; game integration assumed",
+    "supportedClaim": "Families or bounded syndicates can receive future funded lane fees. Atomic checkpoints separate old/new rights. Siege escrow follows configured allocation; principal remains protocol owned.",
+    "evidence": "omerta-contracts/src/market-v2/OmertaTurfV2.sol; OmertaGameSettlementV2.sol; OmertaTurfFeeBridgeV2.sol",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B10",
+        "start": 37.5,
+        "end": 41.666666666666664
+      }
+    ]
+  },
+  {
+    "id": "F79",
+    "primaryFilm": 2,
+    "mechanic": "Player LP NFT commitments",
+    "status": "Implemented V2 candidate",
+    "supportedClaim": "Canonical PositionManager NFT is held for a finite commitment; funded campaigns use sampled qualifying depth. Maturity exit is independent of reward availability.",
+    "evidence": "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B13",
+        "start": 50,
+        "end": 54.166666666666664
+      }
+    ]
+  },
+  {
+    "id": "F80",
+    "primaryFilm": 2,
+    "mechanic": "Arbitrage and bounded keepers",
+    "status": "Implemented V2 candidate",
+    "supportedClaim": "Solver-bound commit/reveal cycles require actual realized profit and a configured reserve share. Keepers run bounded jobs; they are not autonomous player agents or guaranteed-profit bots.",
+    "evidence": "omerta-contracts/src/market-v2/OmertaArbitrageV2.sol; src/marketv2solver.js; src/marketv2keeper.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B09",
+        "start": 33.333333333333336,
+        "end": 37.5
+      }
+    ]
+  },
+  {
+    "id": "F81",
+    "primaryFilm": 2,
+    "mechanic": "RWA Brokers activation and acquisition",
+    "status": "Implemented; gated",
+    "supportedClaim": "Eligible activity/activation weights allocate actual acquired approved units. Ballot, registry, buyer and custody restrictions apply. No price appreciation or yield promise.",
+    "evidence": "src/brokers.js; src/treasury.js; src/rwastockkeeper.js; src/stockcatalogv2.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B15",
+        "start": 58.333333333333336,
+        "end": 62.5
+      }
+    ]
+  },
+  {
+    "id": "F82",
+    "primaryFilm": 2,
+    "mechanic": "Street Deed RWA delivery",
+    "status": "Implemented; chain dormant",
+    "supportedClaim": "Acquired and allocated eligible units can be delivered into the eligible extracted Street Deed token-bound account. No extracted deed means allocation waits; delivery is a separate confirmed act.",
+    "evidence": "src/stockdeliver.js; src/deeds.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B15",
+        "start": 58.333333333333336,
+        "end": 62.5
+      }
+    ]
+  },
+  {
+    "id": "F83",
+    "primaryFilm": 2,
+    "mechanic": "ETH Vault allocation",
+    "status": "Implemented accounting; delivery absent by design",
+    "supportedClaim": "Spending specified OMR can allocate ETH already held; this ledger does not transfer ETH to a player. Keep separate from RWA stock delivery and token withdrawals.",
+    "evidence": "src/treasury.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B16",
+        "start": 62.5,
+        "end": 66.66666666666667
+      }
+    ]
+  },
+  {
+    "id": "F84",
+    "primaryFilm": 2,
+    "mechanic": "Store, PLEX and Season Pass",
+    "status": "Implemented; chain/payment gates",
+    "supportedClaim": "Mint is ETH-only or earned credit. Respawn and eligible Store items support OMR uses; the pass has specified status/consumable rewards and pool-backed OMR tiers.",
+    "evidence": "src/vig.js payPlex; src/store.js; src/pass.js; src/growth.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B02",
+        "start": 4.166666666666667,
+        "end": 8.333333333333334
+      }
+    ]
+  },
+  {
+    "id": "F85",
+    "primaryFilm": 2,
+    "mechanic": "Genesis, launch auction and community drop",
+    "status": "Implemented gated lifecycle",
+    "supportedClaim": "Auction/migration/oracle-warmup/live are explicit phases. Drop eligibility uses published allocation, wallet proof and bounded window. Do not splice launch-only minting into recurring economy claims.",
+    "evidence": "src/genesislaunch.js; src/genesiscca.js; src/drop.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "02",
+        "beat": "C2-B02",
+        "start": 4.166666666666667,
+        "end": 8.333333333333334
+      }
+    ]
+  },
+  {
+    "id": "F86",
+    "primaryFilm": 3,
+    "mechanic": "Investigation evidence and independent corroboration",
+    "status": "Gated world systems",
+    "supportedClaim": "Evidence unlocks bounded conclusions; duplicate screenshots are not independent proof. Supported disclosure history is not a psychic verdict of betrayal.",
+    "evidence": "src/mysteries.js; src/world-knowledge.js; src/content/campaign-network.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B05",
+        "start": 16,
+        "end": 20
+      }
+    ]
+  },
+  {
+    "id": "F87",
+    "primaryFilm": 3,
+    "mechanic": "Agent interface and human authority",
+    "status": "Implemented bounded gateway; adviser prototype",
+    "supportedClaim": "Agents see permitted context and allowed actions. Adviser proposes; consequential authorized commands require the real confirmation path. Existing scoped agent automation has its own limited action set.",
+    "evidence": "src/agentgateway.js; src/agentturn.js; LOCAL docs/agent-gateway-capabilities.md",
+    "coverage": "spoken causal beat plus genuine UI",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F88",
+    "primaryFilm": 3,
+    "mechanic": "Notifications, social memory and public records",
+    "status": "Implemented; new world projections gated",
+    "supportedClaim": "Feeds, city records, player discoveries and authorized activity views show committed changes without exposing every private action.",
+    "evidence": "src/citywire.js; src/streets.js; src/phone.js; src/world-projection.js; src/world-consequences.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F89",
+    "primaryFilm": 1,
+    "mechanic": "The Stable: racing dogs and horses",
+    "status": "Implemented",
+    "supportedClaim": "Buy, train and enter racing animals in bounded PvE/PvP activity; dogs race dogs and horses race horses. These are distinct from boxer management.",
+    "evidence": "src/stable.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B12",
+        "start": 44,
+        "end": 48
+      }
+    ]
+  },
+  {
+    "id": "F90",
+    "primaryFilm": 1,
+    "mechanic": "Speakeasies and social status",
+    "status": "Implemented",
+    "supportedClaim": "District clubs support proprietors, rounds, bottle service, decor and social prestige. OMR status spends follow the global recycle policy.",
+    "evidence": "src/speakeasy.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B10",
+        "start": 36,
+        "end": 40
+      }
+    ]
+  },
+  {
+    "id": "F91",
+    "primaryFilm": 1,
+    "mechanic": "The Pen and prison breaks",
+    "status": "Implemented",
+    "supportedClaim": "Jailed players have yard work, contraband, protection, guard bribes and eligible prison conflict; cooperative escape has its own participant conditions.",
+    "evidence": "src/pen.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B13",
+        "start": 48,
+        "end": 52
+      }
+    ]
+  },
+  {
+    "id": "F92",
+    "primaryFilm": 3,
+    "mechanic": "The Wire: intelligence and counter-intelligence",
+    "status": "Implemented",
+    "supportedClaim": "Specific game surveillance, sweeps, dossiers, informants and feed access expose only the game information those systems authorize; no access to off-platform private communications.",
+    "evidence": "src/wire.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B17",
+        "start": 64,
+        "end": 68
+      }
+    ]
+  },
+  {
+    "id": "F93",
+    "primaryFilm": 3,
+    "mechanic": "Secrets and blackmail",
+    "status": "Implemented",
+    "supportedClaim": "Discover held game secrets, demand hush payments or expose under the system rules. Distinguish real game evidence from disinformation. This does not make adviser deductions omniscient.",
+    "evidence": "src/secrets.js; src/wire.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B17",
+        "start": 64,
+        "end": 68
+      }
+    ]
+  },
+  {
+    "id": "F94",
+    "primaryFilm": 3,
+    "mechanic": "Clue scrolls and treasure trails",
+    "status": "Implemented",
+    "supportedClaim": "A qualifying crime drop can begin a multi-step district/time riddle trail leading to its specified casket. Separate from World Graph campaign mysteries.",
+    "evidence": "src/clues.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "03",
+        "beat": "C3-B17",
+        "start": 64,
+        "end": 68
+      }
+    ]
+  },
+  {
+    "id": "F95",
+    "primaryFilm": 1,
+    "mechanic": "NPC Families, world raids and Blood War",
+    "status": "Implemented",
+    "supportedClaim": "Shared NPC raid reservoirs and a separate Blood War legend support PvE conflict. These are distinct from player turf wars and the new Living World Director.",
+    "evidence": "src/world.js; src/npcwar.js",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B08",
+        "start": 28,
+        "end": 32
+      }
+    ]
+  },
+  {
+    "id": "F96",
+    "primaryFilm": 1,
+    "mechanic": "Landmarks and named city history",
+    "status": "Implemented",
+    "supportedClaim": "Status dedications can change who is named on a city plaque; defined account history survives death. Spending follows global Desk recycling despite older burn comments.",
+    "evidence": "src/landmarks.js; src/rules.tail.js DESK",
+    "coverage": "supporting screenshot / short label",
+    "beats": [
+      {
+        "film": "01",
+        "beat": "C1-B16",
+        "start": 60,
+        "end": 64
+      }
+    ]
+  }
+]

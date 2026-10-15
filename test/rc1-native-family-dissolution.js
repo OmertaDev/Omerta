@@ -112,7 +112,7 @@ try {
   };
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query(`CREATE SCHEMA ${namespace}`);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
-  pool = await makeWorkerDatabase(controller); const { buildServer } = await import('../src/server.js'); app = await buildServer();
+  pool = await makeWorkerDatabase(controller); const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
   app.addHook('onResponse', async req => { const key = req.headers['x-rc1-response-completion'], done = completions.get(key); assert(done); completions.delete(key); done(); });
   await proof.record({ kind: 'database-version', ...(await pool.query('SELECT version() AS version')).rows[0] });
   const allocation = { a: 400, b: 400, member: 200, outsider: 0 };

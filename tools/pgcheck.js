@@ -50,6 +50,8 @@ const deprecations = [];
 process.on('warning', (w) => { if (/pg|client\.query/i.test(w.message)) deprecations.push(w.message); });
 
 const { buildServer } = await import('../src/server.js');
+// Synthetic adult identity for throwaway harness signups; the real age gate remains enabled.
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const app = await buildServer();
 const pool = app.pool;
 // WAS THIS DATABASE ALREADY IN USE? Read before this harness creates anything, so it is a fact about
@@ -136,7 +138,7 @@ console.log('\n2. THE PROCESS SURVIVES ITS CONNECTIONS BEING KILLED');
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n3. THE CORE LOOP, on real Postgres');
-const { body: { token } } = await call('POST', '/v1/auth/guest');
+const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
 {
   const c = await call('POST', '/v1/character', { token, body: { name: `PgCheck ${Date.now() % 100000}` } });
   check(c.code < 500, 'character creation', `${c.code} ${JSON.stringify(c.body).slice(0, 120)}`);
@@ -319,7 +321,7 @@ console.log("\n6b. loadOwned's UNION returns what the fourteen queries did");
 // cast, or a field read raw where it used to be coerced, fails here.
 {
   // its own character, made through the API like a player's — nothing here touches §6's fixtures
-  const { body: { token: uTok } } = await call('POST', '/v1/auth/guest');
+  const { body: { token: uTok } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
   await call('POST', '/v1/character', { token: uTok, body: { name: `Union Uli ${Date.now() % 100000}` } });
   const A = { id: (await call('GET', '/v1/me', { token: uTok })).body.character.id };
   const accOf = (await pool.query('SELECT account_id FROM characters WHERE id=$1', [A.id])).rows[0].account_id;
@@ -435,7 +437,7 @@ console.log('\n6c. SHARED COLLECTIBLE SERIALS ACTUALLY SERIALIZE');
   const piece = SHIPMENT.COMMISSIONS[0];
   const stamp = `${Date.now() % 100000}-${process.pid}`;
   const make = async (suffix) => {
-    const { body: { token: t } } = await call('POST', '/v1/auth/guest');
+    const { body: { token: t } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
     await call('POST', '/v1/character', { token: t, body: { name: `Serial ${suffix} ${stamp}` } });
     const id = (await call('GET', '/v1/me', { token: t })).body.character.id;
     return { id, token: t };
@@ -1316,7 +1318,7 @@ console.log('\n8. A READ DOES NOT WAIT FOR THE WRITE LOCK (D1)');
 // exactly like a proof. Holding the lock from outside tests the actual claim, on demand.
 console.log('\n9. THE VAULT SERIALIZES ON ITS ADVISORY LOCK');
 {
-  const { body: { token } } = await call('POST', '/v1/auth/guest');
+  const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
   await call('POST', '/v1/character', { token, body: { name: `Vault ${Date.now() % 100000}` } });
   const me = (await call('GET', '/v1/me', { token })).body.character;
   const acct = (await pool.query('SELECT account_id a FROM characters WHERE id=$1', [me.id])).rows[0].a;
@@ -1360,7 +1362,7 @@ console.log('\n9. THE VAULT SERIALIZES ON ITS ADVISORY LOCK');
 // while the victim's own request sits blocked on that row.
 console.log('\n9b. A REQUEST IN FLIGHT WHEN THE STREET ENDS IS SERVED THE HEIR');
 {
-  const { body: { token } } = await call('POST', '/v1/auth/guest');
+  const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
   await call('POST', '/v1/character', { token, body: { name: `Racer ${Date.now() % 100000}` } });
   const me = (await call('GET', '/v1/me', { token })).body.character;
   const acct = (await pool.query('SELECT account_id a FROM characters WHERE id=$1', [me.id])).rows[0].a;
@@ -1608,7 +1610,7 @@ console.log('\n9e. THE POT/FUNDER CYCLE LANDS AS CONTENTION, NEVER A 500');
   };
 
   const mk = async (label) => {
-    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
     await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
     const me = (await call('GET', '/v1/me', { token })).body.character;
     await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
@@ -1751,7 +1753,7 @@ console.log('\n9f. THE LISTING/BIDDER CYCLE LANDS AS CONTENTION, NEVER A 500');
     return inv.checks.find((c) => c.name === 'market escrow')?.drift;
   };
   const mkm = async (label) => {
-    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
     await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
     const me = (await call('GET', '/v1/me', { token })).body.character;
     await pool.query('UPDATE characters SET cash=$2 WHERE id=$1', [me.id, 5_000_000]);
@@ -1888,7 +1890,7 @@ console.log('\n9g. THE BOUT/BETTOR CYCLE LANDS AS CONTENTION, NEVER A 500');
   };
   const lvlRespect = (lvl) => PACING.LEVEL_DIVISOR * (lvl - 1) * (lvl - 1);
   const mkb = async (label) => {
-    const { body: { token } } = await call('POST', '/v1/auth/guest');
+    const { body: { token } } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
     await call('POST', '/v1/character', { token, body: { name: `${label} ${Date.now() % 1000000}` } });
     const me = (await call('GET', '/v1/me', { token })).body.character;
     await pool.query('UPDATE characters SET cash=$2, respect=$3 WHERE id=$1',
@@ -2009,7 +2011,7 @@ console.log('\n9z. LAUNCH INVITATIONS — real transaction rollback and simultan
   const code = generateInviteCode();
   await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [code]);
   const contenders = await Promise.all(Array.from({ length: 8 }, () =>
-    call('POST', '/v1/auth/guest', { body: { inviteCode: code } })));
+    call('POST', '/v1/auth/guest', { body: { inviteCode: code, birthDate: SYNTHETIC_ADULT_BIRTH_DATE } })));
   check(contenders.filter((r) => r.code === 200).length === 8, 'all eight concurrent public signups succeed');
   check(contenders.filter((r) => r.body?.error === 'invite').length === 0, 'no public signup needs an invite');
   const admittedToken = contenders.find((r) => r.code === 200)?.body?.token;
@@ -2082,7 +2084,7 @@ console.log('\n9h. POST-COMMIT HOOKS release their transaction connection');
     },
   };
   const make = async () => {
-    const guest = await call('POST', '/v1/auth/guest');
+    const guest = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
     const token = guest.body.token;
     const created = await call('POST', '/v1/character', { token,
       body: { name: `Pool ${crypto.randomBytes(4).toString('hex')}` } });

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { recordPlayerIntel, readPlayerIntel, sharePlayerIntel } from '../src/playerintel.js';
 import { DISCOVERY } from '../src/rules.js';
 import { contactsBoard, recordMeeting } from '../src/contacts.js';

@@ -1,6 +1,6 @@
 // Player intel is earned before an investigation can spend or disclose facts.
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { recordPlayerIntel, readPlayerIntel } from '../src/playerintel.js';
 import { sendDm } from '../src/phone.js';
 

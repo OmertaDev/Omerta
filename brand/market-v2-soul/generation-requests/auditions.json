@@ -1,0 +1,71 @@
+[
+  {
+    "id": "SOUL-SAMPLE-A",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Everybody wants control of the city. <#0.30#> But control costs. <#0.35#> In Oh-MAIR-tah, a trade changes what the reserves actually hold. And when they run thin, <#0.28#> a price bounce won't refill them. The next move has to be paid for.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-SAMPLE-B",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Everybody wants control of the city. <#0.30#> But control costs. <#0.35#> In Oh-MAIR-tah, a trade changes what the reserves actually hold. And when they run thin, <#0.28#> a price bounce won't refill them. The next move has to be paid for.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153726-Geuaz5dD",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-SAMPLE-C",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Everybody wants control of the city. <#0.30#> But control costs. <#0.35#> In Oh-MAIR-tah, a trade changes what the reserves actually hold. And when they run thin, <#0.28#> a price bounce won't refill them. The next move has to be paid for.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513165626-w24U2FiN",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  }
+]

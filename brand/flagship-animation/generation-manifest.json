@@ -1,0 +1,220 @@
+{
+  "createdAt": "2026-10-01",
+  "method": "Built-in imagegen; original painted raster assets. Frame-driven Remotion animation. No paid fal.ai calls.",
+  "model": "Image generation model identity was not returned by the tool.",
+  "assets": [
+    {
+      "file": "public/art/flagship-animation/opening-reference.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-c364e0af-e6aa-44b0-b511-8f07a8d7f7ed.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "55a8288127983d4ab99a75a5bc167c48a426f2f3149132449db13910d2daa46c"
+    },
+    {
+      "file": "public/art/flagship-animation/opening-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-4af94178-4be8-40a8-9578-75d24a6e3849.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "0f507aa4c0cdfb74016029e0cc769fec83c64b718a074513dc3882f1949dbd5f"
+    },
+    {
+      "file": "public/art/flagship-animation/nico-seated.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-c221be72-e16c-46fc-baef-b029645fecb4.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "a8cbda59f2e707829084a10956eed578d01ac6c79f6dec18c2bc05ee506a8b4d",
+      "transparentPixelCount": 1041421
+    },
+    {
+      "file": "public/art/flagship-animation/nico-body.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-e56c57ed-cf42-4d6e-ac95-a9ae3fd01b59.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "7e342bd579f280eb0aeab9a7a59082610e2f2f3efab835542cd4ddbf879f1daa",
+      "transparentPixelCount": 1072196
+    },
+    {
+      "file": "public/art/flagship-animation/nico-forearm.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-6f38bbc4-21ea-457f-939d-7b610a80a66c.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "274b3dd43d2fb465ab06b47a0bf9939aa7032863b5b4ee2d422680efb716868e",
+      "transparentPixelCount": 1118952
+    },
+    {
+      "file": "public/art/flagship-animation/envelope.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-0e1882f9-76c0-441d-b2ca-dd5df82002e1.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "d0d875cb152da46fadf25217253cc2b8a9bf53f8366597135ecda9c949fc08f4",
+      "transparentPixelCount": 1123210
+    },
+    {
+      "file": "public/art/flagship-animation/street-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-8a234341-1b78-4354-8b1d-b426e8142274.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "e5db263d9e991490e7b27d5a290702eb70e8cb675fbe40b6951a2402522bf59e"
+    },
+    {
+      "file": "public/art/flagship-animation/nico-standing.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-906b6760-4865-4d81-bccb-e58f544466de.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGBA",
+      "sha256": "d872f96921b37a77cb8e4f70fc8933674b21ed4fbd9f81a8b92711c1ca889bac",
+      "transparentPixelCount": 1111664
+    },
+    {
+      "file": "public/art/flagship-animation/mara-standing.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-019910c5-3024-4824-825f-cd9d83b87fd2.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGBA",
+      "sha256": "5083f6cd8e5dd02dac364405298bedf3f2dc845ab3ac3bc9d257906600662ee9",
+      "transparentPixelCount": 1175289
+    },
+    {
+      "file": "public/art/flagship-animation/car.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-a7edfbf6-f55b-4a48-a103-b30c88221e89.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "e30394c27df91755b9742beddfd9c8448555b532f2e93b8c8cb651603051627a",
+      "transparentPixelCount": 998150
+    },
+    {
+      "file": "public/art/flagship-animation/dock-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-34f5ed06-05cc-4732-9e54-91b70f67fd0d.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "d70718b2da67a0a15d5e0d637a204078f803895db3a2c51ce82d3e996acf6f9b"
+    },
+    {
+      "file": "public/art/flagship-animation/payroll-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-b251b52d-08d4-4619-a778-426b0c0b73a9.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "52f3cabc58fb0d962d7a42111ed00132e04db8013a69016869c8fc9b0b59b1f3"
+    },
+    {
+      "file": "public/art/flagship-animation/prison-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-e25cdb5a-8dbb-4439-893b-45024b0b9bfc.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "e6ca6bdb3113852561d997dc509b22e400166a272310ab8b1f8da7a5e63f459e"
+    },
+    {
+      "file": "public/art/flagship-animation/evidence-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-48e2820d-a12e-4185-8308-5eabc5e510c7.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "2e7f877ccfb3a9dce4bd7ca09b98f7e92c59e8b0cbc1191e81a56b9a0d52da1b"
+    },
+    {
+      "file": "public/art/flagship-animation/family-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-62162140-c02f-4600-8499-22d0631de1b3.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "75ca0df39de875dc5201ead4ecb9994fbe9bc0a7488d0e960b23f8b8bc04702f"
+    },
+    {
+      "file": "public/art/flagship-animation/finance-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-7ba3668b-ed9e-41f3-b3a0-e471feac97ea.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "42b6462931adeffb6035151c01042e88bbb0dc1eac9252236b81698f300ff447"
+    },
+    {
+      "file": "public/art/flagship-animation/goods.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-6fccc01e-41d2-48f4-8247-345cc4f61e8f.png",
+      "width": 1374,
+      "height": 1145,
+      "mode": "RGBA",
+      "sha256": "c3ca0d5f611251c677aa737eb14c755a5c7ada42d02daceec091855c29c87c45",
+      "transparentPixelCount": 897206
+    },
+    {
+      "file": "public/art/flagship-animation/evidence-file.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-c2918bb9-521d-4d0c-9501-1e5b9526b065.png",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGBA",
+      "sha256": "9fb9946306d01b4a3a98b672a8f4e6722eb3a7e1ad67483c2008d676f5f55194",
+      "transparentPixelCount": 496187
+    },
+    {
+      "file": "public/art/flagship-animation/token.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-5b32d1a4-bee1-43c8-9b5b-1511742fa042.png",
+      "width": 1295,
+      "height": 1214,
+      "mode": "RGBA",
+      "sha256": "f0df0d46ebd6590d128b19f1b0e4782a6d4a7c4a7c654d09493db2654362626b",
+      "transparentPixelCount": 739400
+    },
+    {
+      "file": "public/art/flagship-animation/paths-background.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-9ba2dcdf-b01d-4b01-8197-f47ad8f7da0f.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "sha256": "11993079e0cb5c2b47f7a0bd66862c258981b356f295f4e4d37e4201a417ceed"
+    },
+    {
+      "file": "public/art/flagship-animation/boat.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-6ba973cf-28db-4535-b92f-0e24585beef3.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "b3f3862fca87cd2b2c3ee5409097cda390efe3122c01835fb10c746a7e19bc9a",
+      "transparentPixelCount": 929370
+    },
+    {
+      "file": "public/art/flagship-animation/equipment.png",
+      "tool": "built-in imagegen",
+      "generatedSource": "C:\\Users\\Jorge\\.codex\\generated_images\\01a0d3b8-6091-71f3-8e3c-49226cc81962\\exec-58337268-db31-41a8-b161-9c903b9e4d29.png",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGBA",
+      "sha256": "893c3524d0a00b0bc7954f75fa91aa5efc21be2841db736766892a093f75e4d5",
+      "transparentPixelCount": 774742
+    }
+  ],
+  "externalPaidSpendUsd": 0,
+  "paidGenerationStatus": "Awaiting explicit ceiling; proposed maximum$50, no paid requests made.",
+  "audioReport": "brand/flagship-animation/audio-report.json"
+}

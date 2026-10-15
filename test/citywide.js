@@ -14,7 +14,7 @@
 // per player what is currently computed once for everybody — and it would close the door on
 // edge-caching a public board. That is a decision, so it is pinned rather than left to a comment.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { CITYWIDE_BOARDS } from '../src/citywide.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

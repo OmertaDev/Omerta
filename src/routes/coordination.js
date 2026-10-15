@@ -141,4 +141,5 @@ export function register(app, { pool, auth, modAuth, service = null, receiptTrus
     (req) => coordination.archiveKnowledge(req.user.sub, req.body, req.headers['idempotency-key']));
   app.post('/v1/coordination/knowledge/rebuild', options('CoordinationKnowledgeRebuildReceipt', { body: KNOWLEDGE_INPUTS.rebuild }),
     (req) => coordination.rebuildKnowledge(req.user.sub, req.body, req.headers['idempotency-key']));
+  return coordination;
 }

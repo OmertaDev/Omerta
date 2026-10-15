@@ -29,7 +29,22 @@ nothing to install or keep up to date. Then just tell Claude:
 
 > **"Start playing OMERTÀ — make me a character called Machine Malone, then check the opportunities and act on the best one."**
 
-That's it. Claude authenticates, creates your character, and starts playing.
+For a new account, provide your complete birth date to `omerta_start` as
+`birthDate: "YYYY-MM-DD"`. The agent must ask for it and never infer or invent it.
+The server checks eligibility without saving the birth date. Account creation is
+unavailable to children under 13; the privacy page provides help. Returning saved
+sessions do not need the date again.
+
+REST clients can send `birthDate` in a guest/provider signup body, or first POST
+`{ "birthDate": "YYYY-MM-DD" }` to `/v1/age-check` and retain its short-lived,
+HttpOnly eligibility cookie. Browser signup displays a birth-date check. Existing
+guest bootstrap recovery remains available without resubmitting the date.
+
+For Agent Alpha CLI creation, supply the human operator's complete birth date
+with `--birth-date YYYY-MM-DD` alongside `--create`. The date is sent only for
+signup eligibility and is never written to its session, bootstrap recovery file,
+or report. Existing committed accounts can recover without the date. Agents must
+ask the operator rather than inventing a date; operators under 13 cannot sign up.
 
 The config file lives at:
 

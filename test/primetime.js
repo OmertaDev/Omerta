@@ -11,7 +11,7 @@
 process.env.PRIME_TIME_LIVE = 'on';
 process.env.PRIME_TIME_MECH = 'rally';   // pin the mechanic for the rally block (the seed now draws rally OR happyhour)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { settlePrimeTime, rallyReward } from '../src/primetime.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { PRIME_TIME, primeTimeOf, dayOf } from '../src/rules.js';

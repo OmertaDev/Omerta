@@ -1,0 +1,213 @@
+{
+  "film": "01",
+  "timing": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment.",
+  "lines": [
+    {
+      "id": "C01-L01-P1",
+      "lineId": "C01-L01",
+      "text": "Your next move could build an empire.",
+      "fullText": "Your next move could build an empire.",
+      "start": 0.079083,
+      "end": 2.417854,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L02-P1",
+      "lineId": "C01-L02",
+      "text": "Crimes earn cash and respect. Heat follows.",
+      "fullText": "Crimes earn cash and respect. Heat follows.",
+      "start": 4.080021,
+      "end": 7.872104,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L03-P1",
+      "lineId": "C01-L03",
+      "text": "Train your skills and build a career through action.",
+      "fullText": "Train your skills and build a career through action.",
+      "start": 8.082729,
+      "end": 11.211458,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L04-P1",
+      "lineId": "C01-L04",
+      "text": "Steal a car. Salvage eligible wrecks into materials.",
+      "fullText": "Steal a car. Salvage eligible wrecks into materials.",
+      "start": 12.076625,
+      "end": 15.876917,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L05-P1",
+      "lineId": "C01-L05",
+      "text": "Discover recipes to craft,",
+      "fullText": "Discover recipes to craft, repair, and track your gear.",
+      "start": 16.080021,
+      "end": 17.883951,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L05-P2",
+      "lineId": "C01-L05",
+      "text": "repair, and track your gear.",
+      "fullText": "Discover recipes to craft, repair, and track your gear.",
+      "start": 17.883951,
+      "end": 19.784521,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L06-P1",
+      "lineId": "C01-L06",
+      "text": "Build businesses. Run kitchens.",
+      "fullText": "Build businesses. Run kitchens. Pay the people working them.",
+      "start": 20.079917,
+      "end": 22.00077,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L06-P2",
+      "lineId": "C01-L06",
+      "text": "Pay the people working them.",
+      "fullText": "Build businesses. Run kitchens. Pay the people working them.",
+      "start": 22.00077,
+      "end": 23.831583,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L07-P1",
+      "lineId": "C01-L07",
+      "text": "Move cargo through markets and risky convoys.",
+      "fullText": "Move cargo through markets and risky convoys.",
+      "start": 24.080271,
+      "end": 27.633875,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L08-P1",
+      "lineId": "C01-L08",
+      "text": "Recruit a Crew. Coordinate heists and harder targets.",
+      "fullText": "Recruit a Crew. Coordinate heists and harder targets.",
+      "start": 28.080104,
+      "end": 31.891687,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L09-P1",
+      "lineId": "C01-L09",
+      "text": "Build a Family. Turn strength into territory.",
+      "fullText": "Build a Family. Turn strength into territory.",
+      "start": 32.066792,
+      "end": 35.873958,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L10-P1",
+      "lineId": "C01-L10",
+      "text": "Territory earns income while",
+      "fullText": "Territory earns income while diplomacy shapes the fight.",
+      "start": 36.080021,
+      "end": 37.777303,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L10-P2",
+      "lineId": "C01-L10",
+      "text": "diplomacy shapes the fight.",
+      "fullText": "Territory earns income while diplomacy shapes the fight.",
+      "start": 37.777303,
+      "end": 39.365083,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L11-P1",
+      "lineId": "C01-L11",
+      "text": "Loans and escrow put consequences behind every deal.",
+      "fullText": "Loans and escrow put consequences behind every deal.",
+      "start": 40.079396,
+      "end": 43.11325,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L12-P1",
+      "lineId": "C01-L12",
+      "text": "Race, fight, and play the tables.",
+      "fullText": "Race, fight, and play the tables.",
+      "start": 44.080958,
+      "end": 47.266479,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L13-P1",
+      "lineId": "C01-L13",
+      "text": "Rivals strike back. So do",
+      "fullText": "Rivals strike back. So do investigators, courts, and prison.",
+      "start": 48.104437,
+      "end": 49.779152,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L13-P2",
+      "lineId": "C01-L13",
+      "text": "investigators, courts, and prison.",
+      "fullText": "Rivals strike back. So do investigators, courts, and prison.",
+      "start": 49.779152,
+      "end": 51.849708,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L14-P1",
+      "lineId": "C01-L14",
+      "text": "Protection costs. Death can end a character.",
+      "fullText": "Protection costs. Death can end a character.",
+      "start": 52.08,
+      "end": 54.8275,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L15-P1",
+      "lineId": "C01-L15",
+      "text": "Your heirs, deeds, and reputation carry the legacy.",
+      "fullText": "Your heirs, deeds, and reputation carry the legacy.",
+      "start": 56.082125,
+      "end": 58.980979,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L16-P1",
+      "lineId": "C01-L16",
+      "text": "Seasons reshape the city",
+      "fullText": "Seasons reshape the city while players build monuments.",
+      "start": 60.079125,
+      "end": 61.654754,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L16-P2",
+      "lineId": "C01-L16",
+      "text": "while players build monuments.",
+      "fullText": "Seasons reshape the city while players build monuments.",
+      "start": 61.654754,
+      "end": 63.522167,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C01-L17-P1",
+      "lineId": "C01-L17",
+      "text": "Equip your Crew to take control and reinvest.",
+      "fullText": "Equip your Crew to take control and reinvest.",
+      "start": 64.078771,
+      "end": 67.404542,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C01-L18-P1",
+      "lineId": "C01-L18",
+      "text": "OMERTÀ. Build something worth defending.",
+      "fullText": "OMERTÀ. Build something worth defending.",
+      "start": 68.085208,
+      "end": 71.875729,
+      "timing": "Measured audible sentence edges"
+    }
+  ]
+}

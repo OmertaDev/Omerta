@@ -8,7 +8,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.SOV_WINDOW_OPEN = 'on'; // TEST-ONLY: the vulnerability window is always open for the siege test
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { CAMPAIGNS, HONOR } from '../src/rules.js';
 

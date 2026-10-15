@@ -5,7 +5,7 @@ process.env.EARLY_SELL_TAX_BPS = '0'; // legacy exact-amount swap assertions run
 process.env.MOD_KEY = 'test-mod-key'; // Phase 4 emission-pool ops routes are mod-gated
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runBuyback, mergeLegacyPools } from '../src/worker.js';
 import { CARS, carVal, carMelt, CONSTANTS, BUSINESS_EMPIRE, BUSINESSES, RIVALS, frontTitles, launderRankOf, businessMaxTier, POPULATION, CRIMES,
          RACKETS, ASSETS, OPERATIONS, opSlotsOf } from '../src/rules.js';

@@ -1,0 +1,225 @@
+{
+  "schema": "omerta.hardening-test-integration.v1",
+  "capturedAtUtc": "2026-10-14T22:36:14.415Z",
+  "repositoryHeadAtCapture": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "phase": "Test-only copy/fixture integration alignment; no production runtime, authentication, legal gate, rate limit, token, ledger or source17 file changed.",
+  "changedFile": "test/hardening.js",
+  "command": "node test/hardening.js",
+  "result": "pass",
+  "runs": [
+    {
+      "attempt": 1,
+      "exitCode": 1,
+      "log": "hardening-failure-01.log",
+      "exit": "hardening-failure-01.exit",
+      "finding": "HARD-COPY-01"
+    },
+    {
+      "attempt": 2,
+      "exitCode": 1,
+      "log": "hardening-retest-02.log",
+      "exit": "hardening-retest-02.exit",
+      "finding": "HARD-SDK-01"
+    },
+    {
+      "attempt": 3,
+      "exitCode": 1,
+      "log": "hardening-retest-03.log",
+      "exit": "hardening-retest-03.exit",
+      "finding": "HARD-COPY-02"
+    },
+    {
+      "attempt": 4,
+      "exitCode": 1,
+      "log": "hardening-retest-04.log",
+      "exit": "hardening-retest-04.exit",
+      "finding": "HARD-COPY-03"
+    },
+    {
+      "attempt": 5,
+      "exitCode": 1,
+      "log": "hardening-retest-05.log",
+      "exit": "hardening-retest-05.exit",
+      "finding": "HARD-FIXTURE-01"
+    },
+    {
+      "attempt": 6,
+      "exitCode": 0,
+      "log": "hardening-retest-06.log",
+      "exit": "hardening-retest-06.exit"
+    }
+  ],
+  "findings": [
+    {
+      "id": "HARD-COPY-01",
+      "status": "resolved integration defect",
+      "observed": "Exact Bank city-leg marker rejected the equivalent documented city-distribution heading.",
+      "resolution": "All 18 other system markers remain checked in both codices; Bank topic accepts only the two explicit names and additionally requires open-market OMR purchase, same-day active recipients and purchase-before-distribution mechanics in both."
+    },
+    {
+      "id": "HARD-SDK-01",
+      "status": "resolved integration defect",
+      "observed": "Stale CDN SDK 2.21.5 assertion rejected reviewed local SDK 2.26.0 bundle.",
+      "resolution": "Requires local module import, no external Ethereum-provider SDK import, exact inventory SDK 2.26.0 matching dependency lock, actual served module HTTP 200, and disabled analytics/telemetry/modal-event flags."
+    },
+    {
+      "id": "HARD-COPY-02",
+      "status": "resolved integration defect",
+      "observed": "Retired any-model heading literal rejected the current agent-client heading.",
+      "resolution": "Requires explicit other-client section, MCP/OpenAPI/direct HTTP lanes and named non-Claude clients."
+    },
+    {
+      "id": "HARD-COPY-03",
+      "status": "resolved integration defect",
+      "observed": "Uppercase Arena title and old snapshot-link wording rejected current equivalent visible copy.",
+      "resolution": "Requires actual Arena h1 case-insensitively and snapshot link naming public banded/wealth-band data shown on this page; existing no-authenticated-leaderboard-link and no-exact-wealth assertions remain."
+    },
+    {
+      "id": "HARD-FIXTURE-01",
+      "status": "resolved integration defect",
+      "observed": "Broad buildServer-fixture adoption also redirected WS utility and worker-watch imports to a wrapper exporting only buildServer.",
+      "resolution": "Only two utility import paths restored to actual ../src/server.js; adult buildServer fixture remains. Original WS boundary and real worker-watch behavior assertions pass.",
+      "focusedScan": "No additional direct named/destructured non-buildServer imports from ./server-fixture.js found in test/**/*.js after correction."
+    }
+  ],
+  "preserved": "Full hardening suite retains organic earned-ledger and injected-drift detection, idempotency, invite/auth/OAuth identity/PKCE/token security, agent/private-wealth boundaries, human/agent/swap limits, write/lock guard, schema stamping, backup and actual worker-watch tests.",
+  "source": [
+    {
+      "path": "test/hardening.js",
+      "rawSha256": "2d8a9bd7a8b21297db15a497c6097d9102bf7789f599a7a0984a0d79055c5203",
+      "normalizedLfSha256": "3402d9ffe11e2f184ab6545e9685704779bcb3425476fd8e0169dd13a1421b77",
+      "stagedBlobOid": "399654afeb63e2c50e849dd8d0f98357dbc62228",
+      "stagedRawSha256": "3402d9ffe11e2f184ab6545e9685704779bcb3425476fd8e0169dd13a1421b77"
+    },
+    {
+      "path": "docs/WIKI.md",
+      "rawSha256": "e842aeaa1c201991d8d49f7dcff76af7a067b6a7a17af6c038e0eea7d447c743",
+      "normalizedLfSha256": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2",
+      "stagedBlobOid": "6613bff4d598badeb76b6fa325c26a20af6986e5",
+      "stagedRawSha256": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2"
+    },
+    {
+      "path": "public/wiki.html",
+      "rawSha256": "170386e9ee88a7e3cb17b8ffafa6e2c9bdff9f31d07d0fc6ae39d26d4a6c2d06",
+      "normalizedLfSha256": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696",
+      "stagedBlobOid": "df2e88fde8a86c2639ece6f6f3fd49a087bc924b",
+      "stagedRawSha256": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696"
+    },
+    {
+      "path": "AGENTS.md",
+      "rawSha256": "4c52d503a39e1367e5c2911d36e2b6ab3b41ef147231ddce5d5f446bdfbf909f",
+      "normalizedLfSha256": "eeb12619f1ca02a07703e725bae1924eb2f09b9da2cfd740bbe6880cf15e95cf",
+      "stagedBlobOid": "4100b7195b2a74c20f3d2e5845f325ebd6fde770",
+      "stagedRawSha256": "eeb12619f1ca02a07703e725bae1924eb2f09b9da2cfd740bbe6880cf15e95cf"
+    },
+    {
+      "path": "public/arena.html",
+      "rawSha256": "ff9a315fca02ecde8df6259867d49aa64345572f21361f95b4cd87e383419620",
+      "normalizedLfSha256": "1f34dff7d3c52bd40493e080ee8d61a140db419296001ae6bf2502b8658431f2",
+      "stagedBlobOid": "bb54b36a0965f2724cb56c1ff55013719b4011d6",
+      "stagedRawSha256": "1f34dff7d3c52bd40493e080ee8d61a140db419296001ae6bf2502b8658431f2"
+    },
+    {
+      "path": "public/index.html",
+      "rawSha256": "39ae9522725fe7e67f964c2f0f4893d32343b2e9a3821067097818e7f4c44228",
+      "normalizedLfSha256": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c",
+      "stagedBlobOid": "f5430cc904706625d6812a4a3ea5c0edbde6c884",
+      "stagedRawSha256": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c"
+    },
+    {
+      "path": "public/vendor/walletconnect-manifest.json",
+      "rawSha256": "bf7c4405b1f0f9ee01bb6aec57897554a6da5dd68fc686b21974f3e042781378",
+      "normalizedLfSha256": "11734231d56bc2d3d437c425622dcaef7835f0d750d3d62df4007769dfacfa1d",
+      "stagedBlobOid": "e0d5d25c2f847668cfc197b1af3b0ddbbe9c328b",
+      "stagedRawSha256": "11734231d56bc2d3d437c425622dcaef7835f0d750d3d62df4007769dfacfa1d"
+    },
+    {
+      "path": "package-lock.json",
+      "rawSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+      "normalizedLfSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+      "stagedBlobOid": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+      "stagedRawSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1"
+    },
+    {
+      "path": "src/server.js",
+      "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+      "normalizedLfSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
+      "stagedBlobOid": "9263d8f566bdc6d165b79a12c6c09227d041471f",
+      "stagedRawSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4"
+    },
+    {
+      "path": "test/server-fixture.js",
+      "rawSha256": "8d14c0df5254be2cfe8c761b40523aa22f15d1013c3cc0c8b8b5f4494c69a192",
+      "normalizedLfSha256": "4d12bb8a43b460e89a93046c31368316e795659879455d9198b5f0b071c478cf",
+      "stagedBlobOid": "565a699bd4f67a3d248f420a04fe81d41473ae96",
+      "stagedRawSha256": "4d12bb8a43b460e89a93046c31368316e795659879455d9198b5f0b071c478cf"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "hardening-failure-01.log",
+      "bytes": 431,
+      "rawSha256": "8ba86082d27f6c745d414c49de16a65e53c06f39e9a1f898d87431ab748e11e9"
+    },
+    {
+      "path": "hardening-failure-01.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "hardening-retest-02.log",
+      "bytes": 696,
+      "rawSha256": "6ebb2d91e4c9576dbd53c17e1488916244484de2e818088101690a32f21a7d18"
+    },
+    {
+      "path": "hardening-retest-02.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "hardening-retest-03.log",
+      "bytes": 700,
+      "rawSha256": "7ca37f0899c19ed2bf3044873a8ea5eb5cdbcc5ea0c7b650c2fe73881f4c5e7f"
+    },
+    {
+      "path": "hardening-retest-03.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "hardening-retest-04.log",
+      "bytes": 689,
+      "rawSha256": "63073e08bbff553f22e10df5850ec6721e34eb359588570b93b5bf383c2fcb5f"
+    },
+    {
+      "path": "hardening-retest-04.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "hardening-retest-05.log",
+      "bytes": 2035,
+      "rawSha256": "02fd5beded9cf6bd10ccfbdf4a0dd02d8430b7f367dd75f4e4f40e952f2447ff"
+    },
+    {
+      "path": "hardening-retest-05.exit",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "hardening-retest-06.log",
+      "bytes": 4172,
+      "rawSha256": "51c9c81916242f13e3e24d6e16bc387bdfdad4ed0ba7e79102e52f9890fb699d"
+    },
+    {
+      "path": "hardening-retest-06.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    }
+  ],
+  "limitations": [
+    "Final source hashes bind the successful sixth run; earlier candidates are identified by retained failure logs and sequential findings, not asserted identical to final source.",
+    "Ledger, database-unreachable, backup, webhook and worker drift messages in later runs are deliberate injected drill cases asserted by the suite. They are not production observations.",
+    "Checks execute local pg-mem/test fixtures only; no production service, personal data, RPC or deployment qualification is established."
+  ]
+}

@@ -1,0 +1,40 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+// Editorial data compiler only. No network, credentials, model calls or publishing.
+const root=path.dirname(fileURLToPath(import.meta.url));
+const authored=JSON.parse(fs.readFileSync(path.join(root,'production-source.json'),'utf8'));
+const films=authored.films;
+const tc=s=>{const ms=Math.round(s*1000);return `00:${String(Math.floor(ms/1000)).padStart(2,'0')}.${String(ms%1000).padStart(3,'0')}`;};
+const q=v=>JSON.stringify(v);
+function packageMd(f){
+ let out=`# ${f.title}\n\n${f.duration} seconds · 1080×1920 · 30fps · Full-release launch promo\n\nRead [fact matrix](00-FACT-MATRIX.md), [production bible](01-PRODUCTION-BIBLE.md) and [launch assumptions](02-LAUNCH-ASSUMPTIONS.md) with this package. Machine-readable timings and prompts are in [production-data.json](production-data.json).\n\n## A. Concept\n\n${f.concept}\n\n**Factual boundary:** ${f.claimNote}\n\n## B. Viral thesis\n\n`;
+ for(const [k,v] of Object.entries(f.thesis)) out+=`- **${k.replace(/[A-Z]/g,m=>' '+m.toLowerCase())}:** ${v}\n`;
+ out+='\n## C. Final voice script\n\nExact dialogue in order; no other narration. The Consigliere is performed, not a fabricated recording of an AI call.\n\n';
+ for(const b of f.timeline) out+=`**${b.speaker}:** “${b.speech}”\n\n`;
+ out+='## D. Timecode script\n\nEvery row is a 1.5-second editorial beat; generated source plates are longer and trimmed. “EDIT” assets are compositor/capture inserts, not missing generation requests.\n\n| In → out | Voice / caption | Primary picture | Tertiary channel | Audio sync | Edit / motion | Asset / facts |\n|---|---|---|---|---|---|---|\n';
+ for(const b of f.timeline) out+=`| ${tc(b.start)} → ${tc(b.end)} | ${b.speaker}: ${b.speech} | ${b.primary} | ${b.tertiary} | ${b.sound} | ${b.edit} | ${b.asset}; ${b.claimIds.join(', ')} |\n`;
+ out+='\n## E. Shot list\n\nThese are the six generated base plates. Generate each as a five-second source, then use the selections specified in D. Multiple timeline appearances may use the same source crop/freeze; do not pretend five seconds supplies unrelated new actions. Final voice is always post-recorded.\n\n';
+ for(const s of f.shots){out+=`### ${s.id}\n\n`; const fields={Duration:`${s.sourceDuration}s generated source; editorial windows: ${f.timeline.filter(b=>b.asset===s.id).map(b=>tc(b.start)+'–'+tc(b.end)).join(', ')}`,Purpose:s.purpose,Visual:s.visual,Character:s.characters,Action:s.action,Environment:s.environment,Camera:s.camera,Lighting:s.lighting,Audio:s.audio,Dialogue:s.dialogue,Caption:s.caption,'UI overlay':s.uiOverlay,Transition:s.transition,'Fal model':s.model,'References required':s.referenceAssets.join('; ')}; for(const [k,v] of Object.entries(fields))out+=`- **${k}:** ${v}\n`;out+='\n';}
+ out+='## F. Fal prompts\n\nEach asset has a separate still-edit prompt and a full copy-paste motion prompt. Generate the still using Seedream edit and approved cast refs, then submit its output URL as the video first frame. Do not ask the video model to draw factual text. Exclusions belong in the prompt/rejection process; the default endpoint has no standalone negative-prompt field.\n\n';
+ for(const s of f.shots)out+=`### ${s.id} — first frame\n\n\`\`\`text\n${s.firstFramePrompt}\n\`\`\`\n\n### ${s.id} — motion\n\n\`\`\`text\n${s.generationPrompt}\n\`\`\`\n\n**Negative / failure conditions:** ${s.negativePromptAndFailureConditions}\n\n`;
+ out+='## G. Audio plan\n\n';for(const[k,v]of Object.entries(f.audio))out+=`- **${k}:** ${v}\n`;out+='\nExact sync events for every visual change appear in D. Record separate stems for each voice, music, room tone and SFX. At each new speech line, subtitles change on the first voiced syllable. No licensed-uncleared music or borrowed game sounds.\n\n';
+ out+='## H. Caption plan\n\nThe exact speech captions below cover every spoken line. Use 2–5-word pages within each window; final word onsets follow the recorded take. Caps/emphasis do not add a claim. Keep full language in the SRT and JSON for accessibility. Additional editorial/status labels appear in D and must not replace dialogue subtitles.\n\n| In → out | Exact burned speech text |\n|---|---|\n';for(const b of f.timeline)out+=`| ${tc(b.start)} → ${tc(b.end)} | ${b.caption} |\n`;
+ out+=`\nFiles: [caption JSON](captions/video-${f.id}.json), [SRT](captions/video-${f.id}.srt). JSON follows Remotion Caption fields with scheduled line-level windows. Dialogue has been generated and fitted into these windows; timestamp/confidence remain null because word-level forced alignment has not been performed. See the audio mix report for measured take timing.\n\n## I. Edit plan\n\n`;
+ for(const n of f.editNotes)out+=`- ${n}\n`;out+='\nAll cut/zoom/inset events are in D. Use only a short 2–3-frame displacement for a glitch, not continuous image damage. Source clips may be slowed to 80% for a face hold or sped to 120% for a hand gesture; never ramp over a visible speaking mouth or distort dialogue. Track blank paper/screens where needed. The CTA changes on 1.5-second beats too, so the logo is not a retention dead zone.\n\n';
+ out+='## J. Asset list\n\n';for(const a of f.assets)out+=`- [ ] ${a}\n`;out+='- [ ] Six approved generated base clips; up to three opening candidates selected from consistent refs\n- [ ] Three optional opening-only variant clips/voices/captions\n- [ ] Exact platform upload preview and release capture matching the launch assumptions\n\n';
+ out+='## K. Generation settings\n\nAll six base shots: Seedance 2.5 I2V, vertical first-frame image, 720p, 5s, aspect ratio auto inherited from 9:16 image, high bitrate, H.264, audio false. No input seed on this endpoint. Preserve returned seed/request ID; use reference images for identity. Stills: Seedream 5 Pro edit, 1080×1920 PNG, one image, safety checker on.\n\nUse the exact shared payloads in the production bible. R2V is the alternate when separate identity/set references are required; three opening trials may use recorded seeds. A tested superior character/dialogue result may replace an individual shot with Kling O3 Pro or Veo 3.1; document the winning endpoint/settings. No such quality comparison is claimed as already performed.\n\n';
+ out+='## L. Three alternative opening hooks\n\nReplace only 00:00.000–00:01.500 plus its spoken/caption line. All other edit/audio/caption windows remain unchanged. Generate each variant as a 4-second modular plate and use its strongest first 1.5 seconds. Keep the same game-context overlay and overall loudness. Each needs the same approved actor/prop refs plus its own first-frame still.\n\n';
+ for(const v of f.variants)out+=`### ${v.id}\n\n**Spoken:** “${v.speech}”\n\n**Caption:** ${v.caption}\n\n**Visual:** ${v.visual}\n\n**Bridge:** ${v.bridge}\n\n**First-frame prompt:**\n\n\`\`\`text\n${v.firstFramePrompt}\n\`\`\`\n\n**Video prompt:**\n\n\`\`\`text\n${v.generationPrompt}\n\`\`\`\n\n**Model/settings:** ${v.model}; 4s; 720p; vertical first frame/aspect auto; high bitrate/H.264; audio false; no input seed. Voice/SFX in post.\n\n**Failure conditions:** ${v.negativePromptAndFailureConditions}\n\n`;
+ return out;
+}
+fs.mkdirSync(path.join(root,'captions'),{recursive:true});
+for(const f of films){
+ fs.writeFileSync(path.join(root,`video-${f.id}.md`),packageMd(f));
+ const captions=f.timeline.map(b=>({text:b.caption,startMs:Math.round(b.start*1000),endMs:Math.round(b.end*1000),timestampMs:null,confidence:null}));
+ fs.writeFileSync(path.join(root,'captions',`video-${f.id}.json`),JSON.stringify(captions,null,2)+'\n');
+ fs.writeFileSync(path.join(root,'captions',`video-${f.id}.srt`),f.timeline.map((b,i)=>`${i+1}\n00:${tc(b.start).replace('.',',')} --> 00:${tc(b.end).replace('.',',')}\n${b.caption}\n`).join('\n'));
+}
+fs.writeFileSync(path.join(root,'production-data.json'),JSON.stringify({...authored,films},null,2)+'\n');
+console.log(JSON.stringify({films:films.length,baseShots:films.reduce((n,f)=>n+f.shots.length,0),alternateOpenings:films.reduce((n,f)=>n+f.variants.length,0),captionLines:films.reduce((n,f)=>n+f.timeline.length,0)}));

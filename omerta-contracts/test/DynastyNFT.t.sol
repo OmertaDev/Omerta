@@ -2,16 +2,36 @@
 pragma solidity 0.8.26;
 
 import {Test} from "forge-std/Test.sol";
-import {DynastyNFT} from "../src/DynastyNFT.sol";
+import {DynastyNFT, IERC5192} from "../src/DynastyNFT.sol";
 import {IERC2981} from "@openzeppelin/contracts/interfaces/IERC2981.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import {IERC721Errors} from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+
+contract SoulboundMintReceiver is IERC721Receiver {
+    DynastyNFT immutable nft;
+    bool immutable reject;
+    bool public observedLocked;
+    bool public transferred;
+
+    constructor(DynastyNFT nft_, bool reject_) {
+        nft = nft_;
+        reject = reject_;
+    }
+
+    function onERC721Received(address, address, uint256 id, bytes calldata) external returns (bytes4) {
+        observedLocked = nft.locked(id);
+        (transferred,) = address(nft).call(abi.encodeCall(nft.transferFrom, (address(this), address(0xB0B), id)));
+        return reject ? bytes4(0) : IERC721Receiver.onERC721Received.selector;
+    }
+}
 
 /// DynastyNFT — the uncapped identity NFT (omerta-dynasty-machine-design.md §4). The claims under test are
 /// the ones the design rests on: minting is ONLY a server-signed voucher self-mint (bounded by nonce /
 /// deadline / daily-cap, and there is NO owner-mint path at all), supply is uncapped with a plain sequential
 /// tokenId, the contract gates NOTHING on balanceOf (the entitlement is account-bound off-chain — the token
-/// is a transferable trophy), tokenURI is the off-chain pointer, and EIP-2981 royalty is set to the treasury.
+/// is permanently soulbound), tokenURI is the off-chain pointer, and the legacy EIP-2981 ABI remains stable.
 contract DynastyNFTTest is Test {
     using Strings for uint256;
 
@@ -24,6 +44,9 @@ contract DynastyNFTTest is Test {
     address bob = makeAddr("bob");
     string constant BASE = "https://www.omerta.fun/v1/identity/";
     uint96 constant ROYALTY_BPS = 500; // 5%
+
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
+    event Locked(uint256 tokenId);
 
     function setUp() public {
         signerAddr = vm.addr(signerPk);
@@ -141,7 +164,7 @@ contract DynastyNFTTest is Test {
         capped.claim(v2, abi.encodePacked(e, f, d));
     }
 
-    function test_pause_blocks_mints_but_transfers_still_work() public {
+    function test_pause_blocks_mints_and_identity_remains_soulbound_after_unpause() public {
         bytes memory s1 = _sign(_voucher(alice, 1));
         nft.claim(_voucher(alice, 1), s1);
         vm.prank(safe);
@@ -149,23 +172,129 @@ contract DynastyNFTTest is Test {
         bytes memory s2 = _sign(_voucher(alice, 2));
         vm.expectRevert(); // Pausable: paused (custom error)
         nft.claim(_voucher(alice, 2), s2);
-        // a pause traps nothing — the token still moves freely
         vm.prank(alice);
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(alice, bob, 1);
-        assertEq(nft.ownerOf(1), bob, "a paused mint never freezes an existing token");
+        vm.prank(safe);
+        nft.unpause();
+        _assertTransfersBlocked(alice);
+        nft.claim(_voucher(alice, 2), s2);
+        assertTrue(nft.locked(2));
     }
 
-    // ── the WALL: the token transfers, the contract gates nothing on balanceOf ──────────────────────
-    function test_the_token_is_a_freely_transferable_trophy() public {
+    // ── permanent soulbinding ────────────────────────────────────────────────────────────────────
+    function _assertTransfersBlocked(address caller) internal {
+        vm.startPrank(caller);
+        vm.expectRevert("DN: soulbound");
+        nft.transferFrom(alice, bob, 1);
+        vm.expectRevert("DN: soulbound");
+        nft.safeTransferFrom(alice, bob, 1);
+        vm.expectRevert("DN: soulbound");
+        nft.safeTransferFrom(alice, bob, 1, "soulbound");
+        vm.stopPrank();
+        assertEq(nft.ownerOf(1), alice);
+        assertEq(nft.balanceOf(alice), 1);
+        assertEq(nft.balanceOf(bob), 0);
+        assertTrue(nft.locked(1));
+    }
+
+    function test_owner_cannot_transfer_through_any_ERC721_entrypoint() public {
         bytes memory sig = _sign(_voucher(alice, 1));
         nft.claim(_voucher(alice, 1), sig);
+        _assertTransfersBlocked(alice);
+    }
+
+    function test_token_approval_cannot_unlock_or_transfer_an_identity() public {
+        nft.claim(_voucher(alice, 1), _sign(_voucher(alice, 1)));
+        address operator = makeAddr("operator");
         vm.prank(alice);
-        nft.transferFrom(alice, bob, 1);
-        assertEq(nft.ownerOf(1), bob, "transfers freely - no soulbound lock");
+        nft.approve(operator, 1);
+        _assertTransfersBlocked(operator);
+        assertEq(nft.getApproved(1), operator, "failed transfer changes no approval");
+    }
+
+    function test_blanket_approval_cannot_unlock_or_transfer_an_identity() public {
+        nft.claim(_voucher(alice, 1), _sign(_voucher(alice, 1)));
+        address operator = makeAddr("operator");
+        vm.prank(alice);
+        nft.setApprovalForAll(operator, true);
+        _assertTransfersBlocked(operator);
+        assertTrue(nft.isApprovedForAll(alice, operator), "approval does not bypass soulbinding");
+    }
+
+    function testFuzz_approved_callers_cannot_move_locked_identity(address caller, address to, uint8 path) public {
+        vm.assume(caller != address(0) && to != address(0));
+        nft.claim(_voucher(alice, 1), _sign(_voucher(alice, 1)));
+        uint8 route = path % 3;
+        vm.prank(alice);
+        if (route == 0) nft.approve(caller, 1);
+        else nft.setApprovalForAll(caller, true);
+        vm.prank(caller);
+        vm.expectRevert("DN: soulbound");
+        if (route == 0) nft.transferFrom(alice, to, 1);
+        else if (route == 1) nft.safeTransferFrom(alice, to, 1);
+        else nft.safeTransferFrom(alice, to, 1, "fuzz");
+        assertEq(nft.ownerOf(1), alice);
+        assertEq(nft.balanceOf(alice), 1);
+        assertTrue(nft.locked(1));
+    }
+
+    function test_owner_cannot_self_transfer_or_burn() public {
+        nft.claim(_voucher(alice, 1), _sign(_voucher(alice, 1)));
+        vm.startPrank(alice);
+        vm.expectRevert("DN: soulbound");
+        nft.transferFrom(alice, alice, 1);
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(0)));
+        nft.transferFrom(alice, address(0), 1);
+        vm.stopPrank();
+        assertEq(nft.ownerOf(1), alice);
+    }
+
+    function test_locked_is_discoverable_and_emitted_at_mint() public {
+        bytes memory sig = _sign(_voucher(alice, 1));
+        vm.expectEmit(true, true, true, true, address(nft));
+        emit Transfer(address(0), alice, 1);
+        vm.expectEmit(false, false, false, true, address(nft));
+        emit Locked(1);
+        nft.claim(_voucher(alice, 1), sig);
+        assertTrue(nft.locked(1));
+        assertTrue(nft.supportsInterface(type(IERC5192).interfaceId));
+        assertTrue(nft.supportsInterface(0xb45a3c0e), "standard ERC-5192 interface id");
+        assertFalse(nft.supportsInterface(0xffffffff));
+    }
+
+    function test_locked_and_transfer_revert_for_nonexistent_token_without_minting() public {
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721NonexistentToken.selector, 999));
+        nft.locked(999);
+        vm.prank(alice);
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721NonexistentToken.selector, 999));
+        nft.transferFrom(address(0), alice, 999);
+        assertEq(nft.nextId(), 1);
         assertEq(nft.balanceOf(alice), 0);
-        assertEq(nft.balanceOf(bob), 1);
-        // Nothing in the contract reads balanceOf to gate an entitlement — the entitlement is account-bound
-        // off-chain (account_persistent.minted). This test documents that the trophy carries no on-chain power.
+    }
+
+    function test_mint_receiver_observes_lock_and_cannot_forward_identity() public {
+        SoulboundMintReceiver receiver = new SoulboundMintReceiver(nft, false);
+        DynastyNFT.MintVoucher memory v = _voucher(address(receiver), 1);
+        nft.claim(v, _sign(v));
+        assertTrue(receiver.observedLocked(), "locked before external receiver callback");
+        assertFalse(receiver.transferred(), "callback cannot escape soulbinding");
+        assertEq(nft.ownerOf(1), address(receiver));
+        assertTrue(nft.usedNonce(1));
+    }
+
+    function test_rejected_mint_receiver_rolls_back_soulbound_mint_and_nonce() public {
+        SoulboundMintReceiver receiver = new SoulboundMintReceiver(nft, true);
+        DynastyNFT.MintVoucher memory v = _voucher(address(receiver), 1);
+        bytes memory sig = _sign(v);
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidReceiver.selector, address(receiver)));
+        nft.claim(v, sig);
+        assertEq(nft.nextId(), 1);
+        assertFalse(nft.usedNonce(1));
+        assertEq(nft.mintedOnDay(block.timestamp / 1 days), 0);
+        assertEq(nft.balanceOf(address(receiver)), 0);
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721NonexistentToken.selector, 1));
+        nft.locked(1);
     }
 
     // ── metadata ────────────────────────────────────────────────────────────────────────────────

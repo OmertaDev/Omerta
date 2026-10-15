@@ -2,7 +2,7 @@
 // safe hidden state, and recovery from a committed command without an HTTP receipt.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { grantStack, withItemTransaction } from '../src/items.js';
 import { WORLD_KERNEL_RECIPE } from '../src/content/world-kernel-pilot.js';
 

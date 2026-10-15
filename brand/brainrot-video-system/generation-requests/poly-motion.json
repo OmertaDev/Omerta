@@ -1,0 +1,50 @@
+[
+  {
+    "id": "R3-V1-G03-poly-take1",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Animate this visibly polygonal game scene without changing mesh shapes, identities or props. Press lowers once and retracts; gloved hands safely retrieve the key from the output ledge after all motion stops. Camera: Tight side angle, safe clearance visible. Keep all faces abstract and low-poly, all surfaces flat-shaded. One coherent five-second in-engine shot. No dialogue, no music. No text or GUI. Shot-specific failure conditions:  Hands under moving tooling, sparks obscuring action, new duplicate key, flowing metal or unsafe reach.",
+      "image_url": "https://v3b.fal.media/files/b/0aabba02/RzGHcpR5t7k6PdBmbM24C_a2f398e04d2d4a04ba17d426ff62c43a.png",
+      "duration": "5",
+      "aspect_ratio": "auto",
+      "resolution": "720p",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    },
+    "folder": "clips",
+    "ext": "mp4"
+  },
+  {
+    "id": "R3-V1-G06-poly-take1",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Animate this visibly polygonal game scene without changing mesh shapes, identities or props. Trolley turns into side aisle; existing stall shutter opens; camera finishes on blank notice. Camera: Short handheld pan between already-present objects. Keep all faces abstract and low-poly, all surfaces flat-shaded. One coherent five-second in-engine shot. No dialogue, no music. No text or GUI. Shot-specific failure conditions:  Toy-city treatment, cargo multiplying, false free inventory, real names or generated notice text.",
+      "image_url": "https://v3b.fal.media/files/b/0aabba00/bHSBXGsoIJRRYqwQeIh8Y_4a1cdf798c7e4b83bbd2674ab65bfe1e.png",
+      "duration": "5",
+      "aspect_ratio": "auto",
+      "resolution": "720p",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    },
+    "folder": "clips",
+    "ext": "mp4"
+  },
+  {
+    "id": "R3-V3-G03-poly-take1",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Animate this visibly polygonal game scene without changing mesh shapes, identities or props. Rookie aligns the already-earned blank copy and seal, then stops. A hanging print flutters once. Camera: Tight overhead-oblique crop, not a meeting table. Keep all faces abstract and low-poly, all surfaces flat-shaded. One coherent five-second in-engine shot. No dialogue, no music. No text or GUI. Shot-specific failure conditions:  A copied screenshot treated as a second original source, generated evidence writing, guilt verdict, red-string board or stamping.",
+      "image_url": "https://v3b.fal.media/files/b/0aabba04/o63LL-2qBI09QQwWSUTmV_c8f3c50588ee48d692301509365511f0.png",
+      "duration": "5",
+      "aspect_ratio": "auto",
+      "resolution": "720p",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    },
+    "folder": "clips",
+    "ext": "mp4"
+  }
+]

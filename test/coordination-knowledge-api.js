@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import Fastify from 'fastify';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { register } from '../src/routes/coordination.js';
 
 assert(!process.env.DATABASE_URL, 'knowledge-api must use the in-memory test database');

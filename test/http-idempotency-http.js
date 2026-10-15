@@ -17,7 +17,7 @@ let app, originalQuery, controls = 0, created = false;
 try {
   await control.query(`CREATE SCHEMA ${schema}`); created = true;
   await control.query(`COMMENT ON SCHEMA ${schema} IS '${owner}'`);
-  const { buildServer } = await import('../src/server.js');
+  const { buildServer } = await import('./server-fixture.js');
   app = await buildServer(); originalQuery = app.pool.query;
   async function actor() {
     const login = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: {} });

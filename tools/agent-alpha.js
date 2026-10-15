@@ -690,11 +690,12 @@ async function releaseLock(lock) {
   }
 }
 
-async function recoverGuestBootstrap({ base, stateStore, session, fetchImpl }) {
+async function recoverGuestBootstrap({ base, stateStore, session, fetchImpl, birthDate }) {
   const guest = await requestJson(fetchImpl, base, '/v1/auth/guest', {
     method: 'POST',
     body: {
       bootstrapSecret: session.bootstrapSecret,
+      ...(birthDate ? { birthDate } : {}),
       ...(session.inviteCode === null ? {} : { inviteCode: session.inviteCode }),
     },
   });
@@ -722,7 +723,7 @@ async function acknowledgeGuestBootstrap({ base, stateStore, session, fetchImpl 
   return acknowledged;
 }
 
-async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl }) {
+async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl, birthDate }) {
   if (!validName(name)) throw new Error('Explicit creation requires a valid 2-24 character name');
   const storedInvite = inviteCode ?? null;
   if (!validInviteCode(storedInvite)) {
@@ -738,7 +739,7 @@ async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl })
     pending: null,
   };
   await writeIdentityState(stateStore, session);
-  session = await recoverGuestBootstrap({ base, stateStore, session, fetchImpl });
+  session = await recoverGuestBootstrap({ base, stateStore, session, fetchImpl, birthDate });
   session = await acknowledgeGuestBootstrap({ base, stateStore, session, fetchImpl });
 
   const agent = await requestJson(fetchImpl, base, '/v1/auth/agent-key', {
@@ -758,9 +759,9 @@ async function createIdentity({ base, stateStore, name, inviteCode, fetchImpl })
   return session;
 }
 
-async function ensureIdentity({ base, fetchImpl, stateStore, session, requestedName }) {
+async function ensureIdentity({ base, fetchImpl, stateStore, session, requestedName, birthDate }) {
   if (session.phase === 'bootstrap') {
-    session = await recoverGuestBootstrap({ base, fetchImpl, stateStore, session });
+    session = await recoverGuestBootstrap({ base, fetchImpl, stateStore, session, birthDate });
   }
   if (session.phase === 'guest_bootstrap_ack_pending') {
     session = await acknowledgeGuestBootstrap({ base, fetchImpl, stateStore, session });
@@ -957,7 +958,7 @@ async function runUnlocked(options, timing) {
       throw new Error('Agent Alpha session is missing; explicit --create is required');
     }
     session = await createIdentity({
-      base, stateStore, name: options.name, inviteCode: options.inviteCode, fetchImpl,
+      base, stateStore, name: options.name, inviteCode: options.inviteCode, fetchImpl, birthDate: options.birthDate,
     });
   }
 
@@ -965,7 +966,7 @@ async function runUnlocked(options, timing) {
   if (session.pending && role !== 'general' && !session.pending.operationId.startsWith(`${role}:`))
     throw new Error('Resolve the pending operation under its original role before switching to a restricted role');
   session = await ensureIdentity({
-    base, fetchImpl, stateStore, session, requestedName: options.name,
+    base, fetchImpl, stateStore, session, requestedName: options.name, birthDate: options.birthDate,
   });
 
   let actions = 0;
@@ -1093,6 +1094,7 @@ function cliOptions(argv) {
     const arg = argv[index];
     if (arg === '--create') options.create = true;
     else if (arg === '--name') options.name = argv[++index];
+    else if (arg === '--birth-date') options.birthDate = argv[++index];
     else if (arg === '--max-actions') options.maxActions = Number(argv[++index]);
     else if (arg === '--session') options.sessionFile = argv[++index];
     else if (arg === '--report') options.reportFile = argv[++index];

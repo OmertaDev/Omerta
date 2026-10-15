@@ -7,7 +7,7 @@ process.env.MOD_KEY = 'test-mod-key';
 
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { SOCIAL_TASKS, socialShareUrl, SOCIAL_LINKS, CONSTANTS, DISTRICTS, HUSTLE, CORNER, cornerTasksOf, dayOf, M4, levelOf, PACING, MASTERY, masteryXpFor, CRIMES, MISSIONS, M8 } from '../src/rules.js';
 import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
@@ -748,7 +748,7 @@ assert(/respect/.test(rm.coach.hint) && rm.coach.tab === 'streets', 'quoting the
 // itself in minutes, so it can never mask the ladder — the harness-F1 rule)
 await seedCh(rook.id, 'nerve=0');
 rm = (await call('GET', '/v1/me', { token: rook.token })).body.character;
-assert.equal(rm.coach?.label, 'Out of nerve — it comes back by itself', 'an empty pool coaches the productive wait');
+assert.equal(rm.coach?.label, 'Out of nerve', 'an empty pool coaches the productive wait');
 assert.equal(rm.coach.tab, 'start', 'and points at Start Here (claim what\'s READY while nerve refills)');
 // (harness F1) THE COACH MUST NOT DEAD-END. THREE separate rungs could never clear for a solo
 // player, each masking every rung below it — the harness caught it by reporting the same coach line
@@ -807,7 +807,7 @@ await pool.query(`UPDATE account_persistent SET race_wins=1 WHERE account_id='${
 // real and was simply never said. Since 2026-08-10 the rung states a FACT rather than a price: the
 // mission it names hands over the credit, so it must NAME that job and clear on being minted.
 const made = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
-assert.equal(made?.label, 'You can get made for free', 'lvl 14+ unminted → the free route to being made');
+assert.equal(made?.label, 'Earn a mint credit', 'lvl 14+ unminted → the free route to minting');
 const freeJob = MISSIONS.find((m) => Number(m.reward?.mintCredit) > 0);
 assert(made.hint.includes(freeJob.name), 'the rung names the job that hands over the credit');
 assert(!/\d+ \$OMR/.test(made.hint), 'and states no price — a quoted figure would be a lie at the till');
@@ -815,7 +815,7 @@ assert(!/\d+ \$OMR/.test(made.hint), 'and states no price — a quoted figure wo
 await pool.query(`UPDATE account_persistent SET mint_credits=1 WHERE account_id='${rookAid}'`);
 assert.equal(await coachOf(), 'Spend your mint credit', 'a credit in hand → spend it');
 await pool.query(`UPDATE account_persistent SET mint_credits=0, minted=true WHERE account_id='${rookAid}'`);
-assert.notEqual(await coachOf(), 'You can get made for free', 'being minted clears it — it cannot nag a made man');
+assert.notEqual(await coachOf(), 'Earn a mint credit', 'being minted clears the credit recommendation');
 // (founder: "not obvious… the steps to buy your first business") — concrete, priced off the catalog
 let front = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
 assert.equal(front?.label, 'Open your first front', 'lvl 15+ no front → the Empire walkthrough');
@@ -948,7 +948,7 @@ await pool.query(`INSERT INTO daily_progress (character_id, day, counters, claim
   ON CONFLICT (character_id, day) DO UPDATE SET counters=EXCLUDED.counters, claimed='[]'`,
   [rook.id, cday, JSON.stringify({ [liveDaily.k]: liveDaily.n })]);
 coachedDaily = (await call('GET', '/v1/me', { token: rook.token })).body.character.coach;
-assert.equal(coachedDaily.label, `${liveDaily.name} — ready to collect`, 'the coach names the completed live contract as claim-ready');
+assert.equal(coachedDaily.label, `${liveDaily.name}: ready to collect`, 'the coach names the completed live contract as claim-ready');
 assert.match(coachedDaily.hint, /ready to collect.*Daily Work card/i, 'the coach explicitly says to collect its completed contract');
 assert.equal(coachedDaily.tab, 'streets', 'a completed live daily routes to the Streets claim card');
 // the REAL drawn ids — the count subtracts what this player has actually claimed, so a placeholder
@@ -1043,7 +1043,7 @@ const band = await mk('Band Benny');
 await seedCh(band.id, `respect=${10 * 5 * 5}, path='gun'`);   // level 6 — inside the 3..12 band
 for (let i = 0; i < 20; i++) { const c = await call('POST', '/v1/crimes/pick', { token: band.token }); if (c.body.success) break; await seedCh(band.id, 'nerve=50, jail_until=NULL'); }
 const bandCoach = (await call('GET', '/v1/me', { token: band.token })).body.character.coach;
-assert.equal(bandCoach?.label, 'Nobody survives alone', 'inside the band a gangless street IS nudged to a family');
+assert.equal(bandCoach?.label, 'Find a family', 'inside the band a gangless street IS nudged to a family');
 assert.equal(bandCoach.tab, 'family', 'and pointed at the Family tab');
 // the funnel (mod-gated): counts characters + first-week claims, refuses without the key
 assert.equal((await call('GET', '/v1/mod/funnel', { token: rook.token })).code, 401, 'the funnel needs the mod key');
@@ -1052,13 +1052,36 @@ assert(funnel.characters.total >= 1 && funnel.characters.alive >= 1, 'funnel cou
 assert(funnel.progression.pulled_a_job >= 1, 'funnel sees at least one job pulled');
 assert(funnel.firstWeek.ob_crime >= 1, 'funnel tallies first-week claims from telemetry');
 assert(funnel.referral && typeof funnel.referral.kFactor === 'number' && funnel.referral.accounts >= 1, 'funnel carries the referral block (K-factor + counts)');
-// THE BROADCAST funnel: a share beacon (authed) feeds broadcast.shares → referredPerShare
-assert.equal((await call('POST', '/v1/broadcast/shared', { token: rook.token, body: { kind: 'dossier' } })).code, 200, 'the share beacon accepts an authed post');
-await call('POST', '/v1/broadcast/shared', { token: rook.token, body: { kind: 'win' } });
+// Optional share/screen tracking is disabled. Older authenticated clients still receive a
+// compatibility response, but neither existing telemetry nor the operational funnel may change.
+const withoutOptionalTracking = async (check) => {
+  const before = (await pool.query('SELECT * FROM telemetry ORDER BY id')).rows;
+  const writes = [], query = pool.query;
+  pool.query = function (sql, ...args) {
+    const text = typeof sql === 'string' ? sql : sql?.text || '';
+    if (/\b(?:INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+telemetry\b/i.test(text)) writes.push(text);
+    return query.call(this, sql, ...args);
+  };
+  try { await check(); } finally { pool.query = query; }
+  assert.deepEqual(writes, [], 'compatibility beacons attempt no telemetry writes');
+  assert.deepEqual((await pool.query('SELECT * FROM telemetry ORDER BY id')).rows, before,
+    'compatibility beacons create, update or delete no telemetry rows');
+};
+await withoutOptionalTracking(async () => {
+  assert.equal((await call('POST', '/v1/broadcast/shared', { body: { kind: 'dossier' } })).code,
+    401, 'the share compatibility endpoint still requires authentication');
+  for (const actor of [rook, chef]) for (const kind of ['dossier', 'win']) {
+    const shared = await call('POST', '/v1/broadcast/shared', { token: actor.token, body: { kind } });
+    assert.equal(shared.code, 200, 'the share beacon accepts an authenticated compatibility post');
+    assert.deepEqual(shared.body, { ok: true }, 'share acknowledgement does not enroll tracking');
+  }
+});
 const funnel2 = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json();
-assert(funnel2.broadcast && funnel2.broadcast.shares >= 2, 'funnel counts broadcast share intents');
-assert(funnel2.broadcast.byKind.dossier >= 1 && funnel2.broadcast.byKind.win >= 1, 'funnel breaks shares down by kind');
-assert(funnel2.broadcast.sharers >= 1 && typeof funnel2.broadcast.referredPerShare === 'number', 'funnel carries distinct sharers + reach→conversion');
+assert.deepEqual(funnel.broadcast, { shares: 0, byKind: {}, sharers: 0, referredPerShare: 0 },
+  'the fresh funnel contains no optional share analytics');
+assert.deepEqual(funnel2.broadcast, funnel.broadcast,
+  'repeated shares by distinct actors increment no share, kind, sharer or conversion counters');
+assert.deepEqual(funnel2.referral, funnel.referral, 'share acknowledgements do not alter operational referrals');
 // THE CAREER block — the ladder shipped with a board and a test and NO way for the founder to see
 // whether anybody climbs it. The funnel above stops at day seven; this is where the drop-off moves.
 {
@@ -1076,41 +1099,25 @@ assert(funnel2.broadcast.sharers >= 1 && typeof funnel2.broadcast.referredPerSha
   assert.equal(after.reached.soldier, 0, 'one claim is not four — the second tier stays shut (the NEED gate, mirrored)');
 }
 
-// ── SCREEN REACH — which of the console's 25 screens a player ever OPENS ─────────────────────────
-// The measurement that decides whether the nav wants cutting, merging or leaving alone. Asserted on
-// the REACH PERCENTAGE rather than the raw count, because the percentage is what a founder reads and
-// it is the half that can silently go wrong (a wrong denominator still produces plausible numbers).
-assert.equal((await call('POST', '/v1/screens', { token: rook.token, body: { screens: ['streets', 'kitchen', 'streets'] } })).code,
-  200, 'the screen beacon accepts an authed batch');
-const fun3 = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json();
-assert.equal(fun3.screens.reporters, 1, 'one reporting player');
-// the server dedupes WITHIN a batch — that is what `counted` reports, and all it guards
-assert.equal((await call('POST', '/v1/screens', { token: rook.token, body: { screens: ['den', 'den', 'den'] } })).body.counted,
-  1, 'a repeated screen in one batch is counted once');
-// but the property that makes this REACH rather than frequency is the per-account aggregation, which
-// has to hold ACROSS batches too — a client that re-sends after a reload must not inflate the number
-await call('POST', '/v1/screens', { token: rook.token, body: { screens: ['streets'] } });
-const funDup = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json();
-assert.equal(funDup.screens.opens.streets, 1, 'the same player re-reporting a screen still counts ONCE — reach, not frequency');
-assert.equal(fun3.screens.reach.streets, 100, 'the only reporter opened streets → 100% reach');
-assert.equal(fun3.screens.reach.kitchen, 100, 'and the kitchen');
-assert.equal(fun3.screens.reach.pen, undefined, 'a screen nobody opened is absent, never a phantom 0%');
-// a SECOND player who never finds the kitchen must halve its reach — the denominator is the thing
-// most likely to be wrong, and a single reporter can never show that it is
+// ── SCREEN COMPATIBILITY — optional screen analytics persist nothing ────────────────────────────
 const rook2 = await mk('Reach Two');
-await call('POST', '/v1/screens', { token: rook2.token, body: { screens: ['streets'] } });
-const fun4 = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json();
-assert.equal(fun4.screens.reporters, 2, 'two reporting players');
-assert.equal(fun4.screens.reach.streets, 100, 'both found the streets');
-assert.equal(fun4.screens.reach.kitchen, 50, 'only one found the kitchen — the cold screen the founder acts on');
-// bounds: junk is dropped, the batch is capped, and an empty post is a clean no-op rather than a row
 const many = Array.from({ length: 60 }, (_, i) => 'scr' + i);
-assert.equal((await call('POST', '/v1/screens', { token: rook.token, body: { screens: many } })).body.counted, 40,
-  'the batch is capped rather than trusted');
-assert.equal((await call('POST', '/v1/screens', { token: rook.token, body: { screens: [] } })).body.counted, 0,
-  'an empty batch writes nothing');
-assert.equal((await call('POST', '/v1/screens', { token: rook.token, body: { screens: [1, null, {}] } })).body.counted, 0,
-  'non-string entries are dropped, not stringified');
+const beforeScreens = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json().screens;
+assert.deepEqual(beforeScreens, { reporters: 0, opens: {}, reach: {} }, 'the fresh funnel has no screen tracking');
+await withoutOptionalTracking(async () => {
+  assert.equal((await call('POST', '/v1/screens', { body: { screens: ['streets'] } })).code,
+    401, 'the screen compatibility endpoint still requires authentication');
+  for (const actor of [rook, rook2]) for (const screens of [
+    ['streets', 'kitchen', 'streets'], ['den', 'den', 'den'], ['streets'], many, [], [1, null, {}],
+  ]) {
+    const opened = await call('POST', '/v1/screens', { token: actor.token, body: { screens } });
+    assert.equal(opened.code, 200, 'valid, repeated, oversized, empty and malformed batches remain compatible');
+    assert.deepEqual(opened.body, { ok: true, counted: 0 },
+      'screen acknowledgements count nothing, including across distinct actors and repeated batches');
+  }
+});
+const afterScreens = (await app.inject({ method: 'GET', url: '/v1/mod/funnel', headers: { 'x-mod-key': 'test-mod-key' } })).json().screens;
+assert.deepEqual(afterScreens, beforeScreens, 'screen posts create no reporter, open or reach counters');
 
 // ── STEPPED PAYOUT — "the spark": a small EARLY cash payout the moment a recruit shows real
 // engagement (level 3 + 10 jobs), long before full qualification. Fast feedback for the referrer. ──
@@ -1584,8 +1591,15 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
         'an explicit SOCIAL_GAME_URL still wins, for a separate marketing domain');
       delete process.env.PUBLIC_URL; delete process.env.SOCIAL_GAME_URL;
     }
+    // Synthetic CI operator details complete only these explicit preflight inputs.
+    const socialPreflightLegalFixture = {
+      LEGAL_OPERATOR_NAME: 'Test Operator', LEGAL_POSTAL_ADDRESS: '123 Test Street, Test City',
+      PRIVACY_CONTACT_EMAIL: 'privacy@example.test', DMCA_AGENT_NAME: 'Test Agent',
+      DMCA_AGENT_EMAIL: 'copyright@example.test', DMCA_AGENT_ADDRESS: '123 Test Street, Test City',
+      DMCA_AGENT_PHONE: '+1 202 555 0100', DMCA_AGENT_REGISTERED: 'true', PAYMENT_REFUND_POLICY: 'Test refund policy',
+    };
     const { preflight: pf0 } = await import('../src/preflight.js');
-    assert(pf0({ NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
+    assert(pf0({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
       MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'off', TRUST_PROXY: 'on' })
       .warnings.some((w) => /PUBLIC_URL/.test(w) && /referral link/.test(w)),
     'and with neither set, preflight warns that shares point at somebody else\'s domain');
@@ -1593,7 +1607,7 @@ assert.equal(socialRewardsLive(), true, "'trust' stays live in the alpha (non-pr
     // preflight names the missing var rather than failing the boot (a fatal error here would take a
     // running server down to fix a dormant faucet — strictly worse than the dormant faucet)
     const { preflight } = await import('../src/preflight.js');
-    const pf = preflight({ NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
+    const pf = preflight({ ...socialPreflightLegalFixture, NODE_ENV: 'production', JWT_SECRET: 'a-real-jwt-secret-value-long-enough', MOD_KEY: 'y'.repeat(20),
       MARKET_SEED: 'YqB7#tR2vLx9Kp4Wm6Zn8Cf3Hj5Ds1Ge', SOCIAL_VERIFY_MODE: 'live', TRUST_PROXY: 'on' });
     assert.deepEqual(pf.errors, [], 'live-without-tokens must NOT be fatal');
     assert(pf.warnings.some((w) => /X_BEARER_TOKEN/.test(w) && /pays nobody/.test(w)),

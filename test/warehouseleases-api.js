@@ -12,7 +12,7 @@ if (postgres) {
   process.env.MARKET_SEED = 'warehouse-local-test-seed';
 }
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ledger } from '../src/game.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 const app = await buildServer();

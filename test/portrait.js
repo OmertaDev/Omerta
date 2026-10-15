@@ -8,7 +8,7 @@
 // the route feeds the compositor is `portraitRow`, and `portraitRow` may return no field
 // `publicDossier` does not already return.** Add `loc` to it and this fails by name.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { portraitSvg, portraitStateOf, portraitTraits, portraitRow } from '../src/portrait.js';
 import { publicDossier } from '../src/cards.js';
 import * as Rules from '../src/rules.js';

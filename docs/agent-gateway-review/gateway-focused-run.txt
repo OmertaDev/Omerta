@@ -1,0 +1,21 @@
+
+> omerta-backend@1.2.0 test:gateway
+> node test/gateway-security.js && node test/gateway-consent.js && node test/gateway-context.js && node test/gateway-projection-security.js && node test/gateway-events.js && node test/muse-gateway.js && node test/gateway-api.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+gateway security: delegation, strict scopes, revocation, bounded account rate, replay, stale confirmation and crash recovery passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+gateway-consent: refused/uncertain retries require approved terms; current visibility and expired receipt recovery pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+gateway context: scope isolation, owner isolation, hidden discoveries, bounded inputs, authoritative recipes and read-only previews passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+src/gateway/context.js SHA256 55bb314f045aee05e3434af7bb4457c8fc0b180cdb43daeb5703b8c7240fabbf
+src/growth.js SHA256 55cb6924e8073e657cb86287f719dbd0e33b49d053eb80ac5977e1bc7f7ba565
+src/dynasty.js SHA256 ee097f7fc1402b63351930e386732f4fe8b44994632db48d3dcb39638bcd514a
+src/crew.js SHA256 9372b70926d5c6b5790d0bb41e1013d9817dcd951b3d776e3f2cbea347d2351a
+src/diplomacy.js SHA256 b51ad08334475df51e4df7009b2d8b93d094d08fe947413d8ddb6d77ed6d635c
+projection security: 52 READ/ANALYZE capabilities, role/scope adversarial traces and 125-row social bounds passed; 729 guarded queries, zero durable writes
+gateway events: durable subscriptions, scoped replay, discovery isolation, membership changes, revocation and bounded streams passed
+muse-gateway: adapter mapping, scoped discovery, confirmations, untrusted content, and request boundaries pass
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+gateway API: opaque/player/provider boundaries, safe Muse framing, real prepare-confirm-replay, audit, events and OpenAPI passed

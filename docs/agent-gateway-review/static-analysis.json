@@ -1,0 +1,39 @@
+{
+  "tool": "Acorn 8.18.0 + bounded AST rules (not a general security analyzer)",
+  "node": "v24.19.0",
+  "checkedAt": "2026-09-21T05:26:42.181Z",
+  "files": [
+    "src/gateway/actions.js",
+    "src/gateway/capabilities.js",
+    "src/gateway/context.js",
+    "src/gateway/events.js",
+    "src/gateway/http-contract.js",
+    "src/gateway/security.js",
+    "src/gateway/service.js",
+    "src/integrations/muse/index.js",
+    "src/integrations/muse/manifest.js",
+    "src/integrations/muse/responses.js",
+    "src/integrations/muse/schemas.js",
+    "src/integrations/muse/tools.js",
+    "src/routes/gateway.js",
+    "public/consigliere.js"
+  ],
+  "diagnostics": [
+    {
+      "file": "src/gateway/events.js",
+      "line": 138,
+      "rule": "interpolated-sql-review"
+    },
+    {
+      "file": "src/gateway/events.js",
+      "line": 146,
+      "rule": "interpolated-sql-review"
+    },
+    {
+      "file": "src/gateway/events.js",
+      "line": 155,
+      "rule": "interpolated-sql-review"
+    }
+  ],
+  "note": "Reparsed after final browser recovery copy changes; diagnostic sites are unchanged."
+}

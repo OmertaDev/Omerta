@@ -40,7 +40,7 @@ try {
     endpoint.searchParams.set('options', `-c search_path=${namespace}`);
     process.env.DATABASE_URL = endpoint.toString();
   } else assert(!process.env.DATABASE_URL, 'Memory proof requires disposable pg-mem.');
-  const { buildServer } = await import('../src/server.js');
+  const { buildServer } = await import('./server-fixture.js');
   app = await buildServer();
   if (postgres) {
     const provenance = (await app.pool.query('SELECT current_schema() AS schema,version() AS version')).rows[0];

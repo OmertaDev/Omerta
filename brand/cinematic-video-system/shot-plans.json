@@ -1,0 +1,3417 @@
+[
+  {
+    "film": "01",
+    "shot": "C1-B01",
+    "start": 0,
+    "end": 4,
+    "duration": 4,
+    "purpose": "Your next move. An empire.",
+    "visual": "Actual local game UI: streets",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Your next move could build an empire.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Your next move could build an empire.",
+    "caption": "Your next move could build an empire.",
+    "uiOverlay": "A persistent mafia RPG",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Your next move could build an empire.",
+    "generationSettings": {
+      "text": "Your next move could build an empire.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/streets.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L01-v2.mp3",
+    "evidence": [
+      {
+        "id": "F01",
+        "mechanic": "Core gameplay",
+        "status": "Implemented; release blocked",
+        "supportedClaim": "Browser mafia RPG: choose actions, manage resources/heat, acquire assets, cooperate/compete. New world progression requires real group authority; never imply a fresh solo player can instantly finish it.",
+        "evidence": "`README.md:16–29,65–72`; RC1:69–83",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B02",
+    "start": 4,
+    "end": 8,
+    "duration": 4,
+    "purpose": "Cash. Respect. Heat.",
+    "visual": "Actual local game UI: streets",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Crimes earn cash and respect. Heat follows.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Crimes earn cash and respect. Heat follows.",
+    "caption": "Crimes earn cash and respect. Heat follows.",
+    "uiOverlay": "Nerve / energy · Risk / reward",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Crimes earn cash and respect. Heat follows.",
+    "generationSettings": {
+      "text": "Crimes earn cash and respect. Heat follows.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/streets.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L02.mp3",
+    "evidence": [
+      {
+        "id": "F49",
+        "primaryFilm": 1,
+        "mechanic": "Crime, energy, nerve, heat and respect",
+        "status": "Implemented",
+        "supportedClaim": "Actions consume resources, carry consequences and advance respect/levels; cash progression is not OMR conversion.",
+        "evidence": "src/game.js; src/rules.js; src/growth.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B03",
+    "start": 8,
+    "end": 12,
+    "duration": 4,
+    "purpose": "Become good at something.",
+    "visual": "Actual local game UI: skills",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Train your skills and build a career through action.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Train your skills and build a career through action.",
+    "caption": "Train your skills and build a career through action.",
+    "uiOverlay": "Skills / careers · Ten trades",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Train your skills and build a career through action.",
+    "generationSettings": {
+      "text": "Train your skills and build a career through action.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/skills.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L03-v2.mp3",
+    "evidence": [
+      {
+        "id": "F18",
+        "mechanic": "Professions",
+        "status": "Broader item-profession system planned",
+        "supportedClaim": "Skill specializations and ten use-XP trades are implemented. The broader World Graph profession/blueprint ladder remains a design; do not equate the two.",
+        "evidence": "src/skills.js; src/mastery.js; src/rules.tail.js MASTERY; docs/superpowers/specs/2026-09-04-world-graph-phase-2b-professions-blueprints-design.md",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F50",
+        "primaryFilm": 1,
+        "mechanic": "Skills, careers and trade mastery",
+        "status": "Implemented",
+        "supportedClaim": "Build specializations and repeated actions develop trades; mastery XP is not currency; character skills and account legends have different death rules.",
+        "evidence": "src/skills.js; src/mastery.js; src/career.js; src/rules.tail.js MASTERY",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B04",
+    "start": 12,
+    "end": 16,
+    "duration": 4,
+    "purpose": "A wreck has value.",
+    "visual": "Actual local game UI: garage",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Steal a car. Salvage eligible wrecks into materials.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Steal a car. Salvage eligible wrecks into materials.",
+    "caption": "Steal a car. Salvage eligible wrecks into materials.",
+    "uiOverlay": "Garage / armory · Salvage / materials",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Steal a car. Salvage eligible wrecks into materials.",
+    "generationSettings": {
+      "text": "Steal a car. Salvage eligible wrecks into materials.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/garage.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L04.mp3",
+    "evidence": [
+      {
+        "id": "F16",
+        "mechanic": "Salvage",
+        "status": "Implemented",
+        "supportedClaim": "Consumes a real owned eligible vehicle through salvage service; outputs enter custody. Do not portray arbitrary stolen scenery as an eligible asset.",
+        "evidence": "`src/crafting.js:970`; CORE:41; HANDOFF:49",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F15",
+        "mechanic": "Materials",
+        "status": "Implemented",
+        "supportedClaim": "Scrap steel, wire, salvage parts and other admitted materials are physical game resources. OMR is separate.",
+        "evidence": "`src/content/core-materials.js`; `src/content/automotive-salvage.js`; NETSRC:56–59",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F51",
+        "primaryFilm": 1,
+        "mechanic": "Garage, tuning, repair and armory",
+        "status": "Implemented",
+        "supportedClaim": "Own, tune, repair, fence or salvage eligible assets; weapons/ammo/armor support bounded game actions.",
+        "evidence": "src/economy.js; src/races.js; src/crafting.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B05",
+    "start": 16,
+    "end": 20,
+    "duration": 4,
+    "purpose": "Build your advantage.",
+    "visual": "Actual local game UI: crafting",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Discover recipes to craft, repair, and track your gear.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Discover recipes to craft, repair, and track your gear.",
+    "caption": "Discover recipes to craft, repair, and track your gear.",
+    "uiOverlay": "Inventory / provenance · Recipes / tools",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Discover recipes to craft, repair, and track your gear.",
+    "generationSettings": {
+      "text": "Discover recipes to craft, repair, and track your gear.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/crafting.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L05-v2.mp3",
+    "evidence": [
+      {
+        "id": "F12",
+        "mechanic": "Crafting",
+        "status": "Implemented; knowledge-gated progression gated",
+        "supportedClaim": "Inputs are consumed; knowledge/location can unlock a recipe. Canal Cargo Seal uses salvage inputs at Foundry. No automatic OMR reward from crafting.",
+        "evidence": "CORE:25–27,41; NETSRC:49–59; `src/crafting.js:936–970`",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F13",
+        "mechanic": "Inventory",
+        "status": "Implemented",
+        "supportedClaim": "Real custody, owned unique items and fungible resource balances. UI can show only the authorized owner's inventory or deliberately contributed resources.",
+        "evidence": "CORE:27–29; `src/items.js:970–1069`",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F14",
+        "mechanic": "Item provenance",
+        "status": "Implemented",
+        "supportedClaim": "A game item has creation/custody/use history. Eligible car/boat/gear extraction is a separate, capped onchain rail; provenance alone is not NFT export.",
+        "evidence": "src/items.js; src/nft.js; src/chain.js",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F19",
+        "mechanic": "Durability / tool economy",
+        "status": "Bounded implementation; broader plan",
+        "supportedClaim": "Authored content crafting has tool durability/repair state. Do not generalize to every World Graph item or the whole proposed Phase 2c system.",
+        "evidence": "`src/content/crafting.js:124–140,261–281`; `src/content/compiler.js:684–691`; Phase 2c design",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B06",
+    "start": 20,
+    "end": 24,
+    "duration": 4,
+    "purpose": "An empire has upkeep.",
+    "visual": "Actual local game UI: business → kitchen",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Build businesses. Run kitchens. Pay the people working them.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Build businesses. Run kitchens. Pay the people working them.",
+    "caption": "Build businesses. Run kitchens. Pay the people working them.",
+    "uiOverlay": "Rackets / kitchens · Labor / upkeep",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Build businesses. Run kitchens. Pay the people working them.",
+    "generationSettings": {
+      "text": "Build businesses. Run kitchens. Pay the people working them.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/business.png",
+      "public/art/cinematic-r4/captures/kitchen.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L06.mp3",
+    "evidence": [
+      {
+        "id": "F52",
+        "primaryFilm": 1,
+        "mechanic": "Businesses, rackets and operating upkeep",
+        "status": "Implemented",
+        "supportedClaim": "Buy and upgrade businesses, collect bounded game-cash income, pay wages/upkeep; rivals can shakedown/heist/take over eligible assets.",
+        "evidence": "src/business.js; src/economy.js; src/territory.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F53",
+        "primaryFilm": 1,
+        "mechanic": "Kitchen, labs, trade ranks and hired sellers",
+        "status": "Implemented",
+        "supportedClaim": "Inputs -> cooking -> inventory -> sale; equipment and worker costs create recurring expenses. Display as fictional game commerce.",
+        "evidence": "src/kitchen.js; src/rules.tail.js KITCHEN",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B07",
+    "start": 24,
+    "end": 28,
+    "duration": 4,
+    "purpose": "Getting it there is the game.",
+    "visual": "Actual local game UI: market → logistics",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Move cargo through markets and risky convoys.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Move cargo through markets and risky convoys.",
+    "caption": "Move cargo through markets and risky convoys.",
+    "uiOverlay": "Markets / auctions · Convoys / boats",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Move cargo through markets and risky convoys.",
+    "generationSettings": {
+      "text": "Move cargo through markets and risky convoys.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/market.png",
+      "public/art/cinematic-r4/captures/logistics.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L07-v2.mp3",
+    "evidence": [
+      {
+        "id": "F24",
+        "mechanic": "Logistics",
+        "status": "Implemented; new campaigns gated",
+        "supportedClaim": "Existing convoys/port systems; buyer-owned bulk cargo ships from the buyer’s trunk. Partial ambushes respect capacity; a funded destination toll requires another Family’s territory. New canonical shipment-route states require materials and group actions. No magical teleport from trade to warehouse inventory.",
+        "evidence": "`src/market.js:314–333`; `src/convoy.js:70–99,254–266,327–347`; `src/port.js`; NETWORK:9–15",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F61",
+        "primaryFilm": 1,
+        "mechanic": "Port, boats and shipping",
+        "status": "Implemented",
+        "supportedClaim": "Own eligible boats, undertake shipping and manage cargo/risk; convoy goods originate in custody, never a free material faucet.",
+        "evidence": "src/port.js; src/convoy.js; src/shipment.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F11",
+        "mechanic": "Markets",
+        "status": "Implemented; campaign market gated",
+        "supportedClaim": "Existing goods/escrow Exchange coexist with Canal market infrastructure. Canal establishment does not mint vendor stock or automatically move token price.",
+        "evidence": "`src/economy.js`; `src/social.js`; NETWORK:12–17",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F65",
+        "primaryFilm": 1,
+        "mechanic": "Player markets and auction house",
+        "status": "Implemented",
+        "supportedClaim": "P2P cars/goods and separate OMR auction custody. Sale receipts, bid refunds and house fees are distinct flows.",
+        "evidence": "src/market.js; src/social/exchange.js; src/auction.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B08",
+    "start": 28,
+    "end": 32,
+    "duration": 4,
+    "purpose": "Bring a Crew.",
+    "visual": "Actual local game UI: crew → heists",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Recruit a Crew. Coordinate heists and harder targets.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Recruit a Crew. Coordinate heists and harder targets.",
+    "caption": "Recruit a Crew. Coordinate heists and harder targets.",
+    "uiOverlay": "Crew heists · NPC raids",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Recruit a Crew. Coordinate heists and harder targets.",
+    "generationSettings": {
+      "text": "Recruit a Crew. Coordinate heists and harder targets.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/crew.png",
+      "public/art/cinematic-r4/captures/heists.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L08.mp3",
+    "evidence": [
+      {
+        "id": "F08",
+        "mechanic": "Crews",
+        "status": "Implemented; new world adapters gated",
+        "supportedClaim": "Current members contribute their own items/intelligence. Same-Crew requirements are definition-specific. Membership is not a permanent authorization grant.",
+        "evidence": "CORE:19,78–90; NETSRC:136–152; `src/crew.js`",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F54",
+        "primaryFilm": 1,
+        "mechanic": "Crew heists and informants",
+        "status": "Implemented",
+        "supportedClaim": "Named seats use distinct capabilities; members join, leader executes, success/failure is shared; a rat can cause a specific heist to fail. This is separate from AI guessing guilt.",
+        "evidence": "src/heists.js; src/crew.js",
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F95",
+        "primaryFilm": 1,
+        "mechanic": "NPC Families, world raids and Blood War",
+        "status": "Implemented",
+        "supportedClaim": "Shared NPC raid reservoirs and a separate Blood War legend support PvE conflict. These are distinct from player turf wars and the new Living World Director.",
+        "evidence": "src/world.js; src/npcwar.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B09",
+    "start": 32,
+    "end": 36,
+    "duration": 4,
+    "purpose": "Strength becomes territory.",
+    "visual": "Actual local game UI: family → territory",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Build a Family. Turn strength into territory.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Build a Family. Turn strength into territory.",
+    "caption": "Build a Family. Turn strength into territory.",
+    "uiOverlay": "Hierarchy / wars · Diplomacy / alliances",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Build a Family. Turn strength into territory.",
+    "generationSettings": {
+      "text": "Build a Family. Turn strength into territory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/family.png",
+      "public/art/cinematic-r4/captures/territory.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L09.mp3",
+    "evidence": [
+      {
+        "id": "F09",
+        "mechanic": "Families / hierarchy",
+        "status": "Implemented; world authority gated",
+        "supportedClaim": "Boss/underboss permissions matter; individual contributions require the owner's action. Four-person Foundry operation is a real pilot, not a requirement for every operation.",
+        "evidence": "CORE:21,78–90; `src/social.js`",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F10",
+        "mechanic": "Territory",
+        "status": "Implemented; new world control gated",
+        "supportedClaim": "Existing district seizure/war differs from control of a route/object. A successful authorized operation can change canonical control/state. Neither implies ownership of LP principal.",
+        "evidence": "`README.md:69,108`; CORE:21–23; NETWORK:9–17",
+        "primaryFilm": 1,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F57",
+        "primaryFilm": 1,
+        "mechanic": "Family wars, diplomacy and coalitions",
+        "status": "Implemented",
+        "supportedClaim": "Territory control, pacts, oathbreaking and coalitions affect conflict rules; a treaty is not a token distribution.",
+        "evidence": "src/social.js; src/diplomacy.js; src/territory.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B10",
+    "start": 36,
+    "end": 40,
+    "duration": 4,
+    "purpose": "Control has a cost.",
+    "visual": "Actual local game UI: territory → speakeasy",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Territory earns income while diplomacy shapes the fight.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Territory earns income while diplomacy shapes the fight.",
+    "caption": "Territory earns income while diplomacy shapes the fight.",
+    "uiOverlay": "Commission / favors · Speakeasy status",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Territory earns income while diplomacy shapes the fight.",
+    "generationSettings": {
+      "text": "Territory earns income while diplomacy shapes the fight.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/territory.png",
+      "public/art/cinematic-r4/captures/speakeasy.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L10-v2.mp3",
+    "evidence": [
+      {
+        "id": "F58",
+        "primaryFilm": 1,
+        "mechanic": "Commission politics and decrees",
+        "status": "Implemented",
+        "supportedClaim": "Qualified Families vote on bounded city rules with public political records. Decrees do not conjure funds.",
+        "evidence": "src/commission.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F59",
+        "primaryFilm": 1,
+        "mechanic": "NPC relationships and favor networks",
+        "status": "Implemented",
+        "supportedClaim": "Named contacts, standings, favors and grudges respond to authored player actions; benefits and inheritance are bounded.",
+        "evidence": "src/underworld.js; src/favors.js; src/contacts.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F90",
+        "primaryFilm": 1,
+        "mechanic": "Speakeasies and social status",
+        "status": "Implemented",
+        "supportedClaim": "District clubs support proprietors, rounds, bottle service, decor and social prestige. OMR status spends follow the global recycle policy.",
+        "evidence": "src/speakeasy.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B11",
+    "start": 40,
+    "end": 44,
+    "duration": 4,
+    "purpose": "Make the deal.",
+    "visual": "Actual local game UI: loans",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Loans and escrow put consequences behind every deal.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Loans and escrow put consequences behind every deal.",
+    "caption": "Loans and escrow put consequences behind every deal.",
+    "uiOverlay": "Loans / collateral · Escrow / contracts",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Loans and escrow put consequences behind every deal.",
+    "generationSettings": {
+      "text": "Loans and escrow put consequences behind every deal.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/loans.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L11-v2.mp3",
+    "evidence": [
+      {
+        "id": "F32",
+        "mechanic": "Escrow",
+        "status": "Implemented; new Family operations gated",
+        "supportedClaim": "Different custody systems: game-cash bounties/loans/Family-operation capital; OMR auction bids and collateral; item contributions; chain-funded Turf siege escrow. Never draw them as one interchangeable pot.",
+        "evidence": "src/social/contracts.js; src/loans.js; src/auction.js; src/operations.js; omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F64",
+        "primaryFilm": 1,
+        "mechanic": "Loans and collateral",
+        "status": "Implemented",
+        "supportedClaim": "Funded player-to-player game-cash loans can use permitted collateral; repayment/default transfers existing balances/items, with specified fees.",
+        "evidence": "src/loans.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B12",
+    "start": 44,
+    "end": 48,
+    "duration": 4,
+    "purpose": "Own the room.",
+    "visual": "Actual local game UI: races → boxing → casino → stable",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Race, fight, and play the tables.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Race, fight, and play the tables.",
+    "caption": "Race, fight, and play the tables.",
+    "uiOverlay": "Races / duels / boxing · Poker / casino / stable",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Race, fight, and play the tables.",
+    "generationSettings": {
+      "text": "Race, fight, and play the tables.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/races.png",
+      "public/art/cinematic-r4/captures/boxing.png",
+      "public/art/cinematic-r4/captures/casino.png",
+      "public/art/cinematic-r4/captures/stable.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L12-v2.mp3",
+    "evidence": [
+      {
+        "id": "F62",
+        "primaryFilm": 1,
+        "mechanic": "Races, fight management and duels",
+        "status": "Implemented",
+        "supportedClaim": "Vehicle races, managed boxers and ranked duels are separate competitive loops; stake currency and consent rules differ by activity.",
+        "evidence": "src/races.js; src/boxing.js; src/duels.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F63",
+        "primaryFilm": 1,
+        "mechanic": "Gambling, poker and table escrow",
+        "status": "Implemented",
+        "supportedClaim": "Fictional game-cash tables and escrow; the Den does not accept or pay OMR. Keep distinct from tokenomics.",
+        "evidence": "src/casino.js; src/ring.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F89",
+        "primaryFilm": 1,
+        "mechanic": "The Stable: racing dogs and horses",
+        "status": "Implemented",
+        "supportedClaim": "Buy, train and enter racing animals in bounded PvE/PvP activity; dogs race dogs and horses race horses. These are distinct from boxer management.",
+        "evidence": "src/stable.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B13",
+    "start": 48,
+    "end": 52,
+    "duration": 4,
+    "purpose": "The city hits back.",
+    "visual": "Actual local game UI: combat → law → prison",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Rivals strike back. So do investigators, courts, and prison.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Rivals strike back. So do investigators, courts, and prison.",
+    "caption": "Rivals strike back. So do investigators, courts, and prison.",
+    "uiOverlay": "PvP / bounties / hitmen · Law / courts / prison",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Rivals strike back. So do investigators, courts, and prison.",
+    "generationSettings": {
+      "text": "Rivals strike back. So do investigators, courts, and prison.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/combat.png",
+      "public/art/cinematic-r4/captures/law.png",
+      "public/art/cinematic-r4/captures/prison.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L13.mp3",
+    "evidence": [
+      {
+        "id": "F25",
+        "mechanic": "Law pressure",
+        "status": "Implemented; Director use bounded",
+        "supportedClaim": "Heat, law and court systems exist. Director can observe authored pressure; it does not automatically summon an arrest for every suspicious event.",
+        "evidence": "`src/law.js`; NETWORK:25–29",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F55",
+        "primaryFilm": 1,
+        "mechanic": "PvP, hitmen, protection and loss",
+        "status": "Implemented",
+        "supportedClaim": "Rivalries, funded contracts, bodyguards, hospitalization and lethal loss affect what players risk. Loot moves existing assets.",
+        "evidence": "src/social.js; src/social/contracts.js; src/soldiers.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F60",
+        "primaryFilm": 1,
+        "mechanic": "Law, investigations, juries and counter-pressure",
+        "status": "Implemented",
+        "supportedClaim": "Heat and lawful consequences create costs and constraints; specified OMR services alter bounded conditions, never blanket immunity.",
+        "evidence": "src/law.js; src/rules.tail.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F91",
+        "primaryFilm": 1,
+        "mechanic": "The Pen and prison breaks",
+        "status": "Implemented",
+        "supportedClaim": "Jailed players have yard work, contraband, protection, guard bribes and eligible prison conflict; cooperative escape has its own participant conditions.",
+        "evidence": "src/pen.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F33",
+        "mechanic": "Bounties",
+        "status": "Implemented",
+        "supportedClaim": "Funded player/Family contracts, expiry/refund and claim rules. No invented automated AI assassination or fixed return.",
+        "evidence": "`README.md:110–112`; `src/social/contracts.js:15–19,114–139`",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B14",
+    "start": 52,
+    "end": 56,
+    "duration": 4,
+    "purpose": "One life. Real consequences.",
+    "visual": "Actual local game UI: estate",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Protection costs. Death can end a character.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Protection costs. Death can end a character.",
+    "caption": "Protection costs. Death can end a character.",
+    "uiOverlay": "Protection / death · Heirs / bloodlines",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Protection costs. Death can end a character.",
+    "generationSettings": {
+      "text": "Protection costs. Death can end a character.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/estate.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L14.mp3",
+    "evidence": [
+      {
+        "id": "F56",
+        "primaryFilm": 1,
+        "mechanic": "Death, heirs, bloodlines and legacy",
+        "status": "Implemented",
+        "supportedClaim": "Character death can destroy or redistribute character assets; account legacy, defined inheritance and vendettas persist. Not everything survives.",
+        "evidence": "src/social.js; src/bloodline.js; src/dynasty.js; src/estate.js",
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B15",
+    "start": 56,
+    "end": 60,
+    "duration": 4,
+    "purpose": "Leave a legacy.",
+    "visual": "Actual local game UI: deeds → estate",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Your heirs, deeds, and reputation carry the legacy.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Your heirs, deeds, and reputation carry the legacy.",
+    "caption": "Your heirs, deeds, and reputation carry the legacy.",
+    "uiOverlay": "Deeds / compounds · Honor / dynastic ties",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Your heirs, deeds, and reputation carry the legacy.",
+    "generationSettings": {
+      "text": "Your heirs, deeds, and reputation carry the legacy.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/deeds.png",
+      "public/art/cinematic-r4/captures/estate.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L15.mp3",
+    "evidence": [
+      {
+        "id": "F66",
+        "primaryFilm": 1,
+        "mechanic": "Street Deeds, compounds and collections",
+        "status": "Implemented; export gated",
+        "supportedClaim": "Mapped property, named deeds, compound status and collections support legacy. In-game ownership is not automatically extracted NFT custody.",
+        "evidence": "src/deeds.js; src/estate.js; src/collection.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F67",
+        "primaryFilm": 1,
+        "mechanic": "Dynastic ties and honor",
+        "status": "Implemented",
+        "supportedClaim": "Marriages, bloodline ties, public honor and sworn consequences survive or change under their own rules. Not invulnerability.",
+        "evidence": "src/dynasty.js; src/honor.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B16",
+    "start": 60,
+    "end": 64,
+    "duration": 4,
+    "purpose": "The season turns.",
+    "visual": "Actual local game UI: city",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Seasons reshape the city while players build monuments.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Seasons reshape the city while players build monuments.",
+    "caption": "Seasons reshape the city while players build monuments.",
+    "uiOverlay": "Seasons / megaprojects · Landmarks / collections",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Seasons reshape the city while players build monuments.",
+    "generationSettings": {
+      "text": "Seasons reshape the city while players build monuments.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/city.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L16-v2.mp3",
+    "evidence": [
+      {
+        "id": "F28",
+        "mechanic": "Seasonal systems",
+        "status": "Implemented; funding/chain gates separate",
+        "supportedClaim": "Existing rollover, modifiers, objectives/rewards. Do not promise a payout to all participants or assert new world pilots emit OMR.",
+        "evidence": "`src/worker.js`; `src/season.js`; `src/server.js:1940–1951`",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F68",
+        "primaryFilm": 1,
+        "mechanic": "City megaprojects",
+        "status": "Implemented",
+        "supportedClaim": "Players contribute actual cash, OMR or goods toward a bounded monument; completion and contributor records persist. OMR follows the recycle policy.",
+        "evidence": "src/megaproject.js; src/rules.tail.js DESK",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F96",
+        "primaryFilm": 1,
+        "mechanic": "Landmarks and named city history",
+        "status": "Implemented",
+        "supportedClaim": "Status dedications can change who is named on a city plaque; defined account history survives death. Spending follows global Desk recycling despite older burn comments.",
+        "evidence": "src/landmarks.js; src/rules.tail.js DESK",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B17",
+    "start": 64,
+    "end": 68,
+    "duration": 4,
+    "purpose": "The empire loop.",
+    "visual": "Labeled editorial diagram: EARN → EQUIP | COORDINATE → CONTROL | INCOME → UPKEEP → REINVEST",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Equip your Crew to take control and reinvest.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "Equip your Crew to take control and reinvest.",
+    "caption": "Equip your Crew to take control and reinvest.",
+    "uiOverlay": "Player choices drive the loop",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Equip your Crew to take control and reinvest.",
+    "generationSettings": {
+      "text": "Equip your Crew to take control and reinvest.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/family.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L17-v2.mp3",
+    "evidence": [
+      {
+        "id": "F48",
+        "mechanic": "Other current mechanics",
+        "status": "Implemented; per-system gates",
+        "supportedClaim": "Expanded below into individually assigned mechanic families; coverage means named or demonstrated, not every API endpoint explained.",
+        "evidence": "F49-F96 below",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "01",
+    "shot": "C1-B18",
+    "start": 68,
+    "end": 72,
+    "duration": 4,
+    "purpose": "Build something worth defending.",
+    "visual": "OMERTÀ wordmark and short CTA over genuine source image",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "OMERTÀ. Build something worth defending.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B99C60 accent",
+    "audio": "Original film 01 score and transition SFX; see audio-plan.md",
+    "dialogue": "OMERTÀ. Build something worth defending.",
+    "caption": "OMERTÀ. Build something worth defending.",
+    "uiOverlay": "",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Oh mare tah. Build something worth defending.",
+    "generationSettings": {
+      "text": "Oh mare tah. Build something worth defending.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/territory.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C01-L18.mp3",
+    "evidence": []
+  },
+  {
+    "film": "02",
+    "shot": "C2-B01",
+    "start": 0,
+    "end": 4.166666666666667,
+    "duration": 4.166666666666667,
+    "purpose": "Two currencies. Different jobs.",
+    "visual": "Actual local game UI: finance",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Game cash and OMR follow separate economic circuits.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Game cash and OMR follow separate economic circuits.",
+    "caption": "Game cash and OMR follow separate economic circuits.",
+    "uiOverlay": "Game cash ≠ OMR · ETH has separate custody",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Game cash and O M R follow separate economic circuits.",
+    "generationSettings": {
+      "text": "Game cash and O M R follow separate economic circuits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L01-v2.mp3",
+    "evidence": [
+      {
+        "id": "F29",
+        "mechanic": "OMR",
+        "status": "Implemented ledger; chain rails gated/dormant",
+        "supportedClaim": "OMR, internal gameplay cash and real ETH have distinct custody and purpose. Cash cannot buy OMR; the funded Window permits one-way OMR-to-game-cash redemption. DNR is separate again.",
+        "evidence": "src/economy.js swap; src/exchange.js redeem; src/chain.js; omerta-contracts/docs/market-v2/DESIGN.md",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B02",
+    "start": 4.166666666666667,
+    "end": 8.333333333333334,
+    "duration": 4.166666666666667,
+    "purpose": "A source for every token.",
+    "visual": "Actual local game UI: finance",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Defined missions and funded rewards put OMR in reach.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Defined missions and funded rewards put OMR in reach.",
+    "caption": "Defined missions and funded rewards put OMR in reach.",
+    "uiOverlay": "Missions / seasons / pass · Genesis / funded pools",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Defined missions and funded rewards put O M R in reach.",
+    "generationSettings": {
+      "text": "Defined missions and funded rewards put O M R in reach.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L02.mp3",
+    "evidence": [
+      {
+        "id": "F30",
+        "mechanic": "OMR sources",
+        "status": "Implemented/configured; economic and chain gates",
+        "supportedClaim": "Account-once mission rewards; fund-bounded daily completion transfers; backed prize/season/pass payments; eligible genesis drop; purchased Desk inventory; funded City distribution; PvP loot, loan collateral settlement and trades are transfers. No recurring Street Wage or referral OMR. World Graph operations do not mint OMR.",
+        "evidence": "src/growth.js; src/pass.js; src/drop.js; src/bank.js; src/desk.js; src/invariants.js; src/emission.js",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F85",
+        "primaryFilm": 2,
+        "mechanic": "Genesis, launch auction and community drop",
+        "status": "Implemented gated lifecycle",
+        "supportedClaim": "Auction/migration/oracle-warmup/live are explicit phases. Drop eligibility uses published allocation, wallet proof and bounded window. Do not splice launch-only minting into recurring economy claims.",
+        "evidence": "src/genesislaunch.js; src/genesiscca.js; src/drop.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F84",
+        "primaryFilm": 2,
+        "mechanic": "Store, PLEX and Season Pass",
+        "status": "Implemented; chain/payment gates",
+        "supportedClaim": "Mint is ETH-only or earned credit. Respawn and eligible Store items support OMR uses; the pass has specified status/consumable rewards and pool-backed OMR tiers.",
+        "evidence": "src/vig.js payPlex; src/store.js; src/pass.js; src/growth.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B03",
+    "start": 8.333333333333334,
+    "end": 12.5,
+    "duration": 4.166666666666666,
+    "purpose": "Utility creates demand.",
+    "visual": "Actual local game UI: store",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Spend on eligible gear, services, and upgrades.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Spend on eligible gear, services, and upgrades.",
+    "caption": "Spend on eligible gear, services, and upgrades.",
+    "uiOverlay": "Equipment / services · Made status / commitments",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Spend on eligible gear, services, and upgrades.",
+    "generationSettings": {
+      "text": "Spend on eligible gear, services, and upgrades.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/store.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L03-v2.mp3",
+    "evidence": [
+      {
+        "id": "F31",
+        "mechanic": "OMR sinks",
+        "status": "Implemented ledger paths",
+        "supportedClaim": "Most OMR spends RECYCLE to Desk inventory, then can be sold as existing inventory. Vanity, status, respec, counter-intelligence, eligible PLEX/Store uses, upgrades and specified services are not a universal deflationary burn. Withdrawal is the explicit recycle exclusion.",
+        "evidence": "src/desk.js:1-40; src/rules.tail.js:3508-3546; src/vig.js payPlex; src/store.js; src/vanity.js",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F71",
+        "primaryFilm": 2,
+        "mechanic": "OMR staking, commitments and Made status",
+        "status": "Implemented",
+        "supportedClaim": "Staking changes custody/exposure and supports status laddders. Optional time commitments alter effective stake. Personal yield is retired; locked stake is not immune to PvP loot.",
+        "evidence": "src/economy.js stake/lockStake/unstake; src/made.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B04",
+    "start": 12.5,
+    "end": 16.666666666666668,
+    "duration": 4.166666666666668,
+    "purpose": "Spend. Recycle. Recirculate.",
+    "visual": "Labeled editorial diagram: PLAYER OMR → ELIGIBLE SPEND | DESK INVENTORY | FUNDED INVENTORY SALE → PLAYER",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Eligible spending refills the Desk’s existing token inventory.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Eligible spending refills the Desk’s existing token inventory.",
+    "caption": "Eligible spending refills the Desk’s existing token inventory.",
+    "uiOverlay": "Existing inventory · No mint at resale",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Eligible spending refills the Desk’s existing token inventory.",
+    "generationSettings": {
+      "text": "Eligible spending refills the Desk’s existing token inventory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/desk.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L04-v2.mp3",
+    "evidence": [
+      {
+        "id": "F69",
+        "primaryFilm": 2,
+        "mechanic": "OMR spending -> Desk recycling -> sale",
+        "status": "Implemented; real ETH sale requires chain wiring",
+        "supportedClaim": "Specified spends move to a finite Desk shelf; sales transfer inventory to a buyer. No automatic burn, guaranteed revenue or mint.",
+        "evidence": "src/desk.js; src/game.js ledger; src/rules.tail.js DESK",
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B05",
+    "start": 16.666666666666668,
+    "end": 20.833333333333332,
+    "duration": 4.166666666666664,
+    "purpose": "One way. Funding required.",
+    "visual": "Labeled editorial diagram: PLAYER OMR | FUNDED WINDOW | GAME CASH — NO REVERSE ROUTE",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "The funded Window converts OMR to cash only.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "The funded Window converts OMR to cash only.",
+    "caption": "The funded Window converts OMR to cash only.",
+    "uiOverlay": "OMR → game cash · Cash cannot buy OMR",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "The funded Window converts O M R to cash only.",
+    "generationSettings": {
+      "text": "The funded Window converts O M R to cash only.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L05-v2.mp3",
+    "evidence": [
+      {
+        "id": "F70",
+        "primaryFilm": 2,
+        "mechanic": "One-way Window and city cash pool",
+        "status": "Implemented",
+        "supportedClaim": "OMR redemption draws game cash from a funded, capped pool. A dry pool refuses without taking OMR. Family share and Desk recycling are separate destinations.",
+        "evidence": "src/exchange.js; src/rules.tail.js EXCHANGE/FAMILY_YIELD",
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B06",
+    "start": 20.833333333333332,
+    "end": 25,
+    "duration": 4.166666666666668,
+    "purpose": "Funding sets the limit.",
+    "visual": "Actual local game UI: treasury",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+    "caption": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+    "uiOverlay": "Bank / Vig / community · City / Family funded pools",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+    "generationSettings": {
+      "text": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/treasury.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L06.mp3",
+    "evidence": [
+      {
+        "id": "F72",
+        "primaryFilm": 2,
+        "mechanic": "Vig, revenue buybacks and funded prizes",
+        "status": "Implemented; real swap/chain gates",
+        "supportedClaim": "Qualifying real revenue funds actual OMR buybacks; reserve and prize accounting are bounded by received assets. Source-specific splits apply; mint revenue is excluded from Vig.",
+        "evidence": "src/vig.js; src/fees.js; src/invariants.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F73",
+        "primaryFilm": 2,
+        "mechanic": "The Bank and activity-weighted City distribution",
+        "status": "Implemented; funding/chain gates",
+        "supportedClaim": "A designated protocol-profit leg buys OMR for qualified game activity distribution. It is not an unlimited faucet or a promised return. DNR/credit machinery is a separate denomination.",
+        "evidence": "src/bank.js; omerta-contracts/README.md",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F74",
+        "primaryFilm": 2,
+        "mechanic": "Family yield and community buybacks",
+        "status": "Implemented; source-specific activation",
+        "supportedClaim": "Seasonal standing distributes a funded OMR pool to Family reserves. Community revenue buybacks and Window cuts are distinct inflows. A Family reserve is not a personal ETH wallet.",
+        "evidence": "src/community.js; src/exchange.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F35",
+        "mechanic": "Treasuries",
+        "status": "Gameplay implemented; chain policy separate",
+        "supportedClaim": "Distinguish Family game-cash treasury, Family OMR reserve, protocol ETH/OMR reserves and RWA units. Game-cash contracts/upkeep use authorized Family funds. Standing-weighted Family OMR distributions use funded pools; Turf credits use their own chain rail.",
+        "evidence": "src/territory.js; src/social/contracts.js; src/exchange.js; src/community.js; omerta-contracts/docs/market-v2/DESIGN.md",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B07",
+    "start": 25,
+    "end": 28.766666666666666,
+    "duration": 3.7666666666666657,
+    "purpose": "The canonical market.",
+    "visual": "Labeled editorial diagram: CANONICAL ETH / OMR SWAP | 9% BASE SELL FEE | RECIPIENT BUCKETS",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Canonical sells route a nine-percent base fee.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Canonical sells route a nine-percent base fee.",
+    "caption": "Canonical sells route a nine-percent base fee.",
+    "uiOverlay": "Uniswap v4 / OMERTÀ Hook · Canonical pool policy",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Canonical sells route a nine-percent base fee.",
+    "generationSettings": {
+      "text": "Canonical sells route a nine-percent base fee.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/desk.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L07-v2.mp3",
+    "evidence": [
+      {
+        "id": "F37",
+        "mechanic": "Uniswap v4 / OMERTÀ Hook",
+        "status": "Implemented candidate, not established active",
+        "supportedClaim": "At the assumed full release, show the canonical Hook operating under L02. Use an actual settled receipt. Its POL fee allocation funds Core; designated seasonal Turf LP fees follow a separate bridge.",
+        "evidence": "`omerta-contracts/docs/market-v2/DESIGN.md`; `docs/WIKI.md`; deployment manifest",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F76",
+        "primaryFilm": 2,
+        "mechanic": "Hook fee routing and opening policy",
+        "status": "Implemented V2 candidate",
+        "supportedClaim": "Canonical pool sells have 9% base Hook fee split 2% developer / 1.6% RWA / 2.4% community / 3% POL; additional sell pressure is 0-1% to stability. Pool LP fees are extra; opening buy rules separate.",
+        "evidence": "omerta-contracts/src/market-v2/OmertaHookV2.sol; omerta-contracts/docs/market-v2/DESIGN.md",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B08",
+    "start": 28.766666666666666,
+    "end": 33.333333333333336,
+    "duration": 4.56666666666667,
+    "purpose": "Where the fee goes.",
+    "visual": "Labeled editorial diagram: 2% · Developer | 1.6% · RWA recipient | 2.4% · Community | 3% · POL → Core",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Fees support development, RWA, community, and liquidity.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Fees support development, RWA, community, and liquidity.",
+    "caption": "Fees support development, RWA, community, and liquidity.",
+    "uiOverlay": "0–1% extra stability charge · LP fee is additional",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Fees support development, R W A, community, and liquidity.",
+    "generationSettings": {
+      "text": "Fees support development, R W A, community, and liquidity.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/treasury.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L08-v3.mp3",
+    "evidence": [
+      {
+        "id": "F37",
+        "mechanic": "Uniswap v4 / OMERTÀ Hook",
+        "status": "Implemented candidate, not established active",
+        "supportedClaim": "At the assumed full release, show the canonical Hook operating under L02. Use an actual settled receipt. Its POL fee allocation funds Core; designated seasonal Turf LP fees follow a separate bridge.",
+        "evidence": "`omerta-contracts/docs/market-v2/DESIGN.md`; `docs/WIKI.md`; deployment manifest",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B09",
+    "start": 33.333333333333336,
+    "end": 37.5,
+    "duration": 4.166666666666664,
+    "purpose": "Core has limits.",
+    "visual": "Labeled editorial diagram: HOOK POL ALLOCATION → CORE | SEPARATE WAR CHEST BUDGET | FINITE ACTION / LIFETIME CAPACITY",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "That liquidity allocation funds Core. Stability uses finite reserves.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "That liquidity allocation funds Core. Stability uses finite reserves.",
+    "caption": "That liquidity allocation funds Core. Stability uses finite reserves.",
+    "uiOverlay": "Core / War Chest · Bounded keepers / arbitrage",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "That liquidity allocation funds Core. Stability uses finite reserves.",
+    "generationSettings": {
+      "text": "That liquidity allocation funds Core. Stability uses finite reserves.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L09.mp3",
+    "evidence": [
+      {
+        "id": "F36",
+        "mechanic": "Protocol-owned liquidity",
+        "status": "Deployed dormant legacy / V2 candidate",
+        "supportedClaim": "Protocol custody of liquidity. Under L02–L03, Core funding and separately configured seasonal Turf ranges operate; designated Turf LP fees can support Family credits while principal stays protocol-owned.",
+        "evidence": "`omerta-contracts/deployments/4663/manifest.json:3,255–262`; market-v2 design",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F77",
+        "primaryFilm": 2,
+        "mechanic": "Finite stability inventory and War Chest",
+        "status": "Implemented V2 candidate",
+        "supportedClaim": "Core, Lower Cushion/Garrison, Upper Cushion/Desk and Turf use separate bounded inventory. War Chest funds eligible regeneration; price recovery does not create reserves or guarantee a floor.",
+        "evidence": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol; omerta-contracts/docs/market-v2/DESIGN.md",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F80",
+        "primaryFilm": 2,
+        "mechanic": "Arbitrage and bounded keepers",
+        "status": "Implemented V2 candidate",
+        "supportedClaim": "Solver-bound commit/reveal cycles require actual realized profit and a configured reserve share. Keepers run bounded jobs; they are not autonomous player agents or guaranteed-profit bots.",
+        "evidence": "omerta-contracts/src/market-v2/OmertaArbitrageV2.sol; src/marketv2solver.js; src/marketv2keeper.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B10",
+    "start": 37.5,
+    "end": 41.666666666666664,
+    "duration": 4.166666666666664,
+    "purpose": "Liquidity has territory.",
+    "visual": "Labeled editorial diagram: DESIGNATED TURF LP FEES | FUNDED BRIDGE / CHECKPOINT | ENTITLED FAMILY CREDITS",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Families contest future funded fees in seasonal Turf.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Families contest future funded fees in seasonal Turf.",
+    "caption": "Families contest future funded fees in seasonal Turf.",
+    "uiOverlay": "Turf / syndicates · Prospective fee rights",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Families contest future funded fees in seasonal Turf.",
+    "generationSettings": {
+      "text": "Families contest future funded fees in seasonal Turf.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/territory.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L10-v2.mp3",
+    "evidence": [
+      {
+        "id": "F38",
+        "mechanic": "Liquidity territory",
+        "status": "Candidate/gated",
+        "supportedClaim": "Turf rights concern future funded LP fees, not withdrawal/ownership of pool principal. Keep this separate from game district control.",
+        "evidence": "`omerta-contracts/docs/market-v2/DESIGN.md:48,95–103`; `omerta-contracts/src/market-v2/OmertaTurfV2.sol:11–13`",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F78",
+        "primaryFilm": 2,
+        "mechanic": "Turf syndicates, sieges and seasonal rights",
+        "status": "Implemented V2 candidate; game integration assumed",
+        "supportedClaim": "Families or bounded syndicates can receive future funded lane fees. Atomic checkpoints separate old/new rights. Siege escrow follows configured allocation; principal remains protocol owned.",
+        "evidence": "omerta-contracts/src/market-v2/OmertaTurfV2.sol; OmertaGameSettlementV2.sol; OmertaTurfFeeBridgeV2.sol",
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B11",
+    "start": 41.666666666666664,
+    "end": 45.833333333333336,
+    "duration": 4.166666666666671,
+    "purpose": "Fee rights. Not the principal.",
+    "visual": "Labeled editorial diagram: SIEGE → ADJUDICATED OUTCOME | FUTURE FUNDED FEE RIGHTS | POOL PRINCIPAL → PROTOCOL",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Sieges allocate funded escrow while principal stays protocol-owned.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Sieges allocate funded escrow while principal stays protocol-owned.",
+    "caption": "Sieges allocate funded escrow while principal stays protocol-owned.",
+    "uiOverlay": "Funded siege escrow · Protocol custody stays",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Sieges allocate funded escrow while principal stays protocol-owned.",
+    "generationSettings": {
+      "text": "Sieges allocate funded escrow while principal stays protocol-owned.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/family.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L11-v2.mp3",
+    "evidence": [
+      {
+        "id": "F32",
+        "mechanic": "Escrow",
+        "status": "Implemented; new Family operations gated",
+        "supportedClaim": "Different custody systems: game-cash bounties/loans/Family-operation capital; OMR auction bids and collateral; item contributions; chain-funded Turf siege escrow. Never draw them as one interchangeable pot.",
+        "evidence": "src/social/contracts.js; src/loans.js; src/auction.js; src/operations.js; omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B12",
+    "start": 45.833333333333336,
+    "end": 50,
+    "duration": 4.166666666666664,
+    "purpose": "Inventory, not new supply.",
+    "visual": "Labeled editorial diagram: ETH PAYMENT | FUNDED OMR ENTITLEMENT | VESTED CLAIM",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Inventory bonds vest existing OMR. They do not mint more.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Inventory bonds vest existing OMR. They do not mint more.",
+    "caption": "Inventory bonds vest existing OMR. They do not mint more.",
+    "uiOverlay": "Prefunded OMR · Linear vesting",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Inventory bonds vest existing O M R. They do not mint more.",
+    "generationSettings": {
+      "text": "Inventory bonds vest existing O M R. They do not mint more.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/desk.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L12.mp3",
+    "evidence": [
+      {
+        "id": "F34",
+        "mechanic": "Bonds",
+        "status": "Legacy deployed dormant / V2 candidate",
+        "supportedClaim": "Use Market V2 inventory bonds in the future release: ETH purchases existing prefunded OMR with bounded terms and linear vesting. They cannot mint OMR. Legacy OmertaBond minting is a separate dormant design and must not be spliced into this flow.",
+        "evidence": "src/bonds.js; omerta-contracts/docs/market-v2/DESIGN.md; omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B13",
+    "start": 50,
+    "end": 54.166666666666664,
+    "duration": 4.166666666666664,
+    "purpose": "Commit a position.",
+    "visual": "Labeled editorial diagram: QUALIFYING LP POSITION | FINITE COMMITMENT | PREFUNDED REWARD CAMPAIGN",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Liquidity commitments lock positions against prefunded campaign rewards.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Liquidity commitments lock positions against prefunded campaign rewards.",
+    "caption": "Liquidity commitments lock positions against prefunded campaign rewards.",
+    "uiOverlay": "Position NFT custody · Mature exit independent",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Liquidity commitments lock positions against prefunded campaign rewards.",
+    "generationSettings": {
+      "text": "Liquidity commitments lock positions against prefunded campaign rewards.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L13.mp3",
+    "evidence": [
+      {
+        "id": "F79",
+        "primaryFilm": 2,
+        "mechanic": "Player LP NFT commitments",
+        "status": "Implemented V2 candidate",
+        "supportedClaim": "Canonical PositionManager NFT is held for a finite commitment; funded campaigns use sampled qualifying depth. Maturity exit is independent of reward availability.",
+        "evidence": "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B14",
+    "start": 54.166666666666664,
+    "end": 58.333333333333336,
+    "duration": 4.166666666666671,
+    "purpose": "Ownership has rules.",
+    "visual": "Actual local game UI: chain → garage → deeds",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Eligible assets use distinct onchain ownership rails.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Eligible assets use distinct onchain ownership rails.",
+    "caption": "Eligible assets use distinct onchain ownership rails.",
+    "uiOverlay": "Identity / gear / vehicles · Withdrawal / backing",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Eligible assets use distinct onchain ownership rails.",
+    "generationSettings": {
+      "text": "Eligible assets use distinct onchain ownership rails.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/chain.png",
+      "public/art/cinematic-r4/captures/garage.png",
+      "public/art/cinematic-r4/captures/deeds.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L14-v2.mp3",
+    "evidence": [
+      {
+        "id": "F39",
+        "mechanic": "NFT-compatible / provenanced items",
+        "status": "Provenance implemented; export readiness distinct",
+        "supportedClaim": "Item compatibility is specific. Cars/boats use deterministic OMR rarity upgrades and eligible GearVault extraction; equipment has capped mint rails. The Canal Cargo Seal is explicitly non-exportable.",
+        "evidence": "src/nft.js; src/chain.js; src/content/campaign-network.js; omerta-contracts/src/GearVault.sol",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F40",
+        "mechanic": "NFT rails",
+        "status": "Deployed/gated, not universal item ownership",
+        "supportedClaim": "Identity NFT, eligible gear/car/boat NFTs and Street Deed NFTs are different objects with different rights. An extracted Street Deed can have a token-bound account. Holding identity alone does not confer every entitlement.",
+        "evidence": "src/nft.js; src/deeds.js; src/stockdeliver.js; omerta-contracts/DEPLOYMENT.md",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F42",
+        "mechanic": "Onchain settlement",
+        "status": "Implemented/devnet proof; dormant manifest",
+        "supportedClaim": "Wallet/voucher/watcher paths exist. Requires configured, funded, activated rails; in-game event persistence is not a blockchain transaction.",
+        "evidence": "`README.md:31–48,76–80`; deployment manifest",
+        "primaryFilm": 2,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F75",
+        "primaryFilm": 2,
+        "mechanic": "Withdrawal, backing and settlement",
+        "status": "Implemented; chain gates",
+        "supportedClaim": "Link an authorized wallet; reserve-backed withdrawal/voucher rails and confirmation apply. In-game OMR debits pair with hard token release; do not recycle withdrawn units.",
+        "evidence": "src/chain.js; src/watcher.js; src/defi.js; src/rules.tail.js DESK.NOT_RECYCLED",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B15",
+    "start": 58.333333333333336,
+    "end": 62.5,
+    "duration": 4.166666666666664,
+    "purpose": "Real assets. Specific rails.",
+    "visual": "Actual local game UI: brokers → deeds",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+    "caption": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+    "uiOverlay": "Brokers / acquired units · Street Deed delivery",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Approved R W A acquisitions can reach eligible Street Deed vaults.",
+    "generationSettings": {
+      "text": "Approved R W A acquisitions can reach eligible Street Deed vaults.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/brokers.png",
+      "public/art/cinematic-r4/captures/deeds.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L15.mp3",
+    "evidence": [
+      {
+        "id": "F41",
+        "mechanic": "RWA integrations",
+        "status": "Implemented bounded acquisition/allocation/delivery machinery; chain and compliance/activation gates; production operation unverified",
+        "supportedClaim": "Approved real acquisitions can fund activity-weighted Brokers allocations for eligible NFT holders. Eligible extracted Street Deeds provide the ERC-6551 delivery target. Allocation is not delivery. The old fictional ticker Portfolio is retired; the ETH Vault is allocation-only and separate. Include in future-release film only with actual activated rail/capture, never fabricated stock performance.",
+        "evidence": "src/brokers.js:1-27; src/treasury.js:1-44; src/stockdeliver.js:1-47; src/rwastockkeeper.js; src/stockcatalogv2.js; src/portfolio.js",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F81",
+        "primaryFilm": 2,
+        "mechanic": "RWA Brokers activation and acquisition",
+        "status": "Implemented; gated",
+        "supportedClaim": "Eligible activity/activation weights allocate actual acquired approved units. Ballot, registry, buyer and custody restrictions apply. No price appreciation or yield promise.",
+        "evidence": "src/brokers.js; src/treasury.js; src/rwastockkeeper.js; src/stockcatalogv2.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F82",
+        "primaryFilm": 2,
+        "mechanic": "Street Deed RWA delivery",
+        "status": "Implemented; chain dormant",
+        "supportedClaim": "Acquired and allocated eligible units can be delivered into the eligible extracted Street Deed token-bound account. No extracted deed means allocation waits; delivery is a separate confirmed act.",
+        "evidence": "src/stockdeliver.js; src/deeds.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B16",
+    "start": 62.5,
+    "end": 66.66666666666667,
+    "duration": 4.166666666666671,
+    "purpose": "Three different steps.",
+    "visual": "Labeled editorial diagram: ACQUIRE APPROVED REAL UNITS | ALLOCATE TO ELIGIBLE PLAYERS | DELIVER TO ELIGIBLE DEED VAULT",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Acquisition, allocation, and delivery each have separate rules.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Acquisition, allocation, and delivery each have separate rules.",
+    "caption": "Acquisition, allocation, and delivery each have separate rules.",
+    "uiOverlay": "ETH Vault: allocation only · No automatic universal claim",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Acquisition, allocation, and delivery each have separate rules.",
+    "generationSettings": {
+      "text": "Acquisition, allocation, and delivery each have separate rules.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/deeds.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L16-v2.mp3",
+    "evidence": [
+      {
+        "id": "F83",
+        "primaryFilm": 2,
+        "mechanic": "ETH Vault allocation",
+        "status": "Implemented accounting; delivery absent by design",
+        "supportedClaim": "Spending specified OMR can allocate ETH already held; this ledger does not transfer ETH to a player. Keep separate from RWA stock delivery and token withdrawals.",
+        "evidence": "src/treasury.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B17",
+    "start": 66.66666666666667,
+    "end": 70.83333333333333,
+    "duration": 4.166666666666657,
+    "purpose": "Source. Cost. Custody.",
+    "visual": "Actual local game UI: finance",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Every balance has a source. Every move has a cost.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "Every balance has a source. Every move has a cost.",
+    "caption": "Every balance has a source. Every move has a cost.",
+    "uiOverlay": "Cash / OMR / ETH / RWA · Separate balances and rules",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Every balance has a source. Every move has a cost.",
+    "generationSettings": {
+      "text": "Every balance has a source. Every move has a cost.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/finance.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L17.mp3",
+    "evidence": [
+      {
+        "id": "F29",
+        "mechanic": "OMR",
+        "status": "Implemented ledger; chain rails gated/dormant",
+        "supportedClaim": "OMR, internal gameplay cash and real ETH have distinct custody and purpose. Cash cannot buy OMR; the funded Window permits one-way OMR-to-game-cash redemption. DNR is separate again.",
+        "evidence": "src/economy.js swap; src/exchange.js redeem; src/chain.js; omerta-contracts/docs/market-v2/DESIGN.md",
+        "primaryFilm": 2,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "02",
+    "shot": "C2-B18",
+    "start": 70.83333333333333,
+    "end": 75,
+    "duration": 4.166666666666671,
+    "purpose": "The economy has territory.",
+    "visual": "OMERTÀ wordmark and short CTA over genuine source image",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "OMERTÀ. The economy has territory.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #AABBAE accent",
+    "audio": "Original film 02 score and transition SFX; see audio-plan.md",
+    "dialogue": "OMERTÀ. The economy has territory.",
+    "caption": "OMERTÀ. The economy has territory.",
+    "uiOverlay": "",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Oh mare tah. The economy has territory.",
+    "generationSettings": {
+      "text": "Oh mare tah. The economy has territory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/territory.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C02-L18.mp3",
+    "evidence": []
+  },
+  {
+    "film": "03",
+    "shot": "C3-B01",
+    "start": 0,
+    "end": 4,
+    "duration": 4,
+    "purpose": "Somebody knows.",
+    "visual": "Actual local game UI: evidence",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "In this city, what you know changes everything.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "In this city, what you know changes everything.",
+    "caption": "In this city, what you know changes everything.",
+    "uiOverlay": "Mysteries / hidden information",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "In this city, what you know changes everything.",
+    "generationSettings": {
+      "text": "In this city, what you know changes everything.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/evidence.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L01-v2.mp3",
+    "evidence": [
+      {
+        "id": "F20",
+        "mechanic": "Mysteries",
+        "status": "Gated bounded content",
+        "supportedClaim": "Investigations use actual knowledge, item provenance, location and operation receipts; evidence can reveal an irreversible branch. Not an endless procedural murder generator.",
+        "evidence": "CORE:120–154; NETSRC:88–121",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F22",
+        "mechanic": "Asymmetric information",
+        "status": "Gated",
+        "supportedClaim": "Own/private/shared/public views differ; hidden requirements stay hidden. A public object does not expose its private past.",
+        "evidence": "DIRECTOR:55; FEED:18–32",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B02",
+    "start": 4,
+    "end": 8,
+    "duration": 4,
+    "purpose": "A shipment. An investigation.",
+    "visual": "Actual local game UI: cases",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "A missing shipment becomes an investigation.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "A missing shipment becomes an investigation.",
+    "caption": "A missing shipment becomes an investigation.",
+    "uiOverlay": "Campaign Network · Actual prerequisites",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "A missing shipment becomes an investigation.",
+    "generationSettings": {
+      "text": "A missing shipment becomes an investigation.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/cases.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L02.mp3",
+    "evidence": [
+      {
+        "id": "F04",
+        "mechanic": "Campaign Network",
+        "status": "Gated",
+        "supportedClaim": "Missing Shipment → diverted depot → Black Market → exposure → Informant is implemented. Branches require actual prerequisites.",
+        "evidence": "NETWORK:3–17; RC1:59–66",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B03",
+    "start": 8,
+    "end": 12,
+    "duration": 4,
+    "purpose": "Everything connects.",
+    "visual": "Actual local game UI: case-detail",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Clues connect people, places, objects, and history.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Clues connect people, places, objects, and history.",
+    "caption": "Clues connect people, places, objects, and history.",
+    "uiOverlay": "World Graph · People / places / objects",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Clues connect people, places, objects, and history.",
+    "generationSettings": {
+      "text": "Clues connect people, places, objects, and history.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/case-detail.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L03-v2.mp3",
+    "evidence": [
+      {
+        "id": "F02",
+        "mechanic": "World Graph",
+        "status": "Gated; component-ready",
+        "supportedClaim": "Connects actual player, Crew, Family, territory, inventory, information and operations. Translate as “the city remembers” for committed world changes, not omniscience.",
+        "evidence": "CORE:16–29,33–45",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B04",
+    "start": 12,
+    "end": 16,
+    "duration": 4,
+    "purpose": "Your view is personal.",
+    "visual": "Actual local game UI: knowledge",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Your view is personal. Private intelligence stays private.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Your view is personal. Private intelligence stays private.",
+    "caption": "Your view is personal. Private intelligence stays private.",
+    "uiOverlay": "Own / shared / public · Permission boundaries",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Your view is personal. Private intelligence stays private.",
+    "generationSettings": {
+      "text": "Your view is personal. Private intelligence stays private.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/knowledge.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L04.mp3",
+    "evidence": [
+      {
+        "id": "F23",
+        "mechanic": "Knowledge systems",
+        "status": "Gated",
+        "supportedClaim": "Authentic discoveries and deliberate sharing grant access; revocation or membership loss can remove it. No AI access to all secrets.",
+        "evidence": "CORE:25,144; FEED:26–31",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B05",
+    "start": 16,
+    "end": 20,
+    "duration": 4,
+    "purpose": "Two originals. One connection.",
+    "visual": "Actual local game UI: evidence",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Find original evidence from two independent sources.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Find original evidence from two independent sources.",
+    "caption": "Find original evidence from two independent sources.",
+    "uiOverlay": "Independent sources · Evidence / provenance",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Find original evidence from two independent sources.",
+    "generationSettings": {
+      "text": "Find original evidence from two independent sources.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/evidence.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L05-v2.mp3",
+    "evidence": [
+      {
+        "id": "F21",
+        "mechanic": "Evidence",
+        "status": "Gated",
+        "supportedClaim": "Independent original evidence can corroborate a public disclosure. Duplicate forwarded claims do not become independent proof.",
+        "evidence": "NETSRC:122–132; CORE:25,144",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F86",
+        "primaryFilm": 3,
+        "mechanic": "Investigation evidence and independent corroboration",
+        "status": "Gated world systems",
+        "supportedClaim": "Evidence unlocks bounded conclusions; duplicate screenshots are not independent proof. Supported disclosure history is not a psychic verdict of betrayal.",
+        "evidence": "src/mysteries.js; src/world-knowledge.js; src/content/campaign-network.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B06",
+    "start": 20,
+    "end": 24,
+    "duration": 4,
+    "purpose": "A rumor is not proof.",
+    "visual": "Actual local game UI: knowledge",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Share knowledge carefully: forwarded rumors are not proof.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Share knowledge carefully: forwarded rumors are not proof.",
+    "caption": "Share knowledge carefully: forwarded rumors are not proof.",
+    "uiOverlay": "Knowledge sharing · Disclosure ≠ guilt",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Share knowledge carefully: forwarded rumors are not proof.",
+    "generationSettings": {
+      "text": "Share knowledge carefully: forwarded rumors are not proof.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/knowledge.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L06-v2.mp3",
+    "evidence": [
+      {
+        "id": "F23",
+        "mechanic": "Knowledge systems",
+        "status": "Gated",
+        "supportedClaim": "Authentic discoveries and deliberate sharing grant access; revocation or membership loss can remove it. No AI access to all secrets.",
+        "evidence": "CORE:25,144; FEED:26–31",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F47",
+        "mechanic": "Betrayal / social history",
+        "status": "Events implemented; guilt inference unsupported",
+        "supportedClaim": "A participant notebook can prove their own disclosure action; it does not establish whether it was authorized or betrayal. No psychic rat detection.",
+        "evidence": "NETSRC:107,120,166–173; NETWORK:13–15",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B07",
+    "start": 24,
+    "end": 28,
+    "duration": 4,
+    "purpose": "Preparation matters.",
+    "visual": "Actual local game UI: crafting → inventory",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Bring recipes and tools to the right facility.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Bring recipes and tools to the right facility.",
+    "caption": "Bring recipes and tools to the right facility.",
+    "uiOverlay": "Facilities / recipe access · Tools / materials",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Bring recipes and tools to the right facility.",
+    "generationSettings": {
+      "text": "Bring recipes and tools to the right facility.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/crafting.png",
+      "public/art/cinematic-r4/captures/inventory.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L07-v2.mp3",
+    "evidence": [
+      {
+        "id": "F17",
+        "mechanic": "Facilities",
+        "status": "Gated bounded content",
+        "supportedClaim": "Foundry Archive and Canal Supply Depot have states, location, requirements and control. Not an unlimited facility-building sandbox.",
+        "evidence": "CORE:21–23,41; NETSRC:81–87",
+        "primaryFilm": 1,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B08",
+    "start": 28,
+    "end": 32,
+    "duration": 4,
+    "purpose": "Different players. Different pieces.",
+    "visual": "Actual local game UI: coordination",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Bring equipment while another player brings the intelligence.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Bring equipment while another player brings the intelligence.",
+    "caption": "Bring equipment while another player brings the intelligence.",
+    "uiOverlay": "Roles / contributions · Items / knowledge",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Bring equipment while another player brings the intelligence.",
+    "generationSettings": {
+      "text": "Bring equipment while another player brings the intelligence.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/coordination.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L08-v2.mp3",
+    "evidence": [
+      {
+        "id": "F07",
+        "mechanic": "Coordination Engine",
+        "status": "Gated",
+        "supportedClaim": "Family operations implement roles, promises versus contributions, knowledge, escrow, approval and resolution. Old Phase 0-only README is superseded by the newer component record.",
+        "evidence": "CORE:78–90",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B09",
+    "start": 32,
+    "end": 36,
+    "duration": 4,
+    "purpose": "Authority matters.",
+    "visual": "Actual local game UI: roles → family",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Crew roles and Family authority decide who can act.",
+    "environment": "Real repository game interface",
+    "camera": "spin entrance; each capture receives a separate slow pan; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Crew roles and Family authority decide who can act.",
+    "caption": "Crew roles and Family authority decide who can act.",
+    "uiOverlay": "Crew participation · Family authorization",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Crew roles and Family authority decide who can act.",
+    "generationSettings": {
+      "text": "Crew roles and Family authority decide who can act.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/roles.png",
+      "public/art/cinematic-r4/captures/family.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L09.mp3",
+    "evidence": [
+      {
+        "id": "F46",
+        "mechanic": "Human approval",
+        "status": "Implemented boundaries",
+        "supportedClaim": "New player commands revalidate confirmation/authorization; local adviser proposals need human confirmation; contributions require each owner. No officer/AI silently spends a teammate's inventory.",
+        "evidence": "CMD:19,27–38; CORE:82–86; LOCAL capabilities:48–52",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B10",
+    "start": 36,
+    "end": 40,
+    "duration": 4,
+    "purpose": "An interface into the city.",
+    "visual": "Actual local game UI: consigliere",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "An Agent can read permitted context and propose a move.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.34,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "An Agent can read permitted context and propose a move.",
+    "caption": "An Agent can read permitted context and propose a move.",
+    "uiOverlay": "Agents / Consigliere · Permitted context only",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "An Agent can read permitted context and propose a move.",
+    "generationSettings": {
+      "text": "An Agent can read permitted context and propose a move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/consigliere.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L10.mp3",
+    "evidence": [
+      {
+        "id": "F43",
+        "mechanic": "AI Agents / Agent Turn",
+        "status": "Implemented, bounded",
+        "supportedClaim": "Can expose permitted state and allowed actions. Deep City exploration is read-only; World Graph actions are excluded from autonomous Agent Act.",
+        "evidence": "`src/agentgateway.js:1705–1707,1725–1727`",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F44",
+        "mechanic": "Consigliere adviser",
+        "status": "LOCAL experimental",
+        "supportedClaim": "Scoped adviser, staged proposals and official human confirmation. Not proved deployed/integrated at inspection; L04 explicitly assumes the same released world/command integration for the launch film. No specific Muse interoperability claim.",
+        "evidence": "LOCAL `docs/agent-gateway-capabilities.md:11–31,48–52`; `docs/agent-gateway-review/README.md:95–101`",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F87",
+        "primaryFilm": 3,
+        "mechanic": "Agent interface and human authority",
+        "status": "Implemented bounded gateway; adviser prototype",
+        "supportedClaim": "Agents see permitted context and allowed actions. Adviser proposes; consequential authorized commands require the real confirmation path. Existing scoped agent automation has its own limited action set.",
+        "evidence": "src/agentgateway.js; src/agentturn.js; LOCAL docs/agent-gateway-capabilities.md",
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B11",
+    "start": 40,
+    "end": 44,
+    "duration": 4,
+    "purpose": "Automation has limits.",
+    "visual": "Actual local game UI: approval",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Consequential proposals still need your approval.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Consequential proposals still need your approval.",
+    "caption": "Consequential proposals still need your approval.",
+    "uiOverlay": "Scoped automation · No unrestricted wallet control",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Consequential proposals still need your approval.",
+    "generationSettings": {
+      "text": "Consequential proposals still need your approval.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/approval.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L11-v3.mp3",
+    "evidence": [
+      {
+        "id": "F45",
+        "mechanic": "Autonomous / semi-autonomous agents",
+        "status": "Bounded implementation",
+        "supportedClaim": "Agent Alpha has limited permitted actions; excludes wallet, mint, withdrawal, PvP and borrowing automation. Do not label all agent actions approval-per-click if bounded automation exists.",
+        "evidence": "`src/agentgateway.js:1705–1707`; LOCAL gateway capabilities",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B12",
+    "start": 44,
+    "end": 48,
+    "duration": 4,
+    "purpose": "You make the move.",
+    "visual": "Actual local game UI: approval",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "You confirm. The server checks authority and resources again.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "You confirm. The server checks authority and resources again.",
+    "caption": "You confirm. The server checks authority and resources again.",
+    "uiOverlay": "Player Commands · Human confirmation",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "You confirm. The server checks authority and resources again.",
+    "generationSettings": {
+      "text": "You confirm. The server checks authority and resources again.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/approval.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L12.mp3",
+    "evidence": [
+      {
+        "id": "F06",
+        "mechanic": "Player Commands",
+        "status": "Gated; component-ready",
+        "supportedClaim": "Player chooses server-issued actions; current authority and requirements are checked at execution; consequential actions show confirmation.",
+        "evidence": "CMD:7–38",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F46",
+        "mechanic": "Human approval",
+        "status": "Implemented boundaries",
+        "supportedClaim": "New player commands revalidate confirmation/authorization; local adviser proposals need human confirmation; contributions require each owner. No officer/AI silently spends a teammate's inventory.",
+        "evidence": "CMD:19,27–38; CORE:82–86; LOCAL capabilities:48–52",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B13",
+    "start": 48,
+    "end": 52,
+    "duration": 4,
+    "purpose": "The city keeps the consequence.",
+    "visual": "Actual local game UI: history",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "The operation changes the world. Its receipt becomes history.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "The operation changes the world. Its receipt becomes history.",
+    "caption": "The operation changes the world. Its receipt becomes history.",
+    "uiOverlay": "Committed state / history · Visibility-filtered records",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "The operation changes the world. Its receipt becomes history.",
+    "generationSettings": {
+      "text": "The operation changes the world. Its receipt becomes history.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/history.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L13.mp3",
+    "evidence": [
+      {
+        "id": "F26",
+        "mechanic": "Dynamic world state",
+        "status": "Gated persistent objects",
+        "supportedClaim": "Actions commit state and events together. Distinct recovery/interception/destruction/exposure outcomes persist.",
+        "evidence": "CORE:21–23; NETWORK:11–15",
+        "primaryFilm": 3,
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F27",
+        "mechanic": "Persistent consequences",
+        "status": "Gated; demonstrated in seeded journeys",
+        "supportedClaim": "History survives restart/replay; UI filters visibility. “Remembers this consequence,” not “remembers every betrayal forever.” Some tested branches did not produce follow-up opportunities.",
+        "evidence": "RC1:59–66,85–97; FEED:18–46",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      },
+      {
+        "id": "F88",
+        "primaryFilm": 3,
+        "mechanic": "Notifications, social memory and public records",
+        "status": "Implemented; new world projections gated",
+        "supportedClaim": "Feeds, city records, player discoveries and authorized activity views show committed changes without exposing every private action.",
+        "evidence": "src/citywire.js; src/streets.js; src/phone.js; src/world-projection.js; src/world-consequences.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B14",
+    "start": 52,
+    "end": 56,
+    "duration": 4,
+    "purpose": "A world that reacts.",
+    "visual": "Labeled editorial diagram: CANONICAL WORLD CONDITIONS | ELIGIBLE AUTHORED SITUATION | PERSISTENT CONSEQUENCE",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "The Director responds to real conditions with authored situations.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "spin entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "The Director responds to real conditions with authored situations.",
+    "caption": "The Director responds to real conditions with authored situations.",
+    "uiOverlay": "Living World Director · Conditions → authored response",
+    "transition": "spin",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "The Director responds to real conditions with authored situations.",
+    "generationSettings": {
+      "text": "The Director responds to real conditions with authored situations.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/city.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L14.mp3",
+    "evidence": [
+      {
+        "id": "F03",
+        "mechanic": "Living World Director",
+        "status": "Gated",
+        "supportedClaim": "Observes canonical conditions, selects authored situations, tracks committed consequences. Cannot invent evidence/assets, resolve an operation or move money. No generative infinite story claim.",
+        "evidence": "DIRECTOR:7–11,27–35; `src/director/config.js:19–25`",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B15",
+    "start": 56,
+    "end": 60,
+    "duration": 4,
+    "purpose": "One event opens another.",
+    "visual": "Labeled editorial diagram: SHIPMENT DIVERTED | CANAL MARKET ESTABLISHED | EXPOSURE → INFORMANT CASE",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Divert cargo; exposure can trigger a new case.",
+    "environment": "Editorial explanation of full-release system",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Divert cargo; exposure can trigger a new case.",
+    "caption": "Divert cargo; exposure can trigger a new case.",
+    "uiOverlay": "A supported campaign branch · Prerequisites still apply",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Divert cargo; exposure can trigger a new case.",
+    "generationSettings": {
+      "text": "Divert cargo; exposure can trigger a new case.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/cases.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L15-v2.mp3",
+    "evidence": [
+      {
+        "id": "F04",
+        "mechanic": "Campaign Network",
+        "status": "Gated",
+        "supportedClaim": "Missing Shipment → diverted depot → Black Market → exposure → Informant is implemented. Branches require actual prerequisites.",
+        "evidence": "NETWORK:3–17; RC1:59–66",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B16",
+    "start": 60,
+    "end": 64,
+    "duration": 4,
+    "purpose": "Your next opening.",
+    "visual": "Actual local game UI: cases",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Opportunities connect the next move to what actually happened.",
+    "environment": "Real repository game interface",
+    "camera": "scope entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Opportunities connect the next move to what actually happened.",
+    "caption": "Opportunities connect the next move to what actually happened.",
+    "uiOverlay": "Opportunity feed · Available / authorized moves",
+    "transition": "scope",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Opportunities connect the next move to what actually happened.",
+    "generationSettings": {
+      "text": "Opportunities connect the next move to what actually happened.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/cases.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L16.mp3",
+    "evidence": [
+      {
+        "id": "F05",
+        "mechanic": "Opportunities",
+        "status": "Gated",
+        "supportedClaim": "Prioritized, authorized next moves with known preparation, collaborators and genuine deadlines. Hidden work is not leaked; “related business” is not always proven causation.",
+        "evidence": "FEED:3–17,39–46",
+        "primaryFilm": 3,
+        "coverage": "spoken causal beat plus genuine UI"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B17",
+    "start": 64,
+    "end": 68,
+    "duration": 4,
+    "purpose": "Information is power.",
+    "visual": "Actual local game UI: wire",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "Secrets and alliances give your decisions lasting weight.",
+    "environment": "Real repository game interface",
+    "camera": "snap entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "Secrets and alliances give your decisions lasting weight.",
+    "caption": "Secrets and alliances give your decisions lasting weight.",
+    "uiOverlay": "Wire / secrets / blackmail · Clue scrolls / social history",
+    "transition": "snap",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Secrets and alliances give your decisions lasting weight.",
+    "generationSettings": {
+      "text": "Secrets and alliances give your decisions lasting weight.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/wire.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L17-v2.mp3",
+    "evidence": [
+      {
+        "id": "F92",
+        "primaryFilm": 3,
+        "mechanic": "The Wire: intelligence and counter-intelligence",
+        "status": "Implemented",
+        "supportedClaim": "Specific game surveillance, sweeps, dossiers, informants and feed access expose only the game information those systems authorize; no access to off-platform private communications.",
+        "evidence": "src/wire.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F93",
+        "primaryFilm": 3,
+        "mechanic": "Secrets and blackmail",
+        "status": "Implemented",
+        "supportedClaim": "Discover held game secrets, demand hush payments or expose under the system rules. Distinguish real game evidence from disinformation. This does not make adviser deductions omniscient.",
+        "evidence": "src/secrets.js; src/wire.js",
+        "coverage": "supporting screenshot / short label"
+      },
+      {
+        "id": "F94",
+        "primaryFilm": 3,
+        "mechanic": "Clue scrolls and treasure trails",
+        "status": "Implemented",
+        "supportedClaim": "A qualifying crime drop can begin a multi-step district/time riddle trail leading to its specified casket. Separate from World Graph campaign mysteries.",
+        "evidence": "src/clues.js",
+        "coverage": "supporting screenshot / short label"
+      }
+    ]
+  },
+  {
+    "film": "03",
+    "shot": "C3-B18",
+    "start": 68,
+    "end": 72,
+    "duration": 4,
+    "purpose": "Know more. Move together.",
+    "visual": "OMERTÀ wordmark and short CTA over genuine source image",
+    "character": "Synthetic local preview account; no generated actor",
+    "action": "OMERTÀ. Know more. Move together.",
+    "environment": "Real repository game interface",
+    "camera": "pan entrance; slow pan / push-in; focus {\"x\":0.505,\"y\":0.52,\"scale\":1.04}",
+    "lighting": "Preserve source art; black and ivory with #B25243 accent",
+    "audio": "Original film 03 score and transition SFX; see audio-plan.md",
+    "dialogue": "OMERTÀ. Know more. Move together.",
+    "caption": "OMERTÀ. Know more. Move together.",
+    "uiOverlay": "",
+    "transition": "pan",
+    "falModel": "fal-ai/minimax/speech-02-hd",
+    "generationPrompt": "Oh mare tah. Know more. Move together.",
+    "generationSettings": {
+      "text": "Oh mare tah. Know more. Move together.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "negativePrompt": null,
+    "failureConditions": "Reject cut-off speech, changed words, missing source UI, invented controls, crossed custody paths, illegible essential labels, unverified launch claims or copyrighted third-party meme assets. No synthetic video prompt is used.",
+    "referenceAssetsRequired": [
+      "public/art/cinematic-r4/captures/history.png"
+    ],
+    "selectedNarrationAsset": "public/art/cinematic-r4/audio/C03-L18.mp3",
+    "evidence": []
+  }
+]

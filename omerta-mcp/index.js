@@ -128,6 +128,7 @@ const TOOLS = [
       properties: {
         name: { type: 'string', description: 'Character name to create (2–24 chars, unique among the living). Omit to only authenticate.' },
         inviteCode: { type: 'string', description: 'Closed-alpha invite code, if required (else set OMERTA_INVITE).' },
+        birthDate: { type: 'string', description: 'Human operator birth date YYYY-MM-DD, required only for a new account; checked without storage. Never infer or invent it.' },
         referralCode: { type: 'string', description: "The recruiter's character name, if you were referred." },
         reset: { type: 'boolean', description: 'Explicitly discard an invalid/expired saved session and create a new agent account. Never use this to farm accounts.' },
       },
@@ -225,7 +226,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
           status: session.status, body: session.body });
       }
       const invite = args.inviteCode || process.env.OMERTA_INVITE;
-      const guest = await api('POST', '/v1/auth/guest', invite ? { inviteCode: invite } : {});
+      const guest = await api('POST', '/v1/auth/guest', { ...(invite ? { inviteCode: invite } : {}), ...(args.birthDate ? { birthDate: args.birthDate } : {}) });
       if (guest.status !== 200 || !guest.body?.token) return ok({ step: 'guest', ...guest });
       token = guest.body.token;
       const key = await api('POST', '/v1/auth/agent-key', {});

@@ -1,0 +1,168 @@
+{
+  "baseline": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "phase": "local pre-release implementation verification",
+  "createdAt": "2026-09-21T05:27:07.006Z",
+  "note": "Exact working-tree bytes, not a deployment or git commit. SPEC.md also contains a preserved preexisting contracts row. Unrelated docs/release work is excluded. Individual retained review checkpoints have their own earlier hashes.",
+  "files": [
+    {
+      "file": ".gitignore",
+      "sha256": "d367fac99ef82444f57c289f08b4fc90f1c4246d6716964ea4f6b1862010a14b"
+    },
+    {
+      "file": "MARKETING-POSTS.md",
+      "sha256": "f25d0ba927cf0ae7a95541c4ad7d2f190354f6d10ccdbe5f819d5aae187302ff"
+    },
+    {
+      "file": "SPEC.md",
+      "sha256": "d1bfe98255b8dc39911cd97fd41d3b55c36e40548a06b84813abdd0486160afd"
+    },
+    {
+      "file": "package.json",
+      "sha256": "aba3a7b214be42a459f1798ba14646eb6b57b721dd0183995b71d51ccdfeec41"
+    },
+    {
+      "file": "public/consigliere.html",
+      "sha256": "8405734172b2fb19b67b8001bffa90146af58f48dc7b8b55d870fb363f88f352"
+    },
+    {
+      "file": "public/consigliere.js",
+      "sha256": "d44808269c18b4884aed4b54cc43b5314f640c58e2b1dcde2287f87674faddfd"
+    },
+    {
+      "file": "public/index.html",
+      "sha256": "20687ccfd3f54b284861771797222b763d6c641b997657a0854a688c46c375f9"
+    },
+    {
+      "file": "schema.sql",
+      "sha256": "c18dcff81eddb3a1dd8f2c721f81a15bf57e1bf7fbc0746a93080788654a97ff"
+    },
+    {
+      "file": "src/agentgateway.js",
+      "sha256": "f91d8ca84a5440cd79911e609fd72d221d673b2fb27faef36ce88a5bf15ead72"
+    },
+    {
+      "file": "src/crew.js",
+      "sha256": "9372b70926d5c6b5790d0bb41e1013d9817dcd951b3d776e3f2cbea347d2351a"
+    },
+    {
+      "file": "src/db.js",
+      "sha256": "7afdf7ea54a006c152f16bd5711bfa13f129ce13fec72ec0ac9f0adc8f02a09c"
+    },
+    {
+      "file": "src/diplomacy.js",
+      "sha256": "b51ad08334475df51e4df7009b2d8b93d094d08fe947413d8ddb6d77ed6d635c"
+    },
+    {
+      "file": "src/dynasty.js",
+      "sha256": "ee097f7fc1402b63351930e386732f4fe8b44994632db48d3dcb39638bcd514a"
+    },
+    {
+      "file": "src/gateway/actions.js",
+      "sha256": "95c90c7aba09a0ee31be1db5d90566d9fcec308ff27366bf86083b30e3385cfb"
+    },
+    {
+      "file": "src/gateway/capabilities.js",
+      "sha256": "c03823f43941d4f5875f8b53f6f620d9a947fdeaaa7a41cc688991674e28b0ea"
+    },
+    {
+      "file": "src/gateway/context.js",
+      "sha256": "55bb314f045aee05e3434af7bb4457c8fc0b180cdb43daeb5703b8c7240fabbf"
+    },
+    {
+      "file": "src/gateway/events.js",
+      "sha256": "bac1529b2beaf40bb085d8759424bfd2cf4cf4bc7212cfa3873aa3ccac66a8fb"
+    },
+    {
+      "file": "src/gateway/http-contract.js",
+      "sha256": "52a5c830e5cf29acb10a00dbdf191a41d568d6edf5f4af4fe0e9a6da3c882815"
+    },
+    {
+      "file": "src/gateway/security.js",
+      "sha256": "586225c8ecb0789c0257ee3a3e98ae0ca4411532857d1a6a76625361410efe8c"
+    },
+    {
+      "file": "src/gateway/service.js",
+      "sha256": "53cf398350bebf069404f32d08c14a93fc38b92706cee2272f0aea225245840e"
+    },
+    {
+      "file": "src/growth.js",
+      "sha256": "55cb6924e8073e657cb86287f719dbd0e33b49d053eb80ac5977e1bc7f7ba565"
+    },
+    {
+      "file": "src/integrations/muse/index.js",
+      "sha256": "a8691d019dbc6c769fedc5030364c6882bd16f75ba20f1c7e9a20f0f72990bb0"
+    },
+    {
+      "file": "src/integrations/muse/manifest.js",
+      "sha256": "4e37caf2973f07da77bab6d481ee1ff15bc34d4e14770e6226f9f4576adda30c"
+    },
+    {
+      "file": "src/integrations/muse/responses.js",
+      "sha256": "5e2a5c2212031a09e458dcfe828d302ba841f4728d2bd6813869e91532d44088"
+    },
+    {
+      "file": "src/integrations/muse/schemas.js",
+      "sha256": "074fc0cb0774409c6636147ed510e96f0164eda399da06a781b8399d079f2cdd"
+    },
+    {
+      "file": "src/integrations/muse/tools.js",
+      "sha256": "276e9b63d6a347489d3e2e0f8cc74cdb1c1f7947a74dd8a98c4078bf978c7e5c"
+    },
+    {
+      "file": "src/routes/coordination.js",
+      "sha256": "cefc4c9777d24d4b9a2c9e401154c01bd2a9636f4927288472228befd95ddbf0"
+    },
+    {
+      "file": "src/routes/gateway.js",
+      "sha256": "a609271351e826bec06d21669c1c6be65d9cafe960b524bb8f4688c7c1c885ba"
+    },
+    {
+      "file": "src/routes/worldgraph.js",
+      "sha256": "c0c984dd54f7d854609028bcbcdccbf3cc841c35dad3a4fade5bca9cd56b42f8"
+    },
+    {
+      "file": "src/server.js",
+      "sha256": "bd5cde0f0539c6eba2896c0e06cbe25d48d677bfd8b67aadb81822ce76381dbf"
+    },
+    {
+      "file": "test/coldstart.js",
+      "sha256": "31eb35c2ef89253337d92a488531b6a5a3ad0a3b8de1cf800afd1fca3f397a6a"
+    },
+    {
+      "file": "test/consigliere-recovery-browser.js",
+      "sha256": "ca7f92cfd5793b1bd4c807eb4fe2820b06e6771b92679c8e27940be2aa957a92"
+    },
+    {
+      "file": "test/gateway-api.js",
+      "sha256": "f67fe55d4dd4d134ca8caf45fed515a919708d797cb41359ca007a26e606f798"
+    },
+    {
+      "file": "test/gateway-consent.js",
+      "sha256": "98142fa5668a555a789d4ddd0989187474e29bfe5e02144834337bb34729a1a3"
+    },
+    {
+      "file": "test/gateway-context.js",
+      "sha256": "79064a6b9b4939a22c593cb3a3435c53ce03814448afa55941a0b497f3750c7c"
+    },
+    {
+      "file": "test/gateway-events.js",
+      "sha256": "893bd78193b22f885486cca5ab96ccaf6b657f09dffe02680b0e13cf0db82399"
+    },
+    {
+      "file": "test/gateway-postgres.js",
+      "sha256": "8124b685ab4b0b502c8b4a7e8fa71d503d2c7b2fb0c27c45bb85c56878d48b20"
+    },
+    {
+      "file": "test/gateway-projection-security.js",
+      "sha256": "6bc4a6e221624e124081cab38a3787ad9a642c455391e4c578a485338dd1c25b"
+    },
+    {
+      "file": "test/gateway-security.js",
+      "sha256": "6a040152681cd6caa4ad9947ca1802c04b26cc514921565d7a27a92ef2ce90c4"
+    },
+    {
+      "file": "test/muse-gateway.js",
+      "sha256": "b4e99817c6f67c9bbce3ef7e5d0ebbaade588106896f7b514727ed1cbc7d240b"
+    }
+  ]
+}

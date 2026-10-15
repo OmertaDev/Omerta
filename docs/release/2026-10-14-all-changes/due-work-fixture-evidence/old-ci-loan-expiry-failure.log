@@ -1,0 +1,40 @@
+2026-10-14T22:35:10.2798971Z ##[group]Run npm run test:due-work:postgres
+2026-10-14T22:35:10.2799339Z [36;1mnpm run test:due-work:postgres[0m
+2026-10-14T22:35:10.2861221Z shell: /usr/bin/bash -e {0}
+2026-10-14T22:35:10.2861499Z env:
+2026-10-14T22:35:10.2861734Z   LEGAL_OPERATOR_NAME: CI Test Operator
+2026-10-14T22:35:10.2862095Z   LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+2026-10-14T22:35:10.2862473Z   PRIVACY_CONTACT_EMAIL: privacy@example.test
+2026-10-14T22:35:10.2862801Z   DMCA_AGENT_NAME: CI Test Agent
+2026-10-14T22:35:10.2863293Z   DMCA_AGENT_EMAIL: copyright@example.test
+2026-10-14T22:35:10.2863656Z   DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+2026-10-14T22:35:10.2864002Z   DMCA_AGENT_PHONE: +1 202 555 0100
+2026-10-14T22:35:10.2864296Z   DMCA_AGENT_REGISTERED: true
+2026-10-14T22:35:10.2864693Z   PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+2026-10-14T22:35:10.2865130Z   RC1_PG_BIN: /usr/lib/postgresql/18/bin
+2026-10-14T22:35:10.2865731Z   COORDINATION_TEST_DATABASE_URL: ***localhost:5432/omerta_check
+2026-10-14T22:35:10.2866123Z ##[endgroup]
+2026-10-14T22:35:10.3884730Z 
+2026-10-14T22:35:10.3885518Z > omerta-backend@1.5.0 test:due-work:postgres
+2026-10-14T22:35:10.3886205Z > node test/due-work-process-recovery.js
+2026-10-14T22:35:10.3886667Z 
+2026-10-14T22:35:16.0890854Z node:internal/modules/run_main:123
+2026-10-14T22:35:16.0891502Z     triggerUncaughtException(
+2026-10-14T22:35:16.0891927Z     ^
+2026-10-14T22:35:16.0892087Z 
+2026-10-14T22:35:16.0892580Z AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+2026-10-14T22:35:16.0893080Z 
+2026-10-14T22:35:16.0893197Z 400 !== 200
+2026-10-14T22:35:16.0893378Z 
+2026-10-14T22:35:16.0893840Z     at file:///home/runner/work/Omerta/Omerta/test/due-work-process-recovery.js:69:82
+2026-10-14T22:35:16.0894793Z     at process.processTicksAndRejections (node:internal/process/task_queues:103:5) {
+2026-10-14T22:35:16.0895429Z   generatedMessage: true,
+2026-10-14T22:35:16.0895782Z   code: 'ERR_ASSERTION',
+2026-10-14T22:35:16.0896119Z   actual: 400,
+2026-10-14T22:35:16.0896415Z   expected: 200,
+2026-10-14T22:35:16.0896725Z   operator: 'strictEqual',
+2026-10-14T22:35:16.0897060Z   diff: 'simple'
+2026-10-14T22:35:16.0897347Z }
+2026-10-14T22:35:16.0897490Z 
+2026-10-14T22:35:16.0897610Z Node.js v22.23.3
+2026-10-14T22:35:16.1041123Z ##[error]Process completed with exit code 1.

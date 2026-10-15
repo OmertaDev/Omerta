@@ -8,7 +8,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.CHAIN_CONFIRMATIONS = '3';
 
 const { makeDb } = await import('../src/db.js');
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { syncFeeEvents, syncClaimedEvents, getCursor } = await import('../src/watcher.js');
 
 const app = await buildServer();

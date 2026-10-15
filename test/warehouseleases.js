@@ -45,7 +45,7 @@ console.log('warehouseleases: PASS; bounds/24h/expiry/death reservations; seed19
 // Exercise actual domain writes using the repository memory database and real journals.
 // This deliberately does not claim PostgreSQL locks, rollback, concurrency, or estate orchestration.
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'warehouse-module-local-test-secret'; process.env.SOCIAL_VERIFY_MODE = 'off';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const D = await import('../src/depot.js');
 const W = await import('../src/warehouseleases.js');

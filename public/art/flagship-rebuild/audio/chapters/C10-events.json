@@ -1,0 +1,590 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  100,
+        "character":  124,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "next",
+        "ms":  215,
+        "character":  128,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "job",
+        "ms":  525,
+        "character":  133,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "comes",
+        "ms":  830,
+        "character":  137,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "round",
+        "ms":  1150,
+        "character":  143,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U02",
+        "ms":  2370,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Another",
+        "ms":  2470,
+        "character":  199,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "stake",
+        "ms":  2835,
+        "character":  207,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U03",
+        "ms":  4055,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Another",
+        "ms":  4155,
+        "character":  263,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "empty",
+        "ms":  4540,
+        "character":  271,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "seat",
+        "ms":  4870,
+        "character":  277,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U04",
+        "ms":  6035,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  6135,
+        "character":  332,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "has",
+        "ms":  6495,
+        "character":  337,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "learned",
+        "ms":  6695,
+        "character":  341,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "how",
+        "ms":  7000,
+        "character":  349,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  7175,
+        "character":  353,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "earn",
+        "ms":  7345,
+        "character":  356,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "how",
+        "ms":  8085,
+        "character":  362,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  8255,
+        "character":  366,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "specialize",
+        "ms":  8390,
+        "character":  369,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  9605,
+        "character":  381,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "how",
+        "ms":  9760,
+        "character":  385,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "much",
+        "ms":  9955,
+        "character":  389,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "another",
+        "ms":  10205,
+        "character":  394,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "person\u0027s",
+        "ms":  10540,
+        "character":  402,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "decision",
+        "ms":  11045,
+        "character":  411,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  11525,
+        "character":  420,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "cost",
+        "ms":  11740,
+        "character":  424,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "him",
+        "ms":  12105,
+        "character":  429,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U05",
+        "ms":  13155,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  13255,
+        "character":  483,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "next",
+        "ms":  13370,
+        "character":  487,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "invitation",
+        "ms":  13680,
+        "character":  492,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  14340,
+        "character":  503,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  14505,
+        "character":  506,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "choice",
+        "ms":  14565,
+        "character":  508,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "he",
+        "ms":  14925,
+        "character":  515,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "has",
+        "ms":  15060,
+        "character":  518,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  15300,
+        "character":  522,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "make",
+        "ms":  15405,
+        "character":  525,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U06",
+        "ms":  16530,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "You",
+        "ms":  16630,
+        "character":  580,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  16775,
+        "character":  584,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "buy",
+        "ms":  16965,
+        "character":  588,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "equipment",
+        "ms":  17155,
+        "character":  592,
+        "length":  9
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U07",
+        "ms":  18485,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "You",
+        "ms":  18585,
+        "character":  652,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "cannot",
+        "ms":  18730,
+        "character":  656,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "buy",
+        "ms":  19060,
+        "character":  663,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "trust",
+        "ms":  19265,
+        "character":  667,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U08",
+        "ms":  20575,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Choose",
+        "ms":  20675,
+        "character":  723,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  20980,
+        "character":  730,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "path",
+        "ms":  21135,
+        "character":  735,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U09",
+        "ms":  22365,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Find",
+        "ms":  22465,
+        "character":  790,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  22845,
+        "character":  795,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "people",
+        "ms":  23000,
+        "character":  800,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U10",
+        "ms":  24200,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Make",
+        "ms":  24300,
+        "character":  857,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  24555,
+        "character":  862,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "name",
+        "ms":  24710,
+        "character":  867,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U11",
+        "ms":  25855,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "oh",
+        "ms":  25955,
+        "character":  922,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "mare",
+        "ms":  26105,
+        "character":  925,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "tah",
+        "ms":  26335,
+        "character":  930,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U12",
+        "ms":  27345,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Who",
+        "ms":  27445,
+        "character":  984,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "will",
+        "ms":  27600,
+        "character":  988,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  27780,
+        "character":  993,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "bring",
+        "ms":  27920,
+        "character":  997,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U13",
+        "ms":  29080,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Start",
+        "ms":  29180,
+        "character":  1053,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "playing",
+        "ms":  29560,
+        "character":  1059,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "at",
+        "ms":  29920,
+        "character":  1067,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "oh",
+        "ms":  30100,
+        "character":  1070,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "mare",
+        "ms":  30245,
+        "character":  1073,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "tah",
+        "ms":  30480,
+        "character":  1078,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "dot",
+        "ms":  30735,
+        "character":  1082,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "fun",
+        "ms":  30985,
+        "character":  1086,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C10-U13-end",
+        "ms":  32115,
+        "character":  0,
+        "length":  0
+    }
+]

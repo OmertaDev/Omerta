@@ -34,6 +34,8 @@ process.env.INVITE_MODE = 'on';  // fixture players exercise launch admission on
 
 const { buildServer } = await import('../src/server.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
+// Synthetic adult identity for throwaway harness signups; the real age gate remains enabled.
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const app = await buildServer();
 const pool = app.pool;
 await app.listen({ port: 0, host: '127.0.0.1' });
@@ -58,7 +60,7 @@ async function hit(method, path, { token, body, key } = {}) {
 const mk = async (name) => {
   const inviteCode = `CONC-${crypto.randomUUID()}`;
   await pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [inviteCode]);
-  const signup = await hit('POST', '/v1/auth/guest', { body: { inviteCode } });
+  const signup = await hit('POST', '/v1/auth/guest', { body: { inviteCode, birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
   if (signup.code !== 200 || typeof signup.body?.token !== 'string' || !signup.body.token) {
     const error = typeof signup.body?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(signup.body.error)
       ? signup.body.error : 'invalid_response';

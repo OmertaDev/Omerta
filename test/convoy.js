@@ -7,7 +7,7 @@
 process.env.CONVOY_MS = '600000'; // 10-minute road for the test (TEST-ONLY knob, SEARCH_MS pattern)
 process.env.MOD_KEY = 'test-mod-key'; // Tier-4 death test uses /v1/mod/kill
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { spawnNpcConvoys, despawnArrivedNpc, sweepConvoyHauls } from '../src/convoy.js';
 import { CONVOY, NOTORIETY, REGIMEN, goodPriceOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';

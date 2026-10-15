@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-13; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-15; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -53,18 +53,22 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 54 contracts + 11 interfaces, current owned source inventory
+## 1. SCOPE — 57 contracts + 12 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-owned `omerta-contracts/src` modules — 65 Solidity files, 54 contracts and 11 interfaces.
+owned `omerta-contracts/src` modules — 69 Solidity files, 57 contracts and 12 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
-including its declared local CCA patch. Together these identify all 100 source files; libraries
+including its declared local CCA patch. Together these identify all 104 source files; libraries
 and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
 this inventory update does not extend the liquidity review to them or authorize chain activation.
+The [2026-10-14 integration verification](omerta-contracts/audits/2026-10-14-production-integration/VERIFICATION.md)
+pins scoped predeployment contract checks to source `b602dc0da8fd3922ae53b84d23e4e46b6e90439f`.
+Its source manifest, findings and exclusions govern applicability; it grants no production deployment
+or activation approval, and this inventory does not expand its scope.
 The 2026-09-08 liquidity review names its own source closure and release phase; earlier packages
 retain their original scopes and conclusions.
 
@@ -134,7 +138,12 @@ retain their original scopes and conclusions.
 | 62 | `OmertaGenesisCoordinatorV2` | exact auction binding, inventory allocation and real liquidity execution | `test/market-v2/GenesisCoordinatorV2.t.sol`, `test/market-v2/PlayerGenesisIntegrationV2.t.sol` |
 | 63 | `GenesisCharacterEligibility` | fixed NFT identity and supply-snapshot admission; includes the fixed bid validator from the same source file | `test/OmertaGuardedAuction.t.sol` |
 | 64 | `OmertaAuctionCoordinatorV2` | approved single-auction liquidity funding, Safe custody and reserved ETH recovery | `test/market-v2/AuctionCoordinatorV2.t.sol`, `test/market-v2/AuctionGenesisRobinhoodFork.t.sol` |
-| 65 | `OmertaWorkEscrowV2` | immutable original-party ETH/native issuer USDC work escrow candidate: funded reserve, acceptance, allocation, payee settlement and unused original-funder recovery; no admin, redirect, upgrade or sweep. Public financial activation remains OFF | `test/market-v2/WorkEscrowV2.t.sol` |
+| 65 | `OmertaRestrictedOMRV2` | fixed-supply token with a sealed transfer policy and pinned settlement and custody operators; independent review and launch gates apply | `test/market-v2/RestrictedOMRV2.t.sol`, `test/market-v2/RestrictedMarketIntegrationV2.t.sol` |
+| 66 | `OmertaSwapRouterV2` | bounded ETH/OMR router settling the restricted manager's final fee-adjusted deltas; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedMarketIntegrationV2.t.sol` |
+| 67 | `OmertaProtocolFeesV2` | abstract protocol-fee base in `market-v2/core/OmertaPoolManagerV2.sol`; the same source file includes the restricted `OmertaPoolManagerV2` and its immutable 5% base revenue policy on buys and sells; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedRevenueBoundariesV2.t.sol` |
+| 68 | `IOmertaRestrictedOMRV2` | interface only; sealed token policy, operator roles and runtime bindings | `test/market-v2/RestrictedOMRV2.t.sol`, `test/market-v2/RestrictedPoolManagerV2.t.sol` |
+
+| 69 | `OmertaWorkEscrowV2` | immutable original-party ETH/native issuer USDC work escrow candidate: funded reserve, acceptance, allocation, payee settlement and unused original-funder recovery; no admin, redirect, upgrade or sweep. Public financial activation remains OFF | `test/market-v2/WorkEscrowV2.t.sol` |
 
 The new escrow source has separate scoped evidence in the [current autonomy review](docs/agent-economy-autonomy-release-review.md). Its retained genuine compiler/EVM proof records **10 passed tests, zero failures/skips**, including **512 native-ETH plus 512 USDC conservation fuzz cases (1,024 total)** under Forge1.7.1/Solc0.8.26, viaIR, optimizer800 and Cancun. These are isolated-EVM tests with mock USDC, not production token custody, a chain fork or a new aggregate full-suite/audit result. Original-party rights, exact token deltas, allocation/payout/refund, replay/deadlines, reentrancy and failed-recipient liabilities are scoped to the reviewed source/artifact. No approved deployed escrow/provider, actual external funding/payment, crypto backing or public activation is established. Financial activation and paid compute remain **OFF**. The September historical counts, dates and toolchain below retain their original point-in-time meaning.
 

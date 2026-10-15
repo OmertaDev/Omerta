@@ -16,13 +16,15 @@ const safe = address(77);
 const policy = { totalSupplyWei:'100000000000000000000000000', decimals:18, saleTokenAmountWei:'40000000000000000000000000', lpTokenAmountWei:'20000000000000000000000000', bondTokenAmountWei:'40000000000000000000000000', familySafe:safe, liquidityOwner:safe, unsoldRecipient:safe, bondReserveCustodian:safe, minimumRaiseWei:'10000000000000000000', lpProceedsBps:5000, claimsAtAuctionEnd:true };
 const ceilFloor = ((10n**19n <<96n) +BigInt(policy.saleTokenAmountWei)-1n)/BigInt(policy.saleTokenAmountWei);
 const tick=(ceilFloor+99n)/100n, floor=tick*100n;
-const hookGovernance = { governanceSafe:safe, fixedFounderRecipient:'0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', fixedFounderBps:200, delaySeconds:172800, executionSafeOnly:true };
-const manifest = { chainId: 4663, contracts, dependencies, policy, hookGovernance };
+const hookPolicy = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100, recipients: ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', safe, address(81), address(82), address(83)] };
+const manifest = { chainId: 4663, contracts, dependencies, policy, hookPolicy };
 const codes = Object.fromEntries(names.map((name, i) => [contracts[name].address, `0x60${(i + 1).toString(16).padStart(2, '0')}`]));
 codes[validator] = '0x6005';
 for (const [i, name] of Object.keys(dependencies).entries()) codes[dependencies[name].address] = `0x60${(i + 11).toString(16).padStart(2, '0')}`;
 function fixture() {
   const values = {
+    poolManager: { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')), TRADE_FEE_BPS: 500n, omr: contracts.omr.address,
+      developerRecipient: hookPolicy.recipients[0], rwaRecipient: hookPolicy.recipients[1], communityRecipient: hookPolicy.recipients[2], polRecipient: hookPolicy.recipients[3] },
     auction: { characterNft: contracts.characterNft.address, token: contracts.omr.address, currency: zero,
       launchGate: contracts.coordinator.address, fundsRecipient: contracts.coordinator.address,
       launchGateCodeHash: contracts.coordinator.runtimeCodeHash, launchChainId: 4663n,
@@ -38,7 +40,7 @@ function fixture() {
     characterNft: { balanceOf: 1n },
     omr: { balanceOf: 0n, totalSupply:BigInt(policy.totalSupplyWei), decimals:18 },
     positionManager: { poolManager: dependencies.poolManager.address },
-    hook: { governanceSafe:safe, opsRecipient:hookGovernance.fixedFounderRecipient, OPS_SELL_BPS:200, TAX_CONFIG_DELAY:172800, TAX_EXECUTION_SAFE_ONLY:true, baseSellBps:900, taxConfig:[160,240,300,100], queuedTaxHash:'0x'+'0'.repeat(64), queuedTaxExecuteAfter:0n, taxConfigNonce:0n },
+    hook: { BASE_SELL_BPS: 500n, MAX_SURGE_BPS: 50n, managerCollectsRevenue: true, recipients: [...hookPolicy.recipients] },
     validator: { characterNft: contracts.characterNft.address, characterNftCodeHash: contracts.characterNft.runtimeCodeHash,
       eligibilityChainId: 4663n, omr:contracts.omr.address, omrCodeHash:contracts.omr.runtimeCodeHash, approvedSupply:BigInt(policy.totalSupplyWei) },
   };
@@ -61,7 +63,7 @@ function fixture() {
       assert.ok(name, 'all contract reads target manifest contracts or pinned auction validator');
       if (args.functionName === 'checkpoints') return checkpoints.get(args.args[0].toString()) || [0n, 0n, 0n, 0n, 0n, 0n];
       assert.ok(Object.hasOwn(values[name], args.functionName), `fixture knows ${name}.${args.functionName}`);
-      return values[name][args.functionName];
+      return args.functionName === 'recipients' ? values[name].recipients[Number(args.args[0])] : values[name][args.functionName];
     },
     simulateContract: async args => { simulations.push(args); if(reorgOnSimulation) changedHash=true; if(chainOnSimulation) chain=1;
       if (simulationFails || (simpleExitFails && args.functionName === 'exitBid')) throw new Error('sensitive RPC details'); },

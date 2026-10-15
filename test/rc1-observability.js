@@ -1,6 +1,6 @@
 // Gate RC1-OBS: a real HTTP command must leave one safe, correlated diagnostic chain.
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { addPlayer, findCommand } from './lib/player-command-support.js';
 import { FURNACE_IDS } from '../src/content/furnace-ledger.js';
 import { commandDiagnostic } from '../src/command-diagnostics.js';

@@ -108,6 +108,49 @@ console.log('rc1-source-pair-additive FOURTH COMPLETE PASS: '+fourthNegatives+' 
 fourthNegative('sequence removed',(_a,b)=>{b.sequences=[];},/Sequence state changed/);
 assert.equal(fourthNegatives,826);
 console.log('rc1-source-pair-additive FOURTH FINAL PASS: '+fourthNegatives+' negatives; all three original profiles and every unknown/old row/sequence remain exact');
+
+// The current main branch has additional gateway/legal work. Its separate exact
+// source relation retains that work and the four historical qualification pins.
+const { COMMERCIAL_MAIN_ADDITIVE_PAIR: commercialMainPin, qualifyCommercialMainAdditiveBootstrap } = await import('../tools/rc1-source-pair.js');
+assert.equal(commercialMainPin.predecessor, '5c18acaaf47c84851729b82354340c4d56734dd9');
+assert.deepEqual(commercialMainPin.tables, fourthPin.tables);
+const commercialMainPredecessor = structuredClone(fourthPredecessor);
+const commercialMainCandidate = structuredClone(fourthCandidate);
+commercialMainPredecessor.source = commercialMainPin.predecessor;
+commercialMainCandidate.source = commercialMainPin.reviewedCandidate;
+for (const [identity, side] of [[commercialMainPredecessor, 'predecessor'], [commercialMainCandidate, 'candidate']])
+  for (const field of ['tree', 'schema', 'catalog'])
+    identity.fourthBatchAdditiveSource[field] = commercialMainPin[side + field[0].toUpperCase() + field.slice(1)];
+const commercialMainQualified = qualifyCommercialMainAdditiveBootstrap(fourthOld, fourthFresh, commercialMainPredecessor, commercialMainCandidate);
+assert.equal(commercialMainQualified.relation, 'REVIEWED_COMMERCIAL_MAIN_THIRTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');
+let commercialMainNegatives = 0;
+const commercialMainNegative = mutate => {
+  const a = structuredClone(fourthOld), b = structuredClone(fourthFresh);
+  const p = structuredClone(commercialMainPredecessor), c = structuredClone(commercialMainCandidate);
+  mutate(a, b, p, c);
+  assert.throws(() => qualifyCommercialMainAdditiveBootstrap(a, b, p, c));
+  commercialMainNegatives++;
+};
+for (const table of commercialMainPin.tables) {
+  commercialMainNegative((_a, b) => { delete b.tables[table]; });
+  commercialMainNegative((_a, b) => { b.tables[table] = ['{"unreviewed":true}']; });
+  for (let i = 0; i < commercialMainCandidate.fourthBatchAdditiveSource.catalogTables[table].constraints.length; i++)
+    commercialMainNegative((_a, _b, _p, c) => { c.fourthBatchAdditiveSource.catalogTables[table].constraints[i].definition = 'CHECK (true)'; });
+  for (let i = 0; i < commercialMainCandidate.fourthBatchAdditiveSource.catalogTables[table].notNullColumns.length; i++)
+    commercialMainNegative((_a, _b, _p, c) => { c.fourthBatchAdditiveSource.catalogTables[table].notNullColumns.splice(i, 1); });
+}
+for (const field of ['tree', 'schema', 'catalog']) for (const side of ['predecessor', 'candidate'])
+  commercialMainNegative((_a, _b, p, c) => { (side === 'predecessor' ? p : c).fourthBatchAdditiveSource[field] = '0'.repeat(64); });
+commercialMainNegative((_a, b) => { b.tables.unreviewed_authority = []; });
+commercialMainNegative((_a, b) => { b.tables.accounts = ['{"replacement":true}']; });
+commercialMainNegative((_a, b) => { delete b.tables.unknown_existing_custody; });
+commercialMainNegative((_a, b) => { b.sequences[0].last_value = '11'; });
+commercialMainNegative((_a, _b, p) => { p.source = fourthPin.predecessor; });
+commercialMainNegative((_a, _b, _p, c) => { c.source = 'unknown'; });
+assert.throws(() => qualifyFourthBatchAdditiveBootstrap(fourthOld, fourthFresh, commercialMainPredecessor, commercialMainCandidate));
+assert.throws(() => qualifyCommercialMainAdditiveBootstrap(fourthOld, fourthFresh, fourthPredecessor, fourthCandidate));
+assert.deepEqual(qualifyFourthBatchAdditiveBootstrap(fourthOld, fourthFresh, fourthPredecessor, fourthCandidate), fourthQualified);
+console.log(`rc1-source-pair additive commercial/main: ${commercialMainNegatives} rejecting controls; four historical profiles unchanged`);
 const { SOURCE_PAIR_COMMAND_WINDOW: clockPolicy, sourcePairCommandWindow, waitForSourcePairCommandWindow, assertSourcePairCommandWindow } = await import('../tools/rc1-source-pair.js');
 assert.deepEqual(clockPolicy,{periodMs:600000,minimumCampaignMs:240000,schedulingHeadroomMs:30000,waitSliceMs:30000});
 assert.equal(sourcePairCommandWindow(330000).ready,true);
@@ -183,3 +226,59 @@ for(const file of ['src/managementteamautonomy.js','src/fundedworkescrowadapter.
 fifthNegative('unknown old row changed',(_a,b)=>{b.tables.unknown_existing_custody=['{"id":"changed"}'];},/row\/table changed/);
 fifthNegative('unknown empty catalog table',(_a,_b,_p,c)=>{c.fifthBatchAdditiveSource.catalogTables.unreviewed={constraints:[],notNullColumns:[]};},/catalog evidence differs/);
 console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegatives+' negatives plus actual Git tree/schema/catalog pins and cross-profile/source-exclusion controls; no native or deployed qualification');
+
+// A distinct relation retains current main and the reviewed commercial candidate.
+// The five earlier relations and their exact predecessor identities remain closed.
+{
+  const { AUTONOMY_MAIN_ADDITIVE_PAIR: pin, qualifyAutonomyMainAdditiveBootstrap: qualify } = await import('../tools/rc1-source-pair.js');
+  const git = (...args) => gitProof('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+  assert.equal(pin.predecessor, '226f62c566280b8da59fd7f77b295707975f99eb');
+  assert.deepEqual(pin.tables, fifthPin.tables);
+  const p = structuredClone(fifthPredecessor), c = structuredClone(fifthCandidate);
+  p.source = pin.predecessor; c.source = pin.reviewedCandidate;
+  for (const [identity, side] of [[p, 'predecessor'], [c, 'candidate']]) {
+    for (const field of ['tree', 'schema', 'catalog'])
+      identity.fifthBatchAdditiveSource[field] = pin[side + field[0].toUpperCase() + field.slice(1)];
+    const revision = side === 'predecessor' ? pin.predecessor : pin.reviewedCandidate;
+    const records = git('ls-tree', '-r', '-z', revision).split('\0').filter(Boolean);
+    assert.equal(sourcePairReviewedTreeHash(records), pin[side + 'Tree']);
+    assert.equal(hashProof(git('show', revision + ':schema.sql')), pin[side + 'Schema']);
+    assert.equal(hashProof(git('show', revision + ':test/lib/phase2-architecture-upgrade-catalog.json')), pin[side + 'Catalog']);
+  }
+  assert.equal(qualify(fifthOld, fifthFresh, p, c).relation, 'REVIEWED_AUTONOMY_MAIN_SEVENTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');
+  let negatives = 0;
+  const reject = mutate => {
+    const a = structuredClone(fifthOld), b = structuredClone(fifthFresh);
+    const before = structuredClone(p), after = structuredClone(c);
+    mutate(a, b, before, after); assert.throws(() => qualify(a, b, before, after)); negatives++;
+  };
+  for (const name of pin.tables) {
+    reject((_a, b) => { delete b.tables[name]; });
+    reject((_a, b) => { b.tables[name] = {}; });
+    reject((_a, b) => { b.tables[name] = ['{"unreviewed":true}']; });
+    const evidence = c.fifthBatchAdditiveSource.catalogTables[name];
+    for (let i = 0; i < evidence.constraints.length; i++)
+      for (const field of ['definition', 'constraint_type', 'constraint_name', 'table_name'])
+        reject((_a, _b, _p, c) => { c.fifthBatchAdditiveSource.catalogTables[name].constraints[i][field] = 'unreviewed'; });
+    for (let i = 0; i < evidence.notNullColumns.length; i++) for (const change of ['missing', 'renamed'])
+      reject((_a, _b, _p, c) => {
+        const columns = c.fifthBatchAdditiveSource.catalogTables[name].notNullColumns;
+        if (change === 'missing') columns.splice(i, 1); else columns[i] += '__unknown';
+      });
+  }
+  for (const field of ['tree', 'schema', 'catalog']) for (const side of ['predecessor', 'candidate'])
+    reject((_a, _b, p, c) => { (side === 'predecessor' ? p : c).fifthBatchAdditiveSource[field] = '0'.repeat(64); });
+  reject((_a, b) => { b.tables.unreviewed_authority = []; });
+  reject((_a, b) => { b.tables.accounts = ['{"replacement":true}']; });
+  reject((_a, b) => { b.tables.unknown_existing_custody = ['{"replacement":true}']; });
+  reject((_a, b) => { delete b.tables.unknown_existing_custody; });
+  reject((_a, b) => { b.sequences[0].last_value = '11'; });
+  reject((_a, b) => { b.sequences.push({ sequencename: 'unreviewed', last_value: null }); });
+  reject((_a, _b, p) => { p.source = fifthPin.predecessor; });
+  reject((_a, _b, _p, c) => { c.source = 'unknown'; });
+  reject((_a, _b, _p, c) => { c.fifthBatchAdditiveSource.catalogTables.unreviewed = { constraints: [], notNullColumns: [] }; });
+  assert.throws(() => qualifyFifthBatchAdditiveBootstrap(fifthOld, fifthFresh, p, c));
+  assert.throws(() => qualify(fifthOld, fifthFresh, fifthPredecessor, fifthCandidate));
+  assert.deepEqual(qualifyFifthBatchAdditiveBootstrap(fifthOld, fifthFresh, fifthPredecessor, fifthCandidate), fifthQualified);
+  console.log(`rc1-source-pair autonomy/main: ${negatives} rejecting controls; five historical profiles unchanged; empty-bootstrap evidence only`);
+}

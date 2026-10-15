@@ -1,0 +1,37 @@
+
+Detector: weak-prng
+OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#205-222) uses a weak PRNG: "blockTimestamp = uint32(block.timestamp % 2 ** 32) (src/OmrTwapOracle.sol#210)" 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#weak-PRNG
+
+Detector: divide-before-multiply
+OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#205-222) performs a multiplication on the result of a division:
+	- price0Cumulative += ((uint256(reserve1) << 112) / reserve0) * timeElapsed (src/OmrTwapOracle.sol#218)
+OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#205-222) performs a multiplication on the result of a division:
+	- price1Cumulative += ((uint256(reserve0) << 112) / reserve1) * timeElapsed (src/OmrTwapOracle.sol#219)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: incorrect-equality
+OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#196-199) uses a dangerous strict equality:
+	- avg == 0 (src/OmrTwapOracle.sol#197)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: timestamp
+OmrTwapOracle.update() (src/OmrTwapOracle.sol#140-184) uses timestamp for comparisons
+	Dangerous comparisons:
+	- timeElapsed < PERIOD (src/OmrTwapOracle.sol#146)
+	- timeElapsed > PERIOD * MAX_WINDOW_MULT (src/OmrTwapOracle.sol#164)
+OmrTwapOracle._decode(uint224) (src/OmrTwapOracle.sol#196-199) uses timestamp for comparisons
+	Dangerous comparisons:
+	- avg == 0 (src/OmrTwapOracle.sol#197)
+OmrTwapOracle._currentCumulativePrices() (src/OmrTwapOracle.sol#205-222) uses timestamp for comparisons
+	Dangerous comparisons:
+	- tsLast != blockTimestamp (src/OmrTwapOracle.sol#215)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: naming-convention
+Variable OmrTwapOracle.PERIOD (src/OmrTwapOracle.sol#53) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+src/OmrTwapOracle.sol analyzed (12 contracts with 102 detectors), 8 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/OmrTwapOracle.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

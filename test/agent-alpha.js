@@ -13,7 +13,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 import Fastify from 'fastify';
 
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { createResourceAgentTestFetch } from '../tools/resource-agent.js';
 import {
   createAgentAlphaTestRunner,
@@ -285,7 +285,7 @@ async function initialGuestCrashRecoveryTest() {
         baseUrl: process.env.TEST_BASE,
         sessionFile: process.env.TEST_SESSION,
         reportFile: process.env.TEST_REPORT,
-        create: true,
+        create: true, birthDate: '1990-01-01',
         name: 'Bootstrap Alpha',
         inviteCode: process.env.TEST_INVITE,
         maxActions: 1,
@@ -755,7 +755,7 @@ async function lifecycleTest() {
       baseUrl: api.baseUrl,
       sessionFile,
       reportFile,
-      create: true,
+      create: true, birthDate: '1990-01-01',
       name: 'Alpha Machine',
       maxActions: 2,
       intervalMs: 3100,
@@ -947,7 +947,7 @@ async function failClosedSessionTest() {
           baseUrl: api.baseUrl,
           sessionFile,
           reportFile,
-          create: true,
+          create: true, birthDate: '1990-01-01',
           name: 'Replacement Machine',
           maxActions: 1,
           intervalMs: 3100,
@@ -1752,7 +1752,7 @@ async function initialNameSafetyTest() {
           baseUrl: api.baseUrl,
           sessionFile,
           reportFile,
-          create: true,
+          create: true, birthDate: '1990-01-01',
           name: 'Bad<Name',
           maxActions: 1,
           intervalMs: 3100,
@@ -2250,7 +2250,7 @@ async function danglingSessionAliasCreateTest() {
       baseUrl: 'http://127.0.0.1:1',
       sessionFile,
       reportFile: join(dir, 'target-report.jsonl'),
-      create: true,
+      create: true, birthDate: '1990-01-01',
       name: 'Target Alpha',
       fetchImpl: targetFetch,
     });
@@ -2260,7 +2260,7 @@ async function danglingSessionAliasCreateTest() {
         baseUrl: 'http://127.0.0.1:1',
         sessionFile: aliasSessionFile,
         reportFile: join(dir, 'alias-report.jsonl'),
-        create: true,
+        create: true, birthDate: '1990-01-01',
         name: 'Alias Alpha',
         fetchImpl: aliasFetch,
       }),

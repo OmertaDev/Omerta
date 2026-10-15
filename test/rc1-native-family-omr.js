@@ -92,7 +92,7 @@ try {
   };
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query(`CREATE SCHEMA ${namespace}`);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
-  const { buildServer } = await import('../src/server.js'); app = await buildServer();
+  const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
   await proof.record({ kind: 'database-version', ...(await pool.query('SELECT version() AS version')).rows[0] });
   const allocation = { a: 2200, b: 1200, c: 1000, soldier: 500, member: 0, donor: 20 };
   for (const role of roles) {

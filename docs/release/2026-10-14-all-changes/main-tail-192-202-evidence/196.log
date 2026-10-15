@@ -1,0 +1,9 @@
+Deployment client PASS: reviewed bytes/policy/pins, five individual approvals, durable unknown/late requests, cross-tab locks, nonce/chain/code guards, canonical receipts and failure halt; fake wallet only.
+Parallel pre-read and final native-clock/canonical-block checks reject start/reorg races before intent or wallet send PASS
+Internal validator and schedule-store runtime checks independently block final-stage completion on mismatch PASS
+Packet-load/state mutation races during quote, confirmation and wallet send are refused; captured digest/stage/calldata remain bound PASS
+Stored intent is bound to reviewed calldata/nonce/role/runtime before RPC; all five parent and two child runtimes rechecked at final receipt block PASS
+Trusted local hook bytecode/15 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS
+All five local creation templates and canonical adapter/coordinator/dynamic-auction constructors, offsets, prices and derived uniform schedule bound before wallet access PASS
+Unsupported wallet hash reads fail closed before signing, without numeric/latest fallback PASS
+Deployment signing rejects standard managers and incorrect fixed revenue policy before transaction approval PASS

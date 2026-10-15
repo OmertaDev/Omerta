@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import { createNpcBoatAcquisitionCommitObserver } from '../tools/rc1-npc-boat-journal.js';
 const options={seed:'composition-control',readRandomTape:()=>{throw Error('Non-boat query must not read random tape');},onBoundary:async()=>{}};

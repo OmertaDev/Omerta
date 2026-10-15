@@ -10,7 +10,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.DUEL_CD_MS = '1'; // TEST-ONLY: the challenger cooldown (boot-guard rejects it in production)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { DUELS } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { runSeasonRollover } from '../src/worker.js';

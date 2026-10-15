@@ -1,0 +1,136 @@
+{
+  "reviewedAt": "2026-10-09T04:59:09.729Z",
+  "phase": "local implementation; not deployed",
+  "sourceRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty; preexisting changes preserved",
+  "files": {
+    "public/index.html": "f54ec4af3e9015553c6142b73d8a20d776384514d058e7fba20909245834790b",
+    "public/city-scene.js": "8ceaf463d3e8d29722b1b76b46e5bd46e82891f16490660839291fefd3bc4556",
+    "public/city-scene.css": "13c677500cefa032f0dc76f8cb6d0144e839acc1672281c74ab0dad66e308723",
+    "public/world-fieldwork.js": "1a08db4915d9101d1f4c81d9ee977c2b35bae215e635bf0717b1190c0eb11dd6",
+    "public/world-fieldwork.css": "8409678a45c5c99d7f243332224a57fc3b2ec7bfbc65f888e4fa62fbad09d65b",
+    "public/sw.js": "f658818a5ab70703d2e65d92ca1f6c8aefdc794bdd4f6a93c0c7da410a385161",
+    "src/server.js": "49338b6d16c2ecc020f1a00b8ccae395f9e64b29b95526926696a6bca95821dc",
+    "src/worldgraph-ui.js": "7291a2d736edb824b39afff2f9f6a194e6add73376dfe4dc5b57ed73f98d2261",
+    "src/routes/worldgraph.js": "0b47b4228f88356cb7956c21ac4179d79cf8cf7808b78927d305c700b0d8cc2c",
+    "src/mysteries.js": "c0b8e9794bfd48cd749187815c75bb4d5b75ba4b92ba0284e1210ce94add06c5",
+    "src/crafting.js": "1869bbe96be0d96a54de4f3583db2d0d115bcb5d7731cf93d125abededd20db0",
+    "src/operations.js": "f8c47a8db1c3ea5b24099bafd94792b3e66844bb812d79f1f7c8912811b1e1d6",
+    "src/agentgateway.js": "4f0e31da673a082d3db4fd1e68fd50e25079bd80f5df029a44fa533ad49003ef",
+    "src/content/neighborhood-initiation.js": "0647a219cd993b8885cfda3e19507b219845ed153cbb93485cf15155650fde6b",
+    "src/content/neighborhood-initiation.json": "b91af199e40c197f7df71bb28517b0b961641380abaaf12fba0086dcfa64b267",
+    "src/content/phase1.js": "e61c16584688e35717ed33ea0c5049af22b021f75391262a313bcc425f5dbf12",
+    "src/content/phase1-policy.js": "e1e7b21e48bb7011cc1c900204e9db711e6f7ca4a7ee5fc9a1946fd1dffc39e8",
+    "test/city-rpg.js": "a0bf9ef1abafe7cb57774d109608f21443d4ee3a5e5be08fae529f77235434ce",
+    "test/city-scene-browser.js": "3b315e512cb97460ab835ac6db0f161f16bab38b8e4496c1c2ebc01b2658eac5",
+    "test/world-fieldwork-browser.js": "5ce33fd065dcc60ca28b5dc610204410ec7c348f4932035aa2d3c060ec4673ce",
+    "test/worldgraph-api.js": "725a8a83c565addcccbc9f8ebf4160465fbf64ea7a31b8c56cfa5119106be240",
+    "test/operations.js": "f5b9ff4936b31b4ecc1d99911609fd4c190d3feb8bf3b41d62c71894fbb56e79",
+    "test/worldgraph-validation.js": "cf1d6e57fc0c6f4fe95f28cebb38f5b0125dca788dc6a33208dd811bb97b21ca",
+    "test/client.js": "f2f57d85ccd8e4b4eebd5598f902a1a98b1f3d9c66d5912f1019e6ae34b24fbd",
+    "package.json": "9edc8624bd935da227bda65ca22d17bf7fcd7590ca0dc641e038e054d517dc95"
+  },
+  "scope": "Complete City Mode entry points for existing gameplay plus an original NPC quest, inventory/crafting/journal/crew UI, safe issued actions and recovery projections.",
+  "database": "disposable pg-mem",
+  "browser": "Chromium via Playwright",
+  "invariants": [
+    "Walking is cosmetic and submits no game mutation.",
+    "Only explicit controls dispatch server-issued actions; live domain authorization remains authoritative.",
+    "New quest changes no cash, bank, respect, OMR or financial ledger; rewards are inert cosmetic records.",
+    "Hidden leads and private role clues stay undisclosed until authorized discovery.",
+    "Exact logical retries conserve items, cash and quest rewards.",
+    "Old quest and operation cancellation returns escrow to original recorded depositors.",
+    "Saved walking poses are scoped to character, generation and district.",
+    "Expired credentials and absent characters dispose the graphical clients."
+  ],
+  "methods": {
+    "baseline": "omerta-contracts/SECURITY-REVIEW-POLICY.md",
+    "adaptation": "Manual access-control/execution tracing, state/accounting/replay analysis, context/specification comparison and executable invariants; no claim of a full upstream audit orchestration."
+  },
+  "checks": [
+    {
+      "command": "node test/city-rpg.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/city-scene-browser.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/world-fieldwork-browser.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/worldgraph-api.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/worldgraph-validation.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node tools/worldgraph-content.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/client.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/operations.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/mysteries.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/crafting.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/items.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/belladonna.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/worldgraph.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/pwa.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node test/citymap.js",
+      "exitCode": 0
+    }
+  ],
+  "broaderChecks": [
+    {
+      "command": "node test/routes.js",
+      "exitCode": 1,
+      "passed": "Mounted authentication, route uniqueness, module scope and envelope assertions.",
+      "failure": "Landing research-sheet fixture still expects three removed economic illustration references."
+    },
+    {
+      "command": "node test/docs.js",
+      "exitCode": 1,
+      "failure": "SPEC module census is stale:249 documented versus269 present."
+    }
+  ],
+  "limits": [
+    "Production PostgreSQL locking/contention and migration behavior were not revalidated.",
+    "No deployment, contract activation, external payment or token changes.",
+    "This is scoped implementation evidence, not a whole-repository security or release audit."
+  ],
+  "evidence": [
+    "art/city/quest-review.json",
+    "art/city/qa/city-desktop.png",
+    "art/city/qa/city-quest.png",
+    "art/city/qa/city-mobile.png"
+  ]
+}

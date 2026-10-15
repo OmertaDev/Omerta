@@ -17,7 +17,10 @@ additional_compiler_profiles = [
   { name = "constellation-via-ir", via_ir = true, optimizer = true, optimizer_runs = 800, evm_version = "cancun" },
 ]
 compilation_restrictions = [
-  { paths = "src/market-v2/*.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
+  # Keep the storage-compatible manager on the core's non-IR profile: solc 0.8.26
+  # hits a Pool.swap Yul stack error when compiling the manager through IR.
+  { paths = "src/market-v2/core/OmertaPoolManagerV2.sol", version = "=0.8.26", via_ir = false, optimizer_runs = 800, evm_version = "cancun" },
+  { paths = "src/market-v2/Omerta*.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "test/market-v2/*.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "src/ProtocolLiquidityVault.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },
   { paths = "test/ProtocolLiquidityVault.t.sol", version = "=0.8.26", via_ir = true, optimizer_runs = 800, evm_version = "cancun" },

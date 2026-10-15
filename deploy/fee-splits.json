@@ -1,8 +1,8 @@
 {
   "schema": "omerta.fee-structure.v1",
   "exportedAt": "2026-08-13T20:56:54.104Z",
-  "amendedAt": "2026-09-08",
-  "amendment": "Owner-directed: character creation mint proceeds go 100% to DEV_WALLET. All other source allocations remain unchanged.",
+  "amendedAt": "2026-10-11",
+  "amendment": "Owner-directed: character creation mint proceeds go 100% to DEV_WALLET. Sell tax totals 500 bps of each sale: operations 200, treasury 100, community 100, liquidity 100. Other source allocations remain unchanged.",
   "note": "The founder-signed Path A revenue configuration (exported from the 'Where a Dollar Goes' artifact 2026-08-13). Translated to backend levers + contract args in fee-splits.env; validated by `node tools/validate-fee-splits.js`. GO-LIVE config: applied at chain go-live (past the launch-checklist + audit gate), NOT armed in live render.yaml while the chain is dormant.",
   "sources": [
     { "id": "mint", "name": "Character creation mint", "currency": "eth",
@@ -25,12 +25,12 @@
         { "dest": "vig", "bps": 500, "lands": "vig_revenue source='bond' (reserve)" },
         { "dest": "treasury", "bps": 500, "lands": "bond_reserve.rwa_eth (backed float)" },
         { "dest": "operations", "bps": 1500, "lands": "bond_reserve.dev_eth" } ] },
-    { "id": "tax", "name": "DEX sell tax (900 bps of every OMR sell)", "currency": "eth",
+    { "id": "tax", "name": "DEX sell tax (500 bps of every OMR sell)", "currency": "eth",
       "splits": [
-        { "dest": "operations", "bps": 2222, "lands": "sell_tax_events.dev_eth" },
-        { "dest": "treasury", "bps": 1778, "lands": "sell_tax_events.rwa_eth (backed vault — kept small)" },
-        { "dest": "community", "bps": 2666, "lands": "→ buyback → family_yield_pool (Path A)" },
-        { "dest": "pol", "bps": 3334, "lands": "sell_tax_events.lp_eth (remainder on LP)" } ] },
+        { "dest": "operations", "bps": 4000, "lands": "sell_tax_events.dev_eth" },
+        { "dest": "treasury", "bps": 2000, "lands": "sell_tax_events.rwa_eth (backed vault — kept small)" },
+        { "dest": "community", "bps": 2000, "lands": "→ buyback → family_yield_pool (Path A)" },
+        { "dest": "pol", "bps": 2000, "lands": "sell_tax_events.lp_eth (remainder on LP)" } ] },
     { "id": "auction", "name": "The Desk — daily Dutch auction (ETH proceeds)", "currency": "eth",
       "splits": [
         { "dest": "pol", "bps": 5000, "lands": "desk_sales.pol_eth" },

@@ -1,0 +1,218 @@
+OMERTÀ: TRUST IS THE GAME
+Flagship video production prompt
+
+Act as an expert game trailer director, documentary storyteller, gameplay editor, motion designer, and AI video producer. Create one exceptional flagship film explaining OMERTÀ as a complete, interconnected game.
+
+The goal is not a generic mafia trailer, a narrated feature list, or a token advertisement. Follow a player's rise through the city so the audience understands what they can do, why other players matter, what they can lose, and why they would come back.
+
+Creative thesis: “You can buy equipment. You cannot buy trust.”
+Working title: “OMERTÀ: Trust Is the Game.”
+
+1. THE ASSIGNMENT
+
+Create a roughly 6 minute 30 second film, with a permissible range of 6 to 7 minutes. Target 780 to 860 spoken words, then adjust against an actual voiceover read so dramatic pauses and gameplay explanations have room.
+
+Primary audience: adult strategy, RPG, persistent-world, and social competition players who have never heard of OMERTÀ. Secondary audience: AI agent builders and crypto-native viewers. No prior blockchain knowledge should be required.
+
+The viewer should leave thinking: “I know what I would do first, I see a role for myself, and I know whom I would invite.”
+
+Treat “the entirety” as complete coverage of the major gameplay and economic pillars, not a recital of every route, item, number, or unfinished idea. Explain the connections. Put secondary detail in legible supporting visuals and the accompanying coverage document.
+
+Create one outstanding film before producing any additional cuts. Do not spend the budget on three mediocre variants.
+
+2. ESTABLISH THE TRUTH BEFORE WRITING
+
+Inspect the latest accessible revision of OmertaDev/Omerta, the current public site, approved brand assets, and relevant release evidence. Record the source revision and review date. Begin with these repository documents:
+
+README.md; docs/WIKI.md; AGENTS.md; DESIGN.md; SPEC.md; omerta-economy-design.md; docs/investors/01-plain-language.md; docs/investors/02-technical-detail.md; docs/coordination-engine/README.md; and the current World Graph, market, RWA, and chain activation documentation they reference.
+
+Use https://www.omerta.fun and https://github.com/OmertaDev/Omerta as starting points. Follow current navigation rather than assuming an old route still works. Inspect relevant implementation or tests where a material claim is ambiguous. Do not exhaustively read unrelated code or historic audits.
+
+Build a claim ledger recording each material claim, its source, its status, and how it will be depicted. Distinguish:
+
+LIVE: verified available to the relevant audience.
+IMPLEMENTED: exists in a development build or controlled pilot, but live availability is not established.
+PLANNED: documented design, not an available feature.
+UNVERIFIED: insufficient or conflicting evidence.
+
+Use present-tense availability claims only for LIVE features. Clearly label development-build footage and use “In development” for planned segments. Keep that status visible throughout the relevant demonstration. Omit unverified claims from public narration.
+
+Merged code is not proof of activation. A contract is not proof of funding. A test is not proof of a live payout. The website alone does not establish that a financial feature works.
+
+Resolve conflicting sources against implementation and current release evidence. Never silently choose the most exciting version. Preserve a short list of unresolved publication blockers.
+
+Do not modify game code, change production flags, transact with wallets, expose credentials, reveal private puzzle solutions, or publish the video as part of this assignment.
+
+3. THE STORY ENGINE
+
+Follow one representative newcomer and the Crew they eventually help build. Use a consistent original character identity, a recurring dossier, and a physical motif such as a ledger or sealed envelope.
+
+The dramatic question is: “How does someone with no power become someone the city must deal with?”
+
+Build the progression as choices and consequences: a small job creates an opportunity; specialization makes the player useful; useful people attract allies; allies unlock larger ambitions; ambition attracts rivals and risk.
+
+Where possible, demonstrate a real connected sequence of gameplay actions. When connecting separate systems for illustration, identify the sequence as a composite scenario. Do not invent a playable mission, crafting dependency, betrayal mechanic, or economic reward that the game does not support.
+
+The emotional center is trust, reputation, coordination, information, scarcity, loyalty, and competing incentives. Explain those through decisions, not abstract claims about “community.”
+
+4. THE FILM, SEQUENCE BY SEQUENCE
+
+0:00 to 0:15 | THE WRONG PERSON
+
+Open inside a consequential moment: an operation being assembled, a tense exchange, or a name being crossed out of a dossier. Establish stakes immediately. No opening logo animation, generic skyline montage, or “Welcome to the future of gaming.”
+
+Suggested creative opening: “You can lose a fight. You can lose a fortune. But trust the wrong person, and you can lose an empire.”
+
+This is tonal copy, not permission to invent a mechanical outcome. Show the game interface within the first 10 seconds. Identify OMERTÀ clearly by 15 seconds.
+
+0:15 to 0:50 | YOU START WITH NOTHING TO YOUR NAME
+
+Explain the basic fantasy and the first playable loop: create a character, enter the city, take a job, gain cash and respect, train, and choose what to do next. Verify the actual starting conditions before stating numbers.
+
+Show real onboarding, an action and its result, a resource cost, and one understandable tradeoff. Introduce energy, nerve, heat, or exposure only as needed to understand that action.
+
+Make the viewer understand this is a multiplayer mafia strategy RPG, not a cinematic third-person shooter. Establish the actual browser and interface-based interaction model.
+
+0:50 to 1:35 | PICK YOUR WAY UP
+
+Introduce the six documented Paths, confirming current names and availability: Gun, Ledger, Kitchen, Wheel, Shadow, and Ring.
+
+Present them as identities: the fighter, the operator, the producer, the driver, the information specialist, and the competitor. Use their actual game descriptions for precise abilities.
+
+Show enough of combat, businesses, production, vehicles, intelligence, and boxing for viewers to recognize a role they would enjoy. Do not give every Path an identical mini-advertisement.
+
+Choose one Path for the protagonist and show why another player's different specialty could matter. Never invent a required party composition or hard dependency to make the story convenient.
+
+1:35 to 2:15 | THE CITY IS MORE THAN A MENU
+
+Expand into the districts and the wider economy. Connect crime, businesses and fronts, the Kitchen, cars, boats, trade, workshops, and markets through a few clear examples.
+
+Use a district map and actual transactions or production receipts to show how choices affect resources, timing, exposure, and opportunity. Establish the living city through verified events and NPC activity, not unsupported claims that everything is autonomous or player-owned.
+
+Give secondary activities a concise visual presence: racing, boxing, the Den, the Speakeasy, lending, auctions, fixers, and other documented systems. Keep their labels readable. Do not explain casino rules or real-world criminal procedures.
+
+2:15 to 3:00 | ALONE, YOU HAVE LIMITS
+
+Reveal Crews, Families, organized operations, convoys, heists, territory, rivalries, and Commission politics as applicable to the verified build.
+
+Demonstrate one specific cooperation problem: people contributing different resources, accepting responsibilities, coordinating timing, or deciding what information to share. Explain the actual benefit and the actual failure risk.
+
+Show organization membership, preparation, commitment, resolution, and consequences through genuine interfaces or clearly labeled explanatory graphics. Distinguish player-created social promises from mechanically enforced contracts.
+
+Make the audience feel the appeal of building something with other people, and the tension of having to depend on them.
+
+3:00 to 3:40 | THE CITY HAS SECRETS
+
+Explain the World Graph, crafting, item history, mysteries, and Coordination Engine at the player level, according to their verified scope.
+
+Prefer a small tangible example: salvage becomes material; material becomes a crafted item; an item has a traceable history. Separately, two investigators may need independently obtained evidence rather than two copies of the same clue.
+
+Use only public, approved examples. Explain why discoveries and cooperation matter without exposing hidden solutions, private evidence, future seasonal answers, or exploitable details.
+
+Do not conflate ordinary Crew play with advanced Coordination Engine features. A pilot is a pilot. An OMR-neutral system must not be portrayed as an active token reward faucet. Place clearly labeled future expansion in a distinct visual beat.
+
+3:40 to 4:10 | NOT EVERY PLAYER IS HUMAN
+
+Explain software agents as participants that can interact through supported game interfaces. Distinguish human players, player-operated agents, and NPCs.
+
+Show a supported agent choosing an action, receiving a game response, and changing its state. Translate this into the same readable action-and-result language used for humans.
+
+Verify present access requirements, supported integrations, permissions, and limits. Do not promise that every client works automatically, agents have identical rate limits to humans, an agent can bypass risk, or a bot produces guaranteed income.
+
+Use the contrast creatively: different ways of making decisions, participating in the same city. Do not fill this chapter with decorative robots or unintelligible code.
+
+4:10 to 5:35 | FOLLOW THE MONEY
+
+Use two simple diagrams, not a whitepaper slideshow.
+
+The first distinguishes game cash, in-game OMR, and wallet OMR. Explain their uses and boundaries. The dollar sign on game cash does not make it US dollars. A one-way spending window is not a promise that cash can be freely converted back into tokens. In-game rewards are not automatically withdrawable payouts.
+
+Show concrete OMR utility using current examples. Explain spending, holding or staking requirements, finite funded rewards, and selected purchases without implying all benefits are cosmetic. Distinguish spending that recycles inventory from permanently burning tokens.
+
+The second diagram shows the market layer at a high level: applicable trading fees and funding destinations, protocol-owned liquidity, inventory bonds, qualifying liquidity rewards, and Family rights to actual designated trading fees. Show which participants can receive which benefits. Distinguish fee rights from ownership of liquidity principal.
+
+Keep the original developer, community, RWA, and liquidity allocations visible where applicable. Verify all rates before including them. Label undeployed mechanisms as design or development rather than live financial flows. Explain inventory bonds as purchases of existing token inventory released over time, not guaranteed profitable investments. Mention arbitrage-funded reserves only within their verified scope and actual profit conditions.
+
+Include the RWA ambition explicitly. Define real-world assets, then distinguish a fee allocation from an actual asset purchase, custody, eligibility, delivery, or payout. Explain Commission involvement only where supported. Do not equate tokenized stock exposure with ordinary share ownership, or imply every OMR holder receives dividends.
+
+Do not call the founding supply a hard cap unless the current mint authority actually enforces one. Never claim guaranteed yield, guaranteed price support, risk-free staking, audited safety, or inevitable appreciation.
+
+Keep narration focused on what each layer does and why it changes participation. Put verified percentages and secondary mechanics in restrained graphics or accompanying notes rather than rushing a list of numbers.
+
+5:35 to 6:05 | POWER HAS A COST
+
+Pay off the opening stakes through verified PvP, investigations, prison, exposure, death, or another real consequence.
+
+Explain character death versus account continuity. Show what selected legacy, estate, heir, or prestige systems preserve without implying everything survives. Distinguish season changes from death rules.
+
+Explain that in-game value can be exposed to game loss rules, while unrelated external wallet holdings are not simply seized through ordinary combat.
+
+Where NFT extraction is discussed, show the precise supported assets, availability, and tradeoffs. Do not promise every item can be minted, that extraction is open, or that an extracted asset keeps producing in-game value.
+
+Let this chapter breathe. Stakes should make the earlier ambitions feel meaningful, not make the product sound deceptively safe.
+
+6:05 to 6:30 | WHO WILL YOU BRING?
+
+Return to the original motif. The newcomer now has people depending on them. Resolve the dramatic question through belonging, responsibility, and ambition rather than a guaranteed victory.
+
+Suggested closing: “Choose your path. Find your people. Make your name.”
+
+Reveal the exact OMERTÀ wordmark and finish with one verified call to action. Use “Play now” only when access supports it. Otherwise use the real invitation or access flow. Do not invent a waitlist.
+
+Show the correct destination and hold the final card long enough to read. The primary invitation is to play or join, not to purchase OMR.
+
+5. VISUAL DIRECTION
+
+Use OMERTÀ's actual brand assets and documented design language: noir told through ledgers, dossiers, maps, contracts, receipts, and case files. Cinematic intensity belongs at consequential moments; explanations should be calm and legible.
+
+Follow the existing charcoal, bone, muted gold, and restrained danger-color palette. Preserve the wordmark and accent in OMERTÀ. Use current project typography where available and licensed.
+
+Aim for at least 45 percent of the runtime to contain genuine game footage or accurate, source-grounded explanatory graphics. Cinematic material supplies atmosphere and transitions; it must not impersonate gameplay.
+
+Use consistent character references, wardrobe, props, geography, and lighting. Prefer original cinematic imagery over recognizable actors, franchise characters, or imitation of a specific film scene.
+
+Avoid generic neon cyberpunk, coin showers, rockets, sports cars with no gameplay connection, excessive smoke, floating dashboards, and repetitive slow-motion gangsters. Never generate readable game UI, financial numbers, or logos inside AI footage. Composite those accurately afterward.
+
+6. VOICE, SOUND, AND RETENTION
+
+Use an original, licensed voice with controlled confidence and occasional dry wit. No celebrity imitation, fake Italian accent, generic motivational delivery, or constant shouting.
+
+Write short, specific sentences. Explain technical terms once in plain language. Replace empty claims with actions and consequences. No “revolutionary ecosystem,” “limitless possibilities,” or “the future of Web3.”
+
+Use the useful recognition, novelty, sensation, and attention principles from the previously supplied Pleometric article: https://pleometric.net/articles/brief-practical-advice-for-short-form-brainrot/ . Adapt them to a coherent flagship film rather than turning the whole explanation into random brainrot. Do not reuse copyrighted clips or music without permission.
+
+Create an immediate hook, purposeful changes in visual scale, clear cause and effect, and recurring questions that receive payoffs. Give dense UI shots time to read. Do not enforce arbitrary rapid cuts when comprehension needs a longer hold.
+
+Build an original or licensed score that moves from tension to momentum to consequence. Use restrained environmental sound and precise accents tied to actions. Keep music beneath speech, not competing with it. The film must remain understandable with captions and the sound muted.
+
+7. PRODUCTION WORKFLOW AND SPEND CONTROL
+
+Inventory reusable project media first. Capture real gameplay using authorized access or an isolated development environment with representative test data. Label development captures. Do not spend player funds or alter production state for footage.
+
+Finish the claim ledger, complete narration, storyboard, and a rough timed animatic before expensive generation. Resolve missing factual claims without stopping all other production work.
+
+Use the existing authorized fal.ai account for paid generation when access and a spending ceiling are available. Verify current model availability, capabilities, commercial-use terms, and pricing at execution time. Choose the model by the shot's needs, not an unsupported “best model” label.
+
+Benchmark at most two suitable candidates on a small representative shot within the approved budget. Establish reusable character and scene references. Generate only the atmospheric inserts the edit needs. Build the film from controllable short shots rather than attempting one long generation.
+
+Track endpoint, settings, reference assets, request identifiers, accepted takes, cost, and retry count. Reuse accepted work. Allow a bounded number of retries per shot and reserve part of the budget for final corrections.
+
+Use the existing editing pipeline where practical. Keep the timeline modular and editable. Do not build a new video application merely to deliver this film.
+
+When no paid budget has been authorized, complete the script, storyboard, asset inventory, animatic from available materials, and costed generation plan without making paid calls. Report the exact spend approval needed. Do not claim that an unrendered plan is a finished video.
+
+8. DELIVERY AND ACCEPTANCE
+
+Deliver the final 16:9 master at 1920 × 1080 or higher native quality, a captioned viewing export, a clean export, and SRT or VTT subtitles. Target a consistent 24 fps timeline, 48 kHz audio, approximately -14 LUFS integrated loudness, and a maximum -1 dBTP true peak. Treat these as delivery targets, not reasons to introduce visible motion artifacts.
+
+Include the editable project, complete voiceover script, shot list, source-linked claim ledger, feature-coverage map, generation manifest, media rights record, and actual spend report. A thumbnail may use an approved frame; do not launch a separate image-generation campaign.
+
+The shot list must identify timecode, narration, visual action, source footage or generation instructions, on-screen text, sound, transition, and feature status. Every major pillar must have either meaningful film coverage or an explicit exclusion reason.
+
+Review the actual exports, not just the timeline. Check spelling, OMERTÀ branding, timing, narration accuracy, subtitle synchronization, audio peaks, mobile readability, continuity, status labels, financial diagrams, and CTA destination. Remove placeholders, broken frames, unreadable screens, unauthorized assets, and fabricated proof.
+
+Test comprehension with fresh viewers where available: Can they explain what the game is, what they do first, why a Crew matters, how agents participate, how the three balances differ, and what they can lose? When independent reviewers are unavailable, record that limitation rather than inventing audience feedback.
+
+Deliver a publication-ready film when the required assets, access, and spend are authorized. Otherwise deliver the completed production package and an exact blocker report. Do not publish, buy ads, or make additional variants without separate authorization.
+
+The final standard: this should feel like an invitation into a dangerous social world whose mechanics can actually be demonstrated. Sell the experience. Prove the systems. Make the viewer want to bring someone they trust.

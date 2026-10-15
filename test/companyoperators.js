@@ -11,7 +11,7 @@ if (process.argv.includes('--postgres')) {
   process.env.DATABASE_URL = url.href;
 } else delete process.env.DATABASE_URL;
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import * as G from '../src/game.js';
 import * as O from '../src/companyoperators.js';
 import { setOperatingPolicy } from '../src/operatingpolicy.js';

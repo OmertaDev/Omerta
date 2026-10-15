@@ -51,6 +51,9 @@ contract CharacterAuditNftReceiver is IERC721Receiver {
     uint256 public observedDayCount;
     bool public observedUsedNonce;
     address public observedOwner;
+    bool public observedLocked;
+    bool public forwarded;
+    bytes32 public forwardReasonHash;
     uint256 public outerNonce;
     error RejectPortrait();
 
@@ -74,6 +77,7 @@ contract CharacterAuditNftReceiver is IERC721Receiver {
         observedDayCount = nft.mintedOnDay(block.timestamp / 1 days);
         observedUsedNonce = nft.usedNonce(outerNonce);
         observedOwner = nft.ownerOf(tokenId);
+        observedLocked = nft.locked(tokenId);
         if (mode == Mode.WrongSelector) return bytes4(0);
         if (mode == Mode.RevertEmpty) revert();
         if (mode == Mode.RevertData) revert RejectPortrait();
@@ -83,7 +87,11 @@ contract CharacterAuditNftReceiver is IERC721Receiver {
             if (reason.length >= 4) nestedError = bytes4(reason);
         }
         if (mode == Mode.Forward || mode == Mode.ForwardThenReject) {
-            nft.transferFrom(address(this), destination, tokenId);
+            bytes memory reason;
+            (forwarded, reason) = address(nft).call(
+                abi.encodeCall(nft.transferFrom, (address(this), destination, tokenId))
+            );
+            forwardReasonHash = keccak256(reason);
         }
         if (mode == Mode.ForwardThenReject) revert RejectPortrait();
         return IERC721Receiver.onERC721Received.selector;
@@ -269,7 +277,7 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         assertEq(nft.ownerOf(1), alice);
     }
 
-    function test_relayerCannotRedirectAndNonceSurvivesRotationAndTransfer() public {
+    function test_relayerCannotRedirectAndNonceSurvivesRotationAndRejectedTransfer() public {
         DynastyNFT.MintVoucher memory v = _voucher(alice, type(uint256).max, block.timestamp + 1 hours);
         bytes memory sig = _sign(address(nft), block.chainid, v, KEY);
         vm.prank(attacker);
@@ -277,6 +285,7 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         assertEq(nft.ownerOf(1), alice);
         assertEq(nft.balanceOf(attacker), 0);
         vm.prank(alice);
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(alice, bob, 1);
         vm.startPrank(safe);
         nft.setSigner(vm.addr(OTHER_KEY));
@@ -284,7 +293,8 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         vm.stopPrank();
         vm.expectRevert("DN: replay");
         nft.claim(v, sig);
-        assertEq(nft.ownerOf(1), bob);
+        assertEq(nft.ownerOf(1), alice);
+        assertTrue(nft.locked(1));
         assertEq(nft.nextId(), 2);
     }
 
@@ -355,6 +365,7 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         assertEq(receiver.observedDayCount(), 1);
         assertTrue(receiver.observedUsedNonce());
         assertEq(receiver.observedOwner(), address(receiver));
+        assertTrue(receiver.observedLocked());
         assertFalse(nft.usedNonce(2));
         assertEq(nft.balanceOf(bob), 0);
         _claim(nested);
@@ -381,7 +392,7 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         assertEq(nft.ownerOf(1), address(receiver));
     }
 
-    function test_callbackMayTransferBeforeCustomMintedEventWithoutCreatingExtraToken() public {
+    function test_callbackCannotTransferAndLockIsEmittedBeforeCustomMintedEvent() public {
         CharacterAuditNftReceiver receiver = new CharacterAuditNftReceiver(nft);
         receiver.configure(CharacterAuditNftReceiver.Mode.Forward, bob, 1);
         vm.recordLogs();
@@ -389,16 +400,20 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         Vm.Log[] memory logs = vm.getRecordedLogs();
         assertEq(logs.length, 3);
         assertEq(logs[0].topics[0], keccak256("Transfer(address,address,uint256)"));
-        assertEq(logs[1].topics[0], keccak256("Transfer(address,address,uint256)"));
+        assertEq(logs[1].topics[0], keccak256("Locked(uint256)"));
+        assertEq(abi.decode(logs[1].data, (uint256)), 1);
         assertEq(logs[2].topics[0], keccak256("Minted(uint256,address,uint256)"));
         assertEq(address(uint160(uint256(logs[2].topics[2]))), address(receiver));
-        assertEq(nft.ownerOf(1), bob);
-        assertEq(nft.balanceOf(address(receiver)), 0);
-        assertEq(nft.balanceOf(bob), 1);
+        assertTrue(receiver.observedLocked());
+        assertFalse(receiver.forwarded());
+        assertEq(receiver.forwardReasonHash(), keccak256(abi.encodeWithSignature("Error(string)", "DN: soulbound")));
+        assertEq(nft.ownerOf(1), address(receiver));
+        assertEq(nft.balanceOf(address(receiver)), 1);
+        assertEq(nft.balanceOf(bob), 0);
         assertEq(nft.nextId(), 2);
     }
 
-    function test_approvalCannotEscalateAndOldApprovalDoesNotTravel() public {
+    function test_approvalCannotEscalateOrTransferAndRejectedTransferPreservesApproval() public {
         _claim(_voucher(alice, 1, block.timestamp));
         vm.prank(alice);
         nft.approve(attacker, 1);
@@ -406,12 +421,14 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InvalidApprover.selector, attacker));
         nft.approve(bob, 1);
         vm.prank(attacker);
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(alice, bob, 1);
-        assertEq(nft.getApproved(1), address(0));
+        assertEq(nft.getApproved(1), attacker);
         vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InsufficientApproval.selector, attacker, 1));
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(bob, attacker, 1);
-        assertEq(nft.ownerOf(1), bob);
+        assertEq(nft.ownerOf(1), alice);
+        assertTrue(nft.locked(1));
     }
 
     function test_blanketApprovalRevokeSelfTransferAndWrongFromRemainAtomic() public {
@@ -420,36 +437,38 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         nft.setApprovalForAll(attacker, true);
         assertTrue(nft.isApprovedForAll(alice, attacker));
         vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721IncorrectOwner.selector, bob, 1, alice));
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(bob, attacker, 1);
         assertEq(nft.ownerOf(1), alice);
         assertEq(nft.balanceOf(alice), 1);
         vm.startPrank(alice);
         nft.setApprovalForAll(attacker, false);
         nft.approve(bob, 1);
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(alice, alice, 1);
         vm.stopPrank();
         assertEq(nft.balanceOf(alice), 1);
-        assertEq(nft.getApproved(1), address(0));
+        assertEq(nft.getApproved(1), bob);
         assertFalse(nft.isApprovedForAll(alice, attacker));
         vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721InsufficientApproval.selector, attacker, 1));
+        vm.expectRevert("DN: soulbound");
         nft.transferFrom(alice, attacker, 1);
     }
 
-    function test_rejectingSafeTransferRestoresOwnerBalancesAndApproval() public {
+    function test_lockedSafeTransferNeverCallsReceiverAndPreservesOwnerBalancesAndApproval() public {
         _claim(_voucher(alice, 1, block.timestamp));
         CharacterAuditNftReceiver receiver = new CharacterAuditNftReceiver(nft);
         receiver.configure(CharacterAuditNftReceiver.Mode.RevertData, bob, 1);
         vm.prank(alice);
         nft.approve(attacker, 1);
         vm.prank(attacker);
-        vm.expectRevert(CharacterAuditNftReceiver.RejectPortrait.selector);
+        vm.expectRevert("DN: soulbound");
         nft.safeTransferFrom(alice, address(receiver), 1, "audit");
         assertEq(nft.ownerOf(1), alice);
         assertEq(nft.getApproved(1), attacker);
         assertEq(nft.balanceOf(alice), 1);
         assertEq(nft.balanceOf(address(receiver)), 0);
+        assertFalse(receiver.callbackEntered());
     }
 
     function test_pauseStopsOnlyMintAndUnpauseReusesUntouchedVoucher() public {
@@ -464,12 +483,16 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
         vm.prank(alice);
         nft.approve(attacker, 1);
         vm.prank(attacker);
+        vm.expectRevert("DN: soulbound");
         nft.safeTransferFrom(alice, bob, 1);
-        assertEq(nft.ownerOf(1), bob);
+        assertEq(nft.ownerOf(1), alice);
         vm.prank(safe);
         nft.unpause();
         nft.claim(v, sig);
-        assertEq(nft.balanceOf(bob), 2);
+        assertEq(nft.balanceOf(bob), 1);
+        assertEq(nft.ownerOf(1), alice);
+        assertTrue(nft.locked(1));
+        assertTrue(nft.locked(2));
     }
 
     function test_nftAndFeeOwnershipRequireAcceptanceAndCancelledNomineeHasNoPower() public {
@@ -795,7 +818,7 @@ contract CharacterLaunchAuditTest is CharacterAuditSigning {
     }
 }
 
-/// @dev Stateful model uses its own owners, nonce set, success counts and day buckets.
+/// @dev Stateful model pins each identity to its mint recipient, independent of approvals and transfers.
 contract CharacterAuditNftHandler is CharacterAuditSigning {
     DynastyNFT public nft;
     address[4] public actors = [address(0x1101), address(0x1102), address(0x1103), address(0x1104)];
@@ -804,8 +827,10 @@ contract CharacterAuditNftHandler is CharacterAuditSigning {
     bool public modelPaused;
     uint256 public successfulMints;
     uint256 public attemptedMints;
+    uint256 public attemptedTransfers;
+    uint256 public rejectedTransfers;
     mapping(uint256 => bool) public nonceUsed;
-    mapping(uint256 => address) public tokenOwner;
+    mapping(uint256 => address) public mintOwner;
     mapping(uint256 => uint256) public dayMints;
     uint256[] public usedDays;
 
@@ -832,7 +857,7 @@ contract CharacterAuditNftHandler is CharacterAuditSigning {
         successfulMints++;
         assertEq(abi.decode(result, (uint256)), successfulMints);
         nonceUsed[nonce] = true;
-        tokenOwner[successfulMints] = v.to;
+        mintOwner[successfulMints] = v.to;
         if (dayMints[day] == 0) usedDays.push(day);
         dayMints[day]++;
     }
@@ -851,30 +876,48 @@ contract CharacterAuditNftHandler is CharacterAuditSigning {
     function transfer(uint256 tokenSeed, uint256 actorSeed, uint256 kindSeed) public {
         if (successfulMints == 0) return;
         uint256 id = tokenSeed % successfulMints + 1;
-        address from = tokenOwner[id];
+        address from = mintOwner[id];
         address to = actors[actorSeed % 4];
-        uint256 kind = kindSeed % 4;
+        uint256 kind = kindSeed % 7;
+        address caller = from;
+        bytes memory data;
         if (kind == 0) {
-            vm.prank(from);
-            nft.transferFrom(from, to, id);
+            data = abi.encodeCall(nft.transferFrom, (from, to, id));
         } else if (kind == 1) {
             vm.prank(from);
             nft.approve(address(this), id);
-            nft.safeTransferFrom(from, to, id);
+            caller = address(this);
+            data = abi.encodeWithSignature("safeTransferFrom(address,address,uint256)", from, to, id);
         } else if (kind == 2) {
             vm.prank(from);
             nft.setApprovalForAll(address(this), true);
-            nft.safeTransferFrom(from, to, id, "stateful");
+            caller = address(this);
+            data = abi.encodeWithSignature("safeTransferFrom(address,address,uint256,bytes)", from, to, id, "stateful");
+        } else if (kind == 3) {
+            caller = address(0xBAD001);
+            data = abi.encodeCall(nft.transferFrom, (from, to, id));
+        } else if (kind == 4) {
+            data = abi.encodeCall(nft.transferFrom, (from, from, id));
+        } else if (kind == 5) {
+            address wrongFrom = from == actors[0] ? actors[1] : actors[0];
+            data = abi.encodeCall(nft.transferFrom, (wrongFrom, to, id));
+        } else {
+            data = abi.encodeWithSignature("safeTransferFrom(address,address,uint256,bytes)", from, to, id, "owner");
+        }
+        address approvalBefore = nft.getApproved(id);
+        attemptedTransfers++;
+        vm.prank(caller);
+        (bool ok, bytes memory reason) = address(nft).call(data);
+        assertFalse(ok, "no caller or ERC721 transfer path can move a soulbound identity");
+        assertEq(reason, abi.encodeWithSignature("Error(string)", "DN: soulbound"));
+        rejectedTransfers++;
+        assertEq(nft.getApproved(id), approvalBefore, "rejected transfer must preserve approval");
+        assertEq(nft.ownerOf(id), from, "mint recipient never changes");
+        assertTrue(nft.locked(id));
+        if (kind == 2) {
             vm.prank(from);
             nft.setApprovalForAll(address(this), false);
-        } else {
-            vm.prank(address(0xBAD001));
-            (bool ok,) = address(nft).call(abi.encodeCall(nft.transferFrom, (from, to, id)));
-            assertFalse(ok, "unapproved actor must not transfer");
-            return;
         }
-        tokenOwner[id] = to;
-        assertEq(nft.getApproved(id), address(0));
     }
 
     function assertModel() external view {
@@ -882,15 +925,19 @@ contract CharacterAuditNftHandler is CharacterAuditSigning {
         assertEq(nft.paused(), modelPaused);
         assertEq(nft.dailyMintCap(), modelCap);
         assertEq(nft.signer(), vm.addr(signingKey));
+        assertEq(rejectedTransfers, attemptedTransfers);
         uint256 totalBalances;
         for (uint256 i; i < actors.length; i++) {
             uint256 expectedBalance;
-            for (uint256 id = 1; id <= successfulMints; id++) if (tokenOwner[id] == actors[i]) expectedBalance++;
+            for (uint256 id = 1; id <= successfulMints; id++) if (mintOwner[id] == actors[i]) expectedBalance++;
             assertEq(nft.balanceOf(actors[i]), expectedBalance);
             totalBalances += expectedBalance;
         }
         assertEq(totalBalances, successfulMints);
-        for (uint256 id = 1; id <= successfulMints; id++) assertEq(nft.ownerOf(id), tokenOwner[id]);
+        for (uint256 id = 1; id <= successfulMints; id++) {
+            assertEq(nft.ownerOf(id), mintOwner[id]);
+            assertTrue(nft.locked(id));
+        }
         for (uint256 nonce; nonce < 64; nonce++) assertEq(nft.usedNonce(nonce), nonceUsed[nonce]);
         uint256 totalDayMints;
         for (uint256 i; i < usedDays.length; i++) {
@@ -1002,6 +1049,7 @@ contract CharacterLaunchNftInvariantTest is StdInvariant, Test {
         vm.warp(100 days);
         handler = new CharacterAuditNftHandler();
         handler.claim(63, 0, 0); // Non-vacuous baseline; random sequences then exercise state transitions.
+        for (uint256 kind; kind < 7; kind++) handler.transfer(0, 1, kind);
         bytes4[] memory selectors = new bytes4[](6);
         selectors[0] = handler.claim.selector;
         selectors[1] = handler.changeTime.selector;

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ledger } from '../src/game.js';
 import { CONSTANTS } from '../src/rules.js';
 import { DISTRICT_STORY_ARCS } from '../src/content/district-story-arcs.js';

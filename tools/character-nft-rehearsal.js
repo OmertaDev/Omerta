@@ -39,7 +39,8 @@ const report = { schemaVersion: 1, status: 'running', startedAt: new Date().toIS
   sourceCommit: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout?.trim(),
   workingTree: spawnSync('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8', windowsHide: true }).stdout?.trim() ? 'dirty' : 'clean',
   sourceSha256: Object.fromEntries(['src/chain.js', 'src/fees.js', 'src/watcher.js', 'schema.sql',
-    'omerta-contracts/src/OmertaFees.sol', 'tools/character-nft-rehearsal.js'].map((file) => [file, createHash('sha256').update(fs.readFileSync(path.join(ROOT, file))).digest('hex')])),
+    'omerta-contracts/src/OmertaFees.sol', 'omerta-contracts/src/DynastyNFT.sol',
+    'tools/character-nft-rehearsal.js'].map((file) => [file, createHash('sha256').update(fs.readFileSync(path.join(ROOT, file))).digest('hex')])),
   checks: [], contracts: {} };
 let node, app, nodeExited;
 const check = (name) => { report.checks.push(name); console.log(`PASS ${name}`); };
@@ -128,7 +129,7 @@ try {
     const inviteCode = generateInviteCode();
     await app.pool.query('INSERT INTO invite_codes (code, uses_left) VALUES ($1,1)', [inviteCode]);
     const token = ok(await api('POST', '/v1/access/redeem', null,
-      { inviteCode, bootstrapSecret: randomBytes(32).toString('base64url') })).token;
+      { inviteCode, birthDate: '1990-01-01', bootstrapSecret: randomBytes(32).toString('base64url') })).token;
     ok(await api('POST', '/v1/character', token, { name }));
     const challenge = ok(await api('POST', '/v1/wallet/challenge', token, {}));
     ok(await api('POST', '/v1/wallet/verify', token, { address: wallet.account.address,
@@ -138,7 +139,7 @@ try {
   const token = await bootstrap('Mint Rehearsal', player);
   const accountId = app.jwt.verify(token).sub;
   const buyerToken = await bootstrap('Portrait Collector', buyer);
-  check('Two fresh invited accounts created and wallets proved through SIWE');
+  check('Two fresh adult test accounts created and wallets proved through the current wallet challenge');
   assert.equal((await api('POST', '/v1/character/mint', token, {})).body.error, 'no_mint_credit');
   assert.equal((await api('POST', '/v1/identity/mint', token, {})).body.error, 'not_minted');
   check('Unmade accounts cannot mint the NFT');
@@ -195,19 +196,22 @@ try {
   assert.equal(await read('DynastyNFT', 'tokenURI', [1n]), 'http://local.invalid/v1/identity/1');
   check('Mint watcher binds NFT to voucher account, marks claimed, and serves metadata');
 
-  await write(player, 'DynastyNFT', 'transferFrom', [player.account.address, buyer.account.address, 1n]);
+  assert.equal(await read('DynastyNFT', 'supportsInterface', ['0xb45a3c0e']), true);
+  assert.equal(await read('DynastyNFT', 'locked', [1n]), true);
+  await assert.rejects(() => pub.simulateContract({ account: player.account,
+    address: signed.contract, abi: artifact.DynastyNFT.abi, functionName: 'transferFrom',
+    args: [player.account.address, buyer.account.address, 1n] }), /DN: soulbound/);
   await syncDynastyTransferEvents(app.pool, source, syncOpts);
-  const sold = (await app.pool.query('SELECT * FROM dynasty_tokens WHERE token_id=$1', ['1'])).rows[0];
-  assert.equal(sold.frozen, true);
-  assert.equal(sold.account_id, accountId);
-  assert.equal(sold.owner_address, buyer.account.address.toLowerCase());
+  const bound = (await app.pool.query('SELECT * FROM dynasty_tokens WHERE token_id=$1', ['1'])).rows[0];
+  assert.equal(bound.frozen, false);
+  assert.equal(bound.account_id, accountId);
+  assert.equal(bound.owner_address, player.account.address.toLowerCase());
   assert.equal(ok(await api('GET', '/v1/me', token)).character.minted, true);
   assert.equal(ok(await api('GET', '/v1/me', buyerToken)).character.minted, false);
   assert.equal((await api('POST', '/v1/identity/mint', token, {})).body.error, 'already');
-  const frozenMetadata = ok(await api('GET', '/v1/identity/1'));
   await app.pool.query('UPDATE characters SET name=$2 WHERE account_id=$1', [accountId, 'Later Character']);
-  assert.deepEqual(ok(await api('GET', '/v1/identity/1')), frozenMetadata);
-  check('Transfer freezes portrait; seller keeps account entitlement, buyer receives trophy only');
+  assert.equal(ok(await api('GET', '/v1/identity/1')).name.includes('Later Character'), true);
+  check('ERC-5192 identity rejects transfer and remains bound to its account with live metadata');
   assert.equal(process.env.VOUCHER_CLAIM_ADDRESS, undefined);
   assert.equal(process.env.OMR_ADDRESS, undefined);
   check('Token withdrawal and OMR contract configuration remain absent');

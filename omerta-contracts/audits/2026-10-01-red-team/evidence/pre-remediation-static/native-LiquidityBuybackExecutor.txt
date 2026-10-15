@@ -1,0 +1,69 @@
+
+Detector: reentrancy-balance
+Reentrancy in LiquidityBuybackExecutor.execute(uint256,uint256,uint256) (src/LiquidityBuybackExecutor.sol#132-157):
+	External call allowing reentrancy:
+	- (spent,bought) = abi.decode(poolManager.unlock(abi.encode(amount)),(uint256,uint256)) (src/LiquidityBuybackExecutor.sol#147)
+	Balance read before the call:
+	- beforeOmr = omr.balanceOf(address(this)) (src/LiquidityBuybackExecutor.sol#144)
+	Possible stale balance used after the call in a condition:
+	- spent == 0 || spent > amount || beforeEth - address(this).balance != spent || omr.balanceOf(address(this)) - beforeOmr != bought (src/LiquidityBuybackExecutor.sol#149-150)
+		- stale variable `beforeOmr`
+	- omr.balanceOf(address(this)) != beforeOmr (src/LiquidityBuybackExecutor.sol#154)
+		- stale variable `beforeOmr`
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities
+
+Detector: incorrect-equality
+LiquidityBuybackExecutor._deliver(address,uint256) (src/LiquidityBuybackExecutor.sol#187-192) uses a dangerous strict equality:
+	- amount == 0 (src/LiquidityBuybackExecutor.sol#188)
+LiquidityBuybackExecutor.distributeTokenRevenue() (src/LiquidityBuybackExecutor.sol#162-170) uses a dangerous strict equality:
+	- amount == 0 (src/LiquidityBuybackExecutor.sol#165)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: reentrancy-no-eth
+Reentrancy in LiquidityBuybackExecutor.execute(uint256,uint256,uint256) (src/LiquidityBuybackExecutor.sol#132-157):
+	External calls:
+	- (spent,bought) = abi.decode(poolManager.unlock(abi.encode(amount)),(uint256,uint256)) (src/LiquidityBuybackExecutor.sol#147)
+	State variables written after the call(s):
+	- spentInDay[day] -= amount - spent (src/LiquidityBuybackExecutor.sol#152)
+	LiquidityBuybackExecutor.spentInDay (src/LiquidityBuybackExecutor.sol#55) can be used in cross function reentrancies:
+	- LiquidityBuybackExecutor.spentInDay (src/LiquidityBuybackExecutor.sol#55)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
+
+Detector: unused-return
+LiquidityBuybackExecutor.unlockCallback(bytes) (src/LiquidityBuybackExecutor.sol#172-185) ignores return value by poolManager.settle{value: spent}() (src/LiquidityBuybackExecutor.sol#182)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: missing-zero-check
+LiquidityBuybackExecutor.constructor(address,IPoolManager,PoolKey,IOmrOracle,ILiquidityHealth,LiquidityBuybackExecutor.Stream,address,address,LiquidityBuybackExecutor.Policy).primary_ (src/LiquidityBuybackExecutor.sol#82) lacks a zero-check on :
+		- primaryRecipient = primary_ (src/LiquidityBuybackExecutor.sol#100)
+LiquidityBuybackExecutor.constructor(address,IPoolManager,PoolKey,IOmrOracle,ILiquidityHealth,LiquidityBuybackExecutor.Stream,address,address,LiquidityBuybackExecutor.Policy).secondary_ (src/LiquidityBuybackExecutor.sol#82) lacks a zero-check on :
+		- secondaryRecipient = secondary_ (src/LiquidityBuybackExecutor.sol#101)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Detector: reentrancy-benign
+Reentrancy in LiquidityBuybackExecutor.execute(uint256,uint256,uint256) (src/LiquidityBuybackExecutor.sol#132-157):
+	External calls:
+	- (spent,bought) = abi.decode(poolManager.unlock(abi.encode(amount)),(uint256,uint256)) (src/LiquidityBuybackExecutor.sol#147)
+	State variables written after the call(s):
+	- _unlocking = false (src/LiquidityBuybackExecutor.sol#148)
+	- BuybackExecuted(++ sequence,uint8(stream),spent,bought,primary,secondary,primaryRecipient,secondaryRecipient) (src/LiquidityBuybackExecutor.sol#155-156)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+LiquidityBuybackExecutor.quoteFloor(uint256) (src/LiquidityBuybackExecutor.sol#121-130) uses timestamp for comparisons
+	Dangerous comparisons:
+	- price == 0 || updatedAt > block.timestamp || block.timestamp - updatedAt > maxOracleAge (src/LiquidityBuybackExecutor.sol#125)
+LiquidityBuybackExecutor.execute(uint256,uint256,uint256) (src/LiquidityBuybackExecutor.sol#132-157) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp < nextExecutionAt (src/LiquidityBuybackExecutor.sol#137)
+	- deadline < block.timestamp || deadline > block.timestamp + 300 (src/LiquidityBuybackExecutor.sol#138)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in LiquidityBuybackExecutor.recover(IERC20,uint256) (src/LiquidityBuybackExecutor.sol#203-208):
+	- (ok,None) = address(owner()).call{value: amount}() (src/LiquidityBuybackExecutor.sol#205)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\LiquidityBuybackExecutor.sol analyzed (32 contracts with 102 detectors), 11 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\LiquidityBuybackExecutor.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

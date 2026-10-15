@@ -6,7 +6,7 @@ process.env.SEASON_PHASE = 'opening';
 
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { compileContentPack, validateRuntimeContentPack } from '../src/content/compiler.js';
 import { seasonIdxOf } from '../src/rules.js';
 

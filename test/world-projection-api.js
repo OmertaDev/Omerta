@@ -1,7 +1,7 @@
 // Mounted Fastify route contracts. Native MVCC is covered by world-projection.js.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { COORDINATION_OPERATION_PILOT } from '../src/content/coordination-operation-pilot.js';
 import { WORLD_KERNEL_OBJECTS, WORLD_KERNEL_RECIPE } from '../src/content/world-kernel-pilot.js';
 

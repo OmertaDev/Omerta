@@ -8,7 +8,7 @@ import { readFileSync as _readSrc } from 'node:fs';
 process.env.PEN_YARD_EVENT = 'quiet'; // baseline: no yard incident perturbs the step-one tests (overridden per-case below)
 process.env.PEN_SHANK_CD_MS = '1';    // TEST-ONLY: shrink the per-attacker shank cooldown (SEARCH_MS precedent) — a dedicated block below restores it to assert the gate
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PEN, NPC_HITMEN, yardEventOf, yardCharacterOf, dayOf, MASTERY, penSafe } from '../src/rules.js';
 import { sweepStaleBreaks } from '../src/pen.js';
 import { runLedgerInvariants } from '../src/invariants.js';

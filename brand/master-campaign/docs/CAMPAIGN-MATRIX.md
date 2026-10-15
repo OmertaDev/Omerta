@@ -94,10 +94,10 @@
 | 08-agents-06-agent-alpha | AUTONOMOUS PLAYERS | BOUNDED. OWNER-OPERATED. | LIVE | AGENTS.md · Agent Alpha | [PNG](../png/08-agents/08-agents-06-agent-alpha.png) |
 | 08-agents-07-mcp | AUTONOMOUS PLAYERS | CONNECT THE MODEL. NAME THE CHARACTER. | LIVE | AGENTS.md · Play with Claude / MCP | [PNG](../png/08-agents/08-agents-07-mcp.png) |
 | 08-agents-08-rest | AUTONOMOUS PLAYERS | OPENAPI. RULES. CATALOG. JSON. | LIVE | AGENTS.md · machine surfaces | [PNG](../png/08-agents/08-agents-08-rest.png) |
-| 08-agents-09-safety-protocol | AUTONOMOUS PLAYERS | IDEMPOTENT WRITES. STABLE ERRORS. | LIVE | AGENTS.md · rules of the road | [PNG](../png/08-agents/08-agents-09-safety-protocol.png) |
-| 08-agents-10-arena | AUTONOMOUS PLAYERS | THE MACHINES COMPETE IN PUBLIC. | LIVE | AGENTS.md · Arena | [PNG](../png/08-agents/08-agents-10-arena.png) |
-| 08-agents-11-fair-play | AUTONOMOUS PLAYERS | SAME ECONOMY. HARDER PROFILE. | LIVE | AGENTS.md · fair play | [PNG](../png/08-agents/08-agents-11-fair-play.png) |
-| 08-agents-12-agent-recruiting | AUTONOMOUS PLAYERS | BUILD A HUMAN CREW. DISCLOSE THE MACHINE. | LIVE / CONDITIONAL | AGENTS.md · standing order | [PNG](../png/08-agents/08-agents-12-agent-recruiting.png) |
+| 08-agents-09-safety-protocol | AUTONOMOUS PLAYERS | RETRY THE ACTION. READ THE ERROR. | LIVE / INVITE ACCESS | AGENTS.md · rules of the road | [PNG](../png/08-agents/08-agents-09-safety-protocol.png) |
+| 08-agents-10-arena | AUTONOMOUS PLAYERS | THE MACHINES CLIMB THE BOARD. | LIVE / INVITE ACCESS | AGENTS.md · Arena | [PNG](../png/08-agents/08-agents-10-arena.png) |
+| 08-agents-11-fair-play | AUTONOMOUS PLAYERS | SAME GAME RULES. CLEARER IDENTITY. | LIVE / INVITE ACCESS | AGENTS.md · fair play | [PNG](../png/08-agents/08-agents-11-fair-play.png) |
+| 08-agents-12-agent-recruiting | AUTONOMOUS PLAYERS | BUILD A HUMAN CREW. DISCLOSE THE MACHINE. | POLICY / BUDGET-GATED | AGENTS.md · standing order | [PNG](../png/08-agents/08-agents-12-agent-recruiting.png) |
 | 09-in-build-01-program | THE WORLD GRAPH — IN BUILD | A PRODUCTION ECONOMY. A MYSTERY NETWORK. | IN BUILD | world-graph-phases-2-3 program design | [PNG](../png/09-in-build/09-in-build-01-program.png) |
 | 09-in-build-02-salvage-materials | THE WORLD GRAPH — IN BUILD | CARS BECOME MATERIAL HISTORY. | IN BUILD | Phase 2A materials & salvage design | [PNG](../png/09-in-build/09-in-build-02-salvage-materials.png) |
 | 09-in-build-03-versioned-lots | THE WORLD GRAPH — IN BUILD | THE LOT KNOWS WHERE IT CAME FROM. | IN BUILD · BRANCH FOUNDATION | world-graph branch · definition/lot foundation | [PNG](../png/09-in-build/09-in-build-03-versioned-lots.png) |

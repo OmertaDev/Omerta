@@ -4,7 +4,7 @@
 // right KNOWN HUMANS, the exclusions hold (self / NPC residents / agents / out-of-band whales),
 // filtering uses stored observations, live status stays private, and the whole thing moves no value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { DISCOVERY } from '../src/rules.js';
 import { recordPlayerIntel } from '../src/playerintel.js';

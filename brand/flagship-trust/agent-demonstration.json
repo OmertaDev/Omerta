@@ -1,0 +1,465 @@
+{
+  "controller": "Deterministic player-operated sample client; not an LLM inference",
+  "before": {
+    "identity": {
+      "id": "246cecfb-520c-483b-b7db-a66e95efe9c4",
+      "name": "Relay Nine",
+      "level": 1,
+      "generation": 1,
+      "district": "docks"
+    },
+    "resources": {
+      "cash": 500,
+      "bank": 0,
+      "energy": 50,
+      "nerve": 10,
+      "health": 100,
+      "heat": 0,
+      "omr": 0
+    },
+    "status": {
+      "jailedUntil": null,
+      "hospitalizedUntil": null,
+      "wantedUntil": null,
+      "indictedAt": null
+    }
+  },
+  "choice": {
+    "id": "crime:stereo:standard",
+    "kind": "crime",
+    "cost": {
+      "nerve": 3
+    },
+    "risk": {
+      "baseSuccessPct": 78,
+      "jailMinutes": 8
+    }
+  },
+  "result": {
+    "character": {
+      "id": "246cecfb-520c-483b-b7db-a66e95efe9c4",
+      "name": "Relay Nine",
+      "generation": 1,
+      "level": 1,
+      "respect": 4,
+      "energy": 50,
+      "nerve": 7,
+      "health": 100,
+      "cash": 607,
+      "bank": 0,
+      "omr": 0,
+      "staked": 0,
+      "rewards": 0,
+      "unbonding": 0,
+      "made": false,
+      "madeSeconds": 0,
+      "unbondSeconds": 0,
+      "bankInTransit": 0,
+      "bankClearSeconds": 0,
+      "safehouseCost": 25000,
+      "stats": {
+        "muscle": 4,
+        "cunning": 5,
+        "speed": 6
+      },
+      "eff": {
+        "muscle": 4,
+        "cunning": 5,
+        "speed": 6
+      },
+      "rerollCredits": 0,
+      "statTotal": 15,
+      "forged": null,
+      "forgedName": null,
+      "ammo": 25,
+      "cb": 1,
+      "heat": 0,
+      "welsher": false,
+      "wanted": false,
+      "wantedSeconds": 0,
+      "law": {
+        "stage": "clean",
+        "exposure": 0,
+        "indicted": false,
+        "retainerSeconds": 0,
+        "witproSeconds": 0,
+        "rat": false
+      },
+      "hunt": null,
+      "tradeRep": 0,
+      "busts": 0,
+      "gun": null,
+      "vest": null,
+      "guns": [],
+      "jailSeconds": 0,
+      "hospSeconds": 0,
+      "shootCdSeconds": 0,
+      "gtaSeconds": 0,
+      "safeSeconds": 0,
+      "safeCapSeconds": 43200,
+      "bustAttemptsLeft": 5,
+      "bustRefillSeconds": 0,
+      "guardPrice": null,
+      "fadeLimit": null,
+      "pokerLimit": null,
+      "duelElo": 1000,
+      "duelLimit": null,
+      "vendettas": [],
+      "guardedBy": null,
+      "guardSeconds": 0,
+      "loc": "docks",
+      "path": null,
+      "title": null,
+      "bio": null,
+      "streak": 0,
+      "healCost": null,
+      "checkin": {
+        "done": false,
+        "streak": 1,
+        "pay": 350,
+        "next": 450
+      },
+      "maxEnergy": 52,
+      "maxNerve": 11,
+      "ladder": {
+        "rung": 0,
+        "of": 4,
+        "name": null,
+        "staked": 0,
+        "effective": 0,
+        "madeRungs": 1,
+        "lock": null,
+        "lockTiers": [
+          {
+            "id": "week",
+            "days": 7,
+            "mult": 1.25,
+            "name": "The Handshake"
+          },
+          {
+            "id": "month",
+            "days": 30,
+            "mult": 1.5,
+            "name": "The Word"
+          },
+          {
+            "id": "quarter",
+            "days": 90,
+            "mult": 2,
+            "name": "The Oath"
+          }
+        ],
+        "fx": null,
+        "next": {
+          "name": "Earner",
+          "min": 60,
+          "need": 60
+        }
+      },
+      "disciplines": {
+        "stamina": 1,
+        "composure": 1,
+        "conditioning": 1,
+        "marksmanship": 1,
+        "presence": 1,
+        "handling": 1,
+        "poise": 1,
+        "vigilance": 1
+      },
+      "crewBonusPct": 0,
+      "cargoCap": 10,
+      "skills": [],
+      "honor": {
+        "value": 0,
+        "tier": "Unproven",
+        "peak": 0,
+        "peakTier": "Unproven",
+        "low": 0,
+        "lowTier": "Unproven"
+      },
+      "skillPoints": {
+        "total": 0,
+        "spent": 0,
+        "available": 0
+      },
+      "rackets": [],
+      "assets": [],
+      "businesses": [],
+      "speakeasy": null,
+      "fighters": [],
+      "cargo": {},
+      "items": {},
+      "gear": [],
+      "racketLevels": {},
+      "racketIncomePerHr": {},
+      "tycoon": {
+        "earned": 0,
+        "rank": "Hustler"
+      },
+      "empireTitles": [],
+      "ops": {
+        "used": 0,
+        "slots": 2,
+        "free": 2,
+        "nextAt": 4,
+        "max": 12,
+        "incomeAssets": [],
+        "meteredCat": "Legit Fronts"
+      },
+      "launderer": {
+        "washed": 0,
+        "rank": "Bagman"
+      },
+      "frontTitles": [],
+      "statesman": {
+        "statecraft": 0,
+        "rank": "Ward Heeler"
+      },
+      "cars": [],
+      "shipment": 0,
+      "bespoke": [],
+      "nftCars": [],
+      "gang": null,
+      "lab": null,
+      "crew": 0,
+      "labModules": {
+        "purity": 0,
+        "yield": 0,
+        "stealth": 0
+      },
+      "labModuleNext": {
+        "purity": {
+          "cash": 60000,
+          "omr": 0
+        },
+        "yield": {
+          "cash": 60000,
+          "omr": 0
+        },
+        "stealth": {
+          "cash": 60000,
+          "omr": 0
+        }
+      },
+      "kingpin": {
+        "moved": 0,
+        "rank": "Nobody"
+      },
+      "crewWageOwed": 0,
+      "crewWagePerHr": 0,
+      "crewCold": false,
+      "crewWagePerHead": 1200,
+      "crewMax": 5,
+      "crewCostStep": 50000,
+      "crewNextCost": 50000,
+      "crewColdSeconds": null,
+      "makings": {},
+      "stash": [],
+      "batch": null,
+      "tradeRank": 0,
+      "trades": [
+        {
+          "id": "larceny",
+          "name": "Larceny",
+          "xp": 3,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 20,
+          "perkWhat": "jail stints on a busted job",
+          "perkNextAt": 10
+        },
+        {
+          "id": "wetwork",
+          "name": "Wet Work",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "your search clock on a mark",
+          "perkNextAt": 10
+        },
+        {
+          "id": "chemistry",
+          "name": "The Cook",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "cook time on a batch",
+          "perkNextAt": 10
+        },
+        {
+          "id": "wheels",
+          "name": "Wheels",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "tuning prices at the garage",
+          "perkNextAt": 10
+        },
+        {
+          "id": "seamanship",
+          "name": "Seamanship",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "hull & engine work at the boatyard",
+          "perkNextAt": 10
+        },
+        {
+          "id": "gambling",
+          "name": "The Gambler",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "your PvE table limit at the den",
+          "perkNextAt": 10
+        },
+        {
+          "id": "muscle",
+          "name": "Protection",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "jump & shakedown muscle",
+          "perkNextAt": 10
+        },
+        {
+          "id": "commerce",
+          "name": "Commerce",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "Black Market listing fees",
+          "perkNextAt": 10
+        },
+        {
+          "id": "scores",
+          "name": "Big Scores",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "the Score lines up sooner",
+          "perkNextAt": 10
+        },
+        {
+          "id": "fists",
+          "name": "Fisticuffs",
+          "xp": 0,
+          "lvl": 1,
+          "rank": "Green",
+          "nextAt": 15,
+          "pct": 0,
+          "perkWhat": "your fighters heal faster",
+          "perkNextAt": 10
+        }
+      ],
+      "heistSeconds": 0,
+      "trainSeconds": 0,
+      "missionSeconds": 0,
+      "prestige": 0,
+      "recruits": 0,
+      "estate": null,
+      "wallet": null,
+      "minted": false,
+      "mintCredits": 0,
+      "hitmanRep": 0,
+      "kills": 0,
+      "seasonKills": 0,
+      "hitmanTitle": "Associate",
+      "onboard": {},
+      "coach": {
+        "label": "Claim your first-job reward",
+        "hint": "Your first job is done. Start Here has cash and energy waiting — collect it before the next job.",
+        "tab": "start"
+      },
+      "coachPlan": [
+        {
+          "label": "Claim your first-job reward",
+          "hint": "Your first job is done. Start Here has cash and energy waiting — collect it before the next job.",
+          "tab": "start"
+        },
+        {
+          "label": "Get to level 5",
+          "hint": "Keep pulling jobs. Every job pays respect, and respect IS your level — 156 more respect reaches level 5, where you choose your Path. That's the whole plan: do a job, wait for nerve, do another.",
+          "tab": "streets"
+        },
+        {
+          "label": "Finish your First Week (0/4)",
+          "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+          "tab": "start"
+        },
+        {
+          "label": "Boost 3 cars off the street",
+          "hint": "Boost a car in The Garage.",
+          "tab": "garage"
+        },
+        {
+          "label": "Tonight's hustle is waiting",
+          "hint": "Three stops, three districts, one payoff that scales with your level — and it walks you round the map while it pays. It resets at the end of the day whether you finish it or not.",
+          "tab": "streets"
+        }
+      ],
+      "netWorth": 607,
+      "cityEvent": "raceday",
+      "city": {
+        "event": "raceday",
+        "name": "RACE DAY",
+        "lawEvent": "drought",
+        "hour": 3,
+        "phase": "night",
+        "patrol": false
+      }
+    },
+    "ok": true,
+    "success": true,
+    "approach": "standard",
+    "take": 107,
+    "rep": 4,
+    "crates": 1,
+    "makingsDrop": null,
+    "clue": null,
+    "victim": "Little Tony the Undertow",
+    "markTook": 0,
+    "soldier": null
+  },
+  "after": {
+    "identity": {
+      "id": "246cecfb-520c-483b-b7db-a66e95efe9c4",
+      "name": "Relay Nine",
+      "level": 1,
+      "generation": 1,
+      "district": "docks"
+    },
+    "resources": {
+      "cash": 607,
+      "bank": 0,
+      "energy": 50,
+      "nerve": 7,
+      "health": 100,
+      "heat": 0,
+      "omr": 0
+    },
+    "status": {
+      "jailedUntil": null,
+      "hospitalizedUntil": null,
+      "wantedUntil": null,
+      "indictedAt": null
+    }
+  }
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "R3-C01-poly",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Single full-body character reference on a plain cold-gray background. Adult female avatar with an angular wedge head, flat tan vertex color, a short pale-yellow polygon cap for buzzcut hair, one simple diagonal eyebrow line. Oversized silver faceted windbreaker, deep-violet mitten-shaped gloves, black blocky cargo trousers. Slouching, puzzled stance. One front three-quarter standing pose. Both blocky hands visible, whole feet visible. No contact sheet, no other people.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "refs",
+    "ext": "png"
+  },
+  {
+    "id": "R3-C02-poly",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Single full-body character reference on a plain cold-gray background. Adult male avatar with a broad hexagonal head, flat dark-brown vertex color, tiny rectangular eyes and a plain black low-poly fisherman hat. Bright-orange blocky raincoat, one simple white earpiece line. Upright, unimpressed stance. One front three-quarter standing pose. Both blocky hands visible, whole feet visible. No contact sheet, no other people.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "refs",
+    "ext": "png"
+  },
+  {
+    "id": "R3-C03-poly",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Single full-body character reference on a plain cold-gray background. Adult female adviser avatar with a long faceted rectangular head, flat neutral-tan vertex color, black angular swept-back hair shape crossed by one solid white stripe. Bone-gray sharp-shouldered suit, one thin silver earpiece line, black mitten fingertips. Dry unimpressed stance. One front three-quarter standing pose. Both blocky hands visible, whole feet visible. No contact sheet, no other people.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "refs",
+    "ext": "png"
+  },
+  {
+    "id": "R3-C04-poly",
+    "model": "bytedance/seedream/v5/pro/text-to-image",
+    "input": {
+      "prompt": "Visibly stylized low-poly video-game render, coarse angular polygon mesh, flat vertex colors, hard planar shading, chunky mitten hands, abstract geometric faces with flat rectangular eyes. Clearly fictional digital avatars, not photos or real human likenesses. Full-size in-game environment, not a toy or miniature. Original 2000s mod-scene visual language without copying any actual game, franchise character, map, logo or UI. Acid-lime, cobalt, bone, black and sparse red. Ugly direct-flash-like vertex lighting, fisheye game camera. Vertical 9:16. Blank screens and notices, all typography added in edit. No photoreal skin, facial texture, photographic human face, human scan, celebrity, live-action footage, pores, realistic eyes, fine hair strands, motion blur, cinematic haze or neon skyline. Single full-body character reference on a plain cold-gray background. Adult female avatar with a triangular faceted head, flat neutral-brown vertex color, chunky black pixie-hair wedges, oversized solid-teal square glasses. Black angular poncho and hot-pink square wristwatch. Precise impatient stance. One front three-quarter standing pose. Both blocky hands visible, whole feet visible. No contact sheet, no other people.",
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "refs",
+    "ext": "png"
+  }
+]

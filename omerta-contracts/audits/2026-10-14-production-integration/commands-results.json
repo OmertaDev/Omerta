@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "completedAt": "2026-10-14T21:57:47.261Z",
+  "releasePhase": "Local production integration verification before any on-chain activation",
+  "sourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "verificationHead": "750c07431ab157d8bf764ef1cb60d2cb4332c59b",
+  "scopeTrees": {
+    "omerta-contracts/src": "3aac08b6c4d6a664f2c0489521e908c5f78f9cc3",
+    "omerta-contracts/test": "7be7492f2c710e990b205fc6ef26c06ecb384413",
+    "omerta-contracts/foundry.toml": "171c92f61c5e616c1d1d06a136934d053e97ff2a"
+  },
+  "sourceManifest": {
+    "file": "source-manifest.json",
+    "sha256": "680e81f2b92103ad06daace7dd2ecd534efc477b05e24cf713428b6e513d09a6"
+  },
+  "toolchain": {
+    "forge": "forge Version: 1.7.1\nCommit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8\nBuild Timestamp: 2026-05-08T07:54:39.315067700Z (1778226879)\nBuild Profile: dist",
+    "solc": "0.8.26+commit.8a97fa7a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 800
+    },
+    "evmVersion": "cancun",
+    "profiles": "Profile restrictions and remappings are pinned by the foundry.toml blob in scopeTrees."
+  },
+  "commands": [
+    {
+      "id": "build",
+      "command": "forge build --offline",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "log": {
+        "file": "forge-build.log.gz",
+        "compression": "gzip",
+        "rawBytes": 387939,
+        "rawSha256": "323194a03a0218c72a15253aecf26b1e855526e39b9d450224bc70fd149e6644",
+        "compressedBytes": 25229,
+        "compressedSha256": "08fb08af556b05d6a98359086f5addbad554ac1f1acd78033fcd9162ce2b9182"
+      }
+    },
+    {
+      "id": "fullTest",
+      "command": "forge test -vvv --fuzz-runs 512 --fuzz-seed 0x2109737503393554544",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "log": {
+        "file": "forge-full-tests.log.gz",
+        "compression": "gzip",
+        "rawBytes": 317774,
+        "rawSha256": "a9c76193a302dc2b355c6b5b75cf04cd44495f1aac723f54335edd794c3ae021",
+        "compressedBytes": 69662,
+        "compressedSha256": "ed3a79bf647c66bbf29cb36b5bdf5a4f7a7d8accc0d3a5c684c8af0fcc898dd9"
+      }
+    },
+    {
+      "id": "sizeGate",
+      "command": "forge build --sizes --skip FuzzTester --offline",
+      "workingDirectory": "omerta-contracts",
+      "exitCode": 0,
+      "log": {
+        "file": "forge-size-gate.log.gz",
+        "compression": "gzip",
+        "rawBytes": 515231,
+        "rawSha256": "3fb319a094f2732d47b91c37f2d9fd5d4587533f7cdfea33f8a7c05d7c5c1ccc",
+        "compressedBytes": 31696,
+        "compressedSha256": "2ec07cf283fba61ad1fc3612d979915b096b80c38f2438557ae5642bb16eb45b"
+      }
+    }
+  ],
+  "fullTest": {
+    "summary": "Ran 104 test suites in 2365.27s (15258.79s CPU time): 1486 tests passed, 0 failed, 2 skipped (1488 total tests)",
+    "suites": 104,
+    "wallSeconds": 2365.27,
+    "aggregateCpuSeconds": 15258.79,
+    "passed": 1486,
+    "failed": 0,
+    "skipped": 2,
+    "total": 1488,
+    "fuzzRuns": 512,
+    "seed": "0x2109737503393554544",
+    "invariantBudget": "Each recorded invariant completed 512 runs and 256000 calls (observed depth 500). Handler reverts are retained per property and are not test failures.",
+    "invariants": [
+      {
+        "suite": "test/audit/GenesisOracleBootstrap.t.sol:GenesisOracleBootstrapInvariantTest",
+        "property": "invariant_only_initialized_complete_bounded_windows_publish",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/BankBufferVault.t.sol:BankBufferVaultInvariantTest",
+        "property": "invariant_backingConservationNoUnmeteredSpendOrStandingApproval",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/LiquidityRevenueAutomation.t.sol:KeeperGasInvariantTest",
+        "property": "invariant_refillsRespectGlobalBudgetCooldownAndConserveOperationsFunding",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/LiquidityRevenueAutomation.t.sol:LiquidityRevenueInvariantTest",
+        "property": "invariant_eachDestinationMatchesFeeKindAndModeWithAtomicNonceAccounting",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/CharacterLaunchAudit.t.sol:CharacterLaunchFeesInvariantTest",
+        "property": "invariant_feeReceiptsConserveGrossAndForcedFundsNeverBecomePayments",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/AcquisitionConstellationTask4BudgetBook.t.sol:AcquisitionConstellationTask4BudgetBookTest",
+        "property": "invariant_task4_oneImmutableRecordPerDayAndNoCoreOrFundMovement",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/GenesisWalletCap.t.sol:GenesisWalletCapInvariantTest",
+        "property": "invariantEveryWalletBoundedAndAggregateConserved",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/TurfV2.t.sol:TurfV2InvariantTest",
+        "property": "invariant_all_funded_fees_are_paid_or_back_exact_historical_credits_and_escrow",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/OmertaHookV2.t.sol:OmertaHookV2InvariantTest",
+        "property": "invariant_liabilitiesRemainExactlyFundedInBothCurrencies",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/HookTaxGovernanceV2.t.sol:HookFixedPolicyInvariantTest",
+        "property": "invariantFixedOpsAndFundedLiabilitiesSurviveMutationAttempts",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/RestrictedPoolManagerV2.t.sol:RestrictedPoolManagerV2Test",
+        "property": "invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/RwaHealthOverlayInvariant.t.sol:RwaHealthOverlayInvariantTest",
+        "property": "invariant_generationLatestAndUsedIdsAreMonotone",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest",
+        "property": "invariantCapsAndSettlementAccounting",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36868
+      },
+      {
+        "suite": "test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest",
+        "property": "invariantETHReservesAlwaysCoverLiabilities",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36868
+      },
+      {
+        "suite": "test/GenesisPlayerSaleInvariant.t.sol:GenesisPlayerSaleInvariantTest",
+        "property": "invariantTokenCustodyCoversUnclaimedAllocations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36868
+      },
+      {
+        "suite": "test/market-v2/StabilityV2Invariant.t.sol:StabilityV2InvariantTest",
+        "property": "invariantCompartmentAndFeeLiabilitiesEqualHeldAssets",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/StabilityV2Invariant.t.sol:StabilityV2InvariantTest",
+        "property": "invariantOwnedLiquidityMatchesRealManagerPositions",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_balance_always_backs_outstanding_credits",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_known_credit_sum_equals_outstanding",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_outstanding_equals_recorded_minus_withdrawn",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_recorded_ghost_conserves_live_and_withdrawn_credits",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_unreserved_is_exact_balance_minus_liability",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/SettlementGasPoolInvariant.t.sol:SettlementGasPoolInvariantTest",
+        "property": "invariant_withdrawal_ghost_matches_cumulative_withdrawals",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/market-v2/RestrictedRevenueBoundariesV2.t.sol:RestrictedRevenueBoundariesV2Test",
+        "property": "invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/ProtocolLiquidityVault.t.sol:ProtocolLiquidityVaultInvariantTest",
+        "property": "invariant_balances_and_fee_routes_conserve_each_currency",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/ProtocolLiquidityVault.t.sol:ProtocolLiquidityVaultInvariantTest",
+        "property": "invariant_paused_and_warming_custody_cannot_report_healthy",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/ProtocolLiquidityVault.t.sol:ProtocolLiquidityVaultInvariantTest",
+        "property": "invariant_principal_custody_and_liquidity_are_monotonic",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/CharacterLaunchAudit.t.sol:CharacterLaunchNftInvariantTest",
+        "property": "invariant_nftOwnershipNoncesSupplyAndDailyAccountingMatchModel",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "suite": "test/StockTokenRegistryV2Invariant.t.sol:StockTokenRegistryV2InvariantTest",
+        "property": "invariant_reverseHeadsHistoryCatalogAndBallotsRemainHonest",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      }
+    ],
+    "skippedSuites": [
+      {
+        "suite": "test/market-v2/AuctionGenesisRobinhoodFork.t.sol:AuctionGenesisRobinhoodForkTest",
+        "result": "[SKIP: skipped] setUp() (gas: 0)"
+      },
+      {
+        "suite": "test/market-v2/PlayerGenesisRobinhoodFork.t.sol:PlayerGenesisRobinhoodForkTest",
+        "result": "[SKIP: skipped] setUp() (gas: 0)"
+      }
+    ]
+  },
+  "sizeGate": {
+    "excluded": "test/fizz/FuzzTester.sol is a test harness, excluded from size reporting only; no production contract was excluded.",
+    "runtimeLimitBytes": 24576,
+    "initcodeLimitBytes": 49152,
+    "restrictedManagerRuntimeBytes": 24342,
+    "restrictedManagerRuntimeMarginBytes": 234
+  },
+  "consistencyChecks": {
+    "trackedSourceTestAndConfigMatchSourceCommit": true,
+    "untrackedSourceAndTestInputs": [],
+    "productionSourceHashesVerified": 103,
+    "focusedArtifactsVerified": 10,
+    "dependencyFingerprintsVerified": 5,
+    "frozenHookAuditMatchesSnapshot": "7e42b9955dea4858a20139c51f9f2660d8654669"
+  },
+  "limitations": [
+    "The two Robinhood fork suites are opt-in and were skipped; this run does not verify live chain state.",
+    "No transaction broadcast, contract funding, deployment, upgrade, or on-chain activation is established by this package.",
+    "This is merge integration verification, not a fresh full-protocol security review. Historical static analysis and findings retain their original revision and scope.",
+    "Compiler runtime hashes contain immutable placeholders; deployed bytecode and constructor bindings require separate verification."
+  ]
+}

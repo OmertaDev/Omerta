@@ -3,7 +3,7 @@
 // Each assertion protects an observable contract: catalog drift, recommendation grids, per-system
 // telemetry reads, lost account-history evidence, dishonest eligibility, or a read that moves value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { dbCaps, makeDb } from '../src/db.js';
 import * as Engagement from '../src/engagement.js';
 import * as Explore from '../src/explore.js';
@@ -128,7 +128,7 @@ assert.deepEqual(coverage.catalog, { scope: 'engagement_systems', version: 1, co
 assert.deepEqual(coverage.progress, { visited: 0, eligible: 3, remaining: 40 });
 assert.deepEqual(coverage.next, {
   systemId: 'streets-crime', system: 'streets / crime', name: 'The Streets', tab: 'streets',
-  hook: 'Work a street crime — the city\'s first cash-and-respect loop.', at: 1, mode: 'solo',
+  hook: 'Start with a street crime to earn cash and respect.', at: 1, mode: 'solo',
   reason: 'earliest_overdue_unlock', evidence: { visited: false, source: null },
 });
 assert.deepEqual(Object.keys(coverage.blocked).sort(), ['level', 'policy', 'resource', 'social', 'status']);

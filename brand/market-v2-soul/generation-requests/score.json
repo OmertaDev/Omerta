@@ -1,0 +1,14 @@
+[
+  {
+    "id": "SOUL-SCORE",
+    "model": "elevenlabs/music/v2.5",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Original three-minute instrumental cinematic noir score for an intimate warm male storyteller explaining power, finite resources and loyalty in a mafia city. Deep human soul and subtle tension, elegant and tactile, recorded like a small real acoustic ensemble in a beautiful room. Around 82 BPM with expressive microtiming, restrained D minor harmony with suspended ninths, a memorable sparse three-note felt-piano motif, warm upright bass, delicate nylon-string plucks, breathy bowed cello harmonics, occasional brushes on snare. Low and mid registers leave ample space for dialogue. Open with a single piano thought and room air; gradually introduce gentle bass and a brushed pulse around 30 seconds. Build intrigue through the middle without getting loud. A tender darker cello turn around 105 seconds; increase quiet forward momentum around 130 seconds; resolve into sparse piano and a lingering warm chord near the end. Small breathing gaps and organic dynamics. Sophisticated crime drama with bittersweet warmth and quiet swagger. Entirely original melody. No vocals, speech, choir or humming. No epic trailer brass, no braams, no bombastic drums, no trap, no EDM, no synthetic arpeggiator, no constant ticking, no corporate stock-music uplift, no recognizable existing melody.",
+      "music_length_ms": 180000,
+      "force_instrumental": true,
+      "output_format": "mp3_48000_192"
+    }
+  }
+]

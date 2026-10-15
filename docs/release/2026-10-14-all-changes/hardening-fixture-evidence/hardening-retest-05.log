@@ -1,0 +1,31 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":120969,"rhs":108624,"drift":12345,"ok":false}]
+✓ X integrations: full PKCE exchange + replay, upgrade + identity collision, x_busy transient semantics, post author binding, follow pagination
+[db] unreachable: connect ECONNREFUSED
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 BACKUP INVARIANT DRIFT: [{"name":"wal archiving off","archiveMode":"off","note":"no PITR"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":true,"detail":"recovered — beat 12s ago."}]
+🚨 WORKER INVARIANT DRIFT: [{"name":"worker heartbeat","ok":false,"detail":"no beat in 880 minutes."}]
+🚨 TEST INVARIANT DRIFT: [{"name":"test alert","note":"fired from /admin — this is a drill, nothing is wrong"}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":1477500,"rhs":-22500,"drift":1500000,"ok":false}]
+invariant webhook failed after 3 attempts EAI_AGAIN
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"x","ok":false}]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: WS_MAX_BUFFER is a positive bound
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/hardening.js:1719:5 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

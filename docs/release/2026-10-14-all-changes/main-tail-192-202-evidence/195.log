@@ -1,0 +1,1 @@
+Single-auction unsigned operations PASS: staged checkpoint/migrate/dust, no NFT balance dependency, claim cliff independent, zero ETH exact calldata/simulation, immutable/runtime pins, stale/reorg/chain/simulation rejection.

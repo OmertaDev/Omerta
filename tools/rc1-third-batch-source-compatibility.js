@@ -1,4 +1,5 @@
 import { fourthBatchSourceBaseline, fourthBatchMigrationSchema } from './rc1-fourth-batch-source-compatibility.js';
+import { releaseSourceBaseline } from './release-source-transfer.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
@@ -115,7 +116,7 @@ export function assertThirdBatchSourceTransfer(file,input){
  return{file,baselineText,sourceRevision:THIRD_BATCH_SOURCE_REVISION,predecessorRevision:THIRD_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:THIRD_BATCH_SOURCE_PHASE};
 }
 // Unknown bytes survive unchanged for the original rejecting guard. No prefix, generated or catalog exception.
-export function thirdBatchSourceBaseline(file,input){const outer=fourthBatchSourceBaseline(file,input),text=lf(outer),d=THIRD_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256?assertThirdBatchSourceTransfer(file,text).baselineText:outer;}
+export function thirdBatchSourceBaseline(file,input){const outer=fourthBatchSourceBaseline(file,releaseSourceBaseline(file,input)),text=lf(outer),d=THIRD_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256?assertThirdBatchSourceTransfer(file,text).baselineText:outer;}
 
 // Native catalog entry preserves strict full LF/CRLF admission; mixed/unknown bytes reach the original rejector unchanged.
 export function thirdBatchMigrationSchema(input){

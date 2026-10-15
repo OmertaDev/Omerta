@@ -1,0 +1,140 @@
+[
+  {
+    "id": "SOUL-CH01-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Everybody wants control. But control costs. Core provides two-sided liquidity. Other reserves have different jobs. Sell through active downside ranges: Ether becomes O M R. Buy through upside ranges: O M R becomes Ether. Crossing isn't final. Until withdrawal, inventory can still convert back. Finalization removes eligible positions, separating principal from fees. Deployment spends capacity. Deposits and withdrawals don't reset it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH02-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Completed pool history informs each move, checked against current conditions. Stress gates, cooldowns and capacity limit deployment. Surge fees, bond proceeds and arbitrage shares fund the War Chest. Refill requires a full window of spaced, healthy observations. Only actual idle assets move. Lifetime limits stay spent. A bounce creates no Ether. No guaranteed floor.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH03-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Canonical sells pay nine percent, split four ways. Three percent funds Core. Up to one extra percent funds stability. Fees settle in Ether or O M R, including partial fills. Opening buys have temporary fees and limits. Afterwards, no Hook buy tax. Other venues have their own rules. Pool liquidity fees are separate.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH04-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Pay Ether for bonds backed by existing O M R, released through linear vesting. No minting. No sellback. Purchasing pauses don't erase vested claims. Solvers commit a plan, then fund a two-pool arbitrage cycle. Profit is checked after costs and reserve share. Failed gas remains your risk. Lock canonical position N F Tees. Rewards require fresh, qualifying depth samples. Rewards need funded campaigns. Mature positions can exit independently.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH05-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Families fight for seasonal Turf fees. The protocol keeps principal. Syndicates split rights. Status doesn't multiply money. A checkpoint assigns earned fees before control changes. Existing claims keep their recipients. Sieges freeze wallets and allocate only funded escrow. At season exit, fees settle; principal returns for retirement.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH06-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "The Safe binds and funds systems. Keepers have budgets. The game can't withdraw principal. Game cash, O M R, Ether and R W A stay separate. Trades change inventory. Revenue funds reserves. Conditions gate the next move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  }
+]

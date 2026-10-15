@@ -16,7 +16,7 @@ if (native) {
 } else assert(!process.env.DATABASE_URL, 'Memory proof refuses ambient DATABASE_URL');
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.JWT_SECRET = 'company-succession-module-local-test-secret'; process.env.MOD_KEY = 'company-succession-local-test-mod-secret';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js'), D = await import('../src/depot.js'), W = await import('../src/warehouseleases.js');
 const M = await import('../src/market.js'), F = await import('../src/franchiselicenses.js'), Loan = await import('../src/loans.js');
 const { setAgentCompany, ownAgentCompany } = await import('../src/agentcompany.js');

@@ -1,0 +1,77 @@
+# OMERTÀ — Animated film
+
+Original painted animation. No website screenshots.
+
+- A01 · 0.00–15.00s · opening · Action
+- A02 · 15.00–18.54s · street · A name. A little cash.
+- A03 · 18.54–26.33s · street · Take the job.
+- A04 · 26.33–29.17s · street · Another job? / Spend nerve / Build a bankroll
+- A05 · 29.17–32.54s · street · Train / Energy spent / Stats improve
+- A06 · 32.54–37.63s · street · The bank run / Exposed in transit / Protected on arrival
+- A07 · 37.63–43.67s · drive · Different choices. Different risks.
+- A08 · 43.67–52.00s · closing · One decision.
+- A09 · 52.00–55.88s · paths · Six Paths. Six ways forward.
+- A10 · 55.88–57.79s · paths · Action · Path 0
+- A11 · 57.79–60.00s · paths · Action · Path 1
+- A12 · 60.00–62.04s · paths · Action · Path 2
+- A13 · 62.04–64.25s · paths · Action · Path 3
+- A14 · 64.25–66.46s · paths · Action · Path 4
+- A15 · 66.46–69.00s · paths · Action · Path 5
+- A16 · 69.00–71.08s · paths · Every advantage costs something.
+- A17 · 71.08–74.92s · paths · Nico · The Wheel / Faster convoys / Slower cooking · Path 3
+- A18 · 74.92–80.13s · paths · Mara · The Gun / Street combat / Preparation still matters · Path 0
+- A19 · 80.13–90.00s · recruitment · Become someone worth calling.
+- A20 · 90.00–96.79s · cargo · Coffee purchased. Cargo loaded.
+- A21 · 96.79–101.63s · drive · The route is part of the decision.
+- A22 · 101.63–103.67s · cargo · Keep it running.
+- A23 · 103.67–106.83s · drive · Sea runs. Different risks.
+- A24 · 106.83–110.88s · paths · Time and upkeep / A Kitchen batch takes time · Path 2
+- A25 · 110.88–116.54s · paths · A city worth returning to / Races · Boxing · The Den · Speakeasy · Path 5
+- A26 · 116.54–125.00s · street · Other opportunities / Loans · Auctions · Fixers / Pay attention.
+- A27 · 125.00–130.67s · recruitment · The Night Shift.
+- A28 · 130.67–136.67s · approach · The Payroll Office.
+- A29 · 136.67–143.08s · recruitment · Nico · Wheelman / Muscle · Open seat / Stake committed
+- A30 · 143.08–150.08s · recruitment · Mara joins.
+- A31 · 150.08–154.00s · approach · It cannot guarantee loyalty.
+- A32 · 154.00–157.25s · approach · Commit.
+- A33 · 157.25–161.96s · ambush · The law was waiting. / Somebody talked.
+- A34 · 161.96–168.79s · prison · Both arrested. No informant named.
+- A35 · 168.79–178.00s · prison · Who do you believe?
+- A36 · 178.00–184.79s · opening · Would you invite them again?
+- A37 · 184.79–188.71s · loss · A character can die.
+- A38 · 188.71–195.79s · loss · What survives?
+- A39 · 195.79–201.96s · loss · Extracted gear and vehicles leave play.
+- A40 · 201.96–206.42s · balances · A boundary outside the city.
+- A41 · 206.42–212.00s · closing · What are you prepared to lose?
+- A42 · 212.00–217.13s · evidence · Private discovery / Shared with permission / Choose who knows.
+- A43 · 217.13–223.50s · evidence · Independent source A / Independent source B / A copied clue is not another witness.
+- A44 · 223.50–230.67s · evidence · Salvage + materials / Eligible recipe / A traceable item history
+- A45 · 230.67–237.88s · family · Bigger ambitions.
+- A46 · 237.88–241.08s · family · Contributions / Approval / Then commitment
+- A47 · 241.08–243.17s · drive · Convoys can be ambushed.
+- A48 · 243.17–246.38s · family · Commission seats / Votes on specific city rules / Bounded authority
+- A49 · 246.38–252.00s · closing · The city changes around you.
+- A50 · 252.00–257.04s · agent · Who is across the street?
+- A51 · 257.04–263.46s · agent · Read. Choose. Act. / A street job changes its next decision.
+- A52 · 263.46–269.38s · agent · A new state / Permissions and resources still apply.
+- A53 · 269.38–280.00s · recruitment · Bring friends / Build an agent / Choices have consequences
+- A54 · 280.00–283.33s · cargo · Equipment. Access. People.
+- A55 · 283.33–295.21s · balances · Three balances. Different jobs.
+- A56 · 295.21–300.92s · balances · Most spends recycle OMR.
+- A57 · 300.92–309.38s · balances · One way through the Window.
+- A58 · 309.38–313.83s · fees · Developer / Community / Assets / Liquidity
+- A59 · 313.83–317.38s · bonds · Inventory bonds / Existing OMR · released over time / Released OMR
+- A60 · 317.38–321.25s · liquidity · Liquidity rewards / Eligible positions / Funded campaigns
+- A61 · 321.25–324.88s · liquidity · Reserves / A share of realized profit / Arbitrage profit only
+- A62 · 324.88–330.04s · liquidity · Trading-fee rights / Designated fees / Principal stays put
+- A63 · 330.04–335.17s · rwa · Stock Tokens / Exposure beyond the game / Exposure, not company shares
+- A64 · 335.17–340.08s · rwa · Commission choices / Acquisition and custody / Eligibility governs participation
+- A65 · 340.08–343.46s · closing · Holding OMR promises no universal payout.
+- A66 · 343.46–350.00s · family · Organize together / Decide together / Trust remains your choice
+- A67 · 350.00–357.83s · opening · reprise
+- A68 · 357.83–364.96s · drive · Earn. Specialize. Live with the result.
+- A69 · 364.96–368.33s · opening · The next invitation is yours.
+- A70 · 368.33–370.29s · cargo · You can buy equipment.
+- A71 · 370.29–372.38s · closing · You cannot buy trust.
+- A72 · 372.38–379.00s · recruitment · Choose your path. / Find your people. / Make your name.
+- A73 · 379.00–390.00s · end · Who will you bring?

@@ -4,6 +4,7 @@ import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
+import { eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { isDbDown, pingDb } from './dbhealth.js';
@@ -26,6 +27,7 @@ import * as Favors from './favors.js';
 import * as Crew from './crew.js';
 import * as Invites from './invites.js';
 import { accessCookie, clearAccessCookie, readAccessCookie } from './access.js';
+import { legalPage } from './legal.js';
 import * as Discovery from './discovery.js';
 import * as Mentor from './mentor.js';
 import * as Streak from './streak.js';
@@ -188,6 +190,7 @@ import { register as registerProjections } from './routes/projections.js';
 import { register as registerCommands } from './routes/commands.js';
 import { registerProjectionEvents } from './projection-events.js';
 import { register as registerWorldGraph, WORLD_GRAPH_CAPABILITIES } from './routes/worldgraph.js';
+import { register as registerGateway } from './routes/gateway.js';
 import * as Phone from './phone.js';
 import * as Mega from './megaproject.js';
 import * as Duels from './duels.js';
@@ -395,8 +398,8 @@ export async function buildServer() {
       // self-hosted modules, remove unsafe-inline and promote this policy to enforced.
       if (!reply.getHeader('content-security-policy')) reply.header('Content-Security-Policy-Report-Only',
         "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; "
-        + "script-src 'self' 'unsafe-inline' https://esm.sh; style-src 'self' 'unsafe-inline'; "
-        + "img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.walletconnect.com https://*.walletconnect.org wss://*.walletconnect.com wss://*.walletconnect.org; "
+        + "script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; "
+        + "img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.web3modal.org https://rpc.walletconnect.org https://verify.walletconnect.org https://relay.walletconnect.com https://relay.walletconnect.org wss://relay.walletconnect.com wss://relay.walletconnect.org; "
         + "manifest-src 'self'; worker-src 'self' blob:");
     } else if (ct.startsWith('image/svg')) {
       // /card, /beef, /v1/avatar, the /v1/art SVG fallback — served as navigable documents on the game
@@ -426,8 +429,9 @@ export async function buildServer() {
       throw new Error(`Untrusted reviewer route trust metadata: ${r.method} ${r.url}`);
     }
     const playerAuth = names.includes('auth');
-    const hasAuth = playerAuth || isMod || isRwaReviewer;
-    const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : playerAuth ? 'auth' : null;
+    const gatewayAuth = names.includes('gatewayAuth');
+    const hasAuth = playerAuth || gatewayAuth || isMod || isRwaReviewer;
+    const authKind = isRwaReviewer ? 'rwaReviewerAuth' : isMod ? 'modAuth' : gatewayAuth ? 'gatewayAuth' : playerAuth ? 'auth' : null;
     const methods = Array.isArray(r.method) ? r.method : [r.method];
     for (const m of methods) if (m !== 'HEAD' && m !== 'OPTIONS') routeRegistry.push({
       method: m, url: r.url, hasAuth, isMod, isRwaReviewer, authKind,
@@ -575,6 +579,18 @@ export async function buildServer() {
   let playHtml = '<!doctype html><title>Play OMERTA with Claude</title><p>Walkthrough file missing (public/play.html).</p>';
   try { playHtml = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'play.html'), 'utf8'); } catch { /* headless */ }
   app.get('/play', servePage(playHtml));
+  for (const [url, kind] of Object.entries({ '/privacy': 'privacy', '/terms': 'terms', '/dmca': 'dmca', '/resources': 'resources' })) {
+    app.get(url, async (req, reply) => {
+      const page = legalPage(kind);
+      return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(page.html);
+    });
+  }
+  app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')
+    .header('Cache-Control', 'public, max-age=3600').send(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public/vendor/walletconnect.js'))));
+  app.get('/vendor/walletconnect-manifest.json', async (req, reply) => reply.type('application/json; charset=utf-8')
+    .header('Cache-Control', 'public, max-age=3600').send(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public/vendor/walletconnect-manifest.json'))));
+  app.get('/vendor/walletconnect.js.LEGAL.txt', async (req, reply) => reply.type('text/plain; charset=utf-8')
+    .header('Cache-Control', 'public, max-age=3600').send(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public/vendor/walletconnect.js.LEGAL.txt'))));
   // THE PATH FINDER — a public, server-rendered acquisition funnel. The content manifest derives its
   // numbers from rules.js, the POST below owns scoring, and each result gets a stable indexable URL
   // with its own OG image. Prepared once at boot like the other public pages: no per-hit rendering.
@@ -793,7 +809,7 @@ export async function buildServer() {
       description: frozen
         ? 'A portrait of a bloodline in OMERTÀ, frozen when its first transfer was confirmed and indexed. '
           + 'It preserves the bloodline observed at that time. The entitlement never travels with the token.'
-        : 'A portrait of a bloodline in OMERTÀ. The frame deepens with every generation '
+        : 'A soulbound portrait of a bloodline in OMERTÀ. The frame deepens with every generation '
           + 'buried; the insignia climbs with the street\'s rank. Held by the account, not by the token.',
       image: `${baseUrl}/v1/identity/${encodeURIComponent(id)}/portrait.svg`,
       attributes: portraitTraits(st),
@@ -1360,15 +1376,10 @@ export async function buildServer() {
     const tv = knownTv ?? ((await pool.query('SELECT token_version FROM accounts WHERE id=$1', [accountId])).rows[0]?.token_version ?? 0);
     return app.jwt.sign({ sub: accountId, tv, ...extra }, { expiresIn });
   };
-  // PATH FUNNEL TELEMETRY — deliberately anonymous and deliberately narrow. The browser sends one
-  // random session id so the operator can see start→answer→result→CTA loss without an account, an IP,
-  // a wallet, or a fingerprint. Event names and every dimension are allowlisted; this is not a generic
-  // analytics sink. Complete samples are scored here through the same function the contract tests use.
+  // Quiz scoring is functional processing only: no optional analytics are stored.
   const pathQuestionById = new Map(PATH_QUIZ_QUESTIONS.map((question) => [question.id, question]));
   const pathEvents = new Set(['start', 'answer', 'complete', 'result_view', 'cta_click', 'share']);
-  const pathSources = new Set(['direct', 'site', 'landing', 'wiki', 'quiz', 'result', 'social']);
   const validPathSession = (value) => typeof value === 'string' && /^[a-z0-9_-]{8,64}$/i.test(value);
-  const pathSource = (value) => pathSources.has(value) ? value : 'direct';
   const publicPathQuizRateLimit = async function publicPathQuizRateLimit(req, reply) {
     if (!rateLimitsEnabled()) return;
     const limited = await checkPublicRateLimit({ ip: req.ip });
@@ -1379,11 +1390,10 @@ export async function buildServer() {
     const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
     const event = body.event;
     if (!pathEvents.has(event)) return reply.code(400).send({ error: 'quiz_event' });
-    if (!validPathSession(body.session)) return reply.code(400).send({ error: 'quiz_session' });
-    const common = { session: body.session, source: pathSource(body.source) };
+    if (body.session !== undefined && !validPathSession(body.session)) return reply.code(400).send({ error: 'quiz_session' });
+
 
     if (event === 'start') {
-      await G.track(pool, null, 'path_quiz_start', common);
       return { ok: true };
     }
     if (event === 'answer') {
@@ -1393,9 +1403,6 @@ export async function buildServer() {
       const step = Number(body.step);
       if (!Number.isInteger(step) || step < 1 || step > PATH_QUIZ_QUESTIONS.length)
         return reply.code(400).send({ error: 'quiz_step' });
-      await G.track(pool, null, 'path_quiz_answer', {
-        ...common, question: question.id, option: option.id, lead: option.lead, step,
-      });
       return { ok: true };
     }
     if (event === 'complete') {
@@ -1403,9 +1410,6 @@ export async function buildServer() {
       try { result = scorePathQuiz(body.answers); }
       catch { return reply.code(400).send({ error: 'quiz_answers' }); }
       if (!result.complete) return reply.code(400).send({ error: 'quiz_incomplete' });
-      await G.track(pool, null, 'path_quiz_complete', {
-        ...common, primary: result.primary, secondary: result.secondary, margin: result.margin,
-      });
       return {
         ok: true,
         primary: result.primary,
@@ -1415,33 +1419,43 @@ export async function buildServer() {
     }
 
     if (!PATH_IDS.includes(body.path)) return reply.code(400).send({ error: 'quiz_path' });
-    const resultProps = { ...common, path: body.path };
+
     if (event === 'result_view') {
       const secondary = body.secondary == null ? null : body.secondary;
       if (secondary !== null && (!PATH_IDS.includes(secondary) || secondary === body.path))
         return reply.code(400).send({ error: 'quiz_secondary' });
-      await G.track(pool, null, 'path_result_view', { ...resultProps, secondary });
       return { ok: true };
     }
     if (event === 'cta_click') {
       if (!['play', 'codex', 'retake', 'download_portrait', 'download_vertical'].includes(body.cta))
         return reply.code(400).send({ error: 'quiz_cta' });
-      await G.track(pool, null, 'path_cta_click', { ...resultProps, cta: body.cta });
       return { ok: true };
     }
     if (!['native', 'clipboard'].includes(body.channel)) return reply.code(400).send({ error: 'quiz_channel' });
-    await G.track(pool, null, 'path_share', { ...resultProps, channel: body.channel });
+    // Optional share analytics are disabled.
     return { ok: true };
   });
 
+  app.post('/v1/age-check', async (req, reply) => {
+    reply.header('Cache-Control', 'no-store');
+    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);
+    const cookie = app.jwt.sign({ purpose: 'age-check', eligible }, { expiresIn: '15m' });
+    reply.header('Set-Cookie', ageCookie(cookie));
+    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });
+    return { ok: true };
+  });
   const guestLogin = async (req) => {
+    // Recovery authority does not override a known-ineligible browser or an
+    // explicitly supplied birth date. Existing eligible recovery needs no DOB.
+    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
       const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
-        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode,
+        pool, req.body.bootstrapSecret, req.ip || '0.0.0.0', req.body.inviteCode, () => requireAge(app, req),
       );
       return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
+    requireAge(app, req);
     const id = await A.createGuestAccount(pool, req.ip || '0.0.0.0', req.body?.inviteCode);
     return { token: await signFor(id, {}, '30d', 0) };
   };
@@ -1469,6 +1483,7 @@ export async function buildServer() {
   app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
     A.acknowledgeGuestBootstrap(pool, req.user.sub));
   const providerLogin = (verify) => async (req) => {
+    requireAge(app, req);
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
     // new account, gate held even under a concurrent same-identity race (no separate pre-consume).
@@ -1509,6 +1524,7 @@ export async function buildServer() {
       const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);
       if (!a || a.status === 'banned' || revoked) accountId = null;
     }
+    if (!accountId) requireAge(app, req);
     const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
     // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,
     // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the
@@ -1532,6 +1548,7 @@ export async function buildServer() {
         return reply.redirect('/#claimed=x');
       }
       // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races
+      requireAge(app, req);
       const { accountId } = await A.accountForIdentity(pool, r.identity, req.ip || '0.0.0.0', r.invite);
       const token = await signFor(accountId);
       const claims = app.jwt.verify(token);
@@ -1696,26 +1713,14 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.heal(ch, client, h)));
   app.post('/v1/checkin', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.checkin(ch, client, h)));
-  // THE BROADCAST share beacon — a player tapped broadcast / brag. AUTHED (bounded by real accounts +
-  // rate limits, never an unauthenticated write), zero §10.4 — telemetry feeding the organic-growth funnel.
+  // Older clients can acknowledge shares without recording marketing analytics.
   app.post('/v1/broadcast/shared', { preHandler: auth }, async (req) => {
-    const kind = ['dossier', 'win', 'wanted', 'whacked'].includes(req.body?.kind) ? req.body.kind : 'dossier';
-    await G.track(pool, req.user.sub, 'broadcast_share', { kind });
+    if (req.body?.kind && !['dossier', 'win', 'wanted', 'whacked'].includes(req.body.kind))
+      throw new G.GameError('bad_share', 'Unknown share kind.');
+    // Sharing does not enroll the player in marketing analytics.
     return { ok: true };
   });
-  // SCREEN REACH — which of the console's screens a player ever actually opens. The game has 25 of
-  // them behind a two-tier nav, and until this existed nothing measured whether a mid-game player
-  // uses six or twenty, so any restructure would have been guesswork against a nav that tested well.
-  //
-  // BATCHED and FIRST-OPEN-ONLY: the client sends each screen once per session, flushed in one call,
-  // so a session that walks eight screens makes ~one request rather than eight. That measures REACH
-  // (did they ever find it) rather than frequency, which is the question that decides whether to cut,
-  // merge or leave the nav alone.
-  //
-  // Shape-validated rather than allowlisted, deliberately: the tab list is CLIENT presentation and
-  // the server has no business owning it — a screen the client renames would silently stop being
-  // counted, which is a measurement that lies. Bounded instead (count, length), authed, and rate
-  // limited like any other route, so the worst a bad caller achieves is junk rows in an ops view.
+  // Older clients receive a no-op for removed optional screen analytics.
   app.post('/v1/screens', { preHandler: auth }, async (req) => {
     const raw = Array.isArray(req.body?.screens) ? req.body.screens : [];
     const seen = new Set();
@@ -1726,8 +1731,8 @@ export async function buildServer() {
       if (seen.size >= 40) break;                       // more than the console has; a cap, not a filter
     }
     if (!seen.size) return { ok: true, counted: 0 };
-    await G.track(pool, req.user.sub, 'screen_open', { screens: [...seen] });
-    return { ok: true, counted: seen.size };
+    // Compatibility response for older clients; optional screen analytics are disabled.
+    return { ok: true, counted: 0 };
   });
   app.post('/v1/bank/:dir', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.bank(ch, req.params.dir, req.body?.amount, client, h)));
@@ -2293,7 +2298,7 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.repayHouseLoan(ch, client, h)));
   registerModTools(app, { pool, auth, modAuth, closeAccountSockets });
   registerContent(app, { pool, auth, modAuth });
-  registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
+  const coordination = registerCoordination(app, { pool, auth, modAuth, receiptTrust: coordinationReceiptTrust });
   registerWorldGraph(app, { pool, auth });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()] });
   registerCityHomes(app, { pool, auth });
@@ -2305,6 +2310,7 @@ export async function buildServer() {
   registerProjections(app, { pool, auth,
     readPlayer: (accountId) => G.readCharacter(pool, accountId, async () => ({})) });
   registerCommands(app, { pool, auth, receiptTrust: coordinationReceiptTrust });
+  registerGateway(app, { pool, auth, coordination });
   app.post('/v1/loans/square', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Loans.squareWanted(ch, client, h)));
   // buy is two-party (buyer pays the current lender, becomes the new lender): look up the seller, lock both.
@@ -3517,7 +3523,8 @@ export async function buildServer() {
     // COVERT (meet:false) — the extorter reached the mark anonymously (dig via the wire, extort with
     // no name attached); PAYING the hush must not hand the mark the extorter's number in the black
     // book, or the mark can identify and retaliate against a source whose anonymity was the whole
-    // mechanic. The sibling exposeSecret already carries this flag (AUDIT-street-war-street-life D1).
+    // mechanic. payHush checks ownership of the extorted secret; its hidden counterparty is
+    // authorized by that record rather than by a known identity.
     return G.withTwoCharacters(pool, req.user.sub, s.holder_character,
       (ch, holder, client, h) => Secrets.payHush(ch, holder, req.params.id, client, h), { meet: false, requireKnown: false });
   });
@@ -3604,8 +3611,8 @@ export async function buildServer() {
     // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act
     Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));
   // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the
-  // contract self-mints against a signed MintVoucher and nothing signed one). A transferable trophy:
-  // the `minted` entitlement stays account-bound and never travels with the token.
+  // contract self-mints against a signed MintVoucher and nothing signed one). The current identity
+  // is soulbound; its account entitlement and evolving portrait remain with the originating account.
   app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>
     Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));
   app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));

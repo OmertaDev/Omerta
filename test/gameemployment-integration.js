@@ -14,7 +14,7 @@ if(native) {
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',DELIVERY_CONTRACTS:'on',RESOURCE_ECONOMY:'off',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',
   JWT_SECRET:'employment-integration-local-proof-secret',MARKET_SEED:'employment-integration-native-local-seed',MOD_KEY:'employment-integration-local-mod' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js');
 const { runEstate }=await import('../src/social/estate.js'), { runLedgerInvariants }=await import('../src/invariants.js');
 const { M3,seasonModOf,loanOwed }=await import('../src/rules.js');
 const app=await buildServer(); let serial=0;

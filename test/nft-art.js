@@ -68,7 +68,7 @@ assert.ok(!deedPlateSvg({ name: '<script>bad</script>', district: 'docks' }).inc
 assert.ok(deedPage(d).includes('data:image/jpeg;base64,'), 'public deed page shows the collectible');
 
 // Exercise the actual marketplace image and legend routes, not just the preview generator.
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const app = await buildServer();
 try {
   await app.pool.query("INSERT INTO accounts (id, auth_provider, auth_subject) VALUES ('nft-art-account','guest','nft-art-subject')");

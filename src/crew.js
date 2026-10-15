@@ -247,20 +247,30 @@ async function settleCrew(client, crewId, leftAccount) {
 // ── THE BOARD — your crew (members with live public state), plus pending invites both directions.
 // A read; single-party. Members' state is joined to their CURRENT living street (account-keyed), so a
 // dead member shows as their heir; a between-lives account falls back to the snapshot name. ──
-export async function crewBoard(ch, client) {
+export async function crewBoard(ch, client, { limit } = {}) {
+  if (limit !== undefined && (!Number.isSafeInteger(limit) || limit < 1 || limit > 100)) throw new TypeError('Invalid crew board limit');
+  const bounded = limit !== undefined;
+  const truncated = { invites: false, members: false, requests: false, objectiveContributions: false };
   const crewId = await crewIdOf(client, ch.account_id);
   // invites TO me (whether or not I'm in a crew) — the join offers on my plate. Flat query + a JS
   // headcount fold — never a correlated subquery (pg-mem cannot resolve it; the /v1/gangs precedent).
-  const invited = (await client.query(
+  let invited = (await client.query(
     `SELECT ci.crew_id, ci.from_name, cr.name AS crew_name FROM crew_invites ci
-       JOIN crews cr ON cr.id=ci.crew_id WHERE ci.account_id=$1 ORDER BY ci.at DESC`, [ch.account_id])).rows;
+       JOIN crews cr ON cr.id=ci.crew_id WHERE ci.account_id=$1 ORDER BY ci.at DESC`
+       + (bounded ? ',ci.crew_id LIMIT $2' : ''), bounded ? [ch.account_id, limit + 1] : [ch.account_id])).rows;
+  if (bounded) { truncated.invites = invited.length > limit; invited = invited.slice(0, limit); }
   const counts = new Map();
   if (invited.length) {
-    for (const row of (await client.query('SELECT crew_id, COUNT(*) n FROM crew_members GROUP BY crew_id')).rows)
+    const ids = invited.map((row) => row.crew_id);
+    const counted = bounded
+      ? await client.query(`SELECT crew_id, COUNT(*) n FROM crew_members WHERE crew_id IN (${ids.map((_, index) => `$${index + 1}`).join(',')}) GROUP BY crew_id`, ids)
+      : await client.query('SELECT crew_id, COUNT(*) n FROM crew_members GROUP BY crew_id');
+    for (const row of counted.rows)
       counts.set(row.crew_id, Number(row.n));
   }
   const invites = invited.map((r) => ({ crewId: r.crew_id, name: r.crew_name, from: r.from_name, members: counts.get(r.crew_id) || 0 }));
-  if (!crewId) return { crew: null, invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE };
+  if (!crewId) return { crew: null, invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE,
+    ...(bounded ? { truncated } : {}) };
 
   const crew = (await client.query('SELECT * FROM crews WHERE id=$1', [crewId])).rows[0];
   // The completed objective rows are the authoritative history. Deriving this display counter keeps
@@ -270,14 +280,16 @@ export async function crewBoard(ch, client) {
   )).rows[0].n);
   const intel = await playerIntelMap(client, ch.account_id);
   // Membership identifies the current street, but location/level remain last known for other people.
-  const mem = (await client.query(
+  let mem = (await client.query(
     `SELECT cm.account_id, cm.name AS snap, cm.joined_at, c.id AS char_id, c.name,
             gm.gang_id, g.name AS gang_name
        FROM crew_members cm
        LEFT JOIN characters c ON c.account_id=cm.account_id AND c.alive
        LEFT JOIN gang_members gm ON gm.character_id=c.id
        LEFT JOIN gangs g ON g.id=gm.gang_id
-      WHERE cm.crew_id=$1 ORDER BY cm.joined_at, cm.account_id`, [crewId])).rows;
+      WHERE cm.crew_id=$1 ORDER BY cm.joined_at, cm.account_id`
+      + (bounded ? ' LIMIT $2' : ''), bounded ? [crewId, limit + 1] : [crewId])).rows;
+  if (bounded) { truncated.members = mem.length > limit; mem = mem.slice(0, limit); }
   const members = mem.map((m) => {
     const isMe = m.account_id === ch.account_id;
     const seen = intel.get(m.char_id);
@@ -296,21 +308,26 @@ export async function crewBoard(ch, client) {
     };
   });
   // pending offers OUT of my crew (so the crew can see who's been asked)
-  const pending = (await client.query(
-    'SELECT account_id, from_name FROM crew_invites WHERE crew_id=$1 ORDER BY at DESC', [crewId])).rows.length;
+  const pending = bounded
+    ? Number((await client.query('SELECT COUNT(*) n FROM crew_invites WHERE crew_id=$1', [crewId])).rows[0].n)
+    : (await client.query('SELECT account_id, from_name FROM crew_invites WHERE crew_id=$1 ORDER BY at DESC', [crewId])).rows.length;
   // THE ROLODEX step two — join REQUESTS on the crew's plate (the leader accepts/declines), keyed on the
   // requester's CURRENT living character (a flat JOIN, no account UUID leaves — the /v1/gangs precedent).
-  const requests = (await client.query(
+  let requestRows = (await client.query(
     `SELECT c.id AS char_id, COALESCE(c.name, cr.from_name) AS name, c.respect
        FROM crew_requests cr LEFT JOIN characters c ON c.account_id=cr.account_id AND c.alive
-      WHERE cr.crew_id=$1 ORDER BY cr.at DESC`, [crewId])).rows
-    .map((r) => ({ characterId: r.char_id || null, name: r.name, level: r.respect != null ? levelOf(Number(r.respect)) : null }));
+      WHERE cr.crew_id=$1 ORDER BY cr.at DESC`
+      + (bounded ? ',cr.account_id LIMIT $2' : ''), bounded ? [crewId, limit + 1] : [crewId])).rows;
+  if (bounded) { truncated.requests = requestRows.length > limit; requestRows = requestRows.slice(0, limit); }
+  const requests = requestRows.map((r) => ({ characterId: r.char_id || null, name: r.name, level: r.respect != null ? levelOf(Number(r.respect)) : null }));
   const target = await crewTargetOf(client, crewId);   // THE CREW HIT — the shared mark, if the leader called one
-  const objective = await crewObjective(client, crewId, ch.account_id);   // THE CREW OBJECTIVE — the weekly shared goal
+  const objective = await crewObjective(client, crewId, ch.account_id, limit);   // THE CREW OBJECTIVE — the weekly shared goal
+  if (bounded) { truncated.objectiveContributions = objective.truncated; delete objective.truncated; }
   return {
     crew: { id: crewId, name: crew.name, leader: crew.leader_account === ch.account_id, members, pending,
       recruiting: !!crew.recruiting, requests, target, objective, objectivesDone },
     invites, maxMembers: CREW.MAX_MEMBERS, minLevel: CREW.MIN_LEVEL, nameMax: CREW.NAME_MAX, bringOne: CREW.BRING_ONE,
+    ...(bounded ? { truncated } : {}),
   };
 }
 
@@ -388,7 +405,7 @@ export async function crewLeaderboard(pool, limit = 20) {
 // read the current week's objective for a crew (materialize-on-read is done by the bump; here we only
 // REPORT — if nobody's acted yet the row is absent and we show the drawn goal at 0 progress). Returns
 // the goal + this member's contribution/claim + the per-member contribution texture.
-async function crewObjective(client, crewId, accountId) {
+async function crewObjective(client, crewId, accountId, limit) {
   const week = weekOf();
   const row = (await client.query('SELECT kind, target, progress, done FROM crew_objectives WHERE crew_id=$1 AND week=$2', [crewId, week])).rows[0];
   const members = Number((await client.query('SELECT COUNT(*) n FROM crew_members WHERE crew_id=$1', [crewId])).rows[0].n) || 1;
@@ -398,13 +415,17 @@ async function crewObjective(client, crewId, accountId) {
   const progress = row ? Number(row.progress) : 0;
   const done = !!row?.done;
   // per-member contributions (the "what your crew did this week" texture), joined to living names
-  const contrib = (await client.query(
+  let contrib = (await client.query(
     `SELECT p.account_id, p.n, p.claimed, COALESCE(c.name, cm.name) AS name
        FROM crew_objective_progress p
        JOIN crew_members cm ON cm.crew_id=p.crew_id AND cm.account_id=p.account_id
        LEFT JOIN characters c ON c.account_id=p.account_id AND c.alive
-      WHERE p.crew_id=$1 AND p.week=$2 ORDER BY p.n DESC`, [crewId, week])).rows;
-  const mine = contrib.find((r) => r.account_id === accountId);
+      WHERE p.crew_id=$1 AND p.week=$2 ORDER BY p.n DESC`
+      + (limit === undefined ? '' : ',p.account_id LIMIT $3'), limit === undefined ? [crewId, week] : [crewId, week, limit + 1])).rows;
+  const truncated = limit !== undefined && contrib.length > limit;
+  if (limit !== undefined) contrib = contrib.slice(0, limit);
+  const mine = limit === undefined ? contrib.find((r) => r.account_id === accountId)
+    : (await client.query('SELECT n,claimed FROM crew_objective_progress WHERE crew_id=$1 AND week=$2 AND account_id=$3', [crewId, week, accountId])).rows[0];
   const meta = CREW.OBJECTIVE.KINDS.find((k) => k.id === kind) || {};
   return {
     kind, label: meta.label || kind, unit: meta.unit || '', target, progress,
@@ -414,6 +435,7 @@ async function crewObjective(client, crewId, accountId) {
     claimed: !!mine?.claimed,
     claimable: done && !mine?.claimed,   // you must have contributed to claim (a progress row exists)
     contributions: contrib.map((r) => ({ name: r.name, n: Number(r.n), claimed: !!r.claimed })),
+    ...(limit === undefined ? {} : { truncated }),
   };
 }
 

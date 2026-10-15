@@ -61,6 +61,7 @@ import { HEIST_JOBS } from '../src/rules.js';
 
 const PLAYERS = Number(process.env.SCALE_PLAYERS || 36);
 const DAYS = Number(process.env.SCALE_DAYS || 5);
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const SWEEP = (process.env.SCALE_SWEEP || '').split(',').map((n) => Number(n.trim())).filter(Boolean);
 
 const pick = (a) => a[Math.floor(Math.random() * a.length)];
@@ -100,7 +101,7 @@ const NAMES = ['Vito', 'Sal', 'Nico', 'Rocco', 'Enzo', 'Gino', 'Bruno', 'Carmine
 
 const players = [];
 for (let i = 0; i < PLAYERS; i++) {
-  const { body: { token } } = await call('POST', '/v1/auth/guest');
+  const { body: { token } } = await call('POST', '/v1/auth/guest', null, { birthDate: SYNTHETIC_ADULT_BIRTH_DATE });
   const name = `${NAMES[i % NAMES.length]} Scale${i}`;
   await call('POST', '/v1/character', token, { name });
   const me = (await call('GET', '/v1/me', token)).body.character;

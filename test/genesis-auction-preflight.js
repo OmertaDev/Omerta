@@ -19,7 +19,7 @@ const base = vm.runInNewContext('(' + text.slice(declaration.init.start, declara
 });
 base.chainId = 4663; base.localRehearsal = false; base.nativeClock.chainId = 4663; base.nativeClock.mode = 'arbsys'; base.startingNonce = '27';
 base.roles.deployer = getAddress('0x5ae54b5555ae5dc9f899e03cb9aac74dccdc4e7e');
-base.roles.safe = getAddress('0xbe225658718dcb3865902437887a11830e4a9b10'); base.allocation.safeAddress = base.roles.safe; base.hookGovernance.governanceSafe = base.roles.safe; base.roles.hookRecipients[0] = getAddress('0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced'); base.hookGovernance.fixedFounderRecipient = base.roles.hookRecipients[0];
+base.roles.safe = getAddress('0xbe225658718dcb3865902437887a11830e4a9b10'); base.allocation.safeAddress = base.roles.safe; base.roles.hookRecipients[0] = getAddress('0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced');
 base.external.omr.address = getAddress('0x2e82f8c1cfd5172612b3af56088d7d68d920545d');
 base.hook.opening = { blocks: 0, buyBps: 0, maxBuyQuote: '0' };
 const factoryCode = '0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe03601600081602082378035828234f58015156039578182fd5b8082525050506014600cf3';
@@ -52,7 +52,7 @@ const bindings = {
     poolKey: { currency0: A(0), currency1: base.external.omr.address, fee: base.hook.poolFee, tickSpacing: base.hook.tickSpacing, hooks: addresses.hook } },
   hook: { poolManager: base.external.poolManager.address, omr: base.external.omr.address, authorized: addresses.coordinator, poolFee: base.hook.poolFee,
     tickSpacing: base.hook.tickSpacing, epochDuration: base.hook.epochDuration, surgeFullTicks: base.hook.surgeFullTicks, openingBlocks: 0, openingBuyBps: 0, openingMaxBuyQuote: 0,
-    governanceSafe: base.roles.safe, opsRecipient: base.roles.hookRecipients[0], OPS_SELL_BPS: 200, TAX_CONFIG_DELAY: 172800, TAX_EXECUTION_SAFE_ONLY:true, baseSellBps:900, queuedTaxHash:'0x'+'0'.repeat(64), queuedTaxExecuteAfter:0, taxConfigNonce:0, taxConfig:[160,240,300,100], recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
+    managerCollectsRevenue: true, BASE_SELL_BPS: 500, MAX_SURGE_BPS: 50, recipients: [...base.roles.hookRecipients, addresses.polFunding, addresses.reserveFunding] },
   auction: { token: base.external.omr.address, characterNft: base.external.characterNft.address, launchGate: addresses.coordinator, fundsRecipient: addresses.coordinator,
     tokensRecipient: base.roles.safe, currency: A(0), validationHook: addresses.validator, totalSupply: base.auction.totalSupply, minimumRaiseWei: base.auction.requiredCurrencyRaised,
     startBlock: base.auction.startBlock, endBlock: base.auction.endBlock, claimBlock: base.auction.claimBlock, floorPrice: base.auction.floorPrice, tickSpacing: base.auction.tickSpacing,
@@ -80,6 +80,13 @@ function fixture(options = {}) {
       if (options.occupied && lower === addresses.coordinator.toLowerCase()) return '0x6001';
       return options.badRuntime && lower === base.external.omr.address.toLowerCase() ? '0x6000' : externalCodes[lower] || '0x'; },
     readContract: async ({ address, functionName, blockNumber }) => { requests.push({ address, blockNumber });
+      if (address.toLowerCase() === base.external.poolManager.address.toLowerCase()) {
+        if (options.standardManager) throw Error('unknown selector');
+        const manager = { revenuePolicyId: keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')), TRADE_FEE_BPS: options.badManagerFee ? 501 : 500,
+          omr: base.external.omr.address, developerRecipient: base.roles.hookRecipients[0], rwaRecipient: base.roles.hookRecipients[1],
+          communityRecipient: base.roles.hookRecipients[2], polRecipient: options.badManagerRecipient ? A(333) : plan.addresses.polFunding };
+        assert(Object.hasOwn(manager, functionName)); return manager[functionName];
+      }
       const values = { totalSupply: options.supplyDrift ? 100000000n * E + 1n : 100000000n * E, balanceOf: 100000000n * E, decimals: 18,
         minter: A(0), sellTaxBps: 0n, ammPairs: false, poolManager: base.external.poolManager.address, permit2: base.external.permit2.address,
         getOwners: owners, getThreshold: options.badThreshold ? 1n : 2n, arbBlockNumber: 1000n };
@@ -103,6 +110,7 @@ function fixture(options = {}) {
     },
     readContract: async ({ address, functionName, args = [] }) => {
       const role = Object.keys(addresses).find(k => addresses[k].toLowerCase() === address.toLowerCase());
+      if (options.standardHook && role === 'hook' && functionName === 'managerCollectsRevenue') return false;
       if (options.wrongBinding && role === 'validator' && functionName === 'omr') return A(0);
       assert(Object.hasOwn(bindings[role], functionName), `${role}.${functionName}`);
       return functionName === 'recipients' ? bindings[role][functionName][Number(args[0])] : bindings[role][functionName];
@@ -175,3 +183,8 @@ await actualGenesisClient.getBlock({ blockNumber: actualHeader.number }); // fin
 rpcHeader = { ...rpcHeader, number: '0x1' + '0'.repeat(64) };
 await assert.rejects(() => pinnedRpc({ method: 'eth_getBlockByNumber', params: ['latest', false] }), /unavailable/);
 console.log('Genesis canonical hash transport PASS: real viem reads, immutable calldata, unknown/reorg/wrong-header/chain/eviction/provider rejection and live nonce/balance exceptions; no fallback.');
+
+for (const options of [{ standardManager: true }, { badManagerFee: true }, { badManagerRecipient: true }, { standardHook: true }]) {
+  await assert.rejects(() => verifyGenesisAuctionPreflight(fixture(options)), /restricted manager|Restricted manager|managerCollectsRevenue/);
+}
+console.log('Standard-manager production readiness and mismatched fixed revenue policies rejected PASS');

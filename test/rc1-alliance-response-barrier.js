@@ -43,7 +43,7 @@ const bounded = async (promise, label) => {
 try {
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
-  const [{ buildServer }, { runLedgerInvariants }] = await Promise.all([import('../src/server.js'), import('../src/invariants.js')]);
+  const [{ buildServer }, { runLedgerInvariants }] = await Promise.all([import('./server-fixture.js'), import('../src/invariants.js')]);
   app = await buildServer();
   // Evaluate only the uniquely matched, exact hash-pinned test-harness block.
   new Function('app', 'responseCompletions', 'assert', blocks[0])(app, responseCompletions, assert);

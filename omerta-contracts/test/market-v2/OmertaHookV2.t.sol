@@ -58,7 +58,7 @@ abstract contract OmertaHookV2Fixture is Test {
         address target = address(uint160((uint256(0xBEEF) << 144) | FLAGS));
         deployCodeTo("OmertaHookV2.sol:OmertaHookV2", abi.encode(
             manager, address(omr), address(this), uint24(3000), int24(60), recipients,
-            OmertaHookV2.OpeningConfig(200, 500, 10 ether), uint24(100), uint32(60), address(this)
+            OmertaHookV2.OpeningConfig(200, 250, 10 ether), uint24(100), uint32(60)
         ), target);
         hook = OmertaHookV2(payable(target));
         key = hook.poolKey();
@@ -121,13 +121,13 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
     function test_sellsKeepBaseAllocationAndIsolateSurge() public {
         BalanceDelta result = _swap(false, -int256(10 ether));
         uint256 gross = uint256(uint128(result.amount0())) + _total(eth);
-        uint256 base = gross * 900 / 10_000;
-        assertEq(hook.owed(eth, 0), gross * 200 / 10_000);
-        assertEq(hook.owed(eth, 1), gross * 160 / 10_000);
-        assertEq(hook.owed(eth, 2), gross * 240 / 10_000);
-        assertEq(hook.owed(eth, 3), base - gross * 200 / 10_000 - gross * 160 / 10_000 - gross * 240 / 10_000);
+        uint256 base = gross * 500 / 10_000;
+        assertEq(hook.owed(eth, 0), base * 200 / 500);
+        assertEq(hook.owed(eth, 1), base * 100 / 500);
+        assertEq(hook.owed(eth, 2), base * 100 / 500);
+        assertEq(hook.owed(eth, 3), base - base * 200 / 500 - base * 100 / 500 - base * 100 / 500);
         assertGt(hook.owed(eth, 4), 0);
-        assertLe(hook.owed(eth, 4), gross / 100);
+        assertLe(hook.owed(eth, 4), gross * 50 / 10_000);
         _assertConserved(eth);
     }
 
@@ -135,7 +135,7 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         BalanceDelta result = _swap(false, int256(1 ether));
         uint256 total = _total(token);
         uint256 rawInput = uint256(-int256(result.amount1())) - total;
-        uint256 base = rawInput * 900 / 10_000;
+        uint256 base = rawInput * 500 / 10_000;
         assertEq(total - hook.owed(token, 4), base);
         assertEq(uint256(uint128(result.amount0())), 1 ether);
         assertEq(_total(eth), 0);
@@ -146,11 +146,11 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         BalanceDelta exactIn = _swapLimit(false, -int256(100 ether), TickMath.getSqrtPriceAtTick(10));
         assertLt(uint256(-int256(exactIn.amount1())), 100 ether);
         uint256 gross = uint256(uint128(exactIn.amount0())) + _total(eth);
-        assertEq(_total(eth) - hook.owed(eth, 4), gross * 900 / 10_000);
+        assertEq(_total(eth) - hook.owed(eth, 4), gross * 500 / 10_000);
         BalanceDelta exactOut = _swapLimit(false, int256(100 ether), TickMath.getSqrtPriceAtTick(20));
         assertLt(uint256(uint128(exactOut.amount0())), 100 ether);
         uint256 rawInput = uint256(-int256(exactOut.amount1())) - _total(token);
-        assertEq(_total(token) - hook.owed(token, 4), rawInput * 900 / 10_000);
+        assertEq(_total(token) - hook.owed(token, 4), rawInput * 500 / 10_000);
         _assertConserved(eth);
         _assertConserved(token);
     }
@@ -275,15 +275,15 @@ contract OmertaHookV2Test is OmertaHookV2Fixture {
         assertEq(later, int56(int256(tick) * int256(elapsed + 600)));
     }
 
-    function testFuzz_allFeesAreCoveredAndNeverExceedTenPercent(uint96 amountSeed, bool exactOutput) public {
+    function testFuzz_allFeesAreCoveredAndNeverExceedSixPercent(uint96 amountSeed, bool exactOutput) public {
         uint256 amount = bound(uint256(amountSeed), 1e9, 50 ether);
         BalanceDelta result = _swap(false, exactOutput ? int256(amount) : -int256(amount));
         Currency currency = exactOutput ? token : eth;
         uint256 total = _total(currency);
         uint256 gross = exactOutput ? uint256(-int256(result.amount1())) - total
             : uint256(uint128(result.amount0())) + total;
-        assertLe(total, gross * 1000 / 10_000);
-        assertEq(total - hook.owed(currency, 4), gross * 900 / 10_000);
+        assertLe(total, gross * 600 / 10_000);
+        assertEq(total - hook.owed(currency, 4), gross * 500 / 10_000);
         _assertConserved(currency);
     }
 }

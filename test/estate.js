@@ -6,7 +6,7 @@
 // DRIFT stays exactly the grant — proving estate:* reconciles as a burn.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ESTATE, estateTierOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

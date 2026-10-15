@@ -10,11 +10,12 @@ const raw = {
     hook: { address: address(3), runtimeHash: hash, artifact: 'OmertaHookV2' },
     state: { address: address(4), runtimeHash: hash, artifact: 'OmertaMarketStateV2' },
     controller: { address: address(5), runtimeHash: hash, artifact: 'OmertaStabilityControllerV2' },
+    manager: { address: address(8), runtimeHash: hash, artifact: 'OmertaPoolManagerV2' },
   },
   gas: { maxGas: '1000000', maxFeePerGas: '1000000000', maxPriorityFeePerGas: '0', dailyBudget: '10000000000000000', confirmations: 2, maxSnapshotAgeSeconds: 60 },
   jobs: [
     { id: 'refresh', kind: 'refresh', target: 'state', intervalSeconds: 60 },
-    { id: 'fund-pol', kind: 'hook_claim', target: 'hook', bucket: 3, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 },
+    { id: 'fund-pol', kind: 'manager_claim', target: 'manager', bucket: 3, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 },
     { id: 'deploy-core', kind: 'lp_deploy', target: 'controller', tranche: 0, intervalSeconds: 300 },
   ],
 };
@@ -45,11 +46,27 @@ function fixture({ valid = true, owed = 1000n, code = '0x60006000', rejectDeploy
   const f = fixture(); const plan = await planMarketV2(m, f, { now });
   assert.deepEqual(plan.actions.map(a => a.functionName), ['refresh', 'sweep', 'deploy']);
   for (const action of plan.actions) assert.equal(action.request.value, '0');
-  const claim = plan.actions[1]; const decoded = decodeFunctionData({ abi: marketV2Abi('OmertaHookV2'), data: claim.request.data });
+  const claim = plan.actions[1]; const decoded = decodeFunctionData({ abi: marketV2Abi('OmertaPoolManagerV2'), data: claim.request.data });
   assert.equal(decoded.functionName, 'sweep'); assert.deepEqual(decoded.args, [zeroAddress, 3]);
+  assert.equal(claim.target, address(8)); assert.equal(claim.metadata.kind, 'manager_claim');
   assert.equal(plan.actions[2].args[1], block.timestamp / 60n - 2n);
   const again = await planMarketV2(m, f, { now, completedJobKeys: plan.actions.map(a => a.jobKey) });
   assert.equal(again.actions.length, 0);
+}
+{
+  const policy = structuredClone(raw);
+  policy.jobs = [{ id: 'hook-surge', kind: 'hook_claim', target: 'hook', bucket: 4, currency: zeroAddress, minimumAmount: '100', intervalSeconds: 60 }];
+  const plan = await planMarketV2(policy, fixture(), { now });
+  assert.equal(plan.actions.length, 1);
+  assert.equal(plan.actions[0].target, address(3));
+  const decoded = decodeFunctionData({ abi: marketV2Abi('OmertaHookV2'), data: plan.actions[0].request.data });
+  assert.deepEqual(decoded.args, [zeroAddress, 4], 'separate opening/surge revenues still sweep from the hook');
+  const badBucket = structuredClone(raw); badBucket.jobs[1].bucket = 4;
+  assert.throws(() => validateMarketV2Manifest(badBucket), /invalid_integer/);
+  const badTarget = structuredClone(raw); badTarget.jobs[1].target = 'hook';
+  assert.throws(() => validateMarketV2Manifest(badTarget), /invalid_job/);
+  const badArtifact = structuredClone(raw); badArtifact.contracts.manager.artifact = 'OmertaHookV2';
+  assert.throws(() => validateMarketV2Manifest(badArtifact), /invalid_job/);
 }
 {
   const plan = await planMarketV2(m, fixture({ valid: false, owed: 0n }), { now });
@@ -176,4 +193,4 @@ delete process.env.DATABASE_URL;
 try { await assert.rejects(() => runMarketV2(null, m, {}, { dryRun: false }), /postgres_required/); }
 finally { if (priorDatabase !== undefined) process.env.DATABASE_URL = priorDatabase; }
 assert.equal(raw.jobs[0].minimumAmount, undefined, 'validation never mutates caller policy');
-console.log('marketv2keeper: typed calls, exact epoch, actual ABI, simulation/runtime gating, reorg and planning-age checks, pending-fee projection, no-op/cadence gates, funded regeneration, no treasury authority, PostgreSQL requirement passed');
+console.log('marketv2keeper: typed manager and hook revenue calls, bounded buckets and artifact binding, exact epoch, actual ABI, simulation/runtime gating, reorg and planning-age checks, pending-fee projection, no-op/cadence gates, funded regeneration, no treasury authority, PostgreSQL requirement passed');

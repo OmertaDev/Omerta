@@ -8,7 +8,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PORTFOLIO, TREASURY } from '../src/rules.js';
 import * as Treasury from '../src/treasury.js';
 import { runLedgerInvariants } from '../src/invariants.js';

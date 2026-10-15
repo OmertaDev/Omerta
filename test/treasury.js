@@ -15,7 +15,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA: let the mod route book a REAL fill (the D-MED2 gate)
 import assert from 'node:assert';
 import { readFileSync as _readSrc } from 'node:fs';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { allocateStock, runTreasuryInvariants, stockBudget } from '../src/treasury.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

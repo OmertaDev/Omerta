@@ -1,0 +1,164 @@
+{
+  "schema": "omerta.rules-data-parity.v1",
+  "repositoryHeadAtCapture": "8cf20835738ae14fb6df51142334d777332e5bcd",
+  "phase": "Five data-source copy strings synchronized to already reviewed protected runtime; no reward, predicate, rule, runtime or assertion change.",
+  "changes": [
+    {
+      "id": "ob_crime",
+      "key": "desc",
+      "before": "Any crime, any district.",
+      "after": "Complete a crime in any district."
+    },
+    {
+      "id": "ob_path",
+      "key": "name",
+      "before": "Declare your Path",
+      "after": "Choose your Path"
+    },
+    {
+      "id": "ob_path",
+      "key": "desc",
+      "before": "Pick a career at level 5 — six Paths, each with an edge and a flaw.",
+      "after": "At level 5, choose one of six Paths. Each has bonuses and costs."
+    },
+    {
+      "id": "ob_family",
+      "key": "desc",
+      "before": "Nobody survives this city alone.",
+      "after": "Find a family to work with."
+    },
+    {
+      "id": "ob_wallet",
+      "key": "desc",
+      "before": "The wallet is what survives you.",
+      "after": "Your linked wallet stays with your account after your character dies."
+    }
+  ],
+  "protectedGenerated": {
+    "rawBeforeSha256": "0d07a6c18299dd137ba4e364070502d44ba0c04ea5ea26ddcaf90b406c989fd4",
+    "rawAfterSha256": "0d07a6c18299dd137ba4e364070502d44ba0c04ea5ea26ddcaf90b406c989fd4",
+    "rawByteIdentical": true,
+    "physicalLineEndings": "CRLF; deliberately never rewritten"
+  },
+  "protectedTail": {
+    "rawBeforeSha256": "ce08776af6d10e0895805faf18960870d62adf2563e422a7f52ff9682d3ce755",
+    "rawAfterSha256": "ce08776af6d10e0895805faf18960870d62adf2563e422a7f52ff9682d3ce755"
+  },
+  "data": {
+    "rawBeforeSha256": "fefd27c18bd7c17b1880a3c445aadc2e43a4234a6edb71765c2f14f664ecda12",
+    "rawAfterSha256": "0818b794c7990a03061716eab81624ad0e2c0acbb1516609f7815a2351e687f2",
+    "completeAstParityAfter": true,
+    "changeCount": 5
+  },
+  "extractor": {
+    "command": "node output/release/2026-10-14/backend-checks/rules-extractor-parity/tools/extract-rules.js",
+    "originalCommand": "node tools/extract-rules.js",
+    "isolation": "Unmodified byte-identical extractor and exact current data copied to isolated tools/data/src tree. Canonical-LF target seeded from the protected runtime; actual protected worktree remains untouched.",
+    "toolRawSha256": "cce7a7dd83d605151927095e0c73fd6cd572c6dde0c5442254fe54729e6c775b",
+    "copiedToolRawSha256": "cce7a7dd83d605151927095e0c73fd6cd572c6dde0c5442254fe54729e6c775b",
+    "canonicalBeforeSha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b",
+    "canonicalAfterSha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b",
+    "canonicalByteIdentical": true,
+    "exitCode": 0,
+    "log": "extractor-retest.log",
+    "exit": "extractor-retest.exit",
+    "canonicalEqualsProtectedIndexBlob": true,
+    "protectedIndexBlobOid": "79e59ce682e6ada70082b4f522611e68550f0392",
+    "executionMode": "Isolated invocation of byte-identical extractor; actual protected runtime file never written."
+  },
+  "rules": {
+    "command": "node test/rules.js",
+    "exitCode": 0,
+    "log": "rules-retest.log",
+    "exit": "rules-retest.exit"
+  },
+  "finding": {
+    "id": "RULES-DATA-01",
+    "status": "resolved integration defect",
+    "observed": "Canonical rules data retained five old tutorial name/description strings while protected generated runtime already contained the intended incoming copy. Exact declaration-parity assertion failed.",
+    "resolution": "Only five literal string values across four ONBOARD_TASKS rows synchronized to protected runtime; IDs, rewards, eligibility predicates and all other complete AST content remain equal."
+  },
+  "callersChecked": [
+    "tools/extract-rules.js reads data/rules.js and writes generated declarations; data tables are the future regeneration input.",
+    "src/rules.js exposes generated tables through the facade. src/growth.js uses stable IDs/checks for onboarding claims and source rewards; src/game.js consumes ONBOARD_TASKS without changing predicates."
+  ],
+  "source": [
+    {
+      "path": "data/rules.js",
+      "rawSha256": "0818b794c7990a03061716eab81624ad0e2c0acbb1516609f7815a2351e687f2",
+      "normalizedLfSha256": "b562f5e58263214d6d4d6a200089d7ecbc21743d2e1a14be6af3ad8f13f4d546",
+      "stagedBlobOid": "96b787de39018412bed4ee3cf3609a5fe37848bd",
+      "stagedRawSha256": "b562f5e58263214d6d4d6a200089d7ecbc21743d2e1a14be6af3ad8f13f4d546"
+    },
+    {
+      "path": "src/rules.generated.js",
+      "rawSha256": "0d07a6c18299dd137ba4e364070502d44ba0c04ea5ea26ddcaf90b406c989fd4",
+      "normalizedLfSha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b",
+      "stagedBlobOid": "79e59ce682e6ada70082b4f522611e68550f0392",
+      "stagedRawSha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b"
+    },
+    {
+      "path": "src/rules.tail.js",
+      "rawSha256": "ce08776af6d10e0895805faf18960870d62adf2563e422a7f52ff9682d3ce755",
+      "normalizedLfSha256": "84eeb263dcfc13cc4ea13683a9460dc8429df126182562c5b6986654be6f9e05",
+      "stagedBlobOid": "33db41906771f1594b004e916cdbdb031bfaf170",
+      "stagedRawSha256": "84eeb263dcfc13cc4ea13683a9460dc8429df126182562c5b6986654be6f9e05"
+    },
+    {
+      "path": "src/rules.js",
+      "rawSha256": "3663acc1c829f396d3c6d3448e0278ac170154360c99e8fcd7811498331fd652",
+      "normalizedLfSha256": "57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae",
+      "stagedBlobOid": "6d31ecfdee691f573d39061705cb1fcd893094a1",
+      "stagedRawSha256": "57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae"
+    },
+    {
+      "path": "tools/extract-rules.js",
+      "rawSha256": "cce7a7dd83d605151927095e0c73fd6cd572c6dde0c5442254fe54729e6c775b",
+      "normalizedLfSha256": "62dfd44674229a16e684096286862f9f283f964c2b38bdd74d983cf0e1e727b7",
+      "stagedBlobOid": "827c6184d410ff095800f724116972ed8306ed2d",
+      "stagedRawSha256": "62dfd44674229a16e684096286862f9f283f964c2b38bdd74d983cf0e1e727b7"
+    },
+    {
+      "path": "test/rules.js",
+      "rawSha256": "4ead8bf4a0de23bbbede6c31ad8debcd1aa72ffee7d7fbf12d51e88ed51fded3",
+      "normalizedLfSha256": "04ab7ca4cfb9b44cf14335c573056340633f5318384f746ba18e6a90a58ba6e6",
+      "stagedBlobOid": "11d03a878395cfaf62f0be5415fa7b505c32c876",
+      "stagedRawSha256": "04ab7ca4cfb9b44cf14335c573056340633f5318384f746ba18e6a90a58ba6e6"
+    }
+  ],
+  "initialFailure": {
+    "log": "npm-test-hardening-tail-failure.log",
+    "provenance": "Original release-owner raw main-body checkpoint log copied byte-for-byte, containing passed prefix73..176 and failed177 node test/rules.js. No original exit artifact supplied or reconstructed."
+  },
+  "evidence": [
+    {
+      "path": "extractor-retest.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "extractor-retest.log",
+      "bytes": 246,
+      "rawSha256": "5fa271e106ff1bc652f9fb5f3be0f6945947b074008511467d21acaf1b7ad87f"
+    },
+    {
+      "path": "npm-test-hardening-tail-failure.log",
+      "bytes": 108555,
+      "rawSha256": "2460e0a86ceec991cde25847d9d35d040b6d5092b1221b4108a754130b2f9a95"
+    },
+    {
+      "path": "rules-retest.exit",
+      "bytes": 2,
+      "rawSha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "path": "rules-retest.log",
+      "bytes": 473,
+      "rawSha256": "c2dea6363be13d569e6516f093a62c5cdcd45b622e24f83c418b89d22cc60994"
+    }
+  ],
+  "limitations": [
+    "This is table-source parity and regeneration evidence only; no new gameplay/economic/runtime or production qualification.",
+    "Extractor naturally emits LF. Canonical isolated output is byte-identical to protected Git index content, and actual CRLF worktree runtime bytes remain exactly unchanged. No line-ending change is disguised as extraction parity."
+  ]
+}

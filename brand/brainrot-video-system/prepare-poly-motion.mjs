@@ -1,0 +1,5 @@
+import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';
+const here=path.dirname(fileURLToPath(import.meta.url));const d=JSON.parse(fs.readFileSync(path.join(here,'production-data.json'),'utf8'));const l=JSON.parse(fs.readFileSync(path.resolve(here,'../../public/art/brainrot-r3/generation-ledger.json'),'utf8'));
+const ids=process.argv.slice(2);const jobs=[];
+for(const id of ids){const base=id.replace(/-poly-take\d+$/,'');const shot=d.films.flatMap(f=>f.shots).find(s=>s.id===base);if(!shot)throw new Error(id);const first=l.jobs[`${base}-poly-first-v2`]||l.jobs[`${base}-poly-first`];if(first?.status!=='downloaded')throw new Error(`Missing selected polygonal first frame for ${base}`);jobs.push({id,model:shot.model,input:{prompt:shot.generationPrompt,image_url:first.url,duration:'5',aspect_ratio:'auto',resolution:'720p',generate_audio:false,bitrate_mode:'high',codec:'H264'},folder:'clips',ext:'mp4'});}
+fs.writeFileSync(path.join(here,'generation-requests/poly-motion.json'),JSON.stringify(jobs,null,2)+'\n');console.log(`${jobs.length} clearly stylized motion requests prepared.`);

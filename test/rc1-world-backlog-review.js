@@ -1,3 +1,4 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture, HISTORICAL_SOURCE_FIXTURE_REVISION } from './lib/rc1-historical-source-fixture.js';
 import { invoiceSourceBaseline, INVOICE_SOURCE_TRANSFER } from '../tools/rc1-invoice-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { INTEL_SOURCE_CURRENT_PINS, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
@@ -10,6 +11,31 @@ import { CREW_LOGISTICS_SOURCE_REVIEWED_REVISION, CREW_LOGISTICS_SOURCE_PREDECES
   WAREHOUSE_ESTATE_PIN, WAREHOUSE_ESTATE_BLOB, WAREHOUSE_ESTATE_PREDECESSOR_BLOB, WAREHOUSE_ESTATE_SOURCE_INVERSES, assertWarehouseEstateSourceChange } from '../tools/rc1-deed-source-compatibility.js';
 import { execFileSync } from 'node:child_process';
 import { BACKLOG_CLASS_COUNT, BACKLOG_REVIEW_TABLES, BACKLOG_SOURCE_PINS, BACKLOG_FRANCHISE_SOURCE_TRANSFER, BACKLOG_WAREHOUSE_SOURCE_TRANSFER, BACKLOG_CREW_LOGISTICS_SOURCE_TRANSFER, reviewWorldBacklog, compareWorldBacklogWindows } from '../tools/rc1-world-backlog-review.js';
+if (!isHistoricalSourceFixture()) {
+  const revision = 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0', file = 'src/diplomacy.js';
+  const blob = 'df60c9425c0796d06c5b230f4fd84594a0a269e1';
+  const current = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
+  assert.equal(execFileSync('git', ['rev-parse', `${revision}:${file}`], { encoding: 'utf8' }).trim(), blob);
+  assert.equal(execFileSync('git', ['cat-file', 'blob', blob], { encoding: 'utf8' }), current);
+  assert.equal(sha256(current), 'b6fbd0add3615773ac05c11a488c769af9d3f2ea695d5b6a4c7da0a3b7e56f9d');
+  const target = new URL('../' + file, import.meta.url).href, read = fs.readFileSync;
+  try {
+    for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 backlog source\n']) {
+      let reads = 0;
+      fs.readFileSync = function (candidate, options) {
+        if (String(candidate) !== target) return read.call(this, candidate, options);
+        assert.equal(options, 'utf8'); reads++; return supplied;
+      };
+      assert.throws(() => reviewWorldBacklog({ tables: {} }, { sourceRevision: revision }),
+        /Backlog reviewer source changed: src\/diplomacy.js/);
+      assert.equal(reads, 1, 'The actual backlog guard must read the controlled C2 source exactly once');
+    }
+  } finally { fs.readFileSync = read; }
+  console.log('PASS: historical backlog source guard rejects exact C2, CRLF and tampering; current source is not admitted');
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 for (const file of ['src/chain.js', 'src/invariants.js']) {
   const text = fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
   const proof = assertDeedBacklogCompatibility(file, text);
@@ -61,7 +87,7 @@ assert.match(BACKLOG_WAREHOUSE_SOURCE_TRANSFER.scope, /separate current-source n
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { LOAN, LAW, CASINO, dayOf } from '../src/rules.js';
 
-const DAY = 86400000, at = 1790208000000, sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const DAY = 86400000, at = 1790208000000, sourceRevision = HISTORICAL_SOURCE_FIXTURE_REVISION;
 const configuration = { LIVING_WORLD_DIRECTOR: 'LIVE' }, digest = value => sha256(canonicalJson(value));
 const iso = value => new Date(value).toISOString();
 const empty = () => Object.fromEntries(BACKLOG_REVIEW_TABLES.map(table => [table, []]));

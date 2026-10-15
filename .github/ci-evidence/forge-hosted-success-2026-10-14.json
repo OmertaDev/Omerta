@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-15T00:58:06.720Z",
+  "status": "hosted_success_exact_head",
+  "runId": 38656500911,
+  "jobId": 116167414357,
+  "attempt": 1,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/38656500911",
+  "headSha": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "contractSourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "contractPins": {
+    "src": "3aac08b6c4d6a664f2c0489521e908c5f78f9cc3",
+    "test": "7be7492f2c710e990b205fc6ef26c06ecb384413",
+    "foundry.toml": "171c92f61c5e616c1d1d06a136934d053e97ff2a"
+  },
+  "qualification": "Hosted build/test/E2E/size results for these exact sources and configuration. No deployment, activation, address or production-bytecode verification is claimed.",
+  "tools": {
+    "forge": "1.7.1",
+    "forgeCommit": "4072e48705af9d93e3c0f6e29e93b5e9a40caed8",
+    "solc": "0.8.26",
+    "optimizerRuns": 800,
+    "evm": "cancun",
+    "profiles": [
+      "default non-IR",
+      "configured constellation-via-ir; source restrictions unchanged"
+    ]
+  },
+  "affinityBuild": {
+    "command": "taskset --cpu-list \"$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')\" forge build --threads 1",
+    "startedAt": "2026-10-14T23:51:48Z",
+    "completedAt": "2026-10-15T00:07:04Z",
+    "compilerSequence": [
+      {
+        "files": 296,
+        "announcedAt": "2026-10-14T23:51:49.3353861Z",
+        "completedAt": "2026-10-14T23:59:07.9153881Z",
+        "seconds": 438.58
+      },
+      {
+        "files": 256,
+        "announcedAt": "2026-10-14T23:59:07.9154395Z",
+        "completedAt": "2026-10-15T00:07:03.3569960Z",
+        "seconds": 475.44
+      }
+    ],
+    "conclusion": "Actual log records the second compiler group starting after the first completed. Build succeeded. Prior exit143 root cause remains unproven; no OOM diagnosis is inferred."
+  },
+  "tests": {
+    "command": "forge test -vvv",
+    "normallyParallel": true,
+    "suites": 104,
+    "wallSeconds": 2220.56,
+    "cpuSeconds": 6552,
+    "passed": 1486,
+    "failed": 0,
+    "skipped": 2,
+    "total": 1488,
+    "fuzzRows": 64,
+    "fuzzRunsEach": 512,
+    "invariants": [
+      {
+        "name": "invariant_only_initialized_complete_bounded_windows_publish",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_backingConservationNoUnmeteredSpendOrStandingApproval",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_refillsRespectGlobalBudgetCooldownAndConserveOperationsFunding",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_task4_oneImmutableRecordPerDayAndNoCoreOrFundMovement",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_feeReceiptsConserveGrossAndForcedFundsNeverBecomePayments",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_eachDestinationMatchesFeeKindAndModeWithAtomicNonceAccounting",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantCapsAndSettlementAccounting",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36108
+      },
+      {
+        "name": "invariantETHReservesAlwaysCoverLiabilities",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36108
+      },
+      {
+        "name": "invariantTokenCustodyCoversUnclaimedAllocations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 36108
+      },
+      {
+        "name": "invariant_liabilitiesRemainExactlyFundedInBothCurrencies",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantEveryWalletBoundedAndAggregateConserved",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantFixedOpsAndFundedLiabilitiesSurviveMutationAttempts",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_generationLatestAndUsedIdsAreMonotone",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_balances_and_fee_routes_conserve_each_currency",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_paused_and_warming_custody_cannot_report_healthy",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_principal_custody_and_liquidity_are_monotonic",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_nftOwnershipNoncesSupplyAndDailyAccountingMatchModel",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_all_funded_fees_are_paid_or_back_exact_historical_credits_and_escrow",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantCompartmentAndFeeLiabilitiesEqualHeldAssets",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariantOwnedLiquidityMatchesRealManagerPositions",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_reverseHeadsHistoryCatalogAndBallotsRemainHonest",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_balance_always_backs_outstanding_credits",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_known_credit_sum_equals_outstanding",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_outstanding_equals_recorded_minus_withdrawn",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_recorded_ghost_conserves_live_and_withdrawn_credits",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_unreserved_is_exact_balance_minus_liability",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      },
+      {
+        "name": "invariant_withdrawal_ghost_matches_cumulative_withdrawals",
+        "runs": 512,
+        "calls": 256000,
+        "handlerReverts": 0
+      }
+    ],
+    "invariantDepthInferredFromCallsDividedByRuns": 500,
+    "skippedSetups": [
+      "AuctionGenesisRobinhoodForkTest",
+      "PlayerGenesisRobinhoodForkTest"
+    ],
+    "skipScope": "The two opt-in fork setups were skipped; this is not an executed live-fork qualification.",
+    "seedScope": "Hosted command uses its configured/default seed behavior; no claim that it used the separately retained local explicit seed.",
+    "handlerRevertScope": "Per-invariant handler revert counts are retained. A passing invariant is not a claim that every generated action succeeded."
+  },
+  "sizeGate": {
+    "command": "taskset --cpu-list \"$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')\" forge build --sizes --skip FuzzTester --threads 1",
+    "conclusion": "success",
+    "managerRuntimeBytes": 24342,
+    "managerInitcodeBytes": 25097,
+    "managerRuntimeMarginBytes": 234,
+    "excluded": [
+      "FuzzTester"
+    ],
+    "productionArtifactByteIdentityNewlyMeasured": false
+  },
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:50:27Z",
+      "completedAt": "2026-10-14T23:50:29Z"
+    },
+    {
+      "name": "Initialize containers",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:50:29Z",
+      "completedAt": "2026-10-14T23:50:53Z"
+    },
+    {
+      "name": "Run actions/checkout@v7",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:50:53Z",
+      "completedAt": "2026-10-14T23:51:39Z"
+    },
+    {
+      "name": "Install Foundry",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:51:39Z",
+      "completedAt": "2026-10-14T23:51:43Z"
+    },
+    {
+      "name": "forge --version (what actually ran)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:51:43Z",
+      "completedAt": "2026-10-14T23:51:44Z"
+    },
+    {
+      "name": "Fetch dependencies",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:51:44Z",
+      "completedAt": "2026-10-14T23:51:48Z"
+    },
+    {
+      "name": "Runner resources before compilation",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:51:48Z",
+      "completedAt": "2026-10-14T23:51:48Z"
+    },
+    {
+      "name": "forge build",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:51:48Z",
+      "completedAt": "2026-10-15T00:07:04Z"
+    },
+    {
+      "name": "Market V2 artifact contracts and keeper orchestration",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:07:04Z",
+      "completedAt": "2026-10-15T00:09:20Z"
+    },
+    {
+      "name": "retain failed genesis compiler artifacts",
+      "status": "completed",
+      "conclusion": "skipped",
+      "startedAt": "2026-10-15T00:09:20Z",
+      "completedAt": "2026-10-15T00:09:20Z"
+    },
+    {
+      "name": "forge test (unit + fuzz)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:09:20Z",
+      "completedAt": "2026-10-15T00:46:21Z"
+    },
+    {
+      "name": "v4 encodings on a real pool (dexbot-e2e)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:46:21Z",
+      "completedAt": "2026-10-15T00:46:38Z"
+    },
+    {
+      "name": "the stock rail on a real chain (stock-e2e)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:46:38Z",
+      "completedAt": "2026-10-15T00:46:41Z"
+    },
+    {
+      "name": "unsigned liquidity deployment plan and actual keeper flow",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:46:41Z",
+      "completedAt": "2026-10-15T00:47:18Z"
+    },
+    {
+      "name": "forge build --sizes (EIP-170)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:47:18Z",
+      "completedAt": "2026-10-15T00:47:18Z"
+    },
+    {
+      "name": "Post Install Foundry",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:47:18Z",
+      "completedAt": "2026-10-15T00:47:19Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v7",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:47:19Z",
+      "completedAt": "2026-10-15T00:47:20Z"
+    },
+    {
+      "name": "Stop containers",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:47:20Z",
+      "completedAt": "2026-10-15T00:47:20Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-15T00:47:20Z",
+      "completedAt": "2026-10-15T00:47:20Z"
+    }
+  ],
+  "mutations": {
+    "sourceEditsForMonitoring": false,
+    "reruns": false,
+    "commits": false,
+    "pushes": false
+  },
+  "retainedSourceReceiptSha256": "86ba75a54d3f2a1da8cffe0007cee5b72d9a4b2b5e11981566f39972f08140df",
+  "retainedRawLogSha256": "884e10a982509c3c0f322463ce5b81499607c57c6429b92f07cdbb292a9fdd0b",
+  "retainedArchiveSha256": "3b8417646762acde8b886ebcb9c15c63c39da96608a69e4c70e31e412d6936a9",
+  "publication": "Sanitized qualification fields only; raw diagnostics and full source receipt remain in the ignored release evidence directory. Earlier exit143 failure causes remain unproven. No on-chain activation or production bytecode identity is claimed."
+}

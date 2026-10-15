@@ -19,7 +19,7 @@ if(native) {
   process.env.DATABASE_URL=url.href;
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',DELIVERY_CONTRACTS:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'logistics-hub-local-proof-secret',MARKET_SEED:'logistics-hub-local-native-seed',MOD_KEY:'logistics-hub-local-test-mod' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js'), D=await import('../src/depot.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js'), D=await import('../src/depot.js');
 const W=await import('../src/warehouseleases.js'), P=await import('../src/commercialpremises.js'), F=await import('../src/deliveryfinance.js'), Delivery=await import('../src/delivery.js');
 const { setAgentCompany }=await import('../src/agentcompany.js'), { runEstate }=await import('../src/social/estate.js');
 const { buyGood }=await import('../src/economy.js');

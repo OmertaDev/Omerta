@@ -18,7 +18,7 @@ if (native) {
   process.env.DATABASE_URL = url.href;
 }
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import * as G from '../src/game.js';
 import * as D from '../src/depot.js';
 import * as Market from '../src/market.js';

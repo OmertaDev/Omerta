@@ -68,7 +68,7 @@ try {
   await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
   const [{ buildServer }, { runLedgerInvariants }, resources] = await Promise.all([
-    import('../src/server.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js')]);
+    import('./server-fixture.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js')]);
   observerModule = resources; app = await buildServer();
   diagnostic = serialDatabaseOptions().poolFactory({ connectionString: database.url, options: '-c search_path=' + namespace, max: 1 }, namespace);
   // Hash-bound existing terminal hook, with its original header/map names.

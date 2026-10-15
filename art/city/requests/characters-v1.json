@@ -1,0 +1,11 @@
+{
+  "model": "openai/gpt-image-2.5/flare/text-to-image",
+  "input": {
+    "prompt": "Create a production-quality transparent pixel-art character sprite sheet for an original overhead 1940s mafia roleplaying game. Exactly EIGHT separate full-body sprites in a perfectly regular FOUR COLUMN, TWO ROW grid on genuinely transparent alpha, no ground or background. Each cell is 384x512 in the 1536x1024 canvas. Each character is centered in its cell with feet at the same relative vertical baseline, generous clear transparent margins and absolutely no overlap between cells. Crisp handcrafted pixel clusters, chunky readable 16-bit / premium indie game sprites, detailed but legible at small size, approximately 48x72 logical sprite pixels enlarged with hard nearest-neighbor pixels. Match warm amber highlights, muted burgundy, olive, slate teal and aubergine shadows; beautifully shaded fabrics, strong silhouette, consistent scale and orthographic overhead RPG camera. Top row left to right: the SAME charismatic mafia player in a cream fedora, dark burgundy tailored overcoat, charcoal trousers and polished shoes, 1 facing down toward camera, 2 facing up away from camera, 3 facing left in profile, 4 facing right in profile. Bottom row left to right: 1 a friendly older fixer with dark fedora, olive vest and white shirt facing down; 2 a mechanic in rolled sleeves and navy coveralls facing down; 3 a newspaper editor in brown coat holding a folded newspaper facing down; 4 the same mafia player front-facing with a clear walking-step pose. Human proportions stylized as classic overhead RPG characters, medium-large head but not baby/chibi, visible shoes and hands, no weapons. Every sprite must have a real transparent exterior and sharp clean alpha edges, no shadows disconnected from feet, no gray/checkerboard pattern, no labels, no grid lines, no numbers, no text, no props outside the sprite, no photorealism, no antialiasing or soft painting. Make the artwork charming, polished and expressive, substantially better than rudimentary programmer art.",
+    "image_size": { "width": 1536, "height": 1024 },
+    "quality": "max",
+    "background": "transparent",
+    "output_format": "png",
+    "num_images": 1
+  }
+}

@@ -20,7 +20,7 @@ class FixtureDate extends RealDate {
   static now() { return fixtureNow; }
 }
 globalThis.Date = FixtureDate;
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger, withCharacter, withTwoCharacters } = await import('../src/game.js');
 const Jobs = await import('../src/intelforecastjobs.js');
 const { INTEL_FORECAST } = await import('../src/intelforecasts.js');

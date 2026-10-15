@@ -5,7 +5,7 @@
 // (every port:* row is character_id'd → the per-character cash check reconciles; drift == the seeded cash).
 process.env.PORT_RUN_MS = '0'; // TEST-ONLY: runs arrive instantly
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PORT, NOTORIETY, boatOf, boatResale, fenceMultOf, rarityUtilityBps } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

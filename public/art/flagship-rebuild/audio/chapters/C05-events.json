@@ -1,0 +1,779 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  110,
+        "character":  124,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "forms",
+        "ms":  500,
+        "character":  129,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  925,
+        "character":  135,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "Crew",
+        "ms":  995,
+        "character":  137,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  1910,
+        "character":  143,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "small",
+        "ms":  2000,
+        "character":  145,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "circle",
+        "ms":  2430,
+        "character":  151,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "for",
+        "ms":  2885,
+        "character":  158,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "mutual",
+        "ms":  3070,
+        "character":  162,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "aid",
+        "ms":  3585,
+        "character":  169,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  3805,
+        "character":  173,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "chat",
+        "ms":  3980,
+        "character":  177,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U02",
+        "ms":  5280,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Then",
+        "ms":  5390,
+        "character":  232,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "comes",
+        "ms":  5640,
+        "character":  237,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  5980,
+        "character":  243,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Payroll",
+        "ms":  6080,
+        "character":  247,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "Office",
+        "ms":  6595,
+        "character":  255,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "job",
+        "ms":  6985,
+        "character":  262,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U03",
+        "ms":  8285,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "This",
+        "ms":  8395,
+        "character":  316,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "heist",
+        "ms":  8640,
+        "character":  321,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "needs",
+        "ms":  8975,
+        "character":  327,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  9250,
+        "character":  333,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "wheelman",
+        "ms":  9320,
+        "character":  335,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  9810,
+        "character":  344,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "muscle",
+        "ms":  10000,
+        "character":  348,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U04",
+        "ms":  11325,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  11435,
+        "character":  405,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "takes",
+        "ms":  11825,
+        "character":  410,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  12195,
+        "character":  416,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "wheelman",
+        "ms":  12305,
+        "character":  420,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "role",
+        "ms":  12795,
+        "character":  429,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  13095,
+        "character":  434,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "puts",
+        "ms":  13290,
+        "character":  438,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "up",
+        "ms":  13590,
+        "character":  443,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  13780,
+        "character":  446,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "stake",
+        "ms":  13875,
+        "character":  450,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U05",
+        "ms":  15230,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  15340,
+        "character":  506,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "second",
+        "ms":  15440,
+        "character":  510,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "seat",
+        "ms":  15895,
+        "character":  517,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  16225,
+        "character":  522,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "empty",
+        "ms":  16410,
+        "character":  525,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U06",
+        "ms":  17695,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Mara",
+        "ms":  17805,
+        "character":  581,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "joins",
+        "ms":  18165,
+        "character":  586,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U07",
+        "ms":  19595,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Both",
+        "ms":  19705,
+        "character":  642,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "names",
+        "ms":  20020,
+        "character":  647,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "are",
+        "ms":  20390,
+        "character":  653,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "there",
+        "ms":  20575,
+        "character":  657,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U08",
+        "ms":  21770,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Preparation",
+        "ms":  21880,
+        "character":  713,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "improves",
+        "ms":  22675,
+        "character":  725,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "their",
+        "ms":  23190,
+        "character":  734,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "odds",
+        "ms":  23410,
+        "character":  740,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U09",
+        "ms":  24720,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "It",
+        "ms":  24830,
+        "character":  795,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "cannot",
+        "ms":  24985,
+        "character":  798,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "tell",
+        "ms":  25365,
+        "character":  805,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  25655,
+        "character":  810,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  26010,
+        "character":  815,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "somebody",
+        "ms":  26220,
+        "character":  820,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "else",
+        "ms":  26755,
+        "character":  829,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "will",
+        "ms":  27060,
+        "character":  834,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "choose",
+        "ms":  27245,
+        "character":  839,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U10",
+        "ms":  28630,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "He",
+        "ms":  28740,
+        "character":  896,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "commits",
+        "ms":  28885,
+        "character":  899,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U10-end",
+        "ms":  30315,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U11",
+        "ms":  30315,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  31985,
+        "character":  979,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "law",
+        "ms":  32105,
+        "character":  983,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "was",
+        "ms":  32325,
+        "character":  987,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "waiting",
+        "ms":  32540,
+        "character":  991,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U12",
+        "ms":  33880,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Somebody",
+        "ms":  33990,
+        "character":  1049,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "talked",
+        "ms":  34525,
+        "character":  1058,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U12-end",
+        "ms":  35870,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U13",
+        "ms":  35870,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Both",
+        "ms":  36645,
+        "character":  1136,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "players",
+        "ms":  36940,
+        "character":  1141,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "go",
+        "ms":  37425,
+        "character":  1149,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  37635,
+        "character":  1152,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "jail",
+        "ms":  37785,
+        "character":  1155,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U13-end",
+        "ms":  39055,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U14",
+        "ms":  39055,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  40725,
+        "character":  1232,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "result",
+        "ms":  40865,
+        "character":  1236,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "names",
+        "ms":  41285,
+        "character":  1243,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "no",
+        "ms":  41670,
+        "character":  1249,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "informant",
+        "ms":  41920,
+        "character":  1252,
+        "length":  9
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U15",
+        "ms":  43420,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  43530,
+        "character":  1312,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  43920,
+        "character":  1317,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "read",
+        "ms":  44170,
+        "character":  1321,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "exactly",
+        "ms":  44415,
+        "character":  1326,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  45020,
+        "character":  1334,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "happened",
+        "ms":  45225,
+        "character":  1339,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U16",
+        "ms":  46615,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "He",
+        "ms":  46725,
+        "character":  1398,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "still",
+        "ms":  46880,
+        "character":  1401,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "does",
+        "ms":  47210,
+        "character":  1407,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "not",
+        "ms":  47460,
+        "character":  1412,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "know",
+        "ms":  47705,
+        "character":  1416,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "whom",
+        "ms":  47945,
+        "character":  1421,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  48195,
+        "character":  1426,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "believe",
+        "ms":  48335,
+        "character":  1429,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C05-U16-end",
+        "ms":  49720,
+        "character":  0,
+        "length":  0
+    }
+]

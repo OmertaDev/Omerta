@@ -1,0 +1,170 @@
+{
+  "purpose": "Read-only pons launch architecture research; no security or release clearance",
+  "repositoryHead": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "Dirty; source hashes identify inspected files rather than HEAD alone",
+  "repositorySources": [
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaRestrictedOMRV2.sol",
+      "sha256": "ef98a8db9595e075983b1556240270267dea6669c4bb5e52e20e2c9c9a1c5e2f"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol",
+      "sha256": "551c86e193cc33c7fabd07433bb4b15286d5420332e52b86fa37dc34b05ebac0"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaMarketStateV2.sol",
+      "sha256": "7fe8895ef9640ceb0c14652184f2e8f301973ce50eda9d6cbb6b00609a64f193"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaGenesisCoordinatorV2.sol",
+      "sha256": "f50ac719568484483298529623b97492da501c397100965a18e7073bcd7b73c1"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+      "sha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol",
+      "sha256": "01f8e299708d3f1b07c928633cb5b9af5c86daeb43c136d957be8b0d1ebc07c2"
+    },
+    {
+      "path": "src/marketv2keeper.js",
+      "sha256": "c655957520790aac1ea79c4db53c92aa5c10930f9096b25e97e9550dc8e29746"
+    },
+    {
+      "path": "src/marketv2solver.js",
+      "sha256": "4f8a9965670fa510af851e7e57b5789a2ad25a74a5602f00460ea43bda0cc0ca"
+    },
+    {
+      "path": "tools/market-v2-deployment-plan.js",
+      "sha256": "9943048da6678ed10bbe1c3ed7c2a75ffcd5174016271a1ca0a8ce6fa6eb01ee"
+    }
+  ],
+  "verifiedSources": [
+    {
+      "role": "Factory",
+      "contractName": "PonsV2LaunchFactory",
+      "address": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+      "sourceUrl": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+      "verifiedSourceSha256": "fc2684923aa97b601b29181d30731edcf83b5fec68ac138f20ca9e53e51eb610"
+    },
+    {
+      "role": "Hook",
+      "contractName": "PonsV2MemeHook",
+      "address": "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+      "sourceUrl": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+      "verifiedSourceSha256": "6312cfc0c30add03aee10cf287efe25de2deb0f1165a14345cb75d292d4dbbfd"
+    },
+    {
+      "role": "Locker",
+      "contractName": "PonsV2LaunchLocker",
+      "address": "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952",
+      "sourceUrl": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952",
+      "verifiedSourceSha256": "f947bab8e05edd173214f42221952147bf133944e72880374f9254d07e39924d"
+    },
+    {
+      "role": "Vault",
+      "contractName": "PonsV2BuybackVault",
+      "address": "0x42df2a798f82289E177311362e8f5ccC45c1219c",
+      "sourceUrl": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x42df2a798f82289E177311362e8f5ccC45c1219c",
+      "verifiedSourceSha256": "2b72bcf4abeed6e9da322b75cc5bb5da391d06c0b723f0f41efeeb1fd3f24748"
+    },
+    {
+      "role": "Escrow",
+      "contractName": "PonsV2FeeEscrow",
+      "address": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+      "sourceUrl": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+      "verifiedSourceSha256": "e550c24d15696b06ebf0ae34375a04cd637ebde64a34fceba3375131ae6143f9"
+    }
+  ],
+  "ponsSnapshot": {
+    "network": "Robinhood Chain",
+    "chainId": 4663,
+    "block": "88627146",
+    "blockHash": "0xc700135ad797c30f10f389a4ce2433d54e40143a4a8268313370ca7c2ad31550",
+    "timestamp": "1792007082",
+    "timestampIso": "2026-10-14T19:44:42Z",
+    "contracts": {
+      "Factory": {
+        "address": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+        "fullyVerified": true,
+        "compiler": "v0.8.35+commit.47b9dedd",
+        "codeBytes": 24177,
+        "runtimeKeccak256": "0x89a27da6f703e0a7cdd4f233e7cb57604ff75b164530962d3ff7cf8483a67d84"
+      },
+      "Locker": {
+        "address": "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952",
+        "fullyVerified": true,
+        "compiler": "v0.8.35+commit.47b9dedd",
+        "codeBytes": 1969,
+        "runtimeKeccak256": "0x58455f80b3773871d601a025e56ec27c71ab3bbb8e2ca6b17828954450742025"
+      },
+      "Hook": {
+        "address": "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+        "fullyVerified": true,
+        "compiler": "v0.8.35+commit.47b9dedd",
+        "codeBytes": 15167,
+        "runtimeKeccak256": "0xc21b1e6c1b45403e81a581f22ed6d9c747997af1cfdac1b1dc9f4b1d346a10db"
+      },
+      "Vault": {
+        "address": "0x42df2a798f82289E177311362e8f5ccC45c1219c",
+        "fullyVerified": true,
+        "compiler": "v0.8.35+commit.47b9dedd",
+        "codeBytes": 4602,
+        "runtimeKeccak256": "0x5de8480874faffefa539648f1a7d6c1e69b39da3fa34de22fc95eb7586aece03"
+      },
+      "Escrow": {
+        "address": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+        "fullyVerified": true,
+        "compiler": "v0.8.35+commit.47b9dedd",
+        "codeBytes": 1932,
+        "runtimeKeccak256": "0xf25f75cfbc1637ba068dc34f69098fa4e8a80f8ee8fe7bf7820594e0b3fed2f1"
+      }
+    },
+    "reads": {
+      "Factory.maxCreatorTaxBps": "1000",
+      "Factory.launchEnabled": true,
+      "Factory.owner": "0x263ed295dAFaE1d9AAdD6E56c4B6F9f38eE019Dd",
+      "Factory.launchFee": "500000000000000",
+      "Factory.launchConfigCount": "1",
+      "Factory.launchForwarder": "0xe33E9E479dF8802cb0866d5d05258bEc4cF62948",
+      "Factory.poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+      "Factory.locker": "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952",
+      "Factory.snipeTaxStartBps": "9900",
+      "Factory.CREATOR_FEE_RECIPIENT_TIMELOCK": "259200",
+      "Factory.graduationGuard": "0xf5695117b99B6f6401e67d4195BD653628176C6C",
+      "Factory.snipeTaxSeconds": "3",
+      "Factory.GRADUATION_RESCUE_DELAY": "604800",
+      "Factory.CREATOR_FEE_RECIPIENT_EXECUTION_WINDOW": "259200",
+      "Factory.launchDeployer": "0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42",
+      "Factory.positionManager": "0x58daec3116aae6D93017bAAea7749052E8a04fA7",
+      "Factory.graduationExecutor": "0xC7819B64A1dAECD7eC19856d026cb14EfBd89046",
+      "Factory.getLaunchConfig(0)": {
+        "supply": "1000000000000000000000000000",
+        "curveFeeBps": "100",
+        "phantomQuote": "1680000000000000000",
+        "graduationThreshold": "4200000000000000000",
+        "poolFee": 0,
+        "tickSpacing": 200,
+        "enabled": true
+      },
+      "Factory.canLaunch(0x0000000000000000000000000000000000000001)": true,
+      "Hook.feeSweepOperator": "0xa1018c1D9655292A2dE0F7dEa9a0F848EaA8cA83",
+      "Hook.factory": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+      "Hook.owner": "0x263ed295dAFaE1d9AAdD6E56c4B6F9f38eE019Dd",
+      "Hook.currentFeePolicy": {
+        "protocolFeeRecipient": "0x31eA5b453A6Cd60F36203830DE046ff32DeC2CDB",
+        "protocolFeeShareBps": 3000,
+        "buybackBurnBps": 5000,
+        "hookFeeBps": 100,
+        "maxInternalPriceImpactBps": 300
+      },
+      "Vault.VESTING_DURATION": "157680000"
+    },
+    "ownerSafe": {
+      "address": "0x263ed295dAFaE1d9AAdD6E56c4B6F9f38eE019Dd",
+      "threshold": "2",
+      "signerCount": 3
+    }
+  }
+}

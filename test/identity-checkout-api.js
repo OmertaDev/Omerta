@@ -55,7 +55,7 @@ Object.assign(process.env, { NODE_ENV: 'test', INVITE_MODE: 'off', RATE_LIMIT: '
   VOUCHER_SIGNER_PK: `0x${'11'.repeat(32)}`, OMERTA_FEES_ADDRESS: fees, DYNASTY_NFT_ADDRESS: nft });
 let app;
 try {
-  const { buildServer } = await import('../src/server.js'); app = await buildServer();
+  const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
   await app.pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES('checkout-api','test','checkout-api')");
   await app.pool.query('INSERT INTO account_persistent(account_id,wallet_address) VALUES($1,$2)', ['checkout-api', wallet]);
   await app.pool.query("INSERT INTO chain_cursor(stream,last_block) VALUES('fees',95),('dynasty_minted',95),('dynasty_transfer',95)");

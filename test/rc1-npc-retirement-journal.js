@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 // Deterministic observer controls. The separate retained PostgreSQL witness is
 // the native execution proof; this file does not execute a world or qualify it.
 import assert from 'node:assert/strict';

@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-15T02:59:11.127Z",
+  "status": "LOCAL_CLIENT_GATES_PASSED_FULL_BROWSER_AND_NEXT_HEAD_CI_PENDING",
+  "observedHead": "1dc184c17069b4aa36687f124b642254c502330f",
+  "failedHead": "1dc184c17069b4aa36687f124b642254c502330f",
+  "previousFailure": {
+    "runId": 38671916198,
+    "jobId": 116219964068,
+    "step": 9,
+    "error": "The view switch remains reachable above the active player scene.",
+    "source": "test/city-scene-browser.js:493:9",
+    "caller": "test/city-scene-browser.js:514:58",
+    "checkoutVerified": true,
+    "artifacts": [
+      {
+        "path": "output/release-2026-10-14/ci-38671916198-browser-116219964068.log",
+        "bytes": 78209,
+        "sha256": "e9851ed7880e45ff85e195e0518271024500999c826b1a8d58b1c1d28f85d3f3"
+      },
+      {
+        "path": "output/release-2026-10-14/ci-38671916198-browser-116219964068.json",
+        "bytes": 3444,
+        "sha256": "2b8f2ce400146bb1abc60e4a31d50e189a15f1b115edce9e048e45b5dd177234"
+      },
+      {
+        "path": "output/release-2026-10-14/ci-38671916198-jobs.json",
+        "bytes": 6593,
+        "sha256": "94e981f96d3c4ae2b41be4822969a29ef5214fbf2cd0d161db3cde14f85fe2ad"
+      },
+      {
+        "path": "output/release-2026-10-14/ci-38671916198-summary.json",
+        "bytes": 8088,
+        "sha256": "9fb155e28294bbfe0701f07df68210d697701bd1c3a063676a992fd2a3763910"
+      }
+    ],
+    "unexecuted": [
+      "remaining City scripts",
+      "npm run test:gateway:browser",
+      "npm run mobile"
+    ]
+  },
+  "finishedSuiteEvidence": {
+    "runId": 38671916198,
+    "jobId": 116216780375,
+    "conclusion": "success",
+    "fiveGates": "passed",
+    "harnessCommands": 90,
+    "simDelta": "exactly zero",
+    "scaleChecks": 97,
+    "scaleDays": 2,
+    "scaleDelta": "exactly zero",
+    "receipt": {
+      "path": "output/release-2026-10-14/ci-38671916198-suites-116216780375-summary.json",
+      "bytes": 7209,
+      "sha256": "0aa94b3c3aff323295eabe8fa7da5226e15c9898038f69f72c7eab7cadbc4f9d"
+    }
+  },
+  "fix": {
+    "path": "public/index.html",
+    "before": {
+      "gitBlob": "3012b2c00c409de8ed458104b4dd5af8b1275944",
+      "canonicalLfSha256": "52b7be8066c7808bf06db819aa5a6efe14151ec72ba0e3a6d3ac2cb56f140fda"
+    },
+    "after": {
+      "cleanGitBlob": "8caa1adbc4bee3dcaa4b52a4d32443ae30b0fccc",
+      "rawWorkingSha256": "89d813504a64a45a2e56059e30b11454aa46e92d11b4994bf3e6866ab899d36e",
+      "canonicalLfSha256": "5184307e6cecae67afbbd3d58493df3c722dbb3336da386d551ee26660d3b7fb"
+    },
+    "indexBlobAtCapture": "3012b2c00c409de8ed458104b4dd5af8b1275944",
+    "exactHandlerOnlyDeltaFromFailedHead": true,
+    "from": "      $('#map-mode-territory').onclick = () => { _mapMode = 'territory'; syncMapMode(); };",
+    "to": "      $('#map-mode-territory').onclick = () => {\n        const leavingPlayer = document.body.classList.contains('city-player-view');\n        _mapMode = 'territory'; syncMapMode();\n        if (leavingPlayer) $('#player-view-switch').scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });\n      };",
+    "review": "Capture prior Player-view class; retain existing territory assignment/sync; only when leaving Player view, native-scroll the existing static Game view group with nearest/nearest/instant. Ordinary dashboard scrolling is preserved. No new API requests or gameplay writes.",
+    "publicScopeVersusB12": "CSS plus one event handler; public excluded from unchanged-source reuse.",
+    "retainedCssScope": [
+      "Header flex wrapping",
+      "Phone dashboard header non-sticky",
+      "Landing operation-receipt selectors scoped to .landing",
+      "Phone operation-desk coach padding"
+    ],
+    "reportedDiagnosis": {
+      "source": "Media reproduction reported by root, not independently executed here",
+      "viewport": "375x812",
+      "scrollY": 67,
+      "buttonCenterY": -33,
+      "hit": null,
+      "overlay": false,
+      "qualification": "Separate local geometry; original Linux failure log did not capture these coordinates.",
+      "artifacts": [
+        {
+          "path": "output/release-2026-10-14/city-switch-diagnostic.json",
+          "bytes": 58505,
+          "sha256": "a9a5c69b6efaefae7a2ba55622e86ac600b0ae4453d399ebe0a982f7f1bdc840"
+        },
+        {
+          "path": "output/release-2026-10-14/city-switch-diagnostic.log",
+          "bytes": 28116,
+          "sha256": "c6a27fed60081a1b791a776c81de6d141909e09c9dbd738396a0ca0b665d8e99"
+        }
+      ],
+      "snapshotLimit": "The diagnostic recorded the failed source before launch and the new public file after the failure was reported and the fix was saved. Its aggregate sourceHashesStable is false; it is geometry evidence of the reproduced failure, not a stable-input full-run qualification."
+    }
+  },
+  "reuse": {
+    "baselineHead": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "unchangedDomainCount": 8,
+    "pins": {
+      "src": "8865ac9d3cc8b1f99fe5782bae292f2b5ad5e13c",
+      "data": "b5fa73b743fde33f0dece71116781e193f168f76",
+      "omerta-contracts": "3376d22c7d75f4f3ead3d1075a62bfa13cc436bb",
+      "schema.sql": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+      "package.json": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+      "package-lock.json": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+      "render.yaml": "74a9e985d71f6c1d8999a74fe523b6c874abb600",
+      "omerta-mcp": "81344ce9f02eb66859110509335c0b5ce0738aaf"
+    },
+    "workingAndIndexDiff": "empty for these eight domains",
+    "canonicalNodeEntrypoints": 420,
+    "unchangedCanonicalNodeEntrypoints": 419,
+    "changedCanonicalNodeEntrypoints": [
+      "test/gates.js"
+    ],
+    "freshRequiredCheck": "node test/gates.js"
+  },
+  "pending": {
+    "fullCity": "Complete original npm run test:city:browser is running on frozen watched inputs; result pending at capture.",
+    "fullMobile": "Complete original npm run mobile is running on frozen watched inputs; result pending at capture.",
+    "nextHead": null,
+    "nextHostedRun": null,
+    "completeHostedCityGatewayMobile": "pending"
+  },
+  "qualification": "Source/failure/fix review plus actual local client and gates passes only. Full local browser and next-head hosted results remain pending. Failed 1dc and its passed suites remain source-bound. Native remains separately pinned to unchanged b12 inputs; no new native run, merge, deployment, reset or onchain activation is claimed.",
+  "completedLocal": [
+    {
+      "command": "node test/client.js",
+      "exitCode": 0,
+      "log": {
+        "path": "output/release-2026-10-14/territory-switch-client.log",
+        "bytes": 10836,
+        "sha256": "1af954ae92faf2cb09ae526607e19f5747373e1f60dd11ef03f9252d727b57ee"
+      },
+      "record": {
+        "path": "output/release-2026-10-14/territory-switch-client.exit",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "inputPublicCleanBlob": "8caa1adbc4bee3dcaa4b52a4d32443ae30b0fccc"
+    },
+    {
+      "command": "node test/gates.js",
+      "exitCode": 0,
+      "log": {
+        "path": "output/release-2026-10-14/territory-switch-gates.log",
+        "bytes": 4346,
+        "sha256": "ac94290db4f728efb831c0911900c315d66788f1a71122ac31c959e07e06a0d4"
+      },
+      "record": {
+        "path": "output/release-2026-10-14/territory-switch-gates.exit",
+        "bytes": 3,
+        "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+      },
+      "inputPublicCleanBlob": "8caa1adbc4bee3dcaa4b52a4d32443ae30b0fccc"
+    }
+  ]
+}

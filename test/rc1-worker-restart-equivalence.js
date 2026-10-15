@@ -55,7 +55,7 @@ if (!mode) {
     await proof.record({ kind:'database-created', ...await database.create() });
     pool = await restoreCheckpoint(checkpoint, path.join(checkpointDirectory,'resident-checkpoint.dump'), database.url, { poolFactory:seam.clock.poolFactory });
     for (const level of Object.keys(consoles)) console[level] = (...args) => controller.log(level,args);
-    const { buildServer } = await import('../src/server.js'); app = await buildServer();
+    const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
     const before = await proof.snapshot(pool,'before-startup'), draws = runtime.tape.length;
     if (mode === 'restarted') await runtime.withRestartStartup(() => bootOriginalWorker(controller));
     const after = await proof.snapshot(pool,'after-startup');

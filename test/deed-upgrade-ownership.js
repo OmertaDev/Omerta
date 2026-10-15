@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { upgradeWeights } from '../src/deed-upgrades.js';
 import { brokerBoard, allocateEpoch } from '../src/brokers.js';
 import { dayOf } from '../src/rules.js';

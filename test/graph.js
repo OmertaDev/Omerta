@@ -15,6 +15,9 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import {
   build,
+  extractCommercialHelperReconciliations,
+  extractAutonomyHelperReconciliations,
+  extractAutonomyObservationChecks,
   checkGraph,
   QUERIES,
   census,
@@ -82,6 +85,7 @@ assert.deepEqual(inv.mute.sort(), [
   'physical equipment condition provenance',
   'reason vocabulary',
   'service subscription repair bindings',
+  'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
   'warehouse journal ownership',
@@ -99,6 +103,7 @@ for (const [check, reasons] of [
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ['equipment rental physical title', 'exact physical custody/title and original paid lease bindings'],
   ['service subscription repair bindings', 'original consent, actual repair and exact cycle payment bindings'],
+  ['strategy laboratory canonical observations', 'recorded canonical observation amounts, sources and exposure; no payout or currency custody'],
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
@@ -242,6 +247,129 @@ for (const reason of ['deposit', 'refund', 'spend', 'forfeit']) {
 assert(g.unparsed.some((entry) => entry.file === 'src/coordination/capital.js'
   && entry.kind === 'interpolated-reason' && entry.text === 'coordination:capital:${reason}'),
 'dynamic Family capital ledger reasons must remain visible as an extractor limitation');
+
+// Imported commercial checks reconcile money as well as original-source provenance.
+const commercialHelpers = Object.fromEntries(['src/company-commercial-invariants.js','src/equipmentinsurance.js','src/territoryeconomics.js']
+  .map(file => [file, fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8')]));
+const commercialExpected = [
+ ['company restructuring canonical receipt books','market:refund'],['company restructuring canonical receipt books','depot:withdraw'],
+ ['commercial original source histories','market:refund'],
+ ...['equipment_insurance:reserve','equipment_insurance:premium_pay','equipment_insurance:premium_receive','equipment_insurance:claim','equipment_insurance:refund','equipment_insurance:burn','death:equipment_insurance'].map(reason => ['equipment insurance original loss bindings',reason]),
+ ['territory economics source and tribute bindings','depot:withdraw'],['territory economics source and tribute bindings','gang:tribute'],
+];
+const commercialTerms = extractCommercialHelperReconciliations(invariantSource, commercialHelpers);
+assert.deepEqual(commercialTerms.map(term => [term.check,term.reason]), commercialExpected);
+assert.deepEqual(extractCommercialHelperReconciliations(normalizeText(invariantSource).replaceAll('\n','\r\n'),
+ Object.fromEntries(Object.entries(commercialHelpers).map(([file,text])=>[file,normalizeText(text).replaceAll('\n','\r\n')]))),commercialTerms);
+for (const term of commercialTerms) {
+ const edge=g.edges.find(edge=>edge.type==='RECONCILES'&&edge.from==='Check:'+term.check&&edge.to==='Reason:'+term.reason);
+ assert(edge,'Actual commercial helper money must have a real graph edge');assert.equal(edge.prov.file,term.file);
+ assert(edge.prov.hash&&edge.prov.binding.hash);assert.equal(edge.prov.binding.file,'src/invariants.js');
+}
+const commercialControls = [
+  {
+    "check": "company restructuring canonical receipt books",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCompanyRestructuringIssues",
+    "variable": "restructuringIssues",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "anchors": [
+      "const issues=[],rows=",
+      "Number(j.amount)!==amount",
+      "j.character_id!==(cancel?null:p.original_character)",
+      "Number(returned[0].cash_delta)!==refund"
+    ],
+    "reason": "market:refund"
+  },
+  {
+    "check": "commercial original source histories",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCommercialHistoryIssues",
+    "variable": "commercialHistoryIssues",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "anchors": [
+      "tx.reason!=='market:refund'",
+      "tx.counterparty!==p.depot_id",
+      "Number(tx.amount)!==amount",
+      "Number(backing.cash_delta)!==-Number(q.quantity)*Number(q.unitPrice)"
+    ],
+    "reason": "market:refund"
+  },
+  {
+    "check": "equipment insurance original loss bindings",
+    "file": "src/equipmentinsurance.js",
+    "fn": "collectEquipmentInsuranceIssues",
+    "variable": "equipmentInsuranceIssues",
+    "import": "import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';",
+    "anchors": [
+      "Number(p.maximum_cash)!==Number(p.escrow_cash)+Number(p.paid_cash)+Number(p.refunded_cash)+Number(p.burned_cash)",
+      "t.currency==='cash'&&Number(t.amount)===amount",
+      "t?.character_id===ch&&t.account_id===account",
+      "Math.min(fee,Number(p.maximum_cash))"
+    ],
+    "reason": "equipment_insurance:reserve"
+  },
+  {
+    "check": "territory economics source and tribute bindings",
+    "file": "src/territoryeconomics.js",
+    "fn": "collectTerritoryEconomicsIssues",
+    "variable": "territoryIssues",
+    "import": "import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';",
+    "anchors": [
+      "a.character_id!==p.original_character",
+      "Number(a.amount)!==Number(pay.amount_cash)",
+      "Number(b.amount)!==-Number(pay.amount_cash)",
+      "observed+=Number(j.cash_delta)+Number(j.cost_delta)",
+      "observed-=Number(j.expense)"
+    ],
+    "reason": "depot:withdraw"
+  }
+];
+let commercialNegativeControls=0;
+const alter=(text,literal)=>{assert(text.includes(literal),'Mutation target must exist: '+literal);const changed=text.replace(literal,literal+'__changed');assert.notEqual(changed,text);return changed;};
+for (const spec of commercialControls) {
+ const absent=(inv,helpers)=>{assert.equal(extractCommercialHelperReconciliations(inv,helpers).some(term=>term.check===spec.check),false);commercialNegativeControls++;};
+ absent(alter(invariantSource,spec.import),commercialHelpers);
+ absent(alter(invariantSource,'await '+spec.fn+'(pool)'),commercialHelpers);
+ absent(alter(invariantSource,spec.variable+'.length'),commercialHelpers);
+ absent(alter(invariantSource,"push('"+spec.check+"'"),commercialHelpers);
+ const call='const '+spec.variable+' = await '+spec.fn+'(pool);';
+ absent(invariantSource.replace(call,call+'\n'+call),commercialHelpers);
+ for(const literal of ["'"+spec.reason+"'",...spec.anchors]) absent(invariantSource,{...commercialHelpers,[spec.file]:alter(commercialHelpers[spec.file],literal)});
+ absent(invariantSource,{...commercialHelpers,[spec.file]:commercialHelpers[spec.file]+'\n// unknown helper shape'});
+ absent(invariantSource,{...commercialHelpers,[spec.file]:undefined});
+}
+console.log('✓ imported commercial accounting:12 actual monetary reason edges, LF/CRLF, '+commercialNegativeControls+' causal unknown/import/call/result/amount/reason/party controls');
+
+
+// V imported paired cash must not become a mute; observation provenance has no ledger effect.
+const autonomyHelpers = Object.fromEntries(['src/economicintelligence.js','src/strategylaboratories.js'].map(file=>[file,fs.readFileSync(new URL('../'+file,import.meta.url),'utf8')]));
+const autonomyTerms = extractAutonomyHelperReconciliations(invariantSource,autonomyHelpers);
+assert.deepEqual(autonomyTerms.map(t=>[t.check,t.reason]),[["economic intelligence paired provenance","economic_intelligence:pay"],["economic intelligence paired provenance","economic_intelligence:receive"]]);
+assert.deepEqual(extractAutonomyObservationChecks(invariantSource,autonomyHelpers),['strategy laboratory canonical observations']);
+assert.deepEqual(extractAutonomyHelperReconciliations(normalizeText(invariantSource).replaceAll('\n','\r\n'),Object.fromEntries(Object.entries(autonomyHelpers).map(([f,s])=>[f,normalizeText(s).replaceAll('\n','\r\n')]))),autonomyTerms);
+for(const term of autonomyTerms){
+ assert(!inv.mute.includes(term.check));
+ assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+term.check&&e.to==='Reason:'+term.reason&&e.prov.file===term.file&&e.prov.binding.file==='src/invariants.js'));
+}
+let autonomyNegativeControls=0;
+const autonomySpecs=[{"check":"economic intelligence paired provenance","file":"src/economicintelligence.js","fn":"economicIntelligenceTransferBooks","variable":"intelligenceBooks","import":"import { economicIntelligenceTransferBooks } from './economicintelligence.js';","call":"const intelligenceBooks = await economicIntelligenceTransferBooks(pool);","binding":"push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });","sha256":"6d93a9c38e7543fad2158a2939c832be21c043d4b5a6f7a0b7a61a5ab7a5571e","reasons":["economic_intelligence:pay","economic_intelligence:receive"]},{"check":"strategy laboratory canonical observations","file":"src/strategylaboratories.js","fn":"collectStrategyLaboratoryIssues","variable":"labIssues","import":"import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';","call":"const labIssues = await collectStrategyLaboratoryIssues(pool);","binding":"push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });","sha256":"ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9","reasons":[]}];
+for(const spec of autonomySpecs){
+ const absent=(source,helpers)=>{assert.equal(extractAutonomyHelperReconciliations(source,helpers).some(t=>t.check===spec.check),false);assert.equal(extractAutonomyObservationChecks(source,helpers).includes(spec.check),false);autonomyNegativeControls++;};
+ for(const literal of [spec.import,spec.call,spec.binding]){
+  assert(invariantSource.includes(literal));
+  absent(invariantSource.replace(literal,literal+' /* changed */'),autonomyHelpers);
+  absent(invariantSource.replace(literal,''),autonomyHelpers);
+  absent(invariantSource.replace(literal,literal+'\n'+literal),autonomyHelpers);
+ }
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:undefined});
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:autonomyHelpers[spec.file]+'\n// unknown shape'});
+ const source=autonomyHelpers[spec.file];
+ const anchors=spec.reasons.length?["-Number(p.price)","Number(p.price),'economic_intelligence:receive'","j.character_id!==character","j.currency!=='cash'","Number(j.amount)!==amount","j.reason!==reason","j.counterparty!==p.id","ids.has(journal)","ids.size!==legs.length","status:'unknown'","publication.terms_hash!==publicationHash(publication)","p.buyer_account===p.seller_account"]:["digest(l.terms)!==l.terms_hash","digest(frame)!==a.baseline.hash","a.baseline.ids.includes(sourceId)","r.depot_id!==l.business_id","customer.account_id===l.original_account","net+=Number(r.cash_delta)+Number(r.cost_delta)","net-=Number(r.expense)","net!==Number(view.observedProfitCash)","cost!==Number(l.observed_cost)","!view.noGuaranteedIncome","reason:'unbound_source'"];
+ for(const literal of anchors){assert(source.includes(literal),literal);absent(invariantSource,{...autonomyHelpers,[spec.file]:source.replace(literal,literal+' /* altered */')});}
+}
+console.log('✓ autonomy graph: 2 actual intelligence monetary terms; source-bound observation provenance; '+autonomyNegativeControls+' causal refusals');
+
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
 // ── extraction really found the things we know are in the tree ───────────────────────────────────

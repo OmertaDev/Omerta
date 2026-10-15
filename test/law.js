@@ -18,7 +18,7 @@ process.env.MOD_KEY = 'test-mod-key';
 // flake class — pin the season so the precondition is guaranteed rather than left to the calendar.
 process.env.SEASON_MOD = 'dead_quiet';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { LAW } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepLaw } from '../src/law.js';

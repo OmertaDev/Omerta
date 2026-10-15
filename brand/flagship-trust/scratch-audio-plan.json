@@ -1,0 +1,961 @@
+{
+  "status": "SCRATCH / ANIMATIC ONLY",
+  "voice": "Microsoft David Desktop",
+  "finalVoice": "Selected Voice A remains reserved for paid final narration",
+  "utterances": [
+    {
+      "id": "C01-U01",
+      "chapter": "C01",
+      "text": "The stake is down.",
+      "sentenceFinal": true,
+      "spokenText": "The stake is down.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C01-U01.wav"
+    },
+    {
+      "id": "C01-U02",
+      "chapter": "C01",
+      "text": "One seat is empty.",
+      "sentenceFinal": true,
+      "spokenText": "One seat is empty.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C01-U02.wav"
+    },
+    {
+      "id": "C01-U03",
+      "chapter": "C01",
+      "text": "Who do you trust to fill it?",
+      "sentenceFinal": true,
+      "spokenText": "Who do you trust to fill it?",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C01-U03.wav"
+    },
+    {
+      "id": "C01-U04",
+      "chapter": "C01",
+      "text": "This is OMERTÀ: a multiplayer mafia strategy RPG, played in your browser.",
+      "sentenceFinal": true,
+      "spokenText": "This is oh mare tah: a multiplayer mafia strategy R P G, played in your browser.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C01-U04.wav"
+    },
+    {
+      "id": "C02-U01",
+      "chapter": "C02",
+      "text": "Meet Nico.",
+      "sentenceFinal": true,
+      "spokenText": "Meet Nico.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U01.wav"
+    },
+    {
+      "id": "C02-U02",
+      "chapter": "C02",
+      "text": "One name, a little cash, no reputation.",
+      "sentenceFinal": true,
+      "spokenText": "One name, a little cash, no reputation.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U02.wav"
+    },
+    {
+      "id": "C02-U03",
+      "chapter": "C02",
+      "text": "Nico's story starts with one simple question: what's worth risking?",
+      "sentenceFinal": true,
+      "spokenText": "Nico's story starts with one simple question: what's worth risking?",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U03.wav"
+    },
+    {
+      "id": "C02-U04",
+      "chapter": "C02",
+      "text": "His first job is small.",
+      "sentenceFinal": true,
+      "spokenText": "His first job is small.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U04.wav"
+    },
+    {
+      "id": "C02-U05",
+      "chapter": "C02",
+      "text": "The cost is nerve; success earns game cash and respect.",
+      "sentenceFinal": true,
+      "spokenText": "The cost is nerve; success earns game cash and respect.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U05.wav"
+    },
+    {
+      "id": "C02-U06",
+      "chapter": "C02",
+      "text": "Now there's a choice: train, bank some money, or risk another job.",
+      "sentenceFinal": true,
+      "spokenText": "Now there's a choice: train, bank some money, or risk another job.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U06.wav"
+    },
+    {
+      "id": "C02-U07",
+      "chapter": "C02",
+      "text": "Training spends energy to improve his stats.",
+      "sentenceFinal": true,
+      "spokenText": "Training spends energy to improve his stats.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U07.wav"
+    },
+    {
+      "id": "C02-U08",
+      "chapter": "C02",
+      "text": "Even a bank deposit spends time in vulnerable transit.",
+      "sentenceFinal": true,
+      "spokenText": "Even a bank deposit spends time in vulnerable transit.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U08.wav"
+    },
+    {
+      "id": "C02-U09",
+      "chapter": "C02",
+      "text": "Progress is deciding what to put at risk next.",
+      "sentenceFinal": true,
+      "spokenText": "Progress is deciding what to put at risk next.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C02-U09.wav"
+    },
+    {
+      "id": "C03-U01",
+      "chapter": "C03",
+      "text": "Eventually, Nico earns a Path.",
+      "sentenceFinal": true,
+      "spokenText": "Eventually, Nico earns a Path.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U01.wav"
+    },
+    {
+      "id": "C03-U02",
+      "chapter": "C03",
+      "text": "The Gun favors street combat.",
+      "sentenceFinal": true,
+      "spokenText": "The Gun favors street combat.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U02.wav"
+    },
+    {
+      "id": "C03-U03",
+      "chapter": "C03",
+      "text": "The Ledger builds income through fronts and trade.",
+      "sentenceFinal": true,
+      "spokenText": "The Ledger builds income through fronts and trade.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U03.wav"
+    },
+    {
+      "id": "C03-U04",
+      "chapter": "C03",
+      "text": "The Kitchen improves cook quality.",
+      "sentenceFinal": true,
+      "spokenText": "The Kitchen improves cook quality.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U04.wav"
+    },
+    {
+      "id": "C03-U05",
+      "chapter": "C03",
+      "text": "The Wheel moves convoys faster.",
+      "sentenceFinal": true,
+      "spokenText": "The Wheel moves convoys faster.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U05.wav"
+    },
+    {
+      "id": "C03-U06",
+      "chapter": "C03",
+      "text": "The Shadow shortens searches.",
+      "sentenceFinal": true,
+      "spokenText": "The Shadow shortens searches.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U06.wav"
+    },
+    {
+      "id": "C03-U07",
+      "chapter": "C03",
+      "text": "The Ring improves duels and bouts.",
+      "sentenceFinal": true,
+      "spokenText": "The Ring improves duels and bouts.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U07.wav"
+    },
+    {
+      "id": "C03-U08",
+      "chapter": "C03",
+      "text": "Each edge brings a drawback.",
+      "sentenceFinal": true,
+      "spokenText": "Each edge brings a drawback.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U08.wav"
+    },
+    {
+      "id": "C03-U09",
+      "chapter": "C03",
+      "text": "Nico chooses the Wheel.",
+      "sentenceFinal": true,
+      "spokenText": "Nico chooses the Wheel.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U09.wav"
+    },
+    {
+      "id": "C03-U10",
+      "chapter": "C03",
+      "text": "He likes routes, engines, and arriving before somebody changes their mind.",
+      "sentenceFinal": true,
+      "spokenText": "He likes routes, engines, and arriving before somebody changes their mind.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U10.wav"
+    },
+    {
+      "id": "C03-U11",
+      "chapter": "C03",
+      "text": "Mara chooses the Gun.",
+      "sentenceFinal": true,
+      "spokenText": "Mara chooses the Gun.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U11.wav"
+    },
+    {
+      "id": "C03-U12",
+      "chapter": "C03",
+      "text": "Their Paths don't magically solve a heist; the job still checks their preparation and abilities.",
+      "sentenceFinal": true,
+      "spokenText": "Their Paths don't magically solve a heist; the job still checks their preparation and abilities.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U12.wav"
+    },
+    {
+      "id": "C03-U13",
+      "chapter": "C03",
+      "text": "But they've found different reasons to log in, and different things to bring to the table.",
+      "sentenceFinal": true,
+      "spokenText": "But they've found different reasons to log in, and different things to bring to the table.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C03-U13.wav"
+    },
+    {
+      "id": "C04-U01",
+      "chapter": "C04",
+      "text": "Routes connect more than places.",
+      "sentenceFinal": true,
+      "spokenText": "Routes connect more than places.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U01.wav"
+    },
+    {
+      "id": "C04-U02",
+      "chapter": "C04",
+      "text": "A business earns, but upkeep and exposure eat into the plan.",
+      "sentenceFinal": true,
+      "spokenText": "A business earns, but upkeep and exposure eat into the plan.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U02.wav"
+    },
+    {
+      "id": "C04-U03",
+      "chapter": "C04",
+      "text": "A Kitchen batch takes time.",
+      "sentenceFinal": true,
+      "spokenText": "A Kitchen batch takes time.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U03.wav"
+    },
+    {
+      "id": "C04-U04",
+      "chapter": "C04",
+      "text": "Goods occupy cargo space.",
+      "sentenceFinal": true,
+      "spokenText": "Goods occupy cargo space.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U04.wav"
+    },
+    {
+      "id": "C04-U05",
+      "chapter": "C04",
+      "text": "Cars can be repaired, sold, or broken down; boats put freight on vulnerable water.",
+      "sentenceFinal": true,
+      "spokenText": "Cars can be repaired, sold, or broken down; boats put freight on vulnerable water.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U05.wav"
+    },
+    {
+      "id": "C04-U06",
+      "chapter": "C04",
+      "text": "A price is only useful if you can get the goods there.",
+      "sentenceFinal": true,
+      "spokenText": "A price is only useful if you can get the goods there.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U06.wav"
+    },
+    {
+      "id": "C04-U07",
+      "chapter": "C04",
+      "text": "For Nico, transport becomes a business decision, not background scenery.",
+      "sentenceFinal": true,
+      "spokenText": "For Nico, transport becomes a business decision, not background scenery.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U07.wav"
+    },
+    {
+      "id": "C04-U08",
+      "chapter": "C04",
+      "text": "Around that work: races, boxing, the Den, a Speakeasy, loans, auctions, fixers.",
+      "sentenceFinal": true,
+      "spokenText": "Around that work: races, boxing, the Den, a Speakeasy, loans, auctions, fixers.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U08.wav"
+    },
+    {
+      "id": "C04-U09",
+      "chapter": "C04",
+      "text": "Events and NPC activity change the surroundings.",
+      "sentenceFinal": true,
+      "spokenText": "Events and N P C activity change the surroundings.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U09.wav"
+    },
+    {
+      "id": "C04-U10",
+      "chapter": "C04",
+      "text": "The next opportunity may be across town.",
+      "sentenceFinal": true,
+      "spokenText": "The next opportunity may be across town.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C04-U10.wav"
+    },
+    {
+      "id": "C05-U01",
+      "chapter": "C05",
+      "text": "Nico forms a Crew: a small circle for mutual aid.",
+      "sentenceFinal": true,
+      "spokenText": "Nico forms a Crew: a small circle for mutual aid.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U01.wav"
+    },
+    {
+      "id": "C05-U02",
+      "chapter": "C05",
+      "text": "A Family is a larger structure, with hierarchy, a treasury, rivals, and territory.",
+      "sentenceFinal": true,
+      "spokenText": "A Family is a larger structure, with hierarchy, a treasury, rivals, and territory.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U02.wav"
+    },
+    {
+      "id": "C05-U03",
+      "chapter": "C05",
+      "text": "They're different commitments.",
+      "sentenceFinal": true,
+      "spokenText": "They're different commitments.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U03.wav"
+    },
+    {
+      "id": "C05-U04",
+      "chapter": "C05",
+      "text": "For this heist, a temporary team fills two seats: wheelman and muscle.",
+      "sentenceFinal": true,
+      "spokenText": "For this heist, a temporary team fills two seats: wheelman and muscle.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U04.wav"
+    },
+    {
+      "id": "C05-U05",
+      "chapter": "C05",
+      "text": "Nico puts up the stake.",
+      "sentenceFinal": true,
+      "spokenText": "Nico puts up the stake.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U05.wav"
+    },
+    {
+      "id": "C05-U06",
+      "chapter": "C05",
+      "text": "Mara joins.",
+      "sentenceFinal": true,
+      "spokenText": "Mara joins.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U06.wav"
+    },
+    {
+      "id": "C05-U07",
+      "chapter": "C05",
+      "text": "Preparation improves the odds; it doesn't erase the risk.",
+      "sentenceFinal": true,
+      "spokenText": "Preparation improves the odds; it doesn't erase the risk.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U07.wav"
+    },
+    {
+      "id": "C05-U08",
+      "chapter": "C05",
+      "text": "Families contest districts and commit resources to wars.",
+      "sentenceFinal": true,
+      "spokenText": "Families contest districts and commit resources to wars.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U08.wav"
+    },
+    {
+      "id": "C05-U09",
+      "chapter": "C05",
+      "text": "Convoys move through dangerous routes.",
+      "sentenceFinal": true,
+      "spokenText": "Convoys move through dangerous routes.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U09.wav"
+    },
+    {
+      "id": "C05-U10",
+      "chapter": "C05",
+      "text": "Commission seats bring votes on specific city rules.",
+      "sentenceFinal": true,
+      "spokenText": "Commission seats bring votes on specific city rules.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U10.wav"
+    },
+    {
+      "id": "C05-U11",
+      "chapter": "C05",
+      "text": "The game can enforce a stake or a role.",
+      "sentenceFinal": true,
+      "spokenText": "The game can enforce a stake or a role.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U11.wav"
+    },
+    {
+      "id": "C05-U12",
+      "chapter": "C05",
+      "text": "A promise between friends is still a promise.",
+      "sentenceFinal": true,
+      "spokenText": "A promise between friends is still a promise.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C05-U12.wav"
+    },
+    {
+      "id": "C06-U01",
+      "chapter": "C06",
+      "text": "A wreck becomes salvage.",
+      "sentenceFinal": true,
+      "spokenText": "A wreck becomes salvage.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U01.wav"
+    },
+    {
+      "id": "C06-U02",
+      "chapter": "C06",
+      "text": "Salvage becomes material.",
+      "sentenceFinal": true,
+      "spokenText": "Salvage becomes material.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U02.wav"
+    },
+    {
+      "id": "C06-U03",
+      "chapter": "C06",
+      "text": "An eligible recipe turns material into something useful, with a traceable history.",
+      "sentenceFinal": true,
+      "spokenText": "An eligible recipe turns material into something useful, with a traceable history.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U03.wav"
+    },
+    {
+      "id": "C06-U04",
+      "chapter": "C06",
+      "text": "That's one part of the World Graph: the city keeps connections that matter.",
+      "sentenceFinal": true,
+      "spokenText": "That's one part of the World Graph: the city keeps connections that matter.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U04.wav"
+    },
+    {
+      "id": "C06-U05",
+      "chapter": "C06",
+      "text": "In this city, knowledge has permissions.",
+      "sentenceFinal": true,
+      "spokenText": "In this city, knowledge has permissions.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U05.wav"
+    },
+    {
+      "id": "C06-U06",
+      "chapter": "C06",
+      "text": "Discoveries aren't automatically shared with everyone.",
+      "sentenceFinal": true,
+      "spokenText": "Discoveries aren't automatically shared with everyone.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U06.wav"
+    },
+    {
+      "id": "C06-U07",
+      "chapter": "C06",
+      "text": "Two investigators can need independently obtained evidence, not two copies of one clue.",
+      "sentenceFinal": true,
+      "spokenText": "Two investigators can need independently obtained evidence, not two copies of one clue.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U07.wav"
+    },
+    {
+      "id": "C06-U08",
+      "chapter": "C06",
+      "text": "Advanced coordination adds contributions and approval; it isn't ordinary Crew chat.",
+      "sentenceFinal": true,
+      "spokenText": "Advanced coordination adds contributions and approval; it isn't ordinary Crew chat.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U08.wav"
+    },
+    {
+      "id": "C06-U09",
+      "chapter": "C06",
+      "text": "The Living World Director selects authored situations from game state.",
+      "sentenceFinal": true,
+      "spokenText": "The Living World Director selects authored situations from game state.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U09.wav"
+    },
+    {
+      "id": "C06-U10",
+      "chapter": "C06",
+      "text": "Every discovery can change the next move.",
+      "sentenceFinal": true,
+      "spokenText": "Every discovery can change the next move.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C06-U10.wav"
+    },
+    {
+      "id": "C07-U01",
+      "chapter": "C07",
+      "text": "Nico's neighbor might be a person.",
+      "sentenceFinal": true,
+      "spokenText": "Nico's neighbor might be a person.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U01.wav"
+    },
+    {
+      "id": "C07-U02",
+      "chapter": "C07",
+      "text": "Or a program operated by one.",
+      "sentenceFinal": true,
+      "spokenText": "Or a program operated by one.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U02.wav"
+    },
+    {
+      "id": "C07-U03",
+      "chapter": "C07",
+      "text": "Here, a sample agent reads an allowed action, submits it, and receives changed game state.",
+      "sentenceFinal": true,
+      "spokenText": "Here, a sample agent reads an allowed action, submits it, and receives changed game state.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U03.wav"
+    },
+    {
+      "id": "C07-U04",
+      "chapter": "C07",
+      "text": "The result changes what happens next.",
+      "sentenceFinal": true,
+      "spokenText": "The result changes what happens next.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U04.wav"
+    },
+    {
+      "id": "C07-U05",
+      "chapter": "C07",
+      "text": "An agent makes decisions through the same action-and-result loop.",
+      "sentenceFinal": true,
+      "spokenText": "An agent makes decisions through the same action-and-result loop.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U05.wav"
+    },
+    {
+      "id": "C07-U06",
+      "chapter": "C07",
+      "text": "Supported automation has limits: permissions, resources, risk, and bounded actions.",
+      "sentenceFinal": true,
+      "spokenText": "Supported automation has limits: permissions, resources, risk, and bounded actions.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U06.wav"
+    },
+    {
+      "id": "C07-U07",
+      "chapter": "C07",
+      "text": "NPCs are a separate part of the city.",
+      "sentenceFinal": true,
+      "spokenText": "N P Cs are a separate part of the city.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C07-U07.wav"
+    },
+    {
+      "id": "C08-U01",
+      "chapter": "C08",
+      "text": "To follow the money, separate three balances.",
+      "sentenceFinal": true,
+      "spokenText": "To follow the money, separate three balances.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U01.wav"
+    },
+    {
+      "id": "C08-U02",
+      "chapter": "C08",
+      "text": "Game cash pays for city life.",
+      "sentenceFinal": true,
+      "spokenText": "Game cash pays for city life.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U02.wav"
+    },
+    {
+      "id": "C08-U03",
+      "chapter": "C08",
+      "text": "In-game OMR buys selected equipment, access, and services; some privileges require holding or staking it.",
+      "sentenceFinal": true,
+      "spokenText": "In-game O M R buys selected equipment, access, and services; some privileges require holding or staking it.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U03.wav"
+    },
+    {
+      "id": "C08-U04",
+      "chapter": "C08",
+      "text": "Wallet OMR lives onchain.",
+      "sentenceFinal": true,
+      "spokenText": "Wallet O M R lives onchain.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U04.wav"
+    },
+    {
+      "id": "C08-U05",
+      "chapter": "C08",
+      "text": "The funded Window spends OMR for game cash.",
+      "sentenceFinal": true,
+      "spokenText": "The funded Window spends O M R for game cash.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U05.wav"
+    },
+    {
+      "id": "C08-U06",
+      "chapter": "C08",
+      "text": "Cash doesn't convert back.",
+      "sentenceFinal": true,
+      "spokenText": "Cash doesn't convert back.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U06.wav"
+    },
+    {
+      "id": "C08-U07",
+      "chapter": "C08",
+      "text": "Limited game rewards aren't automatic wallet payouts.",
+      "sentenceFinal": true,
+      "spokenText": "Limited game rewards aren't automatic wallet payouts.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U07.wav"
+    },
+    {
+      "id": "C08-U08",
+      "chapter": "C08",
+      "text": "Many spends recycle OMR; they don't destroy token supply.",
+      "sentenceFinal": true,
+      "spokenText": "Many spends recycle O M R; they don't destroy token supply.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U08.wav"
+    },
+    {
+      "id": "C08-U09",
+      "chapter": "C08",
+      "text": "The market adds another layer.",
+      "sentenceFinal": true,
+      "spokenText": "The market adds another layer.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U09.wav"
+    },
+    {
+      "id": "C08-U10",
+      "chapter": "C08",
+      "text": "Trading fees fund separate developer, community, real-world asset, and liquidity budgets.",
+      "sentenceFinal": true,
+      "spokenText": "Trading fees fund separate developer, community, real-world asset, and liquidity budgets.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U10.wav"
+    },
+    {
+      "id": "C08-U11",
+      "chapter": "C08",
+      "text": "Protocol-owned liquidity remains protocol-controlled.",
+      "sentenceFinal": true,
+      "spokenText": "Protocol-owned liquidity remains protocol-controlled.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U11.wav"
+    },
+    {
+      "id": "C08-U12",
+      "chapter": "C08",
+      "text": "Inventory bonds sell existing OMR released over time.",
+      "sentenceFinal": true,
+      "spokenText": "Inventory bonds sell existing O M R released over time.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U12.wav"
+    },
+    {
+      "id": "C08-U13",
+      "chapter": "C08",
+      "text": "Liquidity rewards need qualifying positions and funded campaigns.",
+      "sentenceFinal": true,
+      "spokenText": "Liquidity rewards need qualifying positions and funded campaigns.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U13.wav"
+    },
+    {
+      "id": "C08-U14",
+      "chapter": "C08",
+      "text": "Market rewards depend on qualification and available funding.",
+      "sentenceFinal": true,
+      "spokenText": "Market rewards depend on qualification and available funding.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U14.wav"
+    },
+    {
+      "id": "C08-U15",
+      "chapter": "C08",
+      "text": "Successful arbitrage can contribute a share of realized profit to reserves.",
+      "sentenceFinal": true,
+      "spokenText": "Successful arbitrage can contribute a share of realized profit to reserves.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U15.wav"
+    },
+    {
+      "id": "C08-U16",
+      "chapter": "C08",
+      "text": "Families compete for designated trading-fee rights, not the pool's principal.",
+      "sentenceFinal": true,
+      "spokenText": "Families compete for designated trading-fee rights, not the pool's principal.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U16.wav"
+    },
+    {
+      "id": "C08-U17",
+      "chapter": "C08",
+      "text": "Real-world assets are interests tied to assets outside the game.",
+      "sentenceFinal": true,
+      "spokenText": "Real-world assets are interests tied to assets outside the game.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U17.wav"
+    },
+    {
+      "id": "C08-U18",
+      "chapter": "C08",
+      "text": "The system includes Stock Tokens and Commission choices.",
+      "sentenceFinal": true,
+      "spokenText": "The system includes Stock Tokens and Commission choices.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U18.wav"
+    },
+    {
+      "id": "C08-U19",
+      "chapter": "C08",
+      "text": "Allocating a fee is the first step: acquisition, custody, eligibility, and delivery each have their place.",
+      "sentenceFinal": true,
+      "spokenText": "Allocating a fee is the first step: acquisition, custody, eligibility, and delivery each have their place.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U19.wav"
+    },
+    {
+      "id": "C08-U20",
+      "chapter": "C08",
+      "text": "Purchase, custody and delivery follow their own rules.",
+      "sentenceFinal": true,
+      "spokenText": "Purchase, custody and delivery follow their own rules.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U20.wav"
+    },
+    {
+      "id": "C08-U21",
+      "chapter": "C08",
+      "text": "Holding OMR does not promise everyone a payout.",
+      "sentenceFinal": true,
+      "spokenText": "Holding O M R does not promise everyone a payout.",
+      "rate": 0,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C08-U21.wav"
+    },
+    {
+      "id": "C09-U01",
+      "chapter": "C09",
+      "text": "Back at the heist, somebody talked.",
+      "sentenceFinal": true,
+      "spokenText": "Back at the heist, somebody talked.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U01.wav"
+    },
+    {
+      "id": "C09-U02",
+      "chapter": "C09",
+      "text": "The result doesn't name them.",
+      "sentenceFinal": true,
+      "spokenText": "The result doesn't name them.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U02.wav"
+    },
+    {
+      "id": "C09-U03",
+      "chapter": "C09",
+      "text": "Everyone goes to jail.",
+      "sentenceFinal": true,
+      "spokenText": "Everyone goes to jail.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U03.wav"
+    },
+    {
+      "id": "C09-U04",
+      "chapter": "C09",
+      "text": "A character can die; the account continues, with only specified legacy preserved.",
+      "sentenceFinal": true,
+      "spokenText": "A character can die; the account continues, with only specified legacy preserved.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U04.wav"
+    },
+    {
+      "id": "C09-U05",
+      "chapter": "C09",
+      "text": "An heir doesn't recover everything.",
+      "sentenceFinal": true,
+      "spokenText": "An heir doesn't recover everything.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U05.wav"
+    },
+    {
+      "id": "C09-U06",
+      "chapter": "C09",
+      "text": "Seasons have separate rules.",
+      "sentenceFinal": true,
+      "spokenText": "Seasons have separate rules.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U06.wav"
+    },
+    {
+      "id": "C09-U07",
+      "chapter": "C09",
+      "text": "Eligible items can be extracted.",
+      "sentenceFinal": true,
+      "spokenText": "Eligible items can be extracted.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U07.wav"
+    },
+    {
+      "id": "C09-U08",
+      "chapter": "C09",
+      "text": "Exported gear and vehicles stop working in-game.",
+      "sentenceFinal": true,
+      "spokenText": "Exported gear and vehicles stop working in-game.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U08.wav"
+    },
+    {
+      "id": "C09-U09",
+      "chapter": "C09",
+      "text": "Combat cannot seize unrelated external wallet holdings.",
+      "sentenceFinal": true,
+      "spokenText": "Combat cannot seize unrelated external wallet holdings.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U09.wav"
+    },
+    {
+      "id": "C09-U10",
+      "chapter": "C09",
+      "text": "You can buy equipment.",
+      "sentenceFinal": true,
+      "spokenText": "You can buy equipment.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U10.wav"
+    },
+    {
+      "id": "C09-U11",
+      "chapter": "C09",
+      "text": "You cannot buy trust.",
+      "sentenceFinal": true,
+      "spokenText": "You cannot buy trust.",
+      "rate": -1,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C09-U11.wav"
+    },
+    {
+      "id": "C10-U01",
+      "chapter": "C10",
+      "text": "The next time that envelope comes round, Nico isn't just filling a seat.",
+      "sentenceFinal": true,
+      "spokenText": "The next time that envelope comes round, Nico isn't just filling a seat.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U01.wav"
+    },
+    {
+      "id": "C10-U02",
+      "chapter": "C10",
+      "text": "Someone is counting on him.",
+      "sentenceFinal": true,
+      "spokenText": "Someone is counting on him.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U02.wav"
+    },
+    {
+      "id": "C10-U03",
+      "chapter": "C10",
+      "text": "From needing a favor to being worth calling.",
+      "sentenceFinal": true,
+      "spokenText": "From needing a favor to being worth calling.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U03.wav"
+    },
+    {
+      "id": "C10-U04",
+      "chapter": "C10",
+      "text": "Choose your path.",
+      "sentenceFinal": true,
+      "spokenText": "Choose your path.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U04.wav"
+    },
+    {
+      "id": "C10-U05",
+      "chapter": "C10",
+      "text": "Find your people.",
+      "sentenceFinal": true,
+      "spokenText": "Find your people.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U05.wav"
+    },
+    {
+      "id": "C10-U06",
+      "chapter": "C10",
+      "text": "Make your name.",
+      "sentenceFinal": true,
+      "spokenText": "Make your name.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U06.wav"
+    },
+    {
+      "id": "C10-U07",
+      "chapter": "C10",
+      "text": "OMERTÀ.",
+      "sentenceFinal": true,
+      "spokenText": "oh mare tah.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U07.wav"
+    },
+    {
+      "id": "C10-U08",
+      "chapter": "C10",
+      "text": "Who will you bring?",
+      "sentenceFinal": true,
+      "spokenText": "Who will you bring?",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U08.wav"
+    },
+    {
+      "id": "C10-U09",
+      "chapter": "C10",
+      "text": "Start playing at omerta.fun.",
+      "sentenceFinal": true,
+      "spokenText": "Start playing at oh mare tah dot fun.",
+      "rate": -2,
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-trust\\audio\\utterances\\C10-U09.wav"
+    }
+  ]
+}

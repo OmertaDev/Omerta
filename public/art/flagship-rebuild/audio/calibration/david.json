@@ -1,0 +1,191 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "start",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "In",
+        "ms":  110,
+        "character":  122,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "this",
+        "ms":  275,
+        "character":  125,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "city",
+        "ms":  465,
+        "character":  130,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  1330,
+        "character":  136,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "name",
+        "ms":  1525,
+        "character":  141,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  1830,
+        "character":  146,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "worth",
+        "ms":  1995,
+        "character":  149,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  2310,
+        "character":  155,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  2525,
+        "character":  160,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  2665,
+        "character":  164,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "hold",
+        "ms":  2845,
+        "character":  168,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "middle",
+        "ms":  4150,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "You",
+        "ms":  4260,
+        "character":  195,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "found",
+        "ms":  4430,
+        "character":  199,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  4790,
+        "character":  205,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "crew",
+        "ms":  4855,
+        "character":  207,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "You",
+        "ms":  6295,
+        "character":  213,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "planned",
+        "ms":  6460,
+        "character":  217,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  6840,
+        "character":  225,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "score",
+        "ms":  6910,
+        "character":  229,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "And",
+        "ms":  8355,
+        "character":  236,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "somebody",
+        "ms":  8535,
+        "character":  240,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "sold",
+        "ms":  9055,
+        "character":  249,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  9440,
+        "character":  254,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "route",
+        "ms":  9550,
+        "character":  258,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "end",
+        "ms":  10700,
+        "character":  0,
+        "length":  0
+    }
+]
