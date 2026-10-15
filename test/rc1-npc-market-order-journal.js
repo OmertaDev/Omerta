@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { BLACK_MARKET, GOODS, POPULATION } from '../src/rules.js';

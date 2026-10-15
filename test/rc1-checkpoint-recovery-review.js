@@ -1,3 +1,4 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
 import { CREW_LOGISTICS_SOURCE_CURRENT_PINS, CREW_LOGISTICS_SOURCE_PREDECESSOR_PINS, CREW_LOGISTICS_SOURCE_INVERSES, assertCrewLogisticsSourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
@@ -11,6 +12,23 @@ import { CHECKPOINT_RECOVERY_REVIEW, verifyCheckpointRecoverySources, recoveryCa
   cityGameplayRecoveryCatalog, preProductionRecoveryCatalog } from '../tools/rc1-checkpoint-recovery-review.js';
 import { CITY_SOURCE_CURRENT_PINS, CITY_SOURCE_PREDECESSOR_PINS, assertCitySourceTransfer } from '../tools/rc1-deed-source-compatibility.js';
 import { coreProgressionContent } from '../src/content/core-progression.js';
+
+if (!isHistoricalSourceFixture()) {
+  const revision = 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0', file = 'src/routes/coordination.js';
+  const blob = 'd803eb4dfd59a8377720e9a3f381915bd120a166';
+  const current = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  assert.equal(execFileSync('git', ['rev-parse', `${revision}:${file}`], { encoding: 'utf8' }).trim(), blob);
+  assert.equal(execFileSync('git', ['cat-file', 'blob', blob], { encoding: 'utf8' }), current);
+  assert.equal(sha256(current), '14906ce7b480b8acd325c4967df6e6129d99c08e3f00bec798cacebe469895fd');
+  for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 checkpoint source\n']) {
+    await assert.rejects(verifyCheckpointRecoverySources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision,
+      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate) }),
+    /Checkpoint review source changed: src\/routes\/coordination.js/);
+  }
+  console.log('PASS: historical checkpoint source guard rejects exact C2, CRLF and tampering; current source is not admitted');
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
 
 const flags = { CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on', COORDINATION_ENGINE: 'on', COORDINATION_KNOWLEDGE: 'on',
   COORDINATION_KNOWLEDGE_SHARING: 'on', COORDINATION_OPERATIONS: 'on', LIVING_WORLD_DIRECTOR: 'LIVE' };

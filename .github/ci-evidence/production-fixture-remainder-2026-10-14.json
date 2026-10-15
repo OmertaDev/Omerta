@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-10-15T01:06:17.433Z",
+  "status": "prepared_remainder_not_yet_executed",
+  "baselineHead": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "baselineTree": "a655d5f6062d5e5816392469a5c93fca46a89e80",
+  "unchangedDomainPins": {
+    "src": "8865ac9d3cc8b1f99fe5782bae292f2b5ad5e13c",
+    "data": "b5fa73b743fde33f0dece71116781e193f168f76",
+    "public": "26a8ecced6cb54f44d1baa01f241d721277b524a",
+    "omerta-contracts": "3376d22c7d75f4f3ead3d1075a62bfa13cc436bb",
+    "schema.sql": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+    "package.json": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+    "package-lock.json": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+    "render.yaml": "74a9e985d71f6c1d8999a74fe523b6c874abb600",
+    ".github/workflows": "f0b1d2cb0af05a9be9d904aa5d289b2e8594ab83",
+    "omerta-mcp": "81344ce9f02eb66859110509335c0b5ce0738aaf"
+  },
+  "verification": {
+    "fullWorkingAndIndexDiffForDomains": "empty",
+    "canonicalNpmNodeEntrypoints": 420,
+    "expandedPackageScripts": [
+      "pretest",
+      "test",
+      "test:city-gameplay",
+      "test:company-workforce",
+      "test:equipment-economy",
+      "test:gateway",
+      "test:legal-security",
+      "test:release-source-transfer"
+    ],
+    "changedCanonicalNpmEntrypoints": [],
+    "changedTools": [
+      "tools/scale.js"
+    ],
+    "changedControlSourceHashes": {
+      "test/lib/rc1-historical-source-fixture.js": {
+        "rawWorkingSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d",
+        "canonicalLfSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d"
+      },
+      "test/lib/rc1-historical-worker-source.js": {
+        "rawWorkingSha256": "054c3b3a95f9bd7549ba9a8941bd404523d53f5a12918ec2c68da3f8cdc86b9a",
+        "canonicalLfSha256": "054c3b3a95f9bd7549ba9a8941bd404523d53f5a12918ec2c68da3f8cdc86b9a"
+      },
+      "test/rc1-car-melt-provenance.js": {
+        "rawWorkingSha256": "2a78e226729095ba906a5fd9d55317c36fec4fac129d0ec42e735a8d365c23fb",
+        "canonicalLfSha256": "cb41c469349b57d5d8d38e70ae833baff09ee674f581e520f6121169cd7d7700"
+      },
+      "test/rc1-checkpoint-recovery-review.js": {
+        "rawWorkingSha256": "625b6ebac8f69e5d738eb1690c64bd13b983b937a853f3014c812c95c98c9a8b",
+        "canonicalLfSha256": "3c966e049c463131ec95f70d0f12fc73a5216c2e42a8669732f7804e8d85c99d"
+      },
+      "test/rc1-lifecycle-applicability.js": {
+        "rawWorkingSha256": "2c2698471aeeb360f8eed62f381bae4c724a7eb9f870fa6488086444292e9ec6",
+        "canonicalLfSha256": "ee8b349f27e4726a8306c31a68c015ac3c09534743b49835c09027a72f151333"
+      },
+      "test/rc1-native-worker-schedule.js": {
+        "rawWorkingSha256": "03b72cb7abdaa7dbc65af0fbf9c5c2437211993c9b72e2bbd0ef0b7a7127747c",
+        "canonicalLfSha256": "09bbcb984e44d24bf186662f5c8d552c3ae238f3d53a841dbead1452a6f4a32f"
+      },
+      "test/rc1-npc-boat-journal.js": {
+        "rawWorkingSha256": "589994ac9963cb9eb59165a1ede640bc3c0d404dc833301c1f7e4c410209911d",
+        "canonicalLfSha256": "ce49ac31b27227ec1c66c410bea32fe166c3a2a923030230464f9fabd76d13cd"
+      },
+      "test/rc1-npc-car-acquisition.js": {
+        "rawWorkingSha256": "dbdd3492a96f4758adf1d682f61acf19aedfbe295c0d8ecee7aff01f305b21ca",
+        "canonicalLfSha256": "b1b57ef218cf586c0dbac3deb6b7c0f0fafd2a197d6b83fd05e90ee7c254ea3b"
+      },
+      "test/rc1-npc-market-order-journal.js": {
+        "rawWorkingSha256": "b9360e349f56753863c0a64ac066352b1e4c09b2888aa229fa1eaf01f446afe4",
+        "canonicalLfSha256": "c5d9af232dd5cb543f7cd6c2c87d187a5419c7a2654ad60464151f4b65f2091d"
+      },
+      "test/rc1-npc-provenance-composition.js": {
+        "rawWorkingSha256": "ecb92f65190863c89d4119d7098c4f91a453cbd33bf94694b133f47d90f4fcf9",
+        "canonicalLfSha256": "3941c2f306d9187059a65bb902317061d2a49ae1bedb7e22d255c92fcf530159"
+      },
+      "test/rc1-npc-retirement-journal.js": {
+        "rawWorkingSha256": "e8254a244d31fb267102970d41b47c9e86c173f594c7216a7bb94efb178809e9",
+        "canonicalLfSha256": "6ac274436728b77ff7ef78a10b9df667f73d90876d91e8b1416156237f0f28de"
+      },
+      "test/rc1-world-backlog-review.js": {
+        "rawWorkingSha256": "3b5a6ec14f6f815829d4dc0d6679fab3be811255ece941e11e42d086cc987797",
+        "canonicalLfSha256": "11f63a76ff991d37ddc0f7f533e072b36958683f9fba7a05496435d01f659788"
+      },
+      "test/rc1-world-car-melt-witness.js": {
+        "rawWorkingSha256": "b697bb6344a93444533f051a69f7e120c5fd02f172e6550daed3ae880e0414ec",
+        "canonicalLfSha256": "077f54adc1b3fac930573fcd4fb6f606edd4e0013ab7771d3f83d417f7b43fb6"
+      },
+      "test/rc1-world-observer-load-order.js": {
+        "rawWorkingSha256": "4ba4d8a527de0a5433a7a26088c10b34e4dbfeaca70929d2e92257326ba7333d",
+        "canonicalLfSha256": "d4667c95df9ea5306e90b5443e7959b70c8587164bda152136dc302b9f689cc7"
+      }
+    },
+    "lineEndingScope": "Raw hashes bind the executed Windows working bytes; canonical LF hashes bind Git/Linux source text. No runtime domain content changes."
+  },
+  "qualification": {
+    "applicationSource": "Protected runtime domains remain C2 b90bd95dee6e0fda851247cc660288f4bbf8fdc0; full app/data/public/config trees are the exact b12 inputs above.",
+    "contractSource": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+    "fullNpmLifecycle": {
+      "runId": 38656500807,
+      "jobId": 116167585012,
+      "step": 7,
+      "conclusion": "success",
+      "seconds": 2265
+    },
+    "native": {
+      "runId": 38656500807,
+      "jobs": [
+        {
+          "id": 116167585015,
+          "server": "16.15",
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "id": 116167585032,
+          "server": "18.4",
+          "passed": 80,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "receipt": ".github/ci-evidence/native-and-lifecycle-b12-2026-10-14.json"
+    },
+    "contracts": {
+      "runId": 38656500911,
+      "passed": 1486,
+      "failed": 0,
+      "skipped": 2,
+      "receipt": ".github/ci-evidence/forge-hosted-success-2026-10-14.json"
+    },
+    "recovery": {
+      "runId": 38656500795,
+      "conclusion": "success"
+    },
+    "currentHistoricalHarness": {
+      "commands": 90,
+      "exitCode": 0,
+      "capturedSourceFilesUnchanged": 117,
+      "receipt": "docs/release/readiness-work/2026-10-14-historical-recovery-fixtures.json"
+    },
+    "changedScale": {
+      "players": 18,
+      "days": 2,
+      "conservationChecks": 97,
+      "all9MarketsReachable": true,
+      "exitCode": 0,
+      "receipt": "docs/release/readiness-work/2026-10-14-scale-admission.json"
+    }
+  },
+  "existingRemainderWorkflow": {
+    "file": ".github/workflows/ci.yml",
+    "gitBlob": "c7b3bd9c8b6ed720563486db16cdf6367a0c827c",
+    "input": {
+      "tail_only": true
+    },
+    "runs": [
+      "gates, chainparams, docs, playthrough-truth, clean knowledge snapshot",
+      "full default90 historical-control harness",
+      "invite admission, telemetry and observability controls",
+      "full economy simulation",
+      "18-player two-day scale gate",
+      "complete City and mobile browser job"
+    ],
+    "explicitlyNotRerun": [
+      "full npm lifecycle",
+      "native PostgreSQL matrix"
+    ],
+    "reason": "All production/runtime/config/workflow inputs and420 canonical Node entrypoints are unchanged. The corrected controls are outside that lifecycle; source/census/knowledge gates and the changed scale are included in the existing remainder workflow."
+  },
+  "requiredBeforeMerge": [
+    "Verify authored and generated-only final commits keep every unchanged domain pin equal to b12.",
+    "Pass the existing remainder workflow and complete browser job on the exact final head.",
+    "Retain the prior b12 native/full-lifecycle qualification with its actual source and checkout tree, without describing it as rerun on the new head."
+  ],
+  "phaseLimits": [
+    "Historical positive controls execute exact fe4 app inputs with reviewed b12 verifier tools and zero database/network attempts. Their unmodified guards explicitly reject current C2; they grant no current native, financial or deployment qualification.",
+    "This is exact source/input equality reuse of actual b12 execution, with fresh affected checks; no historical source-transfer adapter is used to grant native admission.",
+    "No production deploy, reset, configuration write, on-chain activation or production-bytecode identity is claimed."
+  ]
+}

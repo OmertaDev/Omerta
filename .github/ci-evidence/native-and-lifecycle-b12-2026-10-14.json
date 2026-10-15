@@ -1,0 +1,1616 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-15T01:04:48.999Z",
+  "status": "source_bound_native_success_and_lifecycle_success_with_later_harness_failure",
+  "run": {
+    "id": 38656500807,
+    "attempt": 1,
+    "event": "pull_request",
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/38656500807",
+    "headSha": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "status": "completed",
+    "conclusion": "failure",
+    "createdAt": "2026-10-14T23:50:24Z",
+    "completedBy": "2026-10-15T01:00:13Z"
+  },
+  "checkout": {
+    "ref": "refs/remotes/pull/272/merge",
+    "commit": "704eb67c0fb06ecbc3c6aeb6ad0b62b4c4307b3f",
+    "treeSha": "a655d5f6062d5e5816392469a5c93fca46a89e80",
+    "headTreeSha": "a655d5f6062d5e5816392469a5c93fca46a89e80",
+    "exactHeadTreeEquality": true,
+    "parents": [
+      "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+      "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16"
+    ],
+    "verification": "Primary job logs record this checkout; GitHub commit API and local Git resolve the same complete tree."
+  },
+  "qualification": "Executed CI evidence applies to the exact C2 application source and configuration in the tested b12 tree. Native success and lifecycle success do not make the whole workflow green: the later historical harness failed, and the browser job was skipped. No production environment, production database, deployment, chain activation, or production address/bytecode verification is claimed.",
+  "tools": {
+    "runner": "ubuntu-latest",
+    "node": "22.23.3",
+    "npm": "10.9.9",
+    "database": "Isolated GitHub Actions PostgreSQL service containers; no production access"
+  },
+  "sourceBindings": [
+    {
+      "path": "src",
+      "gitObject": "8865ac9d3cc8b1f99fe5782bae292f2b5ad5e13c"
+    },
+    {
+      "path": "data",
+      "gitObject": "b5fa73b743fde33f0dece71116781e193f168f76"
+    },
+    {
+      "path": "public",
+      "gitObject": "26a8ecced6cb54f44d1baa01f241d721277b524a"
+    },
+    {
+      "path": "omerta-contracts",
+      "gitObject": "3376d22c7d75f4f3ead3d1075a62bfa13cc436bb"
+    },
+    {
+      "path": "test",
+      "gitObject": "2e1930d9a6914822d23e1ca3020116b8bb078f9e"
+    },
+    {
+      "path": "tools",
+      "gitObject": "ef9143c111bf8947da89ad8ee6e76375e8415706"
+    },
+    {
+      "path": "schema.sql",
+      "gitObject": "1210ad5ecb4d2417ac1c195c2359177671839e33"
+    },
+    {
+      "path": "package.json",
+      "gitObject": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463"
+    },
+    {
+      "path": "package-lock.json",
+      "gitObject": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitObject": "c7b3bd9c8b6ed720563486db16cdf6367a0c827c"
+    },
+    {
+      "path": "render.yaml",
+      "gitObject": "74a9e985d71f6c1d8999a74fe523b6c874abb600"
+    }
+  ],
+  "nativeJobs": [
+    {
+      "jobId": 116167585015,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/38656500807/job/116167585015",
+      "name": "real Postgres (16)",
+      "matrixPostgres": "16",
+      "serverVersion": "16.15",
+      "serverVersionNum": 160015,
+      "psqlClientVersion": "16.15",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:50:58Z",
+      "completedAt": "2026-10-15T01:00:12Z",
+      "elapsedSeconds": 4154,
+      "stepCounts": {
+        "total": 80,
+        "successful": 80,
+        "failed": 0,
+        "skipped": 0
+      },
+      "rawLog": {
+        "path": "output/release-2026-10-14/ci-38656500807-pg16-116167585015.log",
+        "retention": "Outside tracked Git; complete primary GitHub job log bytes",
+        "bytes": 1731886,
+        "sha256": "7d77beab626458788c11c6d97da3a8f8c34c9bce5b3f13046f87825cee75a741"
+      },
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:50:59Z",
+          "completedAt": "2026-10-14T23:51:00Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 2,
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:51:00Z",
+          "completedAt": "2026-10-14T23:51:11Z",
+          "elapsedSeconds": 11
+        },
+        {
+          "number": 3,
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:51:11Z",
+          "completedAt": "2026-10-14T23:52:14Z",
+          "elapsedSeconds": 63
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:14Z",
+          "completedAt": "2026-10-14T23:52:16Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 5,
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:16Z",
+          "completedAt": "2026-10-14T23:52:36Z",
+          "elapsedSeconds": 20
+        },
+        {
+          "number": 6,
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:36Z",
+          "completedAt": "2026-10-14T23:52:41Z",
+          "elapsedSeconds": 5
+        },
+        {
+          "number": 7,
+          "name": "Gateway, RLS and receipt concurrency on real PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:41Z",
+          "completedAt": "2026-10-14T23:53:06Z",
+          "elapsedSeconds": 25
+        },
+        {
+          "number": 8,
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:53:06Z",
+          "completedAt": "2026-10-14T23:53:11Z",
+          "elapsedSeconds": 5
+        },
+        {
+          "number": 9,
+          "name": "goods market shared quotas and boundary lock waits (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:53:11Z",
+          "completedAt": "2026-10-14T23:53:12Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 10,
+          "name": "deed upgrades (real PostgreSQL concurrency)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:53:12Z",
+          "completedAt": "2026-10-14T23:53:18Z",
+          "elapsedSeconds": 6
+        },
+        {
+          "number": 11,
+          "name": "City RPG quests and concurrent replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:53:18Z",
+          "completedAt": "2026-10-14T23:59:35Z",
+          "elapsedSeconds": 377
+        },
+        {
+          "number": 12,
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:59:35Z",
+          "completedAt": "2026-10-15T00:00:25Z",
+          "elapsedSeconds": 50
+        },
+        {
+          "number": 13,
+          "name": "HTTP receipt recovery and reservation ownership (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:00:25Z",
+          "completedAt": "2026-10-15T00:00:31Z",
+          "elapsedSeconds": 6
+        },
+        {
+          "number": 14,
+          "name": "Funded agent resources, concurrent settlement and recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:00:31Z",
+          "completedAt": "2026-10-15T00:01:06Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 15,
+          "name": "decision association atomicity and command replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:01:06Z",
+          "completedAt": "2026-10-15T00:01:41Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 16,
+          "name": "immutable funded supply offers and competing awards (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:01:41Z",
+          "completedAt": "2026-10-15T00:02:51Z",
+          "elapsedSeconds": 70
+        },
+        {
+          "number": 17,
+          "name": "warehouse custody, rollback and capacity races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:02:51Z",
+          "completedAt": "2026-10-15T00:03:28Z",
+          "elapsedSeconds": 37
+        },
+        {
+          "number": 18,
+          "name": "Crew logistics consent and private membership races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:03:28Z",
+          "completedAt": "2026-10-15T00:04:38Z",
+          "elapsedSeconds": 70
+        },
+        {
+          "number": 19,
+          "name": "native franchise royalties, consent and journal rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:04:38Z",
+          "completedAt": "2026-10-15T00:05:50Z",
+          "elapsedSeconds": 72
+        },
+        {
+          "number": 20,
+          "name": "Prepaid forecast reports, quota consent and row races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:05:50Z",
+          "completedAt": "2026-10-15T00:06:26Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 21,
+          "name": "Private forecast API replay, estate and invariant controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:06:26Z",
+          "completedAt": "2026-10-15T00:07:04Z",
+          "elapsedSeconds": 38
+        },
+        {
+          "number": 22,
+          "name": "Invoice finance canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:07:04Z",
+          "completedAt": "2026-10-15T00:07:40Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 23,
+          "name": "Invoice finance-guards canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:07:40Z",
+          "completedAt": "2026-10-15T00:08:16Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 24,
+          "name": "Invoice finance-api canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:08:16Z",
+          "completedAt": "2026-10-15T00:08:54Z",
+          "elapsedSeconds": 38
+        },
+        {
+          "number": 25,
+          "name": "Logistics coverage post-lock death event clock (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:08:54Z",
+          "completedAt": "2026-10-15T00:09:00Z",
+          "elapsedSeconds": 6
+        },
+        {
+          "number": 26,
+          "name": "Logistics coverage funded reserve and successor recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:09:00Z",
+          "completedAt": "2026-10-15T00:10:00Z",
+          "elapsedSeconds": 60
+        },
+        {
+          "number": 27,
+          "name": "Logistics coverage authenticated API and accounting (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:10:00Z",
+          "completedAt": "2026-10-15T00:10:47Z",
+          "elapsedSeconds": 47
+        },
+        {
+          "number": 28,
+          "name": "Strategy licenses genuine prospective holdout and paired cash (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:10:47Z",
+          "completedAt": "2026-10-15T00:16:23Z",
+          "elapsedSeconds": 336
+        },
+        {
+          "number": 29,
+          "name": "Strategy licenses private library and cash-bound API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:16:23Z",
+          "completedAt": "2026-10-15T00:16:58Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 30,
+          "name": "Company succession explicit estate consent and newly funded front (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:16:58Z",
+          "completedAt": "2026-10-15T00:17:34Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 31,
+          "name": "Company succession private recovery and canonical opening API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:17:34Z",
+          "completedAt": "2026-10-15T00:18:10Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 32,
+          "name": "Public market feed provenance and closed filters (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:18:10Z",
+          "completedAt": "2026-10-15T00:18:45Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 33,
+          "name": "Strategy league domain consent and prospective recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:18:45Z",
+          "completedAt": "2026-10-15T00:24:21Z",
+          "elapsedSeconds": 336
+        },
+        {
+          "number": 34,
+          "name": "Strategy league api consent and prospective recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:24:21Z",
+          "completedAt": "2026-10-15T00:24:56Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 35,
+          "name": "Authorized company operators and replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:24:56Z",
+          "completedAt": "2026-10-15T00:26:08Z",
+          "elapsedSeconds": 72
+        },
+        {
+          "number": 36,
+          "name": "Prepaid payroll, canonical estate and authenticated API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:26:08Z",
+          "completedAt": "2026-10-15T00:27:21Z",
+          "elapsedSeconds": 73
+        },
+        {
+          "number": 37,
+          "name": "Executable contracts, worker fairness and actual API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:27:21Z",
+          "completedAt": "2026-10-15T00:28:04Z",
+          "elapsedSeconds": 43
+        },
+        {
+          "number": 38,
+          "name": "commercial-premises canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:28:04Z",
+          "completedAt": "2026-10-15T00:28:17Z",
+          "elapsedSeconds": 13
+        },
+        {
+          "number": 39,
+          "name": "company-bank-portfolios canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:28:17Z",
+          "completedAt": "2026-10-15T00:28:57Z",
+          "elapsedSeconds": 40
+        },
+        {
+          "number": 40,
+          "name": "logistics-hubs canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:28:57Z",
+          "completedAt": "2026-10-15T00:29:19Z",
+          "elapsedSeconds": 22
+        },
+        {
+          "number": 41,
+          "name": "buyer-cooperatives canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:29:19Z",
+          "completedAt": "2026-10-15T00:30:00Z",
+          "elapsedSeconds": 41
+        },
+        {
+          "number": 42,
+          "name": "company-opportunities canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:30:00Z",
+          "completedAt": "2026-10-15T00:30:40Z",
+          "elapsedSeconds": 40
+        },
+        {
+          "number": 43,
+          "name": "commercial-reputation canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:30:40Z",
+          "completedAt": "2026-10-15T00:30:54Z",
+          "elapsedSeconds": 14
+        },
+        {
+          "number": 44,
+          "name": "business-seasons canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:30:54Z",
+          "completedAt": "2026-10-15T00:33:10Z",
+          "elapsedSeconds": 136
+        },
+        {
+          "number": 45,
+          "name": "Canonical company production, condition, observed demand and forecasts (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:33:10Z",
+          "completedAt": "2026-10-15T00:33:49Z",
+          "elapsedSeconds": 39
+        },
+        {
+          "number": 46,
+          "name": "Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:33:49Z",
+          "completedAt": "2026-10-15T00:38:56Z",
+          "elapsedSeconds": 307
+        },
+        {
+          "number": 47,
+          "name": "Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:56Z",
+          "completedAt": "2026-10-15T00:43:08Z",
+          "elapsedSeconds": 252
+        },
+        {
+          "number": 48,
+          "name": "Nonempty loan expiry process recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:08Z",
+          "completedAt": "2026-10-15T00:43:32Z",
+          "elapsedSeconds": 24
+        },
+        {
+          "number": 49,
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:32Z",
+          "completedAt": "2026-10-15T00:43:46Z",
+          "elapsedSeconds": 14
+        },
+        {
+          "number": 50,
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:46Z",
+          "completedAt": "2026-10-15T00:44:01Z",
+          "elapsedSeconds": 15
+        },
+        {
+          "number": 51,
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:44:01Z",
+          "completedAt": "2026-10-15T00:44:07Z",
+          "elapsedSeconds": 6
+        },
+        {
+          "number": 52,
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:44:07Z",
+          "completedAt": "2026-10-15T00:44:10Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 53,
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:44:10Z",
+          "completedAt": "2026-10-15T00:45:04Z",
+          "elapsedSeconds": 54
+        },
+        {
+          "number": 54,
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:45:04Z",
+          "completedAt": "2026-10-15T00:46:45Z",
+          "elapsedSeconds": 101
+        },
+        {
+          "number": 55,
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:46:45Z",
+          "completedAt": "2026-10-15T00:47:49Z",
+          "elapsedSeconds": 64
+        },
+        {
+          "number": 56,
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:47:49Z",
+          "completedAt": "2026-10-15T00:49:48Z",
+          "elapsedSeconds": 119
+        },
+        {
+          "number": 57,
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:49:48Z",
+          "completedAt": "2026-10-15T00:49:57Z",
+          "elapsedSeconds": 9
+        },
+        {
+          "number": 58,
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:49:57Z",
+          "completedAt": "2026-10-15T00:50:16Z",
+          "elapsedSeconds": 19
+        },
+        {
+          "number": 59,
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:16Z",
+          "completedAt": "2026-10-15T00:50:45Z",
+          "elapsedSeconds": 29
+        },
+        {
+          "number": 60,
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:45Z",
+          "completedAt": "2026-10-15T00:51:02Z",
+          "elapsedSeconds": 17
+        },
+        {
+          "number": 61,
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:51:02Z",
+          "completedAt": "2026-10-15T00:51:27Z",
+          "elapsedSeconds": 25
+        },
+        {
+          "number": 62,
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:51:27Z",
+          "completedAt": "2026-10-15T00:52:43Z",
+          "elapsedSeconds": 76
+        },
+        {
+          "number": 63,
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:52:43Z",
+          "completedAt": "2026-10-15T00:53:18Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 64,
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:53:18Z",
+          "completedAt": "2026-10-15T00:56:58Z",
+          "elapsedSeconds": 220
+        },
+        {
+          "number": 65,
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:56:58Z",
+          "completedAt": "2026-10-15T00:57:01Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 66,
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:01Z",
+          "completedAt": "2026-10-15T00:57:13Z",
+          "elapsedSeconds": 12
+        },
+        {
+          "number": 67,
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:13Z",
+          "completedAt": "2026-10-15T00:57:17Z",
+          "elapsedSeconds": 4
+        },
+        {
+          "number": 68,
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:17Z",
+          "completedAt": "2026-10-15T00:57:17Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 69,
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:17Z",
+          "completedAt": "2026-10-15T00:57:21Z",
+          "elapsedSeconds": 4
+        },
+        {
+          "number": 70,
+          "name": "character wallet checkout and concurrent trophy claim (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:21Z",
+          "completedAt": "2026-10-15T00:57:56Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 71,
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:57:56Z",
+          "completedAt": "2026-10-15T00:58:00Z",
+          "elapsedSeconds": 4
+        },
+        {
+          "number": 72,
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:58:00Z",
+          "completedAt": "2026-10-15T00:58:12Z",
+          "elapsedSeconds": 12
+        },
+        {
+          "number": 73,
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:58:12Z",
+          "completedAt": "2026-10-15T00:58:12Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 74,
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:58:12Z",
+          "completedAt": "2026-10-15T00:59:08Z",
+          "elapsedSeconds": 56
+        },
+        {
+          "number": 75,
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:59:08Z",
+          "completedAt": "2026-10-15T01:00:03Z",
+          "elapsedSeconds": 55
+        },
+        {
+          "number": 76,
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T01:00:03Z",
+          "completedAt": "2026-10-15T01:00:10Z",
+          "elapsedSeconds": 7
+        },
+        {
+          "number": 150,
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T01:00:10Z",
+          "completedAt": "2026-10-15T01:00:10Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 151,
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T01:00:10Z",
+          "completedAt": "2026-10-15T01:00:10Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 152,
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T01:00:10Z",
+          "completedAt": "2026-10-15T01:00:11Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 153,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T01:00:11Z",
+          "completedAt": "2026-10-15T01:00:11Z",
+          "elapsedSeconds": 0
+        }
+      ]
+    },
+    {
+      "jobId": 116167585032,
+      "url": "https://github.com/OmertaDev/Omerta/actions/runs/38656500807/job/116167585032",
+      "name": "real Postgres (18.4)",
+      "matrixPostgres": "18.4",
+      "serverVersion": "18.4",
+      "serverVersionNum": 180004,
+      "psqlClientVersion": "18.6",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:50:58Z",
+      "completedAt": "2026-10-15T00:50:39Z",
+      "elapsedSeconds": 3581,
+      "stepCounts": {
+        "total": 80,
+        "successful": 80,
+        "failed": 0,
+        "skipped": 0
+      },
+      "rawLog": {
+        "path": "output/release-2026-10-14/ci-38656500807-pg18-4-116167585032.log",
+        "retention": "Outside tracked Git; complete primary GitHub job log bytes",
+        "bytes": 1800461,
+        "sha256": "a6c01f5ff324c7e875b112fa5213202d34736e50df94ae8501d91a79788a6bfe"
+      },
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:50:59Z",
+          "completedAt": "2026-10-14T23:51:00Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 2,
+          "name": "Initialize containers",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:51:00Z",
+          "completedAt": "2026-10-14T23:51:13Z",
+          "elapsedSeconds": 13
+        },
+        {
+          "number": 3,
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:51:13Z",
+          "completedAt": "2026-10-14T23:52:02Z",
+          "elapsedSeconds": 49
+        },
+        {
+          "number": 4,
+          "name": "Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:02Z",
+          "completedAt": "2026-10-14T23:52:04Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 5,
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:04Z",
+          "completedAt": "2026-10-14T23:52:14Z",
+          "elapsedSeconds": 10
+        },
+        {
+          "number": 6,
+          "name": "Install PostgreSQL client tools matching the server major",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:14Z",
+          "completedAt": "2026-10-14T23:52:24Z",
+          "elapsedSeconds": 10
+        },
+        {
+          "number": 7,
+          "name": "Gateway, RLS and receipt concurrency on real PostgreSQL",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:24Z",
+          "completedAt": "2026-10-14T23:52:41Z",
+          "elapsedSeconds": 17
+        },
+        {
+          "number": 8,
+          "name": "pgquery (every SQL string parses on real Postgres)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:41Z",
+          "completedAt": "2026-10-14T23:52:44Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 9,
+          "name": "goods market shared quotas and boundary lock waits (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:44Z",
+          "completedAt": "2026-10-14T23:52:44Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 10,
+          "name": "deed upgrades (real PostgreSQL concurrency)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:44Z",
+          "completedAt": "2026-10-14T23:52:48Z",
+          "elapsedSeconds": 4
+        },
+        {
+          "number": 11,
+          "name": "City RPG quests and concurrent replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:52:48Z",
+          "completedAt": "2026-10-14T23:58:23Z",
+          "elapsedSeconds": 335
+        },
+        {
+          "number": 12,
+          "name": "pgcheck (pooling, row locks, timeouts, migration, ledger)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:58:23Z",
+          "completedAt": "2026-10-14T23:59:04Z",
+          "elapsedSeconds": 41
+        },
+        {
+          "number": 13,
+          "name": "HTTP receipt recovery and reservation ownership (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:59:04Z",
+          "completedAt": "2026-10-14T23:59:07Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 14,
+          "name": "Funded agent resources, concurrent settlement and recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:59:07Z",
+          "completedAt": "2026-10-14T23:59:25Z",
+          "elapsedSeconds": 18
+        },
+        {
+          "number": 15,
+          "name": "decision association atomicity and command replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:59:25Z",
+          "completedAt": "2026-10-14T23:59:58Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 16,
+          "name": "immutable funded supply offers and competing awards (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-14T23:59:58Z",
+          "completedAt": "2026-10-15T00:01:03Z",
+          "elapsedSeconds": 65
+        },
+        {
+          "number": 17,
+          "name": "warehouse custody, rollback and capacity races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:01:03Z",
+          "completedAt": "2026-10-15T00:01:37Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 18,
+          "name": "Crew logistics consent and private membership races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:01:37Z",
+          "completedAt": "2026-10-15T00:02:42Z",
+          "elapsedSeconds": 65
+        },
+        {
+          "number": 19,
+          "name": "native franchise royalties, consent and journal rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:02:42Z",
+          "completedAt": "2026-10-15T00:03:49Z",
+          "elapsedSeconds": 67
+        },
+        {
+          "number": 20,
+          "name": "Prepaid forecast reports, quota consent and row races (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:03:49Z",
+          "completedAt": "2026-10-15T00:04:22Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 21,
+          "name": "Private forecast API replay, estate and invariant controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:04:22Z",
+          "completedAt": "2026-10-15T00:04:56Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 22,
+          "name": "Invoice finance canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:04:56Z",
+          "completedAt": "2026-10-15T00:05:29Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 23,
+          "name": "Invoice finance-guards canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:05:29Z",
+          "completedAt": "2026-10-15T00:06:03Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 24,
+          "name": "Invoice finance-api canonical custody controls (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:06:03Z",
+          "completedAt": "2026-10-15T00:06:37Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 25,
+          "name": "Logistics coverage post-lock death event clock (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:06:37Z",
+          "completedAt": "2026-10-15T00:06:40Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 26,
+          "name": "Logistics coverage funded reserve and successor recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:06:40Z",
+          "completedAt": "2026-10-15T00:07:37Z",
+          "elapsedSeconds": 57
+        },
+        {
+          "number": 27,
+          "name": "Logistics coverage authenticated API and accounting (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:07:37Z",
+          "completedAt": "2026-10-15T00:08:21Z",
+          "elapsedSeconds": 44
+        },
+        {
+          "number": 28,
+          "name": "Strategy licenses genuine prospective holdout and paired cash (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:08:21Z",
+          "completedAt": "2026-10-15T00:13:54Z",
+          "elapsedSeconds": 333
+        },
+        {
+          "number": 29,
+          "name": "Strategy licenses private library and cash-bound API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:13:54Z",
+          "completedAt": "2026-10-15T00:14:27Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 30,
+          "name": "Company succession explicit estate consent and newly funded front (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:14:27Z",
+          "completedAt": "2026-10-15T00:15:00Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 31,
+          "name": "Company succession private recovery and canonical opening API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:15:00Z",
+          "completedAt": "2026-10-15T00:15:33Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 32,
+          "name": "Public market feed provenance and closed filters (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:15:33Z",
+          "completedAt": "2026-10-15T00:16:06Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 33,
+          "name": "Strategy league domain consent and prospective recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:16:06Z",
+          "completedAt": "2026-10-15T00:21:39Z",
+          "elapsedSeconds": 333
+        },
+        {
+          "number": 34,
+          "name": "Strategy league api consent and prospective recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:21:39Z",
+          "completedAt": "2026-10-15T00:22:13Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 35,
+          "name": "Authorized company operators and replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:22:13Z",
+          "completedAt": "2026-10-15T00:23:20Z",
+          "elapsedSeconds": 67
+        },
+        {
+          "number": 36,
+          "name": "Prepaid payroll, canonical estate and authenticated API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:23:20Z",
+          "completedAt": "2026-10-15T00:24:29Z",
+          "elapsedSeconds": 69
+        },
+        {
+          "number": 37,
+          "name": "Executable contracts, worker fairness and actual API (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:24:29Z",
+          "completedAt": "2026-10-15T00:25:05Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 38,
+          "name": "commercial-premises canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:25:05Z",
+          "completedAt": "2026-10-15T00:25:13Z",
+          "elapsedSeconds": 8
+        },
+        {
+          "number": 39,
+          "name": "company-bank-portfolios canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:25:13Z",
+          "completedAt": "2026-10-15T00:25:48Z",
+          "elapsedSeconds": 35
+        },
+        {
+          "number": 40,
+          "name": "logistics-hubs canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:25:48Z",
+          "completedAt": "2026-10-15T00:26:00Z",
+          "elapsedSeconds": 12
+        },
+        {
+          "number": 41,
+          "name": "buyer-cooperatives canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:26:00Z",
+          "completedAt": "2026-10-15T00:26:36Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 42,
+          "name": "company-opportunities canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:26:36Z",
+          "completedAt": "2026-10-15T00:27:12Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 43,
+          "name": "commercial-reputation canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:27:12Z",
+          "completedAt": "2026-10-15T00:27:19Z",
+          "elapsedSeconds": 7
+        },
+        {
+          "number": 44,
+          "name": "business-seasons canonical core and integration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:27:19Z",
+          "completedAt": "2026-10-15T00:29:28Z",
+          "elapsedSeconds": 129
+        },
+        {
+          "number": 45,
+          "name": "Canonical company production, condition, observed demand and forecasts (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:29:28Z",
+          "completedAt": "2026-10-15T00:29:50Z",
+          "elapsedSeconds": 22
+        },
+        {
+          "number": 46,
+          "name": "Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:29:50Z",
+          "completedAt": "2026-10-15T00:34:19Z",
+          "elapsedSeconds": 269
+        },
+        {
+          "number": 47,
+          "name": "Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:34:19Z",
+          "completedAt": "2026-10-15T00:38:05Z",
+          "elapsedSeconds": 226
+        },
+        {
+          "number": 48,
+          "name": "Nonempty loan expiry process recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:05Z",
+          "completedAt": "2026-10-15T00:38:19Z",
+          "elapsedSeconds": 14
+        },
+        {
+          "number": 49,
+          "name": "Failed migration refuses startup, preserves stamp, and retries (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:19Z",
+          "completedAt": "2026-10-15T00:38:26Z",
+          "elapsedSeconds": 7
+        },
+        {
+          "number": 50,
+          "name": "RC1 command tampering, concurrent duplicate, and restart replay (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:26Z",
+          "completedAt": "2026-10-15T00:38:34Z",
+          "elapsedSeconds": 8
+        },
+        {
+          "number": 51,
+          "name": "Moderator authentication and limiter precede body parsing (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:34Z",
+          "completedAt": "2026-10-15T00:38:37Z",
+          "elapsedSeconds": 3
+        },
+        {
+          "number": 52,
+          "name": "Native diagnostic precision and actual commit boundary controls",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:37Z",
+          "completedAt": "2026-10-15T00:38:39Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 53,
+          "name": "RC1 scoped resource journals, concurrent retries and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:38:39Z",
+          "completedAt": "2026-10-15T00:39:15Z",
+          "elapsedSeconds": 36
+        },
+        {
+          "number": 54,
+          "name": "RC1 operation capital terminal custody and rollback (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:39:15Z",
+          "completedAt": "2026-10-15T00:40:45Z",
+          "elapsedSeconds": 90
+        },
+        {
+          "number": 55,
+          "name": "Phase 2 definition registry (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:40:45Z",
+          "completedAt": "2026-10-15T00:42:00Z",
+          "elapsedSeconds": 75
+        },
+        {
+          "number": 56,
+          "name": "Phase 2 dormant item boundary (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:42:00Z",
+          "completedAt": "2026-10-15T00:43:03Z",
+          "elapsedSeconds": 63
+        },
+        {
+          "number": 57,
+          "name": "Coordination foundation and knowledge (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:03Z",
+          "completedAt": "2026-10-15T00:43:09Z",
+          "elapsedSeconds": 6
+        },
+        {
+          "number": 58,
+          "name": "World Graph kernel, knowledge gates, and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:09Z",
+          "completedAt": "2026-10-15T00:43:20Z",
+          "elapsedSeconds": 11
+        },
+        {
+          "number": 59,
+          "name": "Family operations, escrow, migration and concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:20Z",
+          "completedAt": "2026-10-15T00:43:36Z",
+          "elapsedSeconds": 16
+        },
+        {
+          "number": 60,
+          "name": "Player projections and visibility snapshots (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:36Z",
+          "completedAt": "2026-10-15T00:43:45Z",
+          "elapsedSeconds": 9
+        },
+        {
+          "number": 61,
+          "name": "Authored progression, scarce recipes and social prerequisites (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:45Z",
+          "completedAt": "2026-10-15T00:43:59Z",
+          "elapsedSeconds": 14
+        },
+        {
+          "number": 62,
+          "name": "Player commands, replay and both playable story branches (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:43:59Z",
+          "completedAt": "2026-10-15T00:44:54Z",
+          "elapsedSeconds": 55
+        },
+        {
+          "number": 63,
+          "name": "RC1 telemetry cannot delay commands or establish permission (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:44:54Z",
+          "completedAt": "2026-10-15T00:45:28Z",
+          "elapsedSeconds": 34
+        },
+        {
+          "number": 64,
+          "name": "Living World Director, three campaign branches and adversarial concurrency (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:45:28Z",
+          "completedAt": "2026-10-15T00:47:49Z",
+          "elapsedSeconds": 141
+        },
+        {
+          "number": 65,
+          "name": "stock catalog v2 finalized-observation consumer (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:47:49Z",
+          "completedAt": "2026-10-15T00:47:51Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 66,
+          "name": "RWA health H1 sweep, 2,048 versions (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:47:51Z",
+          "completedAt": "2026-10-15T00:47:58Z",
+          "elapsedSeconds": 7
+        },
+        {
+          "number": 67,
+          "name": "RWA registry lifecycle persistence (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:47:58Z",
+          "completedAt": "2026-10-15T00:48:00Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 68,
+          "name": "create throwaway databases for fee allocation and deed recovery",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:00Z",
+          "completedAt": "2026-10-15T00:48:01Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 69,
+          "name": "character mint DEV allocation and migration (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:01Z",
+          "completedAt": "2026-10-15T00:48:03Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 70,
+          "name": "character wallet checkout and concurrent trophy claim (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:03Z",
+          "completedAt": "2026-10-15T00:48:36Z",
+          "elapsedSeconds": 33
+        },
+        {
+          "number": 71,
+          "name": "deed event ordering and concurrent recovery (real PostgreSQL)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:36Z",
+          "completedAt": "2026-10-15T00:48:38Z",
+          "elapsedSeconds": 2
+        },
+        {
+          "number": 72,
+          "name": "backup self-test (dump, verify, refuse, restore)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:38Z",
+          "completedAt": "2026-10-15T00:48:47Z",
+          "elapsedSeconds": 9
+        },
+        {
+          "number": 73,
+          "name": "create throwaway databases for the interruption + concurrency harnesses",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:47Z",
+          "completedAt": "2026-10-15T00:48:47Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 74,
+          "name": "chaos (interrupted sweeps, killed backends, torn two-party transfers)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:48:47Z",
+          "completedAt": "2026-10-15T00:49:38Z",
+          "elapsedSeconds": 51
+        },
+        {
+          "number": 75,
+          "name": "loadtest (concurrent players, deadlock counter, §10.4 delta)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:49:38Z",
+          "completedAt": "2026-10-15T00:50:31Z",
+          "elapsedSeconds": 53
+        },
+        {
+          "number": 76,
+          "name": "concurrency (idempotency exactly-once, single-winner escrow, AB-BA, exact take)",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:31Z",
+          "completedAt": "2026-10-15T00:50:35Z",
+          "elapsedSeconds": 4
+        },
+        {
+          "number": 150,
+          "name": "Post Run actions/setup-node@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:35Z",
+          "completedAt": "2026-10-15T00:50:35Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 151,
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:35Z",
+          "completedAt": "2026-10-15T00:50:35Z",
+          "elapsedSeconds": 0
+        },
+        {
+          "number": 152,
+          "name": "Stop containers",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:35Z",
+          "completedAt": "2026-10-15T00:50:36Z",
+          "elapsedSeconds": 1
+        },
+        {
+          "number": 153,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-15T00:50:36Z",
+          "completedAt": "2026-10-15T00:50:36Z",
+          "elapsedSeconds": 0
+        }
+      ]
+    }
+  ],
+  "fullLifecycle": {
+    "jobId": 116167585012,
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/38656500807/job/116167585012",
+    "jobConclusion": "failure",
+    "step": {
+      "number": 7,
+      "name": "npm test (the full suite, on pg-mem)",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-10-14T23:52:05Z",
+      "completedAt": "2026-10-15T00:29:50Z",
+      "elapsedSeconds": 2265
+    },
+    "command": "npm test",
+    "includes": "Unmodified package.json npm lifecycle: pretest plus test and all nested npm scripts",
+    "pretestCommands": 178,
+    "testCommands": 203,
+    "expandedUniqueNodeEntrypoints": 420,
+    "rawLog": {
+      "path": "output/release-2026-10-14/ci-38656500807-pgmem-116167585012.log",
+      "retention": "Outside tracked Git; complete primary GitHub job log bytes",
+      "bytes": 400877,
+      "sha256": "ac31efda8b549feb29327ba826f5e49ec4fa256eba56b60209b61ce2dd932943"
+    },
+    "laterFailure": [
+      {
+        "number": 12,
+        "name": "RC1 original worker scheduling and diagnostic harness controls",
+        "status": "completed",
+        "conclusion": "failure",
+        "startedAt": "2026-10-15T00:30:58Z",
+        "completedAt": "2026-10-15T00:30:59Z"
+      }
+    ],
+    "limitation": "The later harness failure and unexecuted remainder require independent corrected-fixture retest; this receipt does not claim those checks passed."
+  },
+  "reuseConstraint": "Keep these results pinned to b12 and the exact checked-out tree. Any reuse on a later candidate requires retained equality of the affected application, native fixture/dependency and configuration inputs, plus fresh checks for every changed test/helper, metadata/knowledge input and scale fixture; do not claim the skipped native jobs were rerun on that later head."
+}
