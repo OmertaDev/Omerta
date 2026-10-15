@@ -335,7 +335,13 @@ try {
   const releaseCatalog = await createNextLayerReleasePhase2MigrationCatalog(pool, address, equipmentSchema,
     { includeNotNull: false, legacyProfile: 'director' });
   const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);
-  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(releaseCatalog.normalize(rows)), oldConstraints));
+  const normalizeNextLayerConstraints = rows => {
+    assert.deepEqual(rows.filter(row => NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),
+      nextLayerInventory.added.filter(row => NEXT_LAYER_NATIVE_TABLES.includes(row.table_name)),
+      'All eighty-nine pinned next-layer structural definitions remain exact before the historical Director oracle');
+    return rows.filter(row => !NEXT_LAYER_NATIVE_TABLES.includes(row.table_name));
+  };
+  const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(normalizeNextLayerConstraints(releaseCatalog.normalize(rows))), oldConstraints));
   verifyCompletePreservedConstraints(upgradedConstraints);
   await verifyNextLayerReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);
   gameplayCatalog.verifyMetadata(gameplayMetadata);
