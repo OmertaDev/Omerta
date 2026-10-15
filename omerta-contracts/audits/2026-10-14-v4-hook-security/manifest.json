@@ -1,0 +1,3459 @@
+{
+  "generatedAt": "2026-10-14T20:49:35.515Z",
+  "sourceCommit": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "sourceState": "dirty; existing production edits preserved; only tests and review evidence added",
+  "phase": "local source and regression review; no deployment or target-chain verification",
+  "chain": {
+    "target": null,
+    "addresses": [],
+    "fixtureChain": 31337
+  },
+  "fuzz": {
+    "runs": 512,
+    "seed": "0x2109737503393554544"
+  },
+  "methods": {
+    "pashov": "c577eb7799c349de0acb187ba00ca98e14e436fd",
+    "plamen": "795962b96e254f2e423a2635fe7f8cb8ea1e6d69",
+    "trailofbits": "d3323cefbcf645678b8dc481de204b02ad3d02dc"
+  },
+  "dependencies": {
+    "v4Core": "1.0.2",
+    "openzeppelin": "5.6.1",
+    "v4Periphery": "ad04c9f24a170accf5ea1b2836bbafd514537ca6",
+    "permit2": "cc56ad0f3439c502c246fc5cfcc3db92bb8b7219",
+    "forgeStd": "unmanaged local copy; source SHA256 and compiler Keccak256 retained below"
+  },
+  "note": "Artifact hashes are local files and compiler bytecode templates with immutable placeholders, not deployed runtime attestations. Dependency closure hashes do not imply manual review of every dependency.",
+  "files": [
+    {
+      "path": "foundry.toml",
+      "sha256": "0f9f19c8db7b98ad8de8efcb287e5c7b2bdd69e482d35f5e46130ba32236f11b"
+    },
+    {
+      "path": "lib/forge-std/src/Base.sol",
+      "sha256": "29297a56d2b1692d4439545b93ed62890da7e9e1060c03005b43151af7984bf0"
+    },
+    {
+      "path": "lib/forge-std/src/Script.sol",
+      "sha256": "69481d9a1b816761680fe82700233d0ecbb85f81f4e2826841664779cbb6f535"
+    },
+    {
+      "path": "lib/forge-std/src/StdAssertions.sol",
+      "sha256": "d4c89eec70d267dec6188461fbc74d3dc8c47e518d176a23417533a232ed9780"
+    },
+    {
+      "path": "lib/forge-std/src/StdChains.sol",
+      "sha256": "09a88ace5bc037f4a805c7ae071abf675ce802c8b36810287cd327b7d035fb81"
+    },
+    {
+      "path": "lib/forge-std/src/StdCheats.sol",
+      "sha256": "29af42f9d670fd22e9fc3ebe3c2da194471e93e210361c41d3d26ef04e9dca28"
+    },
+    {
+      "path": "lib/forge-std/src/StdConstants.sol",
+      "sha256": "6c785abd2fb9d42560f867d8e43e729c55f5bda2c06e5ddae27b17e301de4f04"
+    },
+    {
+      "path": "lib/forge-std/src/StdError.sol",
+      "sha256": "82ca17e33a03775e95b4612bd604a8732c73b2982a0278d214e06c68a886dc11"
+    },
+    {
+      "path": "lib/forge-std/src/StdInvariant.sol",
+      "sha256": "f572e991cfe874844b3b75a540e38e2161c29b5d9ab1635a3c4f1a16c548f987"
+    },
+    {
+      "path": "lib/forge-std/src/StdJson.sol",
+      "sha256": "0211b47e93dbeb6a7de6112470a77137038ed73b79b015847f013e49fcd7511f"
+    },
+    {
+      "path": "lib/forge-std/src/StdMath.sol",
+      "sha256": "f04fc0616741563eb32d66c11af7fdca55a7202221e14282268c7be851fc63ab"
+    },
+    {
+      "path": "lib/forge-std/src/StdStorage.sol",
+      "sha256": "c6dbb05b29be5bcbfabf06ea46b64fe9fbdb7542681795614ca3dee248214215"
+    },
+    {
+      "path": "lib/forge-std/src/StdStyle.sol",
+      "sha256": "324c2b0e100e88edbdb75f60f8a4c42f056f8d618ae5f56b1c404df64e8280a7"
+    },
+    {
+      "path": "lib/forge-std/src/StdToml.sol",
+      "sha256": "de3fb35af79a1fd2a2de9bc4ca7866e4102f9d3fbf11f66f3fe82696412d47e2"
+    },
+    {
+      "path": "lib/forge-std/src/StdUtils.sol",
+      "sha256": "c64a4d5023e6d46884734b8cb1b0f424bab26f0ccc920779b58d2f841c4506ae"
+    },
+    {
+      "path": "lib/forge-std/src/Test.sol",
+      "sha256": "b1b48a4dfbd65fed186163326dc8870316679f64a195aa18050f83657d2df39c"
+    },
+    {
+      "path": "lib/forge-std/src/Vm.sol",
+      "sha256": "ed75a1941f4f90e0a0fcb049c0899c867d1e43245b4cbf778c70061c76c0f35e"
+    },
+    {
+      "path": "lib/forge-std/src/console.sol",
+      "sha256": "896c5a5a5c235cb11a39876d430e1fc2c621e7950c4637ca58251b84b053f178"
+    },
+    {
+      "path": "lib/forge-std/src/console2.sol",
+      "sha256": "3bbe2e07ec53d8cf9c091667fe10234fcb3e2b45eab2c711002188806f46e779"
+    },
+    {
+      "path": "lib/forge-std/src/interfaces/IMulticall3.sol",
+      "sha256": "6620d9c5ea2e2291440e1dcce5072f948b7ec4d65075876a0d0ac9267d3342e3"
+    },
+    {
+      "path": "lib/forge-std/src/safeconsole.sol",
+      "sha256": "ed11aa2efc83fa8e575215a11dd7a9be385cf49dacbc379630168d7334899e46"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+      "sha256": "38578bd71c0a909840e67202db527cc6b4e6b437e0f39f0c909da32c1e30cb81"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol",
+      "sha256": "c75345d7b9feef17ae29f2a800ca2f65f8021cf80436a41d6ec00f57f5180f36"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+      "sha256": "9c3a75a925a6dac9e88b03cddc58d42fe3131b0aaaad84408521f3f7af2f991b"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+      "sha256": "dfb3f56fa928a7c6cae41a7ce2c86b9210fa18d33fa26389099d66a0fa790368"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+      "sha256": "0158e2d3e0e28bedd99eec13dcf1a8aa3a70a5b7e4bb2ad709609c95fcc740d1"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol",
+      "sha256": "fa7068f56bc180571a6095be6eaef06d51dbe81e30cb128397d993c9599ecc30"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+      "sha256": "50f34ae16a067a41c2c1091445d11d63788e54c717677cb6d6b0e4cdea2ad21d"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+      "sha256": "01b6f5c4fa45fd38822b286ecef6daf983d27306dd6362496fa71b3e4600b72c"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "sha256": "0b7132f17d14d1d84b41b0bb429be62dafdff00fd3470f68724d8018eb07f57a"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+      "sha256": "c2394cb2a327f234711da34884947f4aa0f6dd2791d1d6303a0c7acfaf81bca3"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+      "sha256": "ff0eb9902bf0ac099205615fac90eacf34fae637571b05aab3ea35dea53d5f17"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+      "sha256": "847fda5460fee70f56f4200f59b82ae622bb03c79c77e67af010e31b7e2cc5b6"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/Panic.sol",
+      "sha256": "270fc8401c1a13fae6a7a4a2dd6e381b95d658896701e51f0d3e2688acab3dec"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+      "sha256": "94e409e8f6e3184236651a6cc2b1a6a3ea0f0a25eb85b71e524ad5791bb2fbc8"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+      "sha256": "75704538dcb223239280c6726d9a31cf769a7816718517c997fc7d63bdb70778"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/Hashes.sol",
+      "sha256": "ecdbce11c5ecdf32b306e26b8ab1b878327c08154b4ccd04518b6b64b298cf31"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol",
+      "sha256": "fd5635e85da7518bf1a153eaa99d3fad8bb6700f9d5d9cb70ddde75935cb122c"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+      "sha256": "9055c2994b37dea1a41b7b7926dcb510f05dbe2540b0aafc5fbee9558fffd0ca"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+      "sha256": "bdfdbe133991c0c78042957ff5cd97167926fcaf6d15664f3835a076cb066457"
+    },
+    {
+      "path": "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol",
+      "sha256": "5779bc848bde39f1ad7bc02b4f708a0040888e0083b1a33f119cd94639350134"
+    },
+    {
+      "path": "lib/permit2/src/interfaces/IAllowanceTransfer.sol",
+      "sha256": "5cf9ef1bb81dc1e226749781c7a6e57d031887d7809a031ea065ecac5ccb7999"
+    },
+    {
+      "path": "lib/permit2/src/interfaces/IEIP712.sol",
+      "sha256": "bc6bf21f3ef5efd8cf0be404885797ef40e93040fa7485ececedc22826a8541f"
+    },
+    {
+      "path": "lib/permit2/src/interfaces/IERC1271.sol",
+      "sha256": "0f477eae7a45541f9be08c824dbe3a267ce9fb9cfcd0f510543d2a91cddfef33"
+    },
+    {
+      "path": "lib/permit2/src/libraries/SignatureVerification.sol",
+      "sha256": "6b1e5d31e221fa5ca815f131ebf7f89d7eac6b633dd3edec9d442d36eedafa91"
+    },
+    {
+      "path": "lib/permit2/test/utils/DeployPermit2.sol",
+      "sha256": "d4a295440ae5c36a4a33fb0271ce7347ea74d501f6df247d3098a2d70b4f8435"
+    },
+    {
+      "path": "lib/v4-core/lib/solmate/src/auth/Owned.sol",
+      "sha256": "8ac2f2dc41ab8012e93adb3791326ffa1e4059a20c306a777109dd81816b9125"
+    },
+    {
+      "path": "lib/v4-core/lib/solmate/src/tokens/ERC721.sol",
+      "sha256": "2da0cca384448208e25d43eeb5953a237de0e6712942a07d0f2674e895b0d3d3"
+    },
+    {
+      "path": "lib/v4-core/src/ERC6909.sol",
+      "sha256": "0f1bf94844851b561ae53d57263366d18f4c4431eb47096871e8715837c6ec9d"
+    },
+    {
+      "path": "lib/v4-core/src/ERC6909Claims.sol",
+      "sha256": "6fa9989899398646fd7c33f837254a69e7c75b77af120970ede397c3d0fbdc37"
+    },
+    {
+      "path": "lib/v4-core/src/Extsload.sol",
+      "sha256": "ac157c05d62562eed212cdf290046a85d192e7b1f8aba69c3ce358b0ebac4279"
+    },
+    {
+      "path": "lib/v4-core/src/Exttload.sol",
+      "sha256": "386b5618307a20144a44308b81188c7755a6c279db6c5824cf63a910864324d4"
+    },
+    {
+      "path": "lib/v4-core/src/NoDelegateCall.sol",
+      "sha256": "525bf4df92c4ac0fd582e1b6ac18fdfb5d147d410f38f19231e4c9a469187415"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+      "sha256": "9421ef4ba198d94058cd9a4c9fd2d663c61fc682f7dafa449a873456853f0025"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/IExttload.sol",
+      "sha256": "c21643d2c7f48d2d2407438a64a3ff0f376324cf6a0c62608977713652308c9e"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/IHooks.sol",
+      "sha256": "6eb35c9c598eb932e963219f1ff180748bc4c30ac6a02d924893b3c29abb1d73"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+      "sha256": "a98405333567e4ab344489728014795721cf0071c151536377d2fcc986e0600c"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+      "sha256": "807d68adea106ec2aa51a8009155de09ebfe09e1ee7053d5a5ae448d7e840654"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol",
+      "sha256": "2e4a514730654da2e08a82eff5b3eabae12dc1c6198951396e1d466d4c0e223e"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+      "sha256": "5e966a2d22b3b234a56af4b17e36bf7be90f9b29b1ddb6a15bfefc0b6dab4282"
+    },
+    {
+      "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+      "sha256": "1cd65496c829036bc6aee67bc71363ab5fb6989c65e793087d0e1e2379f7d7d8"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/BitMath.sol",
+      "sha256": "e8a45eb3d57f9427fc47bbb2543c1a6a5f394113b378123ac7ca9f113a7502b4"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/CurrencyDelta.sol",
+      "sha256": "dfbb3d232c2d52bb09c8dcbb38b4a8fd16c616b8e6bf49e6f4ee948760530f7b"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/CurrencyReserves.sol",
+      "sha256": "b38f1d3807d90bbccb865c0d96caf1ef92d6df9b69adbbe43b1d12e1241523c9"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+      "sha256": "9d3dbe6b742cb1ac30f57df89d879ade9649389de1165fc637114bd062d39fca"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+      "sha256": "1ca2f55160697b73bd66fd27c8724d79a57108121ce1e8a0ab8b79f38bb58fbb"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/FixedPoint96.sol",
+      "sha256": "66ee26d4fb3ac639124bdfa27d3256d196970997fa127c09e9bf7154e30d4590"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/FullMath.sol",
+      "sha256": "a9607255a6fd604d9c92f6b7416811c38b9d86e5dfdb0c345a494ebd35f7a4a3"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/Hooks.sol",
+      "sha256": "297d577998cdede64d48b47b12f15e4f442eea032fbb9676bb3c2f89da89b83c"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+      "sha256": "e96c3fa7deac991dc09b6c5e560a340d01d6c68ccba483d4b29f8a66e5aa44e0"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+      "sha256": "67a39e58732340af4870342ba9230691f35501d89ed8725ca1b338deaa0eb26a"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/Lock.sol",
+      "sha256": "29cd41a53de22514164e638e7bc965ccf4d9f34b455b43a1a15e06a8cb86e7f1"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/NonzeroDeltaCount.sol",
+      "sha256": "0ae35ca64da2527b4e1f7afa4ca10c4b65af952dc473c33b6663101e8d199f40"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+      "sha256": "6a6f3d1cec0143fd70ea68c34e6dce3bde72f368b213f1a225ada23dbfd99bb8"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/Pool.sol",
+      "sha256": "59c493035ad25d56f24a457e8b40d9d1e3784504b8ff13d171db1eb25c6f128e"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/Position.sol",
+      "sha256": "3dc4e2ad1564fa94eddf3ff06ce9ac592c9d578ea64ca194050382da454c8fcb"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/ProtocolFeeLibrary.sol",
+      "sha256": "f8d96d9c8b5d12ab927b34551699bd7086750475f70254c9505e636f2cafe56a"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/SafeCast.sol",
+      "sha256": "c1a815a41607be5b4c86ca588a951f368156da8ee21bdfc18b5d51b58a0f27be"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/SqrtPriceMath.sol",
+      "sha256": "42440c21bbab86c7eed4716b281ed5ca281cf14af8b5e06dc6dc3bc6864bcfdf"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+      "sha256": "eebdbc1b6e431072ce5521b9e1b603d43831e3b6e062743e6665e070d5cf8a1a"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/SwapMath.sol",
+      "sha256": "eb3971ea0ba84ff0a01f2fbe43f62f9c393121ef1724774ed3f3ab7760780e4a"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/TickBitmap.sol",
+      "sha256": "19b25dccfac8bd90f9d615fb182547eb7b5908a5cbf21a1c5920b92c47383cb6"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/TickMath.sol",
+      "sha256": "272d4f6d3ff9ae33596ebcdb84a71a3c2d4542ae8fb5c88ddf1aca8043f5d06b"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/TransientStateLibrary.sol",
+      "sha256": "9835fca9df8b3f649def66835c5d7ee68de6a6cbe92bf255eb5d8b92a6a8d60e"
+    },
+    {
+      "path": "lib/v4-core/src/libraries/UnsafeMath.sol",
+      "sha256": "2de236e7ca0b9572a6b0184557565b6fd54e177224e202c727fe248785ede427"
+    },
+    {
+      "path": "lib/v4-core/src/test/PoolModifyLiquidityTest.sol",
+      "sha256": "43be2141b83cae264fa9d5278c8a061d4074698458822358a7c09a9748741e9a"
+    },
+    {
+      "path": "lib/v4-core/src/test/PoolSwapTest.sol",
+      "sha256": "1bfd112087ec3abc30ea92cef6e39c9fd502502c9f28dac3d4df9fee7155e6d2"
+    },
+    {
+      "path": "lib/v4-core/src/test/PoolTestBase.sol",
+      "sha256": "e3ab1cd908af2302b1abfdfa327ea344c297fb879312164392d7020321943833"
+    },
+    {
+      "path": "lib/v4-core/src/types/BalanceDelta.sol",
+      "sha256": "320d9c13dec135c3903729e66d3a1040fe86d537a7ee53728915012ca183af32"
+    },
+    {
+      "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+      "sha256": "6aee06f1553e879f5909e8f4c0eac26ec23dd4821a7e56e4d5077db39a227e12"
+    },
+    {
+      "path": "lib/v4-core/src/types/Currency.sol",
+      "sha256": "ba6726fd24fbc66848208dfbb2899116c10729c505e6e5552316ac2444f1dfc3"
+    },
+    {
+      "path": "lib/v4-core/src/types/PoolId.sol",
+      "sha256": "548424ac50ad58212545da70207283fb8990731578c115c85d5acbcb0e1d3c9f"
+    },
+    {
+      "path": "lib/v4-core/src/types/PoolKey.sol",
+      "sha256": "99e1afe285b5c614ebc9586ab5196db9d24a63fd924a449f5d99f490a6a6d6a9"
+    },
+    {
+      "path": "lib/v4-core/src/types/PoolOperation.sol",
+      "sha256": "cf72ad0c3e5e91662029e862acd841fabce8753040b0d4e802dee64ef1157232"
+    },
+    {
+      "path": "lib/v4-core/src/types/Slot0.sol",
+      "sha256": "378b45486644dc7e49726358e83d0e2fffdaee088d18cac1a3df00d02c3635b4"
+    },
+    {
+      "path": "lib/v4-core/test/utils/CurrencySettler.sol",
+      "sha256": "afe4d7de04f55f35f25bae046a96baa4137709b9df13d90b76c643a1317df6b8"
+    },
+    {
+      "path": "lib/v4-periphery/src/PositionManager.sol",
+      "sha256": "1fd6f1af6712536983263305b9be1fc38d7d830cd0f1f218f7561c2c515bd1ce"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/BaseActionsRouter.sol",
+      "sha256": "7c6aab6af7eea956521542baf0b7d57a5487b3ffcf23cd23b85586205e466e97"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/DeltaResolver.sol",
+      "sha256": "bff375b0c32f0ec28429d172ab8618758060d6b153d2a8ebf44cb117f601ef86"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/EIP712_v4.sol",
+      "sha256": "3df032f8194f0ba3c68d39d8a678d58a992ee38db0e3a7b54ee30cfc7f9f9901"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/ERC721Permit_v4.sol",
+      "sha256": "5388341c638be10736bbac7223d091c9817db073571ebd959dd944265c143f7d"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/ImmutableState.sol",
+      "sha256": "37301d3a6fa89ba0609f4be4d82d5bcec42d6085833a3991d40c2f2f15d7c7b6"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/Multicall_v4.sol",
+      "sha256": "a9991c1a94bfb38ce6be9170886afee55e9b04304741b8f019f2e84f3c24cd4a"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/NativeWrapper.sol",
+      "sha256": "7653d72b0f426c859b6b1d93a8f68fe58a82a528553899fef299ce0b712454ac"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/Notifier.sol",
+      "sha256": "7a1ad1a50e3c3258f8d981270a730a946217967c8b6683a586d48369953af2e3"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/Permit2Forwarder.sol",
+      "sha256": "00c46786ee5ca70f0e8006c9ac853d26401f4edb8ef58cf7164c5c8c9ab355f5"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/PoolInitializer_v4.sol",
+      "sha256": "64370facd16d3d03df1933cf647379564468f428093eae3240a728a8dbca23a1"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/ReentrancyLock.sol",
+      "sha256": "158d2a265c27522fdb763b94a37232465018e9cd4af759ee323a117a75e1bcfc"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/SafeCallback.sol",
+      "sha256": "838865e1be6f90407bf179ba1d148269ccb2d16cd1bcaf16c2b8ecd55ce1f313"
+    },
+    {
+      "path": "lib/v4-periphery/src/base/UnorderedNonce.sol",
+      "sha256": "2266c8f365719a6681dcb675e45886f4f4a08054bfdc3d36154af150bff8452d"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IEIP712_v4.sol",
+      "sha256": "c7dd9bb343b0f079cae8c861fbe13711e659b1cf74104cbb4cc4536efa01891f"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol",
+      "sha256": "f6987dbe451d1207ccc1322cf89c81f4a3ad06b2229e8c3be6f5abbc529e1026"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IImmutableState.sol",
+      "sha256": "c1eda88405c19dc061b37a304558ee54210124c7563110ad67ffcc4ed24d34b9"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IMsgSender.sol",
+      "sha256": "0f17bcd8bbba1c702b4504140c3963320702bc1089d62122e065ae32fe9dda45"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IMulticall_v4.sol",
+      "sha256": "5e3fedcaf5c711fb564caf43a7dd33ac6cc985157d1339ebb36651015490245c"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/INotifier.sol",
+      "sha256": "ed4aec42c8aed343a13a7111e1904dedb921733d80e87e58adce395cefc0d627"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol",
+      "sha256": "438fa4797fe51454c9f4780a6c694c6aad59ed7a258cf29b75a8f921c58ab359"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol",
+      "sha256": "5f00a2d13a4726ec4dd6ed4e52e75a85537cc5ae20a852576762f386da9de753"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IPositionDescriptor.sol",
+      "sha256": "5e1141cf3469c730e90e84aedf6b3d845f9cb4cef94cdc8e4c096e14bb970af6"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IPositionManager.sol",
+      "sha256": "814910e65a48828c9e98115937a6e00d42cb5c5f9141865d00ed1b687be573f7"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/ISubscriber.sol",
+      "sha256": "6ed5e7b45c87f04fb6f9f8a44b082099b06b99ee1e2f5427f8a31b0e24d4f238"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol",
+      "sha256": "c280271ffe32bc702a73fedbca5f250c77453f1c716e3cbfa53ab5cdb41f1b87"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/IV4Router.sol",
+      "sha256": "e4528c09fc1008317fdbc2eb0f48eb2c950625fd9149095b48632a6953fbf0ae"
+    },
+    {
+      "path": "lib/v4-periphery/src/interfaces/external/IWETH9.sol",
+      "sha256": "0e24f150815ee60ebcd0a349e40941cfbcee3812c7da606e97cc966a180d192f"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/ActionConstants.sol",
+      "sha256": "42c04b05150fc1719cf12806769c9e37e133ff988ab8f910e450a4097c3dbab8"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/Actions.sol",
+      "sha256": "941f31b48e6f673427fff1ea839a0a0fdd43dc168e847664b9c832cbfc2586c0"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/CalldataDecoder.sol",
+      "sha256": "1cffdfdb4896df69aae8dd319749729d5d5e6edd33d51fe84cca32080e4db03b"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/ERC721PermitHash.sol",
+      "sha256": "bbf67d2c32af2aa431917bde29642a7b8532eac13efc7f4cb732a12eb70f73d0"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/LiquidityAmounts.sol",
+      "sha256": "d5ad3268881c4374afa6434a4fee043b2d17cdc9b532f572eb25d81118fd15c2"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/Locker.sol",
+      "sha256": "a1e4767cf3b91009f0fd51725867a262fdd351c215e401e80e38912381afb959"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/PathKey.sol",
+      "sha256": "dbe74e1c1415275bcc032579aaa309dc741e2ba9fdc822a4c827bf53ea598fbb"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol",
+      "sha256": "aefbce0d0d1db8d996bd48148a6b261da5fe1496cc0034188c14a1f33f06ba0d"
+    },
+    {
+      "path": "lib/v4-periphery/src/libraries/SlippageCheck.sol",
+      "sha256": "65870b67b7c1b2c56ffabd986a3b9d809992c7533fedcf73ccd350e21817be77"
+    },
+    {
+      "path": "src/GenesisPlayerSale.sol",
+      "sha256": "565de887db17c875ca628fea3d3a07be5b806e671d21ddcb9906cc7a868efdaf"
+    },
+    {
+      "path": "src/OmertaHook.sol",
+      "sha256": "95563000dd26f9709ad57ba89d09076fb6e5fcfe0516e9c06532d7aeb3cb3ece"
+    },
+    {
+      "path": "src/interfaces/IInitializerHook.sol",
+      "sha256": "64dd472652df0d669857b08e2191a22e6d7228b4ff7c1adf02186e862897231a"
+    },
+    {
+      "path": "src/interfaces/IOmrV4ObservationSource.sol",
+      "sha256": "a272583e3f972af7707a0fdb7a79a1573741e36c880018a0f0584602bd8f5c0e"
+    },
+    {
+      "path": "src/market-v2/IOmertaRestrictedOMRV2.sol",
+      "sha256": "bca16994c3dd05d4a96c34c8b43d638c3d59c25a75da0856d4d98d18f5487793"
+    },
+    {
+      "path": "src/market-v2/OmertaGenesisCoordinatorV2.sol",
+      "sha256": "f50ac719568484483298529623b97492da501c397100965a18e7073bcd7b73c1"
+    },
+    {
+      "path": "src/market-v2/OmertaHookV2.sol",
+      "sha256": "ec6362e88daeb7f35bd8f95cbc6bf2344378cb29603b3bf31460a14eada0c903"
+    },
+    {
+      "path": "src/market-v2/OmertaInventoryBondV2.sol",
+      "sha256": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f"
+    },
+    {
+      "path": "src/market-v2/OmertaMarketStateV2.sol",
+      "sha256": "7fe8895ef9640ceb0c14652184f2e8f301973ce50eda9d6cbb6b00609a64f193"
+    },
+    {
+      "path": "src/market-v2/OmertaRestrictedOMRV2.sol",
+      "sha256": "ef98a8db9595e075983b1556240270267dea6669c4bb5e52e20e2c9c9a1c5e2f"
+    },
+    {
+      "path": "src/market-v2/OmertaStabilityControllerV2.sol",
+      "sha256": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645"
+    },
+    {
+      "path": "src/market-v2/OmertaSwapRouterV2.sol",
+      "sha256": "6af5be95fac73edf33facfe7348b3b326305af0f33bdd7f2f40459701f313d70"
+    },
+    {
+      "path": "src/market-v2/core/OmertaPoolManagerV2.sol",
+      "sha256": "551c86e193cc33c7fabd07433bb4b15286d5420332e52b86fa37dc34b05ebac0"
+    },
+    {
+      "path": "test/OmertaHook.t.sol",
+      "sha256": "092a8184134ea694a7452e24472056225c3430da161be39c15bf06013fbc9741"
+    },
+    {
+      "path": "test/audit/OmertaHookObserverDoS.t.sol",
+      "sha256": "26a82ca8652651d04869b1500613c95bd7601f94d6e88677763c12c0c3fd113f"
+    },
+    {
+      "path": "test/market-v2/GenesisCoordinatorV2.t.sol",
+      "sha256": "c8812b32f1d0abe3e86b8e9f794d19f8e09301619a4eecf44e79cad3a7e6c4ed"
+    },
+    {
+      "path": "test/market-v2/GraduationSettlementRegressionV2.t.sol",
+      "sha256": "88b9207ba6a2099069051293065ea4b43b7a49d957c27ceae0a5eae81e4fe660"
+    },
+    {
+      "path": "test/market-v2/HookExploitRegressionV2.t.sol",
+      "sha256": "bbe9c95ae1ecbc2a0f9a3c78ba557d1ef69ef7b54375c9edca3de1ea5db132f0"
+    },
+    {
+      "path": "test/market-v2/LPRevenueEnforcementV2.t.sol",
+      "sha256": "13418241c90ef9d7ebab8dbafe41547d7b8d896bc55aa89cec7c51163c51e6b8"
+    },
+    {
+      "path": "test/market-v2/MarketStateV2.t.sol",
+      "sha256": "fc46f31c2e11628414ad1402232903386658575981e638f573d573eba4db7666"
+    },
+    {
+      "path": "test/market-v2/OmertaHookV2.t.sol",
+      "sha256": "b81f359d5b325567a1e52a4b540e623bfa638cd3d3d5b6374da3fdbdd46a8272"
+    },
+    {
+      "path": "test/market-v2/PlayerGenesisIntegrationV2.t.sol",
+      "sha256": "f8bbf4c8c9013cc593cb9e1e66cf2dccfe58b0c6cc0c83ba78e5503439e94bbc"
+    },
+    {
+      "path": "test/market-v2/RestrictedMarketIntegrationV2.t.sol",
+      "sha256": "eae6a8e91f87295035e2727802a3d9013b5aa9595f22012f4aa88823170f3c8f"
+    },
+    {
+      "path": "test/market-v2/RestrictedPoolManagerV2.t.sol",
+      "sha256": "16da4a2b15b4089cf5f1ac813839ea3bf2ac0e98293a6e6b36b65d4664c2c6e6"
+    },
+    {
+      "path": "test/market-v2/RestrictedRevenueBoundariesV2.t.sol",
+      "sha256": "5e22765d2c5fcbb161b484185221bbd70d13292aa513bbb2c31ab99ebf758cd6"
+    }
+  ],
+  "artifacts": [
+    {
+      "contract": "OmertaHook",
+      "path": "out/OmertaHook.sol/OmertaHook.json",
+      "sha256": "c936b0c000280caf5e29f2cf6af57683dd5388c51feaba0822dc95c5d7f86147",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/OmertaHook.sol": "OmertaHook"
+        },
+        "evmVersion": "cancun",
+        "libraries": {}
+      },
+      "creationTemplateSha256": "2ec8d844a63e41bd743b22859b5f867c33ca47cbf73e50b488e76d60129dd103",
+      "runtimeTemplateSha256": "324cd6a19f7414190ea94f873c81351136f80bee3d998106a54aa49f7a4ce90e",
+      "immutableReferences": {
+        "39674": [
+          {
+            "start": 2071,
+            "length": 32
+          },
+          {
+            "start": 3403,
+            "length": 32
+          },
+          {
+            "start": 3489,
+            "length": 32
+          },
+          {
+            "start": 4286,
+            "length": 32
+          },
+          {
+            "start": 5852,
+            "length": 32
+          },
+          {
+            "start": 6094,
+            "length": 32
+          },
+          {
+            "start": 6221,
+            "length": 32
+          },
+          {
+            "start": 7798,
+            "length": 32
+          }
+        ],
+        "39677": [
+          {
+            "start": 1141,
+            "length": 32
+          },
+          {
+            "start": 6427,
+            "length": 32
+          },
+          {
+            "start": 6487,
+            "length": 32
+          },
+          {
+            "start": 7067,
+            "length": 32
+          },
+          {
+            "start": 7126,
+            "length": 32
+          },
+          {
+            "start": 7898,
+            "length": 32
+          },
+          {
+            "start": 7957,
+            "length": 32
+          }
+        ],
+        "39680": [
+          {
+            "start": 1254,
+            "length": 32
+          },
+          {
+            "start": 6285,
+            "length": 32
+          },
+          {
+            "start": 6371,
+            "length": 32
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "lib/openzeppelin-contracts/contracts/access/Ownable.sol",
+          "compilerKeccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/access/Ownable2Step.sol",
+          "compilerKeccak256": "0xdcad8898fda432696597752e8ec361b87d85c82cb258115427af006dacf7128c"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+          "compilerKeccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Hooks.sol",
+          "compilerKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+          "compilerKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+          "compilerKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+          "compilerKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "src/OmertaHook.sol",
+          "compilerKeccak256": "0x2a343e6dac9549901d37e94099dadbacfd35d40f8f1f251451060d8af0abaee7"
+        },
+        {
+          "path": "src/interfaces/IInitializerHook.sol",
+          "compilerKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3"
+        },
+        {
+          "path": "src/interfaces/IOmrV4ObservationSource.sol",
+          "compilerKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151"
+        }
+      ]
+    },
+    {
+      "contract": "OmertaHookV2",
+      "path": "out/OmertaHookV2.sol/OmertaHookV2.json",
+      "sha256": "e4737c5d86a95ee73a86a61a35d999d3289f3ea5ab698db523584968c71ef415",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/OmertaHookV2.sol": "OmertaHookV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "creationTemplateSha256": "5bdf52d4e66b0ef3cacfc4287abc43c4141df085faca2c5b2674e09f9b86340c",
+      "runtimeTemplateSha256": "befd20af34549de35e0d2df0119e5d5e334abbcb00940dbdb77883564ca59060",
+      "immutableReferences": {
+        "94531": [
+          {
+            "start": 36,
+            "length": 32
+          },
+          {
+            "start": 988,
+            "length": 32
+          },
+          {
+            "start": 1163,
+            "length": 32
+          },
+          {
+            "start": 1897,
+            "length": 32
+          },
+          {
+            "start": 2562,
+            "length": 32
+          },
+          {
+            "start": 3427,
+            "length": 32
+          },
+          {
+            "start": 4336,
+            "length": 32
+          },
+          {
+            "start": 4528,
+            "length": 32
+          },
+          {
+            "start": 9256,
+            "length": 32
+          },
+          {
+            "start": 10203,
+            "length": 32
+          }
+        ],
+        "94533": [
+          {
+            "start": 5132,
+            "length": 32
+          },
+          {
+            "start": 10354,
+            "length": 32
+          },
+          {
+            "start": 11379,
+            "length": 32
+          }
+        ],
+        "94535": [
+          {
+            "start": 4959,
+            "length": 32
+          },
+          {
+            "start": 6080,
+            "length": 32
+          },
+          {
+            "start": 7220,
+            "length": 32
+          },
+          {
+            "start": 7508,
+            "length": 32
+          }
+        ],
+        "94537": [
+          {
+            "start": 1045,
+            "length": 32
+          },
+          {
+            "start": 4830,
+            "length": 32
+          }
+        ],
+        "94539": [
+          {
+            "start": 5357,
+            "length": 32
+          },
+          {
+            "start": 6123,
+            "length": 32
+          },
+          {
+            "start": 7148,
+            "length": 32
+          },
+          {
+            "start": 7435,
+            "length": 32
+          }
+        ],
+        "94541": [
+          {
+            "start": 1328,
+            "length": 32
+          },
+          {
+            "start": 6162,
+            "length": 32
+          },
+          {
+            "start": 7084,
+            "length": 32
+          },
+          {
+            "start": 7367,
+            "length": 32
+          }
+        ],
+        "94543": [
+          {
+            "start": 3699,
+            "length": 32
+          },
+          {
+            "start": 4700,
+            "length": 32
+          },
+          {
+            "start": 7818,
+            "length": 32
+          },
+          {
+            "start": 8533,
+            "length": 32
+          }
+        ],
+        "94545": [
+          {
+            "start": 4763,
+            "length": 32
+          },
+          {
+            "start": 9798,
+            "length": 32
+          }
+        ],
+        "94547": [
+          {
+            "start": 712,
+            "length": 32
+          },
+          {
+            "start": 3539,
+            "length": 32
+          }
+        ],
+        "94549": [
+          {
+            "start": 778,
+            "length": 32
+          },
+          {
+            "start": 11288,
+            "length": 32
+          },
+          {
+            "start": 11431,
+            "length": 32
+          }
+        ],
+        "94551": [
+          {
+            "start": 3035,
+            "length": 32
+          },
+          {
+            "start": 11238,
+            "length": 32
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+          "compilerKeccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+          "compilerKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+          "compilerKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Hooks.sol",
+          "compilerKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+          "compilerKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+          "compilerKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+          "compilerKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "src/interfaces/IInitializerHook.sol",
+          "compilerKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3"
+        },
+        {
+          "path": "src/interfaces/IOmrV4ObservationSource.sol",
+          "compilerKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151"
+        },
+        {
+          "path": "src/market-v2/OmertaHookV2.sol",
+          "compilerKeccak256": "0xe67a82ee4ce27fe84175091f52e339045d7919b64d139997bf67ae5811ecbbf9"
+        }
+      ]
+    },
+    {
+      "contract": "OmertaSwapRouterV2",
+      "path": "out/OmertaSwapRouterV2.sol/OmertaSwapRouterV2.json",
+      "sha256": "2c86ab3b7f805957175610850b59ce29f40954363f07eef77bd49f17680e7454",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/OmertaSwapRouterV2.sol": "OmertaSwapRouterV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "creationTemplateSha256": "9beb8d0f9df41743a1f41820d910ae5f181e517639adbf231a7f0f917ead5a45",
+      "runtimeTemplateSha256": "de79f78ee01aac42609781c3c7dd7380a050ceb79bdac2e728f42370bbd3657e",
+      "immutableReferences": {
+        "103094": [
+          {
+            "start": 36,
+            "length": 32
+          },
+          {
+            "start": 239,
+            "length": 32
+          },
+          {
+            "start": 2318,
+            "length": 32
+          },
+          {
+            "start": 3224,
+            "length": 32
+          },
+          {
+            "start": 3778,
+            "length": 32
+          },
+          {
+            "start": 4014,
+            "length": 32
+          }
+        ],
+        "103097": [
+          {
+            "start": 1294,
+            "length": 32
+          },
+          {
+            "start": 2386,
+            "length": 32
+          },
+          {
+            "start": 2608,
+            "length": 32
+          },
+          {
+            "start": 4199,
+            "length": 32
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+          "compilerKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+          "compilerKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+          "compilerKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+          "compilerKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+          "compilerKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+          "compilerKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol",
+          "compilerKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "src/market-v2/IOmertaRestrictedOMRV2.sol",
+          "compilerKeccak256": "0x1500fa712b94e1cc9593e6439c965b65f95b233c1ff7249444a2320db5213438"
+        },
+        {
+          "path": "src/market-v2/OmertaSwapRouterV2.sol",
+          "compilerKeccak256": "0xf430f7117999ae05bb144957553b36b39ef13c73c6fa1d2eda822f0ffadf5724"
+        }
+      ]
+    },
+    {
+      "contract": "OmertaPoolManagerV2",
+      "path": "out/OmertaPoolManagerV2.sol/OmertaPoolManagerV2.json",
+      "sha256": "7938a3d440f7b4397a0ea378d147158893b0075946275386058983c9ce3821d6",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/core/OmertaPoolManagerV2.sol": "OmertaPoolManagerV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {}
+      },
+      "creationTemplateSha256": "76b9d850b45411698e5654a72be4d0d32bc0e12bde9c6db21bd9ac334f3c2524",
+      "runtimeTemplateSha256": "a49887d878546205bdc05d9e6ef192c313d6ac474d0e7843fa1280982503c652",
+      "immutableReferences": {
+        "15768": [
+          {
+            "start": 7336,
+            "length": 32
+          }
+        ],
+        "60635": [
+          {
+            "start": 1233,
+            "length": 32
+          },
+          {
+            "start": 6459,
+            "length": 32
+          },
+          {
+            "start": 6632,
+            "length": 32
+          },
+          {
+            "start": 7410,
+            "length": 32
+          },
+          {
+            "start": 7576,
+            "length": 32
+          },
+          {
+            "start": 10100,
+            "length": 32
+          }
+        ],
+        "60637": [
+          {
+            "start": 939,
+            "length": 32
+          },
+          {
+            "start": 11389,
+            "length": 32
+          }
+        ],
+        "60639": [
+          {
+            "start": 2219,
+            "length": 32
+          },
+          {
+            "start": 11439,
+            "length": 32
+          }
+        ],
+        "60641": [
+          {
+            "start": 1138,
+            "length": 32
+          },
+          {
+            "start": 11489,
+            "length": 32
+          }
+        ],
+        "60643": [
+          {
+            "start": 2094,
+            "length": 32
+          },
+          {
+            "start": 11539,
+            "length": 32
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/v4-core/lib/solmate/src/auth/Owned.sol",
+          "compilerKeccak256": "0xfedb27d14c508342c33eb067c9a02eabcdb0f9dcf93b04ded1001f580d12d0ea"
+        },
+        {
+          "path": "lib/v4-core/src/ERC6909.sol",
+          "compilerKeccak256": "0x22476a1c183be1b547a509b3e6906abaccb6408375f798fce805ff7877aca09f"
+        },
+        {
+          "path": "lib/v4-core/src/ERC6909Claims.sol",
+          "compilerKeccak256": "0xf496ef3a5a9bf4f4aa2eec951dbeff09a01ef058bb9f64b1664cf46c9e85cd49"
+        },
+        {
+          "path": "lib/v4-core/src/Extsload.sol",
+          "compilerKeccak256": "0x784074bd04a1541c7c6ace074e30245746133fd37c3ba16b025dce394db986ce"
+        },
+        {
+          "path": "lib/v4-core/src/Exttload.sol",
+          "compilerKeccak256": "0x769ee2733a08112c652274f4b972c45fb56cc46109f233b9a30f81561b15dd54"
+        },
+        {
+          "path": "lib/v4-core/src/NoDelegateCall.sol",
+          "compilerKeccak256": "0xacb81aecb7c74c86650a035462dae38c313b4b7b5842e14b645f864f61da2b51"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol",
+          "compilerKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/BitMath.sol",
+          "compilerKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CurrencyDelta.sol",
+          "compilerKeccak256": "0x80dbd898cf0f90c5c27192689b16c34edc765d6ab21b8358e3bb792c7fef238c"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CurrencyReserves.sol",
+          "compilerKeccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint96.sol",
+          "compilerKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Hooks.sol",
+          "compilerKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+          "compilerKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Lock.sol",
+          "compilerKeccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/NonzeroDeltaCount.sol",
+          "compilerKeccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+          "compilerKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Pool.sol",
+          "compilerKeccak256": "0xb8191707c5913f5e2f589cec5167e3fac4a5b86bd84f61fdba0fbe6a8ce8a3a0"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ProtocolFeeLibrary.sol",
+          "compilerKeccak256": "0xf483001899229ab10f5a626fe1c5866134d9e965b48ce6cf55ce0d7f74f7d8ec"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SqrtPriceMath.sol",
+          "compilerKeccak256": "0xf8079fe6e3460db495451d06b1705e18f1c4075c1af96a31ad313545f7082982"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SwapMath.sol",
+          "compilerKeccak256": "0x6baa782ae523269c079cc763639a9b91a25fcfa1743c049c76e43741ef494bd9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TickBitmap.sol",
+          "compilerKeccak256": "0x6779f89e28a0b4af6e09d518caf014b7e8fc627400f5561f86fed11635b1458a"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TickMath.sol",
+          "compilerKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/UnsafeMath.sol",
+          "compilerKeccak256": "0xa6e55e0a43a15df2df471d9972cd48f613d07c663ecb8bbeaf7623f6f99bcce4"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "lib/v4-core/src/types/Slot0.sol",
+          "compilerKeccak256": "0x8b4912fac7e25ea680056748121113f902d56f8b2640f421d5c38d438db11c1b"
+        },
+        {
+          "path": "src/market-v2/IOmertaRestrictedOMRV2.sol",
+          "compilerKeccak256": "0x1500fa712b94e1cc9593e6439c965b65f95b233c1ff7249444a2320db5213438"
+        },
+        {
+          "path": "src/market-v2/core/OmertaPoolManagerV2.sol",
+          "compilerKeccak256": "0x3ecd55ae1cee4809dd0aaba20ed256f8614bb831f075a3138b1440f0f93d5789"
+        }
+      ]
+    },
+    {
+      "contract": "OmertaGenesisCoordinatorV2",
+      "path": "out/OmertaGenesisCoordinatorV2.sol/OmertaGenesisCoordinatorV2.json",
+      "sha256": "3099191e3d7cacff1710b92ac59c18ad73e1bfb7366c9183ab61960e41d470d5",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "src/market-v2/OmertaGenesisCoordinatorV2.sol": "OmertaGenesisCoordinatorV2"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "creationTemplateSha256": "799d2d8c44b9cd7e8a88075f99e2c49f2f521c94304dbc1c2c28c553e0049e7e",
+      "runtimeTemplateSha256": "bc8c5cb92667eec95569b9020a95ed67a3a83446d1c65d390ee07ecf41b5144c",
+      "immutableReferences": {
+        "92998": [
+          {
+            "start": 864,
+            "length": 32
+          },
+          {
+            "start": 5108,
+            "length": 32
+          },
+          {
+            "start": 5538,
+            "length": 32
+          },
+          {
+            "start": 8801,
+            "length": 32
+          },
+          {
+            "start": 12930,
+            "length": 32
+          }
+        ],
+        "93001": [
+          {
+            "start": 79,
+            "length": 32
+          },
+          {
+            "start": 1278,
+            "length": 32
+          },
+          {
+            "start": 1963,
+            "length": 32
+          },
+          {
+            "start": 2097,
+            "length": 32
+          },
+          {
+            "start": 2372,
+            "length": 32
+          },
+          {
+            "start": 2469,
+            "length": 32
+          },
+          {
+            "start": 2633,
+            "length": 32
+          },
+          {
+            "start": 2864,
+            "length": 32
+          },
+          {
+            "start": 2971,
+            "length": 32
+          },
+          {
+            "start": 3772,
+            "length": 32
+          },
+          {
+            "start": 5024,
+            "length": 32
+          },
+          {
+            "start": 8067,
+            "length": 32
+          },
+          {
+            "start": 9217,
+            "length": 32
+          },
+          {
+            "start": 9887,
+            "length": 32
+          },
+          {
+            "start": 10021,
+            "length": 32
+          },
+          {
+            "start": 10274,
+            "length": 32
+          },
+          {
+            "start": 10371,
+            "length": 32
+          },
+          {
+            "start": 10535,
+            "length": 32
+          },
+          {
+            "start": 10765,
+            "length": 32
+          },
+          {
+            "start": 10871,
+            "length": 32
+          },
+          {
+            "start": 11624,
+            "length": 32
+          },
+          {
+            "start": 12846,
+            "length": 32
+          }
+        ],
+        "93004": [
+          {
+            "start": 1774,
+            "length": 32
+          },
+          {
+            "start": 1854,
+            "length": 32
+          },
+          {
+            "start": 2039,
+            "length": 32
+          },
+          {
+            "start": 2525,
+            "length": 32
+          },
+          {
+            "start": 2706,
+            "length": 32
+          },
+          {
+            "start": 2765,
+            "length": 32
+          },
+          {
+            "start": 4940,
+            "length": 32
+          },
+          {
+            "start": 9698,
+            "length": 32
+          },
+          {
+            "start": 9778,
+            "length": 32
+          },
+          {
+            "start": 9963,
+            "length": 32
+          },
+          {
+            "start": 10427,
+            "length": 32
+          },
+          {
+            "start": 10608,
+            "length": 32
+          },
+          {
+            "start": 10667,
+            "length": 32
+          },
+          {
+            "start": 12762,
+            "length": 32
+          },
+          {
+            "start": 14032,
+            "length": 32
+          }
+        ],
+        "93007": [
+          {
+            "start": 1808,
+            "length": 32
+          },
+          {
+            "start": 1916,
+            "length": 32
+          },
+          {
+            "start": 2166,
+            "length": 32
+          },
+          {
+            "start": 2586,
+            "length": 32
+          },
+          {
+            "start": 2799,
+            "length": 32
+          },
+          {
+            "start": 3526,
+            "length": 32
+          },
+          {
+            "start": 4576,
+            "length": 32
+          },
+          {
+            "start": 4856,
+            "length": 32
+          },
+          {
+            "start": 6275,
+            "length": 32
+          },
+          {
+            "start": 6797,
+            "length": 32
+          },
+          {
+            "start": 9732,
+            "length": 32
+          },
+          {
+            "start": 9840,
+            "length": 32
+          },
+          {
+            "start": 10090,
+            "length": 32
+          },
+          {
+            "start": 10488,
+            "length": 32
+          },
+          {
+            "start": 10701,
+            "length": 32
+          },
+          {
+            "start": 11402,
+            "length": 32
+          },
+          {
+            "start": 12398,
+            "length": 32
+          },
+          {
+            "start": 12678,
+            "length": 32
+          },
+          {
+            "start": 13205,
+            "length": 32
+          },
+          {
+            "start": 13494,
+            "length": 32
+          }
+        ],
+        "93009": [
+          {
+            "start": 5705,
+            "length": 32
+          },
+          {
+            "start": 13825,
+            "length": 32
+          }
+        ],
+        "93011": [
+          {
+            "start": 1538,
+            "length": 32
+          },
+          {
+            "start": 3842,
+            "length": 32
+          },
+          {
+            "start": 9476,
+            "length": 32
+          },
+          {
+            "start": 11694,
+            "length": 32
+          },
+          {
+            "start": 13272,
+            "length": 32
+          }
+        ],
+        "93013": [
+          {
+            "start": 3169,
+            "length": 32
+          },
+          {
+            "start": 8136,
+            "length": 32
+          },
+          {
+            "start": 11071,
+            "length": 32
+          },
+          {
+            "start": 13585,
+            "length": 32
+          }
+        ],
+        "93015": [
+          {
+            "start": 3247,
+            "length": 32
+          },
+          {
+            "start": 8237,
+            "length": 32
+          },
+          {
+            "start": 11149,
+            "length": 32
+          }
+        ],
+        "93017": [
+          {
+            "start": 3349,
+            "length": 32
+          },
+          {
+            "start": 8306,
+            "length": 32
+          },
+          {
+            "start": 11216,
+            "length": 32
+          }
+        ],
+        "93019": [
+          {
+            "start": 1131,
+            "length": 32
+          },
+          {
+            "start": 4645,
+            "length": 32
+          },
+          {
+            "start": 7317,
+            "length": 32
+          },
+          {
+            "start": 9069,
+            "length": 32
+          },
+          {
+            "start": 12467,
+            "length": 32
+          }
+        ],
+        "93021": [
+          {
+            "start": 503,
+            "length": 32
+          },
+          {
+            "start": 7723,
+            "length": 32
+          },
+          {
+            "start": 8461,
+            "length": 32
+          }
+        ],
+        "93023": [
+          {
+            "start": 5143,
+            "length": 32
+          },
+          {
+            "start": 12965,
+            "length": 32
+          }
+        ],
+        "93025": [
+          {
+            "start": 5059,
+            "length": 32
+          },
+          {
+            "start": 12881,
+            "length": 32
+          }
+        ],
+        "93027": [
+          {
+            "start": 4975,
+            "length": 32
+          },
+          {
+            "start": 12797,
+            "length": 32
+          }
+        ],
+        "93029": [
+          {
+            "start": 4891,
+            "length": 32
+          },
+          {
+            "start": 12713,
+            "length": 32
+          }
+        ]
+      },
+      "sources": [
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+          "compilerKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+          "compilerKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+          "compilerKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+          "compilerKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+          "compilerKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/Panic.sol",
+          "compilerKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+          "compilerKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+          "compilerKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/Hashes.sol",
+          "compilerKeccak256": "0x8cbd338f083224b4b6f0ff42cbda641a0a6c31ffcdca197452b97fe4d0918269"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol",
+          "compilerKeccak256": "0x5e27273c7ebdbcfe7d2bad2866feb635a49db139abfe5643bdeacec4a0880225"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+          "compilerKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol",
+          "compilerKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+        },
+        {
+          "path": "lib/permit2/src/interfaces/IAllowanceTransfer.sol",
+          "compilerKeccak256": "0x37f0ac203b6ef605c9533e1a739477e8e9dcea90710b40e645a367f8a21ace29"
+        },
+        {
+          "path": "lib/permit2/src/interfaces/IEIP712.sol",
+          "compilerKeccak256": "0xfdccf2b9639070803cd0e4198427fb0df3cc452ca59bd3b8a0d957a9a4254138"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/BitMath.sol",
+          "compilerKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint96.sol",
+          "compilerKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+          "compilerKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TickMath.sol",
+          "compilerKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IEIP712_v4.sol",
+          "compilerKeccak256": "0xd7f7115476e307a0bfc32a0f0a0f5434e9e5ca62a6c5af1e18b75e48161bb408"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol",
+          "compilerKeccak256": "0x103adbba724ef536abc536fe8a4d7dc12880724c562109b69f2adce4a91fa017"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IImmutableState.sol",
+          "compilerKeccak256": "0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IMulticall_v4.sol",
+          "compilerKeccak256": "0x336bec303f7ff86497d2679464c5adad5040f412b3d0769ce5e1d2a42f7e2c08"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/INotifier.sol",
+          "compilerKeccak256": "0xfdc5187a98240a1691aae98b7dd2444d4c2bfb4746f3c34de9f3d18399c17c5e"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol",
+          "compilerKeccak256": "0xfad472937280e861125ff12aa6f9c2cf7440fbb20a2cc29485c24662ad4279c5"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol",
+          "compilerKeccak256": "0x2e4feda94650a2642039e0309ffdec480ee050bc40864bf5e1dba42bb4dc9e98"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPositionManager.sol",
+          "compilerKeccak256": "0x62dfa0cbee8314ee7e6787db8bc1d364245c340f940875ac7ff11e89d074fc7e"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/ISubscriber.sol",
+          "compilerKeccak256": "0x34ceadec4a63019680e543fe73197f198a55c825d86e18f327840354760b57e7"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol",
+          "compilerKeccak256": "0xd7f32fee74dc7d1a3b078ca1263961baccaa6bf434c79e8fe0e092e30c3e0ec3"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/Actions.sol",
+          "compilerKeccak256": "0x8efd4b8b289177ee27e557d9d0a5a9f973d66fe1eb1ef8959d316b11987ca830"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/LiquidityAmounts.sol",
+          "compilerKeccak256": "0x8ea74b89831877ffe657f8461164a01a6f3c7e46f415410854fca8d28a8cab53"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol",
+          "compilerKeccak256": "0xc5ddf96bd088bc87ea50a20f907fc932fb28397a42682a301b268a11b7f34078"
+        },
+        {
+          "path": "src/GenesisPlayerSale.sol",
+          "compilerKeccak256": "0x55decf60769c641a3efb2f6f2e460586c67bc9b21bb575c121e1afac6502a977"
+        },
+        {
+          "path": "src/market-v2/OmertaGenesisCoordinatorV2.sol",
+          "compilerKeccak256": "0x9f3d2e78d76a429880fede816efe318240282132b614974d479ee5ee1a42c9b1"
+        }
+      ]
+    },
+    {
+      "contract": "HookExploitRegressionV2Test",
+      "path": "out/HookExploitRegressionV2.t.sol/HookExploitRegressionV2Test.json",
+      "sha256": "4bfaa4681289260326e431e6ae595606e9c9941e9f56cb3bc05c28e65f9a81ba",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "test/market-v2/HookExploitRegressionV2.t.sol": "HookExploitRegressionV2Test"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "creationTemplateSha256": "f25820d770930f5e7f83e922de2e34e53b952fd0ad5786ee0c93fa2594583a22",
+      "runtimeTemplateSha256": "8ed6e608d3e0509f96cd366d47648ef6330c7ac4e82b2cdeee557fe79d1ef575",
+      "sources": [
+        {
+          "path": "lib/forge-std/src/Base.sol",
+          "compilerKeccak256": "0xa3735a6618a3014e42bb4329ad143e3b2c59cd95094350202e4c4a06c9d585dd"
+        },
+        {
+          "path": "lib/forge-std/src/StdAssertions.sol",
+          "compilerKeccak256": "0x4584f551c3a875c26423c1e50a77179bc2f9c9c1ee6d0f0c6be0f89ca5ee8270"
+        },
+        {
+          "path": "lib/forge-std/src/StdChains.sol",
+          "compilerKeccak256": "0xd3edaf57db178f839d97ccee0009c2b7b20f78c2adca9028a6013acb8d5b4c5e"
+        },
+        {
+          "path": "lib/forge-std/src/StdCheats.sol",
+          "compilerKeccak256": "0x0fa6ec03602648b62cce41aab2096e6b7e052f2846075d967b6958dd586db746"
+        },
+        {
+          "path": "lib/forge-std/src/StdConstants.sol",
+          "compilerKeccak256": "0x319ccdabfa2c0b2428301445873270ffea20f0e039d4fd5e6eeba65158e4e534"
+        },
+        {
+          "path": "lib/forge-std/src/StdError.sol",
+          "compilerKeccak256": "0xbf477b11a42d7611696956546bcfaa29317d1166bf65e402344599c05943fc77"
+        },
+        {
+          "path": "lib/forge-std/src/StdInvariant.sol",
+          "compilerKeccak256": "0x4dab3021edfa9511bbdd80c48f060ef62eaf457f99eaf841f561fc2557d9a08d"
+        },
+        {
+          "path": "lib/forge-std/src/StdJson.sol",
+          "compilerKeccak256": "0xbc0132abe1c2accc2867c0f03667afffdf92f3e95a581bb03c9557eaa38ea500"
+        },
+        {
+          "path": "lib/forge-std/src/StdMath.sol",
+          "compilerKeccak256": "0xd90ad4fd8aeaeb8929964e686e769fdedd5eded3fc3815df194a0ab9f91a3fb2"
+        },
+        {
+          "path": "lib/forge-std/src/StdStorage.sol",
+          "compilerKeccak256": "0xb91ab24383a5872b894fc93325eef1add6cbbf981628f18e860068bf88bb7dcc"
+        },
+        {
+          "path": "lib/forge-std/src/StdStyle.sol",
+          "compilerKeccak256": "0x43e2a8a9b9c2574dabe74f11adf6f782df218f463540e3b5b563609fe108597d"
+        },
+        {
+          "path": "lib/forge-std/src/StdToml.sol",
+          "compilerKeccak256": "0x58a72c765ed3f7ff6b105509689658795b8a3739b8931772a497155878381861"
+        },
+        {
+          "path": "lib/forge-std/src/StdUtils.sol",
+          "compilerKeccak256": "0x7274081e11c05164fd8eadde4de8305c033e58a43008dea58065f3170ccf0737"
+        },
+        {
+          "path": "lib/forge-std/src/Test.sol",
+          "compilerKeccak256": "0x3dda6083a83dfa3e8526e97bcc28e862ee2442dd58fe94d5c426d65b8e38f73c"
+        },
+        {
+          "path": "lib/forge-std/src/Vm.sol",
+          "compilerKeccak256": "0x399d0b11c8e4e902b6c95c21c187968e62e1bd2a86b8f6dad882c399a05404c1"
+        },
+        {
+          "path": "lib/forge-std/src/console.sol",
+          "compilerKeccak256": "0x4bbf47eb762cef93729d6ef15e78789957147039b113e5d4df48e3d3fd16d0f5"
+        },
+        {
+          "path": "lib/forge-std/src/console2.sol",
+          "compilerKeccak256": "0x3b8fe79f48f065a4e4d35362171304a33784c3a90febae5f2787805a438de12f"
+        },
+        {
+          "path": "lib/forge-std/src/interfaces/IMulticall3.sol",
+          "compilerKeccak256": "0x7aac1389150499a922d1f9ef5749c908cef127cb2075b92fa17e9cb611263d0a"
+        },
+        {
+          "path": "lib/forge-std/src/safeconsole.sol",
+          "compilerKeccak256": "0xbef9786cb49d3eade757bad87568c49c8c8f35721f0193c95ffb055d9e466e11"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol",
+          "compilerKeccak256": "0x1b88b3fb3d85ba5496d7d5f396f83ee1fddcdd6762059ff65992655b67920998"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+          "compilerKeccak256": "0x669464167428061ee0f8618b73b3ee90aff8405683e7ddde8cd77dadaa1afe29"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+          "compilerKeccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+          "compilerKeccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+          "compilerKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+          "compilerKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol",
+          "compilerKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/BitMath.sol",
+          "compilerKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CurrencyReserves.sol",
+          "compilerKeccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Hooks.sol",
+          "compilerKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+          "compilerKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Lock.sol",
+          "compilerKeccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/NonzeroDeltaCount.sol",
+          "compilerKeccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+          "compilerKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+          "compilerKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TickMath.sol",
+          "compilerKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TransientStateLibrary.sol",
+          "compilerKeccak256": "0x7d1e0875747bd89b32c25f1a48da2766e5f4aff1f671ad5f3c0c07ebbbcb946a"
+        },
+        {
+          "path": "lib/v4-core/src/test/PoolModifyLiquidityTest.sol",
+          "compilerKeccak256": "0x4a3ca2a5ed763efa34d9dfa8b90cafcff6b42a0903c6f20815c1a51e785b3af3"
+        },
+        {
+          "path": "lib/v4-core/src/test/PoolSwapTest.sol",
+          "compilerKeccak256": "0x3d769a76b948910a1a2321435e8d19156ff767ad3ddbd5abe4fa60d1e9b11ac0"
+        },
+        {
+          "path": "lib/v4-core/src/test/PoolTestBase.sol",
+          "compilerKeccak256": "0xc3b1c46487231f8416d053652cfb3c773d728705a6a1a542ea48e8d1cca44962"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "lib/v4-core/test/utils/CurrencySettler.sol",
+          "compilerKeccak256": "0x2569dc02a637111de76e8e8c65f27510e7608273c19652fe6d31d76c983c19b6"
+        },
+        {
+          "path": "src/interfaces/IInitializerHook.sol",
+          "compilerKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3"
+        },
+        {
+          "path": "src/interfaces/IOmrV4ObservationSource.sol",
+          "compilerKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151"
+        },
+        {
+          "path": "src/market-v2/OmertaHookV2.sol",
+          "compilerKeccak256": "0xe67a82ee4ce27fe84175091f52e339045d7919b64d139997bf67ae5811ecbbf9"
+        },
+        {
+          "path": "test/market-v2/HookExploitRegressionV2.t.sol",
+          "compilerKeccak256": "0xc1bf163114e9fbde2a59898762f6c96c70399b34d16490fa68b02927fd560409"
+        },
+        {
+          "path": "test/market-v2/OmertaHookV2.t.sol",
+          "compilerKeccak256": "0x78d5516dcf6b862b842c40c6a4890d5701ba60ccaa4cabd02cfae0e030d3b670"
+        }
+      ]
+    },
+    {
+      "contract": "GraduationSettlementRegressionV2Test",
+      "path": "out/GraduationSettlementRegressionV2.t.sol/GraduationSettlementRegressionV2Test.json",
+      "sha256": "4ec138e09d131e28dbe3477e33cae4c353db034d570bf93dd75cd861b5e9687f",
+      "compiler": {
+        "version": "0.8.26+commit.8a97fa7a"
+      },
+      "settings": {
+        "remappings": [
+          "@ensdomains/=lib/v4-core/node_modules/@ensdomains/",
+          "@openzeppelin/=lib/openzeppelin-contracts/",
+          "@uniswap/v4-core/=lib/v4-core/",
+          "ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/",
+          "erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/",
+          "forge-std/=lib/forge-std/src/",
+          "hardhat/=lib/v4-core/node_modules/hardhat/",
+          "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+          "permit2/=lib/permit2/",
+          "solmate/=lib/v4-core/lib/solmate/",
+          "v4-core/=lib/v4-core/src/",
+          "v4-periphery/=lib/v4-periphery/src/"
+        ],
+        "optimizer": {
+          "enabled": true,
+          "runs": 800
+        },
+        "metadata": {
+          "bytecodeHash": "ipfs"
+        },
+        "compilationTarget": {
+          "test/market-v2/GraduationSettlementRegressionV2.t.sol": "GraduationSettlementRegressionV2Test"
+        },
+        "evmVersion": "cancun",
+        "libraries": {},
+        "viaIR": true
+      },
+      "creationTemplateSha256": "4abdba44c5836dc23926b7ff448f950ded4bd386f68e63ecbb67104008f98d18",
+      "runtimeTemplateSha256": "f1faaa28804a7f9ed7b1adcb9e7bf676090b6ef7bf340c24af84897a364d5ca4",
+      "sources": [
+        {
+          "path": "lib/forge-std/src/Base.sol",
+          "compilerKeccak256": "0xa3735a6618a3014e42bb4329ad143e3b2c59cd95094350202e4c4a06c9d585dd"
+        },
+        {
+          "path": "lib/forge-std/src/Script.sol",
+          "compilerKeccak256": "0xc942e27c7baae499beb01afbbae99f24d42af9a6e4aae675bc6901b704aa8e9b"
+        },
+        {
+          "path": "lib/forge-std/src/StdAssertions.sol",
+          "compilerKeccak256": "0x4584f551c3a875c26423c1e50a77179bc2f9c9c1ee6d0f0c6be0f89ca5ee8270"
+        },
+        {
+          "path": "lib/forge-std/src/StdChains.sol",
+          "compilerKeccak256": "0xd3edaf57db178f839d97ccee0009c2b7b20f78c2adca9028a6013acb8d5b4c5e"
+        },
+        {
+          "path": "lib/forge-std/src/StdCheats.sol",
+          "compilerKeccak256": "0x0fa6ec03602648b62cce41aab2096e6b7e052f2846075d967b6958dd586db746"
+        },
+        {
+          "path": "lib/forge-std/src/StdConstants.sol",
+          "compilerKeccak256": "0x319ccdabfa2c0b2428301445873270ffea20f0e039d4fd5e6eeba65158e4e534"
+        },
+        {
+          "path": "lib/forge-std/src/StdError.sol",
+          "compilerKeccak256": "0xbf477b11a42d7611696956546bcfaa29317d1166bf65e402344599c05943fc77"
+        },
+        {
+          "path": "lib/forge-std/src/StdInvariant.sol",
+          "compilerKeccak256": "0x4dab3021edfa9511bbdd80c48f060ef62eaf457f99eaf841f561fc2557d9a08d"
+        },
+        {
+          "path": "lib/forge-std/src/StdJson.sol",
+          "compilerKeccak256": "0xbc0132abe1c2accc2867c0f03667afffdf92f3e95a581bb03c9557eaa38ea500"
+        },
+        {
+          "path": "lib/forge-std/src/StdMath.sol",
+          "compilerKeccak256": "0xd90ad4fd8aeaeb8929964e686e769fdedd5eded3fc3815df194a0ab9f91a3fb2"
+        },
+        {
+          "path": "lib/forge-std/src/StdStorage.sol",
+          "compilerKeccak256": "0xb91ab24383a5872b894fc93325eef1add6cbbf981628f18e860068bf88bb7dcc"
+        },
+        {
+          "path": "lib/forge-std/src/StdStyle.sol",
+          "compilerKeccak256": "0x43e2a8a9b9c2574dabe74f11adf6f782df218f463540e3b5b563609fe108597d"
+        },
+        {
+          "path": "lib/forge-std/src/StdToml.sol",
+          "compilerKeccak256": "0x58a72c765ed3f7ff6b105509689658795b8a3739b8931772a497155878381861"
+        },
+        {
+          "path": "lib/forge-std/src/StdUtils.sol",
+          "compilerKeccak256": "0x7274081e11c05164fd8eadde4de8305c033e58a43008dea58065f3170ccf0737"
+        },
+        {
+          "path": "lib/forge-std/src/Test.sol",
+          "compilerKeccak256": "0x3dda6083a83dfa3e8526e97bcc28e862ee2442dd58fe94d5c426d65b8e38f73c"
+        },
+        {
+          "path": "lib/forge-std/src/Vm.sol",
+          "compilerKeccak256": "0x399d0b11c8e4e902b6c95c21c187968e62e1bd2a86b8f6dad882c399a05404c1"
+        },
+        {
+          "path": "lib/forge-std/src/console.sol",
+          "compilerKeccak256": "0x4bbf47eb762cef93729d6ef15e78789957147039b113e5d4df48e3d3fd16d0f5"
+        },
+        {
+          "path": "lib/forge-std/src/console2.sol",
+          "compilerKeccak256": "0x3b8fe79f48f065a4e4d35362171304a33784c3a90febae5f2787805a438de12f"
+        },
+        {
+          "path": "lib/forge-std/src/interfaces/IMulticall3.sol",
+          "compilerKeccak256": "0x7aac1389150499a922d1f9ef5749c908cef127cb2075b92fa17e9cb611263d0a"
+        },
+        {
+          "path": "lib/forge-std/src/safeconsole.sol",
+          "compilerKeccak256": "0xbef9786cb49d3eade757bad87568c49c8c8f35721f0193c95ffb055d9e466e11"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol",
+          "compilerKeccak256": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol",
+          "compilerKeccak256": "0x0afcb7e740d1537b252cb2676f600465ce6938398569f09ba1b9ca240dde2dfc"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol",
+          "compilerKeccak256": "0x1a6221315ce0307746c2c4827c125d821ee796c74a676787762f4778671d4f44"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC6093.sol",
+          "compilerKeccak256": "0x1b88b3fb3d85ba5496d7d5f396f83ee1fddcdd6762059ff65992655b67920998"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol",
+          "compilerKeccak256": "0x669464167428061ee0f8618b73b3ee90aff8405683e7ddde8cd77dadaa1afe29"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol",
+          "compilerKeccak256": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+          "compilerKeccak256": "0xd6fa4088198f04eef10c5bce8a2f4d60554b7ec4b987f684393c01bf79b94d9f"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol",
+          "compilerKeccak256": "0x304d732678032a9781ae85c8f204c8fba3d3a5e31c02616964e75cfdc5049098"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol",
+          "compilerKeccak256": "0xf78f05f3b8c9f75570e85300d7b4600d7f6f6a198449273f31d44c1641adb46f"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/Context.sol",
+          "compilerKeccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/Panic.sol",
+          "compilerKeccak256": "0xf7fe324703a64fc51702311dc51562d5cb1497734f074e4f483bfb6717572d7a"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol",
+          "compilerKeccak256": "0xa516cbf1c7d15d3517c2d668601ce016c54395bf5171918a14e2686977465f53"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+          "compilerKeccak256": "0xcf74f855663ce2ae00ed8352666b7935f6cddea2932fdf2c3ecd30a9b1cd0e97"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/Hashes.sol",
+          "compilerKeccak256": "0x8cbd338f083224b4b6f0ff42cbda641a0a6c31ffcdca197452b97fe4d0918269"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/cryptography/MerkleProof.sol",
+          "compilerKeccak256": "0x5e27273c7ebdbcfe7d2bad2866feb635a49db139abfe5643bdeacec4a0880225"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol",
+          "compilerKeccak256": "0x8891738ffe910f0cf2da09566928589bf5d63f4524dd734fd9cedbac3274dd5c"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/math/Math.sol",
+          "compilerKeccak256": "0x59973a93b1f983f94e10529f46ca46544a9fec2b5f56fb1390bbe9e0dc79f857"
+        },
+        {
+          "path": "lib/openzeppelin-contracts/contracts/utils/math/SafeCast.sol",
+          "compilerKeccak256": "0xc8cae21c9ae4a46e5162ff9bf5b351d6fa6a6eba72d515f3bc1bdfeda7fdf083"
+        },
+        {
+          "path": "lib/permit2/src/interfaces/IAllowanceTransfer.sol",
+          "compilerKeccak256": "0x37f0ac203b6ef605c9533e1a739477e8e9dcea90710b40e645a367f8a21ace29"
+        },
+        {
+          "path": "lib/permit2/src/interfaces/IEIP712.sol",
+          "compilerKeccak256": "0xfdccf2b9639070803cd0e4198427fb0df3cc452ca59bd3b8a0d957a9a4254138"
+        },
+        {
+          "path": "lib/permit2/src/interfaces/IERC1271.sol",
+          "compilerKeccak256": "0x0a546b8535127fb4a49d36d5f306fd5a8bbe6125a1852f935b9bb85a04c1acef"
+        },
+        {
+          "path": "lib/permit2/src/libraries/SignatureVerification.sol",
+          "compilerKeccak256": "0x99f437ffe99aa1ff7885aec8b971f48efac00c6ebc59c02eec78c9ca850a5e30"
+        },
+        {
+          "path": "lib/permit2/test/utils/DeployPermit2.sol",
+          "compilerKeccak256": "0xcbb39b108ef3ef287c248dfcce1a2bd4a9abde620bb30b2a425baa4824b91f67"
+        },
+        {
+          "path": "lib/v4-core/lib/solmate/src/tokens/ERC721.sol",
+          "compilerKeccak256": "0x04af19f16f00ba65ae168d6d10da5210dc18da6bcec6974dccf984ba388aa22d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExtsload.sol",
+          "compilerKeccak256": "0x80b53ca4907d6f0088c3b931f2b72cad1dc4615a95094d96bd0fb8dff8d5ba43"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IExttload.sol",
+          "compilerKeccak256": "0xc6b68283ebd8d1c789df536756726eed51c589134bb20821b236a0d22a135937"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IHooks.sol",
+          "compilerKeccak256": "0xc131ffa2d04c10a012fe715fe2c115811526b7ea34285cf0a04ce7ce8320da8d"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IPoolManager.sol",
+          "compilerKeccak256": "0xbdab3544da3d32dfdf7457baa94e17d5a3012952428559e013ffac45d067038e"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/IProtocolFees.sol",
+          "compilerKeccak256": "0x32a666e588a2f66334430357bb1e2424fe7eebeb98a3364b1dd16eb6ccca9848"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/callback/IUnlockCallback.sol",
+          "compilerKeccak256": "0x58c82f2bd9d7c097ed09bd0991fedc403b0ec270eb3d0158bfb095c06a03d719"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC20Minimal.sol",
+          "compilerKeccak256": "0xeccadf1bf69ba2eb51f2fe4fa511bc7bb05bbd6b9f9a3cb8e5d83d9582613e0f"
+        },
+        {
+          "path": "lib/v4-core/src/interfaces/external/IERC6909Claims.sol",
+          "compilerKeccak256": "0xa586f345739e52b0488a0fe40b6e375cce67fdd25758408b0efcb5133ad96a48"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/BitMath.sol",
+          "compilerKeccak256": "0x51b9be4f5c4fd3e80cbc9631a65244a2eb2be250b6b7f128a2035080e18aee8d"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CurrencyReserves.sol",
+          "compilerKeccak256": "0x1576616129933fcdf3b684cea33cffd9c95e18fafbd2832a8c48ac3d8526d4c3"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/CustomRevert.sol",
+          "compilerKeccak256": "0x111ed3031b6990c80a93ae35dde6b6ac0b7e6af471388fdd7461e91edda9b7de"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint128.sol",
+          "compilerKeccak256": "0xad236e10853f4b4b20a35a9bb52b857c4fc79874846b7e444e06ead7f2630542"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FixedPoint96.sol",
+          "compilerKeccak256": "0xef5c3fd41aee26bb12aa1c32873cfee88e67eddfe7c2b32283786265ac669741"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/FullMath.sol",
+          "compilerKeccak256": "0x4fc73a00817193fd3cac1cc03d8167d21af97d75f1815a070ee31a90c702b4c2"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Hooks.sol",
+          "compilerKeccak256": "0xd679b4b2d429689bc44f136050ebc958fb2d7d0d3a3c7b3e48c08ab4fba09aaa"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LPFeeLibrary.sol",
+          "compilerKeccak256": "0xbf6914e01014e7c1044111feb7df7a3d96bb503b3da827ad8464b1955580d13b"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/LiquidityMath.sol",
+          "compilerKeccak256": "0x000ef2eadcc1eb7b2c18a77655f94e76e0e860f605783484657ef65fd6eda353"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Lock.sol",
+          "compilerKeccak256": "0x9338be4b5695f1da5f3d3f7a3eeaf7a356c1045458289586ac0cbe9cef77c6d5"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/NonzeroDeltaCount.sol",
+          "compilerKeccak256": "0x0666ebd5d3528d7d52c48538296367a4cff97a578cf13365c51983fae3219b87"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/ParseBytes.sol",
+          "compilerKeccak256": "0x7533b13f53ee2c2c55500100b22ffd6e37e7523c27874edc98663d53a8672b15"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/Position.sol",
+          "compilerKeccak256": "0xddab2a831f1befb6abf5567e77c4582169ca8156cf69eb4f22d8e87f7226a3f9"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/SafeCast.sol",
+          "compilerKeccak256": "0x42c4a24f996a14d358be397b71f7ec9d7daf666aaec78002c63315a6ee67aa86"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/StateLibrary.sol",
+          "compilerKeccak256": "0x96db333ee126a841dd959e38e452cc59d73583cb0437a1d48b2052e33a74f952"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TickMath.sol",
+          "compilerKeccak256": "0x4e1a11e154eb06106cb1c4598f06cca5f5ca16eaa33494ba2f0e74981123eca8"
+        },
+        {
+          "path": "lib/v4-core/src/libraries/TransientStateLibrary.sol",
+          "compilerKeccak256": "0x7d1e0875747bd89b32c25f1a48da2766e5f4aff1f671ad5f3c0c07ebbbcb946a"
+        },
+        {
+          "path": "lib/v4-core/src/types/BalanceDelta.sol",
+          "compilerKeccak256": "0xa719c8fe51e0a9524280178f19f6851bcc3b3b60e73618f3d60905d35ae5569f"
+        },
+        {
+          "path": "lib/v4-core/src/types/BeforeSwapDelta.sol",
+          "compilerKeccak256": "0x2a774312d91285313d569da1a718c909655da5432310417692097a1d4dc83a78"
+        },
+        {
+          "path": "lib/v4-core/src/types/Currency.sol",
+          "compilerKeccak256": "0x4a0b84b282577ff6f8acf13ec9f4d32dbb9348748b49611d00e68bee96609c93"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolId.sol",
+          "compilerKeccak256": "0x308311916ea0f5c2fd878b6a2751eb223d170a69e33f601fae56dfe3c5d392af"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolKey.sol",
+          "compilerKeccak256": "0xf89856e0580d7a4856d3187a76858377ccee9d59702d230c338d84388221b786"
+        },
+        {
+          "path": "lib/v4-core/src/types/PoolOperation.sol",
+          "compilerKeccak256": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162"
+        },
+        {
+          "path": "lib/v4-periphery/src/PositionManager.sol",
+          "compilerKeccak256": "0x0c28bf323e06f12b8cfe0f10324a7f7c043af1b3dbf4c9ddd0b582545920b6a2"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/BaseActionsRouter.sol",
+          "compilerKeccak256": "0xc9ed11618c4d82c5b723841a7d8eaf61600118c593e01e9929a193ecdb1ad63a"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/DeltaResolver.sol",
+          "compilerKeccak256": "0x94a2da2be5c924df65a8e1e29f585bbe4c37777fedd43b45989c66d509a4a83c"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/EIP712_v4.sol",
+          "compilerKeccak256": "0x151e85890822c1b0fe85ec3c021826cb42f615e2b9d6fcdd79019681a6ee5588"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/ERC721Permit_v4.sol",
+          "compilerKeccak256": "0xb1c3d4cc1fa0c7f9562674917d9ffdd119a1ccdb3adca44b2832d5c91c068125"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/ImmutableState.sol",
+          "compilerKeccak256": "0x1867c9fa2f9b4fa73bab0fcdc9d19ccef4eeac552273d8b84a170cd1cc90350a"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/Multicall_v4.sol",
+          "compilerKeccak256": "0x654c6e65bd9bbf12b2cc393f8523db04e85ec45e829200de3895709479d6d569"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/NativeWrapper.sol",
+          "compilerKeccak256": "0xfb756bc69e401d621f615746d881cfef7e98f3f563775905a1eca79a074a35ca"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/Notifier.sol",
+          "compilerKeccak256": "0x5f2a29b2a528269643d026bf4698e6520eeb1e5fc773f9d5059b3e279a488bf6"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/Permit2Forwarder.sol",
+          "compilerKeccak256": "0xcdf793e6732cdf0c386f89573384032314b0893bf208b3d75ac71d3002674a3b"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/PoolInitializer_v4.sol",
+          "compilerKeccak256": "0x068c85032e50ef6374958ff3e7dcc143527f669de1bbba831e552d033344a1e3"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/ReentrancyLock.sol",
+          "compilerKeccak256": "0x66dd19f8eb40b7a86afea0e5b1dcada6268041027b0dfc493b80ca1f66af217d"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/SafeCallback.sol",
+          "compilerKeccak256": "0xd78b583df1b9ee06d58e83b84fc9f08971389b34dd34bc13db072e0c13c710da"
+        },
+        {
+          "path": "lib/v4-periphery/src/base/UnorderedNonce.sol",
+          "compilerKeccak256": "0x0ec175bf2213d75606ebb770227e8622ae9666fbde8ff2d1682d85890b81676e"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IEIP712_v4.sol",
+          "compilerKeccak256": "0xd7f7115476e307a0bfc32a0f0a0f5434e9e5ca62a6c5af1e18b75e48161bb408"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IERC721Permit_v4.sol",
+          "compilerKeccak256": "0x103adbba724ef536abc536fe8a4d7dc12880724c562109b69f2adce4a91fa017"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IImmutableState.sol",
+          "compilerKeccak256": "0x36ab3100e87457ecf04887f4f540e34fd7f21d8e3b83880cb679239e60b7b06b"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IMsgSender.sol",
+          "compilerKeccak256": "0xcc7d4e3f2fde34cf1ad9f05a8e43977e04d19624f71eb8a8c295feaf64b362a3"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IMulticall_v4.sol",
+          "compilerKeccak256": "0x336bec303f7ff86497d2679464c5adad5040f412b3d0769ce5e1d2a42f7e2c08"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/INotifier.sol",
+          "compilerKeccak256": "0xfdc5187a98240a1691aae98b7dd2444d4c2bfb4746f3c34de9f3d18399c17c5e"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPermit2Forwarder.sol",
+          "compilerKeccak256": "0xfad472937280e861125ff12aa6f9c2cf7440fbb20a2cc29485c24662ad4279c5"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPoolInitializer_v4.sol",
+          "compilerKeccak256": "0x2e4feda94650a2642039e0309ffdec480ee050bc40864bf5e1dba42bb4dc9e98"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPositionDescriptor.sol",
+          "compilerKeccak256": "0x5a4327e608b35ba2d3451c267b609336efbd780912080dbb1a21563db25c9768"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IPositionManager.sol",
+          "compilerKeccak256": "0x62dfa0cbee8314ee7e6787db8bc1d364245c340f940875ac7ff11e89d074fc7e"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/ISubscriber.sol",
+          "compilerKeccak256": "0x34ceadec4a63019680e543fe73197f198a55c825d86e18f327840354760b57e7"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IUnorderedNonce.sol",
+          "compilerKeccak256": "0xd7f32fee74dc7d1a3b078ca1263961baccaa6bf434c79e8fe0e092e30c3e0ec3"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/IV4Router.sol",
+          "compilerKeccak256": "0xc4133fae25e61cc2447d7331729f6035322d7c1fe26b39b225422bf98cc63459"
+        },
+        {
+          "path": "lib/v4-periphery/src/interfaces/external/IWETH9.sol",
+          "compilerKeccak256": "0xe88abf12501ac275619aec0687240a07d26968aecbbcdfea88ba8bbd5d6e5e14"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/ActionConstants.sol",
+          "compilerKeccak256": "0x3d6f0e5b4a7b1e60bad93e73dce5db67fb66bebef11c31ed8355014a79aa03b3"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/Actions.sol",
+          "compilerKeccak256": "0x8efd4b8b289177ee27e557d9d0a5a9f973d66fe1eb1ef8959d316b11987ca830"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/CalldataDecoder.sol",
+          "compilerKeccak256": "0x26df49e13fb5410fd4db253cca877dfdfb3a1ba03e394d054c0e0514a88a56e5"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/ERC721PermitHash.sol",
+          "compilerKeccak256": "0xd8024f516738a1f968169875efd4ba803049c933cf6ea5e36189df9915f4e3f2"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/LiquidityAmounts.sol",
+          "compilerKeccak256": "0x8ea74b89831877ffe657f8461164a01a6f3c7e46f415410854fca8d28a8cab53"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/Locker.sol",
+          "compilerKeccak256": "0x5c0859290a277fbfba8579b506426d3fc4b2ff7d8b691c03dd23aa85797fdae1"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/PathKey.sol",
+          "compilerKeccak256": "0xbbd79ffefe045f025263e389539021266fb4d371463aefba405e1ff1d3fcf9bc"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/PositionInfoLibrary.sol",
+          "compilerKeccak256": "0xc5ddf96bd088bc87ea50a20f907fc932fb28397a42682a301b268a11b7f34078"
+        },
+        {
+          "path": "lib/v4-periphery/src/libraries/SlippageCheck.sol",
+          "compilerKeccak256": "0x9b7872e403b417dfbcf9835b16109f80f7abed702652a9817e28f07189983b4b"
+        },
+        {
+          "path": "src/GenesisPlayerSale.sol",
+          "compilerKeccak256": "0x55decf60769c641a3efb2f6f2e460586c67bc9b21bb575c121e1afac6502a977"
+        },
+        {
+          "path": "src/interfaces/IInitializerHook.sol",
+          "compilerKeccak256": "0x6d70f8604515d341b27801c185bbe57b29483834ae180b048efdd9d4cdfeddc3"
+        },
+        {
+          "path": "src/interfaces/IOmrV4ObservationSource.sol",
+          "compilerKeccak256": "0xa4ac6829a93d87f952a608a7b5de4c0a12ec525f676b4c078c3fb9f521b67151"
+        },
+        {
+          "path": "src/market-v2/OmertaGenesisCoordinatorV2.sol",
+          "compilerKeccak256": "0x9f3d2e78d76a429880fede816efe318240282132b614974d479ee5ee1a42c9b1"
+        },
+        {
+          "path": "src/market-v2/OmertaHookV2.sol",
+          "compilerKeccak256": "0xe67a82ee4ce27fe84175091f52e339045d7919b64d139997bf67ae5811ecbbf9"
+        },
+        {
+          "path": "test/market-v2/GenesisCoordinatorV2.t.sol",
+          "compilerKeccak256": "0xab9444cff7ed7a285bc7c54c4e8e594d18ed48ea6fd24713670fd1cd9bc96ec2"
+        },
+        {
+          "path": "test/market-v2/GraduationSettlementRegressionV2.t.sol",
+          "compilerKeccak256": "0x2299f13190289a77872b0ab733566a2d1e7242107d1605db532972fb2ec46c6e"
+        }
+      ]
+    }
+  ],
+  "report": {
+    "path": "audits/2026-10-14-v4-hook-security/README.md",
+    "sha256": "e0d253f050396226453eac5583f5cebf8c04dd6dfef6b27dbb0eaad4bf4a243a"
+  },
+  "evidence": [
+    {
+      "path": "audits/2026-10-14-v4-hook-security/README.md",
+      "sha256": "e0d253f050396226453eac5583f5cebf8c04dd6dfef6b27dbb0eaad4bf4a243a"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/STATIC-TRIAGE.md",
+      "sha256": "f205ae7e7a7155df655b42410e589cd0c6086e5f8bfcff818af912a0077a1ebd"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/baseline-hashes.json",
+      "sha256": "512cf18376156e2c931af283216e5505c5e24dc7ff2c90fc115f7fb718730338"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/baseline-hook-tests.log",
+      "sha256": "02b5b4a9cd0f6df3cd4571728ed0d78ee605b61ecc952e901242608aa2a886a7"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/baseline-status.txt",
+      "sha256": "75c7bc5d6dec37ea4c1125f026b2b08c8ef24584b16843d15ec7a4f1de829242"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/baseline.patch",
+      "sha256": "f01928265add4ea991e1dc6b02cd80801ef18de212c118904eb12253da355bf4"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/boundary-retest.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/boundary-retest.log",
+      "sha256": "6efb663c68f061c9a5b88cbe58d7ca7136c1604d173c35a449d33d184e8fc83f"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/boundary-suites.txt",
+      "sha256": "9479cb7f430fcf1f784e4c5808e350d680dbf4c296b7f815f56703bb7261792e"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/build-manifest.mjs",
+      "sha256": "bea6f8f74d484c266d11a21c4eb50bacedc898719fff1437298686d12fd5822b"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/compatibility-hook-tests.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/compatibility-hook-tests.log",
+      "sha256": "ebb6d696dce4027e2baa3b95833623b2804e1566d00d24752c244feb5b248a15"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/exploit-regressions.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/exploit-regressions.log",
+      "sha256": "1d3f7cbfba1677a1f90b0572b0628f1dbde336a049a93d08baf077ff00b09012"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/foundry-config.json",
+      "sha256": "e75ea578e431bb27ee734dd804732f8fa971b689a1d34cc2c663c6c1f34a4528"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/graduation-regressions.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/graduation-regressions.log",
+      "sha256": "a71653d9a757592e0514c5f759476442cf6231cf0a459bdf9fec6f853a2f3206"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/market-boundary-tests.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/market-boundary-tests.log",
+      "sha256": "5f7bebead0b4a25135ea4a8899267335d695d00b3bc1fcd77af4dfca759018fa"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/observer-regressions.exit",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/observer-regressions.log",
+      "sha256": "a50dd2c4218e74525b63c767c2a81339335ab32dd3ebd2ed33709b61710b5017"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-coordinator-ir.exit",
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-coordinator-ir.json",
+      "sha256": "72702429630a5b8359b4c4436af9116b3e281665cb130a78adbab183260da5f0"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-coordinator-ir.log",
+      "sha256": "675cb8aaf642fadc6913c746de3b2b1a5afec2039218b64f36eb1bd70dedc5de"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-coordinator.exit",
+      "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-coordinator.log",
+      "sha256": "ebc1a9ec79f2ab320ffecb75c0d3ff11818009de5c74e5bf145cdf0d76c8d3da"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook-v2.exit",
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook-v2.json",
+      "sha256": "f6d7f0f16cef973d1b79ab803ebb23f25014f33273ef1c87f392d80a7cd53ab9"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook-v2.log",
+      "sha256": "f9dd3744a9035fa65cdb5025be072adcec280f9c5fcee363f846ef8707b5127c"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook.exit",
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook.json",
+      "sha256": "86588985361455e9f1fdcb5928d39ce38b966b798d559604160171a806b41971"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-hook.log",
+      "sha256": "eb43d3645a4aa6ebf65ecc75f776d3b4f1f6838fe3502e614f448a75791dc7c2"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-manager.exit",
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-manager.json",
+      "sha256": "93a48d10f9ac36c0a706c088ac6fdac7b08e3d58d3e728d53f2374404372540f"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-manager.log",
+      "sha256": "df3dba6e3bf7a5282d5e084f72c5d27ab2567355b7c14763c1f13e5f55ff6f6a"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-router.exit",
+      "sha256": "186a919b8c7cb84aebf4e53c70cd1cc028a93a1d183ee29dd6e10cd18a714577"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-router.json",
+      "sha256": "b3936664e51e9195a74660808561c5f12f1c36caf230dfbe2087b6e9fb0bc490"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/slither-router.log",
+      "sha256": "11a1b9e9921e726ed36da9facc47d7d4e50e336561859fed6f6c18632c2d2a62"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2108492978889347486.json",
+      "sha256": "f846d4e3e371c7f6dbe9b08b45b1aff8336ee5e9a8a2b5d82ad24b63079febe3"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2108566687553314875.json",
+      "sha256": "977c86127b46c0f35e5713118eea4cc87fcf60711a56f3442d16115d0bd6f7c4"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737503393554544.json",
+      "sha256": "c0e99dcbcf0871b0bdb01fba069d70d05cebf0efa77c6d4ccb36d6296fe8a0d9"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737505927139648.json",
+      "sha256": "ca47ab07921105b1b562b2a7ffce87dd630b728d573cc884b4d0188df07b212b"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737508699611147.json",
+      "sha256": "4275a8b12eb6b9dd0813708a6eaa118296e75748ad1a70d0dbbebf4b6596fbbe"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737510771245091.json",
+      "sha256": "613c9ed0d92645374cf585c0c25f7c5dff38629e1f09028a2e5f802ee8ce012d"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737513506222230.json",
+      "sha256": "67c0bed12f4990ed138a85506fd06f080a3bcb2470c94a4fb2b74f78e2c91345"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737516324823353.json",
+      "sha256": "0ee315bd439685fd5a596ed2976f09094b129c4207d319cfcea6f2f02b398fea"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/2109737519462105244.json",
+      "sha256": "8be7b04fbe938f78bfed8753b36088c3f2c61c027b99b5d8fe5413777e191d72"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/Bucket-Launchpad-Security-Review.pdf",
+      "sha256": "89c40393d129e9ae86939e0e1dedfcbca9bb4fa7d2a9f02ac9647dde51cc9720"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/Bucket-Launchpad-Security-Review.txt",
+      "sha256": "17c632bc079fe467eb56a73815fcbcc006ca0cb4d0c4fddff75e3a7ade4820af"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/BuilDefi-Security-Review.pdf",
+      "sha256": "394a4abf2222100f1ffe4edcec674835520d41cfeafc6ef4e55fa37808dddb2d"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/BuilDefi-Security-Review.txt",
+      "sha256": "cc767b4aba4e4d189b2b7bd1abdb039191463c16ed9bd6f7fc1d1f1b2dc62557"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/Letscash-Security-Review.pdf",
+      "sha256": "a3dd127f5b2107750f145bc03681d6237f11633b30f1e70a58882d8d35060d96"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/Letscash-Security-Review.txt",
+      "sha256": "9d7b3bc36a54b5f910623dd2a7a4d26313b5b69c2b16a4c617f858d2b61373c1"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/source-posts/README.md",
+      "sha256": "da826f822586b25c6f1583ab026ea8817a0f5b2da622f8fa9c193b008d615711"
+    },
+    {
+      "path": "audits/2026-10-14-v4-hook-security/toolchain.txt",
+      "sha256": "aec539e9ddfdb7482d3aaa807c22f238eb62e21e9cba4248a03f5897acc0e24c"
+    }
+  ]
+}

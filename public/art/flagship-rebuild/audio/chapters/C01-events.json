@@ -1,0 +1,296 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C01-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  100,
+        "character":  125,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "has",
+        "ms":  465,
+        "character":  130,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "put",
+        "ms":  645,
+        "character":  134,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "up",
+        "ms":  865,
+        "character":  138,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  1035,
+        "character":  141,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "stake",
+        "ms":  1130,
+        "character":  145,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C01-U02",
+        "ms":  2355,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "One",
+        "ms":  2455,
+        "character":  201,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "seat",
+        "ms":  2680,
+        "character":  205,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  2985,
+        "character":  210,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "empty",
+        "ms":  3140,
+        "character":  213,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C01-U03",
+        "ms":  4310,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Fill",
+        "ms":  4410,
+        "character":  269,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  4700,
+        "character":  274,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "with",
+        "ms":  4830,
+        "character":  277,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  5035,
+        "character":  282,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "wrong",
+        "ms":  5155,
+        "character":  286,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "person",
+        "ms":  5425,
+        "character":  292,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  6345,
+        "character":  300,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "everyone",
+        "ms":  6540,
+        "character":  304,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "could",
+        "ms":  7030,
+        "character":  313,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "go",
+        "ms":  7220,
+        "character":  319,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  7415,
+        "character":  322,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "jail",
+        "ms":  7555,
+        "character":  325,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C01-U04",
+        "ms":  8705,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "This",
+        "ms":  8805,
+        "character":  380,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  9035,
+        "character":  385,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "oh",
+        "ms":  9190,
+        "character":  388,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "mare",
+        "ms":  9335,
+        "character":  391,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "tah",
+        "ms":  9570,
+        "character":  396,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  10280,
+        "character":  401,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "multiplayer",
+        "ms":  10365,
+        "character":  403,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "mafia",
+        "ms":  11035,
+        "character":  415,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "strategy",
+        "ms":  11475,
+        "character":  421,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "R",
+        "ms":  12090,
+        "character":  430,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "P",
+        "ms":  12265,
+        "character":  432,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "G",
+        "ms":  12485,
+        "character":  434,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "in",
+        "ms":  12745,
+        "character":  436,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  12875,
+        "character":  439,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "browser",
+        "ms":  13020,
+        "character":  444,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C01-U04-end",
+        "ms":  14320,
+        "character":  0,
+        "length":  0
+    }
+]

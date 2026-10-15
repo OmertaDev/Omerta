@@ -1,0 +1,50 @@
+OMERTÀ's street economy starts with a simple premise: every movement of cash should leave a record someone can reconcile.
+An append-only ledger gives the city memory. A nightly conservation sweep asks whether the numbers still add up.
+The interesting question is not only how much cash you have. It is where it came from, where it went, and who noticed.
+A bank deposit has a journey before it clears. That delay gives timing a price.
+Withdrawals can be immediate while deposits are in transit. A player who ignores the difference may plan with cash they cannot yet use.
+Would you carry cash into a dangerous district or wait for the bank to clear it first?
+The safest ledger entry is often the one made before your next risky move.
+District quotes move in four-hour blocks. A price can change while you are still choosing a route.
+Arbitrage is a problem in geography and fees, not a magic button marked profit.
+Compare a quote, price the trip, count the fees, then ask if the spread still exists.
+Two players can see the same market and make different choices because they stand in different districts.
+A route that looks clever on paper can fail on a clock. The city charges for delay.
+Rackets accrue on your clock. Their pressure accrues too.
+Owning a corner is an operating problem: defend it, maintain it, and know who sees the money move.
+Passive in-game income is still exposed to the city's raids, rivals, and upkeep.
+The best racket may be the one you can actually protect after nightfall.
+Five upgradeable businesses turn an empire into a series of maintenance decisions.
+A business is more than a cash flow. It is a place with costs, attention, and somebody who might want it.
+Would you expand one front or strengthen the one already paying the bills?
+The Kitchen links inputs, purity, yield, stealth, crews, wages, and raids to one clock.
+Product does not move itself. A crew gets paid whether or not your plan worked.
+Making more can mean exposing more. The Kitchen rewards a manager who can count risk as well as output.
+Stealth and yield pull on different parts of the same operation. Choose a recipe for the night you actually have.
+The black market needs another side to every deal: buyers, sellers, reserves, and clocks.
+An anti-snipe clock turns the final moments of an auction into a decision, not a reflex test.
+A buy order says what you are willing to pay. The city decides whether anyone wants that trade.
+What would you list at auction if you knew the wrong bidder could also learn what you own?
+Credit in OMERTÀ has a direction. A loan can be collateralized, defaulted, and sold.
+The dangerous part of lending is not the signature. It is the next week of the borrower's life.
+Collateral changes who carries the risk; it does not make risk disappear.
+A default becomes someone else's opportunity, problem, or grudge depending on who owns the paper.
+Convoys put bulk freight on a real clock. Guards, tolls, insurance, and ambush risk travel with the cargo.
+The cheapest route is not always the route that gets a shipment home.
+Would you buy more guards, pay the toll, or accept the risk and keep the margin?
+Insurance is a cost paid before the bad night, not a story told after it.
+Freight makes a district price actionable only if you can actually move the goods.
+The port is another logistics map: boats, routes, contraband, interception, and rendezvous.
+Water can look open from shore. A route still has chokepoints and people watching it.
+Buying a boat is the start of a plan. Upgrading it tells the city what kind of trips you intend to take.
+The most valuable harbor contact may be the one who knows when not to sail.
+Estate auctions give property, collections, and player consignments a public stage.
+A bid is a declaration of value. Winning may also tell rivals what you wanted badly enough to show up for.
+An estate can be a home for wealth and a map of what someone thinks is worth keeping.
+Collections are personal until they enter a marketplace. Then everyone can see what the story costs.
+The Auction House is a place where prestige meets a counterparty with a different plan.
+A Family treasury can make power durable only if its books survive the decisions made in its name.
+Street Deeds connect ownership to the city's map. The chain facing rail remains gated; check the current status before assuming a live market.
+The Megaproject is a reason to think beyond one player's next job. Big plans need records as much as ambition.
+Cash moves. Property remains visible. Reputation travels. In OMERTÀ, an economy is the set of people who can challenge your claim.
+The invitation at omerta.fun opens the street economy to exploration. Bring a plan for what to do after your first sale.

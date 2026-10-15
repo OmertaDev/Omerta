@@ -6,7 +6,7 @@
 // logic, the reward CAP (the run climbs, the cash flattens), and that the ONLY value that moves is the
 // ledgered `streak:daily` faucet.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { STREAK, streakReward, dayOf } from '../src/rules.js';
 

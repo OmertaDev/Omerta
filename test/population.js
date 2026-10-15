@@ -13,7 +13,7 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { boxingBoard } from '../src/boxing.js';
 import { spawnResident, retireResident, runPopulation, population, runResidentBehaviour, residentAct, seededToday, runFamilies } from '../src/population.js';
 import { residentEnterTournament, resolveTournament, residentNominateFuturity } from '../src/casino.js';

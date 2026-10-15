@@ -1,0 +1,42 @@
+[
+  {
+    "id": "R3-C01-voice",
+    "model": "fal-ai/minimax/voice-design",
+    "input": {
+      "prompt": "An original fictional adult character, speaking natural conversational English with a neutral American accent. Breathy alto, clipped and incredulous without shouting. Short fast spoken dialogue with understated comic timing. Close dry recording, no music, no announcer tone, no impersonation or resemblance to any named person.",
+      "preview_text": "This key needs four people? I bought some cargo. Where's my cargo?"
+    },
+    "folder": "voice-design",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-C02-voice",
+    "model": "fal-ai/minimax/voice-design",
+    "input": {
+      "prompt": "An original fictional adult character, speaking natural conversational English with a neutral American accent. Low male voice, dry and clipped, never a movie impression. Short fast spoken dialogue with understated comic timing. Close dry recording, no music, no announcer tone, no impersonation or resemblance to any named person.",
+      "preview_text": "You wanted a mafia game. Find the rat. Oh mare tah."
+    },
+    "folder": "voice-design",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-C03-voice",
+    "model": "fal-ai/minimax/voice-design",
+    "input": {
+      "prompt": "An original fictional adult character, speaking natural conversational English with a neutral American accent. Clear older female voice, dry, lightly telephone-filtered; no robotic vocoder. Short fast spoken dialogue with understated comic timing. Close dry recording, no music, no announcer tone, no impersonation or resemblance to any named person.",
+      "preview_text": "Two independent sources. Disclosure, not guilt. His. You cannot read it."
+    },
+    "folder": "voice-design",
+    "ext": "mp3"
+  },
+  {
+    "id": "R3-C04-voice",
+    "model": "fal-ai/minimax/voice-design",
+    "input": {
+      "prompt": "An original fictional adult character, speaking natural conversational English with a neutral American accent. Precise mid-register female voice; short attacks and impatient breaths. Short fast spoken dialogue with understated comic timing. Close dry recording, no music, no announcer tone, no impersonation or resemblance to any named person.",
+      "preview_text": "Pickup only. Ambushed. The principal stays protocol owned."
+    },
+    "folder": "voice-design",
+    "ext": "mp3"
+  }
+]

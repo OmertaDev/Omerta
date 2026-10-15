@@ -10,7 +10,7 @@ if(native) {
   process.env.DATABASE_URL=url.href;
 }
 Object.assign(process.env,{DEPOT_PILOT:'on',DELIVERY_CONTRACTS:'on',RESOURCE_ECONOMY:'off',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',MOD_KEY:'opportunity-integrated-local-mod',JWT_SECRET:'opportunity-integrated-local-proof-secret',MARKET_SEED:'opportunity-integrated-local-seed'});
-const {buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),Market=await import('../src/market.js'),O=await import('../src/companyopportunities.js');
+const {buildServer}=await import('./server-fixture.js'),G=await import('../src/game.js'),Market=await import('../src/market.js'),O=await import('../src/companyopportunities.js');
 const { runCompanyOpportunities }=await import('../src/companyopportunityrunner.js');
 const app=await buildServer(); let serial=0;
 const path='/v1/company/opportunities';

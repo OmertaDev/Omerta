@@ -26,7 +26,7 @@ const configuration = { phase: 'local-prerelease', scenario, database: database.
   exclusions: ['Natural entry and earned initial progression/resources', 'Complete route/role authority cross product', 'Concurrent transaction commit ordering', 'Workers and timed recovery', 'Full economy/resource conservation for funded fixtures', '90-day matrix', 'Deployment and physical devices'] };
 const proof = await createProofRecorder({ directory, source, configuration, runId: `${scenario}-authority`, seed: 'scoped-http-v1',
   scenarioId: `${scenario}-http-authority`, population: scenario === 'knowledge' ? 6 : 2 });
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { roleKnowledgeProbes } = await import('./lib/rc1-authority-probes.js');
 const { choiceConfirmationProbes } = await import('./lib/rc1-choice-confirmation-probes.js');
 const { familyOperationInvariants } = await import('../src/coordination/operation-invariants.js');

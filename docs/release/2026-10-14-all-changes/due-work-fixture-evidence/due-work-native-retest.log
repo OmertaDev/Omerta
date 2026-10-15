@@ -1,0 +1,5 @@
+
+> omerta-backend@1.5.0 test:due-work:postgres
+> node test/due-work-process-recovery.js
+
+{"status":"PASS_SCOPED","source":"8cf20835738ae14fb6df51142334d777332e5bcd","databaseVersion":"18.4","cases":[{"mode":"worker-interruption","dueBefore":1,"refundedOnce":true,"acknowledgedOfferReplay":true,"originalPeriodMs":3600000,"elapsedMs":6371},{"mode":"database-disconnect","dueBefore":1,"refundedOnce":true,"acknowledgedOfferReplay":true,"originalPeriodMs":3600000,"elapsedMs":5600},{"mode":"api-restart","dueBefore":1,"refundedOnce":true,"acknowledgedOfferReplay":true,"originalPeriodMs":3600000,"elapsedMs":8322}],"fixture":"Initial character cash10000 liquidity fixture, canonical HTTP offers, initial offered_at aging and native refund-insert barrier before baseline; no post-baseline state/deadline rewrites","scope":"One nonempty cash escrow expiry queue through original API/worker process interruption and native backend disconnect; not all queues, full resources or soak qualification"}

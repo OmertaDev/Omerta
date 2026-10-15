@@ -10,7 +10,7 @@ if (native) {
 } else assert(!process.env.DATABASE_URL, 'Memory proof refuses ambient DATABASE_URL');
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.JWT_SECRET = 'coverage-module-local-test-secret-only'; process.env.MOD_KEY = 'coverage-local-test-mod';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js'), D = await import('../src/depot.js'), W = await import('../src/warehouseleases.js');
 const { runEstate } = await import('../src/social/estate.js');
 const app = await buildServer();

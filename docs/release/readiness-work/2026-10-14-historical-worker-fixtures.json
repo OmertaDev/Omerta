@@ -1,0 +1,316 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-15T00:40:51.864Z",
+  "scope": "Test-only historical loader positive-fixture correction and rejection controls. No current runtime, native, financial, migration, deployment or onchain qualification is transferred.",
+  "headBeforeFixtureEdits": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "runtimeSourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "sourceFiles": [
+    {
+      "path": "test/lib/rc1-historical-worker-source.js",
+      "rawSha256": "054c3b3a95f9bd7549ba9a8941bd404523d53f5a12918ec2c68da3f8cdc86b9a",
+      "canonicalLfSha256": "054c3b3a95f9bd7549ba9a8941bd404523d53f5a12918ec2c68da3f8cdc86b9a",
+      "gitBlob": "0c902ddb458354800c01448923b9254c31b12a0f"
+    },
+    {
+      "path": "test/rc1-native-worker-schedule.js",
+      "rawSha256": "03b72cb7abdaa7dbc65af0fbf9c5c2437211993c9b72e2bbd0ef0b7a7127747c",
+      "canonicalLfSha256": "09bbcb984e44d24bf186662f5c8d552c3ae238f3d53a841dbead1452a6f4a32f",
+      "gitBlob": "0f7e646584a3c78ad3539b5bfa3dbe820585abfa"
+    },
+    {
+      "path": "test/rc1-world-observer-load-order.js",
+      "rawSha256": "4ba4d8a527de0a5433a7a26088c10b34e4dbfeaca70929d2e92257326ba7333d",
+      "canonicalLfSha256": "d4667c95df9ea5306e90b5443e7959b70c8587164bda152136dc302b9f689cc7",
+      "gitBlob": "e17931eba1df5fa93da1088418b1e13aa8cf6813"
+    },
+    {
+      "path": "SPEC.md",
+      "rawSha256": "a6d1332cad4552376e79465f7cfc4212c11f696c7731c1de985d8c8e331915e0",
+      "canonicalLfSha256": "5f1b489d669cb5df273ed9d2e805d7148065ca88bbcd55da4f5248cc8f10d129",
+      "gitBlob": "6bd4ba2ae2a95dddb7fc00ce7a78f27246679b0e"
+    }
+  ],
+  "historicalLoader": {
+    "path": "tools/rc1-native-worker.js",
+    "gitBlob": "93acdf3c2eb0192cb1ea4d5559ae47bfd339bd64",
+    "unchanged": true
+  },
+  "protectedSourceDomains": {
+    "count": 17,
+    "allMatchC2": true,
+    "files": [
+      {
+        "path": "package-lock.json",
+        "gitBlob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04"
+      },
+      {
+        "path": "package.json",
+        "gitBlob": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463"
+      },
+      {
+        "path": "schema.sql",
+        "gitBlob": "1210ad5ecb4d2417ac1c195c2359177671839e33"
+      },
+      {
+        "path": "src/agentgateway.js",
+        "gitBlob": "34b013e86f9e6881f26a510b6c6abdb3f183066d"
+      },
+      {
+        "path": "src/crew.js",
+        "gitBlob": "7d52c88cc1f24a754376d5e68c539f48c97a370b"
+      },
+      {
+        "path": "src/db.js",
+        "gitBlob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13"
+      },
+      {
+        "path": "src/deeds.js",
+        "gitBlob": "ff8a0f0f3bc7dc38090eee29eece293b96dcdb54"
+      },
+      {
+        "path": "src/game.js",
+        "gitBlob": "c15e6f171c4be7240b7aea96121762c21f772163"
+      },
+      {
+        "path": "src/routes/worldgraph.js",
+        "gitBlob": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e"
+      },
+      {
+        "path": "src/server.js",
+        "gitBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f"
+      },
+      {
+        "path": "src/wire.js",
+        "gitBlob": "f5d1028d85ed2a694b090a8955e097c7156069c1"
+      },
+      {
+        "path": "src/worker.js",
+        "gitBlob": "77f7316057624ebf35ef2b6c555be85d02d816b2"
+      },
+      {
+        "path": "src/rules.generated.js",
+        "gitBlob": "79e59ce682e6ada70082b4f522611e68550f0392"
+      },
+      {
+        "path": "src/rules.tail.js",
+        "gitBlob": "33db41906771f1594b004e916cdbdb031bfaf170"
+      },
+      {
+        "path": "src/genesisauction.js",
+        "gitBlob": "1e6934fc1f9a546ed475905f2ac61b7f389715c0"
+      },
+      {
+        "path": "public/genesis-deploy-client.js",
+        "gitBlob": "0480de8ee58a3e83705f42d81c097f9b10d1a4d8"
+      },
+      {
+        "path": "tools/genesis-auction-preflight.js",
+        "gitBlob": "dd33b91629b545fd176cfba4cab673a9057bf7d6"
+      }
+    ]
+  },
+  "closedDatabaseFixtures": {
+    "current": {
+      "revision": "1a29ff10ecfa30989fdd7ada3238499ea4c85e0f",
+      "blob": "e99e39679503978ea1e79a56a1b2a2f4776b8029",
+      "canonicalLfSha256": "abaa10fd7e25ff0be9c204fc6c18e300b97ba7fe32d9d8fc61654293eebf4a46"
+    },
+    "prior": {
+      "revision": "320a27836704a1ec04d7ff79a9c88e301fde1563",
+      "blob": "1e8948060d907b08382d4b5769aa0b08a647c0a1",
+      "canonicalLfSha256": "9c43ed14a026c378ec4768d39a52cc66840b63396e3b6218075cc4797bdfcd81"
+    },
+    "unsupportedReleaseC2": {
+      "revision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+      "blob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13",
+      "canonicalLfSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+      "admission": "REJECTED"
+    }
+  },
+  "fixtureValidation": [
+    "Closed profile selection rejects unknown fixture identities",
+    "Pinned revision resolves to exact Git blob",
+    "Complete raw Git object SHA1 matches the blob identity",
+    "Git source is canonical LF and matches independent historical SHA256",
+    "Current worktree DB matches independently pinned C2 rejection source"
+  ],
+  "preservedControls": [
+    "Cached uninstrumented DB rejects before pool creation",
+    "Historical Coverage current, predecessor and CRLF positive sources preserve raw transformation identity",
+    "Unknown historical current and predecessor suffixes reject with zero transformations and pools",
+    "Both original observer import order controls preserve sentinel pool constructor admission versus cached DB refusal"
+  ],
+  "addedControls": [
+    "Exact C2, C2 CRLF and tampered C2 reject before any source transformation or pool construction in both scheduling and observer fixtures"
+  ],
+  "remoteFailure": {
+    "runId": "38656500807",
+    "jobId": "116167585012",
+    "head": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "failedStep": "RC1 original worker scheduling and diagnostic harness controls",
+    "command": "npm run test:rc1:harness",
+    "failedCommandPositionOneBased": 2,
+    "test": "test/rc1-native-worker-schedule.js",
+    "testLine": 77,
+    "guard": "tools/rc1-native-worker.js:178",
+    "reason": "Historical positive fixture supplied current C2 database source to the unchanged historical loader",
+    "actualSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+    "expectedSha256": "9c43ed14a026c378ec4768d39a52cc66840b63396e3b6218075cc4797bdfcd81",
+    "rawJobLog": {
+      "path": "output/release-2026-10-14/ci-38656500807-pgmem-116167585012.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 400877,
+      "sha256": "ac31efda8b549feb29327ba826f5e49ec4fa256eba56b60209b61ce2dd932943"
+    }
+  },
+  "localHarnessAttempt1": {
+    "result": {
+      "command": "npm run test:rc1:harness",
+      "startAt": "2026-10-15T00:36:50.334Z",
+      "endAt": "2026-10-15T00:38:12.713Z",
+      "durationMs": 82379,
+      "exitCode": 1,
+      "signal": null
+    },
+    "log": {
+      "path": "output/release-2026-10-14/rc1-harness-historical-fixture-retest-attempt1.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 28664,
+      "sha256": "8723b694d7cbe780c196946dc64e271ab5b1a5529777d16a030dc01383d6d83a"
+    },
+    "wrapperExitReceipt": {
+      "path": "output/release-2026-10-14/rc1-harness-historical-fixture-retest-attempt1.log.exit.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 182,
+      "sha256": "19a74dec464a35538a2f5895202df7f5806b0f78940fe460dacbab8e64a12206"
+    },
+    "status": "FAILED_AT_SEPARATE_HISTORICAL_NPC_FIXTURE",
+    "failedCommandPositionOneBased": 40,
+    "failedTest": "test/rc1-npc-retirement-journal.js",
+    "failureGuard": "tools/rc1-npc-car-acquisition.js:29",
+    "actualRulesTailSha256": "84eeb263dcfc13cc4ea13683a9460dc8429df126182562c5b6986654be6f9e05",
+    "expectedRulesTailSha256": "83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb",
+    "fullHarnessPass": false,
+    "completedCommandPositionRangeInclusiveOneBased": {
+      "first": 1,
+      "last": 39
+    }
+  },
+  "focusedObserver": {
+    "result": {
+      "command": "node test/rc1-world-observer-load-order.js",
+      "startAt": "2026-10-15T00:38:47.944Z",
+      "endAt": "2026-10-15T00:38:49.483Z",
+      "durationMs": 1539,
+      "exitCode": 0,
+      "signal": null
+    },
+    "log": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-rc1-world-observer-load-order-attempt1.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 264,
+      "sha256": "1d9ace09d77e079ddcda34d7e89ad448441c2a3853c0ce78ffbd746a6b29b79e"
+    },
+    "wrapperExitReceipt": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-rc1-world-observer-load-order-attempt1.log.exit.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 199,
+      "sha256": "e4fce8dd7bf81be50a1ad2ff5ffea5a936e566e0d9837844b4029cf7a3124a1e"
+    }
+  },
+  "docsBeforeCensus": {
+    "result": {
+      "command": "node test/docs.js",
+      "startAt": "2026-10-15T00:38:14.501Z",
+      "endAt": "2026-10-15T00:38:15.172Z",
+      "durationMs": 671,
+      "exitCode": 1,
+      "signal": null
+    },
+    "log": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-docs-attempt1.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 511,
+      "sha256": "ab0af869d5c3c993d2bd90cb0cd44b70f8acb68fbff6df4f22c308b95d6bd023"
+    },
+    "wrapperExitReceipt": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-docs-attempt1.log.exit.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 173,
+      "sha256": "93d9d7be5161a5ab90a81ba408ecfa5ebbe6fc2b2914ef998a2613d33545720e"
+    }
+  },
+  "docsAfterCensus": {
+    "result": {
+      "command": "node test/docs.js",
+      "startAt": "2026-10-15T00:39:24.356Z",
+      "endAt": "2026-10-15T00:39:34.170Z",
+      "durationMs": 9814,
+      "exitCode": 0,
+      "signal": null
+    },
+    "log": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-docs-attempt2.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 4466,
+      "sha256": "caf599498da20a70d83399204eeeaded5ebd5975a6790e0c81681cfb549c2b83"
+    },
+    "wrapperExitReceipt": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-docs-attempt2.log.exit.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 174,
+      "sha256": "b67b8425cdbed972a852f9987b69e166714c5ab586342694c9af75243384dce7"
+    }
+  },
+  "gates": {
+    "result": {
+      "command": "node test/gates.js",
+      "startAt": "2026-10-15T00:38:49.485Z",
+      "endAt": "2026-10-15T00:38:58.701Z",
+      "durationMs": 9216,
+      "exitCode": 0,
+      "signal": null
+    },
+    "log": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-gates-attempt1.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 4307,
+      "sha256": "f2d5e988d1a575d1aaeb3533d4c62a5987751be8f31b35eca11e85c8129c3779"
+    },
+    "wrapperExitReceipt": {
+      "path": "output/release-2026-10-14/rc1-historical-fixture-gates-attempt1.log.exit.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 175,
+      "sha256": "b06a557ed08769da49ef21ad48ea442dc69e3ef6a4473ee05da2157fc5c4e06b"
+    }
+  },
+  "censusCorrection": {
+    "path": "SPEC.md",
+    "section": "Test suites measured inventory",
+    "filesBefore": 645,
+    "filesAfter": 646,
+    "linesBefore": 170431,
+    "linesAfter": 170627,
+    "note": "A final root recount follows separately owned NPC fixture changes."
+  },
+  "testEnvironment": {
+    "fullHarnessFocusedObserverGatesAndInitialDocs": {
+      "CI": "true",
+      "legalProfile": "Existing nine-field CI synthetic profile; no actual operator profile or production configuration used"
+    },
+    "docsAfterCensus": "Static documentation check in inherited local environment; no database or operator configuration applied"
+  },
+  "directCiCallerReview": {
+    "workflow": ".github/workflows/ci.yml",
+    "namedNpmScriptsInspected": 81,
+    "defaultHarnessCommands": 90,
+    "loaderFixtureCallers": [
+      "test/rc1-native-worker-schedule.js",
+      "test/rc1-world-observer-load-order.js"
+    ],
+    "nativeWorkerScheduleOrWorldWorkloadInvokedByCi": false,
+    "note": "Available --postgres worker/world aliases remain unchanged and are not newly admitted; no real database or worker boot was performed by these fixtures."
+  },
+  "rawDiagnosticsPublished": false,
+  "commitOrPushPerformed": false
+}

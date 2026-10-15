@@ -1,0 +1,1944 @@
+{
+  "version": 4,
+  "jobs": {
+    "M04-L01": {
+      "id": "M04-L01",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "The market has defenses. Every one can run out.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:43:36.207Z",
+      "request_id": "01a0d672-6722-7f12-9a85-96faf8f505bf",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d672-6722-7f12-9a85-96faf8f505bf",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d672-6722-7f12-9a85-96faf8f505bf/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d672-6722-7f12-9a85-96faf8f505bf/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc996/skaHF_QzzlnsoZYg_X2qc_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 117331
+        },
+        "duration_ms": 3604
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc996/skaHF_QzzlnsoZYg_X2qc_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L01.mp3",
+      "sha256": "b785c11d0bd3593d8a1eb80b758cc78255306b87e568650667eb5088326ff34f",
+      "bytes": 117331
+    },
+    "M04-L02": {
+      "id": "M04-L02",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:46.985Z",
+      "request_id": "01a0d673-7b6e-7dd1-8860-8af809a40ed6",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7b6e-7dd1-8860-8af809a40ed6",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7b6e-7dd1-8860-8af809a40ed6/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7b6e-7dd1-8860-8af809a40ed6/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99e/6CKtKuoYoMQYdUN4377EF_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 163307
+        },
+        "duration_ms": 5041
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99e/6CKtKuoYoMQYdUN4377EF_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L02.mp3",
+      "sha256": "25fd9afe5343f494606f6d76642ceecafff37486fe2dfbebc3e6f9fd5e27e71b",
+      "bytes": 163307
+    },
+    "M04-L03": {
+      "id": "M04-L03",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Selling converts the Lower Cushion and Garrison’s Ether into O M R.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.203Z",
+      "request_id": "01a0d673-7c46-77a0-963a-0285b7339080",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7c46-77a0-963a-0285b7339080",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7c46-77a0-963a-0285b7339080/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7c46-77a0-963a-0285b7339080/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99e/yTayFjE-nFPOBbt2SU-Lw_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 142409
+        },
+        "duration_ms": 4388
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99e/yTayFjE-nFPOBbt2SU-Lw_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L03.mp3",
+      "sha256": "730df0c14415c2df8d79856cf7e39f4fdf896ae5a5871b68754df52d6c562f40",
+      "bytes": 142409
+    },
+    "M04-L04": {
+      "id": "M04-L04",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Buying converts the Upper Cushion and Desk’s O M R into Ether.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.420Z",
+      "request_id": "01a0d673-7ca8-7b71-95e6-2dab2991fd62",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ca8-7b71-95e6-2dab2991fd62",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ca8-7b71-95e6-2dab2991fd62/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ca8-7b71-95e6-2dab2991fd62/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/s3MNrQw3ia4oYDAOIzvJm_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 142409
+        },
+        "duration_ms": 4388
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/s3MNrQw3ia4oYDAOIzvJm_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L04.mp3",
+      "sha256": "43391e2bf67867adca05c72e2b2c496ddb5dcfc08308e4883745a814913b1b1e",
+      "bytes": 142409
+    },
+    "M04-L05": {
+      "id": "M04-L05",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Crossing a range isn’t final. Inventory can still convert back.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.518Z",
+      "request_id": "01a0d673-7d00-7b63-977f-7303da54f5e2",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d00-7b63-977f-7303da54f5e2",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d00-7b63-977f-7303da54f5e2/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d00-7b63-977f-7303da54f5e2/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99e/9OaZ3jSK0IaEy_4B5vbd7_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 129870
+        },
+        "duration_ms": 3996
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99e/9OaZ3jSK0IaEy_4B5vbd7_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L05.mp3",
+      "sha256": "18b5f91b2d36f033af5f413e71bf77cddded2432060385cd1b1a97f06a95b721",
+      "bytes": 129870
+    },
+    "M04-L06": {
+      "id": "M04-L06",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Finalization removes eligible positions and separates returned principal from fees.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.600Z",
+      "request_id": "01a0d673-7d55-73b1-af2f-84227bd61f3a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d55-73b1-af2f-84227bd61f3a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d55-73b1-af2f-84227bd61f3a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7d55-73b1-af2f-84227bd61f3a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99e/eFTD1jSuuyEkcao8dU_v__speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 172502
+        },
+        "duration_ms": 5328
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99e/eFTD1jSuuyEkcao8dU_v__speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L06.mp3",
+      "sha256": "ce0a3eb0323af0cc0f6acaa4c61d33fef17594d065327b7761fe6bbd77e15fc0",
+      "bytes": 172502
+    },
+    "M04-L07": {
+      "id": "M04-L07",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.691Z",
+      "request_id": "01a0d673-7da2-7c33-94e6-a885bf18d654",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7da2-7c33-94e6-a885bf18d654",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7da2-7c33-94e6-a885bf18d654/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7da2-7c33-94e6-a885bf18d654/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/RF3RAKIkIn0evE_Vn_VuP_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 163307
+        },
+        "duration_ms": 5041
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/RF3RAKIkIn0evE_Vn_VuP_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L07.mp3",
+      "sha256": "7f23221a52fba92262b97919a3c6ac5859bfeb7f77e91970281a7ff19ac5151f",
+      "bytes": 163307
+    },
+    "M04-L08": {
+      "id": "M04-L08",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.764Z",
+      "request_id": "01a0d673-7e00-7631-b6d7-ef72b08fa7bc",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e00-7631-b6d7-ef72b08fa7bc",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e00-7631-b6d7-ef72b08fa7bc/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e00-7631-b6d7-ef72b08fa7bc/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/b4xmdEpLIhSlMqkEouzGt_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 166650
+        },
+        "duration_ms": 5146
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/b4xmdEpLIhSlMqkEouzGt_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L08.mp3",
+      "sha256": "11a0a973c4160bfa1b0bdde7544bc71982bcc6d3f9c7dcf182f59c585b813dc7",
+      "bytes": 166650
+    },
+    "M04-L09": {
+      "id": "M04-L09",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.860Z",
+      "request_id": "01a0d673-7e59-7873-88c7-44de9ab1f256",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e59-7873-88c7-44de9ab1f256",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e59-7873-88c7-44de9ab1f256/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7e59-7873-88c7-44de9ab1f256/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/26DCIbcJePKfJ9O_vj27D_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/26DCIbcJePKfJ9O_vj27D_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L09.mp3",
+      "sha256": "27dfb057e60bdbf49d56c78119ec1e2e47f493e9ee6b94f08c0753606dcf6740",
+      "bytes": 157455
+    },
+    "M04-L10": {
+      "id": "M04-L10",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:47.947Z",
+      "request_id": "01a0d673-7ea6-70e3-97d2-bb4da07cc96a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ea6-70e3-97d2-bb4da07cc96a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ea6-70e3-97d2-bb4da07cc96a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ea6-70e3-97d2-bb4da07cc96a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/r6YpKZ-oIhbZlFBG3F92p_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/r6YpKZ-oIhbZlFBG3F92p_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L10.mp3",
+      "sha256": "b5a57905b4d605971dec44955e19343f97670ab653cea036f3c1b137800f57cc",
+      "bytes": 149096
+    },
+    "M04-L11": {
+      "id": "M04-L11",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Spaced healthy observations can unlock a bounded, funded refill.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.026Z",
+      "request_id": "01a0d673-7ef4-7453-ae80-d4a539e5bcf6",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ef4-7453-ae80-d4a539e5bcf6",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ef4-7453-ae80-d4a539e5bcf6/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7ef4-7453-ae80-d4a539e5bcf6/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/6C809qGO61IpQUbtY0Aix_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 139901
+        },
+        "duration_ms": 4310
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/6C809qGO61IpQUbtY0Aix_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L11.mp3",
+      "sha256": "469fb301003cb8b10043492e3b6a20ede7c8354d748e97713ef4eb77591599c8",
+      "bytes": 139901
+    },
+    "M04-L12": {
+      "id": "M04-L12",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Only real idle assets move. Lifetime limits stay consumed.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.105Z",
+      "request_id": "01a0d673-7f44-77e0-b559-f6b029c03976",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f44-77e0-b559-f6b029c03976",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f44-77e0-b559-f6b029c03976/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f44-77e0-b559-f6b029c03976/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/7SWKgAx8rDaeFtoWI_iJv_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 142409
+        },
+        "duration_ms": 4388
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/7SWKgAx8rDaeFtoWI_iJv_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L12.mp3",
+      "sha256": "56f80988ff92838f2e284fd24876fe09caee10e95347bcee5f35064d634c0e73",
+      "bytes": 142409
+    },
+    "M04-L13": {
+      "id": "M04-L13",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "A price recovery creates no Ether. There is no guaranteed floor.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.181Z",
+      "request_id": "01a0d673-7f92-7ae1-ac9f-4d8a55d6e545",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f92-7ae1-ac9f-4d8a55d6e545",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f92-7ae1-ac9f-4d8a55d6e545/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7f92-7ae1-ac9f-4d8a55d6e545/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/9EUNkdKMMJtLKsPQlEwty_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/9EUNkdKMMJtLKsPQlEwty_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L13.mp3",
+      "sha256": "b8eac13c856224b83056ec759967ca3849919133da48b55332ec975e4ab5d313",
+      "bytes": 157455
+    },
+    "M04-L14": {
+      "id": "M04-L14",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Canonical sells pay nine percent, split across four recipients.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.261Z",
+      "request_id": "01a0d673-7fdb-7890-bc10-b6c36ea215ed",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7fdb-7890-bc10-b6c36ea215ed",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7fdb-7890-bc10-b6c36ea215ed/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-7fdb-7890-bc10-b6c36ea215ed/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/wyOJaUcalAONSx3rGrnCc_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 154112
+        },
+        "duration_ms": 4754
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/wyOJaUcalAONSx3rGrnCc_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L14.mp3",
+      "sha256": "2da04aa3b9447dfb059a5ce5fe869f9f8c3076a0213a04d18feefea22fa42680",
+      "bytes": 154112
+    },
+    "M04-L15": {
+      "id": "M04-L15",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Three percent funds Core. Additional sell pressure funds stability.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.332Z",
+      "request_id": "01a0d673-802f-7e60-9361-eb2172b8ed3c",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-802f-7e60-9361-eb2172b8ed3c",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-802f-7e60-9361-eb2172b8ed3c/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-802f-7e60-9361-eb2172b8ed3c/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/qK4lhgUeVVzOQaoxzDsYQ_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 139901
+        },
+        "duration_ms": 4310
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/qK4lhgUeVVzOQaoxzDsYQ_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L15.mp3",
+      "sha256": "a019384670bfbf130335b318c5f96879e1db5b168bdbd137af95266efceb8e68",
+      "bytes": 139901
+    },
+    "M04-L16": {
+      "id": "M04-L16",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "A fee receipt can contain Ether or O M R.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.419Z",
+      "request_id": "01a0d673-807f-7912-a3e7-85afd3c316d7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-807f-7912-a3e7-85afd3c316d7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-807f-7912-a3e7-85afd3c316d7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-807f-7912-a3e7-85afd3c316d7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/IXZQgrwELMrD59F3TMkhO_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 124019
+        },
+        "duration_ms": 3813
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/IXZQgrwELMrD59F3TMkhO_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L16.mp3",
+      "sha256": "d458fadfdc28cbaae074f808b3aece67ef726691bf03ee763c5d338d5e4c31a5",
+      "bytes": 124019
+    },
+    "M04-L17": {
+      "id": "M04-L17",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Opening buys have temporary rules. Later buys have no Hook tax.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.498Z",
+      "request_id": "01a0d673-80ce-7a42-bd83-a867eaa6facf",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-80ce-7a42-bd83-a867eaa6facf",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-80ce-7a42-bd83-a867eaa6facf/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-80ce-7a42-bd83-a867eaa6facf/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/jx2nqUKtPCzsY1BerKi21_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/jx2nqUKtPCzsY1BerKi21_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L17.mp3",
+      "sha256": "ea45fcdfb26442c5e71c5dae47bad9b42864b9eb7cf22eb01857c6fdf9f4370e",
+      "bytes": 149096
+    },
+    "M04-L18": {
+      "id": "M04-L18",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "These rules cover the canonical pool, not every trading venue.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.575Z",
+      "request_id": "01a0d673-811f-7d03-bde8-1dd382fa0cb3",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-811f-7d03-bde8-1dd382fa0cb3",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-811f-7d03-bde8-1dd382fa0cb3/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-811f-7d03-bde8-1dd382fa0cb3/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/KDJM8i2cpyY6akf9rRpxu_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 121511
+        },
+        "duration_ms": 3735
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/KDJM8i2cpyY6akf9rRpxu_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L18.mp3",
+      "sha256": "e5f5a9d64f1abe611fad52f2bb275d2e936d09e36aad1a061dd4e7a1b47d51ec",
+      "bytes": 121511
+    },
+    "M04-L19": {
+      "id": "M04-L19",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Bonds reserve existing O M R upfront, then release it through linear vesting.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.658Z",
+      "request_id": "01a0d673-8175-7b23-9b3b-9206a051d17a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8175-7b23-9b3b-9206a051d17a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8175-7b23-9b3b-9206a051d17a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8175-7b23-9b3b-9206a051d17a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/DM1HGLp18A4IQcP8FoVRO_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 178353
+        },
+        "duration_ms": 5511
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/DM1HGLp18A4IQcP8FoVRO_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L19.mp3",
+      "sha256": "cceee6a2135a2036209338d133aecb02fd5b00357aa3a87991535958c3797dd3",
+      "bytes": 178353
+    },
+    "M04-L20": {
+      "id": "M04-L20",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "No minting or sellback. Vested claims survive a purchasing pause.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.747Z",
+      "request_id": "01a0d673-81c6-7890-ab9a-608c59e5d8d1",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-81c6-7890-ab9a-608c59e5d8d1",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-81c6-7890-ab9a-608c59e5d8d1/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-81c6-7890-ab9a-608c59e5d8d1/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/OBSioPTJZgYf-1SCn_K5U_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 159963
+        },
+        "duration_ms": 4937
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/OBSioPTJZgYf-1SCn_K5U_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L20.mp3",
+      "sha256": "6fc146d9a55f61404c2b54d843b4da2198ee0c52cc86dfab51b79dcdd6ec03ba",
+      "bytes": 159963
+    },
+    "M04-L21": {
+      "id": "M04-L21",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.827Z",
+      "request_id": "01a0d673-8219-7402-b92e-6b66b9be51b7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8219-7402-b92e-6b66b9be51b7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8219-7402-b92e-6b66b9be51b7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8219-7402-b92e-6b66b9be51b7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/aanyxwChtne1u0XkbrFnS_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/aanyxwChtne1u0XkbrFnS_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L21.mp3",
+      "sha256": "f22fe043e9918fb2ab8568529af1741c0271d376bf6ddf5195c119d8424c5f82",
+      "bytes": 157455
+    },
+    "M04-L22": {
+      "id": "M04-L22",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Actual profit is checked. Competition and failed gas remain your risk.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.906Z",
+      "request_id": "01a0d673-8267-7d12-a125-a8611dab990e",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8267-7d12-a125-a8611dab990e",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8267-7d12-a125-a8611dab990e/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8267-7d12-a125-a8611dab990e/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/2EV4KLv0IC4xT0xmIp4kr_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 151604
+        },
+        "duration_ms": 4675
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/2EV4KLv0IC4xT0xmIp4kr_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L22.mp3",
+      "sha256": "b788b077bc9858d92e33d9522abc4473cb97e7a5c983e6ffbd0c81222ee33a94",
+      "bytes": 151604
+    },
+    "M04-L23": {
+      "id": "M04-L23",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Players commit canonical position N F Ts. Rewards require qualifying, fresh depth samples.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:48.985Z",
+      "request_id": "01a0d673-82b0-7150-8ad7-d411be864ee4",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82b0-7150-8ad7-d411be864ee4",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82b0-7150-8ad7-d411be864ee4/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82b0-7150-8ad7-d411be864ee4/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/5optNUqCbmIZIIj-1X3_Q_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 205939
+        },
+        "duration_ms": 6373
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/5optNUqCbmIZIIj-1X3_Q_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L23.mp3",
+      "sha256": "44ae99755ea47843aefab22a3b5daa1276ee5d9002026111d9ce635ccf2570df",
+      "bytes": 205939
+    },
+    "M04-L24": {
+      "id": "M04-L24",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.059Z",
+      "request_id": "01a0d673-82ff-7432-94f2-3f8dd9d9aff1",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82ff-7432-94f2-3f8dd9d9aff1",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82ff-7432-94f2-3f8dd9d9aff1/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-82ff-7432-94f2-3f8dd9d9aff1/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc99f/OsHF823SBB8e-EQhNW3Mk_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 166650
+        },
+        "duration_ms": 5146
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc99f/OsHF823SBB8e-EQhNW3Mk_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L24.mp3",
+      "sha256": "11d3b0a51a8145ed180cf79803ec6c1babc747e370daf69a4723a86b25967732",
+      "bytes": 166650
+    },
+    "M04-L25": {
+      "id": "M04-L25",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Families contest seasonal price slabs and future funded fee credits.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.137Z",
+      "request_id": "01a0d673-834f-79b2-8c98-fd1dd47900f9",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-834f-79b2-8c98-fd1dd47900f9",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-834f-79b2-8c98-fd1dd47900f9/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-834f-79b2-8c98-fd1dd47900f9/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 1,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/o7z8XkqPNv_wxVcCk8xxa_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/o7z8XkqPNv_wxVcCk8xxa_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L25.mp3",
+      "sha256": "e99130466e0485281b4fb52f69579055f8340ed4bb09e213663f4d7f9dcd4b8c",
+      "bytes": 149096
+    },
+    "M04-L26": {
+      "id": "M04-L26",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Syndicates split those rights. Corridors and fortifications don’t multiply money.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.217Z",
+      "request_id": "01a0d673-839e-7af2-8273-3f6af1f1bc49",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-839e-7af2-8273-3f6af1f1bc49",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-839e-7af2-8273-3f6af1f1bc49/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-839e-7af2-8273-3f6af1f1bc49/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/RIdT32YjrVQe-bOceiXIt_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 169158
+        },
+        "duration_ms": 5224
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/RIdT32YjrVQe-bOceiXIt_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L26.mp3",
+      "sha256": "f445b9693bc1e8ad54e01e69c3a84082084c70d736eac3e9c8c38a582edc2a6b",
+      "bytes": 169158
+    },
+    "M04-L27": {
+      "id": "M04-L27",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.296Z",
+      "request_id": "01a0d673-83eb-7691-bade-e6f51e06ff2b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-83eb-7691-bade-e6f51e06ff2b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-83eb-7691-bade-e6f51e06ff2b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-83eb-7691-bade-e6f51e06ff2b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/kutnWajy3N05IZjGhFF-T_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 178353
+        },
+        "duration_ms": 5511
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/kutnWajy3N05IZjGhFF-T_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L27.mp3",
+      "sha256": "2c8ac192e156e9b3ce20afebb7ccc3ea328f12683a027b953378015439d5088d",
+      "bytes": 178353
+    },
+    "M04-L28": {
+      "id": "M04-L28",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Sieges freeze participant wallets and allocate only funded escrow.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.372Z",
+      "request_id": "01a0d673-843b-7ff0-ab9c-72fe67514825",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-843b-7ff0-ab9c-72fe67514825",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-843b-7ff0-ab9c-72fe67514825/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-843b-7ff0-ab9c-72fe67514825/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/-af7Q_p5F6-7u2WJwdiyB_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 142409
+        },
+        "duration_ms": 4388
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/-af7Q_p5F6-7u2WJwdiyB_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L28.mp3",
+      "sha256": "49f3f2d46332b458b8d06752b5225e60d4a419e32eeccd771ac5d41766862d88",
+      "bytes": 142409
+    },
+    "M04-L29": {
+      "id": "M04-L29",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "At season exit, fees settle and protocol principal returns for retirement.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.453Z",
+      "request_id": "01a0d673-8489-72b0-b780-fc46d10208a4",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8489-72b0-b780-fc46d10208a4",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8489-72b0-b780-fc46d10208a4/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8489-72b0-b780-fc46d10208a4/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a1/Z7Tgp5PtjFjvdQe8jpwqB_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a1/Z7Tgp5PtjFjvdQe8jpwqB_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L29.mp3",
+      "sha256": "992d46aca80797015109210b28a5ed9736b89e8860b534c7bb3f54f9776fea0f",
+      "bytes": 149096
+    },
+    "M04-L30": {
+      "id": "M04-L30",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Game outcomes use constrained settlement. Keepers simulate and spend within budgets.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.531Z",
+      "request_id": "01a0d673-84db-7ec0-8c27-d9e6b2cb2b8d",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-84db-7ec0-8c27-d9e6b2cb2b8d",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-84db-7ec0-8c27-d9e6b2cb2b8d/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-84db-7ec0-8c27-d9e6b2cb2b8d/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/guwRm1OUtfTHx8ztcOOh2_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 178353
+        },
+        "duration_ms": 5511
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/guwRm1OUtfTHx8ztcOOh2_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L30.mp3",
+      "sha256": "9ab2d3b339a61ade013ac6b259a963f5cf20e828809e849a8c277f57e71fe1b6",
+      "bytes": 178353
+    },
+    "M04-L31": {
+      "id": "M04-L31",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Game cash, O M R, Ether and R W A allocations remain separate.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.613Z",
+      "request_id": "01a0d673-8528-7ea3-8597-79cec253cd4f",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8528-7ea3-8597-79cec253cd4f",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8528-7ea3-8597-79cec253cd4f/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8528-7ea3-8597-79cec253cd4f/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/m1k_KjpVSYxqMLwLCoW1f_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 203431
+        },
+        "duration_ms": 6295
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/m1k_KjpVSYxqMLwLCoW1f_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L31.mp3",
+      "sha256": "59d1592d7e034a563c66d02d52344dc3c4659e2eafa89c52ea0d5ef3d95bfd73",
+      "bytes": 203431
+    },
+    "M04-L32": {
+      "id": "M04-L32",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.690Z",
+      "request_id": "01a0d673-8578-7750-a37c-1a4abe283fb0",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8578-7750-a37c-1a4abe283fb0",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8578-7750-a37c-1a4abe283fb0/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-8578-7750-a37c-1a4abe283fb0/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/KdH7WvHyXhwwcjar4JtIO_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 180861
+        },
+        "duration_ms": 5590
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/KdH7WvHyXhwwcjar4JtIO_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L32.mp3",
+      "sha256": "d4efce8eb5515520cd4fd18dad8a515b6fbc06b4979de81bbf2da04041413b7d",
+      "bytes": 180861
+    },
+    "M04-L33": {
+      "id": "M04-L33",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Oh mare tah Market version two. Learn what moves the city.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:44:49.771Z",
+      "request_id": "01a0d673-85c4-7ac0-9b3d-0bae9519b43b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-85c4-7ac0-9b3d-0bae9519b43b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-85c4-7ac0-9b3d-0bae9519b43b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d673-85c4-7ac0-9b3d-0bae9519b43b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a0/cQVjutDnXQa0Qc-d0q1Gj_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 133214
+        },
+        "duration_ms": 4101
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a0/cQVjutDnXQa0Qc-d0q1Gj_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L33.mp3",
+      "sha256": "5b69a60160aea372abdef4cc7c8e64f48ca2294d66eb1ad8ae39785e5eaa3d20",
+      "bytes": 133214
+    },
+    "M04-L03-v2": {
+      "id": "M04-L03-v2",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "As selling crosses active ranges, Ether converts into O M R.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:45:44.371Z",
+      "request_id": "01a0d674-5b93-72d1-bdf0-d8a405e508c2",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5b93-72d1-bdf0-d8a405e508c2",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5b93-72d1-bdf0-d8a405e508c2/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5b93-72d1-bdf0-d8a405e508c2/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a2/hc_2i-bxFMO5N18GNXSmY_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a2/hc_2i-bxFMO5N18GNXSmY_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L03-v2.mp3",
+      "sha256": "53c6e103f344b29a935bd707cece67fcd09e61de82edf0dfdc19e6cd2b6e6d7a",
+      "bytes": 157455
+    },
+    "M04-L04-v2": {
+      "id": "M04-L04-v2",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "As buying crosses active ranges, O M R converts into Ether.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:45:44.582Z",
+      "request_id": "01a0d674-5c64-7dd2-99d8-eb477f1d8024",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5c64-7dd2-99d8-eb477f1d8024",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5c64-7dd2-99d8-eb477f1d8024/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5c64-7dd2-99d8-eb477f1d8024/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a2/bsrG_XqlLARL2JjdDgRD1_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a2/bsrG_XqlLARL2JjdDgRD1_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L04-v2.mp3",
+      "sha256": "6d635b7fd620f3506ac2df96aabb758ce88cf9af2055ad410c437ba664e93f39",
+      "bytes": 149096
+    },
+    "M04-L26-v2": {
+      "id": "M04-L26-v2",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:45:44.790Z",
+      "request_id": "01a0d674-5cbc-7981-97c6-ccf2346e5649",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5cbc-7981-97c6-ccf2346e5649",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5cbc-7981-97c6-ccf2346e5649/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5cbc-7981-97c6-ccf2346e5649/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a2/tCaQLHyvrDvHqxMfdj4fx_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a2/tCaQLHyvrDvHqxMfdj4fx_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L26-v2.mp3",
+      "sha256": "9313a7d92f393efd658d956ffaae7d64945ef67a81d4b48cb891399c3f2c814d",
+      "bytes": 157455
+    },
+    "M04-L30-v2": {
+      "id": "M04-L30-v2",
+      "model": "fal-ai/minimax/speech-2.8-hd",
+      "input": {
+        "prompt": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1.05,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-25T02:45:44.879Z",
+      "request_id": "01a0d674-5d05-7743-959e-81e92e27729a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5d05-7743-959e-81e92e27729a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5d05-7743-959e-81e92e27729a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d674-5d05-7743-959e-81e92e27729a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc9a2/uC_B2bD0RdywgfVClBdxm_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc9a2/uC_B2bD0RdywgfVClBdxm_speech.mp3",
+      "src": "art/market-v2-film/audio/M04-L30-v2.mp3",
+      "sha256": "6e03884d9bf5cd939dfed13c93da973b0be9cd9ef9a4ef47118b05c6cf84209f",
+      "bytes": 149096
+    }
+  },
+  "catalog": [
+    {
+      "term": "minimax/speech",
+      "at": "2026-09-25T02:43:08.488Z",
+      "result": {
+        "models": [
+          {
+            "endpoint_id": "fal-ai/minimax/speech-2.8-hd",
+            "metadata": {
+              "display_name": "MiniMax Speech 2.8 [HD]",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-2.8 HD model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [],
+              "updated_at": "2026-05-07T21:20:34.572Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a8d0e4a/5FhhsQ0BicVC_DZ_BDLGL_895a8e6af34848f8844c20244c3e4672.jpg",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-2.8-hd",
+              "license_type": "commercial",
+              "date": "2026-02-04T00:13:29.621Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text To Speech 2.8 HD"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "stream_url": "https://fal.run/fal-ai/minimax/speech-2.8-hd/stream",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/speech-2.8-turbo",
+            "metadata": {
+              "display_name": "MiniMax Speech 2.8 [Turbo]",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-2.8 Turbo model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [],
+              "updated_at": "2026-04-21T17:52:12.732Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a8d0e23/l9QaO81QWM5lp_w3ZnahE_efa53369ffad488ba50146e6f9567df1.jpg",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-2.8-turbo",
+              "license_type": "commercial",
+              "date": "2026-02-04T00:09:54.525Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text To Speech 2.8 Turbo"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "stream_url": "https://fal.run/fal-ai/minimax/speech-2.8-turbo/stream",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/speech-2.6-turbo",
+            "metadata": {
+              "display_name": "MiniMax Speech 2.6 [Turbo]",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-2.6 HD model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "text-to-speech"
+              ],
+              "updated_at": "2026-04-21T17:52:11.120Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/koala/i6OK72M3MRgCjSurJLlYT_018f5a573af24e69aadfc9a9b559a110.jpg",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-2.6-turbo",
+              "license_type": "commercial",
+              "date": "2025-10-29T14:37:37.968Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text To Speech 2.6 Turbo"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "stream_url": "https://fal.run/fal-ai/minimax/speech-2.6-turbo/stream",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/speech-2.6-hd",
+            "metadata": {
+              "display_name": "MiniMax Speech 2.6 [HD]",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-2.6 HD model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "text-to-speech"
+              ],
+              "updated_at": "2026-04-21T17:52:10.330Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/penguin/SjejS2pB-SmgrWVM-2UQ9_0b44c0c9f723499297b9f93624fa899b.jpg",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-2.6-hd",
+              "license_type": "commercial",
+              "date": "2025-10-29T14:33:02.910Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text To Speech 2.6 HD"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "stream_url": "https://fal.run/fal-ai/minimax/speech-2.6-hd/stream",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/speech-02-turbo",
+            "metadata": {
+              "display_name": "MiniMax Speech-02 Turbo",
+              "category": "text-to-speech",
+              "description": "Generate fast speech from text prompts and different voices using the MiniMax Speech-02 Turbo model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "speech",
+                ""
+              ],
+              "updated_at": "2026-06-24T10:45:42.193Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a9f91b6/054Hl3dIeF1BDfoCszbuS_1WPpjHNS.png",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-02-turbo",
+              "license_type": "commercial",
+              "date": "2025-05-06T16:20:17.682Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text to Speech 2.0 Turbo"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/speech-02-hd",
+            "metadata": {
+              "display_name": "MiniMax Speech-02 HD",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-02 HD model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "speech"
+              ],
+              "updated_at": "2026-06-24T10:36:41.475Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a9f91b5/Li_VoZtaOd5__F9GMv1O4_yPTcO4eQ.png",
+              "model_url": "https://fal.run/fal-ai/minimax/speech-02-hd",
+              "license_type": "commercial",
+              "date": "2025-05-06T16:17:49.560Z",
+              "group": {
+                "key": "minimax-speech",
+                "label": "Text To Speech 2.0 HD"
+              },
+              "highlighted": false,
+              "kind": "inference",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/preview/speech-2.5-hd",
+            "metadata": {
+              "display_name": "Minimax",
+              "category": "text-to-speech",
+              "description": "Generate speech from text prompts and different voices using the MiniMax Speech-02 HD model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "speech"
+              ],
+              "updated_at": "2026-06-24T11:42:01.057Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a9f92d1/HmXRZPRtPK9mGJUDtlnu0_59gznpUE.png",
+              "model_url": "https://fal.run/fal-ai/minimax/preview/speech-2.5-hd",
+              "license_type": "commercial",
+              "date": "2025-08-11T09:41:03.032Z",
+              "highlighted": false,
+              "kind": "inference",
+              "pinned": false
+            }
+          },
+          {
+            "endpoint_id": "fal-ai/minimax/preview/speech-2.5-turbo",
+            "metadata": {
+              "display_name": "Minimax",
+              "category": "text-to-speech",
+              "description": "Generate fast speech from text prompts and different voices using the MiniMax Speech-02 Turbo model, which leverages advanced AI techniques to create high-quality text-to-speech.",
+              "status": "active",
+              "tags": [
+                "text-to-speech"
+              ],
+              "updated_at": "2026-06-24T11:49:45.147Z",
+              "is_favorited": false,
+              "thumbnail_url": "https://v3b.fal.media/files/b/0a9f92da/CVkTH0KATZIyuBLbfuVz4_ca6fAKxo.png",
+              "model_url": "https://fal.run/fal-ai/minimax/preview/speech-2.5-turbo",
+              "license_type": "commercial",
+              "date": "2025-08-11T09:33:12.088Z",
+              "highlighted": false,
+              "kind": "inference",
+              "pinned": false
+            }
+          }
+        ],
+        "next_cursor": null,
+        "has_more": false
+      }
+    },
+    {
+      "pricing": "fal-ai/minimax/speech-02-hd",
+      "at": "2026-09-25T02:43:08.759Z",
+      "result": {
+        "prices": [
+          {
+            "endpoint_id": "fal-ai/minimax/speech-02-hd",
+            "unit_price": 0.1,
+            "unit": "1000 characters",
+            "currency": "USD"
+          }
+        ],
+        "next_cursor": null,
+        "has_more": false
+      }
+    },
+    {
+      "pricing": "fal-ai/minimax/speech-2.8-hd",
+      "at": "2026-09-25T02:43:36.205Z",
+      "result": {
+        "prices": [
+          {
+            "endpoint_id": "fal-ai/minimax/speech-2.8-hd",
+            "unit_price": 0.1,
+            "unit": "1000 characters",
+            "currency": "USD"
+          }
+        ],
+        "next_cursor": null,
+        "has_more": false
+      }
+    }
+  ]
+}

@@ -1,8 +1,27 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
 import { WORLD_RECOVERY_REVIEW } from '../tools/rc1-world-qualification.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
+import { execFileSync } from 'node:child_process';
 import { canonicalJson, sha256 } from '../tools/rc1-native-proof.js';
 import { verifyLifecycleSources, reviewWorkloadLifecycleApplicability } from '../tools/rc1-lifecycle-applicability.js';
+
+if (!isHistoricalSourceFixture()) {
+  const revision = 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0', file = 'src/made.js';
+  const blob = 'cea5ee787cbdb4c87397e967cb821de771f079bd';
+  const current = (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n');
+  assert.equal(execFileSync('git', ['rev-parse', `${revision}:${file}`], { encoding: 'utf8' }).trim(), blob);
+  assert.equal(execFileSync('git', ['cat-file', 'blob', blob], { encoding: 'utf8' }), current);
+  assert.equal(sha256(current), '89decd4437290888d81602171e6de006d26da6596985f150bc3caeebe2c210e5');
+  for (const supplied of [current, current.replaceAll('\n', '\r\n'), current + '\n// unreviewed C2 lifecycle source\n']) {
+    await assert.rejects(verifyLifecycleSources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision,
+      readFile: candidate => candidate === file ? supplied : fs.readFile(candidate) }),
+    /Lifecycle source changed: src\/made.js/);
+  }
+  console.log('PASS: historical lifecycle source guard rejects exact C2, CRLF and tampering; current source is not admitted');
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
 
 const hash = value => sha256(canonicalJson(value)), copy = value => structuredClone(value);
 const source = await verifyLifecycleSources({ sourceRevision: WORLD_RECOVERY_REVIEW.reviewedRevision, readFile: file => fs.readFile(file) });

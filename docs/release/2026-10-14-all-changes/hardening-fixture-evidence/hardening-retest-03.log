@@ -1,0 +1,18 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+🚨 §10.4 LEDGER INVARIANT DRIFT: [{"name":"character cash","lhs":113249,"rhs":100904,"drift":12345,"ok":false}]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: the agent guide carries the vendor-neutral (any-model) section
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/hardening.js:425:1
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

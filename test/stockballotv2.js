@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { getAddress } from 'viem';
 import { dbCaps, makeDb } from '../src/db.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import {
   canonicalTickerBallotTallyHashV2,
   castTickerVoteV2,

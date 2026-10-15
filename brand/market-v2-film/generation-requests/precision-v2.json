@@ -1,0 +1,94 @@
+[
+  {
+    "id": "M04-L03-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "As selling crosses active ranges, Ether converts into O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L04-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "As buying crosses active ranges, O M R converts into Ether.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L26-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "M04-L30-v2",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "input": {
+      "prompt": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  }
+]

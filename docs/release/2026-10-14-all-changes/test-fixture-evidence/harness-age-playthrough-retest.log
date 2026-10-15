@@ -1,0 +1,96 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+the city: 48 residents on the streets before play starts
+
+━━ OMERTÀ PROGRESSION HARNESS ━━
+a plausible new player: 1 sitting(s)/day × 1 min, over 1 days
+pacing: level=D(L-1)² D=10 · energy 12/min · nerve 6/min · gym 3m · missions 4h
+
+SESSION TIMELINE
+  day  sit   level        respect        net $     idle   what they did
+    1  1      1→1            +0        $-250     0%   corner:accept×3 hustle:travel×1 boost:miss×1
+
+WHERE THE TIME WENT
+  played                0h01m across 1 sittings
+  idle (nothing to do)  0% of played minutes
+  in lockup             0% of played minutes
+
+WHAT ACTUALLY THROTTLES A SITTING
+  crimes                0.0/hour played   (nerve regen 6/min funds the drip)
+  nerve pool            sat at 91% of cap on average, full at 0% of minutes
+  energy pool           full at 0% of minutes   (energy is spent by the gym + the garage only)
+  the gym               0 sessions — hard-capped at 0/sitting by the 3m cooldown
+  the mission ladder    0 jobs — the 4h cooldown is LONGER than a sitting, so it advances ~once per session no matter how long you play
+
+ACTIONS TAKEN
+  corner:accept    3
+  hustle:travel    1
+  boost:miss       1
+
+WHAT BLOCKED THEM  (the gate a real player hits, and how often)
+  score:jailed                 1
+  train:jailed                 1
+  crime:jailed                 1
+
+TIME TO LEVEL
+  level      played (at the keyboard)      world (wall clock from birth)
+      2      — not reached
+      3      — not reached
+      5      — not reached
+      8      — not reached
+     10      — not reached
+     15      — not reached
+     20      — not reached
+     25      — not reached
+     30      — not reached
+     40      — not reached
+     50      — not reached
+     75      — not reached
+    100      — not reached
+
+THE GATES  (can you afford the front the moment you unlock it?)
+  front         gate   entry cost      net worth at the gate    covers
+  laundromat   lvl  15   $250,000       — never reached
+  restaurant   lvl  22   $500,000       — never reached
+  nightclub    lvl  30   $1,200,000     — never reached
+  hotel        lvl  42   $3,000,000     — never reached
+  casino       lvl  58   $8,000,000     — never reached
+
+MILESTONES
+  corner:accept          0h00m
+  boost                  0h00m
+
+WHERE THEY ENDED
+  level 1 · respect 0 · $250 · stats 4/6/5
+  missions 0/36 · First Week 0/6 gameplay tasks
+  the coach says: "Pull your first job"
+
+THE SOLO CEILING  (crime + gym + garage + Score + missions ONLY, 1 days)
+  level 1 · $250 · 0/36 of the story — with zero contact with another player
+
+SYSTEMS THEY ACTUALLY TOUCHED  (measured from telemetry, 0 of 40)
+  never opened: streets / crime · the kitchen · wet work · contracts · the dueling ladder · crew heists · clue scrolls · the family · the commission · territory · the world · the blood war · business empire · convoys · the port · the black market · loan sharking · the casino · the speakeasy · boxing · street races · the stable · the law · the pen · the wire · secrets · skills · the underworld · the estate · the made man · the auction house · the collection · going legit · the megaproject · street life · landmarks · street deeds · vanity · the store / pass · growth / social
+  (this measures the LADDER as much as the game — a system this harness never tries
+   cannot appear. What it is evidence for is the FUNNEL: what a plausible player,
+   following the coach and the checklist, actually arrives at.)
+
+THE COACH  (1 distinct rungs across 0h01m of advised play, 0h00m silent)
+  100%    0h01m  Pull your first job
+  the plan box offered 5.0 steps on average (max 5)
+  obeyed: none
+  not tested: "Pull your first job" — no action wired in this harness
+
+  ✓ the coach walked: 1 rungs; every rung the player obeyed cleared
+
+  ⚠ "Pull your first job" held 100% of advised play and this
+     player could never act on it — no action wired in this harness.
+     Every rung below it went unseen for that whole stretch. On a populated server it
+     clears; on a thin one it is a wall. Band it or demote it if that is not intended.
+
+THE REFILL CEILING  (does levelling up hand back more nerve than the level cost?)
+  RAW CROSSING GOES SELF-SUSTAINING AT LEVEL 90: the next level costs ~96 nerve (via "grandcasino") and a crossing refills 100.
+  ✔ BOUNDED: at most 10 refills/day (PACING.LEVEL_UP_REFILL_MAX_DAY), so the refill
+    contributes ≤ 10.43 levels/day at level 90 — and the ratio is flat in L (both terms are linear),
+    so it stays that bounded at every level above. Regen does the rest, as intended.
+
+  ▸ AFTER 2 HOURS AT THE KEYBOARD: level 1   (the alpha speedrun reached 240)
+  ▸ after 5 hours: level 1   ·   after 10 hours: level 1

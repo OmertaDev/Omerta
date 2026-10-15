@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `15cdb00fb416`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c89ce4729d6c`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 3704 |
+| Commits in clone | 3640 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-14 — test(release): pin reviewed commercial route declaration fix |
+| Latest commit | 2026-10-15 — Merge pull request #274 from OmertaDev/codex/city-graphics-prod-20261015 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 2746 |
+| OmertaDev | 2682 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 113 |
@@ -30,46 +30,46 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 628 | historical |
-| knowledge/generated/graph-summary.md | 628 | historical |
-| knowledge/generated/graph.json | 628 | historical |
-| knowledge/generated/inventory.md | 628 | historical |
+| knowledge/generated/github-history.md | 635 | historical |
+| knowledge/generated/graph-summary.md | 635 | historical |
+| knowledge/generated/graph.json | 635 | historical |
+| knowledge/generated/inventory.md | 635 | historical |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [SPEC.md](../../SPEC.md) | 515 | yes |
-| [public/index.html](../../public/index.html) | 459 | yes |
-| [src/server.js](../../src/server.js) | 419 | yes |
-| [schema.sql](../../schema.sql) | 350 | yes |
+| [SPEC.md](../../SPEC.md) | 510 | yes |
+| [public/index.html](../../public/index.html) | 465 | yes |
+| [src/server.js](../../src/server.js) | 418 | yes |
+| [schema.sql](../../schema.sql) | 349 | yes |
 | knowledge/generated/documents.md | 316 | historical |
-| [package.json](../../package.json) | 304 | yes |
+| [package.json](../../package.json) | 303 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/modules.md | 224 | historical |
+| knowledge/generated/modules.md | 227 | historical |
+| [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
-| [src/game.js](../../src/game.js) | 188 | yes |
-| knowledge/generated/graph.mmd | 174 | historical |
+| knowledge/generated/graph.mmd | 175 | historical |
 | [test/gates.js](../../test/gates.js) | 155 | yes |
-| [src/invariants.js](../../src/invariants.js) | 149 | yes |
+| [src/invariants.js](../../src/invariants.js) | 147 | yes |
 | [src/worker.js](../../src/worker.js) | 137 | yes |
-| [test/client.js](../../test/client.js) | 129 | yes |
+| [test/client.js](../../test/client.js) | 130 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | knowledge/generated/schema.md | 124 | historical |
-| [src/rules.tail.js](../../src/rules.tail.js) | 118 | yes |
+| [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
 | knowledge/generated/routes.md | 114 | historical |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 105 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
-| [public/wiki.html](../../public/wiki.html) | 91 | yes |
+| [public/wiki.html](../../public/wiki.html) | 93 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 89 | yes |
-| [test/social.js](../../test/social.js) | 86 | yes |
-| [test/growth.js](../../test/growth.js) | 81 | yes |
-| [docs/WIKI.md](../../docs/WIKI.md) | 79 | yes |
+| [test/social.js](../../test/social.js) | 88 | yes |
+| [test/growth.js](../../test/growth.js) | 83 | yes |
+| [docs/WIKI.md](../../docs/WIKI.md) | 81 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 76 | yes |
-| [test/migrate.js](../../test/migrate.js) | 75 | yes |
-| [test/hardening.js](../../test/hardening.js) | 67 | yes |
-| [src/preflight.js](../../src/preflight.js) | 65 | yes |
-| [tools/sim.js](../../tools/sim.js) | 60 | yes |
+| [test/migrate.js](../../test/migrate.js) | 74 | yes |
+| [test/hardening.js](../../test/hardening.js) | 69 | yes |
+| [src/preflight.js](../../src/preflight.js) | 67 | yes |
+| [tools/sim.js](../../tools/sim.js) | 61 | yes |
 | [CHAIN-DEPLOY.md](../../CHAIN-DEPLOY.md) | 60 | yes |
 | [README.md](../../README.md) | 60 | yes |
-| [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 58 | yes |
-| [test/rc1-world-qualification.js](../../test/rc1-world-qualification.js) | 55 | yes |
+| [test/rc1-native-world-workload.js](../../test/rc1-native-world-workload.js) | 59 | yes |
+| [test/docs.js](../../test/docs.js) | 57 | yes |
 
 ## Pull requests
 

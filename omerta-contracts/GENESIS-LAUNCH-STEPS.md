@@ -1,6 +1,6 @@
 # Genesis deployment checklist
 
-Preparation checklist for the approved five-day NFT-gated auction. The signing packet is not ready until review, hosted checks and final-plan verification pass. Do not use the superseded nonce-27 preview.
+Preparation checklist for the five-day NFT-gated auction. The signing packet is not ready until review, hosted checks and final-plan verification pass. The restricted-market prerequisites and a reviewed typed funding path must also be in place: a sealed token rejects direct Safe-to-auction/coordinator transfers while the genesis Safe has no operator role. The funding-call examples below are not executable fixed-policy approval until that path is supplied and rehearsed. Do not use the superseded nonce-27 preview.
 
 1. Select deployer 0x5aE54B5555ae5dC9F899e03cB9aaC74dCcDc4E7E in MetaMask on Robinhood Chain (4663). Verify gas funding. Confirm two owners can approve the Safe's token funding.
 2. Receive the verified signing packet: source/artifact and report pins, fresh nonce, predicted addresses, gas estimates, dependencies, Safe roles, schedule and simulations. Review the 40M sale / 20M LP / 40M retained bonds, 50% accepted ETH LP budget, Family Yield remainder, 10 ETH graduation and floor, and claims at closure. LP opens at its funded price, which can differ from the final auction price.
@@ -19,6 +19,6 @@ Preparation checklist for the approved five-day NFT-gated auction. The signing p
 
 There are five EOA deployment transactions and four funding/configuration calls before opening. Safe owner approvals are additional signatures; the funding calls can be batched. Five main contracts plus the internally created NFT validator and read-only auction schedule store produce seven addresses. The earlier six-address count omitted the schedule store; deployment transaction count stays five.
 
-Existing OMR, character NFT and character-fee contracts are reused after verification. Core/reserve adapters are created without activating their future strategy controllers. No automatic Family Yield conversion/distribution or bond activation is part of genesis deployment.
+The character NFT and character-fee contracts retain their verified existing addresses. The fixed trade policy additionally requires a reviewed restricted token, bound settlement manager and paired PositionManager; standard deployed OMR/manager pins do not satisfy that policy. Core/reserve adapters are created without activating their future strategy controllers. No automatic Family Yield conversion/distribution or bond activation is part of genesis deployment.
 
 No private keys or recovery phrases are requested. The user reviews and signs wallet transactions; the agent prepares and verifies them. A failed deployment or changed nonce stops the sequence for regeneration. All step addresses, values and data must match the final verified packet.

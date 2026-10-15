@@ -1,6 +1,6 @@
 // Authenticated production routes and generic HTTP idempotency middleware together.
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { travel, withCharacter } from '../src/game.js';
 import { FURNACE_IDS as ids } from '../src/content/furnace-ledger.js';
 import { addPlayer, characterId, findCommand } from './lib/player-command-support.js';

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "SOUL-MOTION-city",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "folder": "clips",
+    "ext": "mp4",
+    "input": {
+      "prompt": "Single continuous 8-second vertical cinematic shot. Slow cinematic dolly forward from behind the man toward the harbor. His coat moves slightly in the cool wind; one hand settles naturally on the parapet. Distant harbor lamps shimmer on wet roofs. Quiet restrained human movement; preserve his silhouette and the original composition. Retain the reference image's rich amber practical light, deep olive shadows, burgundy details, tactile 35mm grain and organic chiaroscuro. Understated film scene, not an advertisement pose. No cuts, no graphics, no captions, no logos, no new objects, no sudden zoom, no exaggerated action, no cartoon movement.",
+      "image_url": "https://v3b.fal.media/files/b/0aabcd30/jeccbvlayKkLTohuucOho_9ab083dc45cc46cc98392cb3f3fe5751.png",
+      "duration": "8",
+      "resolution": "720p",
+      "aspect_ratio": "auto",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    }
+  },
+  {
+    "id": "SOUL-MOTION-vault",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "folder": "clips",
+    "ext": "mp4",
+    "input": {
+      "prompt": "Single continuous 8-second vertical cinematic shot. Slow lateral tracking shot past the patinated locking wheels toward the nearly empty vault interior. A narrow shaft of warm light drifts across worn brass. Dust in the air. All geometry and inventory remain fixed and believable; the steel door does not morph. Retain the reference image's rich amber practical light, deep olive shadows, burgundy details, tactile 35mm grain and organic chiaroscuro. Understated film scene, not an advertisement pose. No cuts, no graphics, no captions, no logos, no new objects, no sudden zoom, no exaggerated action, no cartoon movement.",
+      "image_url": "https://v3b.fal.media/files/b/0aabcd30/RM4CtnWyOo-fDM9B67taq_5bcce47ccfa64acda609c390b8938bf2.png",
+      "duration": "8",
+      "resolution": "720p",
+      "aspect_ratio": "auto",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    }
+  },
+  {
+    "id": "SOUL-MOTION-harbor",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "folder": "clips",
+    "ext": "mp4",
+    "input": {
+      "prompt": "Single continuous 8-second vertical cinematic shot. Slow low dolly forward along the wet harbor, ripples move naturally on dark water, sea mist drifts gently and warm warehouse lights reflect. The ropes and moored vessel remain physically stable. Retain the reference image's rich amber practical light, deep olive shadows, burgundy details, tactile 35mm grain and organic chiaroscuro. Understated film scene, not an advertisement pose. No cuts, no graphics, no captions, no logos, no new objects, no sudden zoom, no exaggerated action, no cartoon movement.",
+      "image_url": "https://v3b.fal.media/files/b/0aabcd31/U8UYWcNyIERXQE1pAjJhJ_45bc1837f3014109978a49b381371dc5.png",
+      "duration": "8",
+      "resolution": "720p",
+      "aspect_ratio": "auto",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    }
+  },
+  {
+    "id": "SOUL-MOTION-family",
+    "model": "bytedance/seedance-2.5/image-to-video",
+    "folder": "clips",
+    "ext": "mp4",
+    "input": {
+      "prompt": "Single continuous 8-second vertical cinematic shot. An intimate restrained dolly in toward the table. The adult nearest camera slowly passes the sealed plain envelope across the table; another adult receives it with one natural hand movement. Others barely shift and breathe. Preserve natural anatomy, no dialogue, no lip-sync. Retain the reference image's rich amber practical light, deep olive shadows, burgundy details, tactile 35mm grain and organic chiaroscuro. Understated film scene, not an advertisement pose. No cuts, no graphics, no captions, no logos, no new objects, no sudden zoom, no exaggerated action, no cartoon movement.",
+      "image_url": "https://v3b.fal.media/files/b/0aabcd30/OPp4z5T_h8bEFEVv0GROO_f9e8954071f0425c8995e3b5ace43c0f.png",
+      "duration": "8",
+      "resolution": "720p",
+      "aspect_ratio": "auto",
+      "generate_audio": false,
+      "bitrate_mode": "high",
+      "codec": "H264"
+    }
+  }
+]

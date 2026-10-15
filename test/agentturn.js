@@ -14,7 +14,7 @@ if (process.argv.includes('--postgres')) {
 
 import assert from 'node:assert/strict';
 import { goodPriceOf, energyCapOf, nerveCapOf, levelOf } from '../src/rules.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { agentActionLockHooks, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
 import { withCharacter } from '../src/game.js';
 import { payBusinessUpkeep } from '../src/business.js';

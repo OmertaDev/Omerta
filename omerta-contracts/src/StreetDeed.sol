@@ -42,6 +42,11 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///         much shorter deadlines in practice.
     uint256 public constant MAX_VOUCHER_TTL = 30 days;
 
+    /// @notice Permanent cap on distinct streets, including identities whose NFT was redeemed.
+    ///         Re-extracting the same street does not issue another identity or free a supply slot.
+    uint256 public constant MAX_DEED_IDENTITIES = 2_500;
+    uint256 public totalDeedIdentities;
+
     bytes32 public constant DEED_VOUCHER_TYPEHASH =
         keccak256("DeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)");
 
@@ -181,6 +186,8 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
 
         uint256 id = tokenIdFor(v.name);
         if (bytes(deedName[id]).length == 0) {
+            require(totalDeedIdentities < MAX_DEED_IDENTITIES, "SD: lifetime cap");
+            ++totalDeedIdentities;
             deedName[id] = v.name;
             deedDistrict[id] = v.district;
         } else {

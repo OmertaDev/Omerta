@@ -1,0 +1,24 @@
+No files changed, compilation skipped
+
+Ran 3 tests for test/market-v2/LPRevenueEnforcementV2.t.sol:LPRevenueEnforcementV2Test
+[PASS] test_registeredPoolManagerBreaksNormalRouterSettlement() (gas: 307203)
+[PASS] test_twoPoolNettingBypassesEvenRegisteredPoolManagerTransferTax() (gas: 245062)
+[PASS] test_unhookedSalePaysNoRevenueWhenPoolManagerIsUnregistered() (gas: 174099)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 4.21ms (2.25ms CPU time)
+
+Ran 9 tests for test/market-v2/MarketStateV2.t.sol:MarketStateV2Test
+[PASS] testFuzz_idleCheckpointsCannotChangeObservedPrice(uint32,uint8) (runs: 512, μ: 311704, ~: 295388)
+Logs:
+  Bound result 31535990
+
+[PASS] test_dustSellCannotDeclareFullMarketStress() (gas: 511576)
+[PASS] test_fullUint32IdleCycleCannotAliasSnapshotFreshness() (gas: 272342)
+[PASS] test_negativeFractionalMeanRoundsTowardNegativeInfinity() (gas: 427525)
+[PASS] test_requiresCompleteEpochAndCannotRefreshSpamNewEpochs() (gas: 433813)
+[PASS] test_snapshotFailsClosedWhenStaleWithoutNeedingRefresh() (gas: 273253)
+[PASS] test_swapAtBoundaryCannotRewritePriorEpochPriceOrVolume() (gas: 602041)
+[PASS] test_timeWeightedVarianceUsesElapsedPriceNotSwapCount() (gas: 585828)
+[PASS] test_zeroLiquidityIntervalInvalidatesAndRecoveryNeedsFullHealthyEpoch() (gas: 450279)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 51.45ms (55.55ms CPU time)
+
+Ran 2 test suites in 53.00ms (55.67ms CPU time): 12 tests passed, 0 failed, 0 skipped (12 total tests)

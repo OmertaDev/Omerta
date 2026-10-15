@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-14T22:35:45.941Z",
+  "status": "controlled_ci_experiment_prepared_not_remote_validated",
+  "runId": 38645119016,
+  "url": "https://github.com/OmertaDev/Omerta/actions/runs/38645119016",
+  "failedHead": "fd9713822a96fe8eba6e9e3e582b45dd4104afb0",
+  "contractSourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "runner": {
+    "version": "2.337.0",
+    "label": "ubuntu-latest",
+    "image": "ubuntu-24.04",
+    "os": "Ubuntu 24.04.5 LTS"
+  },
+  "attempts": [
+    {
+      "number": 1,
+      "jobId": 116129939830,
+      "conclusion": "failure",
+      "failedStep": "forge build",
+      "exitCode": 143,
+      "buildStartedAt": "2026-10-14T22:06:35Z",
+      "buildEndedAt": "2026-10-14T22:13:47Z",
+      "debug": false
+    },
+    {
+      "number": 2,
+      "jobId": 116133982642,
+      "conclusion": "failure",
+      "failedStep": "forge build",
+      "exitCode": 143,
+      "buildStartedAt": "2026-10-14T22:16:52Z",
+      "buildEndedAt": "2026-10-14T22:25:00Z",
+      "debug": true
+    }
+  ],
+  "diagnosis": {
+    "confirmed": "Runner shutdown interrupted compilation. The local frozen build/test/size checks do not make the required remote check pass.",
+    "underlyingTrigger": "unproven",
+    "memoryExhaustionConfirmed": false,
+    "resourceCountersAvailable": false,
+    "userActorIdentified": false,
+    "enumCaveat": "actions/runner v2.337.0 also sets UserCancelled on Worker_Unloading/SIGTERM and RunnerShutdown messages; this label alone does not identify a human cancellation or prove resource pressure.",
+    "compilerOrContractDiagnosticPresent": false
+  },
+  "sanitizedDiagnosticEvidence": [
+    "Both failed attempts began the 256-file and 296-file solc 0.8.26 compilations concurrently and ended without a compiler diagnostic.",
+    "Attempt 2 worker: Finished process 2956 with exit code 143, and elapsed time 00:08:08.1964310.",
+    "Attempt 2 worker at 22:25:00 UTC: Runner will be shutdown for UserCancelled.",
+    "Attempt 2 step log: Skip Re-evaluate condition on runner shutdown.",
+    "The runner lease renewed normally through 22:24:18 UTC, valid until 23:09:18 UTC; no memory/RSS/resource-threshold measurement was exposed."
+  ],
+  "upstreamEnumReferences": [
+    "https://github.com/actions/runner/blob/v2.337.0/src/Runner.Worker/Worker.cs#L127-L131",
+    "https://github.com/actions/runner/blob/v2.337.0/src/Runner.Worker/Worker.cs#L222-L227",
+    "https://github.com/actions/runner/blob/v2.337.0/src/Runner.Listener/Runner.cs#L350-L355"
+  ],
+  "retainedLocalLogHashes": [
+    {
+      "file": "remote-forge-fd9713822-full.log",
+      "bytes": 181811,
+      "sha256": "8dd97fb98df750bdb53afb6e8ce046a3adc1778e61492cf0ade500ed18e383e2"
+    },
+    {
+      "file": "remote-forge-fd9713822-attempt1-logs.zip",
+      "bytes": 52587,
+      "sha256": "5b5dab99d67118c7d6e2cc2e02c6cb9d178e59d8d6b4dd85b06ed7238c564011"
+    },
+    {
+      "file": "remote-forge-fd9713822-attempt2-full.log",
+      "bytes": 214124,
+      "sha256": "fd152c5c464427e5d38a0204176b26a006cc5ff48bc1af6b3b8c209037e336d9"
+    },
+    {
+      "file": "remote-forge-fd9713822-attempt2-logs.zip",
+      "bytes": 92777,
+      "sha256": "a30676744512283353a5c3c593e79abafb856f2fc681466f2a85a5d2dd5ae6e5"
+    }
+  ],
+  "experiment": {
+    "reason": "Reduce peak compiler concurrency and collect a bounded resource snapshot after two externally interrupted builds. Underlying shutdown trigger is unproven; this is not a diagnosed OOM fix.",
+    "workflow": ".github/workflows/forge.yml",
+    "baselineWorkflowSha256": "8af0fcc6e1ccac4560880cc6e775490d52590ff343db965c6cbe78d3f198d880",
+    "preparedWorkflowSha256": "e042629a6dbd52b82f37c931396ade6af1ed4a654ae7abb198b798a1531f1d43",
+    "workflowHashRepresentation": "Canonical LF Git blob bytes",
+    "buildCommand": "forge build --threads 1",
+    "sizeCommand": "forge build --sizes --skip FuzzTester --threads 1",
+    "resourceSnapshotBeforeCompile": [
+      "free -m",
+      "df -h ."
+    ],
+    "preserved": [
+      "Both configured compiler profiles and all sources",
+      "Pinned Forge 1.7.1, solc 0.8.26, optimizer 800, Cancun EVM",
+      "Full unit/fuzz/invariant suite and all E2E steps",
+      "Production runtime/initcode size assertions and sole FuzzTester size exclusion"
+    ],
+    "noNewSleepBackgroundHelpersOrRunnerClass": true
+  },
+  "localValidation": {
+    "cliHelp": "Pinned Forge 1.7.1 build --help accepts -j/--threads (alias --jobs), with 0 defaulting to logical cores.",
+    "yaml": "js-yaml parse and structural deep comparison against HEAD passed; only the two explicit worker limits and one bounded resource step changed.",
+    "gates": {
+      "command": "node test/gates.js",
+      "exitCode": 0
+    },
+    "remoteResult": "Not yet executed for the prepared workflow; required checks must complete on the next candidate.",
+    "docs": {
+      "command": "node test/docs.js",
+      "exitCode": 0,
+      "testedAt": "2026-10-14T22:41:02.941Z",
+      "sourceHeadAtCheck": "8cf20835738ae14fb6df51142334d777332e5bcd",
+      "logSha256": "f2491c8205c6dba6b45ed59654702cf507629456ff09172a13cd22a6782b6de8",
+      "shapeReconciliation": "test/docs.js accepts only the bare build command or the same command with --threads 1; parse/size separation and downstream ordering assertions remain enforced."
+    }
+  },
+  "publicationScope": "Sanitized metadata, safe diagnostic excerpts and hashes only. Raw runner archives remain outside Git because they may contain credential-sensitive diagnostic data.",
+  "limitations": [
+    "The UserCancelled enum also covers SIGTERM/unloading and RunnerShutdown messages; it does not identify a human actor.",
+    "No measured memory exhaustion, Solidity compiler error or failing contract assertion was observed in either interrupted build.",
+    "Existing local b602 build/test/size evidence remains point-in-time evidence; it does not make a required remote check green.",
+    "No Solidity, runtime, compiler profile, source test budget, protected source, or frozen evidence package is changed by this experiment."
+  ]
+}

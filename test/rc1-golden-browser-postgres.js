@@ -6,7 +6,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { createLivingWorldDirector } from '../src/director/runtime.js';
 import { createDockWarDefinitions } from '../src/director/dock-war.js';
 import { DOCK_WAR_IDS as ids } from '../src/content/dock-war.js';

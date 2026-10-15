@@ -9,7 +9,7 @@ if (postgres) {
 } else process.env.DATABASE_URL = '';
 Object.assign(process.env, { RATE_LIMIT: 'off', JWT_SECRET: 'delivery-finance-local-test-only-secret', MOD_KEY: 'delivery-finance-local-mod-only',
   SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', DELIVERY_CONTRACTS: 'on', MARKET_SEED: 'delivery-finance-native-test-only' });
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger, withCharacter, withTwoCharacters } = await import('../src/game.js');
 const Finance = await import('../src/deliveryfinance.js');
 const Loans = await import('../src/loans.js');

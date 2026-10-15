@@ -1,0 +1,34 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync,spawnSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {chapters} from '../flagship-rebuild/story-source.mjs';
+const root=process.cwd(),out=path.join(root,'output/flagship-animation');
+const bin=path.join(root,'brand/hype-flywheel-video/node_modules/@remotion/compositor-win32-x64-msvc');
+const names=['OMERTA-Trust-Is-The-Game-Animated-1080.mp4','OMERTA-Trust-Is-The-Game-Animated-Clean-1080.mp4'];
+const results=[];
+for(const name of names){
+ const file=path.join(out,name);
+ const probe=JSON.parse(execFileSync(path.join(bin,'ffprobe.exe'),['-v','error','-show_streams','-show_format','-of','json',file],{encoding:'utf8'}));
+ const v=probe.streams.find(s=>s.codec_type==='video'),a=probe.streams.find(s=>s.codec_type==='audio');
+ if(v.width!==1920||v.height!==1080||v.avg_frame_rate!=='24/1')throw Error('Video geometry/fps mismatch: '+name);
+ if(Number(v.nb_frames)!==9360||Math.abs(Number(v.duration)-390)>.05)throw Error('Incomplete video timeline: '+name);
+ if(Number(a.sample_rate)!==48000||a.channels!==2)throw Error('Audio format mismatch: '+name);
+ if(Math.abs(Number(probe.format.duration)-390)>.1)throw Error('Container duration mismatch: '+name);
+ execFileSync(path.join(bin,'ffmpeg.exe'),['-v','error','-threads','2','-i',file,'-map','0:v','-map','0:a','-c:v','rawvideo','-threads','1','-c:a','pcm_s16le','-f','null','-'],{encoding:'utf8',stdio:['ignore','pipe','pipe']});
+ results.push({file:name,bytes:fs.statSync(file).size,sha256:createHash('sha256').update(fs.readFileSync(file)).digest('hex'),duration:Number(probe.format.duration),width:v.width,height:v.height,fps:v.avg_frame_rate,frames:Number(v.nb_frames),audio:{sampleRate:Number(a.sample_rate),channels:a.channels},fullDecode:'Passed'});
+}
+const measured=spawnSync(path.join(bin,'ffmpeg.exe'),['-hide_banner','-i',path.join(out,names[0]),'-vn','-af','loudnorm=I=-14:TP=-1:print_format=json','-c:a','pcm_s16le','-f','null','-'],{encoding:'utf8',maxBuffer:4000000});
+if(measured.status!==0)throw Error('Export audio measurement failed');
+const loudness=JSON.parse(measured.stderr.match(/\{\s*"input_i"[\s\S]*?\}/)?.[0]||'null');
+if(!loudness||Number(loudness.input_tp)>-1)throw Error('Export exceeds true-peak target');
+const film=JSON.parse(fs.readFileSync('public/art/flagship-animation/film.json'));
+const captions=film.captions;
+for(let i=0;i<captions.length;i++)if(captions[i].endMs<=captions[i].startMs||captions[i].endMs>390000||(i&&captions[i].startMs<captions[i-1].endMs))throw Error('Invalid subtitle timing');
+const normalize=s=>s.replace(/\s+/g,' ').trim();
+const expected=normalize(chapters.map(c=>c.text).join(' ')),actual=normalize(captions.map(c=>c.text).join(' '));
+if(expected!==actual)throw Error('Caption narration differs from the script');
+if(film.shots.some(s=>s.capture||s.scene==='gameplay'||/captures|screenshot/.test(s.asset||'')))throw Error('Forbidden UI source in animation timeline');
+const qa={verifiedAt:new Date().toISOString(),stage:'Complete animated review cut; temporary narration',exports:results,captions:{count:captions.length,wordCount:expected.split(' ').length,exactScriptMatch:true,withinTimeline:true,overlap:false},shots:film.shots.length,generatedArtAssets:22,websiteScreenshots:0,technique:'Painted raster assets with layered 2.5D character/prop animation and frame-driven effects. Not AI-generated video.',audio:{integratedLufs:Number(loudness.input_i),truePeakDbtp:Number(loudness.input_tp),report:'brand/flagship-animation/audio-report.json'},creativePremise:'Public launch, present-tense narration and Play now CTA per user direction.',newExternalPaidSpendUsd:0,publicationReady:false,remaining:['Voice A is selected but this export retains clearly identified local scratch narration.','Full generated character performances require the pending paid-generation ceiling; current motion is layered 2.5D.','Historical generated score account rights remain as documented in the media-rights record.']};
+fs.writeFileSync(path.join(out,'qa-report.json'),JSON.stringify(qa,null,2)+'\n');
+console.log(JSON.stringify({exports:results.map(r=>({file:r.file,frames:r.frames,duration:r.duration,bytes:r.bytes})),captions:qa.captions,audio:qa.audio,websiteScreenshots:0},null,2));

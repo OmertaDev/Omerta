@@ -5,7 +5,7 @@
 // Pinned to a known theme via BULLETIN_THEME (the SEASON_MOD test-override precedent).
 process.env.BULLETIN_THEME = 'boxing'; // metric boxing_wins, target 3 — set BEFORE the server boots
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { bulletinOf, BULLETIN } from '../src/rules.js';
 

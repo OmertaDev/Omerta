@@ -1,0 +1,104 @@
+{
+  "baselineCommit": "c07a002bd74b00f4dfe0aa5f351e109f4ff3c897",
+  "reviewedState": "working-tree source supplement; bind final release by these hashes",
+  "runDate": "2026-10-14",
+  "authorization": "Owner explicitly requested a new production respect reset; no production mutation performed by these tests",
+  "marker": "starting-levels-2026-10-14",
+  "historicalMarkerRetained": "starting-levels-2026-10-06",
+  "mutation": "UPDATE characters SET respect=0 WHERE alive=true AND is_npc=false",
+  "versions": {
+    "node": "24.19.0",
+    "postgres": "18.4",
+    "pg": "8.22.0",
+    "pgMem": "3.0.14"
+  },
+  "fuzz": {
+    "executed": false,
+    "seed": null
+  },
+  "files": {
+    "src/db.js": {
+      "baselineGitBlobSha256": "0fdad8781931817f104df25265ff91c477a33aac3904626c294ed043e17f6bed",
+      "baselineNormalizedLfSha256": "0fdad8781931817f104df25265ff91c477a33aac3904626c294ed043e17f6bed",
+      "reviewedHostRawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+      "reviewedNormalizedLfSha256": "dabe71959257fe28a99c08be900e5b9ad0979144af41a121b0fcab24f9326808",
+      "bytes": 63402
+    },
+    "test/public-start.js": {
+      "baselineGitBlobSha256": "2443245fccaf4f6920618763c76327bf3feb92f7e13d8826bac46d132a79b9e8",
+      "baselineNormalizedLfSha256": "2443245fccaf4f6920618763c76327bf3feb92f7e13d8826bac46d132a79b9e8",
+      "reviewedHostRawSha256": "3b8cb7eed299abf43859ba3d678508eea617adc7b8dc934173384f25d9d58d7c",
+      "reviewedNormalizedLfSha256": "030be00b497e45b19fdaf249226d62d2a14b7fcb21f867f7ee0e6b6ef43d0e36",
+      "bytes": 3159
+    },
+    "test/readiness-migration-failure.js": {
+      "baselineGitBlobSha256": "b7887ab68b5089b1778614ed1e33fffd02e0dc4414b8b436f20c80c3b695d0be",
+      "baselineNormalizedLfSha256": "b7887ab68b5089b1778614ed1e33fffd02e0dc4414b8b436f20c80c3b695d0be",
+      "reviewedHostRawSha256": "d45c83e83e516aca5875302566d97ae328bfe0a339d1d3dab944651d63f72fb0",
+      "reviewedNormalizedLfSha256": "9343924bf6feeff7975b868f9be3f5c9b2c1f99bac3bfa87bd2edf432a258ec9",
+      "bytes": 6783
+    }
+  },
+  "runs": [
+    {
+      "stem": "memory-reset",
+      "command": "node test/public-start.js",
+      "exitCode": 0,
+      "engine": "pg-mem"
+    },
+    {
+      "stem": "native-reset",
+      "command": "node test/readiness-migration-failure.js",
+      "exitCode": 0,
+      "engine": "PostgreSQL 18.4",
+      "environment": {
+        "COORDINATION_TEST_DATABASE_URL": "postgres://postgres@127.0.0.1:55438/omerta_release_native"
+      }
+    },
+    {
+      "stem": "native-sql",
+      "command": "npm run pgquery",
+      "exitCode": 0,
+      "engine": "PostgreSQL 18.4",
+      "environment": {
+        "DATABASE_URL": "postgres://postgres@127.0.0.1:55438/omerta_respect_reset_query"
+      }
+    }
+  ],
+  "artifacts": {
+    "memory-reset.log": {
+      "sha256": "71bbd8a13a38f08db5dab682a85af123d25e7a2d08673ea61c5c0e395a45d999",
+      "bytes": 125
+    },
+    "memory-reset.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    "native-reset.log": {
+      "sha256": "ed6446e34e52fb42690458a2eb5b461910a185e347f8055f56d29ee16386f58f",
+      "bytes": 466
+    },
+    "native-reset.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    "native-sql.log": {
+      "sha256": "0759731e94aa66d17eac6551d409d387c9e68cc6ae2ee65649996884256474a1",
+      "bytes": 565
+    },
+    "native-sql.exit": {
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    "reset.patch": {
+      "sha256": "aab3f61bf2eaf2123c4a78fd6a5afbae0b022e528bee4035a7e3a18b7019c7a9",
+      "bytes": 8928
+    }
+  },
+  "reportNormalizedLfSha256": "9077345b217764d6952eabef0a8faefda5b2bed40c0cc874b0e5c61c78fa1e69",
+  "limitations": [
+    "No production environment or database execution verified",
+    "No deployment, contract edit, RPC rehearsal or activation",
+    "Parent source-transfer proof must be repinned after source freeze"
+  ]
+}

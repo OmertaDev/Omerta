@@ -5,6 +5,18 @@ import {Test} from "forge-std/Test.sol";
 import {StreetDeed} from "../src/StreetDeed.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
+contract DeedSupplyBurnReceiver is IERC721Receiver {
+    StreetDeed immutable deed;
+
+    constructor(StreetDeed deed_) { deed = deed_; }
+
+    function onERC721Received(address, address, uint256 tokenId, bytes calldata) external returns (bytes4) {
+        deed.redeem(tokenId);
+        return IERC721Receiver.onERC721Received.selector;
+    }
+}
 
 /// StreetDeed — the on-chain tradeable deed NFT (omerta-street-deeds-design.md §2/§3). The claims under
 /// test are the ones the whole design rests on: a deed is minted ONLY on a server signature (bounded by
@@ -108,6 +120,64 @@ contract StreetDeedTest is Test {
         assertEq(deed.deedName(id), "Corvino Way", "name stored on-chain");
         assertEq(deed.deedDistrict(id), "The Docks", "district stored on-chain");
         assertTrue(deed.usedNonce(1), "nonce consumed");
+        assertEq(deed.totalDeedIdentities(), 1, "first extraction issues one permanent identity");
+    }
+
+    function test_lifetime_cap_survives_burn_and_allows_same_identity_reextraction() public {
+        assertEq(deed.MAX_DEED_IDENTITIES(), 2_500, "fixed scarcity promise");
+        for (uint256 i; i < deed.MAX_DEED_IDENTITIES(); ++i) {
+            _mintTo(alice, string.concat("Limited Street ", i.toString()), i + 1);
+        }
+        assertEq(deed.totalDeedIdentities(), 2_500, "all identities issued");
+
+        StreetDeed.DeedVoucher memory excess = _voucher(bob, "One Too Many", "The Docks", 3_001);
+        bytes memory sig = _sign(excess);
+        vm.expectRevert(bytes("SD: lifetime cap"));
+        deed.claim(excess, sig);
+        assertFalse(deed.usedNonce(3_001), "failed issuance does not consume its voucher");
+
+        uint256 id = deed.tokenIdFor("Limited Street 0");
+        vm.prank(alice);
+        deed.redeem(id);
+        assertEq(deed.totalDeedIdentities(), 2_500, "burn never frees an identity slot");
+        vm.expectRevert(bytes("SD: lifetime cap"));
+        deed.claim(excess, sig);
+
+        _mintTo(bob, "Limited Street 0", 3_002);
+        assertEq(deed.ownerOf(id), bob, "same permanent identity returns at the cap");
+        assertEq(deed.totalDeedIdentities(), 2_500, "re-extraction is not new supply");
+    }
+
+    function test_failed_safeMint_does_not_consume_lifetime_supply() public {
+        StreetDeed.DeedVoucher memory v = _voucher(address(deed), "Rejected Street", "The Docks", 1);
+        bytes memory sig = _sign(v);
+        vm.expectRevert(); // StreetDeed is not an ERC721 receiver.
+        deed.claim(v, sig);
+        assertEq(deed.totalDeedIdentities(), 0, "recipient rejection rolls back the counter");
+        assertEq(deed.deedName(deed.tokenIdFor(v.name)), "", "and the identity");
+        assertFalse(deed.usedNonce(1), "and the nonce");
+    }
+
+    function test_burn_during_mint_callback_does_not_free_lifetime_supply() public {
+        DeedSupplyBurnReceiver receiver = new DeedSupplyBurnReceiver(deed);
+        uint256 id = _mintTo(address(receiver), "Callback Street", 1);
+        vm.expectRevert();
+        deed.ownerOf(id);
+        assertEq(deed.totalDeedIdentities(), 1, "callback burn retains the issued identity");
+        _mintTo(alice, "Callback Street", 2);
+        assertEq(deed.ownerOf(id), alice);
+        assertEq(deed.totalDeedIdentities(), 1, "same identity is recoverable without creating supply");
+    }
+
+    function testFuzz_reextraction_never_adds_an_identity(uint8 repetitions) public {
+        uint256 id = _mintTo(alice, "Permanent Street", 1);
+        uint256 rounds = bound(uint256(repetitions), 1, 10);
+        for (uint256 i; i < rounds; ++i) {
+            vm.prank(alice);
+            deed.redeem(id);
+            _mintTo(alice, "Permanent Street", i + 2);
+            assertEq(deed.totalDeedIdentities(), 1);
+        }
     }
 
     function test_tokenId_is_the_keccak_of_the_name() public view {

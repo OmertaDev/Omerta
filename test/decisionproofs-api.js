@@ -11,7 +11,7 @@ if (postgres) {
   process.env.MARKET_SEED = 'decision-proof-local-test-seed';
 }
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { resourceTransaction, lockResourceTreasury } from '../src/resourcebook.js';
 const app = await buildServer();
 let sequence = 0;

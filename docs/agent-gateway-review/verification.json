@@ -1,0 +1,126 @@
+{
+  "baseline": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "phase": "local pre-release implementation verification",
+  "updatedAt": "2026-09-21T05:39:29.083Z",
+  "sourceManifest": "source-manifest.json",
+  "overall": "focused_checks_passed_broader_regression_has_three_existing_failures",
+  "checks": [
+    {
+      "command": "npm run test:gateway",
+      "status": "passed",
+      "evidence": "gateway-focused-run.txt",
+      "detail": "Scoped grants, privacy/bounds, confirmation/replay, events, Muse contract and mounted API."
+    },
+    {
+      "command": "node test/gateway-postgres.js",
+      "status": "passed",
+      "evidence": "gateway-postgres-run.txt",
+      "detail": "Final checkpoint: ten PostgreSQL concurrency/recovery groups."
+    },
+    {
+      "command": "npm run pgcheck",
+      "status": "passed",
+      "evidence": "pgcheck-run.txt",
+      "detail": "203 checks; zero failures, isolated local database."
+    },
+    {
+      "command": "node test/consigliere-recovery-browser.js",
+      "status": "passed",
+      "evidence": "ui-recovery-retest.md",
+      "detail": "Actual local server and Chromium; committed receipt recovery without another command."
+    },
+    {
+      "command": "node test/coldstart.js",
+      "status": "passed",
+      "evidence": "coldstart-run.txt",
+      "detail": "Explicit player/delegated credential perimeters. Supersedes initial cold-start failure in remaining-regressions-run.txt."
+    },
+    {
+      "command": "node test/docs.js",
+      "status": "passed",
+      "evidence": "docs-run.txt",
+      "detail": "Updated file census and route-count claims. Supersedes initial census failure in remaining-regressions-run.txt."
+    },
+    {
+      "command": "node test/preflight.js",
+      "status": "passed",
+      "evidence": "preflight-run.txt",
+      "detail": "Production configuration classification and refusal behavior."
+    },
+    {
+      "command": "npm run preflight",
+      "status": "passed",
+      "evidence": null,
+      "detail": "Development content/configuration check; not production environment approval."
+    },
+    {
+      "command": "npm run test:invites",
+      "status": "passed",
+      "evidence": "invites-run.txt",
+      "detail": "Existing invite-gated page flow."
+    },
+    {
+      "command": "npm run sim",
+      "status": "passed",
+      "evidence": "simulation-summary.txt",
+      "detail": "Economy simulation with exact ledger invariants."
+    },
+    {
+      "command": "node test/dynasty.js; node test/crew.js; node test/gateway-context.js; node test/gateway-projection-security.js",
+      "status": "passed",
+      "evidence": "projection.md",
+      "detail": "Default game behavior, scope/privacy and bounded query regression."
+    },
+    {
+      "command": "node test/diagram-renderer.js; node test/client.js; node test/engagement.js; node test/levers.js; node test/graph.js; node test/chainparams.js; node test/playthrough-truth.js",
+      "status": "passed",
+      "evidence": "remaining-regressions-run.txt",
+      "detail": "Remaining checks executed independently after known route-suite failure."
+    },
+    {
+      "command": "Acorn parse and bounded AST diagnostics",
+      "status": "passed",
+      "evidence": "static-analysis.json",
+      "detail": "14 new gateway/adapter/client files; three fixed SQL-construction sites reviewed."
+    },
+    {
+      "command": "git diff --check",
+      "status": "passed",
+      "evidence": null,
+      "detail": "Exit zero."
+    }
+  ],
+  "broaderRegression": {
+    "command": "npm test",
+    "status": "failed_existing_assertion",
+    "exitCode": 1,
+    "pretest": "passed including 100 seeds / 25000 property actions",
+    "gameplay": "All sequential suites before test/routes.js passed. Mounted-route authentication/envelope checks passed (806 registrations, 771 under /v1).",
+    "stoppedAt": "test/routes.js:351 — existing homepage-art expectation",
+    "evidence": "full-regression-summary.txt",
+    "remainingChecks": "Executed separately; known gates/knowledge-test failures remain. Cold-start and documentation census failures were fixed and their final retests passed."
+  },
+  "knownFailures": [
+    {
+      "command": "node test/routes.js",
+      "detail": "Authentication/envelope checks pass; later existing homepage PNG-link assertion fails.",
+      "evidence": "route-baseline.json"
+    },
+    {
+      "command": "node test/gates.js",
+      "detail": "Existing price-bound check flags unchanged bondQuoteBudgetAmount.",
+      "evidence": "regression-baseline.json"
+    },
+    {
+      "command": "node tools/knowledge-test.js",
+      "detail": "Existing root provenance expects servePage instead of unchanged serveLaunchPage.",
+      "evidence": "regression-baseline.json"
+    }
+  ],
+  "releaseLimits": [
+    "Native Muse vendor/protocol not identified; REST adapter only, nativeMuseVerified=false.",
+    "Capability guide records unavailable trade/unsigned transaction, RBS, liquidity-to-territory and territory-event adapters, plus bounded/partial projections.",
+    "Event source retention and late-commit timestamp cursor gaps remain; no exactly-once claim.",
+    "No deployment, vendor enrollment, wallet signature or live economic transaction performed."
+  ]
+}

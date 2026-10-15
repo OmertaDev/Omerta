@@ -1,0 +1,5 @@
+* -text
+*.log whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.exit whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# Preserve timestamp-only upstream Actions lines byte-for-byte.
+old-ci-loan-expiry-failure.log whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

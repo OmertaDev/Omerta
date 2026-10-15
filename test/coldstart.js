@@ -23,7 +23,7 @@ process.env.COORDINATION_OPERATIONS = 'off';
 process.env.CHAIN_RPC_URL = ''; // this fixture deliberately has no funded-chain configuration
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 
@@ -131,10 +131,27 @@ const parameterlessGets = (app.routes || [])
   .filter((r) => !r.url.includes('/mod/'))
   .filter((r) => !r.url.includes(':'));
 const reviewerGets = parameterlessGets.filter((r) => r.authKind === 'rwaReviewerAuth');
+const delegatedGets = parameterlessGets.filter((r) => r.authKind === 'gatewayAuth');
+assert.deepEqual(delegatedGets.map((r) => r.url).sort(), [
+  '/v1/gateway/capabilities', '/v1/gateway/events', '/v1/gateway/events/catalog',
+  '/v1/gateway/events/stream', '/v1/gateway/subscriptions',
+], 'the delegated perimeter uses its own credential and subscription context');
+for (const route of delegatedGets) assert.equal((await j('GET', route.url, token)).code, 401,
+  'ordinary player JWTs cannot substitute for a scoped connection: ' + route.url);
+const connection = await j('POST', '/v1/gateway/connections', token,
+  { provider: 'muse', label: 'Cold-start adviser', scopes: ['omerta.player.read', 'omerta.world.read'] });
+assert.equal(connection.code, 200);
+for (const url of ['/v1/gateway/capabilities', '/v1/gateway/events/catalog', '/v1/gateway/subscriptions'])
+  assert.equal((await j('GET', url, connection.body.token)).code, 200, url + ' works with scoped credentials on an empty world');
+const subscription = await j('POST', '/v1/gateway/subscriptions', connection.body.token, { topics: ['world.event.resolved'] });
+assert.equal(subscription.code, 200);
+const emptyEvents = await j('GET', '/v1/gateway/events?subscriptionId=' + subscription.body.id, connection.body.token);
+assert.equal(emptyEvents.code, 200);
+assert.deepEqual(emptyEvents.body.events, []);
 assert.deepEqual(reviewerGets.map((r) => r.url), ['/v1/rwa/reviewer/queue'],
   'the one trusted reviewer GET is classified and excluded from the player cold-start probe');
 const paths = [...new Set(parameterlessGets
-  .filter((r) => r.authKind !== 'rwaReviewerAuth')
+  .filter((r) => !['rwaReviewerAuth', 'gatewayAuth'].includes(r.authKind))
   .map((r) => r.url))].sort();
 const defaultOff = new Map([
   ['/v1/worldgraph/state', 'world_unavailable'],

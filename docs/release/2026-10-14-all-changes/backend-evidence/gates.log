@@ -1,0 +1,46 @@
+✓ 73 gate requirements hold across 5 families
+✓ completeness: 14 street crimes and every collect* action are classified
+✓ 4 participation cash faucets exclude agents at the point of payment (3 waived with a stated reason)
+✓ no site hand-rolls a gate
+✓ no module re-defines jailed/hospitalized/safeHoused — every gate resolves to the one definition
+✓ all 28 public wrong-location refusals carry the destination as data; the lost-tail refusal protects its private destination
+✅ THE GATE MATRIX passed — every verb in a family enforces the gates its siblings do, checked through direct calls, shared assert helpers and inline column comparisons alike; the membership is derived from the code rather than trusted, so a new street crime or collect action cannot slip past unclassified; the sites that hand-roll a gate instead of calling the helper are named rather than quietly accepted; and no module may re-define a canonical predicate, which is the shape the inline check structurally cannot see. Scope: it proves a gate is REACHED, not that it is correct.
+✓ all 9 real-value price surfaces are walled or waived with a stated bound
+✓ all 128 pooled connections are released before their function returns
+✓ all 9 vehicle handovers clear the consent flags and the consumable
+✓ all 35 human status boards exclude residents (11 waived with a stated reason)
+✓ every code 11 watcher recorders can throw is classified poison or waived
+✓ all 88 worker jobs are isolated and every wrapped result is read null-safely
+✓ all 5 guarded worker schedulers are registered before they are first run
+✓ the season rollover -- the one job linear in the population -- runs off the alarm tick
+✓ the worker watchdog names the job it is stuck in, across 133 un-nested safe() jobs, and restarts the process after 30m
+✓ the API watches the worker heartbeat and shouts on the founder channel, one shared threshold
+✓ all 24 catalog gates test membership, not truthiness (6 waived with a stated reason)
+✓ all 12 watched event signatures match their contract declaration on type, indexed-ness AND parameter name (2 external)
+✓ all 38 decoded-log field reads name a parameter their own event declares
+✓ all 172 multi-lock transactions agree on one order for each of 196 pairs, and no contended row (211 lock sites, 108 of them write-form) is taken before a character row
+✓ all 47 Promise.all sites are exact-classified as genuine-pool/non-PG concurrency; no shared pg client is waived by syntax inference
+✓ all 179 personal notification types render a sentence, and every multi-shape type branches (329 emit sites, 250 types)
+✓ every money figure across all 2391 GameError refusals is formatted for a player
+✓ all 34 refusal messages naming a catalog rung let the NAME supply its own article
+✓ all 73 client lines naming a catalog rung let the NAME supply its own article
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: player-visible payload(s) sending a catalog id with no display name. The client has no catalog handle, so it can print nothing but the key — "the payroll came off HOT". Send the name with the id, or declare the field in WAIVED with the property that makes it safe:
+   - C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\src\gateway\context.js — kind: row.kind
+   - C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\src\gateway\events.js — kind: row.kind
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/gates.js:2285:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [
+    'C:\\Users\\Jorge\\.codex\\worktrees\\production-all-changes-20261014\\Omerta\\src\\gateway\\context.js — kind: row.kind',
+    'C:\\Users\\Jorge\\.codex\\worktrees\\production-all-changes-20261014\\Omerta\\src\\gateway\\events.js — kind: row.kind'
+  ],
+  expected: [],
+  operator: 'deepEqual',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

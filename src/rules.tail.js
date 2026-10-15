@@ -3457,11 +3457,11 @@ export const SOCIAL_TASKS = {
   ALL_BONUS: 500,  // a small bonus for doing every task in a day
   TASKS: [
     { id: 'sw_post',   name: 'Post about the family', kind: 'tweet',
-      desc: 'Tweet about OMERTÀ — tag us and drop your name as a referral code.' },
+      desc: 'Post about OMERTÀ on X. Tag us and include your character name as a referral code.' },
     { id: 'sw_invite', name: 'Send out your code',    kind: 'referral',
-      desc: 'Share your street name as a referral code — a recruit who sticks pays you real cash + $OMR.' },
-    { id: 'sw_boost',  name: 'Boost the word',        kind: 'boost',
-      desc: 'Follow, retweet, or like the pinned post to push OMERTÀ up the timeline.' },
+      desc: 'Share your character name as a referral code. Recruits who qualify can earn you in-game cash.' },
+    { id: 'sw_boost',  name: 'Share the post',        kind: 'boost',
+      desc: 'Follow OMERTÀ on X, or repost or like the pinned post.' },
   ],
 }
 // Prefilled share intents (client opens these in a new tab). code = the player's living name.
@@ -3474,8 +3474,8 @@ export const socialShareUrl = (kind, code = '') => {
   const c = String(code || '').trim()
   const link = c ? `${SOCIAL_GAME_URL}/u/${encodeURIComponent(c)}?ref=${encodeURIComponent(c)}` : SOCIAL_GAME_URL
   const tweet = (text) => `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`
-  if (kind === 'tweet') return tweet(`I'm running the streets in OMERTÀ — a noir mob RPG. Come take the city with me. @${h}`)
-  if (kind === 'referral') return tweet(`Come earn with me in OMERTÀ — tap in and I get the credit for bringing you in. @${h}`)
+  if (kind === 'tweet') return tweet(`I'm playing OMERTÀ, a noir mob RPG. Join me in the city. @${h}`)
+  if (kind === 'referral') return tweet(`Join me in OMERTÀ. Use my link so I get credit for bringing you in. @${h}`)
   return `https://x.com/${h}` // boost: the profile / pinned post
 }
 // The real First-Week social DESTINATIONS (deploy-configurable) — the OMERTÀ handle / community /

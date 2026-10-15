@@ -1,0 +1,24 @@
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+if(process.env.DATABASE_URL || process.env.NODE_ENV==='production') throw new Error('Local memory fixture only.');
+process.env.COORDINATION_ENGINE='on';process.env.COORDINATION_KNOWLEDGE='on';process.env.COORDINATION_KNOWLEDGE_SHARING='on';
+process.env.COORDINATION_ACCOUNT_IDS='cinematic-a,cinematic-b,cinematic-c';process.env.RATE_LIMIT='off';
+process.env.CHAIN_RPC_URL='http://127.0.0.1:1';process.env.DEFI_RPC_URL='http://127.0.0.1:1';
+const {buildServer}=await import('../../src/server.js');const app=await buildServer();
+const here=path.dirname(fileURLToPath(import.meta.url));const tokens=new Map();const records=[];
+app.get('/capture-session/:person',async(req,reply)=>{const who={'mara':'cinematic-a','luca':'cinematic-b','nina':'cinematic-c'}[req.params.person];if(!who)return reply.code(404).send('Unknown fixture');reply.type('text/html').header('Cache-Control','no-store');return `<!doctype html><title>Local capture session</title><p>Opening disposable OMERTÀ fixture.</p><script>localStorage.setItem('omerta_token',${JSON.stringify(tokens.get(who))});localStorage.setItem('omerta_sfx','off');location.replace('/');</script>`;});
+const fixture=async(id,name,loc)=>{await app.pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'capture-fixture',$1)",[id]);await app.pool.query('INSERT INTO account_persistent(account_id,omr) VALUES($1,350)',[id]);await app.pool.query("INSERT INTO characters(id,account_id,name,loc,season,respect,cash,bank,ammo,heat,path) VALUES($1,$2,$3,$4,1,100000,250000,50000,240,18,'enforcer')",[id+'-character',id,name,loc]);tokens.set(id,app.jwt.sign({sub:id,tv:0}));};
+await fixture('cinematic-a','Mara Voss','foundry');await fixture('cinematic-b','Luca Vale','docks');await fixture('cinematic-c','Nina Cross','foundry');
+const call=async(method,url,who='cinematic-a',payload)=>{const r=await app.inject({method,url,...(payload?{payload}:{}),headers:{authorization:`Bearer ${tokens.get(who)}`,'idempotency-key':crypto.randomUUID()}});const body=r.json();records.push({method,url,account:who,status:r.statusCode,body});return {status:r.statusCode,body};};
+const car=crypto.randomUUID();await app.pool.query("INSERT INTO cars(id,character_id,model_id,trim_id,dmg,listed,pledged,minted_onchain,race_limit,pink_slip) VALUES($1,'cinematic-a-character','junker','stock',80,false,false,false,null,false)",[car]);
+await call('POST',`/v1/worldgraph/recipes/recipe:car_salvage_basic/salvage/${car}`);
+await call('POST','/v1/worldgraph/recipes/recipe:hardened_steel/craft');
+const ownedCar=crypto.randomUUID();await app.pool.query("INSERT INTO cars(id,character_id,model_id,trim_id,dmg,listed,pledged,minted_onchain,race_limit,pink_slip) VALUES($1,'cinematic-a-character','junker','stock',12,false,false,false,null,false)",[ownedCar]);
+await call('POST','/v1/crew','cinematic-a',{name:'The Night Shift'});
+await call('POST','/v1/gangs','cinematic-a',{name:'The Voss Family',tag:'VOSS'});
+const cat=await call('GET','/v1/coordination','cinematic-b');const graph=cat.body.graphs?.find(g=>g.id==='omerta.coordination.split-ledger');
+if(graph){for(const who of ['cinematic-b','cinematic-c']){let r=await call('POST',`/v1/coordination/${graph.id}/instances`,who,{expectedContentHash:graph.contentHash});let v=r.body.instance;for(let i=0;i<3&&v?.actions?.length;i++){const a=i===2?v.actions.find(x=>x.nodeId===(who==='cinematic-b'?'docks-source':'foundry-source')):v.actions[0];if(!a)break;r=await call('POST',`/v1/coordination/instances/${v.id}/act`,who,{expectedRevision:v.revision,actionId:a.id});v=r.body.instance;}}}
+const evidence=()=>fs.writeFileSync(path.join(here,'capture-evidence.json'),JSON.stringify({createdAt:new Date().toISOString(),environment:'Actual local repository UI and handlers; disposable pg-mem; synthetic accounts/balances; no production or external RPC',records},null,2));evidence();
+await app.listen({host:'127.0.0.1',port:8824});console.log(JSON.stringify({url:'http://127.0.0.1:8824/capture-session/mara',fixtureRequests:records.map(r=>({url:r.url,status:r.status}))}));

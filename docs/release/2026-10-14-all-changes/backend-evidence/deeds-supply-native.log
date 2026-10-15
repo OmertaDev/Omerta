@@ -1,0 +1,29 @@
+C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\node_modules\pg\lib\client.js:652
+          Error.captureStackTrace(err)
+                ^
+
+error: column "home_authority_token" of relation "street_deeds" does not exist
+    at C:\Users\Jorge\.codex\worktrees\production-all-changes-20261014\Omerta\node_modules\pg\lib\client.js:652:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async claimDeed (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/deeds.js:108:5)
+    at async file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/deeds-supply-postgres.js:37:3 {
+  length: 145,
+  severity: 'ERROR',
+  code: '42703',
+  detail: undefined,
+  hint: undefined,
+  position: '75',
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'parse_target.c',
+  line: '1073',
+  routine: 'checkInsertTargets'
+}
+
+Node.js v24.19.0

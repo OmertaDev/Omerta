@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const here=path.dirname(fileURLToPath(import.meta.url));const root=path.resolve(here,'../..');
+let runner=fs.readFileSync(path.join(root,'brand/brainrot-video-system/fal-session.mjs'),'utf8').replace("import {characters} from './revision-3-look.mjs';",'const characters=[];').replaceAll('brainrot-r3','cinematic-r4').replace('version:3','version:4');
+fs.writeFileSync(path.join(here,'fal-session.mjs'),runner);
+const data=JSON.parse(fs.readFileSync(path.join(here,'production-data.json'),'utf8'));
+const previous=JSON.parse(fs.readFileSync(path.join(root,'public/art/brainrot-r3/generation-ledger.json'),'utf8'));
+const voices=['R3-C02-voice','R3-C04-voice','R3-C03-voice'].map(k=>previous.jobs[k].result.custom_voice_id);
+const jobs=data.films.flatMap((f,i)=>f.beats.map((b,j)=>({id:`C${f.id}-L${String(j+1).padStart(2,'0')}`,model:'fal-ai/minimax/speech-02-hd',input:{text:b.narration.replace(/OMERTÀ/g,'Oh mare tah').replace(/OMR/g,'O M R').replace(/RWA/g,'R W A').replace(/ETH/g,'Ether').replace(/NPC/g,'N P C'),voice_setting:{voice_id:voices[i],speed:1,pitch:0,vol:1,english_normalization:false},audio_setting:{sample_rate:44100,bitrate:256000,format:'mp3',channel:1},output_format:'url'},folder:'audio',ext:'mp3'})));
+fs.mkdirSync(path.join(here,'generation-requests'),{recursive:true});fs.writeFileSync(path.join(here,'generation-requests/narration.json'),JSON.stringify(jobs,null,2)+'\n');console.log(`Prepared ${jobs.length} fresh narration takes with original account-designed voices.`);

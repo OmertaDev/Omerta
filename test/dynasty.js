@@ -8,7 +8,7 @@
 // pg-mem, zero infra.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { MARRIAGE, SOLDIERS } from '../src/rules.js';
 import { checkScandal } from '../src/dynasty.js';

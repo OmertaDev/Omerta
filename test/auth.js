@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // THE AUTH SURFACE — the parts security.js doesn't cover.
 //
 // security.js already exercises the CONCURRENCY of auth (the invite stampede, the same-identity
@@ -13,7 +14,7 @@
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { makeDb } from '../src/db.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { verifyPrivy, upgradeAccount, accountForIdentity, consumeInvite, xOAuthStart, xOAuthCallback } from '../src/auth.js';
 
 process.env.PRIVY_APP_ID = 'omerta-test-app';
@@ -111,7 +112,7 @@ const pool = await makeDb();
     const headers = {};
     if (token) headers.authorization = `Bearer ${token}`;
     if (modKey) headers['x-mod-key'] = modKey;
-    const response = await app.inject({ method, url, headers, payload: body });
+    const response = await app.inject({ method, url, headers, payload: adultAuthFixture(method, url, body) });
     let payload; try { payload = response.json(); } catch { payload = {}; }
     return { code: response.statusCode, body: payload };
   };
@@ -251,7 +252,7 @@ const pool = await makeDb();
 {
   const app = await buildServer();
   const call = async (method, url, { token, body } = {}) => {
-    const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+    const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, body) });
     return { code: res.statusCode, body: res.json() };
   };
   const { body: { token } } = await call('POST', '/v1/auth/guest');
@@ -310,7 +311,7 @@ const pool = await makeDb();
     const headers = {};
     if (token) headers.authorization = `Bearer ${token}`;
     if (modKey) headers['x-mod-key'] = modKey;
-    const res = await app.inject({ method, url, headers, payload: body });
+    const res = await app.inject({ method, url, headers, payload: adultAuthFixture(method, url, body) });
     let b; try { b = res.json(); } catch { b = res.body; }
     return { code: res.statusCode, body: b };
   };

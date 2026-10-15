@@ -1,0 +1,28 @@
+
+Detector: uninitialized-local
+AcquisitionConstellationFactory.constructor(address,address,bytes32,uint256,bytes32[5],bytes32[5]).predicted (src/AcquisitionConstellationFactory.sol#95) is a local variable never initialized
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#uninitialized-local-variables
+
+Detector: assembly
+AcquisitionConstellationFactory.deployNext(bytes) (src/AcquisitionConstellationFactory.sol#188-223) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#201-203)
+AcquisitionConstellationFactory._checkAuthoritySnapshot() (src/AcquisitionConstellationFactory.sol#254-293) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#260-265)
+AcquisitionConstellationFactory._checkCoreSnapshot() (src/AcquisitionConstellationFactory.sol#295-323) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#301-306)
+AcquisitionConstellationFactory._checkRegistry(address,bool) (src/AcquisitionConstellationFactory.sol#392-407) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#398-403)
+AcquisitionConstellationFactory._checkTopology(uint8,bool,bool) (src/AcquisitionConstellationFactory.sol#409-435) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#417-425)
+AcquisitionConstellationFactory._callFinalizer(uint8,address,bytes) (src/AcquisitionConstellationFactory.sol#444-459) uses assembly
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#449-452)
+	- INLINE ASM (src/AcquisitionConstellationFactory.sol#454-456)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Detector: cyclomatic-complexity
+AcquisitionConstellationFactory.constructor(address,address,bytes32,uint256,bytes32[5],bytes32[5]) (src/AcquisitionConstellationFactory.sol#80-149) has a high cyclomatic complexity (19).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+src\AcquisitionConstellationFactory.sol analyzed (1 contracts with 102 detectors), 8 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\AcquisitionConstellationFactory.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

@@ -12,7 +12,7 @@ if (process.argv.includes('--postgres')) {
   process.env.MARKET_SEED ||= 'supply-tenders-local-test-market-seed';
 }
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ledger } from '../src/game.js';
 const app = await buildServer();
 let seq = 0;

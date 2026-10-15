@@ -1,0 +1,573 @@
+{
+  "film": "04",
+  "timing": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment.",
+  "lines": [
+    {
+      "id": "M04-L01-P1",
+      "lineId": "M04-L01",
+      "text": "The market has defenses. Every one can run out.",
+      "fullText": "The market has defenses. Every one can run out.",
+      "start": 0.080104,
+      "end": 3.245146,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "M04-L02-P1",
+      "lineId": "M04-L02",
+      "text": "Core supplies two-sided liquidity.",
+      "fullText": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+      "start": 5.08,
+      "end": 7.06224,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L02-P2",
+      "lineId": "M04-L02",
+      "text": "The other compartments have specific jobs.",
+      "fullText": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+      "start": 7.06224,
+      "end": 9.610833,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L03-P1",
+      "lineId": "M04-L03",
+      "text": "As selling crosses active ranges,",
+      "fullText": "As selling crosses active ranges, Ether converts into OMR.",
+      "start": 10.080229,
+      "end": 12.61961,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L03-P2",
+      "lineId": "M04-L03",
+      "text": "Ether converts into OMR.",
+      "fullText": "As selling crosses active ranges, Ether converts into OMR.",
+      "start": 12.61961,
+      "end": 14.479437,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L04-P1",
+      "lineId": "M04-L04",
+      "text": "As buying crosses active ranges,",
+      "fullText": "As buying crosses active ranges, OMR converts into Ether.",
+      "start": 15.081313,
+      "end": 17.434963,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L04-P2",
+      "lineId": "M04-L04",
+      "text": "OMR converts into Ether.",
+      "fullText": "As buying crosses active ranges, OMR converts into Ether.",
+      "start": 17.434963,
+      "end": 19.208729,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L05-P1",
+      "lineId": "M04-L05",
+      "text": "Crossing a range isn’t final.",
+      "fullText": "Crossing a range isn’t final. Inventory can still convert back.",
+      "start": 20.080021,
+      "end": 21.787048,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L05-P2",
+      "lineId": "M04-L05",
+      "text": "Inventory can still convert back.",
+      "fullText": "Crossing a range isn’t final. Inventory can still convert back.",
+      "start": 21.787048,
+      "end": 23.773917,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L06-P1",
+      "lineId": "M04-L06",
+      "text": "Finalization removes eligible positions",
+      "fullText": "Finalization removes eligible positions and separates returned principal from fees.",
+      "start": 25.081688,
+      "end": 27.365577,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L06-P2",
+      "lineId": "M04-L06",
+      "text": "and separates returned principal from fees.",
+      "fullText": "Finalization removes eligible positions and separates returned principal from fees.",
+      "start": 27.365577,
+      "end": 29.866979,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L07-P1",
+      "lineId": "M04-L07",
+      "text": "Deployment consumes finite capacity.",
+      "fullText": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+      "start": 30.125625,
+      "end": 32.267865,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L07-P2",
+      "lineId": "M04-L07",
+      "text": "Deposits and withdrawals don’t reset it.",
+      "fullText": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+      "start": 32.267865,
+      "end": 34.635604,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L08-P1",
+      "lineId": "M04-L08",
+      "text": "Historical pool readings inform decisions.",
+      "fullText": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+      "start": 35.079875,
+      "end": 37.556031,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L08-P2",
+      "lineId": "M04-L08",
+      "text": "They aren’t an external price oracle.",
+      "fullText": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+      "start": 37.556031,
+      "end": 39.726146,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L09-P1",
+      "lineId": "M04-L09",
+      "text": "Stress gates and cooldowns restrain",
+      "fullText": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+      "start": 40.077583,
+      "end": 42.240339,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L09-P2",
+      "lineId": "M04-L09",
+      "text": "deployment. Every response has limits.",
+      "fullText": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+      "start": 42.240339,
+      "end": 44.459271,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L10-P1",
+      "lineId": "M04-L10",
+      "text": "Surge fees, bond proceeds and an",
+      "fullText": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+      "start": 45.080021,
+      "end": 47.080345,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L10-P2",
+      "lineId": "M04-L10",
+      "text": "arbitrage share fund the War Chest.",
+      "fullText": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+      "start": 47.080345,
+      "end": 49.252125,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L11-P1",
+      "lineId": "M04-L11",
+      "text": "Spaced healthy observations can",
+      "fullText": "Spaced healthy observations can unlock a bounded, funded refill.",
+      "start": 51.078542,
+      "end": 52.998188,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L11-P2",
+      "lineId": "M04-L11",
+      "text": "unlock a bounded, funded refill.",
+      "fullText": "Spaced healthy observations can unlock a bounded, funded refill.",
+      "start": 52.998188,
+      "end": 54.889604,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L12-P1",
+      "lineId": "M04-L12",
+      "text": "Only real idle assets move.",
+      "fullText": "Only real idle assets move. Lifetime limits stay consumed.",
+      "start": 57.08,
+      "end": 58.925879,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L12-P2",
+      "lineId": "M04-L12",
+      "text": "Lifetime limits stay consumed.",
+      "fullText": "Only real idle assets move. Lifetime limits stay consumed.",
+      "start": 58.925879,
+      "end": 60.928187,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L13-P1",
+      "lineId": "M04-L13",
+      "text": "A price recovery creates no Ether.",
+      "fullText": "A price recovery creates no Ether. There is no guaranteed floor.",
+      "start": 62.079583,
+      "end": 64.384893,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L13-P2",
+      "lineId": "M04-L13",
+      "text": "There is no guaranteed floor.",
+      "fullText": "A price recovery creates no Ether. There is no guaranteed floor.",
+      "start": 64.384893,
+      "end": 66.347521,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L14-P1",
+      "lineId": "M04-L14",
+      "text": "Canonical sells pay nine percent,",
+      "fullText": "Canonical sells pay nine percent, split across four recipients.",
+      "start": 67.079979,
+      "end": 69.371831,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L14-P2",
+      "lineId": "M04-L14",
+      "text": "split across four recipients.",
+      "fullText": "Canonical sells pay nine percent, split across four recipients.",
+      "start": 69.371831,
+      "end": 71.373167,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L15-P1",
+      "lineId": "M04-L15",
+      "text": "Three percent funds Core. Additional",
+      "fullText": "Three percent funds Core. Additional sell pressure funds stability.",
+      "start": 73.080021,
+      "end": 75.155596,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L15-P2",
+      "lineId": "M04-L15",
+      "text": "sell pressure funds stability.",
+      "fullText": "Three percent funds Core. Additional sell pressure funds stability.",
+      "start": 75.155596,
+      "end": 76.88075,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L16-P1",
+      "lineId": "M04-L16",
+      "text": "A fee receipt can contain Ether or OMR.",
+      "fullText": "A fee receipt can contain Ether or OMR.",
+      "start": 78.079958,
+      "end": 81.400042,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "M04-L17-P1",
+      "lineId": "M04-L17",
+      "text": "Opening buys have temporary rules.",
+      "fullText": "Opening buys have temporary rules. Later buys have no Hook tax.",
+      "start": 82.08,
+      "end": 84.312324,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L17-P2",
+      "lineId": "M04-L17",
+      "text": "Later buys have no Hook tax.",
+      "fullText": "Opening buys have temporary rules. Later buys have no Hook tax.",
+      "start": 84.312324,
+      "end": 86.208271,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L18-P1",
+      "lineId": "M04-L18",
+      "text": "These rules cover the canonical",
+      "fullText": "These rules cover the canonical pool, not every trading venue.",
+      "start": 87.08,
+      "end": 88.801069,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L18-P2",
+      "lineId": "M04-L18",
+      "text": "pool, not every trading venue.",
+      "fullText": "These rules cover the canonical pool, not every trading venue.",
+      "start": 88.801069,
+      "end": 90.372479,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L19-P1",
+      "lineId": "M04-L19",
+      "text": "Bonds reserve existing OMR upfront,",
+      "fullText": "Bonds reserve existing OMR upfront, then release it through linear vesting.",
+      "start": 91.079979,
+      "end": 93.481257,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L19-P2",
+      "lineId": "M04-L19",
+      "text": "then release it through linear vesting.",
+      "fullText": "Bonds reserve existing OMR upfront, then release it through linear vesting.",
+      "start": 93.481257,
+      "end": 96.170687,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L20-P1",
+      "lineId": "M04-L20",
+      "text": "No minting or sellback. Vested",
+      "fullText": "No minting or sellback. Vested claims survive a purchasing pause.",
+      "start": 97.079708,
+      "end": 99.167411,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L20-P2",
+      "lineId": "M04-L20",
+      "text": "claims survive a purchasing pause.",
+      "fullText": "No minting or sellback. Vested claims survive a purchasing pause.",
+      "start": 99.167411,
+      "end": 101.512062,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L21-P1",
+      "lineId": "M04-L21",
+      "text": "Solvers commit a plan, then execute",
+      "fullText": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+      "start": 102.077687,
+      "end": 104.367834,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L21-P2",
+      "lineId": "M04-L21",
+      "text": "a funded, two-pool arbitrage cycle.",
+      "fullText": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+      "start": 104.367834,
+      "end": 106.507312,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L22-P1",
+      "lineId": "M04-L22",
+      "text": "Actual profit is checked. Competition",
+      "fullText": "Actual profit is checked. Competition and failed gas remain your risk.",
+      "start": 108.080062,
+      "end": 110.321003,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L22-P2",
+      "lineId": "M04-L22",
+      "text": "and failed gas remain your risk.",
+      "fullText": "Actual profit is checked. Competition and failed gas remain your risk.",
+      "start": 110.321003,
+      "end": 112.306646,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L23-P1",
+      "lineId": "M04-L23",
+      "text": "Players commit canonical position NFTs.",
+      "fullText": "Players commit canonical position NFTs. Rewards require qualifying, fresh depth samples.",
+      "start": 113.08,
+      "end": 115.706056,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L23-P2",
+      "lineId": "M04-L23",
+      "text": "Rewards require qualifying, fresh depth samples.",
+      "fullText": "Players commit canonical position NFTs. Rewards require qualifying, fresh depth samples.",
+      "start": 115.706056,
+      "end": 118.869979,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L24-P1",
+      "lineId": "M04-L24",
+      "text": "Rewards draw from funded campaigns.",
+      "fullText": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+      "start": 119.079896,
+      "end": 121.225697,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L24-P2",
+      "lineId": "M04-L24",
+      "text": "Mature positions can exit independently.",
+      "fullText": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+      "start": 121.225697,
+      "end": 123.657604,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L25-P1",
+      "lineId": "M04-L25",
+      "text": "Families contest seasonal price slabs",
+      "fullText": "Families contest seasonal price slabs and future funded fee credits.",
+      "start": 124.079667,
+      "end": 126.340882,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L25-P2",
+      "lineId": "M04-L25",
+      "text": "and future funded fee credits.",
+      "fullText": "Families contest seasonal price slabs and future funded fee credits.",
+      "start": 126.340882,
+      "end": 128.155438,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L26-P1",
+      "lineId": "M04-L26",
+      "text": "Syndicates split fee rights.",
+      "fullText": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+      "start": 129.083688,
+      "end": 131.0264,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L26-P2",
+      "lineId": "M04-L26",
+      "text": "Status bonuses don’t multiply money.",
+      "fullText": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+      "start": 131.0264,
+      "end": 133.454792,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L27-P1",
+      "lineId": "M04-L27",
+      "text": "Before control changes, an onchain",
+      "fullText": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+      "start": 134.079958,
+      "end": 136.297112,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L27-P2",
+      "lineId": "M04-L27",
+      "text": "checkpoint assigns the fees already earned.",
+      "fullText": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+      "start": 136.297112,
+      "end": 139.091333,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L28-P1",
+      "lineId": "M04-L28",
+      "text": "Sieges freeze participant wallets",
+      "fullText": "Sieges freeze participant wallets and allocate only funded escrow.",
+      "start": 140.080333,
+      "end": 142.095908,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L28-P2",
+      "lineId": "M04-L28",
+      "text": "and allocate only funded escrow.",
+      "fullText": "Sieges freeze participant wallets and allocate only funded escrow.",
+      "start": 142.095908,
+      "end": 144.0275,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L29-P1",
+      "lineId": "M04-L29",
+      "text": "At season exit, fees settle and protocol",
+      "fullText": "At season exit, fees settle and protocol principal returns for retirement.",
+      "start": 145.079333,
+      "end": 147.34303,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L29-P2",
+      "lineId": "M04-L29",
+      "text": "principal returns for retirement.",
+      "fullText": "At season exit, fees settle and protocol principal returns for retirement.",
+      "start": 147.34303,
+      "end": 149.164396,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L30-P1",
+      "lineId": "M04-L30",
+      "text": "The Safe binds and funds systems.",
+      "fullText": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+      "start": 151.078063,
+      "end": 153.08412,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L30-P2",
+      "lineId": "M04-L30",
+      "text": "Keepers simulate budgeted execution.",
+      "fullText": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+      "start": 153.08412,
+      "end": 155.201625,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L31-P1",
+      "lineId": "M04-L31",
+      "text": "Game cash, OMR, Ether and RWA",
+      "fullText": "Game cash, OMR, Ether and RWA allocations remain separate.",
+      "start": 156.280125,
+      "end": 159.142853,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L31-P2",
+      "lineId": "M04-L31",
+      "text": "allocations remain separate.",
+      "fullText": "Game cash, OMR, Ether and RWA allocations remain separate.",
+      "start": 159.142853,
+      "end": 161.867063,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L32-P1",
+      "lineId": "M04-L32",
+      "text": "Trades change inventory. Funded revenue supports",
+      "fullText": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+      "start": 162.079854,
+      "end": 164.893446,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L32-P2",
+      "lineId": "M04-L32",
+      "text": "reserves. Conditions gate the next move.",
+      "fullText": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+      "start": 164.893446,
+      "end": 167.210521,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "M04-L33-P1",
+      "lineId": "M04-L33",
+      "text": "OMERTÀ Market V2. Learn what moves the city.",
+      "fullText": "OMERTÀ Market V2. Learn what moves the city.",
+      "start": 168.079854,
+      "end": 171.603938,
+      "timing": "Measured audible sentence edges"
+    }
+  ]
+}

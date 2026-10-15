@@ -1,0 +1,1614 @@
+[
+  {
+    "id": "M04-B01",
+    "start": 0,
+    "end": 5,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "Every defense\ncan run out.",
+    "narration": "The market has defenses. Every one can run out.",
+    "kind": "hero",
+    "state": "overview",
+    "tags": [
+      "Finite inventory",
+      "Full-release system illustration"
+    ],
+    "nodes": [],
+    "screen": "finance",
+    "transition": "scope",
+    "duration": 5,
+    "purpose": "Every defense can run out.",
+    "visual": "hero / overview: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "The market has defenses. Every one can run out.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "The market has defenses. Every one can run out.",
+    "generationSettings": {
+      "prompt": "The market has defenses. Every one can run out.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L01.mp3",
+    "referenceAssets": [
+      "art/market-v2-film/captures/finance.png"
+    ],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B02",
+    "start": 5,
+    "end": 10,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "Separate reserves.\nSpecific jobs.",
+    "narration": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+    "kind": "range",
+    "state": "overview",
+    "tags": [
+      "Core / downside / upside / War Chest"
+    ],
+    "nodes": [],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Separate reserves. Specific jobs.",
+    "visual": "range / overview: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+    "generationSettings": {
+      "prompt": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L02.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B03",
+    "start": 10,
+    "end": 15,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "When players sell.",
+    "narration": "As selling crosses active ranges, Ether converts into OMR.",
+    "kind": "range",
+    "state": "selling",
+    "tags": [
+      "Lower Cushion + Garrison",
+      "ETH → OMR"
+    ],
+    "nodes": [],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "When players sell.",
+    "visual": "range / selling: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "As selling crosses active ranges, Ether converts into OMR.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "As selling crosses active ranges, Ether converts into O M R.",
+    "generationSettings": {
+      "prompt": "As selling crosses active ranges, Ether converts into O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L03-v2.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B04",
+    "start": 15,
+    "end": 20,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "When players buy.",
+    "narration": "As buying crosses active ranges, OMR converts into Ether.",
+    "kind": "range",
+    "state": "buying",
+    "tags": [
+      "Upper Cushion + Desk",
+      "OMR → ETH"
+    ],
+    "nodes": [],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "When players buy.",
+    "visual": "range / buying: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "As buying crosses active ranges, OMR converts into Ether.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "As buying crosses active ranges, O M R converts into Ether.",
+    "generationSettings": {
+      "prompt": "As buying crosses active ranges, O M R converts into Ether.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L04-v2.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B05",
+    "start": 20,
+    "end": 25,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "Crossed ≠ settled.",
+    "narration": "Crossing a range isn’t final. Inventory can still convert back.",
+    "kind": "range",
+    "state": "reversal",
+    "tags": [
+      "Reversible until liquidity is removed"
+    ],
+    "nodes": [],
+    "transition": "snap",
+    "duration": 5,
+    "purpose": "Crossed ≠ settled.",
+    "visual": "range / reversal: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Crossing a range isn’t final. Inventory can still convert back.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Crossing a range isn’t final. Inventory can still convert back.",
+    "generationSettings": {
+      "prompt": "Crossing a range isn’t final. Inventory can still convert back.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L05.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B06",
+    "start": 25,
+    "end": 30,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "Remove.\nAccount.",
+    "narration": "Finalization removes eligible positions and separates returned principal from fees.",
+    "kind": "range",
+    "state": "finalize",
+    "tags": [
+      "Fully converted / later block",
+      "Principal and fees stay separate"
+    ],
+    "nodes": [],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Remove. Account.",
+    "visual": "range / finalize: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Finalization removes eligible positions and separates returned principal from fees.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Finalization removes eligible positions and separates returned principal from fees.",
+    "generationSettings": {
+      "prompt": "Finalization removes eligible positions and separates returned principal from fees.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L06.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B07",
+    "start": 30,
+    "end": 35,
+    "chapter": "01 / THE INVENTORY",
+    "headline": "Capacity is spent.",
+    "narration": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+    "kind": "range",
+    "state": "depleted",
+    "tags": [
+      "Per action / epoch / episode / lifetime"
+    ],
+    "nodes": [],
+    "transition": "spin",
+    "duration": 5,
+    "purpose": "Capacity is spent.",
+    "visual": "range / depleted: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+    "generationSettings": {
+      "prompt": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L07.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B08",
+    "start": 35,
+    "end": 40,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "Observe the market.",
+    "narration": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+    "kind": "observations",
+    "state": "read",
+    "tags": [
+      "Completed intervals",
+      "Current spot + liquidity checks"
+    ],
+    "nodes": [
+      "Mean tick / dispersion",
+      "Turnover / imbalance / liquidity",
+      "Fresh completed observations"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Observe the market.",
+    "visual": "observations / read: Mean tick / dispersion | Turnover / imbalance / liquidity | Fresh completed observations",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+    "generationSettings": {
+      "prompt": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L08.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B09",
+    "start": 40,
+    "end": 45,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "Rules before action.",
+    "narration": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+    "kind": "observations",
+    "state": "gate",
+    "tags": [
+      "Stress entry ≠ recovery threshold",
+      "Freshness / deviation / liquidity"
+    ],
+    "nodes": [
+      "QUALIFYING MARKET STATE",
+      "COOLDOWN + CAPACITY",
+      "ELIGIBLE DEPLOYMENT"
+    ],
+    "transition": "snap",
+    "duration": 5,
+    "purpose": "Rules before action.",
+    "visual": "observations / gate: QUALIFYING MARKET STATE | COOLDOWN + CAPACITY | ELIGIBLE DEPLOYMENT",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+    "generationSettings": {
+      "prompt": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L09.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B10",
+    "start": 45,
+    "end": 51,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "Fund the War Chest.",
+    "narration": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+    "kind": "reserves",
+    "state": "fund",
+    "tags": [
+      "Idle, funded ETH / OMR",
+      "No direct range deployment"
+    ],
+    "nodes": [
+      "SURGE + BONDS + ARBITRAGE SHARE",
+      "ACTUAL ASSETS RECEIVED",
+      "WAR CHEST"
+    ],
+    "transition": "scope",
+    "duration": 6,
+    "purpose": "Fund the War Chest.",
+    "visual": "reserves / fund: SURGE + BONDS + ARBITRAGE SHARE | ACTUAL ASSETS RECEIVED | WAR CHEST",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+    "generationSettings": {
+      "prompt": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L10.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B11",
+    "start": 51,
+    "end": 57,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "Recovery has\nconditions.",
+    "narration": "Spaced healthy observations can unlock a bounded, funded refill.",
+    "kind": "reserves",
+    "state": "recover",
+    "tags": [
+      "X healthy epochs in a full Y-window",
+      "Minimum time between observations"
+    ],
+    "nodes": [
+      "QUALIFYING RECOVERY WINDOW",
+      "IDLE WAR CHEST ASSETS",
+      "BOUNDED PARTIAL REFILL"
+    ],
+    "transition": "pan",
+    "duration": 6,
+    "purpose": "Recovery has conditions.",
+    "visual": "reserves / recover: QUALIFYING RECOVERY WINDOW | IDLE WAR CHEST ASSETS | BOUNDED PARTIAL REFILL",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Spaced healthy observations can unlock a bounded, funded refill.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Spaced healthy observations can unlock a bounded, funded refill.",
+    "generationSettings": {
+      "prompt": "Spaced healthy observations can unlock a bounded, funded refill.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L11.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B12",
+    "start": 57,
+    "end": 62,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "The cap stays.",
+    "narration": "Only real idle assets move. Lifetime limits stay consumed.",
+    "kind": "reserves",
+    "state": "cap",
+    "tags": [
+      "Partial episode-capacity recovery",
+      "No lifetime reset"
+    ],
+    "nodes": [],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "The cap stays.",
+    "visual": "reserves / cap: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Only real idle assets move. Lifetime limits stay consumed.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Only real idle assets move. Lifetime limits stay consumed.",
+    "generationSettings": {
+      "prompt": "Only real idle assets move. Lifetime limits stay consumed.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L12.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B13",
+    "start": 62,
+    "end": 67,
+    "chapter": "02 / THE RECOVERY",
+    "headline": "No magic refill.",
+    "narration": "A price recovery creates no Ether. There is no guaranteed floor.",
+    "kind": "reserves",
+    "state": "empty",
+    "tags": [
+      "Funding ≠ new deployment capacity"
+    ],
+    "nodes": [],
+    "transition": "spin",
+    "duration": 5,
+    "purpose": "No magic refill.",
+    "visual": "reserves / empty: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "A price recovery creates no Ether. There is no guaranteed floor.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "A price recovery creates no Ether. There is no guaranteed floor.",
+    "generationSettings": {
+      "prompt": "A price recovery creates no Ether. There is no guaranteed floor.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L13.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B14",
+    "start": 67,
+    "end": 73,
+    "chapter": "03 / THE FUNDING",
+    "headline": "Where nine\npercent goes.",
+    "narration": "Canonical sells pay nine percent, split across four recipients.",
+    "kind": "allocation",
+    "state": "base",
+    "tags": [
+      "Base sell fee",
+      "Pool LP fees are additional"
+    ],
+    "nodes": [
+      "2% · Developer",
+      "1.6% · RWA recipient",
+      "2.4% · Community",
+      "3% · POL → Core"
+    ],
+    "transition": "pan",
+    "duration": 6,
+    "purpose": "Where nine percent goes.",
+    "visual": "allocation / base: 2% · Developer | 1.6% · RWA recipient | 2.4% · Community | 3% · POL → Core",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Canonical sells pay nine percent, split across four recipients.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Canonical sells pay nine percent, split across four recipients.",
+    "generationSettings": {
+      "prompt": "Canonical sells pay nine percent, split across four recipients.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L14.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B15",
+    "start": 73,
+    "end": 78,
+    "chapter": "03 / THE FUNDING",
+    "headline": "Core and reserves\nare separate.",
+    "narration": "Three percent funds Core. Additional sell pressure funds stability.",
+    "kind": "flow",
+    "state": "funding",
+    "tags": [
+      "0–1% extra sell charge → stability",
+      "Buys do not instantly erase pressure"
+    ],
+    "nodes": [
+      "3% POL BUCKET → CORE",
+      "SURGE → WAR CHEST",
+      "Separate custody and budgets"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Core and reserves are separate.",
+    "visual": "flow / funding: 3% POL BUCKET → CORE | SURGE → WAR CHEST | Separate custody and budgets",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Three percent funds Core. Additional sell pressure funds stability.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Three percent funds Core. Additional sell pressure funds stability.",
+    "generationSettings": {
+      "prompt": "Three percent funds Core. Additional sell pressure funds stability.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L15.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B16",
+    "start": 78,
+    "end": 82,
+    "chapter": "03 / THE FUNDING",
+    "headline": "Read the receipt.",
+    "narration": "A fee receipt can contain Ether or OMR.",
+    "kind": "flow",
+    "state": "receipts",
+    "tags": [
+      "Actual settled deltas / partial fills",
+      "Independent recipient claims"
+    ],
+    "nodes": [
+      "ACTUAL SWAP SETTLEMENT",
+      "ETH OR OMR FEE BUCKETS",
+      "FIXED RECIPIENTS"
+    ],
+    "transition": "pan",
+    "duration": 4,
+    "purpose": "Read the receipt.",
+    "visual": "flow / receipts: ACTUAL SWAP SETTLEMENT | ETH OR OMR FEE BUCKETS | FIXED RECIPIENTS",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "A fee receipt can contain Ether or OMR.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "A fee receipt can contain Ether or O M R.",
+    "generationSettings": {
+      "prompt": "A fee receipt can contain Ether or O M R.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L16.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B17",
+    "start": 82,
+    "end": 87,
+    "chapter": "03 / THE FUNDING",
+    "headline": "The opening\nis temporary.",
+    "narration": "Opening buys have temporary rules. Later buys have no Hook tax.",
+    "kind": "observations",
+    "state": "opening",
+    "tags": [
+      "Bounded window / fee / quote limit",
+      "Per swap, not per person"
+    ],
+    "nodes": [
+      "IMMUTABLE OPENING WINDOW",
+      "TEMPORARY BUY POLICY",
+      "POST-WINDOW: NO HOOK BUY TAX"
+    ],
+    "transition": "snap",
+    "duration": 5,
+    "purpose": "The opening is temporary.",
+    "visual": "observations / opening: IMMUTABLE OPENING WINDOW | TEMPORARY BUY POLICY | POST-WINDOW: NO HOOK BUY TAX",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Opening buys have temporary rules. Later buys have no Hook tax.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Opening buys have temporary rules. Later buys have no Hook tax.",
+    "generationSettings": {
+      "prompt": "Opening buys have temporary rules. Later buys have no Hook tax.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L17.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B18",
+    "start": 87,
+    "end": 91,
+    "chapter": "03 / THE FUNDING",
+    "headline": "One canonical pool.",
+    "narration": "These rules cover the canonical pool, not every trading venue.",
+    "kind": "flow",
+    "state": "venues",
+    "tags": [
+      "Fixed pool LP fee policy",
+      "Independent venues remain possible"
+    ],
+    "nodes": [
+      "CANONICAL ETH / OMR POOL",
+      "ITS HOOK POLICY",
+      "OTHER POOLS HAVE THEIR OWN RULES"
+    ],
+    "transition": "pan",
+    "duration": 4,
+    "purpose": "One canonical pool.",
+    "visual": "flow / venues: CANONICAL ETH / OMR POOL | ITS HOOK POLICY | OTHER POOLS HAVE THEIR OWN RULES",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "These rules cover the canonical pool, not every trading venue.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "These rules cover the canonical pool, not every trading venue.",
+    "generationSettings": {
+      "prompt": "These rules cover the canonical pool, not every trading venue.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L18.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B19",
+    "start": 91,
+    "end": 97,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "Inventory bonds.",
+    "narration": "Bonds reserve existing OMR upfront, then release it through linear vesting.",
+    "kind": "bond",
+    "state": "reserve",
+    "tags": [
+      "ETH payment / prefunded entitlement",
+      "Bounded discount and sale limits"
+    ],
+    "nodes": [
+      "ETH PAYMENT",
+      "EXISTING OMR RESERVED",
+      "LINEAR VESTING"
+    ],
+    "transition": "scope",
+    "duration": 6,
+    "purpose": "Inventory bonds.",
+    "visual": "bond / reserve: ETH PAYMENT | EXISTING OMR RESERVED | LINEAR VESTING",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Bonds reserve existing OMR upfront, then release it through linear vesting.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Bonds reserve existing O M R upfront, then release it through linear vesting.",
+    "generationSettings": {
+      "prompt": "Bonds reserve existing O M R upfront, then release it through linear vesting.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L19.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B20",
+    "start": 97,
+    "end": 102,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "A claim survives\na pause.",
+    "narration": "No minting or sellback. Vested claims survive a purchasing pause.",
+    "kind": "bond",
+    "state": "claim",
+    "tags": [
+      "Nontransferable notes",
+      "Canonical resales still pay sell fees"
+    ],
+    "nodes": [
+      "PURCHASES MAY PAUSE",
+      "VESTED CLAIMS REMAIN",
+      "NO MINT / NO SELLBACK"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "A claim survives a pause.",
+    "visual": "bond / claim: PURCHASES MAY PAUSE | VESTED CLAIMS REMAIN | NO MINT / NO SELLBACK",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "No minting or sellback. Vested claims survive a purchasing pause.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "No minting or sellback. Vested claims survive a purchasing pause.",
+    "generationSettings": {
+      "prompt": "No minting or sellback. Vested claims survive a purchasing pause.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L20.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B21",
+    "start": 102,
+    "end": 108,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "Arbitrage with\na committed plan.",
+    "narration": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+    "kind": "solver",
+    "state": "cycle",
+    "tags": [
+      "Solver-bound commit / reveal",
+      "Taxes + LP fees included"
+    ],
+    "nodes": [
+      "SOLVER FUNDS ETH",
+      "CANONICAL ↔ ALTERNATIVE POOL",
+      "REALIZED PROFIT CHECK"
+    ],
+    "transition": "snap",
+    "duration": 6,
+    "purpose": "Arbitrage with a committed plan.",
+    "visual": "solver / cycle: SOLVER FUNDS ETH | CANONICAL ↔ ALTERNATIVE POOL | REALIZED PROFIT CHECK",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+    "generationSettings": {
+      "prompt": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L21.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B22",
+    "start": 108,
+    "end": 113,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "Profit is checked.\nGas is still risk.",
+    "narration": "Actual profit is checked. Competition and failed gas remain your risk.",
+    "kind": "solver",
+    "state": "settle",
+    "tags": [
+      "Fixed reserve share",
+      "Collateral returned through claims"
+    ],
+    "nodes": [
+      "REALIZED PROFIT",
+      "FIXED SHARE → RESERVES",
+      "REMAINDER + COLLATERAL CLAIM"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Profit is checked. Gas is still risk.",
+    "visual": "solver / settle: REALIZED PROFIT | FIXED SHARE → RESERVES | REMAINDER + COLLATERAL CLAIM",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Actual profit is checked. Competition and failed gas remain your risk.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Actual profit is checked. Competition and failed gas remain your risk.",
+    "generationSettings": {
+      "prompt": "Actual profit is checked. Competition and failed gas remain your risk.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L22.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B23",
+    "start": 113,
+    "end": 119,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "Commit actual\nliquidity.",
+    "narration": "Players commit canonical position NFTs. Rewards require qualifying, fresh depth samples.",
+    "kind": "commitment",
+    "state": "lock",
+    "tags": [
+      "Actual PositionManager NFT custody",
+      "Two epochs / sampled useful depth"
+    ],
+    "nodes": [
+      "CANONICAL LP POSITION",
+      "FINITE LOCK TERM",
+      "QUALIFYING DEPTH SAMPLES"
+    ],
+    "transition": "pan",
+    "duration": 6,
+    "purpose": "Commit actual liquidity.",
+    "visual": "commitment / lock: CANONICAL LP POSITION | FINITE LOCK TERM | QUALIFYING DEPTH SAMPLES",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Players commit canonical position NFTs. Rewards require qualifying, fresh depth samples.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Players commit canonical position N F Ts. Rewards require qualifying, fresh depth samples.",
+    "generationSettings": {
+      "prompt": "Players commit canonical position N F Ts. Rewards require qualifying, fresh depth samples.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L23.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B24",
+    "start": 119,
+    "end": 124,
+    "chapter": "04 / THE PARTICIPANTS",
+    "headline": "Funding limits\nthe reward.",
+    "narration": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+    "kind": "commitment",
+    "state": "exit",
+    "tags": [
+      "First-come against available funds",
+      "No continuous-occupancy guarantee"
+    ],
+    "nodes": [
+      "PREFUNDED CAMPAIGN",
+      "BOUNDED REWARD CLAIM",
+      "MATURE NFT EXIT: INDEPENDENT"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Funding limits the reward.",
+    "visual": "commitment / exit: PREFUNDED CAMPAIGN | BOUNDED REWARD CLAIM | MATURE NFT EXIT: INDEPENDENT",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+    "generationSettings": {
+      "prompt": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L24.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B25",
+    "start": 124,
+    "end": 129,
+    "chapter": "05 / THE FAMILY",
+    "headline": "Liquidity territory.",
+    "narration": "Families contest seasonal price slabs and future funded fee credits.",
+    "kind": "turf",
+    "state": "rights",
+    "tags": [
+      "Protocol keeps LP principal",
+      "Distinct from ordinary district control"
+    ],
+    "nodes": [
+      "DESIGNATED TURF LP FEES",
+      "FIXED SEASON + SLAB",
+      "FUNDED FAMILY CREDITS"
+    ],
+    "screen": "territory",
+    "transition": "snap",
+    "duration": 5,
+    "purpose": "Liquidity territory.",
+    "visual": "turf / rights: DESIGNATED TURF LP FEES | FIXED SEASON + SLAB | FUNDED FAMILY CREDITS",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Families contest seasonal price slabs and future funded fee credits.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Families contest seasonal price slabs and future funded fee credits.",
+    "generationSettings": {
+      "prompt": "Families contest seasonal price slabs and future funded fee credits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L25.mp3",
+    "referenceAssets": [
+      "art/market-v2-film/captures/territory.png"
+    ],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B26",
+    "start": 129,
+    "end": 134,
+    "chapter": "05 / THE FAMILY",
+    "headline": "Alliances divide\nrights.",
+    "narration": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+    "kind": "turf",
+    "state": "syndicate",
+    "tags": [
+      "Up to four Families / 100% total",
+      "Corridors / loyalty / fortification"
+    ],
+    "nodes": [
+      "FIXED FAMILY SHARES",
+      "PROSPECTIVE FEE RIGHTS",
+      "STATUS ≠ EXTRA MONEY"
+    ],
+    "transition": "spin",
+    "duration": 5,
+    "purpose": "Alliances divide rights.",
+    "visual": "turf / syndicate: FIXED FAMILY SHARES | PROSPECTIVE FEE RIGHTS | STATUS ≠ EXTRA MONEY",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+    "generationSettings": {
+      "prompt": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L26-v2.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B27",
+    "start": 134,
+    "end": 140,
+    "chapter": "05 / THE FAMILY",
+    "headline": "Settle the past.\nThen change control.",
+    "narration": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+    "kind": "turf",
+    "state": "checkpoint",
+    "tags": [
+      "Ownership / siege / treasury changes",
+      "Existing claims stay with old recipients"
+    ],
+    "nodes": [
+      "COLLECT + FORWARD LP FEES",
+      "ATOMIC CHECKPOINT",
+      "NEW CONTROL APPLIES GOING FORWARD"
+    ],
+    "transition": "scope",
+    "duration": 6,
+    "purpose": "Settle the past. Then change control.",
+    "visual": "turf / checkpoint: COLLECT + FORWARD LP FEES | ATOMIC CHECKPOINT | NEW CONTROL APPLIES GOING FORWARD",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+    "generationSettings": {
+      "prompt": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L27.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B28",
+    "start": 140,
+    "end": 145,
+    "chapter": "05 / THE FAMILY",
+    "headline": "Only funded\nescrow.",
+    "narration": "Sieges freeze participant wallets and allocate only funded escrow.",
+    "kind": "turf",
+    "state": "siege",
+    "tags": [
+      "Typed, revision-checked settlement",
+      "Expiry call → default defender"
+    ],
+    "nodes": [
+      "FROZEN PARTICIPANT WALLETS",
+      "ACTUAL FUNDED ESCROW",
+      "BOUNDED OUTCOME ALLOCATION"
+    ],
+    "transition": "pan",
+    "duration": 5,
+    "purpose": "Only funded escrow.",
+    "visual": "turf / siege: FROZEN PARTICIPANT WALLETS | ACTUAL FUNDED ESCROW | BOUNDED OUTCOME ALLOCATION",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Sieges freeze participant wallets and allocate only funded escrow.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Sieges freeze participant wallets and allocate only funded escrow.",
+    "generationSettings": {
+      "prompt": "Sieges freeze participant wallets and allocate only funded escrow.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L28.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B29",
+    "start": 145,
+    "end": 151,
+    "chapter": "05 / THE FAMILY",
+    "headline": "Close the season.",
+    "narration": "At season exit, fees settle and protocol principal returns for retirement.",
+    "kind": "turf",
+    "state": "expiry",
+    "tags": [
+      "Fees accrue until actual exit",
+      "Exit does not need the oracle"
+    ],
+    "nodes": [
+      "REMOVE THE TURF POSITION",
+      "FEES → RECORDED LANE",
+      "PRINCIPAL → PROTOCOL TURF ACCOUNT"
+    ],
+    "transition": "snap",
+    "duration": 6,
+    "purpose": "Close the season.",
+    "visual": "turf / expiry: REMOVE THE TURF POSITION | FEES → RECORDED LANE | PRINCIPAL → PROTOCOL TURF ACCOUNT",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "At season exit, fees settle and protocol principal returns for retirement.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "At season exit, fees settle and protocol principal returns for retirement.",
+    "generationSettings": {
+      "prompt": "At season exit, fees settle and protocol principal returns for retirement.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L29.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B30",
+    "start": 151,
+    "end": 156.2,
+    "chapter": "06 / THE BOUNDARIES",
+    "headline": "Bounded authority.",
+    "narration": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+    "kind": "flow",
+    "state": "authority",
+    "tags": [
+      "Typed game outcomes / replay checks",
+      "Confirmations + reorg policy"
+    ],
+    "nodes": [
+      "SAFE: BINDINGS + SEASON + FUNDING",
+      "GAME CANNOT WITHDRAW PRINCIPAL",
+      "KEEPER: ONE NEW TRANSACTION PER RUN"
+    ],
+    "transition": "pan",
+    "duration": 5.199999999999989,
+    "purpose": "Bounded authority.",
+    "visual": "flow / authority: SAFE: BINDINGS + SEASON + FUNDING | GAME CANNOT WITHDRAW PRINCIPAL | KEEPER: ONE NEW TRANSACTION PER RUN",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+    "generationSettings": {
+      "prompt": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L30-v2.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B31",
+    "start": 156.2,
+    "end": 162,
+    "chapter": "06 / THE BOUNDARIES",
+    "headline": "Separate ledgers.",
+    "narration": "Game cash, OMR, Ether and RWA allocations remain separate.",
+    "kind": "capture",
+    "state": "ledgers",
+    "tags": [
+      "DNR is also separate",
+      "A market receipt does not pay game cash"
+    ],
+    "nodes": [],
+    "screen": "finance",
+    "transition": "pan",
+    "duration": 5.800000000000011,
+    "purpose": "Separate ledgers.",
+    "visual": "capture / ledgers: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Game cash, OMR, Ether and RWA allocations remain separate.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Game cash, O M R, Ether and R W A allocations remain separate.",
+    "generationSettings": {
+      "prompt": "Game cash, O M R, Ether and R W A allocations remain separate.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L31.mp3",
+    "referenceAssets": [
+      "art/market-v2-film/captures/finance.png"
+    ],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B32",
+    "start": 162,
+    "end": 168,
+    "chapter": "06 / THE BOUNDARIES",
+    "headline": "The complete\nmarket loop.",
+    "narration": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+    "kind": "flow",
+    "state": "loop",
+    "tags": [
+      "No automatic floor / unlimited reserve",
+      "Actual launch configuration governs"
+    ],
+    "nodes": [
+      "TRADES → INVENTORY CHANGES",
+      "FUNDED REVENUE → RESERVES",
+      "OBSERVATIONS + LIMITS → NEXT MOVE"
+    ],
+    "transition": "pan",
+    "duration": 6,
+    "purpose": "The complete market loop.",
+    "visual": "flow / loop: TRADES → INVENTORY CHANGES | FUNDED REVENUE → RESERVES | OBSERVATIONS + LIMITS → NEXT MOVE",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+    "generationSettings": {
+      "prompt": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L32.mp3",
+    "referenceAssets": [],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  },
+  {
+    "id": "M04-B33",
+    "start": 168,
+    "end": 173,
+    "chapter": "OMERTÀ / MARKET V2",
+    "headline": "Learn what moves\nthe city.",
+    "narration": "OMERTÀ Market V2. Learn what moves the city.",
+    "kind": "end",
+    "state": "end",
+    "tags": [],
+    "nodes": [],
+    "screen": "territory",
+    "transition": "snap",
+    "duration": 5,
+    "purpose": "Learn what moves the city.",
+    "visual": "end / end: ",
+    "character": "No synthetic actor; genuine game account UI where shown",
+    "camera": "Animated inventory diagram with restrained pans, scope/spin transitions and readable holds",
+    "lighting": "Black and ivory with copper and ink-blue accents",
+    "audio": "Original mechanical-noir score; see audio-plan.md",
+    "caption": "OMERTÀ Market V2. Learn what moves the city.",
+    "falModel": "fal-ai/minimax/speech-2.8-hd",
+    "generationPrompt": "Oh mare tah Market version two. Learn what moves the city.",
+    "generationSettings": {
+      "prompt": "Oh mare tah Market version two. Learn what moves the city.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1.05,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "selectedAudio": "public/art/market-v2-film/audio/M04-L33.mp3",
+    "referenceAssets": [
+      "art/market-v2-film/captures/territory.png"
+    ],
+    "failureConditions": "No invented prices or balances; no guaranteed floor; no fee/principal conflation; no unrestricted game custody; no cut-off dialogue."
+  }
+]

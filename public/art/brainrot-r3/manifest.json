@@ -1,0 +1,164 @@
+{
+  "version": 3,
+  "creativeDirection": "DIRTY WEB / CRIME TABLOID",
+  "status": "internal-production-draft",
+  "assets": {
+    "R3-V1-G01": {
+      "src": "art/brainrot-r3/clips/R3-V1-G01-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d403-9b58-7fc1-b47b-979126d144ae",
+      "sha256": "b2b98fec834df56c109135f6514b4619fe2104d2a303330515b70dcf4de22482"
+    },
+    "R3-V1-G02": {
+      "src": "art/brainrot-r3/clips/R3-V1-G02-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-87b7-7d91-8c7f-e2cef600f050",
+      "sha256": "d4a3edf7245b60ba6bee440e26084089ec9cd1f64f2bdff242838a354dc1ca78"
+    },
+    "R3-V1-G03": {
+      "src": "art/brainrot-r3/clips/R3-V1-G03-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d414-48c9-75f3-a850-f2c5c12cb82d",
+      "sha256": "882b79843f02dcd50a3140119f15bd550b78908b7305d5533ed99ec0d5303527"
+    },
+    "R3-V1-G04": {
+      "src": "art/brainrot-r3/clips/R3-V1-G04-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8812-73b3-a999-a18277ec19eb",
+      "sha256": "31467985c565df4ba6d9a416e626f84d7905cf2d0ae534d0677a1b432f54d527"
+    },
+    "R3-V1-G05": {
+      "src": "art/brainrot-r3/clips/R3-V1-G05-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8861-7800-af34-612769f966d4",
+      "sha256": "b113b1892de9eaf384e7ad136976d89b24f2db8118c498b732ce69d30aebe460"
+    },
+    "R3-V1-G06": {
+      "src": "art/brainrot-r3/clips/R3-V1-G06-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d414-49a5-7d13-8bce-8e85ab4e6d39",
+      "sha256": "7cadb6c924964f178d4e7afc0294c0435072c4f4981dfe93c18b99dd979fff65"
+    },
+    "R3-V2-G01": {
+      "src": "art/brainrot-r3/clips/R3-V2-G01-poly-take3.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8949-7eb0-a788-f919a6e96d02",
+      "sha256": "d63dc20bdae041c1c7a2b488dece352a8a2c28d7c62f7ab91b0e33c676568df7"
+    },
+    "R3-V2-G02": {
+      "src": "art/brainrot-r3/clips/R3-V2-G02-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8996-79d2-b492-a75b2a363749",
+      "sha256": "9f51499061f1145245c893113b3a58c3ea7c38a35916353a2cb348d51e7ed438"
+    },
+    "R3-V2-G03": {
+      "src": "art/brainrot-r3/clips/R3-V2-G03-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-89eb-7550-b4bc-6faebfd1823c",
+      "sha256": "1b5ed861afc9ed127970ef8741eb87968c8956348551d466cf9ba1d1f8f93275"
+    },
+    "R3-V2-G04": {
+      "src": "art/brainrot-r3/clips/R3-V2-G04-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8a38-7c13-8948-682a05c4d8ef",
+      "sha256": "b3a18f6ec7cf82673e444b2e7993fdd335af7b956ed77c98d4ab4b8fbd925f38"
+    },
+    "R3-V2-G05": {
+      "src": "art/brainrot-r3/clips/R3-V2-G05-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8a87-7493-a130-43bb0711cf2a",
+      "sha256": "c7e841b45bbf3effa10c80ddf270f1b7dada71a0f15695d252cd8844d6bacbf3"
+    },
+    "R3-V2-G06": {
+      "src": "art/brainrot-r3/clips/R3-V2-G06-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8ae4-7541-90b3-dd38db2306a2",
+      "sha256": "4f8745cd3adc78869cb08a84d51b8ac0084444ea21205d9d06e59430fd6588b7"
+    },
+    "R3-V3-G01": {
+      "src": "art/brainrot-r3/clips/R3-V3-G01-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8b40-7772-9891-570748aba32c",
+      "sha256": "05e58f60b9020c92e980f2bb86e94f148522560706b57b667d8720c63df54784"
+    },
+    "R3-V3-G02": {
+      "src": "art/brainrot-r3/clips/R3-V3-G02-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8c4c-7af2-9fb8-05ee87868563",
+      "sha256": "7c01715ddefa0b38ee13f25e9f8e958f5b436a23af13320c01675356c958934d"
+    },
+    "R3-V3-G03": {
+      "src": "art/brainrot-r3/clips/R3-V3-G03-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d414-49f8-7bf2-8963-d1e629ee90fd",
+      "sha256": "b90744d7c4e72c8f703e79b906ef1433584865281cfd8c38b497c2c47db5b7a4"
+    },
+    "R3-V3-G04": {
+      "src": "art/brainrot-r3/clips/R3-V3-G04-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8c9d-79e1-b698-738137eb6951",
+      "sha256": "929111fe716c13764ad6236c565530d75e548c5ae5d1cfb14e6a718f1f81964f"
+    },
+    "R3-V3-G05": {
+      "src": "art/brainrot-r3/clips/R3-V3-G05-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8ce9-78b1-8a60-96e89eae06bf",
+      "sha256": "1f2baad4288e208023504993a26cd72626595d38eef1594c30feb339257f83ee"
+    },
+    "R3-V3-G06": {
+      "src": "art/brainrot-r3/clips/R3-V3-G06-poly-take1.mp4",
+      "kind": "video",
+      "duration": 5.041667,
+      "muted": true,
+      "requestId": "01a0d40d-8d44-7460-95a7-0e5d549a382c",
+      "sha256": "f2b5f09129ebe5be69d3c53ef59f786dd7797c1e1f4da98576ee7b980169ade6"
+    }
+  },
+  "audio": {
+    "01": {
+      "src": "art/brainrot-r3/audio/R3-V1-mix.wav"
+    },
+    "02": {
+      "src": "art/brainrot-r3/audio/R3-V2-mix.wav"
+    },
+    "03": {
+      "src": "art/brainrot-r3/audio/R3-V3-mix.wav"
+    }
+  },
+  "actualCostUsd": null,
+  "captureStatus": "Release UI capture slots remain pending; editorial graphics are not gameplay recordings."
+}

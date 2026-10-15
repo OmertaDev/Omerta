@@ -1,0 +1,805 @@
+{
+  "schemaVersion": 1,
+  "status": "LOCAL_BROWSER_AND_GATES_PASSED_KNOWLEDGE_AND_EXACT_HEAD_HOSTED_CI_PENDING",
+  "phase": "Local application browser integration and source comparison; separately reported production inspection is read-only. No deployment, reset or onchain activation.",
+  "headAtPreparation": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+  "sourceBaseline": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "currentSource": {
+    "state": "Uncommitted working tree at the observed HEAD",
+    "pins": [
+      {
+        "path": "public/index.html",
+        "headBlob": "2998f192a42daccf0d81170b7db28b6a99c1b86f",
+        "workingCleanBlob": "3012b2c00c409de8ed458104b4dd5af8b1275944",
+        "rawSha256": "f2bed86ed6b274569648db4b249010eea9a57e402bef9735418e80ad40b9952c",
+        "canonicalLfSha256": "52b7be8066c7808bf06db819aa5a6efe14151ec72ba0e3a6d3ac2cb56f140fda"
+      },
+      {
+        "path": "tools/mobile.js",
+        "headBlob": "cef1d5da41c2781d51309bf71a4aeb40fb7ae2c1",
+        "workingCleanBlob": "b75f0e5c11f0033c55d86c50998c143796da6f3a",
+        "rawSha256": "1b3bf4c74f5f0d48c96e3c3dec4ae30def3d20289bc909d1ef39ac67122244dc",
+        "canonicalLfSha256": "3f64ef5875496c7b3405f0d10b9b62d6355268b9dc18759ad0d190e4bb9fa515"
+      },
+      {
+        "path": "test/consigliere-recovery-browser.js",
+        "headBlob": "e5301a52c0a8e3398231e91a9a22122be4c558d6",
+        "workingCleanBlob": "a32c8fe609ffc7c9ff9042bb9852af89e757ecc6",
+        "rawSha256": "1b3ab87b880d77cda4be501530ab8acdf5e3f8cd517fa049dd5fe503895d05c8",
+        "canonicalLfSha256": "3c26061b4e5cbbcecf1c48140f30bd479fe6bfb82ab46e12ae8b9e75df8efec9"
+      },
+      {
+        "path": ".github/workflows/ci.yml",
+        "headBlob": "c7b3bd9c8b6ed720563486db16cdf6367a0c827c",
+        "workingCleanBlob": "a5d2453fc2c545edcb6fbf2f04ca39bc1d177cea",
+        "rawSha256": "e5377035ae5b72852f47e58efc84f883499bee0d799a2c2e7bced804355419b6",
+        "canonicalLfSha256": "e5377035ae5b72852f47e58efc84f883499bee0d799a2c2e7bced804355419b6"
+      },
+      {
+        "path": "test/gates.js",
+        "headBlob": "40170b5bd50057fbc2892302ae4990e710d92452",
+        "workingCleanBlob": "5b71f2e393ee93897fbc8f64a69230deb6e1e057",
+        "rawSha256": "69ab3a82dd82a2583b17abf8009708c438e8b3bf10a43c1ac6045db4dc25da70",
+        "canonicalLfSha256": "77b6eaadadd7500b4fd00d7e8ee215a2fadb3020e0bf4e6bc32f52db3461680a"
+      }
+    ],
+    "currentVerifiedUnchangedDomains": [
+      {
+        "path": "src",
+        "baselineObject": "8865ac9d3cc8b1f99fe5782bae292f2b5ad5e13c",
+        "headObject": "8865ac9d3cc8b1f99fe5782bae292f2b5ad5e13c",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "data",
+        "baselineObject": "b5fa73b743fde33f0dece71116781e193f168f76",
+        "headObject": "b5fa73b743fde33f0dece71116781e193f168f76",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "omerta-contracts",
+        "baselineObject": "3376d22c7d75f4f3ead3d1075a62bfa13cc436bb",
+        "headObject": "3376d22c7d75f4f3ead3d1075a62bfa13cc436bb",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "schema.sql",
+        "baselineObject": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+        "headObject": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "package.json",
+        "baselineObject": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+        "headObject": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "package-lock.json",
+        "baselineObject": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+        "headObject": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "render.yaml",
+        "baselineObject": "74a9e985d71f6c1d8999a74fe523b6c874abb600",
+        "headObject": "74a9e985d71f6c1d8999a74fe523b6c874abb600",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      },
+      {
+        "path": "omerta-mcp",
+        "baselineObject": "81344ce9f02eb66859110509335c0b5ce0738aaf",
+        "headObject": "81344ce9f02eb66859110509335c0b5ce0738aaf",
+        "workingAndIndexTrackedDiffEmpty": true,
+        "nonIgnoredUntrackedFiles": 0
+      }
+    ],
+    "canonicalNpmScope": {
+      "status": "actual_verified",
+      "baseline": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+      "uniqueNodeEntrypoints": 420,
+      "rootScripts": [
+        "pretest",
+        "test",
+        "test:city-gameplay",
+        "test:company-workforce",
+        "test:equipment-economy",
+        "test:gateway",
+        "test:legal-security",
+        "test:release-source-transfer"
+      ],
+      "recursivelyExpandedScripts": [
+        "pretest",
+        "test",
+        "test:city-gameplay",
+        "test:company-workforce",
+        "test:equipment-economy",
+        "test:gateway",
+        "test:legal-security",
+        "test:release-source-transfer"
+      ],
+      "sortedPathListSha256": "1c8b2190e25c9f169c5bd0b90787d6c5821c1ac27981a25da2a2bb7409f8418c",
+      "comparison": "Current git diff against b12 across the same420-entrypoint set contains only test/gates.js; previous canonical-LF pass proved the remaining files identical.",
+      "changedEntrypoints": [
+        "test/gates.js"
+      ],
+      "outsideScope": [
+        "tools/mobile.js",
+        "test/consigliere-recovery-browser.js"
+      ],
+      "unchangedEntrypoints": 419,
+      "changedEntrypointDisposition": {
+        "path": "test/gates.js",
+        "exactlyFiveLineReplacementsVerified": true,
+        "scope": "Three required20-to25 literals plus matching explanatory comment and console summary.",
+        "fullActualRetest": {
+          "exitCode": 0,
+          "startedAt": "2026-10-15T02:29:29.2540479Z",
+          "endedAt": "2026-10-15T02:29:37.5316505Z",
+          "command": "node test/gates.js",
+          "status": "PASS",
+          "record": {
+            "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.exit.json",
+            "bytes": 153,
+            "sha256": "dbfda506934502d2164024f6b6cec23bb32abea8f56ce372db7355c360b8752f"
+          },
+          "log": {
+            "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.log",
+            "bytes": 4346,
+            "sha256": "ac94290db4f728efb831c0911900c315d66788f1a71122ac31c959e07e06a0d4"
+          },
+          "sourceSnapshotLimitation": "This receipt records actual command/exit/times but no dedicated before/after source snapshot; current input hashes are independently bound in this receipt."
+        }
+      }
+    },
+    "currentVerifiedUnchangedDomainCount": 8,
+    "workflowException": {
+      "status": "actual_reviewed",
+      "path": ".github/workflows/ci.yml",
+      "onlySemanticDelta": "browser job timeout-minutes20 to25",
+      "changedOtherWorkflowFiles": [],
+      "commentsUpdated": true,
+      "commandsAssertionsNative75MinuteBoundsAndFuzzBudgetsUnchanged": true
+    }
+  },
+  "changes": {
+    "publicIndex": {
+      "cssOnlyComparedWithBaseline": true,
+      "outsideFirstStyleElementCanonicalLfEqual": true,
+      "changes": [
+        "Add flex-wrap:wrap to base #top flex container (already committed in a03).",
+        "Allow dashboard #top to scroll away at every phone width<=760px; existing more-specific compact City header remains sticky.",
+        "Scope landing operation-receipt styles and phone overrides under .landing to avoid styling gameplay operation receipts.",
+        "Set phone #operation-desk #coach padding to5px8px."
+      ],
+      "javascriptHtmlAndGameplayLogicChanged": false
+    },
+    "gateway": {
+      "from": "assert.match(await page.locator('#approval-result').textContent(), /Retrying may execute the action you approved/);",
+      "to": "assert.equal(await page.locator('#approval-result').textContent(), 'Completion has not been confirmed. Retrying may carry out the action you approved.');",
+      "meaning": "Require the complete current warning; preserve pending/expired controls and confirmation-count assertions.",
+      "exactWarningAndInstalledExecutableDiscoveryOnly": true,
+      "installedExecutableDiscovery": {
+        "status": "actual_saved_and_full_local_retest_passed_without_override",
+        "scope": "Explicit override, Playwright executable path and installed Chromium/Chrome candidates; actual file existence required; no game/assertion bypass.",
+        "fullRetest": {
+          "exitCode": 0,
+          "startedAt": "2026-10-15T02:28:45.9511293Z",
+          "endedAt": "2026-10-15T02:28:53.2547601Z",
+          "command": "node test/consigliere-recovery-browser.js",
+          "chromiumPathOverride": false,
+          "status": "PASS",
+          "record": {
+            "path": "output/release-2026-10-14/final-gateway-discovery.exit.json",
+            "bytes": 210,
+            "sha256": "b2acd2baedda01e8e112f9b8fab6394f9578a9b98962c818a4cae20f423961f4"
+          },
+          "log": {
+            "path": "output/release-2026-10-14/final-gateway-discovery.log",
+            "bytes": 227,
+            "sha256": "1be76086d441b1e82a4a6617f26e8544394340ca6141d549977075817655b966"
+          },
+          "sourceSnapshotLimitation": "This receipt records actual command/exit/times but no dedicated before/after source snapshot; current input hashes are independently bound in this receipt."
+        }
+      }
+    },
+    "mobilePrivacy": {
+      "exactChangesLimitedToUtilityImportObserverAndFormerGRegion": true,
+      "viewportsUnchanged": [
+        {
+          "width": 320,
+          "height": 568
+        },
+        {
+          "width": 375,
+          "height": 667
+        },
+        {
+          "width": 360,
+          "height": 780
+        }
+      ],
+      "allOtherSourceRegionsCanonicalLfEqualToHead": true,
+      "previousFullRunScreenChecks": 179,
+      "finalExpectedScreenChecks": 179,
+      "finalExecutionPending": false,
+      "preserved": [
+        "Every real navigation/check() call",
+        "Tour first crime real click and response",
+        "First-job lifetime counter/reward readiness",
+        "Actual reward claim and coach transition",
+        "Remaining gameplay, conservation, receipt and stored-XSS checks",
+        "Failure collection and screensChecked increment"
+      ],
+      "checks": [
+        "Observe actual browser requests to /v1/screens before navigation through visibilitychange; require none.",
+        "Deep-compare actual ordered screen_open database rows before/after navigation.",
+        "Stop UI observer before separate intentional authenticated real-browser POST with nonempty walked screen IDs.",
+        "Require exact200 response {ok:true,counted:0}; deep-compare screen_open rows after compatibility call."
+      ],
+      "privacyPolicy": "Optional analytics are removed entirely; there is no current analytics-consent opt-in UI/API. Historical funnel-reader coverage remains in existing engagement tests.",
+      "finalScreenChecks": 179,
+      "finalFailures": 0,
+      "finalPassedSourceRawSha256": "1b3bf4c74f5f0d48c96e3c3dec4ae30def3d20289bc909d1ef39ac67122244dc"
+    },
+    "browserJobDeadline": {
+      "status": "actual_saved_scope_verified_full_gates_passed",
+      "path": ".github/workflows/ci.yml",
+      "job": "browser",
+      "fromMinutes": 20,
+      "toMinutes": 25,
+      "reason": "Observed919 seconds setup/full City, plus gateway8 and local mobile229 projects1156 seconds, leaving44 seconds (~3.8%) under20 minutes. Prospective bounded headroom adjustment; no claim of hosted success.",
+      "fullGatesRetest": {
+        "exitCode": 0,
+        "startedAt": "2026-10-15T02:29:29.2540479Z",
+        "endedAt": "2026-10-15T02:29:37.5316505Z",
+        "command": "node test/gates.js",
+        "status": "PASS",
+        "record": {
+          "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.exit.json",
+          "bytes": 153,
+          "sha256": "dbfda506934502d2164024f6b6cec23bb32abea8f56ce372db7355c360b8752f"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.log",
+          "bytes": 4346,
+          "sha256": "ac94290db4f728efb831c0911900c315d66788f1a71122ac31c959e07e06a0d4"
+        },
+        "sourceSnapshotLimitation": "This receipt records actual command/exit/times but no dedicated before/after source snapshot; current input hashes are independently bound in this receipt."
+      }
+    }
+  },
+  "historicalEvidence": {
+    "preservedTrackedReceipt": {
+      "path": ".github/ci-evidence/header-wrap-logout-retest-2026-10-15.json",
+      "bytes": 23132,
+      "sha256": "9721f23c2ce3cb0d2fa701e2df9b2dbe87740bee6f4d652be7358d96cd755f78"
+    },
+    "older5b43HostedFailure": {
+      "runId": 38664677331,
+      "headSha": "5b43a35dceb555a35e49da9073ed249a8dec660e",
+      "jobId": 116196940532,
+      "step": 9,
+      "name": "City Mode and RPG desktop/mobile journeys",
+      "source": "test/city-world-host-browser.js:1461:43",
+      "error": "locator.click: Timeout 30000ms exceeded",
+      "locator": "#btn-logout",
+      "observed": "Button was visible/enabled/stable; /resources link and div#top intercepted pointer events.",
+      "startedAt": "2026-10-15T01:28:23Z",
+      "completedAt": "2026-10-15T01:36:54Z",
+      "elapsedSeconds": 511,
+      "artifacts": [
+        {
+          "path": "output/release-2026-10-14/ci-38664677331-browser-116196940532.log",
+          "bytes": 106332,
+          "sha256": "948fe563a8d09662fb9813ec9aed536c5038a233423082b7cfe38da41a493b6e"
+        },
+        {
+          "path": "output/release-2026-10-14/ci-38664677331-jobs.json",
+          "bytes": 6593,
+          "sha256": "c5b4d069c31fc2ce9edb047626a20f01adb0fe82f8734cd83e01a2cfe334b894"
+        },
+        {
+          "path": "output/release-2026-10-14/ci-38664677331-summary.json",
+          "bytes": 13394,
+          "sha256": "8e700913e03ad19175df4e73c78d518496d1a41c7b841b09b237e46e748ca3b4"
+        }
+      ],
+      "unexecutedCommands": [
+        "npm run test:city-gameplay:browser",
+        "npm run test:gateway:browser",
+        "npm run mobile"
+      ]
+    },
+    "a03HostedFailure": {
+      "head": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+      "runId": 38667950786,
+      "conclusion": "failure",
+      "diagnosis": "Gateway browser requires CHROMIUM_PATH before any assertion; environment/discovery gap. Fix was pending at that failure; implementation and local retest are recorded separately below.",
+      "artifacts": [
+        {
+          "path": "output/release-2026-10-14/ci-38667950786-summary.json",
+          "bytes": 14399,
+          "sha256": "5213086cc94e18bb35b7c528d6c7e99dbb3122e39bfcc6c6b87b7b9dfa953e72"
+        },
+        {
+          "path": "output/release-2026-10-14/ci-38667950786-browser-116207232915.log",
+          "bytes": 102607,
+          "sha256": "60f39bb6f7601b4a0a0230c911126de6e7bb7e05e44b8ef6a5aebc02411f5c9b"
+        }
+      ]
+    },
+    "gatewayInitial": {
+      "record": {
+        "path": "output/release-2026-10-14/header-wrap-gateway-browser.log.exit.json",
+        "bytes": 2585,
+        "sha256": "c03eeca04de613488a877e5320cbdcf9dcb2ad3a339e086b85916f2bb8fac58d"
+      },
+      "command": "npm run test:gateway:browser",
+      "exitCode": 1,
+      "signal": null,
+      "startAt": "2026-10-15T01:54:21.665Z",
+      "endAt": "2026-10-15T01:54:30.137Z",
+      "durationMs": 8472,
+      "log": {
+        "path": "output/release-2026-10-14/header-wrap-gateway-browser.log",
+        "bytes": 860,
+        "sha256": "d1621cb0b63fb4e6abd13aca085dbf45179a246a8ed0b985a547c5f065878b8d"
+      },
+      "trackedInputsChangedDuringRun": [],
+      "headChangedDuringRun": false,
+      "diagnosis": "Obsolete warning regex refused current complete warning."
+    },
+    "gatewayWarningRetest": {
+      "record": {
+        "path": "output/release-2026-10-14/header-wrap-gateway-browser-retest.log.exit.json",
+        "bytes": 2583,
+        "sha256": "0f98ba18275b5651feff4e303b724a3ad7b62499e5134395a77b13f3fa211105"
+      },
+      "command": "npm run test:gateway:browser",
+      "exitCode": 0,
+      "signal": null,
+      "startAt": "2026-10-15T01:56:14.425Z",
+      "endAt": "2026-10-15T01:56:22.911Z",
+      "durationMs": 8486,
+      "log": {
+        "path": "output/release-2026-10-14/header-wrap-gateway-browser-retest.log",
+        "bytes": 315,
+        "sha256": "451ed7261b9224f155de229aadef0e94288098e85d227008e80489be6892264b"
+      },
+      "trackedInputsChangedDuringRun": [],
+      "headChangedDuringRun": false,
+      "qualification": "Pass at recorded earlier CSS and gateway bytes only; does not qualify the later executable discovery or final current CSS."
+    },
+    "mobileInitialTimeout": {
+      "record": {
+        "path": "output/release-2026-10-14/header-wrap-mobile.log.exit.json",
+        "bytes": 2521,
+        "sha256": "fea9a1091d1acb4b2c29417b9e54642e69a4ecb1a6b0b61f548c6fb071ecf88c"
+      },
+      "command": "npm run mobile",
+      "exitCode": 1,
+      "signal": null,
+      "startAt": "2026-10-15T01:54:30.361Z",
+      "endAt": "2026-10-15T01:55:12.406Z",
+      "durationMs": 42045,
+      "log": {
+        "path": "output/release-2026-10-14/header-wrap-mobile.log",
+        "bytes": 995,
+        "sha256": "ebbd9501ba7149a581c0d1586b10fa62f16ea4ddf0c27c221ee7910a6f92038a"
+      },
+      "trackedInputsChangedDuringRun": [],
+      "headChangedDuringRun": false,
+      "diagnosis": "No crime POST occurred. Pointer interception caused the response-wait timeout; background World409 was unrelated."
+    },
+    "pointerDiagnostic": {
+      "status": "confirmed_local_geometry",
+      "artifacts": [
+        {
+          "path": "output/release-2026-10-14/mobile-first-job-diagnostic.log",
+          "bytes": 1585,
+          "sha256": "e7242a664a4aa32952b1aebed21202055086d8613bfe96ebf1a2fd463b881e42"
+        },
+        {
+          "path": "output/release-2026-10-14/mobile-first-job-diagnostic.png",
+          "bytes": 205377,
+          "sha256": "eda55eb9ae330a5651fc8be387541f95ed1ef85ca76b22a5f91af7799b68db4f"
+        },
+        {
+          "path": "output/release-2026-10-14/mobile-first-job-diagnostic.mjs",
+          "bytes": 94390,
+          "sha256": "a6ae2e66a698834df79ec7e08223e37eed115eaf664616e1cf902e78dc104152"
+        }
+      ],
+      "viewport": {
+        "width": 320,
+        "height": 568
+      },
+      "enabledButtonPath": "POST /v1/crimes/stereo",
+      "buttonBox": {
+        "x": 124.578125,
+        "y": 262,
+        "width": 70.84375,
+        "height": 44
+      },
+      "hitElement": {
+        "id": "whoami",
+        "tag": "SPAN"
+      },
+      "headerHeight": 309.75,
+      "visibleDialogs": 0,
+      "noCrimePostObserved": true
+    },
+    "fullPhoneMobileBeforeFinalFixes": {
+      "record": {
+        "path": "output/release-2026-10-14/header-phone-mobile.log.exit.json",
+        "bytes": 2584,
+        "sha256": "9bacfe7ce950d2d5d12ac01cc8168fb4b390e81da1a5dcf4b67943aa4c5ba1bb"
+      },
+      "command": "npm run mobile",
+      "exitCode": 1,
+      "signal": null,
+      "startAt": "2026-10-15T02:05:49.496Z",
+      "endAt": "2026-10-15T02:09:38.696Z",
+      "durationMs": 229200,
+      "log": {
+        "path": "output/release-2026-10-14/header-phone-mobile.log",
+        "bytes": 20946,
+        "sha256": "4efc80d183f57cf17d326c45c4d8df1226ab893a2cb1277b2c79848840f7c697"
+      },
+      "trackedInputsChangedDuringRun": [],
+      "headChangedDuringRun": false,
+      "screenChecks": 179,
+      "failureCount": 32,
+      "obsoletePositiveAnalyticsFailures": 3,
+      "foldFailures": 29,
+      "qualification": "Full unchanged old harness after phone-static CSS; failure evidence retained, not a pass."
+    },
+    "foldDiagnostic": {
+      "artifact": {
+        "path": "output/release-2026-10-14/header-phone-fold-padding-diagnostic.json",
+        "bytes": 40575,
+        "sha256": "d828363ace2b2366a91a85c94ec1cfbd23d801bcaea5a640f00d9624f5f67c25"
+      },
+      "rawLog": {
+        "path": "output/release-2026-10-14/header-phone-fold-padding-diagnostic.log",
+        "bytes": 27274,
+        "sha256": "5f2c09cc61b43cae1e7a02622918872d870cf8c4a25f183371c18c45ce414d5e"
+      },
+      "actualExit": 0,
+      "samples": 5,
+      "failures": 0,
+      "pageErrors": 0,
+      "qualification": "CSSOM diagnostic only; no replacement for the full unchanged navigation/gameplay journey."
+    }
+  },
+  "completedFocusedChecks": {
+    "commands": [
+      {
+        "command": "node --check tools/mobile.js",
+        "exitCode": 0
+      },
+      {
+        "command": "git diff --check -- tools/mobile.js",
+        "exitCode": 0
+      },
+      {
+        "command": "node test/legal-security.js",
+        "exitCode": 0
+      },
+      {
+        "command": "node test/engagement.js",
+        "exitCode": 0
+      }
+    ],
+    "sourceQualifiedToMobileRawSha256": "1b3bf4c74f5f0d48c96e3c3dec4ae30def3d20289bc909d1ef39ac67122244dc",
+    "evidence": "Actual tool exits observed by reviewer; no new raw log artifact was retained for these focused invocations.",
+    "environment": "Disposable pg-mem; DATABASE_URL was verified absent."
+  },
+  "pending": {
+    "finalDocsGatesAndKnowledge": {
+      "gates": "complete_actual_local_pass",
+      "docs": "To be run by exact-head affected CI.",
+      "knowledge": "Generate after authored commit, then test clean generated-only snapshot."
+    },
+    "nextHeadHostedCI": {
+      "status": "pending_owner_exact_head_binding",
+      "head": null,
+      "runIds": []
+    }
+  },
+  "productionState": {
+    "source": "Parent-reported fresh complete Render UI observation at2026-10-15T02:00Z; not re-queried in this local draft.",
+    "fullProductionLegalProfileReady": false,
+    "missingFieldCount": 9,
+    "missingFieldNames": [
+      "LEGAL_OPERATOR_NAME",
+      "LEGAL_POSTAL_ADDRESS",
+      "PRIVACY_CONTACT_EMAIL",
+      "DMCA_AGENT_NAME",
+      "DMCA_AGENT_EMAIL",
+      "DMCA_AGENT_ADDRESS",
+      "DMCA_AGENT_PHONE",
+      "DMCA_AGENT_REGISTERED",
+      "PAYMENT_REFUND_POLICY"
+    ],
+    "valuesRecorded": false,
+    "productionWritesPerformedByThisTask": false,
+    "resetPerformed": false,
+    "onchainActivationPerformed": false,
+    "automation": {
+      "source": "Parent-reported fresh Render UI observation at2026-10-15T02:31Z; not independently queried by this task.",
+      "api": {
+        "autoDeploy": "no",
+        "branch": "main"
+      },
+      "worker": {
+        "autoDeploy": "no",
+        "branch": "main"
+      }
+    }
+  },
+  "limits": [
+    "This immutable receipt records local results before the authored commit and next-head hosted run; it grants no production or onchain qualification.",
+    "Earlier passing receipts remain qualified to their original source pins. Historical receipts were read only and remain unchanged.",
+    "The420 canonical entrypoints include419 unchanged sources plus the narrowly updated gates source with its actual full retest. Mobile, gateway browser and public/index.html remain outside that set and have separate local browser evidence.",
+    "No raw log contents, browser executable personal paths, secret values or production credentials are embedded."
+  ],
+  "completedFinalLocalChecks": {
+    "summary": {
+      "path": "output/release-2026-10-14/final-browser-results.json",
+      "bytes": 1818,
+      "sha256": "47c3ed1b7e788a8d1d9e64e2d12cf983756cd2c8366b2e2b8541426747991684"
+    },
+    "mobileVerdict": "179 screen checks across 3 phone sizes; 0 failures",
+    "runs": [
+      {
+        "command": "npm run mobile",
+        "status": "PASS",
+        "exitCode": 0,
+        "signal": null,
+        "startAt": "2026-10-15T02:19:19.329Z",
+        "endAt": "2026-10-15T02:23:06.504Z",
+        "durationMs": 227175,
+        "receipt": {
+          "path": "output/release-2026-10-14/final-browser-mobile.exit.json",
+          "bytes": 5801,
+          "sha256": "70db36add4dc56ee4dd86a9a22a896d5e991137726eb4b8ae7e95f7fb4faaacc"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-browser-mobile.log",
+          "bytes": 9037,
+          "sha256": "9233b0e4caf35e657b0e8476818fc07a9827e013d56e3ec045919473930c7dd2"
+        },
+        "sourceHashesStable": true,
+        "recordedSourceFileCount": 12,
+        "recordedSourceHashesMatchCurrent": true,
+        "scope": "Complete unchanged command, final root-owned CSS plus frozen privacy-negative mobile assertions; disposable local pg-mem only",
+        "sourceSnapshot": {
+          "head": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+          "files": [
+            {
+              "path": "package.json",
+              "rawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+              "gitBlob": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463"
+            },
+            {
+              "path": "public/index.html",
+              "rawSha256": "f2bed86ed6b274569648db4b249010eea9a57e402bef9735418e80ad40b9952c",
+              "gitBlob": "3012b2c00c409de8ed458104b4dd5af8b1275944"
+            },
+            {
+              "path": "public/omerta-ui.css",
+              "rawSha256": "b0d8ea58c2ef5df3aa1c0f7569886afbac3a77079f434b5b28a137a97cc69713",
+              "gitBlob": "a6f3f6ca2c6fc0de7cbf23fec694f9643c7cdd2f"
+            },
+            {
+              "path": "public/city-scene.css",
+              "rawSha256": "0fe5812b2b4695dd57b8bbe017e434a293016b62bfa0aa2d6674933e86606c37",
+              "gitBlob": "1573611e2182078d2f7dc83714c02fc2977ecb0f"
+            },
+            {
+              "path": "public/city-world-ui.css",
+              "rawSha256": "39baadff56370ed3354dfcdb856b2f46d16cd6a0098979f9ea47360bfd4c8466",
+              "gitBlob": "3cb79cf673ca0649b74ab22e03cd6e6e2da799df"
+            },
+            {
+              "path": "public/world-fieldwork.css",
+              "rawSha256": "2fcdd895a866f9b1d09282cc59a7db18dbd78312f3b05bc6920499b904f5333a",
+              "gitBlob": "3d192b888deba92d21751a27309a48607bb4f479"
+            },
+            {
+              "path": "tools/mobile.js",
+              "rawSha256": "1b3bf4c74f5f0d48c96e3c3dec4ae30def3d20289bc909d1ef39ac67122244dc",
+              "gitBlob": "b75f0e5c11f0033c55d86c50998c143796da6f3a"
+            },
+            {
+              "path": "test/city-district-arcs-browser.js",
+              "rawSha256": "595318ebba09fbffee186d7dca3f64384c725ebf163530c7b352fa45da22cdcf",
+              "gitBlob": "eb5db3767ea8968fe7622ea5d9d466ef289c0c05"
+            },
+            {
+              "path": "test/city-gameplay-panels-browser.js",
+              "rawSha256": "3513e10968e6ce97f6cb20c2d314c6965eea1d19a5b9e5e5c2819d7b61006286",
+              "gitBlob": "197a19466dde6c0f452df1987288754fa34de32e"
+            },
+            {
+              "path": "src/server.js",
+              "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+              "gitBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f"
+            },
+            {
+              "path": "src/db.js",
+              "rawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+              "gitBlob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13"
+            },
+            {
+              "path": "src/game.js",
+              "rawSha256": "6332ad6f3cf406c16168d58a486622fde791a53ad87954153870d77084af60cd",
+              "gitBlob": "c15e6f171c4be7240b7aea96121762c21f772163"
+            }
+          ]
+        }
+      },
+      {
+        "command": "npm run test:city-gameplay:browser",
+        "status": "PASS",
+        "exitCode": 0,
+        "signal": null,
+        "startAt": "2026-10-15T02:19:19.329Z",
+        "endAt": "2026-10-15T02:21:58.564Z",
+        "durationMs": 159235,
+        "receipt": {
+          "path": "output/release-2026-10-14/final-browser-city-gameplay.exit.json",
+          "bytes": 5828,
+          "sha256": "803805dc8e67216aa383e5dfa15d8fdc6aa236361d90bb89371e9f431ebe66ec"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-browser-city-gameplay.log",
+          "bytes": 3151,
+          "sha256": "22efa52860450140b58b1dc55aa086b71f5639e259f05270b371617afad262c8"
+        },
+        "sourceHashesStable": true,
+        "recordedSourceFileCount": 12,
+        "recordedSourceHashesMatchCurrent": true,
+        "scope": "Complete unchanged command, final root-owned CSS plus frozen privacy-negative mobile assertions; disposable local pg-mem only",
+        "sourceSnapshot": {
+          "head": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
+          "files": [
+            {
+              "path": "package.json",
+              "rawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+              "gitBlob": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463"
+            },
+            {
+              "path": "public/index.html",
+              "rawSha256": "f2bed86ed6b274569648db4b249010eea9a57e402bef9735418e80ad40b9952c",
+              "gitBlob": "3012b2c00c409de8ed458104b4dd5af8b1275944"
+            },
+            {
+              "path": "public/omerta-ui.css",
+              "rawSha256": "b0d8ea58c2ef5df3aa1c0f7569886afbac3a77079f434b5b28a137a97cc69713",
+              "gitBlob": "a6f3f6ca2c6fc0de7cbf23fec694f9643c7cdd2f"
+            },
+            {
+              "path": "public/city-scene.css",
+              "rawSha256": "0fe5812b2b4695dd57b8bbe017e434a293016b62bfa0aa2d6674933e86606c37",
+              "gitBlob": "1573611e2182078d2f7dc83714c02fc2977ecb0f"
+            },
+            {
+              "path": "public/city-world-ui.css",
+              "rawSha256": "39baadff56370ed3354dfcdb856b2f46d16cd6a0098979f9ea47360bfd4c8466",
+              "gitBlob": "3cb79cf673ca0649b74ab22e03cd6e6e2da799df"
+            },
+            {
+              "path": "public/world-fieldwork.css",
+              "rawSha256": "2fcdd895a866f9b1d09282cc59a7db18dbd78312f3b05bc6920499b904f5333a",
+              "gitBlob": "3d192b888deba92d21751a27309a48607bb4f479"
+            },
+            {
+              "path": "tools/mobile.js",
+              "rawSha256": "1b3bf4c74f5f0d48c96e3c3dec4ae30def3d20289bc909d1ef39ac67122244dc",
+              "gitBlob": "b75f0e5c11f0033c55d86c50998c143796da6f3a"
+            },
+            {
+              "path": "test/city-district-arcs-browser.js",
+              "rawSha256": "595318ebba09fbffee186d7dca3f64384c725ebf163530c7b352fa45da22cdcf",
+              "gitBlob": "eb5db3767ea8968fe7622ea5d9d466ef289c0c05"
+            },
+            {
+              "path": "test/city-gameplay-panels-browser.js",
+              "rawSha256": "3513e10968e6ce97f6cb20c2d314c6965eea1d19a5b9e5e5c2819d7b61006286",
+              "gitBlob": "197a19466dde6c0f452df1987288754fa34de32e"
+            },
+            {
+              "path": "src/server.js",
+              "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+              "gitBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f"
+            },
+            {
+              "path": "src/db.js",
+              "rawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+              "gitBlob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13"
+            },
+            {
+              "path": "src/game.js",
+              "rawSha256": "6332ad6f3cf406c16168d58a486622fde791a53ad87954153870d77084af60cd",
+              "gitBlob": "c15e6f171c4be7240b7aea96121762c21f772163"
+            }
+          ]
+        }
+      },
+      {
+        "command": "node test/city-world-host-browser.js",
+        "commandProvenance": "Parent-reported invocation; plain exit/log do not encode a full launch receipt.",
+        "status": "PASS",
+        "exitCode": 0,
+        "record": {
+          "path": "output/release-2026-10-14/final-browser-world-host.exit",
+          "bytes": 3,
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-browser-world-host.log",
+          "bytes": 1561,
+          "sha256": "697dce5423ad906e9c231be6d89326fa5d937c3f1d484fdd9a5e9a3d50b193b2"
+        },
+        "currentHarnessSource": {
+          "path": "test/city-world-host-browser.js",
+          "headBlob": "d9f5c262cd08e98db472ac4f1a8f766ec14c4e84",
+          "workingCleanBlob": "d9f5c262cd08e98db472ac4f1a8f766ec14c4e84",
+          "rawSha256": "59f0f093c465b9fde7b826690f2819e05fe6e24d52d2241b1f55946549714b6b",
+          "canonicalLfSha256": "0121c18b860e98d7786a3ab1e8edf3e8a7736073d344a7ad29d34c8e91ae94ce"
+        },
+        "sourceSnapshotLimitation": "No dedicated before/after source snapshot was recorded for this invocation. Concurrent mobile/City receipts prove their shared12-file inputs stable; this is not an independent full-invocation source snapshot.",
+        "recordedLogLastWriteAt": "2026-10-15T02:21:05.323Z"
+      },
+      {
+        "exitCode": 0,
+        "startedAt": "2026-10-15T02:28:45.9511293Z",
+        "endedAt": "2026-10-15T02:28:53.2547601Z",
+        "command": "node test/consigliere-recovery-browser.js",
+        "chromiumPathOverride": false,
+        "status": "PASS",
+        "record": {
+          "path": "output/release-2026-10-14/final-gateway-discovery.exit.json",
+          "bytes": 210,
+          "sha256": "b2acd2baedda01e8e112f9b8fab6394f9578a9b98962c818a4cae20f423961f4"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-gateway-discovery.log",
+          "bytes": 227,
+          "sha256": "1be76086d441b1e82a4a6617f26e8544394340ca6141d549977075817655b966"
+        },
+        "sourceSnapshotLimitation": "This receipt records actual command/exit/times but no dedicated before/after source snapshot; current input hashes are independently bound in this receipt."
+      },
+      {
+        "exitCode": 0,
+        "startedAt": "2026-10-15T02:29:29.2540479Z",
+        "endedAt": "2026-10-15T02:29:37.5316505Z",
+        "command": "node test/gates.js",
+        "status": "PASS",
+        "record": {
+          "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.exit.json",
+          "bytes": 153,
+          "sha256": "dbfda506934502d2164024f6b6cec23bb32abea8f56ce372db7355c360b8752f"
+        },
+        "log": {
+          "path": "output/release-2026-10-14/final-browser-deadline-gates-retest.log",
+          "bytes": 4346,
+          "sha256": "ac94290db4f728efb831c0911900c315d66788f1a71122ac31c959e07e06a0d4"
+        },
+        "sourceSnapshotLimitation": "This receipt records actual command/exit/times but no dedicated before/after source snapshot; current input hashes are independently bound in this receipt."
+      }
+    ],
+    "qualification": "Actual local zero exits only; source-qualified per receipt. This is not next-head hosted CI qualification."
+  },
+  "recordedAt": "2026-10-15T02:32:38.679Z"
+}

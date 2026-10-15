@@ -1,0 +1,1337 @@
+{
+  "version": 1,
+  "sourceRevision": "da88c4b784b497697bfd9418e6153ddf2817ab91",
+  "setting": "Future fully-live release under the user brief. Market V2 is an implementation candidate; no production activation is asserted.",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "diagramPolicy": "Illustrative inventory changes only; no invented prices, reserve balances, range widths, epoch durations or reward rates. Display ETH per OMR; raw contract tick direction is the inverse.",
+  "film": {
+    "id": "04",
+    "title": "MARKET V2 — CONTROL COSTS",
+    "duration": 174.5,
+    "beats": [
+      {
+        "id": "M04-B01",
+        "start": 0,
+        "end": 4.866666666666666,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "Control\ncosts.",
+        "narration": "Everybody wants control. But control costs.",
+        "kind": "hero",
+        "state": "overview",
+        "tags": [
+          "Finite inventory",
+          "Full-release system illustration"
+        ],
+        "nodes": [],
+        "screen": "finance",
+        "transition": "scope",
+        "plate": "city-motion",
+        "layout": "cinema",
+        "speechStart": 0.36,
+        "speechEnd": 4.42
+      },
+      {
+        "id": "M04-B02",
+        "start": 4.866666666666666,
+        "end": 10.5,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "Separate reserves.\nSpecific jobs.",
+        "narration": "Core provides two-sided liquidity. Other reserves have different jobs.",
+        "kind": "range",
+        "state": "overview",
+        "tags": [
+          "Core / downside / upside / War Chest"
+        ],
+        "nodes": [],
+        "transition": "pan",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 5.319999999999999,
+        "speechEnd": 10.1
+      },
+      {
+        "id": "M04-B03",
+        "start": 10.5,
+        "end": 15.866666666666667,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "When players sell.",
+        "narration": "Sell through active downside ranges: Ether becomes OMR.",
+        "kind": "range",
+        "state": "selling",
+        "tags": [
+          "Lower Cushion + Garrison",
+          "ETH → OMR"
+        ],
+        "nodes": [],
+        "transition": "pan",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 10.879999999999999,
+        "speechEnd": 15.62
+      },
+      {
+        "id": "M04-B04",
+        "start": 15.866666666666667,
+        "end": 20.566666666666666,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "When players buy.",
+        "narration": "Buy through upside ranges: OMR becomes Ether.",
+        "kind": "range",
+        "state": "buying",
+        "tags": [
+          "Upper Cushion + Desk",
+          "OMR → ETH"
+        ],
+        "nodes": [],
+        "transition": "pan",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 16.12,
+        "speechEnd": 20.3
+      },
+      {
+        "id": "M04-B05",
+        "start": 20.566666666666666,
+        "end": 26.7,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "Crossed ≠ settled.",
+        "narration": "Crossing isn't final. Until withdrawal, inventory can still convert back.",
+        "kind": "range",
+        "state": "reversal",
+        "tags": [
+          "Reversible until liquidity is removed"
+        ],
+        "nodes": [],
+        "transition": "snap",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 20.84,
+        "speechEnd": 26.3
+      },
+      {
+        "id": "M04-B06",
+        "start": 26.7,
+        "end": 32,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "Remove.\nAccount.",
+        "narration": "Finalization removes eligible positions, separating principal from fees.",
+        "kind": "range",
+        "state": "finalize",
+        "tags": [
+          "Fully converted / later block",
+          "Principal and fees stay separate"
+        ],
+        "nodes": [],
+        "transition": "pan",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 27.080000000000002,
+        "speechEnd": 31.76
+      },
+      {
+        "id": "M04-B07",
+        "start": 32,
+        "end": 36.833333333333336,
+        "chapter": "01 / THE INVENTORY",
+        "headline": "Capacity is spent.",
+        "narration": "Deployment spends capacity. Deposits and withdrawals don't reset it.",
+        "kind": "range",
+        "state": "depleted",
+        "tags": [
+          "Per action / epoch / episode / lifetime"
+        ],
+        "nodes": [],
+        "transition": "spin",
+        "plate": "reserves",
+        "layout": "diagram",
+        "speechStart": 32.259,
+        "speechEnd": 36.5
+      },
+      {
+        "id": "M04-B08",
+        "start": 36.833333333333336,
+        "end": 41.8,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "Observe the market.",
+        "narration": "Completed pool history informs each move, checked against current conditions.",
+        "kind": "observations",
+        "state": "read",
+        "tags": [
+          "Completed intervals",
+          "Current spot + liquidity checks"
+        ],
+        "nodes": [
+          "Mean tick / dispersion",
+          "Turnover / imbalance / liquidity",
+          "Fresh completed observations"
+        ],
+        "transition": "pan",
+        "plate": "vault",
+        "layout": "diagram",
+        "speechStart": 37.18,
+        "speechEnd": 41.54
+      },
+      {
+        "id": "M04-B09",
+        "start": 41.8,
+        "end": 45.56666666666667,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "Rules before action.",
+        "narration": "Stress gates, cooldowns and capacity limit deployment.",
+        "kind": "observations",
+        "state": "gate",
+        "tags": [
+          "Stress entry ≠ recovery threshold",
+          "Freshness / deviation / liquidity"
+        ],
+        "nodes": [
+          "QUALIFYING MARKET STATE",
+          "COOLDOWN + CAPACITY",
+          "ELIGIBLE DEPLOYMENT"
+        ],
+        "transition": "snap",
+        "plate": "vault",
+        "layout": "diagram",
+        "speechStart": 42.08,
+        "speechEnd": 45.3
+      },
+      {
+        "id": "M04-B10",
+        "start": 45.56666666666667,
+        "end": 51.03333333333333,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "Fund the War Chest.",
+        "narration": "Surge fees, bond proceeds and arbitrage shares fund the War Chest.",
+        "kind": "reserves",
+        "state": "fund",
+        "tags": [
+          "Idle, funded ETH / OMR",
+          "No direct range deployment"
+        ],
+        "nodes": [
+          "SURGE + BONDS + ARBITRAGE SHARE",
+          "ACTUAL ASSETS RECEIVED",
+          "WAR CHEST"
+        ],
+        "transition": "scope",
+        "plate": "vault",
+        "layout": "capture",
+        "screen": "finance",
+        "speechStart": 45.82,
+        "speechEnd": 50.74
+      },
+      {
+        "id": "M04-B11",
+        "start": 51.03333333333333,
+        "end": 55.53333333333333,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "Recovery has\nconditions.",
+        "narration": "Refill requires a full window of spaced, healthy observations.",
+        "kind": "reserves",
+        "state": "recover",
+        "tags": [
+          "X healthy epochs in a full Y-window",
+          "Minimum time between observations"
+        ],
+        "nodes": [
+          "QUALIFYING RECOVERY WINDOW",
+          "IDLE WAR CHEST ASSETS",
+          "BOUNDED PARTIAL REFILL"
+        ],
+        "transition": "pan",
+        "plate": "vault",
+        "layout": "diagram",
+        "speechStart": 51.3,
+        "speechEnd": 55.22
+      },
+      {
+        "id": "M04-B12",
+        "start": 55.53333333333333,
+        "end": 60.666666666666664,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "The cap stays.",
+        "narration": "Only actual idle assets move. Lifetime limits stay spent.",
+        "kind": "reserves",
+        "state": "cap",
+        "tags": [
+          "Partial episode-capacity recovery",
+          "No lifetime reset"
+        ],
+        "nodes": [],
+        "transition": "pan",
+        "plate": "vault",
+        "layout": "diagram",
+        "speechStart": 55.84,
+        "speechEnd": 60.36
+      },
+      {
+        "id": "M04-B13",
+        "start": 60.666666666666664,
+        "end": 64.83333333333333,
+        "chapter": "02 / THE RECOVERY",
+        "headline": "No magic refill.",
+        "narration": "A bounce creates no Ether. No guaranteed floor.",
+        "kind": "reserves",
+        "state": "empty",
+        "tags": [
+          "Funding ≠ new deployment capacity"
+        ],
+        "nodes": [],
+        "transition": "spin",
+        "plate": "vault-motion",
+        "layout": "cinema",
+        "speechStart": 60.96,
+        "speechEnd": 64.48
+      },
+      {
+        "id": "M04-B14",
+        "start": 64.83333333333333,
+        "end": 68.96666666666667,
+        "chapter": "03 / THE FUNDING",
+        "headline": "Where nine\npercent goes.",
+        "narration": "Canonical sells pay nine percent, split four ways.",
+        "kind": "allocation",
+        "state": "base",
+        "tags": [
+          "Base sell fee",
+          "Pool LP fees are additional"
+        ],
+        "nodes": [
+          "2% · Developer",
+          "1.6% · RWA recipient",
+          "2.4% · Community",
+          "3% · POL → Core"
+        ],
+        "transition": "pan",
+        "plate": "harbor",
+        "layout": "diagram",
+        "speechStart": 65.21333333333334,
+        "speechEnd": 68.69333333333333
+      },
+      {
+        "id": "M04-B15",
+        "start": 68.96666666666667,
+        "end": 73.63333333333334,
+        "chapter": "03 / THE FUNDING",
+        "headline": "Core and reserves\nare separate.",
+        "narration": "Three percent funds Core. Up to one extra percent funds stability.",
+        "kind": "flow",
+        "state": "funding",
+        "tags": [
+          "0–1% extra sell charge → stability",
+          "Buys do not instantly erase pressure"
+        ],
+        "nodes": [
+          "3% POL BUCKET → CORE",
+          "SURGE → WAR CHEST",
+          "Separate custody and budgets"
+        ],
+        "transition": "pan",
+        "plate": "harbor",
+        "layout": "diagram",
+        "speechStart": 69.23333333333333,
+        "speechEnd": 73.35333333333332
+      },
+      {
+        "id": "M04-B16",
+        "start": 73.63333333333334,
+        "end": 78.36666666666666,
+        "chapter": "03 / THE FUNDING",
+        "headline": "Read the receipt.",
+        "narration": "Fees settle in Ether or OMR, including partial fills.",
+        "kind": "flow",
+        "state": "receipts",
+        "tags": [
+          "Actual settled deltas / partial fills",
+          "Independent recipient claims"
+        ],
+        "nodes": [
+          "ACTUAL SWAP SETTLEMENT",
+          "ETH OR OMR FEE BUCKETS",
+          "FIXED RECIPIENTS"
+        ],
+        "transition": "pan",
+        "plate": "harbor-motion",
+        "layout": "cinema",
+        "speechStart": 73.89333333333333,
+        "speechEnd": 78.03333333333333
+      },
+      {
+        "id": "M04-B17",
+        "start": 78.36666666666666,
+        "end": 84.83333333333333,
+        "chapter": "03 / THE FUNDING",
+        "headline": "The opening\nis temporary.",
+        "narration": "Opening buys have temporary fees and limits. Afterwards, no Hook buy tax.",
+        "kind": "observations",
+        "state": "opening",
+        "tags": [
+          "Bounded window / fee / quote limit",
+          "Per swap, not per person"
+        ],
+        "nodes": [
+          "IMMUTABLE OPENING WINDOW",
+          "TEMPORARY BUY POLICY",
+          "POST-WINDOW: NO HOOK BUY TAX"
+        ],
+        "transition": "snap",
+        "plate": "harbor",
+        "layout": "cinema",
+        "showTags": true,
+        "speechStart": 78.67333333333333,
+        "speechEnd": 84.51333333333334
+      },
+      {
+        "id": "M04-B18",
+        "start": 84.83333333333333,
+        "end": 89.33333333333333,
+        "chapter": "03 / THE FUNDING",
+        "headline": "One canonical pool.",
+        "narration": "Other venues have their own rules. Pool liquidity fees are separate.",
+        "kind": "flow",
+        "state": "venues",
+        "tags": [
+          "Fixed pool LP fee policy",
+          "Independent venues remain possible"
+        ],
+        "nodes": [
+          "CANONICAL ETH / OMR POOL",
+          "ITS HOOK POLICY",
+          "OTHER POOLS HAVE THEIR OWN RULES"
+        ],
+        "transition": "pan",
+        "plate": "harbor",
+        "layout": "capture",
+        "screen": "desk",
+        "speechStart": 85.13333333333333,
+        "speechEnd": 88.95333333333333
+      },
+      {
+        "id": "M04-B19",
+        "start": 89.33333333333333,
+        "end": 95.2,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "Inventory bonds.",
+        "narration": "Pay Ether for bonds backed by existing OMR, released through linear vesting.",
+        "kind": "bond",
+        "state": "reserve",
+        "tags": [
+          "ETH payment / prefunded entitlement",
+          "Bounded discount and sale limits"
+        ],
+        "nodes": [
+          "ETH PAYMENT",
+          "EXISTING OMR RESERVED",
+          "LINEAR VESTING"
+        ],
+        "transition": "scope",
+        "plate": "ledger",
+        "layout": "diagram",
+        "speechStart": 89.68,
+        "speechEnd": 94.96
+      },
+      {
+        "id": "M04-B20",
+        "start": 95.2,
+        "end": 100.5,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "A claim survives\na pause.",
+        "narration": "No minting. No sellback. Purchasing pauses don't erase vested claims.",
+        "kind": "bond",
+        "state": "claim",
+        "tags": [
+          "Nontransferable notes",
+          "Canonical resales still pay sell fees"
+        ],
+        "nodes": [
+          "PURCHASES MAY PAUSE",
+          "VESTED CLAIMS REMAIN",
+          "NO MINT / NO SELLBACK"
+        ],
+        "transition": "pan",
+        "plate": "ledger",
+        "layout": "capture",
+        "screen": "desk",
+        "showTags": true,
+        "speechStart": 95.42,
+        "speechEnd": 100.16
+      },
+      {
+        "id": "M04-B21",
+        "start": 100.5,
+        "end": 105.33333333333333,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "Arbitrage with\na committed plan.",
+        "narration": "Solvers commit a plan, then fund a two-pool arbitrage cycle.",
+        "kind": "solver",
+        "state": "cycle",
+        "tags": [
+          "Solver-bound commit / reveal",
+          "Taxes + LP fees included"
+        ],
+        "nodes": [
+          "SOLVER FUNDS ETH",
+          "CANONICAL ↔ ALTERNATIVE POOL",
+          "REALIZED PROFIT CHECK"
+        ],
+        "transition": "snap",
+        "plate": "ledger",
+        "layout": "cinema",
+        "showTags": true,
+        "speechStart": 100.82,
+        "speechEnd": 105.12
+      },
+      {
+        "id": "M04-B22",
+        "start": 105.33333333333333,
+        "end": 111.16666666666667,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "Profit is checked.\nGas is still risk.",
+        "narration": "Profit is checked after costs and reserve share. Failed gas remains your risk.",
+        "kind": "solver",
+        "state": "settle",
+        "tags": [
+          "Fixed reserve share",
+          "Collateral returned through claims"
+        ],
+        "nodes": [
+          "REALIZED PROFIT",
+          "FIXED SHARE → RESERVES",
+          "REMAINDER + COLLATERAL CLAIM"
+        ],
+        "transition": "pan",
+        "plate": "ledger",
+        "layout": "cinema",
+        "showTags": true,
+        "speechStart": 105.52,
+        "speechEnd": 110.86
+      },
+      {
+        "id": "M04-B23",
+        "start": 111.16666666666667,
+        "end": 118.63333333333334,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "Commit actual\nliquidity.",
+        "narration": "Lock canonical position NFTs. Rewards require fresh, qualifying depth samples.",
+        "kind": "commitment",
+        "state": "lock",
+        "tags": [
+          "Actual PositionManager NFT custody",
+          "Two epochs / sampled useful depth"
+        ],
+        "nodes": [
+          "CANONICAL LP POSITION",
+          "FINITE LOCK TERM",
+          "QUALIFYING DEPTH SAMPLES"
+        ],
+        "transition": "pan",
+        "plate": "ledger",
+        "layout": "diagram",
+        "speechStart": 111.44,
+        "speechEnd": 118.36
+      },
+      {
+        "id": "M04-B24",
+        "start": 118.63333333333334,
+        "end": 124.96666666666667,
+        "chapter": "04 / THE PARTICIPANTS",
+        "headline": "Funding limits\nthe reward.",
+        "narration": "Rewards need funded campaigns. Mature positions can exit independently.",
+        "kind": "commitment",
+        "state": "exit",
+        "tags": [
+          "First-come against available funds",
+          "No continuous-occupancy guarantee"
+        ],
+        "nodes": [
+          "PREFUNDED CAMPAIGN",
+          "BOUNDED REWARD CLAIM",
+          "MATURE NFT EXIT: INDEPENDENT"
+        ],
+        "transition": "pan",
+        "plate": "ledger",
+        "layout": "diagram",
+        "speechStart": 118.92,
+        "speechEnd": 124.6
+      },
+      {
+        "id": "M04-B25",
+        "start": 124.96666666666667,
+        "end": 130.26666666666668,
+        "chapter": "05 / THE FAMILY",
+        "headline": "Liquidity territory.",
+        "narration": "Families fight for seasonal Turf fees. The protocol keeps principal.",
+        "kind": "turf",
+        "state": "rights",
+        "tags": [
+          "Protocol keeps LP principal",
+          "Distinct from ordinary district control"
+        ],
+        "nodes": [
+          "DESIGNATED TURF LP FEES",
+          "FIXED SEASON + SLAB",
+          "FUNDED FAMILY CREDITS"
+        ],
+        "screen": "territory",
+        "transition": "snap",
+        "plate": "family",
+        "layout": "diagram",
+        "captureInsert": {
+          "screen": "territory",
+          "startFraction": 0.65,
+          "label": "District interface · Turf fee rights are separate"
+        },
+        "speechStart": 125.32,
+        "speechEnd": 129.96
+      },
+      {
+        "id": "M04-B26",
+        "start": 130.26666666666668,
+        "end": 134.56666666666666,
+        "chapter": "05 / THE FAMILY",
+        "headline": "Alliances divide\nrights.",
+        "narration": "Syndicates split rights. Status doesn't multiply money.",
+        "kind": "turf",
+        "state": "syndicate",
+        "tags": [
+          "Up to four Families / 100% total",
+          "Corridors / loyalty / fortification"
+        ],
+        "nodes": [
+          "FIXED FAMILY SHARES",
+          "PROSPECTIVE FEE RIGHTS",
+          "STATUS ≠ EXTRA MONEY"
+        ],
+        "transition": "spin",
+        "plate": "family",
+        "layout": "capture",
+        "screen": "family",
+        "speechStart": 130.6,
+        "speechEnd": 134.2
+      },
+      {
+        "id": "M04-B27",
+        "start": 134.56666666666666,
+        "end": 141.7,
+        "chapter": "05 / THE FAMILY",
+        "headline": "Settle the past.\nThen change control.",
+        "narration": "A checkpoint assigns earned fees before control changes. Existing claims keep their recipients.",
+        "kind": "turf",
+        "state": "checkpoint",
+        "tags": [
+          "Ownership / siege / treasury changes",
+          "Existing claims stay with old recipients"
+        ],
+        "nodes": [
+          "COLLECT + FORWARD LP FEES",
+          "ATOMIC CHECKPOINT",
+          "NEW CONTROL APPLIES GOING FORWARD"
+        ],
+        "transition": "scope",
+        "plate": "family",
+        "layout": "diagram",
+        "speechStart": 134.92,
+        "speechEnd": 141.35999999999999
+      },
+      {
+        "id": "M04-B28",
+        "start": 141.7,
+        "end": 146.06666666666666,
+        "chapter": "05 / THE FAMILY",
+        "headline": "Only funded\nescrow.",
+        "narration": "Sieges freeze wallets and allocate only funded escrow.",
+        "kind": "turf",
+        "state": "siege",
+        "tags": [
+          "Typed, revision-checked settlement",
+          "Expiry call → default defender"
+        ],
+        "nodes": [
+          "FROZEN PARTICIPANT WALLETS",
+          "ACTUAL FUNDED ESCROW",
+          "BOUNDED OUTCOME ALLOCATION"
+        ],
+        "transition": "pan",
+        "plate": "family",
+        "layout": "cinema",
+        "showTags": true,
+        "speechStart": 142.04,
+        "speechEnd": 145.76
+      },
+      {
+        "id": "M04-B29",
+        "start": 146.06666666666666,
+        "end": 151.43333333333334,
+        "chapter": "05 / THE FAMILY",
+        "headline": "Close the season.",
+        "narration": "At season exit, fees settle; principal returns for retirement.",
+        "kind": "turf",
+        "state": "expiry",
+        "tags": [
+          "Fees accrue until actual exit",
+          "Exit does not need the oracle"
+        ],
+        "nodes": [
+          "REMOVE THE TURF POSITION",
+          "FEES → RECORDED LANE",
+          "PRINCIPAL → PROTOCOL TURF ACCOUNT"
+        ],
+        "transition": "snap",
+        "plate": "family",
+        "layout": "diagram",
+        "speechStart": 146.4,
+        "speechEnd": 151.07999999999998
+      },
+      {
+        "id": "M04-B30",
+        "start": 151.43333333333334,
+        "end": 158.36666666666667,
+        "chapter": "06 / THE BOUNDARIES",
+        "headline": "Bounded authority.",
+        "narration": "The Safe binds and funds systems. Keepers have budgets. The game can't withdraw principal.",
+        "kind": "flow",
+        "state": "authority",
+        "tags": [
+          "Typed game outcomes / replay checks",
+          "Confirmations + reorg policy"
+        ],
+        "nodes": [
+          "SAFE: BINDINGS + SEASON + FUNDING",
+          "GAME CANNOT WITHDRAW PRINCIPAL",
+          "KEEPER: ONE NEW TRANSACTION PER RUN"
+        ],
+        "transition": "pan",
+        "plate": "city",
+        "layout": "cinema",
+        "showTags": true,
+        "speechStart": 151.78,
+        "speechEnd": 158.07999999999998
+      },
+      {
+        "id": "M04-B31",
+        "start": 158.36666666666667,
+        "end": 163.16666666666666,
+        "chapter": "06 / THE BOUNDARIES",
+        "headline": "Separate ledgers.",
+        "narration": "Game cash, OMR, Ether and RWA stay separate.",
+        "kind": "capture",
+        "state": "ledgers",
+        "tags": [
+          "DNR is also separate",
+          "A market receipt does not pay game cash"
+        ],
+        "nodes": [],
+        "screen": "finance",
+        "transition": "pan",
+        "plate": "city",
+        "layout": "capture",
+        "speechStart": 158.62,
+        "speechEnd": 162.94
+      },
+      {
+        "id": "M04-B32",
+        "start": 163.16666666666666,
+        "end": 169.5,
+        "chapter": "06 / THE BOUNDARIES",
+        "headline": "What happens\nnext?",
+        "narration": "Trades change inventory. Revenue funds reserves. Conditions gate the next move.",
+        "kind": "flow",
+        "state": "loop",
+        "tags": [
+          "No automatic floor / unlimited reserve",
+          "Actual launch configuration governs"
+        ],
+        "nodes": [
+          "TRADES → INVENTORY CHANGES",
+          "FUNDED REVENUE → RESERVES",
+          "OBSERVATIONS + LIMITS → NEXT MOVE"
+        ],
+        "transition": "pan",
+        "plate": "city-motion",
+        "layout": "cinema",
+        "speechStart": 163.4,
+        "speechEnd": 169.07999999999998
+      },
+      {
+        "id": "M04-B33",
+        "start": 169.5,
+        "end": 174.5,
+        "chapter": "OMERTÀ / MARKET V2",
+        "headline": "Control costs.",
+        "narration": "OMERTÀ. Control costs.",
+        "kind": "end",
+        "state": "end",
+        "tags": [],
+        "nodes": [],
+        "screen": "territory",
+        "transition": "snap",
+        "plate": "city",
+        "layout": "cinema",
+        "speechStart": 169.94,
+        "speechEnd": 172.82
+      }
+    ],
+    "captionTiming": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment."
+  },
+  "revision": "Soul final narrative / voice A / connected chapters",
+  "captions": [
+    {
+      "text": "Everybody wants control.",
+      "startMs": 334.99999999999994,
+      "endMs": 1985,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B01"
+    },
+    {
+      "text": "But control costs.",
+      "startMs": 2655.0000000000005,
+      "endMs": 4505,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B01"
+    },
+    {
+      "text": "Core provides two-sided liquidity.",
+      "startMs": 5294.999999999999,
+      "endMs": 7585,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B02"
+    },
+    {
+      "text": "Other reserves have different jobs.",
+      "startMs": 8254.999999999998,
+      "endMs": 10185,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B02"
+    },
+    {
+      "text": "Sell through active downside ranges:",
+      "startMs": 10854.999999999998,
+      "endMs": 13145.000000000002,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B03"
+    },
+    {
+      "text": "Ether becomes OMR.",
+      "startMs": 13614.999999999998,
+      "endMs": 15705,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B03"
+    },
+    {
+      "text": "Buy through upside ranges:",
+      "startMs": 16095.000000000002,
+      "endMs": 17885,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B04"
+    },
+    {
+      "text": "OMR becomes Ether.",
+      "startMs": 18255.000000000004,
+      "endMs": 20385,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B04"
+    },
+    {
+      "text": "Crossing isn't final.",
+      "startMs": 20815,
+      "endMs": 22205.000000000004,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B05"
+    },
+    {
+      "text": "Until withdrawal, inventory can still convert",
+      "startMs": 22555.000000000004,
+      "endMs": 25955.000000000004,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B05"
+    },
+    {
+      "text": "back.",
+      "startMs": 25955.000000000004,
+      "endMs": 26385,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B05"
+    },
+    {
+      "text": "Finalization removes eligible positions,",
+      "startMs": 27055.000000000004,
+      "endMs": 29625.000000000004,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B06"
+    },
+    {
+      "text": "separating principal from fees.",
+      "startMs": 29955.000000000004,
+      "endMs": 31845.000000000004,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B06"
+    },
+    {
+      "text": "Deployment spends capacity.",
+      "startMs": 32234,
+      "endMs": 33965,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B07"
+    },
+    {
+      "text": "Deposits and withdrawals don't reset it.",
+      "startMs": 34235,
+      "endMs": 36585,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B07"
+    },
+    {
+      "text": "Completed pool history informs each move,",
+      "startMs": 37155,
+      "endMs": 39525,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B08"
+    },
+    {
+      "text": "checked against current conditions.",
+      "startMs": 39895,
+      "endMs": 41625,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B08"
+    },
+    {
+      "text": "Stress gates, cooldowns and capacity limit",
+      "startMs": 42055,
+      "endMs": 44735,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B09"
+    },
+    {
+      "text": "deployment.",
+      "startMs": 44735,
+      "endMs": 45385,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B09"
+    },
+    {
+      "text": "Surge fees, bond proceeds and arbitrage shares",
+      "startMs": 45795,
+      "endMs": 49365,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B10"
+    },
+    {
+      "text": "fund the War Chest.",
+      "startMs": 49695,
+      "endMs": 50825,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B10"
+    },
+    {
+      "text": "Refill requires a full window of spaced,",
+      "startMs": 51275,
+      "endMs": 53915,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B11"
+    },
+    {
+      "text": "healthy observations.",
+      "startMs": 53915,
+      "endMs": 55305,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B11"
+    },
+    {
+      "text": "Only actual idle assets move.",
+      "startMs": 55815.00000000001,
+      "endMs": 58105,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B12"
+    },
+    {
+      "text": "Lifetime limits stay spent.",
+      "startMs": 58615,
+      "endMs": 60445,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B12"
+    },
+    {
+      "text": "A bounce creates no Ether.",
+      "startMs": 60935,
+      "endMs": 62645,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B13"
+    },
+    {
+      "text": "No guaranteed floor.",
+      "startMs": 63155,
+      "endMs": 64565,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B13"
+    },
+    {
+      "text": "Canonical sells pay nine percent, split four",
+      "startMs": 65188.333333333336,
+      "endMs": 68268.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B14"
+    },
+    {
+      "text": "ways.",
+      "startMs": 68268.33333333333,
+      "endMs": 68778.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B14"
+    },
+    {
+      "text": "Three percent funds Core.",
+      "startMs": 69208.33333333333,
+      "endMs": 70778.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B15"
+    },
+    {
+      "text": "Up to one extra percent funds stability.",
+      "startMs": 71188.33333333333,
+      "endMs": 73438.33333333331,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B15"
+    },
+    {
+      "text": "Fees settle in Ether or OMR, including partial",
+      "startMs": 73868.33333333333,
+      "endMs": 77598.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B16"
+    },
+    {
+      "text": "fills.",
+      "startMs": 77608.33333333331,
+      "endMs": 78118.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B16"
+    },
+    {
+      "text": "Opening buys have temporary fees and limits.",
+      "startMs": 78648.33333333333,
+      "endMs": 81478.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B17"
+    },
+    {
+      "text": "Afterwards, no Hook buy tax.",
+      "startMs": 82168.33333333333,
+      "endMs": 84598.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B17"
+    },
+    {
+      "text": "Other venues have their own rules.",
+      "startMs": 85108.33333333331,
+      "endMs": 86838.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B18"
+    },
+    {
+      "text": "Pool liquidity fees are separate.",
+      "startMs": 87288.33333333333,
+      "endMs": 89038.33333333333,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B18"
+    },
+    {
+      "text": "Pay Ether for bonds backed by existing OMR,",
+      "startMs": 89655,
+      "endMs": 92925,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B19"
+    },
+    {
+      "text": "released through linear vesting.",
+      "startMs": 93294.99999999999,
+      "endMs": 95044.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B19"
+    },
+    {
+      "text": "No minting. No sellback.",
+      "startMs": 95395,
+      "endMs": 97164.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B20"
+    },
+    {
+      "text": "Purchasing pauses don't erase vested claims.",
+      "startMs": 97494.99999999999,
+      "endMs": 100244.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B20"
+    },
+    {
+      "text": "Solvers commit a plan, then fund a two-pool",
+      "startMs": 100794.99999999999,
+      "endMs": 104024.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B21"
+    },
+    {
+      "text": "arbitrage cycle.",
+      "startMs": 104035,
+      "endMs": 105205,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B21"
+    },
+    {
+      "text": "Profit is checked after costs and reserve",
+      "startMs": 105494.99999999999,
+      "endMs": 107985,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B22"
+    },
+    {
+      "text": "share. Failed gas remains your risk.",
+      "startMs": 107994.99999999999,
+      "endMs": 110945,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B22"
+    },
+    {
+      "text": "Lock canonical position NFTs.",
+      "startMs": 111414.99999999999,
+      "endMs": 114324.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B23"
+    },
+    {
+      "text": "Rewards require fresh, qualifying depth",
+      "startMs": 114714.99999999999,
+      "endMs": 117765,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B23"
+    },
+    {
+      "text": "samples.",
+      "startMs": 117794.99999999999,
+      "endMs": 118445,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B23"
+    },
+    {
+      "text": "Rewards need funded campaigns.",
+      "startMs": 118895,
+      "endMs": 121225,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B24"
+    },
+    {
+      "text": "Mature positions can exit independently.",
+      "startMs": 121755,
+      "endMs": 124684.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B24"
+    },
+    {
+      "text": "Families fight for seasonal Turf fees.",
+      "startMs": 125294.99999999999,
+      "endMs": 127824.99999999999,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B25"
+    },
+    {
+      "text": "The protocol keeps principal.",
+      "startMs": 128375,
+      "endMs": 130045.00000000001,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B25"
+    },
+    {
+      "text": "Syndicates split rights.",
+      "startMs": 130574.99999999999,
+      "endMs": 132005,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B26"
+    },
+    {
+      "text": "Status doesn't multiply money.",
+      "startMs": 132554.99999999997,
+      "endMs": 134285,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B26"
+    },
+    {
+      "text": "A checkpoint assigns earned fees before",
+      "startMs": 134894.99999999997,
+      "endMs": 137355,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B27"
+    },
+    {
+      "text": "control changes. Existing claims keep their",
+      "startMs": 137355,
+      "endMs": 140614.99999999997,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B27"
+    },
+    {
+      "text": "recipients.",
+      "startMs": 140614.99999999997,
+      "endMs": 141445,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B27"
+    },
+    {
+      "text": "Sieges freeze wallets and allocate only funded",
+      "startMs": 142015,
+      "endMs": 145215,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B28"
+    },
+    {
+      "text": "escrow.",
+      "startMs": 145215,
+      "endMs": 145845,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B28"
+    },
+    {
+      "text": "At season exit, fees settle;",
+      "startMs": 146375,
+      "endMs": 148365,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B29"
+    },
+    {
+      "text": "principal returns for retirement.",
+      "startMs": 148595,
+      "endMs": 151165,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B29"
+    },
+    {
+      "text": "The Safe binds and funds systems.",
+      "startMs": 151755,
+      "endMs": 153925,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B30"
+    },
+    {
+      "text": "Keepers have budgets.",
+      "startMs": 154475,
+      "endMs": 155805,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B30"
+    },
+    {
+      "text": "The game can't withdraw principal.",
+      "startMs": 156315,
+      "endMs": 158165,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B30"
+    },
+    {
+      "text": "Game cash, OMR, Ether and RWA stay separate.",
+      "startMs": 158595,
+      "endMs": 163025,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B31"
+    },
+    {
+      "text": "Trades change inventory.",
+      "startMs": 163375,
+      "endMs": 165105,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B32"
+    },
+    {
+      "text": "Revenue funds reserves.",
+      "startMs": 165355,
+      "endMs": 166965,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B32"
+    },
+    {
+      "text": "Conditions gate the next move.",
+      "startMs": 167475,
+      "endMs": 169165,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B32"
+    },
+    {
+      "text": "OMERTÀ. Control costs.",
+      "startMs": 169915,
+      "endMs": 172905,
+      "timestampMs": null,
+      "confidence": null,
+      "beatId": "M04-B33"
+    }
+  ],
+  "captionTiming": "ElevenLabs forced alignment to selected native-speed chapter audio; phrase pages derived from aligned words, with25ms lead and85ms maximum tail.",
+  "voiceChoice": "A"
+}

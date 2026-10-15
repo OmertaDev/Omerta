@@ -6,7 +6,7 @@
 process.env.STANDING_CACHE_MS = '0';
 
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { maybeQualifyReferral } from '../src/game.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { M4 } from '../src/rules.js';

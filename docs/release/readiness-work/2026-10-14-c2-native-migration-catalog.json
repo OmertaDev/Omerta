@@ -1,0 +1,292 @@
+{
+  "schema": "omerta.c2-native-migration-catalog.v1",
+  "sourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "scope": "Fresh native PostgreSQL18.4 catalog qualification for exact C2 schema additions at the existing Phase2 and Director upgrade callers. This is separate from the source-only envelope and all historical native or financial qualifications.",
+  "code": {
+    "tools/release-phase2-migration-catalog.js": {
+      "rawSha256": "419a5de3238081b8e2b1ce566eae33cd30f88a8bfa19ef35441f309eec3e19c8",
+      "canonicalLfSha256": "419a5de3238081b8e2b1ce566eae33cd30f88a8bfa19ef35441f309eec3e19c8"
+    },
+    "test/phase2-postgres.js": {
+      "rawSha256": "bebfe866353fe87aef036c8ee0919f2ba38483db363ab84ad82d86261b023f5e",
+      "canonicalLfSha256": "019796dbd34bd1b604e6a95292eb6e4a10ece0372c6c96019e521fe72ad8a387"
+    },
+    "test/director-migration.js": {
+      "rawSha256": "89f95829851072230ca79d85b4615642213365591545581e2aaabad7c05c57bf",
+      "canonicalLfSha256": "d51bf7a7a6146a029d1e6c7bc8628ed3f1588cefb0e962b1e7bb87c5b9129229"
+    }
+  },
+  "runtimeGitBlobs": {
+    "package-lock.json": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04",
+    "package.json": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463",
+    "schema.sql": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+    "src/agentgateway.js": "34b013e86f9e6881f26a510b6c6abdb3f183066d",
+    "src/crew.js": "7d52c88cc1f24a754376d5e68c539f48c97a370b",
+    "src/db.js": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13",
+    "src/deeds.js": "ff8a0f0f3bc7dc38090eee29eece293b96dcdb54",
+    "src/game.js": "c15e6f171c4be7240b7aea96121762c21f772163",
+    "src/routes/worldgraph.js": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e",
+    "src/server.js": "9263d8f566bdc6d165b79a12c6c09227d041471f",
+    "src/wire.js": "f5d1028d85ed2a694b090a8955e097c7156069c1",
+    "src/worker.js": "77f7316057624ebf35ef2b6c555be85d02d816b2",
+    "src/rules.generated.js": "79e59ce682e6ada70082b4f522611e68550f0392",
+    "src/rules.tail.js": "33db41906771f1594b004e916cdbdb031bfaf170",
+    "src/genesisauction.js": "1e6934fc1f9a546ed475905f2ac61b7f389715c0",
+    "public/genesis-deploy-client.js": "0480de8ee58a3e83705f42d81c097f9b10d1a4d8",
+    "tools/genesis-auction-preflight.js": "dd33b91629b545fd176cfba4cab673a9057bf7d6"
+  },
+  "historicalHelperSha256": {
+    "test/lib/equipment-economy-migration-catalog.js": "0648f733d96ca535be0b6c8b9cb76304d77a89f6827b4141f3aee67737779262",
+    "test/lib/city-gameplay-migration-catalog.js": "4dc01b2e1d81c811ca333e0782d596941f052afe782dbf561ebe062d6c7b0fd3",
+    "tools/rc1-third-batch-source-compatibility.js": "8c174410e8b271dfb71a0a079369bc86f69a1f01e15b8b0ef33c1ebbf50ae673",
+    "tools/release-source-transfer.js": "85242aafcd9e1ff6ea6d040de1fece427259051b32df80cf4316ba463dc885fd"
+  },
+  "sourcePins": {
+    "current": {
+      "revision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+      "blob": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+      "sha256": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42"
+    },
+    "predecessor": {
+      "revision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+      "blob": "9d613ef4cef422ddf11995b42afad1a2a4ebb4c3",
+      "sha256": "9eead996764ec9b0a7211cb28eefb3588e1f2e100d28cd28e05a39f340e558dd"
+    },
+    "closedSourceDelta": "91 added lines in exactly three literal inverse blocks; reconstruction equals complete predecessor source"
+  },
+  "schemaEolPreparation": {
+    "originalRawBackupOutsideGit": "output/phase2-schema-original-raw.sql",
+    "beforeBlob": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+    "rawSha256": "7fa216f2c81c2739f4d004d8231c3db55381e5654f4549f2df2f37bb9274429a",
+    "bytes": 552275,
+    "canonicalLfSha256": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
+    "afterGitBlob": "1210ad5ecb4d2417ac1c195c2359177671839e33",
+    "scope": "Only worktree EOL normalized to LF after raw backup; original and final filtered Git blob are identical."
+  },
+  "expectedCatalog": "Seven added tables, 60 typed columns (48 NOT NULL), 70 native PG18 constraints (48 exact NOT NULL rows), 15 indexes including two cursor indexes on existing tables. PostgreSQL16 expects22 native constraints plus the same48 attnotnull column bindings; PostgreSQL16 is pending remote CI.",
+  "wholeSchemaAttestation": "No table/column/index exclusions: exact full relation inventory, column identity/ordinal/type/typmod/default/nullability/collation/identity/generated fields, constraints with type/validation/deferrability/FK schema+target+columns+actions, index definition/unique/predicate/valid/ready/live/nulls metadata. Every normalize call revalidates exact new-constraint multiset, then removes exact keys before unchanged equipment/City/original oracles.",
+  "commonRuntimeTable": "Only the fixed player_reset_migrations CREATE literal is independently compiled after complete C2 src/db.js source/blob/hash and unique exact-DDL binding. No reset DML/function runs in references. Actual runtime canonical source is also pinned.",
+  "legacyOrdinalModel": "Two closed caller-bound profiles: full8dbe source with exact397948-byte Phase2 prefix SHA; full44f48 Director source. Independently compile predecessor then exact C2 SQL, derive retained ordinals and append any missing columns using fresh pinned C2 positions. Assert exact literal remaps (15 Phase2,30 Director), and reject ordinal drift for every remapped existing field. Expectations never come from actual upgraded metadata.",
+  "causalControls": {
+    "phase2": 2434,
+    "director": 2257,
+    "realTransactionalDdlRereadsPerCaller": 13,
+    "externalFk": "External namespace FK remains actually validated=true, with native reader asserting the changed namespace before attestation rejects. Source/profile/row/metadata unknown/removal/alteration/duplicate/rename controls remain fail closed."
+  },
+  "runs": [
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "startedAt": "2026-10-14T22:49:10.777Z",
+      "endedAt": "2026-10-14T22:49:36.076Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_check",
+      "scope": "Original closed source admission failure",
+      "finalCodeQualification": false,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt1.log.gz",
+          "encoding": "gzip",
+          "bytes": 4745,
+          "sha256": "fd16de4d1fb9bb8b1630d38ef55c90f84b1e8c28849e8f9bf78b9ee53d1a3800",
+          "rawBytes": 39483,
+          "rawSha256": "4dc6644520e3618a8821acba2b7786fd6f4d6b09d862319580e1e376e3d29161"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt1.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    },
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "startedAt": "2026-10-14T22:56:26.818Z",
+      "endedAt": "2026-10-14T22:56:56.115Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Parallel reference lock-memory failure",
+      "finalCodeQualification": false,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt2.log.gz",
+          "encoding": "gzip",
+          "bytes": 4737,
+          "sha256": "536347e0f04fb8a6d4e6e4e51aec0d36204e766915cb5fc5e97e170e743f4327",
+          "rawBytes": 39425,
+          "rawSha256": "6f1859a3c77508d161e30c5773b5b5cbefbcc1bcb38167c65c0a439c1fc24248"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt2.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    },
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "startedAt": "2026-10-14T22:57:31.309Z",
+      "endedAt": "2026-10-14T22:58:06.653Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Initial full catalog mismatch before closed legacy model",
+      "finalCodeQualification": false,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt3.log.gz",
+          "encoding": "gzip",
+          "bytes": 4778,
+          "sha256": "bc5418cdfd84c007ed741018d6b3b7d210e0b30fc2b1ab8400f4a1c13eb183a9",
+          "rawBytes": 39538,
+          "rawSha256": "05aefcc81738a8c1fd63131f9c75fc70c12dc31174534df9a30c56765b0f1793"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt3.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    },
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "startedAt": "2026-10-14T22:58:48.352Z",
+      "endedAt": "2026-10-14T22:59:25.310Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Bounded diagnosis of reset table and legacy ordinals",
+      "finalCodeQualification": false,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt4.log.gz",
+          "encoding": "gzip",
+          "bytes": 5421,
+          "sha256": "ff55950eaa8c5f57c5ac8cfc23a913d4a1f373631f993b4beb018a2a7ee7b22c",
+          "rawBytes": 44993,
+          "rawSha256": "ec84b2ee1cfcdbb43529388d834f8f42cebc3fdc494c1e5ccebbebcb4548bfe5"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt4.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    },
+    {
+      "command": "node test/phase2-postgres.js --definitions",
+      "startedAt": "2026-10-14T23:04:17.800Z",
+      "endedAt": "2026-10-14T23:06:46.702Z",
+      "exitCode": 0,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Final complete Phase2 native pass",
+      "finalCodeQualification": true,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt5.log.gz",
+          "encoding": "gzip",
+          "bytes": 5245,
+          "sha256": "ec5a3efec3c75546433079a72b19b5482759b2242d4cecc8cec500ad3bf02407",
+          "rawBytes": 40618,
+          "rawSha256": "5d0d5c7f9a9220e6be9a3518a962a1938c977da80a3c88cb3aaffddf5981d7a2"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-definitions-native-attempt5.exit",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      }
+    },
+    {
+      "command": "node test/director-migration.js",
+      "startedAt": "2026-10-14T22:56:38.642Z",
+      "endedAt": "2026-10-14T22:56:54.132Z",
+      "exitCode": 1,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Parallel reference lock-memory failure",
+      "finalCodeQualification": false,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-director-native-attempt1.log.gz",
+          "encoding": "gzip",
+          "bytes": 495,
+          "sha256": "166e027ebfa6011f808bb5eee8cea41c7a53884f39f6aada012470bda76bd5a4",
+          "rawBytes": 971,
+          "rawSha256": "ba74ae138b633912db914367722ff5aa55c60688e75782f30b8b69f53464e3c2"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-director-native-attempt1.exit",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+        }
+      }
+    },
+    {
+      "command": "node test/director-migration.js",
+      "startedAt": "2026-10-14T23:07:08.720Z",
+      "endedAt": "2026-10-14T23:08:43.498Z",
+      "exitCode": 0,
+      "signal": null,
+      "database": "postgres://postgres@127.0.0.1:55438/omerta_query",
+      "scope": "Final complete Director native pass",
+      "finalCodeQualification": true,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-director-native-attempt2.log.gz",
+          "encoding": "gzip",
+          "bytes": 425,
+          "sha256": "3707105366c5487e4dbe214411469bc61ec394adb85d034964c1e6cbffe1f431",
+          "rawBytes": 676,
+          "rawSha256": "90d09c07f0f2be4cf0a1caac02bea9e01748dc070fd8b8f7b31dc419694a60a0"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/phase2-director-native-attempt2.exit",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      }
+    }
+  ],
+  "verification": {
+    "syntax": "node --check passed for all3 edited code files",
+    "historicalUnit": "node test/equipment-economy-migration-catalog.js passed; exact LF/CRLF source and historical negative controls unchanged",
+    "historicalHelpers": "git diff --exit-code passed for all4 historical helpers above",
+    "phase2": "All clean/upgrade/scalar/missing-unique children passed under existing240000ms child budget;149seconds total.",
+    "director": "Populated two-migration preservation and original feature/City/equipment/unknown-object assertions passed;95seconds total."
+  },
+  "priorFailures": "All original and intermediate raw logs/exits are preserved. Intermediate adapter development states are diagnostic evidence and are not qualified as the final code hashes. The final two pass runs executed the final code above without subsequent edits.",
+  "localIsolation": {
+    "endpoint": "127.0.0.1:55438",
+    "databases": "Fresh task-owned omerta_check and omerta_query; generated schema per child/reference; no production URL used",
+    "cleanup": [
+      {
+        "name": "director_migration_b78fd20c18cb90f4",
+        "state": "removed owned failed parallel-attempt fixture"
+      },
+      {
+        "name": "release_phase2_ref_32d0de052b291811",
+        "state": "removed owned failed parallel-attempt fixture"
+      },
+      {
+        "name": "release_phase2_ref_5565bd8908506c32",
+        "state": "removed owned failed parallel-attempt fixture"
+      }
+    ],
+    "residue": [],
+    "server": {
+      "version": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+      "address": "127.0.0.1",
+      "port": 55438,
+      "postmaster_started_at": "2026-10-14T21:06:28.681Z"
+    }
+  },
+  "separateEvidence": [
+    "docs/release/2026-10-14-all-changes/backend-evidence/evidence-index.json",
+    "docs/release/2026-10-14-all-changes/backend-evidence/deeds-supply-native-retest.exit",
+    "docs/release/2026-10-14-all-changes/respect-reset-evidence/source-and-evidence.json"
+  ],
+  "limitations": "Catalog-only. No seed/backfill-DML, reset behavior, payment behavior, RLS policy, financial/economic, onchain activation or deployment qualification is transferred or claimed. Those native/backend proofs remain separate. PostgreSQL16 remains a required remote CI gate. No runtime Git blob or historical helper changed."
+}

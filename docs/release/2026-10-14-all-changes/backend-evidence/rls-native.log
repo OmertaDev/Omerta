@@ -1,0 +1,2 @@
+db-rls: compatibility skip and fail-closed catalog checks passed
+db-rls: PostgreSQL owner access, direct-client denial, permissive-policy resistance, repair and idempotence passed

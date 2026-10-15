@@ -8,7 +8,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA: let the mod route drive the real-revenue flywheel (D-MED2 gate)
 import assert from 'node:assert';
 import { getAddress } from 'viem';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PASS } from '../src/rules.js';
 // the three stipend tiers, read off the track — a re-denomination moves them and this file
 // must not need editing (the lever-register argument applied to a fixture)

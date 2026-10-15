@@ -5,7 +5,7 @@
 // no live tracking or trouble report, the blood feed frames around the circle member, NO account UUID ever leaks, and
 // the whole thing moves no value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { circleBoard } from '../src/circle.js';
 import { recordPlayerIntel } from '../src/playerintel.js';
 

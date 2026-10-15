@@ -11,6 +11,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fail = code => Object.assign(new Error(code), { keeperCode: code });
 const kinds = {
   refresh: ['OmertaMarketStateV2', 'refresh'],
+  manager_claim: ['OmertaPoolManagerV2', 'sweep'],
   hook_claim: ['OmertaHookV2', 'sweep'],
   funding_flush: ['OmertaReserveFundingV2', 'flush'],
   lp_collect: ['OmertaStabilityControllerV2', 'collect'],
@@ -73,8 +74,8 @@ export function validateMarketV2Manifest(input) {
     else if (j.tranche !== undefined) throw fail('unexpected_tranche');
     if (['lp_collect', 'lp_claim', 'lp_finalize', 'lp_deploy', 'lp_recover', 'lp_regenerate'].includes(j.kind) && j.tranche === 5) throw fail('reserve_is_idle');
     if (['lp_finalize', 'lp_recover', 'lp_regenerate'].includes(j.kind) && ![1, 2, 3, 4].includes(j.tranche)) throw fail('not_directional_tranche');
-    if (j.kind === 'hook_claim') {
-      integer(j.bucket, 0, 4);
+    if (j.kind === 'hook_claim' || j.kind === 'manager_claim') {
+      integer(j.bucket, 0, j.kind === 'manager_claim' ? 3 : 4);
       if (!isAddress(j.currency, { strict: true })) throw fail('invalid_currency');
       j.currency = getAddress(j.currency).toLowerCase();
     } else if (j.bucket !== undefined || j.currency !== undefined) throw fail('unexpected_fee_argument');
@@ -149,7 +150,7 @@ async function jobArgs(j, target, block, client, abi) {
       const duration = BigInt(await read('epochDuration', [], source, marketV2Abi('OmertaHookV2')));
       return block.timestamp / duration > s.epoch + 1n ? [] : null;
     }
-    case 'hook_claim': return await read('owed', [j.currency, j.bucket]) >= min ? [j.currency, j.bucket] : null;
+    case 'manager_claim': case 'hook_claim': return await read('owed', [j.currency, j.bucket]) >= min ? [j.currency, j.bucket] : null;
     case 'funding_flush': {
       const token = await read('omr');
       const tokenAbi = [{ type: 'function', name: 'balanceOf', stateMutability: 'view', inputs: [{ type: 'address' }], outputs: [{ type: 'uint256' }] }];
@@ -221,7 +222,7 @@ export async function planMarketV2(input, clients, { completedJobKeys = [], now 
   const block = await pub.getBlock({ blockTag: 'latest' });
   if (!fresh(block)) throw fail('stale_block');
   // Runtime hashes bind executable code and embedded immutables. The deployment plan
-  // separately verifies constructor storage and one-time bindings before activation.
+  // requires separate live verification of constructor storage and one-time bindings before activation.
   await Promise.all(Object.values(m.contracts).map(async c => {
     const code = await pub.getCode({ address: c.address, blockNumber: block.number });
     if (!code || code === '0x' || keccak256(code).toLowerCase() !== c.runtimeHash) throw fail('runtime_mismatch');

@@ -1,0 +1,50 @@
+OMERTÀ separates game cash from $OMR. No amount of game cash becomes the token through a hidden exchange route.
+Two ledgers can serve one game without pretending they are the same thing. The boundary is part of the design.
+The city's ordinary jobs operate in game cash. The token has its own rails, gates, and accounting.
+A player should be able to ask where a balance came from and get an answer that does not depend on marketing language.
+The Capital Desk is designed to separate current game state from future chain capability on the same screen.
+A finance view earns trust by making a gate visible, especially when a feature is built but not yet activated.
+What would you want to see before trusting a market screen: balances, funding, rules, or the exact state of each gate?
+The current market design uses separate steps for review, deployment, funding, observation, and activation.
+Deployment alone is not a launch. A system becomes a player feature only after the relevant gates are met.
+Funding is not a line of copy. A reserve must contain what a promise would require it to deliver.
+The proposed liquidity campaign is designed around prefunded rewards for useful liquidity, not an unlimited issuance claim.
+A finite campaign can be measured against what it actually holds. That is the point of prefunding.
+The proposed upside range has a hard question to answer: how much $OMR is there to offer right now?
+If a desk has no funded inventory, the honest output is a refusal, not a future IOU disguised as a quote.
+The one-way game-cash window is designed to refuse a trade when its till cannot cover the published rate.
+One-way means one-way: a token can enter an eligible game-cash window when funded; game cash does not buy $OMR.
+Would you rather see a clean refusal today or a smooth promise whose reserve cannot honor it tomorrow?
+The commitment design uses a finite funded campaign. Time and inventory have to be visible in the same calculation.
+The proposed bond path reserves existing $OMR under finite limits and linear vesting.
+Vesting is a clock attached to real inventory, not a mechanism for creating inventory that was never there.
+The canonical hook design names its recipients and rules. An immutable address is a constraint the review must inspect.
+A fee route should say who receives each slice before anyone is asked to trust the pool.
+The current market design includes a fixed base fee and a bounded sell surge. The exact implementation belongs in code and review evidence.
+A bounded rule is still a rule worth testing at its boundary.
+The opening policy for one canonical PoolKey is part of the hook design. The market needs one place to be checked.
+The proposed RWA fee recipient is an accounting path. Stock delivery is a separate future gate.
+Naming a recipient does not mean a stock can be withdrawn today. Distinct capabilities need distinct claims.
+What would a trustworthy launch checklist show besides a deploy transaction?
+The extraction path uses sign-in, identity, and reserve-backed vouchers. Each step needs its own live gate.
+A voucher should never be signed for more than the reserve can back.
+The reserve is a piece of plumbing that constrains what the product can promise.
+The strongest market statement is often a status statement: designed, deployed, funded, observed, or activated.
+An immutable hook can make fee recipients inspectable. It cannot replace the operational work of funding and monitoring.
+The model is built around finite quantities. Every claim about availability should follow the quantity actually present.
+The proposed market does not need a story about token price to explain its mechanics.
+In OMERTÀ, token design is most interesting where it meets gameplay constraints and refuses to blur them.
+The street economy can be lively while a chain-facing rail remains gated. Those are different facts.
+What should a player learn from a market page before making any decision: the rule, the reserve, or the current state?
+The difference between a design and a live service is an audit trail of gates cleared in order.
+The current market design expects review before activation. That expectation is part of the player-facing story.
+Liquidity rewards, if activated, must come from a campaign funded in advance. A useful mechanism still needs real inventory.
+An upside quote only means something if the Desk could deliver the $OMR behind it.
+Linear vesting turns a reservation into a schedule. It does not turn a proposal into a live offering.
+The canonical pool's fee rules are code, not a promise of future price behavior.
+No mechanic can guarantee what a market will be worth. OMERTÀ's copy should describe rules and gates, not outcomes.
+The token and game cash boundary protects clarity: work in the city does not silently print the token.
+Behind every public market claim should be a deploy state, a reserve state, and a way to verify both.
+The market is one part of a larger game whose consequences begin on the street, not on a chart.
+If you follow OMERTÀ's market work, ask what is activated and funded today. The answer matters more than the diagram.
+Explore the game at omerta.fun. Treat every chain-facing feature according to its displayed gate and current status.

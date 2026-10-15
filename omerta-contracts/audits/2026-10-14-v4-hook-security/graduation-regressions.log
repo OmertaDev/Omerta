@@ -1,0 +1,27 @@
+Compiling 1 files with Solc 0.8.26
+Solc 0.8.26 finished in 37.11s
+Compiler run successful with warnings:
+Warning (2018): Function state mutability can be restricted to view
+   --> src/market-v2/OmertaHookV2.sol:181:5:
+    |
+181 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 10 tests for test/market-v2/GraduationSettlementRegressionV2.t.sol:GraduationSettlementRegressionV2Test
+[PASS] testBindingRejectsWrongHookPoolBeforeBidding() (gas: 5371264)
+[PASS] testCancelledPlayersRefundAndPublicSaleStillMigrates() (gas: 883511)
+[PASS] testCannotRebindOrSpoofPlayerCallback() (gas: 19966)
+[PASS] testFuzzBothLegsFundLiquidityAndResiduals(uint96) (runs: 512, μ: 1010764, ~: 1010708)
+Logs:
+  Bound result 2458
+
+[PASS] testInsufficientMatchingInventoryRollsBackAllLegs() (gas: 419900)
+[PASS] testNoEarlyMigration() (gas: 61507)
+[PASS] testRealPositionCombinesBothLegsAndClaimsWaitForCliff() (gas: 1082176)
+[PASS] test_forcedNativeBalancesCannotContaminateGraduationSpendOrCredits() (gas: 1012940)
+[PASS] test_graduationPoolCannotBeInitializedAheadOfCoordinator() (gas: 1013585)
+[PASS] test_nestedUnlockRollsBackGraduationAndAllowsCleanRetry() (gas: 1747576)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 77.67ms (82.34ms CPU time)
+
+Ran 1 test suite in 78.89ms (77.67ms CPU time): 10 tests passed, 0 failed, 0 skipped (10 total tests)

@@ -66,7 +66,7 @@ try {
   await lease.create(); pool = new pg.Pool({ connectionString: lease.url }); await bootApi();
   const version = (await pool.query('SHOW server_version')).rows[0].server_version;
   for (const mode of ['worker-interruption', 'database-disconnect', 'api-restart']) {
-    const auth = await request('POST', '/v1/auth/guest', null, null, {}); assert.equal(auth.status, 200);
+    const auth = await request('POST', '/v1/auth/guest', null, null, { birthDate: '1990-01-01' }); assert.equal(auth.status, 200);
     const token = JSON.parse(auth.body).token;
     const created = await request('POST', '/v1/character', token, crypto.randomUUID(), { name: `Due ${crypto.randomBytes(4).toString('hex')}` }); assert.equal(created.status, 200);
     const view = JSON.parse((await request('GET', '/v1/me', token)).body).character;

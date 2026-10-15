@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { privateKeyToAccount } from 'viem/accounts';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 if (process.env.DATABASE_URL) throw new Error('Wallet browser test requires disposable pg-mem; clear DATABASE_URL.');
 process.env.RATE_LIMIT = 'off';
@@ -131,7 +131,7 @@ try {
     await context.route('**/v1/rules', (route) => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ ...baseRules,
       walletConnect: wc ? { projectId: 'synthetic-project', chainId: 1 } : null,
     }) }));
-    await context.route('https://esm.sh/@walletconnect/ethereum-provider@2.21.5', (route) => route.fulfill({ contentType: 'application/javascript',
+    await context.route('**/vendor/walletconnect.js', (route) => route.fulfill({ contentType: 'application/javascript',
       body: 'export const EthereumProvider = { init: async () => window.__walletTest.providers.wc };',
     }));
     if (!game) {

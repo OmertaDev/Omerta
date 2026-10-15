@@ -241,7 +241,7 @@ try {
     && agentProof.overviewWidth >= 1080 && agentProof.facts === 4,
     `landing agent dossier is missing its responsive system proof — ${JSON.stringify(agentProof)}`);
   check(JSON.stringify(agentProof.actions) === JSON.stringify(['/play', '/agents', '/arena'])
-    && agentProof.live === 'AGENT API LIVE' && /DORMANT IN PRODUCTION$/.test(agentProof.gated || ''),
+    && agentProof.live === 'AGENT API LIVE' && /INACTIVE IN PRODUCTION$/.test(agentProof.gated || ''),
     `landing agent dossier loses its setup, guide, Arena, or production-state truth — ${JSON.stringify(agentProof)}`);
   check(agentProof.over <= 1, `desktop agent dossier scrolls sideways by ${agentProof.over}px`);
 
@@ -441,6 +441,9 @@ try {
   reportStage('Guest onboarding and operation receipts');
   await mobile.goto(BASE, { waitUntil: 'networkidle' });
   await mobile.click('#btn-guest');
+  await mobile.waitForSelector('#age-date');
+  await mobile.fill('#age-date', '1990-01-01');
+  await mobile.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await mobile.waitForSelector('#screen-create:not(.hidden)');
   await mobile.fill('#new-name', 'Intent ' + Math.random().toString(36).slice(2, 8));
   await mobile.click('#btn-create');

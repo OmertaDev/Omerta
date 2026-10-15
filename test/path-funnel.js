@@ -9,7 +9,7 @@ import {
   scorePathQuiz,
 } from '../src/path-funnel.js';
 import { renderPathQuizPage, renderPathResultPage } from '../src/path-pages.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const EXPECTED_IDS = ['gun', 'ledger', 'kitchen', 'wheel', 'shadow', 'ring'];
 
@@ -115,7 +115,7 @@ assert.throws(() => scorePathQuiz({ [PATH_QUIZ_QUESTIONS[0].id]: 'not_an_option'
 
 const origin = 'https://www.omerta.fun';
 const quizPage = renderPathQuizPage({ baseUrl: origin });
-assert.match(quizPage, /<title>Which OMERTÀ Path Are You\?/, 'the quiz has an indexable, human title');
+assert.match(quizPage, /<title>Which OMERTÀ Path suits you\?/, 'the quiz has an indexable, human title');
 assert.match(quizPage, /<form[^>]+id="path-quiz"/, 'the seven decisions use a semantic form');
 assert.match(quizPage, /data-question-host/, 'the progressive question host is explicit');
 assert.match(quizPage, /\/v1\/path-quiz/, 'quiz completion goes back through the shared server scorer');
@@ -172,7 +172,7 @@ try {
   assert.match(quizRoute.headers['content-type'], /text\/html/, 'the quiz responds as HTML');
   const gunRoute = await server.inject({ method: 'GET', url: '/path/gun' });
   assert.equal(gunRoute.statusCode, 200, 'each known Path result is mounted');
-  assert.match(gunRoute.body, /YOU ARE THE GUN/, 'the Path route renders the requested server-owned dossier');
+  assert.match(gunRoute.body, /You are the Gun/, 'the Path route renders the requested server-owned dossier');
   const unknownRoute = await server.inject({ method: 'GET', url: '/path/not-a-path' });
   assert.equal(unknownRoute.statusCode, 404, 'unknown Path slugs stay a real 404');
 
@@ -210,14 +210,7 @@ try {
   const telemetry = (await server.pool.query(
     "SELECT account_id, event, props FROM telemetry WHERE event LIKE 'path_%' ORDER BY at",
   )).rows;
-  assert.equal(telemetry.length, 8, 'the complete funnel has one anonymous row per explicit event');
-  for (const row of telemetry) {
-    const props = JSON.parse(row.props);
-    assert.equal(row.account_id, null, `${row.event} does not invent or infer an account`);
-    assert.equal(props.session, 'path-test-session', `${row.event} joins only on the random browser session`);
-    assert.equal('ip' in props || 'userAgent' in props || 'fingerprint' in props, false,
-      `${row.event} stores no IP, user agent, or fingerprint`);
-  }
+  assert.equal(telemetry.length, 0, 'quiz and form answers do not create analytics records');
 
   const incomplete = await server.inject({
     method: 'POST', url: '/v1/path-quiz',

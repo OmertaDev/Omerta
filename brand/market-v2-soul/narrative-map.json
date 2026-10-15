@@ -1,0 +1,215 @@
+{
+  "voiceChoice": "A",
+  "voiceId": "ttv-voice-2026092513153126-73DRGCkR",
+  "chapterGapSeconds": 0.25,
+  "chapters": [
+    {
+      "id": "SOUL-CH01",
+      "beats": [
+        {
+          "id": "M04-B01",
+          "text": "Everybody wants control. But control costs.",
+          "spoken": "Everybody wants control. But control costs."
+        },
+        {
+          "id": "M04-B02",
+          "text": "Core provides two-sided liquidity. Other reserves have different jobs.",
+          "spoken": "Core provides two-sided liquidity. Other reserves have different jobs."
+        },
+        {
+          "id": "M04-B03",
+          "text": "Sell through active downside ranges: Ether becomes OMR.",
+          "spoken": "Sell through active downside ranges: Ether becomes O M R."
+        },
+        {
+          "id": "M04-B04",
+          "text": "Buy through upside ranges: OMR becomes Ether.",
+          "spoken": "Buy through upside ranges: O M R becomes Ether."
+        },
+        {
+          "id": "M04-B05",
+          "text": "Crossing isn't final. Until withdrawal, inventory can still convert back.",
+          "spoken": "Crossing isn't final. Until withdrawal, inventory can still convert back."
+        },
+        {
+          "id": "M04-B06",
+          "text": "Finalization removes eligible positions, separating principal from fees.",
+          "spoken": "Finalization removes eligible positions, separating principal from fees."
+        },
+        {
+          "id": "M04-B07",
+          "text": "Deployment spends capacity. Deposits and withdrawals don't reset it.",
+          "spoken": "Deployment spends capacity. Deposits and withdrawals don't reset it."
+        }
+      ],
+      "sourceId": "SOUL-CH01-v2"
+    },
+    {
+      "id": "SOUL-CH02",
+      "beats": [
+        {
+          "id": "M04-B08",
+          "text": "Completed pool history informs each move, checked against current conditions.",
+          "spoken": "Completed pool history informs each move, checked against current conditions."
+        },
+        {
+          "id": "M04-B09",
+          "text": "Stress gates, cooldowns and capacity limit deployment.",
+          "spoken": "Stress gates, cooldowns and capacity limit deployment."
+        },
+        {
+          "id": "M04-B10",
+          "text": "Surge fees, bond proceeds and arbitrage shares fund the War Chest.",
+          "spoken": "Surge fees, bond proceeds and arbitrage shares fund the War Chest."
+        },
+        {
+          "id": "M04-B11",
+          "text": "Refill requires a full window of spaced, healthy observations.",
+          "spoken": "Refill requires a full window of spaced, healthy observations."
+        },
+        {
+          "id": "M04-B12",
+          "text": "Only actual idle assets move. Lifetime limits stay spent.",
+          "spoken": "Only actual idle assets move. Lifetime limits stay spent."
+        },
+        {
+          "id": "M04-B13",
+          "text": "A bounce creates no Ether. No guaranteed floor.",
+          "spoken": "A bounce creates no Ether. No guaranteed floor."
+        }
+      ],
+      "sourceId": "SOUL-CH02-v2"
+    },
+    {
+      "id": "SOUL-CH03",
+      "beats": [
+        {
+          "id": "M04-B14",
+          "text": "Canonical sells pay nine percent, split four ways.",
+          "spoken": "Canonical sells pay nine percent, split four ways."
+        },
+        {
+          "id": "M04-B15",
+          "text": "Three percent funds Core. Up to one extra percent funds stability.",
+          "spoken": "Three percent funds Core. Up to one extra percent funds stability."
+        },
+        {
+          "id": "M04-B16",
+          "text": "Fees settle in Ether or OMR, including partial fills.",
+          "spoken": "Fees settle in Ether or O M R, including partial fills."
+        },
+        {
+          "id": "M04-B17",
+          "text": "Opening buys have temporary fees and limits. Afterwards, no Hook buy tax.",
+          "spoken": "Opening buys have temporary fees and limits. Afterwards, no Hook buy tax."
+        },
+        {
+          "id": "M04-B18",
+          "text": "Other venues have their own rules. Pool liquidity fees are separate.",
+          "spoken": "Other venues have their own rules. Pool liquidity fees are separate."
+        }
+      ],
+      "sourceId": "SOUL-CH03-v2"
+    },
+    {
+      "id": "SOUL-CH04",
+      "beats": [
+        {
+          "id": "M04-B19",
+          "text": "Pay Ether for bonds backed by existing OMR, released through linear vesting.",
+          "spoken": "Pay Ether for bonds backed by existing O M R, released through linear vesting."
+        },
+        {
+          "id": "M04-B20",
+          "text": "No minting. No sellback. Purchasing pauses don't erase vested claims.",
+          "spoken": "No minting. No sellback. Purchasing pauses don't erase vested claims."
+        },
+        {
+          "id": "M04-B21",
+          "text": "Solvers commit a plan, then fund a two-pool arbitrage cycle.",
+          "spoken": "Solvers commit a plan, then fund a two-pool arbitrage cycle."
+        },
+        {
+          "id": "M04-B22",
+          "text": "Profit is checked after costs and reserve share. Failed gas remains your risk.",
+          "spoken": "Profit is checked after costs and reserve share. Failed gas remains your risk."
+        },
+        {
+          "id": "M04-B23",
+          "text": "Lock canonical position NFTs. Rewards require fresh, qualifying depth samples.",
+          "spoken": "Lock canonical position N F Tees. Rewards require fresh, qualifying depth samples."
+        },
+        {
+          "id": "M04-B24",
+          "text": "Rewards need funded campaigns. Mature positions can exit independently.",
+          "spoken": "Rewards need funded campaigns. Mature positions can exit independently."
+        }
+      ],
+      "sourceId": "SOUL-CH04-v2"
+    },
+    {
+      "id": "SOUL-CH05",
+      "beats": [
+        {
+          "id": "M04-B25",
+          "text": "Families fight for seasonal Turf fees. The protocol keeps principal.",
+          "spoken": "Families fight for seasonal Turf fees. The protocol keeps principal."
+        },
+        {
+          "id": "M04-B26",
+          "text": "Syndicates split rights. Status doesn't multiply money.",
+          "spoken": "Syndicates split rights. Status doesn't multiply money."
+        },
+        {
+          "id": "M04-B27",
+          "text": "A checkpoint assigns earned fees before control changes. Existing claims keep their recipients.",
+          "spoken": "A checkpoint assigns earned fees before control changes. Existing claims keep their recipients."
+        },
+        {
+          "id": "M04-B28",
+          "text": "Sieges freeze wallets and allocate only funded escrow.",
+          "spoken": "Sieges freeze wallets and allocate only funded escrow."
+        },
+        {
+          "id": "M04-B29",
+          "text": "At season exit, fees settle; principal returns for retirement.",
+          "spoken": "At season exit, fees settle; principal returns for retirement."
+        }
+      ],
+      "sourceId": "SOUL-CH05-v2"
+    },
+    {
+      "id": "SOUL-CH06",
+      "beats": [
+        {
+          "id": "M04-B30",
+          "text": "The Safe binds and funds systems. Keepers have budgets. The game can't withdraw principal.",
+          "spoken": "The Safe binds and funds systems. Keepers have budgets. The game can't withdraw principal."
+        },
+        {
+          "id": "M04-B31",
+          "text": "Game cash, OMR, Ether and RWA stay separate.",
+          "spoken": "Game cash, O M R, Ether and R W A stay separate."
+        },
+        {
+          "id": "M04-B32",
+          "text": "Trades change inventory. Revenue funds reserves. Conditions gate the next move.",
+          "spoken": "Trades change inventory. Revenue funds reserves. Conditions gate the next move."
+        }
+      ],
+      "sourceId": "SOUL-CH06-v2"
+    },
+    {
+      "id": "SOUL-CH07",
+      "beats": [
+        {
+          "id": "M04-B33",
+          "text": "OMERTÀ. Control costs.",
+          "spoken": "Oh-MAIR-tah. Control costs."
+        }
+      ],
+      "sourceId": "SOUL-CH07"
+    }
+  ],
+  "revision": 2
+}

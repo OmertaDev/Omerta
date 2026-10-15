@@ -48,7 +48,7 @@ try {
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
   const [{ buildServer }, { runLedgerInvariants }, { PACING, M3 }, observer] = await Promise.all([
-    import('../src/server.js'), import('../src/invariants.js'), import('../src/rules.js'), import('../tools/rc1-world-resource-observer.js')]);
+    import('./server-fixture.js'), import('../src/invariants.js'), import('../src/rules.js'), import('../tools/rc1-world-resource-observer.js')]);
   assert.equal(M3.GANG_MAX_MEMBERS, plan.canonicalMaximumMembers); assert.equal(M3.GANG_FOUND_LEVEL, plan.formationLevelMinimum); assert.equal(M3.GANG_FOUND_COST, 25000);
   app = await buildServer(); const pool = app.pool, resources = () => observer.snapshotWorldResources(pool);
   async function reconcile(before, after, identity) {

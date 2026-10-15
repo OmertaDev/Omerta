@@ -13,7 +13,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.RATE_LIMIT = 'off';   // a real limiter has its own suites; this one drives many calls
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { MASTERY, SKILLS, collectionCatalog, firstsCatalog, masteryXpFor } from '../src/rules.js';
 import { claimFirst, firstsBoard } from '../src/firsts.js';
 import { logCollect } from '../src/collection.js';

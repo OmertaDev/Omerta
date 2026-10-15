@@ -1621,6 +1621,14 @@ CREATE TABLE IF NOT EXISTS street_deeds (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ix_street_deeds_name ON street_deeds (name_lc);
 CREATE INDEX IF NOT EXISTS ix_street_deeds_district ON street_deeds (district);
+-- Lifetime unique-street issuance. The singleton locks cross-account claims; burns, extraction,
+-- resale and death never decrement it. Seed upgrades from every existing identity, on-chain or not.
+CREATE TABLE IF NOT EXISTS street_deed_supply (
+  id INT PRIMARY KEY CHECK (id = 1),
+  issued INT NOT NULL DEFAULT 0 CHECK (issued >= 0)
+);
+INSERT INTO street_deed_supply (id, issued)
+  SELECT 1, COUNT(*) FROM street_deeds ON CONFLICT (id) DO NOTHING;
 -- Phase 2 — CONTROL + THE CORNER TAKE. The deed (owner) is permanent; CONTROL (who collects the corner
 -- take) is contestable: a rival muscles in for a window, then it lapses back to the owner. `corner_at`
 -- is the corner-take lazy clock (a small bounded cash faucet `deed:corner`); a seizure forfeits pending
@@ -7422,6 +7430,69 @@ CREATE TABLE IF NOT EXISTS deed_upgrades (
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS ownership_since_day INT;
 ALTER TABLE account_persistent ADD COLUMN IF NOT EXISTS reward_wallet_since_day INT;
 
+-- Provider-neutral Consigliere delegation. Credentials and requests never hold wallet keys.
+CREATE TABLE IF NOT EXISTS agent_gateway_connections (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  provider TEXT NOT NULL,
+  label TEXT NOT NULL,
+  scopes_json TEXT NOT NULL,
+  token_hash TEXT NOT NULL UNIQUE,
+  token_version INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  revoked_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_agent_gateway_connections_account ON agent_gateway_connections(account_id,created_at);
+CREATE TABLE IF NOT EXISTS agent_gateway_rate_buckets (
+  account_id TEXT PRIMARY KEY REFERENCES accounts(id),
+  window_id BIGINT NOT NULL,
+  used INT NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS agent_gateway_requests (
+  connection_id TEXT NOT NULL REFERENCES agent_gateway_connections(id),
+  request_id TEXT NOT NULL,
+  request_hash TEXT NOT NULL,
+  capability TEXT NOT NULL,
+  action_class TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'started',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  completed_at TIMESTAMPTZ,
+  result_code TEXT,
+  preparation_id TEXT,
+  PRIMARY KEY (connection_id,request_id)
+);
+CREATE TABLE IF NOT EXISTS agent_gateway_preparations (
+  id TEXT PRIMARY KEY,
+  connection_id TEXT NOT NULL REFERENCES agent_gateway_connections(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  request_id TEXT NOT NULL,
+  capability TEXT NOT NULL,
+  arguments_json TEXT NOT NULL,
+  preview_json TEXT NOT NULL,
+  target_json TEXT NOT NULL,
+  digest TEXT NOT NULL,
+  nonce TEXT NOT NULL,
+  state TEXT NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at TIMESTAMPTZ NOT NULL,
+  confirmed_at TIMESTAMPTZ,
+  result_json TEXT,
+  UNIQUE (connection_id,request_id)
+);
+CREATE INDEX IF NOT EXISTS ix_agent_gateway_preparations_account ON agent_gateway_preparations(account_id,created_at);
+CREATE TABLE IF NOT EXISTS agent_gateway_subscriptions (
+  id TEXT PRIMARY KEY,
+  connection_id TEXT NOT NULL REFERENCES agent_gateway_connections(id),
+  account_id TEXT NOT NULL REFERENCES accounts(id),
+  topics_json TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  revoked_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS ix_agent_gateway_subscriptions_connection ON agent_gateway_subscriptions(connection_id,created_at,id);
+CREATE INDEX IF NOT EXISTS ix_agent_gateway_notifications_cursor ON notifications(character_id,created_at,id);
+CREATE INDEX IF NOT EXISTS ix_agent_gateway_coordination_cursor ON coordination_events(occurred_at,id);
+
 -- Inventory-backed gin depots. No clock-based income or mint authority.
 CREATE TABLE IF NOT EXISTS business_depots (
   id TEXT PRIMARY KEY,
@@ -8858,3 +8929,24 @@ CREATE TABLE IF NOT EXISTS company_restructuring_requests (
  account_id TEXT NOT NULL,key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),run_id TEXT NOT NULL UNIQUE,
  receipt JSONB,account_ref TEXT REFERENCES accounts(id),actor_ref TEXT REFERENCES characters(id),PRIMARY KEY(account_id,key_hash),
  CHECK((receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL) OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)));
+
+
+-- Committed purchase receipts, independent of marketing opt-in. Delivery retries
+-- use a stable receipt ID; no email is queued without a verified address.
+CREATE TABLE IF NOT EXISTS payment_receipts (
+  id TEXT PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('made','wire','watch')),
+  amount NUMERIC NOT NULL CHECK (amount >= 0),
+  duration_seconds INT NOT NULL CHECK (duration_seconds > 0),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  next_attempt_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  attempts INT NOT NULL DEFAULT 0,
+  first_attempt_at TIMESTAMPTZ,
+  abandoned_at TIMESTAMPTZ,
+  claimed_until TIMESTAMPTZ,
+  lease_id TEXT,
+  sent_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS payment_receipts_due_idx ON payment_receipts(next_attempt_at) WHERE sent_at IS NULL;

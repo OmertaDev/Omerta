@@ -8,7 +8,7 @@
 process.env.SEARCH_MS = '0';
 process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepCrewInvites, CREW_FIRST_CHARACTER_LOCKS, setRecruiting } from '../src/crew.js';
 import { withCharacter } from '../src/game.js';

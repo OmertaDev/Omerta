@@ -1,0 +1,26 @@
+
+Detector: reentrancy-benign
+Reentrancy in OmertaArbitrageV2.execute(OmertaArbitrageV2.Plan) (src/market-v2/OmertaArbitrageV2.sol#103-127):
+	External calls:
+	- profit = abi.decode(manager.unlock(payload),(uint256)) (src/market-v2/OmertaArbitrageV2.sol#120)
+	State variables written after the call(s):
+	- delete _activePlan (src/market-v2/OmertaArbitrageV2.sol#121)
+	- claimable[stabilityRecipient] += reserve (src/market-v2/OmertaArbitrageV2.sol#123)
+	- claimable[msg.sender] += msg.value + profit - reserve (src/market-v2/OmertaArbitrageV2.sol#124)
+	- totalClaimable += msg.value + profit (src/market-v2/OmertaArbitrageV2.sol#125)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+OmertaArbitrageV2.execute(OmertaArbitrageV2.Plan) (src/market-v2/OmertaArbitrageV2.sol#103-127) uses timestamp for comparisons
+	Dangerous comparisons:
+	- plan.amount == 0 || plan.amount > maxInput || msg.value != plan.amount || plan.minimumProfit == 0 || plan.deadline < block.timestamp || plan.deadline > block.timestamp + 300 || Currency.unwrap(plan.alternative.currency0) != address(0) || Currency.unwrap(plan.alternative.currency1) != omr || address(plan.alternative.hooks) != address(0) || plan.alternative.fee > 10_000 || plan.alternative.tickSpacing <= 0 || plan.alternative.tickSpacing > TickMath.MAX_TICK_SPACING (src/market-v2/OmertaArbitrageV2.sol#105-110)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in OmertaArbitrageV2._claim(address,address) (src/market-v2/OmertaArbitrageV2.sol#159-167):
+	- (ok,None) = receiver.call{value: amount}() (src/market-v2/OmertaArbitrageV2.sol#164)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\market-v2\OmertaArbitrageV2.sol analyzed (19 contracts with 102 detectors), 3 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\market-v2\OmertaArbitrageV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

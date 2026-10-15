@@ -7,7 +7,7 @@ if (postgres) {
 } else if (process.env.DATABASE_URL) throw new Error('Memory proof refuses an existing DATABASE_URL.');
 process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'crew-logistics-api-local-secret'; process.env.MOD_KEY = 'crew-logistics-api-local-mod';
 process.env.MARKET_SEED = 'crew-logistics-api-local-seed'; process.env.DEPOT_PILOT = 'on'; process.env.SOCIAL_VERIFY_MODE = 'off';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const app = await buildServer();
 let sequence = 0;
 const call = async (method, url, token, body, key = `crew-logistics-api-${++sequence}`) => {

@@ -1,0 +1,129 @@
+{
+  "assets": {
+    "intake": {
+      "src": "art/flagship-trust/captures/01-intake.jpg",
+      "width": 1920,
+      "height": 1080,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "welcome": {
+      "src": "art/flagship-trust/captures/02-welcome.jpg",
+      "width": 1920,
+      "height": 1080,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "job": {
+      "src": "art/flagship-trust/captures/03-first-job-result.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "loop": {
+      "src": "art/flagship-trust/captures/04-first-loop.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "heist-open": {
+      "src": "art/flagship-trust/captures/05-heist-open-seat.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "heist-ready": {
+      "src": "art/flagship-trust/captures/06-heist-ready.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "garage": {
+      "src": "art/flagship-trust/captures/07-garage.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "city-ui": {
+      "src": "art/flagship-trust/captures/08-city.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "kitchen": {
+      "src": "art/flagship-trust/captures/09-kitchen.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "crew": {
+      "src": "art/flagship-trust/captures/10-crew.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "consequence": {
+      "src": "art/flagship-trust/captures/11-heist-consequence.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "trade": {
+      "src": "art/flagship-trust/captures/12-trade-receipt.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "territory": {
+      "src": "art/flagship-trust/captures/13-territory.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "invitation": {
+      "src": "art/flagship-trust/captures/public-invitation.jpg",
+      "width": 1270,
+      "height": 714,
+      "type": "image",
+      "provenance": "Actual public signed-out invitation page, Sep 29 2026"
+    },
+    "ledger": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-ledger.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Previously generated project atmosphere; temporary animatic insert, not gameplay; rights record applies"
+    },
+    "family": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-family.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Previously generated project atmosphere; temporary animatic insert, not gameplay; rights record applies"
+    },
+    "city": {
+      "src": "art/market-v2-soul/frames/SOUL-PLATE-city.png",
+      "width": 1080,
+      "height": 1920,
+      "type": "image",
+      "provenance": "Previously generated project atmosphere; temporary animatic insert, not gameplay; rights record applies"
+    }
+  },
+  "brandLogo": "art/flagship-trust/logo.svg",
+  "audio": {
+    "src": "art/flagship-trust/audio/animatic-mix.wav",
+    "label": "Offline David Desktop scratch; Voice A retained for final",
+    "scratch": true
+  }
+}

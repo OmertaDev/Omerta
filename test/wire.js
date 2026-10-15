@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // THE WIRE — the intelligence terminal. Covers: the board (costs, empty state), the
 // wiretap sink (self/gone/cap gates, exact intel:wiretap burn), tap INTEL (law stage, wealth band,
 // ops counts, the huntingYou money-signal), bugs-on-you + SWEEP (free when clean, charged + clears
@@ -8,7 +9,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { WIRE, RIVALS, intelCost, wireSubTier } from '../src/rules.js';
 import { sweepWire, sweepWireAlerts, sweepStandingWatches } from '../src/wire.js';
 import { runLedgerInvariants } from '../src/invariants.js';
@@ -18,7 +19,7 @@ const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
   const res = await app.inject({ method, url,
-    headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+    headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, body) });
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;
@@ -347,6 +348,8 @@ let ssBoard = (await call('GET', '/v1/wire', { token: ss.token })).body;
 assert.equal(ssBoard.subTier, 2, 'the board shows the active tier'); assert.equal(ssBoard.subTierName, T2.name, 'and its name');
 assert.equal(ssBoard.watchSlots, T2.watchSlots, 'and the tier-2 standing-watch slots (2)');
 assert(Array.isArray(ssBoard.subTiers) && ssBoard.subTiers.length === WIRE.SUB_TIERS.length, 'the ladder catalog is surfaced');
+assert.deepEqual(ssBoard.subTiers.map((t) => t.days), WIRE.SUB_TIERS.map((t) => t.ms / 86400000), 'checkout durations match the actual pass rules');
+assert.equal(ssBoard.tapHours, WIRE.TAP_MS / 3600000, 'the displayed watch renewal interval matches the charged tap window');
 
 // (B) the STANDING WATCH: enroll a mark → places the tap now + records the auto-renew enrollment
 const w1 = await mk('Watched One'); const w2 = await mk('Watched Two'); const w3 = await mk('Watched Three');

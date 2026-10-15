@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PACING } from '../src/rules.js';
 
 assert(!process.env.DATABASE_URL, 'World host browser fixtures require disposable pg-mem.');
@@ -88,7 +88,7 @@ try {
     let releaseArt;
     if (pendingEntry) {
       const artGate = new Promise(resolve => { releaseArt = resolve; });
-      await context.route('**/art/city-neighborhood-v1.png*', async route => {
+      await context.route('**/art/city-neighborhood-v2.png*', async route => {
         const response = await route.fetch(); await artGate; await route.fulfill({ response });
       });
     }

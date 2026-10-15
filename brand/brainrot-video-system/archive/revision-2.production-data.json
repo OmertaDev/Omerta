@@ -1,0 +1,2093 @@
+{
+  "version": 2,
+  "prepared": "2026-09-24",
+  "publicationScenario": "fully live release under L01–L05",
+  "revision": "32859cf7d198d2a003160b2bb1ef005991697d73",
+  "status": "full-release launch creative; not generated or published",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "films": [
+    {
+      "id": "01",
+      "title": "WHAT EVEN IS OMERTÀ? — The key needs a committee",
+      "duration": 31.5,
+      "concept": "A Rookie holds an absurdly large key while four tiny, very serious adults hold a meeting around it. He thought he was playing a mafia game. His car becomes materials, knowledge reveals a recipe, crafting creates a key, and other people must contribute before Family approval opens a persistent archive. A clearly marked cut to another part of the same city reveals the shipment/market/investigation chain. The joke is that a basic game interaction has acquired a group project and a second genre before the Rookie has finished complaining.",
+      "thesis": {
+        "recognition": "Mafia hierarchy, old browser-RPG inventory, guild readiness checks, conspiracy board.",
+        "novelty": "The humble key is effectively a multiplayer institution. A file archive gets a more serious launch meeting than the crime.",
+        "sensation": "Key clang → crunchy salvage ticks → stamp impact → mouse-click approval → archive bass hit → notification panic. The opening is already absurd on the first frame.",
+        "patternInterrupt": "A normal-sized key dominates the frame while a miniature committee points at it; Rookie: “This key needs FOUR PEOPLE?”",
+        "informationGap": "Why are other people and intel necessary for a door? The viewer learns the contributions before seeing the persistent payoff.",
+        "shareTrigger": "Send it to the group member who says “just one quick quest.” Three visual genres arrive before the viewer can categorize the game."
+      },
+      "claimNote": "F01–F09, F12–F17, F20–F23, F26–F27. Four seats are from the Foundry pilot, not every mission. “Elsewhere” at 21.0 explicitly separates the campaign example from the archive. The shipment is diverted through an authorized operation; it is not a randomly disappearing commodity. Full-release master under L01 and L05; all pictured systems are available at publication.",
+      "audio": {
+        "voices": "Rookie: clipped tenor, baffled but not shouting. Don: dry contralto. Consigliere: neutral alto through a mild telephone EQ. Speaker names never appear as tutorial introductions.",
+        "music": "Original 112 BPM lopsided plucked-bass/pizzicato loop. Beat grid is subordinate to dialogue: cut on the specified half-second/1.5-second timeline, not every musical beat.",
+        "drops": "0.000 key clang + short mid-bass; 4.500 3-note inventory cascade; 18.000 short low impact when the archive opens; 21.000 beat switches to a cheap drum-machine fill.",
+        "silence": "16.500–18.000 remove all music under “It’s a door.” Keep one chair creak after the line; restart on archive movement.",
+        "transitions": "Salvage ticks become stamp rhythm; stamp becomes approval click; archive scrape becomes a market receipt feed; a tiny key rattle at 31.350 leads directly back into frame-zero clang.",
+        "mix": "Follow house mix. Let “FOUR” and “door” sit dry; do not add laugh tracks."
+      },
+      "timeline": [
+        {
+          "start": 0,
+          "end": 1.5,
+          "speaker": "Rookie",
+          "speech": "This key needs FOUR PEOPLE?",
+          "caption": "This key needs FOUR PEOPLE?",
+          "primary": "Key fills foreground; four miniature adults already seated around it.",
+          "tertiary": "Four small role silhouettes; no fake native UI.",
+          "sound": "Key clang at 0.000, sub thump at 0.100.",
+          "edit": "Punch from 105% to 120% at 0.600; FOUR briefly 118%.",
+          "claimIds": [
+            "F09"
+          ],
+          "asset": "V1-G01"
+        },
+        {
+          "start": 1.5,
+          "end": 3,
+          "speaker": "Don",
+          "speech": "You wanted a mafia game.",
+          "caption": "You wanted a mafia game.",
+          "primary": "Normal-sized Don seen beside the same table.",
+          "tertiary": "Role silhouettes rearrange into four seats; actual requirement status remains visible.",
+          "sound": "Chair scrape at 1.650; bass loop enters.",
+          "edit": "Hard cut to reverse crop; no dissolve.",
+          "claimIds": [
+            "F01"
+          ],
+          "asset": "V1-G01"
+        },
+        {
+          "start": 3,
+          "end": 4.5,
+          "speaker": "Rookie",
+          "speech": "I stole a car.",
+          "caption": "I stole a car.",
+          "primary": "Owned game vehicle card flashes over the Rookie beside a battered car.",
+          "tertiary": "Seeded garage ownership record; dramatized identity/plate redacted.",
+          "sound": "Car lock chirp at 3.000.",
+          "edit": "Crash cut from tiny chairs to garage; screen capture insert at 3.900.",
+          "claimIds": [
+            "F01",
+            "F16"
+          ],
+          "asset": "V1-G02"
+        },
+        {
+          "start": 4.5,
+          "end": 6,
+          "speaker": "Consigliere",
+          "speech": "You salvaged it.",
+          "caption": "You salvaged it.",
+          "primary": "Vehicle card switches to actual salvage confirmation; separate trays of materials.",
+          "tertiary": "Actual before/after inventory from the same staged release account.",
+          "sound": "Chunky metal clicks at 4.500, 4.900, 5.300.",
+          "edit": "On confirmation cut to empty vehicle slot; no whole car spontaneously multiplying.",
+          "claimIds": [
+            "F13",
+            "F15",
+            "F16"
+          ],
+          "asset": "V1-G02"
+        },
+        {
+          "start": 6,
+          "end": 7.5,
+          "speaker": "Rookie",
+          "speech": "Made a key.",
+          "caption": "Made a key.",
+          "primary": "Archive Turn Key lands on felt; Rookie looks absurdly proud.",
+          "tertiary": "Actual craft receipt and consumed-input icons; no OMR change.",
+          "sound": "Small bell at 6.000 then felt thud.",
+          "edit": "Macro crop and 6-frame overshoot; retain key shape.",
+          "claimIds": [
+            "F12",
+            "F14"
+          ],
+          "asset": "V1-G03"
+        },
+        {
+          "start": 7.5,
+          "end": 9,
+          "speaker": "Don",
+          "speech": "After finding the recipe.",
+          "caption": "After finding the recipe.",
+          "primary": "Receipt runs backward editorially to a clue then the known recipe card.",
+          "tertiary": "Known original Docks discovery → available Archive Turn Key recipe.",
+          "sound": "Tape scrub at 7.500; single discovery ping at 8.100.",
+          "edit": "Reverse only the paper insert, not the underlying game action; label flashback with RECIPE FIRST.",
+          "claimIds": [
+            "F12",
+            "F20",
+            "F23"
+          ],
+          "asset": "V1-G03"
+        },
+        {
+          "start": 9,
+          "end": 10.5,
+          "speaker": "Rookie",
+          "speech": "Door opens?",
+          "caption": "Door opens?",
+          "primary": "Rookie tries to present the key to an indifferent filing cabinet.",
+          "tertiary": "Real operation board shows missing contributions.",
+          "sound": "Tiny failed latch click at 9.000.",
+          "edit": "Smash cut to board; freeze Rookie at 9.800.",
+          "claimIds": [
+            "F07",
+            "F17"
+          ],
+          "asset": "V1-G04"
+        },
+        {
+          "start": 10.5,
+          "end": 12,
+          "speaker": "Don",
+          "speech": "Four people.",
+          "caption": "Four people.",
+          "primary": "Four mismatched chairs appear as four human portraits.",
+          "tertiary": "Seeded four-seat Foundry operation; exact captured role labels.",
+          "sound": "Four spaced wood knocks between 10.500 and 11.500.",
+          "edit": "One portrait per knock; never copy a paid game avatar.",
+          "claimIds": [
+            "F07",
+            "F09"
+          ],
+          "asset": "V1-G04"
+        },
+        {
+          "start": 12,
+          "end": 13.5,
+          "speaker": "Consigliere",
+          "speech": "One brings the key.",
+          "caption": "One brings the key.",
+          "primary": "Rookie slides his key toward the contribution tray.",
+          "tertiary": "His actual contributed item changes custody in the operation panel.",
+          "sound": "Inventory deposit click at 12.050.",
+          "edit": "Match-cut key in hand to real item row; no officer taking it for him.",
+          "claimIds": [
+            "F07",
+            "F13",
+            "F46"
+          ],
+          "asset": "V1-G04"
+        },
+        {
+          "start": 13.5,
+          "end": 15,
+          "speaker": "Consigliere",
+          "speech": "Others bring what’s missing.",
+          "caption": "Others bring what’s missing.",
+          "primary": "Other hands contribute; a clue and resource tray become ready.",
+          "tertiary": "Captured missing requirements turn fulfilled: known evidence, materials/capital as required.",
+          "sound": "Paper flick at 13.650; restrained ready ping at 14.600.",
+          "edit": "Fast three-way inserts at 13.500/14.000/14.500.",
+          "claimIds": [
+            "F07",
+            "F21",
+            "F46"
+          ],
+          "asset": "V1-G04"
+        },
+        {
+          "start": 15,
+          "end": 16.5,
+          "speaker": "Don",
+          "speech": "Boss signs.",
+          "caption": "Boss signs.",
+          "primary": "Don taps a blank approval card once.",
+          "tertiary": "Actual approval/confirmation UI only; execution waits until 18.000.",
+          "sound": "Pen tap at 15.000; click at 15.850.",
+          "edit": "Push into approval confirmation; keep the approved operation READY, not executed.",
+          "claimIds": [
+            "F06",
+            "F09",
+            "F46"
+          ],
+          "asset": "V1-G04"
+        },
+        {
+          "start": 16.5,
+          "end": 18,
+          "speaker": "Rookie",
+          "speech": "It’s a door.",
+          "caption": "It’s a door.",
+          "primary": "Rookie deadpan, key held like a diploma.",
+          "tertiary": "Small operation panel holds READY; cursor pauses.",
+          "sound": "Music/SFX stop at 16.500; chair creak at 17.750.",
+          "edit": "Static face, tiny creep from 100 to 104%; joke needs breathing space.",
+          "claimIds": [
+            "F07"
+          ],
+          "asset": "V1-G01"
+        },
+        {
+          "start": 18,
+          "end": 19.5,
+          "speaker": "Consigliere",
+          "speech": "Now the archive is open.",
+          "caption": "Now the archive is open.",
+          "primary": "Tall cabinet opens onto a mundane archive, treated like a raid boss.",
+          "tertiary": "Designated boss/underboss executor clicks at 18.000; actual consequence follows: archive open.",
+          "sound": "Execution click at 18.000; metal scrape at 18.200 + short bass impact.",
+          "edit": "Hard cut; insert state change at 18.750.",
+          "claimIds": [
+            "F17",
+            "F26"
+          ],
+          "asset": "V1-G05"
+        },
+        {
+          "start": 19.5,
+          "end": 21,
+          "speaker": "Rookie",
+          "speech": "Other people can see that?",
+          "caption": "Other people can see that?",
+          "primary": "Second authorized player view sees newly public archive state.",
+          "tertiary": "Separate account capture clearly tagged ANOTHER PLAYER; hide prior private details.",
+          "sound": "Second monitor boot pip at 19.650.",
+          "edit": "Two-up views, quick arrow between current states only.",
+          "claimIds": [
+            "F22",
+            "F27"
+          ],
+          "asset": "V1-G05"
+        },
+        {
+          "start": 21,
+          "end": 22.5,
+          "speaker": "Don",
+          "speech": "Meanwhile, a shipment gets diverted.",
+          "caption": "Meanwhile, a shipment gets diverted.",
+          "primary": "Cheap paper city; a crate slides toward a different route.",
+          "tertiary": "Large ELSEWHERE IN THE SAME CITY; staged release Missing Shipment interception result.",
+          "sound": "Abrupt cheap drum fill at 21.000.",
+          "edit": "Prediction error: crime cinema becomes school-project tabletop.",
+          "claimIds": [
+            "F04",
+            "F24"
+          ],
+          "asset": "V1-G06"
+        },
+        {
+          "start": 22.5,
+          "end": 24,
+          "speaker": "Consigliere",
+          "speech": "A market opens.",
+          "caption": "A market opens.",
+          "primary": "A cardboard market booth is set on the diverted-route point.",
+          "tertiary": "Actual establish-market action/result; infrastructure state, no free vendor inventory.",
+          "sound": "Cash-register-style clack at 22.500; no coin shower.",
+          "edit": "Fast pin pop; upper UI says NEW CAMPAIGN.",
+          "claimIds": [
+            "F04",
+            "F11"
+          ],
+          "asset": "V1-G06"
+        },
+        {
+          "start": 24,
+          "end": 25.5,
+          "speaker": "Consigliere",
+          "speech": "Someone exposes it.",
+          "caption": "Someone exposes it.",
+          "primary": "Blank shipping notice slaps onto the miniature wall.",
+          "tertiary": "Authorized exposure result, followed by public aftermath only.",
+          "sound": "Paper slap at 24.000 then ominous notification.",
+          "edit": "Whip crop to notice; CASE OPEN does not identify a culprit.",
+          "claimIds": [
+            "F04",
+            "F21"
+          ],
+          "asset": "V1-G06"
+        },
+        {
+          "start": 25.5,
+          "end": 27,
+          "speaker": "Rookie",
+          "speech": "Now it’s an investigation?",
+          "caption": "Now it’s an investigation?",
+          "primary": "Board of route, seal and documents fills screen.",
+          "tertiary": "Informant opportunity from this demonstrated branch; source-neutral evidence icons.",
+          "sound": "Three tack clicks at 25.500/26.000/26.500.",
+          "edit": "Map becomes evidence board; genre shift four, no red quest marker.",
+          "claimIds": [
+            "F20",
+            "F21"
+          ],
+          "asset": "EDIT-V1-EVIDENCE"
+        },
+        {
+          "start": 27,
+          "end": 28.5,
+          "speaker": "Don",
+          "speech": "Anyway. OMERTÀ.",
+          "caption": "Anyway. OMERTÀ.",
+          "primary": "Flat cut to real OMERTÀ wordmark on dirty cream; Rookie still tiny below.",
+          "tertiary": "Last visible clue gently pulses beside the wordmark.",
+          "sound": "Beat cuts; dry voice then single printer tick.",
+          "edit": "Logo appears instantly at 27.000; no slow reveal.",
+          "claimIds": [
+            "F01"
+          ],
+          "asset": "EDIT-V1-END"
+        },
+        {
+          "start": 28.5,
+          "end": 30,
+          "speaker": "Rookie",
+          "speech": "Bring your committee.",
+          "caption": "Bring your committee.",
+          "primary": "Wordmark stays; four chairs scoot toward the key.",
+          "tertiary": "CTA: BRING YOUR COMMITTEE.",
+          "sound": "Four miniature chair scrapes.",
+          "edit": "CTA pops at 28.500; one chair is upside down as repeat-view joke.",
+          "claimIds": [
+            "F09"
+          ],
+          "asset": "EDIT-V1-END"
+        },
+        {
+          "start": 30,
+          "end": 31.5,
+          "speaker": "Don",
+          "speech": "Got your key?",
+          "caption": "Got your key?",
+          "primary": "Key rises to fill the identical opening crop.",
+          "tertiary": "Four role dots return to opening positions.",
+          "sound": "Key rattle at 31.350; no new musical resolve.",
+          "edit": "Match final pose/crop to frame zero; cut at 31.500.",
+          "claimIds": [
+            "F09"
+          ],
+          "asset": "V1-G01"
+        }
+      ],
+      "shots": [
+        {
+          "id": "V1-G01",
+          "sourceDuration": 5,
+          "purpose": "Hook, reaction and loop plate",
+          "visual": "An oversized ordinary brass key with a tiny folding-chair committee; Rookie and Don reaction crops.",
+          "characters": "C01 Rookie; C02 Don; four original miniature adult extras",
+          "action": "Hold key steady; committee makes tiny serious gestures; Rookie gives one slow side-eye.",
+          "environment": "Cramped back-room office, cheap folding table",
+          "camera": "Locked phone camera, low tabletop angle; no orbit",
+          "lighting": "Harsh overhead fluorescent with one warm desk lamp",
+          "audio": "Post key clang, chair squeak, dry voices",
+          "dialogue": "Opening/reaction/loop lines from timeline; no generated speech",
+          "caption": "This key needs FOUR PEOPLE? / It’s a door. / Got your key?",
+          "uiOverlay": "Role silhouettes are editorial, not fake captured gameplay",
+          "transition": "Hard cut to garage; return for loop",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "C02",
+            "approved-key-prop",
+            "refs/V1-G01-first.png"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Rookie holds a brass key horizontally at chest height above a cheap table; four miniature adult office-crime archetypes sit visibly around the key from frame one; Don sits at normal scale at frame edge. The miniatures are deliberately toy-scale, with coherent bodies. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Start on the already-visible miniature committee and key. Tiny attendees tap blank papers once. Rookie lifts one eyebrow and slightly tips the key; camera remains almost still. Keep key available as the final centered pose. Camera: Locked phone camera, low tabletop angle; no orbit. Lighting: Harsh overhead fluorescent with one warm desk lamp. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Miniatures merge into the key, opening action takes more than 0.3s to read, or key shape changes.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V1-G02",
+          "sourceDuration": 5,
+          "purpose": "Crime becomes resource management",
+          "visual": "Battered eligible vehicle, then separate parts trays for an editorial salvage jump.",
+          "characters": "C01 Rookie",
+          "action": "Points proudly at vehicle; looks down toward pre-existing sorted material trays.",
+          "environment": "Unpolished garage with damp concrete",
+          "camera": "Waist-high handheld phone, tiny sudden tilt down",
+          "lighting": "Cold work light, no showroom sheen",
+          "audio": "Post lock chirp and dry mechanical inventory clicks",
+          "dialogue": "I stole a car. / You salvaged it.",
+          "caption": "Exact dialogue in two timed pages",
+          "uiOverlay": "Actual garage and before/after inventory; quantities from capture only",
+          "transition": "Hard mechanical jump cut, then key macro",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "approved-car-reference",
+            "refs/V1-G02-first.png",
+            "release-owned-vehicle-and-salvage-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Rookie beside one battered unbranded compact car, sorted metal trays already visible at his feet; blank clipboard. No license text. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Rookie points to the car, then tilts his head toward three distinct existing trays of salvaged metal. Slight camera tilt follows. Do not destroy or transform the whole car within the generated shot; editing supplies the before/after transition. Camera: Waist-high handheld phone, tiny sudden tilt down. Lighting: Cold work light, no showroom sheen. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Car spontaneously duplicates, trays conjure themselves, logos appear, or effects suggest a token reward.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V1-G03",
+          "sourceDuration": 5,
+          "purpose": "Knowledge gates a physical crafted object",
+          "visual": "Plain brass key on a dirty workbench beside blank folded instructions.",
+          "characters": "C01 hands only",
+          "action": "Places the same key onto felt and nudges a blank folded paper beside it.",
+          "environment": "Foundry workbench",
+          "camera": "Close macro, 50mm look, slight push",
+          "lighting": "Institutional green lamp with warm edge light",
+          "audio": "Post stamp/bell, tape scrub, discovery ping",
+          "dialogue": "Made a key. / After finding the recipe.",
+          "caption": "MADE A KEY / RECIPE FIRST, plus verbatim speech",
+          "uiOverlay": "Actual recipe, material spend and discovered clue",
+          "transition": "Paper match cut into role board",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "approved-key-prop",
+            "C01-hand-ring-detail",
+            "refs/V1-G03-first.png",
+            "actual-known-recipe-and-discovery-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Same brass key on charcoal felt, Rookie red-ring hand at left, one blank folded paper and simple stamp; no writing or UI. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Hand gently sets key down; camera advances slightly; other hand places blank instruction paper next to it. Hold the final arrangement for compositing. Camera: Close macro, 50mm look, slight push. Lighting: Institutional green lamp with warm edge light. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Different key, legible invented recipe, duplicate fingers, or unexplained extra finished keys.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V1-G04",
+          "sourceDuration": 5,
+          "purpose": "Multiplayer requirements become the joke",
+          "visual": "Four real adults at cheap chairs and a contribution tray.",
+          "characters": "C01; C02; C04; original adult extra",
+          "action": "Take turns presenting an item or blank paper; Don makes one approving tap.",
+          "environment": "Small mafia back room that looks like a community meeting",
+          "camera": "Fixed medium-wide; crop inserts in edit",
+          "lighting": "Warm bare practical bulb, intentionally flat",
+          "audio": "Post four knocks, contribution clicks, approval tap",
+          "dialogue": "Door opens? through Boss signs.",
+          "caption": "Each corresponding spoken line; FOUR emphasis",
+          "uiOverlay": "Captured role/contribution/readiness/approval states",
+          "transition": "Hard cuts among wide, hands and real UI",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "C02",
+            "C04",
+            "approved-key-prop",
+            "refs/V1-G04-first.png",
+            "actual-four-seat-operation-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Four distinct adults at a cheap table; Rookie holds the key, Auditor holds blank folder, one extra has metal tray, Don rests hand beside blank approval card. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. At normal speed, Rookie slides key toward a tray without exchanging hands, Auditor opens blank folder, extra steadies materials, Don taps her card once. Each motion sequential, all identities stable. Camera: Fixed medium-wide; crop inserts in edit. Lighting: Warm bare practical bulb, intentionally flat. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Officer takes another player’s item without their participation, extra hands, merged faces, or handoff becomes impossible.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V1-G05",
+          "sourceDuration": 5,
+          "purpose": "Persistent state, visible to someone else",
+          "visual": "Oversized mundane metal archive cabinet, not a magical portal.",
+          "characters": "C01 at edge",
+          "action": "Watches the archive door swing open to paper shelves.",
+          "environment": "Foundry archive",
+          "camera": "Chest-height static shot, 10% push only",
+          "lighting": "Cold fluorescent interior; amber spill at edge",
+          "audio": "Metal scrape and bass hit; soft second-screen pip",
+          "dialogue": "Now the archive is open. / Other people can see that?",
+          "caption": "Exact lines; small THE CITY REMEMBERS editorial tag",
+          "uiOverlay": "Real successful event and separate current public view",
+          "transition": "Cabinet edge match-cut to cardboard city",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "approved-key-prop",
+            "refs/V1-G05-first.png",
+            "before-after-world-state-two-authorized-views"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Tall dented archive cabinet with plain unlabeled shelves behind nearly closed door; Rookie at left edge with the same outfit, no visible text. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Archive door opens once to mundane shelves; Rookie looks toward a second unseen person. No magical light explosion, no objects created, hold open state. Camera: Chest-height static shot, 10% push only. Lighting: Cold fluorescent interior; amber spill at edge. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Archive closes again for no reason, room changes shape, treasure fountain, or generated fake database text.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V1-G06",
+          "sourceDuration": 5,
+          "purpose": "Escalate into a different connected campaign",
+          "visual": "Deliberately cheap paper city with route, small crate, stall and blank notice.",
+          "characters": "C04 gloved hand; no faces",
+          "action": "Moves a crate along a diverted route, then sets down a stall and notice.",
+          "environment": "Kitchen tabletop pretending to be a city map",
+          "camera": "Overhead phone, slight accidental crop",
+          "lighting": "Bright uneven desk lamp",
+          "audio": "Cheap drum fill, mechanical till clack, paper slap",
+          "dialogue": "Meanwhile… / A market opens. / Someone exposes it.",
+          "caption": "ELSEWHERE IN THE SAME CITY remains during switch; exact speech below",
+          "uiOverlay": "Real route/market/exposure state inserts; no balances or price graph",
+          "transition": "Overhead tabletop becomes editor-built evidence board",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C04-glove-detail",
+            "original-paper-city-reference",
+            "refs/V1-G06-first.png",
+            "campaign-intercept-establish-expose-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Original handmade paper harbor city, one crate, one separate folded stall, one blank notice, no labels or recognizable map. Blue-gloved left hand at frame edge. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Hand deliberately slides crate sideways onto a distinct route, places an already-existing paper booth nearby, and pins a blank notice. Preserve each object; simple physical tabletop motion. Camera: Overhead phone, slight accidental crop. Lighting: Bright uneven desk lamp. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Procedural city explosion, real-world map/logos, automatic coin income, or readable invented notice.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        }
+      ],
+      "editNotes": [
+        "Opening generated plate remains deliberately awkward; cut at 0.600 before the model can over-perform.",
+        "Three prediction errors: key committee → garage inventory at 3.000; approval meeting → ordinary door deadpan at 16.500; archive → cheap paper economy at 21.000.",
+        "Third channel: real known requirements/role progress early; authorized consequence/history later. Do not fill it with random scrolling green numbers.",
+        "Replay joke: fourth miniature chair is upside down at 28.500. It implies no additional game mechanic.",
+        "Information hierarchy: first watch “friends + resources change world”; second watch recipe, custody, permission and separate campaign. Comment seed is the four-person key, not an explicit question to commenters."
+      ],
+      "assets": [
+        "Four cast refs and ordinary extra release/rights clearance",
+        "One approved brass Archive Turn Key prop, paper harbor and archive scene refs",
+        "Owned vehicle → salvage → clue → recipe → crafted key captures from staged release account",
+        "Four distinct eligible operation participants, actual contributions and boss approval/execution capture",
+        "Before/after archive state and second permitted player view",
+        "Separate shipment interception → market establishment → exposure → Informant opportunity captures",
+        "Editable evidence-board graphics using authorized source labels, no invented culprit",
+        "OMERTÀ wordmark from existing brand assets, cleared subtitle font",
+        "Three voice actors plus printer voice; original bass/pizzicato loop and cleared sync effects"
+      ],
+      "variants": [
+        {
+          "id": "V1-H1",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "The door rejected my résumé.",
+          "caption": "THE DOOR REJECTED MY RÉSUMÉ.",
+          "visual": "Rookie holds a key and blank résumé; ordinary filing cabinet slams a small blank rejection flap.",
+          "generationPrompt": "Animate the approved alternate opening frame: Rookie pushes blank paper toward a cabinet slot; flap gently closes while key stays visible. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Rookie holds a key and blank résumé; ordinary filing cabinet slams a small blank rejection flap.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. No real rejection UI, physical hand injury, generated text or sentient game-door claim; editorial gag only.",
+          "bridge": "Cut at 1.500 to Don: “You wanted a mafia game.” Everything after that is unchanged.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V1-H2",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "My guild is a locksmith.",
+          "caption": "MY GUILD IS A LOCKSMITH.",
+          "visual": "Four tiny workers with folding chairs inspect one key with unreasonable seriousness.",
+          "generationPrompt": "Animate the approved alternate opening frame: Tiny committee leans toward the stationary key; one chair tips slightly, nobody falls. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Four tiny workers with folding chairs inspect one key with unreasonable seriousness.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. No fantasy-game characters or branded guild symbols.",
+          "bridge": "Same Don response at 1.500; match key/table color.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V1-H3",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "This key needs management.",
+          "caption": "THIS KEY NEEDS MANAGEMENT.",
+          "visual": "Rookie at cheap table surrounded by four blank folders and an enormous key.",
+          "generationPrompt": "Animate the approved alternate opening frame: A hand slides another blank folder into frame; Rookie gives up and rests chin on key. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Rookie at cheap table surrounded by four blank folders and an enormous key.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Do not show a fabricated tutorial screen or imply RC1 onboarding is complete.",
+          "bridge": "Same 1.500 Don line; subtitle includes editorial gag badge, not a claim about fresh solo onboarding.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "title": "THE ECONOMY IS THE GAME — The chart has a Family",
+      "duration": 33,
+      "concept": "The Rookie buys a bulk cargo order, survives a partial convoy ambush and pays a rival Family’s destination toll. He thinks he has understood the economy. The Auditor opens the OMR market: a canonical sale routes Hook funding into protocol liquidity, while a separate seasonal liquidity range becomes a Family siege map. The winning Family gets rights to future funded fees; the protocol keeps custody of the principal. A cardboard shipping problem has become an argument about who controls a section of the chart.",
+      "thesis": {
+        "recognition": "MMO trading, cargo ambushes, mafia tolls, an ETH/OMR market and guild territory wars.",
+        "novelty": "A financial range map becomes a literal Family war table. Players contest funded fee rights while the pool principal stays under protocol control.",
+        "sensation": "Crate slam → inventory pickup → toy convoy impact → toll bell → mechanical Hook splitter → tabletop siege → a tiny receipt instead of a stolen vault.",
+        "patternInterrupt": "A cardboard cargo crate slams onto an absurd finance desk. Rookie: “I bought some cargo.”",
+        "informationGap": "Why does one cargo purchase end with a Family fighting over a section of a market chart?",
+        "shareTrigger": "Game friends recognize a guild turning everything into territory; crypto friends recognize the fee-rights/principal distinction. The same scene is legible to both."
+      },
+      "claimNote": "Full-release master under L01–L03 and L05. F10–F11, F24, F29, F32, F35–F38 and F42 apply. The Rookie owns the collected bulk cargo before dispatch; the staged ambush leaves a verified remainder. The destination is another Family’s territory, with the shipper present and funded for a positive toll. The canonical OMR sale is a separate human-confirmed action, not an automatic result of cargo trading. Hook POL funding goes to Core; designated seasonal Turf LP fees go through their own bridge. A siege settlement changes prospective rights, not historical credits or principal ownership. No tokenomics numbers, projected yield or invented receipt.",
+      "audio": {
+        "voices": "Rookie: baffled conversational tenor. Auditor: fast, precise midrange. Don: quiet authority, now clearly representing the rival destination Family and later that Family’s Turf victory.",
+        "music": "Original 126 BPM calculator-percussion breakbeat. At 13.500 add a dry mechanical bass pulse; at 18.000 an absurd two-note toy-military motif. No borrowed music or casino payoff.",
+        "drops": "0.000 crate slam; 4.500 muted ambush kick; 7.500 toll bell; 15.000 Hook splitter clack; 18.000 cardboard siege impact; 24.000 small receipt click.",
+        "silence": "21.000–22.500: remove music under “They get the pool?” Restart with a dry two-note answer on “The fee rights.” Remove bass again at 25.500 for “So the pool stays?”",
+        "transitions": "Pickup pip becomes a hi-hat; toll bell becomes the market cursor sound; splitter clack becomes a map-pin knock; siege impact resolves into a deliberately tiny receipt-printer tick.",
+        "mix": "No rising profit chime, cash shower or triumphant investment-return sound. Liquidity and fee events have mechanical feedback; the laugh comes from the tiny receipt after the huge siege."
+      },
+      "timeline": [
+        {
+          "start": 0,
+          "end": 1.5,
+          "speaker": "Rookie",
+          "speech": "I bought some cargo.",
+          "caption": "I bought some cargo.",
+          "primary": "One outer crate representing a bulk order slams onto an overcomplicated desk.",
+          "tertiary": "Actual purchased bulk manifest; no invented price or quantity.",
+          "sound": "Crate slam at 0.000; tape rip at 0.450.",
+          "edit": "Immediate impact, 6-frame camera bump.",
+          "claimIds": [
+            "F11"
+          ],
+          "asset": "V2-G01"
+        },
+        {
+          "start": 1.5,
+          "end": 3,
+          "speaker": "Auditor",
+          "speech": "Pickup only.",
+          "caption": "Pickup only.",
+          "primary": "Auditor points at the goods; real pickup capture credits the Rookie’s own trunk.",
+          "tertiary": "Location and trunk requirements, then successful buyer pickup.",
+          "sound": "Pickup pip at 1.800.",
+          "edit": "UI insert at 2.100 precedes departure.",
+          "claimIds": [
+            "F11",
+            "F24"
+          ],
+          "asset": "V2-G01"
+        },
+        {
+          "start": 3,
+          "end": 4.5,
+          "speaker": "Rookie",
+          "speech": "Fine. Send a convoy.",
+          "caption": "Fine. Send a convoy.",
+          "primary": "Cargo vehicle rolls onto a deliberately cheap tabletop road.",
+          "tertiary": "Same owned cargo manifest and actual departure command.",
+          "sound": "Engine cough at 3.000; tiny tire squeak.",
+          "edit": "Desk → paper road scale change.",
+          "claimIds": [
+            "F24"
+          ],
+          "asset": "V2-G02"
+        },
+        {
+          "start": 4.5,
+          "end": 6,
+          "speaker": "Auditor",
+          "speech": "Ambushed.",
+          "caption": "Ambushed.",
+          "primary": "A rival toy vehicle blocks the route and takes only cargo it can carry.",
+          "tertiary": "Actual partial ambush; stolen/remaining goods from the same convoy.",
+          "sound": "Muted kick and box thud at 4.500.",
+          "edit": "Security-camera crop; one 3-frame displacement.",
+          "claimIds": [
+            "F24"
+          ],
+          "asset": "V2-G02"
+        },
+        {
+          "start": 6,
+          "end": 7.5,
+          "speaker": "Rookie",
+          "speech": "The rest got through.",
+          "caption": "The rest got through.",
+          "primary": "Surviving boxes reach the destination; the same manifest continues.",
+          "tertiary": "Actual arrival/collection with remaining goods and shipper at destination.",
+          "sound": "Relieved engine sputter at 6.100.",
+          "edit": "Match cargo identities; do not invent a recovery.",
+          "claimIds": [
+            "F24"
+          ],
+          "asset": "V2-G02"
+        },
+        {
+          "start": 7.5,
+          "end": 9,
+          "speaker": "Auditor",
+          "speech": "Rival dock. Pay the toll.",
+          "caption": "Rival dock. Pay the toll.",
+          "primary": "Tiny barrier drops in front of the surviving cargo.",
+          "tertiary": "OTHER FAMILY’S TERRITORY; actual positive game-cash toll.",
+          "sound": "Toll bell at 7.500.",
+          "edit": "Hard cut from vehicle to financial ledger crop.",
+          "claimIds": [
+            "F24",
+            "F35"
+          ],
+          "asset": "V2-G03"
+        },
+        {
+          "start": 9,
+          "end": 10.5,
+          "speaker": "Don",
+          "speech": "Our Family’s treasury.",
+          "caption": "Our Family’s treasury.",
+          "primary": "Don pulls a plain ledger toward herself; Rookie realizes who collected.",
+          "tertiary": "Shipper game-cash/bank debit → destination Family treasury.",
+          "sound": "Ledger snap at 9.000.",
+          "edit": "Follow the real cash receipt, not an OMR or ETH arrow.",
+          "claimIds": [
+            "F35"
+          ],
+          "asset": "V2-G03"
+        },
+        {
+          "start": 10.5,
+          "end": 12,
+          "speaker": "Rookie",
+          "speech": "So that’s the economy?",
+          "caption": "So that’s the economy?",
+          "primary": "Rookie closes a mundane cash drawer, relieved too early.",
+          "tertiary": "GAME CASH label; cargo icon still ticks along in a corner.",
+          "sound": "Drawer click at 10.800.",
+          "edit": "Hold face, then Auditor’s hand enters on next beat.",
+          "claimIds": [
+            "F29",
+            "F35"
+          ],
+          "asset": "V2-G03"
+        },
+        {
+          "start": 12,
+          "end": 13.5,
+          "speaker": "Auditor",
+          "speech": "That’s cash. This is OMR.",
+          "caption": "That’s cash. This is OMR.",
+          "primary": "Auditor opens an adjacent market workstation, separate from the cash drawer.",
+          "tertiary": "OMR / ETH canonical pool; actual release market interface.",
+          "sound": "Second drawer clack at 12.000; new bass pulse.",
+          "edit": "Strong material/color cut; no cash-to-OMR conversion animation.",
+          "claimIds": [
+            "F29",
+            "F37"
+          ],
+          "asset": "V2-G04"
+        },
+        {
+          "start": 13.5,
+          "end": 15,
+          "speaker": "Rookie",
+          "speech": "Fine. Sell some OMR.",
+          "caption": "Fine. Sell some OMR.",
+          "primary": "Player reviews and confirms a canonical OMR-to-ETH swap.",
+          "tertiary": "Actual quote/confirmation and subsequent settled receipt; action by human.",
+          "sound": "Confirm click at 13.650, short settlement tick after actual receipt.",
+          "edit": "Compress elapsed time with receipt jump-cut; never fake instant finality.",
+          "claimIds": [
+            "F37",
+            "F42",
+            "F46"
+          ],
+          "asset": "EDIT-V2-SWAP"
+        },
+        {
+          "start": 15,
+          "end": 16.5,
+          "speaker": "Auditor",
+          "speech": "Hook funds protocol liquidity.",
+          "caption": "Hook funds protocol liquidity.",
+          "primary": "A small mechanical splitter routes the captured applicable POL allocation into Core.",
+          "tertiary": "HOOK FEE → POL / CORE; separate LP FEES line visibly distinct.",
+          "sound": "Splitter clack at 15.000; one metal-channel click.",
+          "edit": "Track one real fee path; no percentages or invented fee currency.",
+          "claimIds": [
+            "F36",
+            "F37"
+          ],
+          "asset": "V2-G04"
+        },
+        {
+          "start": 16.5,
+          "end": 18,
+          "speaker": "Rookie",
+          "speech": "Why’s this a war map?",
+          "caption": "Why’s this a war map?",
+          "primary": "A different seasonal Turf range slides out of the market display as a cheap war table.",
+          "tertiary": "SEASONAL TURF RANGE, separate from POL/Core; actual registered range map.",
+          "sound": "Map unfolds at 16.500; two pin taps.",
+          "edit": "Prediction error: terminal → cardboard siege table.",
+          "claimIds": [
+            "F38"
+          ],
+          "asset": "V2-G05"
+        },
+        {
+          "start": 18,
+          "end": 19.5,
+          "speaker": "Don",
+          "speech": "Family siege.",
+          "caption": "Family siege.",
+          "primary": "Two Family markers face off over that range, far too seriously.",
+          "tertiary": "Designated Turf LP fees → funded SIEGE ESCROW; real siege state.",
+          "sound": "Tiny military motif and cardboard impact at 18.000.",
+          "edit": "Quick 110% zoom, range edges remain readable.",
+          "claimIds": [
+            "F32",
+            "F38"
+          ],
+          "asset": "V2-G05"
+        },
+        {
+          "start": 19.5,
+          "end": 21,
+          "speaker": "Don",
+          "speech": "Our Family won.",
+          "caption": "Our Family won.",
+          "primary": "Actual adjudicated victory; checkpoint then prospective range-holder change.",
+          "tertiary": "Confirmed typed game settlement; escrow allocation per configured rules.",
+          "sound": "Stamp at 19.650; restrained ownership click.",
+          "edit": "Time compression is editorial; old credited fees stay with their historical recipients.",
+          "claimIds": [
+            "F38"
+          ],
+          "asset": "V2-G05"
+        },
+        {
+          "start": 21,
+          "end": 22.5,
+          "speaker": "Rookie",
+          "speech": "They get the pool?",
+          "caption": "They get the pool?",
+          "primary": "Rookie reaches for the big principal compartment.",
+          "tertiary": "PRINCIPAL / FEE RIGHTS diagram beside actual map; no withdrawal action.",
+          "sound": "Music drops at 21.000; sleeve rustle only.",
+          "edit": "Cut from battle scale to one awkward reaching hand.",
+          "claimIds": [
+            "F36",
+            "F38"
+          ],
+          "asset": "V2-G06"
+        },
+        {
+          "start": 22.5,
+          "end": 24,
+          "speaker": "Auditor",
+          "speech": "The fee rights.",
+          "caption": "The fee rights.",
+          "primary": "Auditor redirects attention to a small receipt tray for the winning Family.",
+          "tertiary": "Future designated Turf LP fee rights; protocol principal remains in custody.",
+          "sound": "Dry two-note answer and tiny tray tap at 22.500.",
+          "edit": "Clear separate compartments, not the same pile relabeled.",
+          "claimIds": [
+            "F38"
+          ],
+          "asset": "V2-G06"
+        },
+        {
+          "start": 24,
+          "end": 25.5,
+          "speaker": "Auditor",
+          "speech": "Only fees actually funded.",
+          "caption": "Only fees actually funded.",
+          "primary": "A later earned/funded fee receipt enters the authorized Family tray.",
+          "tertiary": "Actual later bridge credit; no spinning earnings counter or projected amount.",
+          "sound": "Small receipt-printer click at 24.000.",
+          "edit": "Show LATER marker; credit follows funding, not merely the win.",
+          "claimIds": [
+            "F38"
+          ],
+          "asset": "V2-G06"
+        },
+        {
+          "start": 25.5,
+          "end": 27,
+          "speaker": "Rookie",
+          "speech": "So the pool stays?",
+          "caption": "So the pool stays?",
+          "primary": "Big principal mechanism continues behind the small receipt tray.",
+          "tertiary": "Control of fee rights changed; principal custody did not.",
+          "sound": "Bass stops at 25.500; machine hum remains.",
+          "edit": "Almost still gag; a tiny map marker supplies third-channel motion.",
+          "claimIds": [
+            "F36",
+            "F38"
+          ],
+          "asset": "V2-G06"
+        },
+        {
+          "start": 27,
+          "end": 28.5,
+          "speaker": "Auditor",
+          "speech": "The principal stays protocol-owned.",
+          "caption": "The principal stays protocol-owned.",
+          "primary": "Principal compartment remains anchored while the Family marker sits on its fee-rights map.",
+          "tertiary": "PROTOCOL PRINCIPAL; fee-rights marker only. No claim of fixed value.",
+          "sound": "One anchoring bolt click at 27.100.",
+          "edit": "Cut to release diagram for legibility; no profit graph.",
+          "claimIds": [
+            "F36",
+            "F38"
+          ],
+          "asset": "EDIT-V2-PRINCIPAL"
+        },
+        {
+          "start": 28.5,
+          "end": 30,
+          "speaker": "Don",
+          "speech": "OMERTÀ.",
+          "caption": "OMERTÀ.",
+          "primary": "Wordmark instantly stamps onto the original cardboard crate.",
+          "tertiary": "One small seasonal range marker keeps moving.",
+          "sound": "Plain brand stamp at 28.500.",
+          "edit": "Instant reveal, no slow logo animation.",
+          "claimIds": [
+            "F01"
+          ],
+          "asset": "EDIT-V2-END"
+        },
+        {
+          "start": 30,
+          "end": 31.5,
+          "speaker": "Auditor",
+          "speech": "Bring your Family.",
+          "caption": "Bring your Family.",
+          "primary": "Wordmark stays; opposing Family pins gather around the crate.",
+          "tertiary": "CTA: BRING YOUR FAMILY.",
+          "sound": "Two pin taps at 30.100 and 30.700.",
+          "edit": "CTA pops inside safe area.",
+          "claimIds": [
+            "F09",
+            "F38"
+          ],
+          "asset": "EDIT-V2-END"
+        },
+        {
+          "start": 31.5,
+          "end": 33,
+          "speaker": "Rookie",
+          "speech": "Where’s my cargo?",
+          "caption": "Where’s my cargo?",
+          "primary": "Crate rises into the identical opening position.",
+          "tertiary": "Manifest cursor returns to the same cargo order.",
+          "sound": "Room tone, short inhalation, no impact until replay.",
+          "edit": "Final pose matches frame zero; loop restarts on crate slam.",
+          "claimIds": [
+            "F11"
+          ],
+          "asset": "V2-G01"
+        }
+      ],
+      "shots": [
+        {
+          "id": "V2-G01",
+          "sourceDuration": 5,
+          "purpose": "Cargo hook and loop",
+          "visual": "One outer cardboard crate representing a bulk order on a ludicrously complicated desk.",
+          "characters": "C01 Rookie; C04 Auditor",
+          "action": "Crate lands immediately; Auditor points at pickup slip; Rookie reacts.",
+          "environment": "Underfunded Family shipping desk",
+          "camera": "Close wide-angle phone; modest impact shake",
+          "lighting": "Flat office fluorescent",
+          "audio": "Crate slam, tape rip, pickup pip, final room tone",
+          "dialogue": "I bought some cargo. / Pickup only. / Where’s my cargo?",
+          "caption": "Verbatim timeline speech",
+          "uiOverlay": "Actual purchased bulk manifest and successful buyer pickup",
+          "transition": "Desk → toy road; reuse final pose for loop",
+          "referenceAssets": [
+            "C01",
+            "C04",
+            "approved-crate",
+            "refs/V2-G01-first.png",
+            "release-bulk-purchase-pickup-captures"
+          ],
+          "firstFrame": "Rookie holds one unbranded outer cargo crate just above desk, Auditor points to blank pickup slip, unbranded calculators and blank paper roll.",
+          "motion": "Crate lands within first 0.3 seconds. Auditor points to pickup slip. Rookie gives one offended look; leave final crate pose stable.",
+          "fail": "Crate duplicates, visual asserts one game unit rather than bulk cargo, or logo/price text appears.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Rookie holds one unbranded outer cargo crate just above desk, Auditor points to blank pickup slip, unbranded calculators and blank paper roll. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Crate lands within first 0.3 seconds. Auditor points to pickup slip. Rookie gives one offended look; leave final crate pose stable. Camera: Close wide-angle phone; modest impact shake. Lighting: Flat office fluorescent. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: Crate duplicates, visual asserts one game unit rather than bulk cargo, or logo/price text appears.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        },
+        {
+          "id": "V2-G02",
+          "sourceDuration": 5,
+          "purpose": "Actual cargo custody and partial loss",
+          "visual": "Original toy cargo vehicle with distinct cargo lots on paper road.",
+          "characters": "C04 gloved hand; no faces",
+          "action": "Vehicle advances, rival blocks it, one lot moves aside and surviving cargo continues.",
+          "environment": "Cheap tabletop harbor route",
+          "camera": "Static overhead phone",
+          "lighting": "Uneven desk lamp",
+          "audio": "Engine cough, ambush impact, arrival sputter",
+          "dialogue": "Fine. Send a convoy. / Ambushed. / The rest got through.",
+          "caption": "Verbatim lines; SAME CONVOY overlay",
+          "uiOverlay": "Same release departure, partial ambush and arrival manifest",
+          "transition": "Paper road edge → toll barrier",
+          "referenceAssets": [
+            "original-van-and-road-ref",
+            "approved-cargo-miniatures",
+            "refs/V2-G02-first.png",
+            "same-convoy-release-captures"
+          ],
+          "firstFrame": "Small unbranded cargo van, distinguishable plain boxes representing bulk lots, rival car and paper road. No map text.",
+          "motion": "Van rolls forward. Rival car blocks road briefly. Gloved hand moves one box to rival. Van continues with remaining boxes. Deliberately simple physical toy choreography.",
+          "fail": "All cargo vanishes despite remainder, boxes change identity, or implied theft exceeds captured capacity.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Small unbranded cargo van, distinguishable plain boxes representing bulk lots, rival car and paper road. No map text. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Van rolls forward. Rival car blocks road briefly. Gloved hand moves one box to rival. Van continues with remaining boxes. Deliberately simple physical toy choreography. Camera: Static overhead phone. Lighting: Uneven desk lamp. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: All cargo vanishes despite remainder, boxes change identity, or implied theft exceeds captured capacity.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        },
+        {
+          "id": "V2-G03",
+          "sourceDuration": 5,
+          "purpose": "Game cash toll creates the first economic surprise",
+          "visual": "Tiny toll arm, Family ledger and separate cash drawer.",
+          "characters": "C01 Rookie; C02 Don, the destination Family boss",
+          "action": "Don lowers barrier, receives paperwork and closes cash drawer.",
+          "environment": "Same shabby harbor office",
+          "camera": "Medium tabletop shot with reaction crop space",
+          "lighting": "Warm practical lamp, flat fill",
+          "audio": "Toll bell, ledger snap, cash drawer click",
+          "dialogue": "Rival dock. Pay the toll. / Our Family’s treasury. / So that’s the economy?",
+          "caption": "Exact dialogue; OTHER FAMILY’S TERRITORY",
+          "uiOverlay": "Positive game-cash toll and destination Family treasury receipt",
+          "transition": "Cash drawer → distinct OMR workstation",
+          "referenceAssets": [
+            "C01",
+            "C02",
+            "approved-crate-miniature",
+            "refs/V2-G03-first.png",
+            "release-rival-destination-toll-receipt"
+          ],
+          "firstFrame": "Don seated at plain desk with miniature toll arm, ledger with blank pages and a shut cash drawer. Rookie holds surviving cargo paperwork.",
+          "motion": "Don lowers small barrier, draws ledger toward herself and closes drawer. Rookie watches, thinking the problem is over. No piles of coins.",
+          "fail": "Game cash becomes ETH/OMR, same-Family territory is charged, or real-world cash logos appear.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Don seated at plain desk with miniature toll arm, ledger with blank pages and a shut cash drawer. Rookie holds surviving cargo paperwork. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Don lowers small barrier, draws ledger toward herself and closes drawer. Rookie watches, thinking the problem is over. No piles of coins. Camera: Medium tabletop shot with reaction crop space. Lighting: Warm practical lamp, flat fill. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: Game cash becomes ETH/OMR, same-Family territory is charged, or real-world cash logos appear.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        },
+        {
+          "id": "V2-G04",
+          "sourceDuration": 5,
+          "purpose": "OMR market and Hook funding become visible mechanisms",
+          "visual": "Small mechanical fee splitter beside an OMR market screen, physically separate from cash drawer.",
+          "characters": "C01 Rookie; C04 Auditor",
+          "action": "Human presses one blank control; a finite marker moves through a channel into a Core compartment.",
+          "environment": "Overbuilt terminal grafted onto cheap shipping desk",
+          "camera": "Close lateral phone push, 10% maximum",
+          "lighting": "Institutional green screen spill with amber channel light",
+          "audio": "Drawer clack, human-confirm click, splitter clack",
+          "dialogue": "That’s cash. This is OMR. / Fine. Sell some OMR. / Hook funds protocol liquidity.",
+          "caption": "Exact speech; factual labels added in edit",
+          "uiOverlay": "Canonical OMR→ETH release swap; HOOK FEE→POL/CORE; separate LP FEES track",
+          "transition": "Terminal border unfolds into a distinct seasonal range table",
+          "referenceAssets": [
+            "C01",
+            "C04",
+            "approved-splitter-mechanism",
+            "refs/V2-G04-first.png",
+            "release-canonical-swap-and-POL-funding-receipts"
+          ],
+          "firstFrame": "Auditor beside an unbranded terminal with blank screen, two separate narrow mechanical channels with blank label plates, one finite marker and a large stationary compartment; ordinary cash drawer visibly separate.",
+          "motion": "Rookie presses one blank button. One finite marker follows the first mechanical channel into its compartment. The second channel remains visibly separate. Nothing multiplies, pays a Family or instantly expands all pool positions.",
+          "fail": "Hook tax is sent directly to Family turf, every pool looks taxed, arbitrary balances generated, or cash converts into OMR.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Auditor beside an unbranded terminal with blank screen, two separate narrow mechanical channels with blank label plates, one finite marker and a large stationary compartment; ordinary cash drawer visibly separate. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Rookie presses one blank button. One finite marker follows the first mechanical channel into its compartment. The second channel remains visibly separate. Nothing multiplies, pays a Family or instantly expands all pool positions. Camera: Close lateral phone push, 10% maximum. Lighting: Institutional green screen spill with amber channel light. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: Hook tax is sent directly to Family turf, every pool looks taxed, arbitrary balances generated, or cash converts into OMR.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        },
+        {
+          "id": "V2-G05",
+          "sourceDuration": 5,
+          "purpose": "Seasonal liquidity territory becomes a physical siege",
+          "visual": "Cheap war table shaped like adjacent market ranges with two Family markers.",
+          "characters": "C02 Don; C04 Auditor",
+          "action": "Unfold range board, move opposing markers, then exchange one blank ownership marker.",
+          "environment": "Same office, suddenly a tiny war room",
+          "camera": "Overhead crash crop, stable afterward",
+          "lighting": "Harsh desk lamp, deliberately unglamorous",
+          "audio": "Map unfold, tiny military motif, cardboard impact, settlement stamp",
+          "dialogue": "Why’s this a war map? / Family siege. / Our Family won.",
+          "caption": "Exact lines; SEASONAL TURF RANGE / SIEGE ESCROW",
+          "uiOverlay": "Real registered Turf range, funded siege escrow and confirmed prospective ownership transition",
+          "transition": "Huge-seeming battle → small fee receipt tray",
+          "referenceAssets": [
+            "C02",
+            "C04",
+            "original-range-board",
+            "refs/V2-G05-first.png",
+            "release-turf-siege-and-checkpointed-settlement-captures"
+          ],
+          "firstFrame": "Original cardboard table with adjacent unlabelled rectangular range strips, two distinct Family-color markers and tiny blank receipt tray. No price levels, percentages or logos.",
+          "motion": "Auditor unfolds board. Don moves her marker toward another marker; after one small cardboard collision she replaces only that range’s blank ownership marker. Other markers and compartments stay intact.",
+          "fail": "Family seizes all liquidity or Core, historical fees transfer retroactively, victory prints funds, or an unconfirmed receipt appears final.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Original cardboard table with adjacent unlabelled rectangular range strips, two distinct Family-color markers and tiny blank receipt tray. No price levels, percentages or logos. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Auditor unfolds board. Don moves her marker toward another marker; after one small cardboard collision she replaces only that range’s blank ownership marker. Other markers and compartments stay intact. Camera: Overhead crash crop, stable afterward. Lighting: Harsh desk lamp, deliberately unglamorous. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: Family seizes all liquidity or Core, historical fees transfer retroactively, victory prints funds, or an unconfirmed receipt appears final.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        },
+        {
+          "id": "V2-G06",
+          "sourceDuration": 5,
+          "purpose": "Fee rights payoff, principal custody punchline",
+          "visual": "Large anchored principal mechanism and comically small separate fee receipt tray.",
+          "characters": "C01 Rookie; C04 Auditor",
+          "action": "Rookie reaches for big mechanism; Auditor redirects his attention to a small receipt; principal remains anchored.",
+          "environment": "Same desk, closer view",
+          "camera": "Low close-up; almost static for deadpan question",
+          "lighting": "Ordinary fluorescent, no luxury glow",
+          "audio": "Sleeve rustle, dry two-note answer, tiny receipt click, machine hum",
+          "dialogue": "They get the pool? / The fee rights. / Only fees actually funded. / So the pool stays?",
+          "caption": "Verbatim lines; LATER on funded credit insert",
+          "uiOverlay": "Actual later earned/funded Turf fee credit; PROTOCOL PRINCIPAL separate from FAMILY FEE RIGHTS",
+          "transition": "Anchored principal insert → OMERTÀ on original crate",
+          "referenceAssets": [
+            "C01",
+            "C04",
+            "approved-principal-and-fee-tray-props",
+            "refs/V2-G06-first.png",
+            "release-later-turf-fee-credit"
+          ],
+          "firstFrame": "Big plainly anchored mechanical compartment with blank label plate beside tiny separate receipt tray. Rookie hand hovers near big compartment; Auditor points to tray. Paper receipt blank.",
+          "motion": "Rookie reaches toward large compartment without moving it. Auditor points to the little tray as one blank receipt arrives. Big mechanism continues steadily; no promise of fixed value, no tokens multiplied, no safe opening.",
+          "fail": "Principal moves to Family, receipt precedes funding in the edit, guaranteed payout visuals, or unlimited credit counter.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "firstFramePrompt": "Use approved character/prop references without changing identity. Big plainly anchored mechanical compartment with blank label plate beside tiny separate receipt tray. Rookie hand hovers near big compartment; Auditor points to tray. Paper receipt blank. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "generationPrompt": "Animate the approved first frame. Rookie reaches toward large compartment without moving it. Auditor points to the little tray as one blank receipt arrives. Big mechanism continues steadily; no promise of fixed value, no tokens multiplied, no safe opening. Camera: Low close-up; almost static for deadpan question. Lighting: Ordinary fluorescent, no luxury glow. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject: Principal moves to Family, receipt precedes funding in the edit, guaranteed payout visuals, or unlimited credit counter.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V exposes no input seed; retain reference hashes, request ID and returned seed."
+          }
+        }
+      ],
+      "editNotes": [
+        "Three prediction errors: shipping desk → toy convoy at 3.000; cash drawer → OMR market at 12.000; market chart → literal Family siege at 16.500.",
+        "Preserve the same owned bulk manifest from buyer pickup through convoy and arrival. Positive toll uses another Family’s destination and sufficient gameplay cash/bank.",
+        "The canonical OMR sale is a new human action. Do not draw a conversion arrow from cargo, game cash or the toll into OMR.",
+        "Keep HOOK FEE → POL/CORE and DESIGNATED TURF LP FEES → BRIDGE/ESCROW in separate colors and channels. No claim that every Core LP fee belongs to Turf.",
+        "Siege victory uses real adjudication and onchain checkpoint. Apply configured escrow allocation, not a made-up winner-takes-all payout. Show LATER before the newly entitled Family receives later funded fees; old credits do not migrate.",
+        "The fee-rights map changes, while principal custody remains protocol-owned. This is not a claim that price or the principal’s asset composition never changes.",
+        "Comment seed: “the chart has a Family.” Optional fourth joke: little tray is labelled PAPERWORK DEPARTMENT in one replay frame; this is an editorial joke, not a protocol term."
+      ],
+      "assets": [
+        "C01/C02/C04 selected refs; matching cargo/vehicle/tabletop props",
+        "Release bulk purchase, buyer pickup and owned trunk capture meeting convoy minimum",
+        "Same convoy with partial ambush, real remaining goods and destination collection",
+        "Rival-Family destination, sufficient shipper cash/bank, positive toll and correct Family ledger",
+        "Actual release canonical ETH/OMR pool UI, human sell confirmation and settled swap receipt",
+        "Applicable Hook POL allocation and Core funding evidence; fee currency copied from actual receipt",
+        "Separately registered funded seasonal Turf range, game map and bridge binding",
+        "Actual siege start, funded escrow, adjudicated result and confirmed checkpointed ownership change",
+        "Later earned/funded Turf fee credit and protocol-principal custody illustration",
+        "Two-lane editable fee diagram, real OMERTÀ wordmark, cleared caption font",
+        "Original breakbeat/toy-siege motif, mechanical effects and three voice performances"
+      ],
+      "variants": [
+        {
+          "id": "V2-H1",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "This crate has a tax department.",
+          "caption": "THIS CRATE HAS A TAX DEPARTMENT.",
+          "visual": "Auditor’s gloved hand stamps a blank slip on one crate as Rookie stares.",
+          "generationPrompt": "Animate the approved alternate opening frame: One stamp hits paper; crate stays stationary; Rookie looks at the stamp in disbelief. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Auditor’s gloved hand stamps a blank slip on one crate as Rookie stares.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. No real tax-advice document, invented game rate or OMR toll label.",
+          "bridge": "Cut at 1.500 to “Pickup only.” The later positive rival-Family toll explains this accusation; the Hook has a separate cause.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V2-H2",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "My loot needs shipping insurance.",
+          "caption": "MY LOOT NEEDS SHIPPING INSURANCE.",
+          "visual": "Rookie hugs one crate in a cheap office while a blank form pile lands beside it.",
+          "generationPrompt": "Animate the approved alternate opening frame: One small bundle of blank forms drops beside crate; Rookie tightens his grip. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Rookie hugs one crate in a cheap office while a blank form pile lands beside it.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Do not show an automatic claim or guaranteed payout.",
+          "bridge": "Same “Pickup only” response at 1.500. Insurance is an existing optional convoy mechanic; no payout is claimed. The liquidity sequence stays unchanged.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V2-H3",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "My cargo has a liquidity department.",
+          "caption": "MY CARGO HAS A LIQUIDITY DEPARTMENT.",
+          "visual": "Rookie holds a bulk cargo crate while a tiny unlabelled range-war table sits on the desk beside it.",
+          "generationPrompt": "Animate that first frame. Rookie lowers crate and notices tiny war table. One Family marker tips toward another; no text, no money conversion. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "firstFramePrompt": "Use C01 Rookie and the same approved crate. One bulk cargo crate beside a tiny cardboard range map with two Family-color markers. Rookie looks from cargo to map. Original fictional adults and original props only. Vertical 9:16. Tobacco brown, dirty cream, burgundy and institutional green. Cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep action central and lower caption space clean. Screens, papers and label plates stay blank; all text is composited in post. One coherent shot, no internal montage, no speech or music. No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline.",
+          "negativePromptAndFailureConditions": "No celebrity or franchise likeness, third-party logo, watermark, generated readable text, fake interface, fabricated financial numbers, extra limbs, duplicated hands, face or wardrobe drift, object teleportation, gold shower, infinite money, rising-profit graphic, or neon skyline. Reject any cargo-to-token transformation or generated price chart.",
+          "bridge": "Cut at 1.500 to “Pickup only.” The cargo story and separate OMR market supply the escalating explanation; do not imply automatic conversion.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "title": "THE GAME IS WATCHING YOU — The rat is a noticeboard",
+      "duration": 33,
+      "concept": "The Family wants its Consigliere to identify a rat. A cheap receipt-printer adviser points at a public notice. Two people investigate different original records, but corroborating disclosure does not prove betrayal. A private participant report remains private. The players then contribute evidence and a crafted seal to an authorized operation that records a different, persistent world outcome. The printer embodies the integrated release Consigliere: it reads permitted context and prepares a proposal while the players make consequential decisions. Dialogue is scripted characterization, and the interface inserts use the released adviser. The unsettling idea is that the city can preserve what happened without pretending to know why.",
+      "thesis": {
+        "recognition": "Mob interrogation, “find the leaker,” conspiracy-board screenshots, AI assistant interface.",
+        "novelty": "The AI-coded consigliere is office equipment with better evidence discipline than the Family. A public notice is the punchline, not a psychic betrayal detector.",
+        "sensation": "Desk slam answered by printer squeak; interrogation lighting becomes fluorescent noticeboard; red string cuts into a clean permission boundary; verdict music stops on “not guilt.”",
+        "patternInterrupt": "Don slams a folder onto the table. A single googly-eyed receipt printer stares back. “Find the rat.”",
+        "informationGap": "Why is the suspected leak public, and why can two matching records still fail to establish guilt?",
+        "shareTrigger": "People share the Family group-chat accusation and the adviser refusing to overclaim. Comment seed: what exactly does the game remember, and who is allowed to know it?"
+      },
+      "claimNote": "F02–F09, F17, F20–F23, F26–F27, F43–F47. Full-release master under L01, L04 and L05: assume the adviser is integrated with the released campaign and command services. Its performed lines illustrate permitted reasoning rather than impersonating an actual model-call transcript. The tested campaign loop predates the opening: a route was diverted, a market established and exposed, enabling this investigation. No automatic culprit or betrayal detector exists. Not every outcome spawns a new opportunity.",
+      "audio": {
+        "voices": "Don leads with clipped certainty. Consigliere is calm neutral alto; no omniscient villain growl. Auditor/Detective dry and specific. Rookie supplies the human “wait” reactions.",
+        "music": "Original 96 BPM detuned plucked-string suspense over office ventilation. A deliberately cheap three-note mystery motif only; no recognizable mafia film score.",
+        "drops": "0.000 folder slam; 1.500 printer squeak replaces expected gunshot; 10.500 two hard evidence taps; 24.000 low stamp impact on real consequence.",
+        "silence": "12.000–13.500 remove music under “Disclosure. Not guilt.” Then 25.500–27.000 another music dropout for “You haven’t proved that.”",
+        "transitions": "Paper drag becomes surveillance room hiss; projector click becomes UI scope toggle; receipt printer resumes under end card and loops to the folder slam.",
+        "mix": "No jump-scare gain spike. Keep printer EQ intelligible. The silence is embarrassment, not a threat."
+      },
+      "timeline": [
+        {
+          "start": 0,
+          "end": 1.5,
+          "speaker": "Don",
+          "speech": "Find the rat.",
+          "caption": "Find the rat.",
+          "primary": "Don slams a blank dossier opposite one googly-eyed receipt printer.",
+          "tertiary": "Tiny editorial case tag: EXPOSED ROUTE; a known clue marker pulses.",
+          "sound": "Folder slam at 0.000; ventilation cuts briefly.",
+          "edit": "Immediate impact; very fast push to printer.",
+          "claimIds": [
+            "F20",
+            "F47"
+          ],
+          "asset": "V3-G01"
+        },
+        {
+          "start": 1.5,
+          "end": 3,
+          "speaker": "Consigliere",
+          "speech": "You mean… the noticeboard?",
+          "caption": "You mean… the noticeboard?",
+          "primary": "Hard cut to mundane public noticeboard with the same blank paper.",
+          "tertiary": "Editorial PUBLIC NOTICE; actor narration, not an agent transcript.",
+          "sound": "Printer squeak at 1.500, absurdly cheerful pin ping.",
+          "edit": "Prediction error: interrogation → municipal hallway.",
+          "claimIds": [
+            "F21",
+            "F47"
+          ],
+          "asset": "V3-G02"
+        },
+        {
+          "start": 3,
+          "end": 4.5,
+          "speaker": "Don",
+          "speech": "Our route got exposed.",
+          "caption": "Our route got exposed.",
+          "primary": "Map shows diverted route → market established → exposed, all as prior events.",
+          "tertiary": "Actual authorized predecessor captures; mark EARLIER, no hidden culprit.",
+          "sound": "Three muted event clicks at 3.000/3.500/4.000.",
+          "edit": "Fast flashback cards from the demonstrated network branch.",
+          "claimIds": [
+            "F04",
+            "F26"
+          ],
+          "asset": "EDIT-V3-PRIOR"
+        },
+        {
+          "start": 4.5,
+          "end": 6,
+          "speaker": "Consigliere",
+          "speech": "Check what you can see.",
+          "caption": "Check what you can see.",
+          "primary": "Printer points with a blank receipt toward three permission cards.",
+          "tertiary": "CONSIGLIERE CONTEXT: OWN / SHARED / PUBLIC; actual release-scoped context, no autonomous action execution.",
+          "sound": "Soft scope-selection click at 4.650.",
+          "edit": "Match-cut printer to the actual released adviser view; attribute scripted voice to the character, not a fabricated model-call receipt.",
+          "claimIds": [
+            "F22",
+            "F43",
+            "F44"
+          ],
+          "asset": "V3-G01"
+        },
+        {
+          "start": 6,
+          "end": 7.5,
+          "speaker": "Auditor",
+          "speech": "Notice at the docks.",
+          "caption": "Notice at the docks.",
+          "primary": "Auditor photographs an unbranded public notice, text added from actual known clue.",
+          "tertiary": "First original investigator’s authorized notice discovery.",
+          "sound": "Camera click at 6.000.",
+          "edit": "Hard flash-like exposure bump, not strobe; source card appears.",
+          "claimIds": [
+            "F20",
+            "F21"
+          ],
+          "asset": "V3-G02"
+        },
+        {
+          "start": 7.5,
+          "end": 9,
+          "speaker": "Rookie",
+          "speech": "Matching copy at the Foundry.",
+          "caption": "Matching copy at the Foundry.",
+          "primary": "Rookie lifts separate printer copy and crafted-seal reference.",
+          "tertiary": "Second original investigator’s authorized printer-copy evidence; provenance captured.",
+          "sound": "Paper peel at 7.500; stamp alignment click.",
+          "edit": "Notice square match-cut to printer copy; distinct source labels.",
+          "claimIds": [
+            "F12",
+            "F14",
+            "F21"
+          ],
+          "asset": "V3-G03"
+        },
+        {
+          "start": 9,
+          "end": 10.5,
+          "speaker": "Don",
+          "speech": "Two screenshots. Case closed.",
+          "caption": "Two screenshots. Case closed.",
+          "primary": "Two copied images slap together on a crowded conspiracy board.",
+          "tertiary": "Editorial WRONG INFERENCE badge appears; these are copies, not new independent discoveries.",
+          "sound": "Overconfident double click at 9.000.",
+          "edit": "Red string whips across; no guilty player portrait.",
+          "claimIds": [
+            "F21",
+            "F47"
+          ],
+          "asset": "V3-G03"
+        },
+        {
+          "start": 10.5,
+          "end": 12,
+          "speaker": "Consigliere",
+          "speech": "Two independent sources.",
+          "caption": "Two independent sources.",
+          "primary": "Copied cards get crossed out; actual original notice and printer-copy sources take their place.",
+          "tertiary": "Captured original-investigator/source distinction; no duplicated evidence count.",
+          "sound": "Two deliberate tack clicks at 10.500 and 11.200.",
+          "edit": "Board simplifies to two source nodes; correction is unmissable.",
+          "claimIds": [
+            "F21"
+          ],
+          "asset": "EDIT-V3-EVIDENCE"
+        },
+        {
+          "start": 12,
+          "end": 13.5,
+          "speaker": "Consigliere",
+          "speech": "Disclosure. Not guilt.",
+          "caption": "Disclosure. Not guilt.",
+          "primary": "Red GUILTY stamp freezes before touching paper, then slides away.",
+          "tertiary": "Exact supported conclusion: public disclosure corroborated; culprit unknown.",
+          "sound": "Music off at 12.000; stamp squeak only.",
+          "edit": "Keep four words large, two pages; do not flash a named suspect.",
+          "claimIds": [
+            "F47"
+          ],
+          "asset": "V3-G03"
+        },
+        {
+          "start": 13.5,
+          "end": 15,
+          "speaker": "Rookie",
+          "speech": "He has a private report.",
+          "caption": "He has a private report.",
+          "primary": "Anonymous other-player notebook icon beside separate current-player view.",
+          "tertiary": "Editorial representation of access scope; no invented private contents.",
+          "sound": "Closed-folder click at 13.700.",
+          "edit": "Two panes separated by thick border.",
+          "claimIds": [
+            "F22",
+            "F47"
+          ],
+          "asset": "V3-G04"
+        },
+        {
+          "start": 15,
+          "end": 16.5,
+          "speaker": "Consigliere",
+          "speech": "His. You can’t read it.",
+          "caption": "His. You can’t read it.",
+          "primary": "Private pane stays fully closed; current-player public evidence remains readable.",
+          "tertiary": "PERMISSION BOUNDARY; no hidden count, outline, secret name or blurred readable text.",
+          "sound": "Firm dry deny tap at 15.000.",
+          "edit": "No hacking/glitch unlock animation; small printer-eye crop.",
+          "claimIds": [
+            "F22",
+            "F44"
+          ],
+          "asset": "V3-G04"
+        },
+        {
+          "start": 16.5,
+          "end": 18,
+          "speaker": "Don",
+          "speech": "Fine. Form the operation.",
+          "caption": "Fine. Form the operation.",
+          "primary": "Two operation seats replace the board; Don watches.",
+          "tertiary": "Consigliere prepares a proposal for human review; actual trace-disclosure operation uses Auditor as underboss/organizer, Rookie as runner; Don can approve.",
+          "sound": "Two chair clicks at 16.500 and 17.200.",
+          "edit": "Whip pan from board to contributions table.",
+          "claimIds": [
+            "F07",
+            "F09"
+          ],
+          "asset": "V3-G05"
+        },
+        {
+          "start": 18,
+          "end": 19.5,
+          "speaker": "Rookie",
+          "speech": "I’ll bring the seal.",
+          "caption": "I’ll bring the seal.",
+          "primary": "Rookie voluntarily slides actual represented cargo-seal prop into tray.",
+          "tertiary": "Captured runner item and required wire contribution; no hidden automatic transfer.",
+          "sound": "Satisfying seal clunk at 18.000.",
+          "edit": "Close-up contribution → actual custody row.",
+          "claimIds": [
+            "F12",
+            "F13",
+            "F46"
+          ],
+          "asset": "V3-G05"
+        },
+        {
+          "start": 19.5,
+          "end": 21,
+          "speaker": "Auditor",
+          "speech": "I’ll bring the evidence.",
+          "caption": "I’ll bring the evidence.",
+          "primary": "Auditor places two source cards beside operation.",
+          "tertiary": "Authorized corroborated intelligence; same-Crew/social prerequisite from captured operation.",
+          "sound": "Two quiet paper flicks at 19.500.",
+          "edit": "Known requirements turn satisfied from real capture.",
+          "claimIds": [
+            "F07",
+            "F21"
+          ],
+          "asset": "V3-G05"
+        },
+        {
+          "start": 21,
+          "end": 22.5,
+          "speaker": "Consigliere",
+          "speech": "Your boss still approves.",
+          "caption": "Your boss still approves.",
+          "primary": "Don approves; Auditor, visibly the underboss/organizer, sees the ready command and confirmation. Execution waits until 22.500.",
+          "tertiary": "Human confirmation remains explicit and current; player actions, no AI self-execution.",
+          "sound": "Mouse click at 21.550 then restrained readiness ping.",
+          "edit": "Distinct authorized accounts for approval and execution; do not merge consent into AI response.",
+          "claimIds": [
+            "F06",
+            "F46"
+          ],
+          "asset": "EDIT-V3-APPROVAL"
+        },
+        {
+          "start": 22.5,
+          "end": 24,
+          "speaker": "Don",
+          "speech": "Document the disclosure.",
+          "caption": "Document the disclosure.",
+          "primary": "Auditor executes as the authorized underboss/organizer; a clean case record replaces the chaotic accusation board.",
+          "tertiary": "Actual trace_disclosure result: public_trace; no verdict of guilt.",
+          "sound": "Stamp impact at 22.650.",
+          "edit": "Show before/after known state; preserve exactly what the captured UI discloses.",
+          "claimIds": [
+            "F26",
+            "F47"
+          ],
+          "asset": "V3-G06"
+        },
+        {
+          "start": 24,
+          "end": 25.5,
+          "speaker": "Rookie",
+          "speech": "So nobody’s the rat?",
+          "caption": "So nobody’s the rat?",
+          "primary": "Rookie looks from record to printer; question mark is editorial.",
+          "tertiary": "UNCORROBORATED GUILT; known disclosure record stays visible.",
+          "sound": "Low comic wobble at 24.000.",
+          "edit": "Tight face crop, then printer; no exoneration state invented.",
+          "claimIds": [
+            "F47"
+          ],
+          "asset": "V3-G01"
+        },
+        {
+          "start": 25.5,
+          "end": 27,
+          "speaker": "Consigliere",
+          "speech": "You haven’t proved that.",
+          "caption": "You haven’t proved that.",
+          "primary": "Blank receipt stops mid-feed; eye tilts by camera crop only.",
+          "tertiary": "History contains action, not an invented motive.",
+          "sound": "Music off at 25.500; paper motor stops.",
+          "edit": "Hold deadpan beat for 1.5s, tiny 3% zoom.",
+          "claimIds": [
+            "F47"
+          ],
+          "asset": "V3-G01"
+        },
+        {
+          "start": 27,
+          "end": 28.5,
+          "speaker": "Don",
+          "speech": "And the city keeps this?",
+          "caption": "And the city keeps this?",
+          "primary": "Reload/time-skip graphic; same permitted consequence still present.",
+          "tertiary": "Actual persisted event after reload/restart; visibility remains filtered.",
+          "sound": "Reload pip at 27.150.",
+          "edit": "Cut from staged paper to genuine release history capture.",
+          "claimIds": [
+            "F27"
+          ],
+          "asset": "EDIT-V3-HISTORY"
+        },
+        {
+          "start": 28.5,
+          "end": 30,
+          "speaker": "Consigliere",
+          "speech": "The consequence. Yes.",
+          "caption": "The consequence. Yes.",
+          "primary": "History card stays; main caption pivots to game-state reveal.",
+          "tertiary": "Large STAGED VISUALS · GAME STATE; editorial NOT A CUTSCENE appears beside actual state capture.",
+          "sound": "Printer resumes at 28.500; brief low resolving note.",
+          "edit": "No new opportunity invented for this terminal branch. Earlier exposure → investigation already proved the new-work connection.",
+          "claimIds": [
+            "F04",
+            "F27"
+          ],
+          "asset": "EDIT-V3-HISTORY"
+        },
+        {
+          "start": 30,
+          "end": 31.5,
+          "speaker": "Don",
+          "speech": "OMERTÀ.",
+          "caption": "OMERTÀ.",
+          "primary": "Wordmark instant on blank receipt background.",
+          "tertiary": "A tiny anonymous evidence node keeps pulsing beside the wordmark.",
+          "sound": "Brand stamp at 30.000.",
+          "edit": "Static brand, no slow reveal.",
+          "claimIds": [
+            "F01"
+          ],
+          "asset": "EDIT-V3-END"
+        },
+        {
+          "start": 31.5,
+          "end": 33,
+          "speaker": "Consigliere",
+          "speech": "Bring receipts.",
+          "caption": "Bring receipts.",
+          "primary": "Receipt slides under opening dossier; Don hand returns to slam position.",
+          "tertiary": "CTA: BRING RECEIPTS.",
+          "sound": "Paper zip at 31.550, room tone tail.",
+          "edit": "Last pose matches opening; loop slam supplies the next beat.",
+          "claimIds": [
+            "F21"
+          ],
+          "asset": "EDIT-V3-END"
+        }
+      ],
+      "shots": [
+        {
+          "id": "V3-G01",
+          "sourceDuration": 5,
+          "purpose": "Hook and adviser character reactions",
+          "visual": "Don opposite a cheap single-eyed printer and one dossier.",
+          "characters": "C02; C03; C01 optional reverse crop",
+          "action": "Folder lands on desk; printer paper advances slightly; Don waits.",
+          "environment": "Dim back room with painfully ordinary office equipment",
+          "camera": "Low medium close-up, tiny editorial push only",
+          "lighting": "Harsh desk lamp with warm edge; no glamor fog",
+          "audio": "Folder slam, printer squeak/motor, dry character dialogue",
+          "dialogue": "Find the rat. / Check what you can see. / So nobody’s the rat? / You haven’t proved that.",
+          "caption": "Verbatim; PERMITTED CONTEXT label on adviser inset",
+          "uiOverlay": "Case tag; later released OWN/SHARED/PUBLIC context panel",
+          "transition": "Hard cut to ordinary noticeboard",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "C02",
+            "C03",
+            "refs/V3-G01-first.png"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Don’s hand poised inches above a blank dossier, single-eyed receipt printer opposite, Rookie at edge; blank paper tongue, no real text. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Dossier lands immediately; printer advances a short blank strip; Don glances at it. No face on printer, no autonomous hand, no text. Hold printer still long enough for reaction crops. Camera: Low medium close-up, tiny editorial push only. Lighting: Harsh desk lamp with warm edge; no glamor fog. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Printer grows extra eyes, identifies a named culprit, generates chat text, or reads another person’s private document.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V3-G02",
+          "sourceDuration": 5,
+          "purpose": "The supposed secret is public",
+          "visual": "Ordinary public noticeboard in a harbor corridor.",
+          "characters": "C04",
+          "action": "Photographs one blank posted sheet.",
+          "environment": "Docks corridor with cheap cork board",
+          "camera": "Flat surveillance-like wide then slight crop",
+          "lighting": "Unflattering institutional fluorescent",
+          "audio": "Absurd pin ping, camera click",
+          "dialogue": "You mean… the noticeboard? / Notice at the docks.",
+          "caption": "PUBLIC NOTICE; exact spoken lines",
+          "uiOverlay": "Captured public source after clue admission, no unearned private data",
+          "transition": "Square notice match-cut to Foundry copy",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C04",
+            "approved-blank-notice-prop",
+            "refs/V3-G02-first.png",
+            "actual-authorized-notice-clue"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Auditor facing cheap cork noticeboard in plain harbor corridor; one large blank sheet, no names, public hallway context, no branding. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Auditor raises phone and takes one photo of blank notice, then lowers phone. Camera is nearly static, like cheap security footage; phone display stays unreadable. Camera: Flat surveillance-like wide then slight crop. Lighting: Unflattering institutional fluorescent. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Implied secret hacking, readable invented paper, identifying real person, or glamorous cinematic tracking.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V3-G03",
+          "sourceDuration": 5,
+          "purpose": "Independent evidence versus copied accusation",
+          "visual": "Foundry printer copy, cargo seal and a deliberately messy evidence board.",
+          "characters": "C01; C04 hands only",
+          "action": "Places second blank source beside first; a red blank stamp hovers then moves away.",
+          "environment": "Foundry workbench doubling as conspiracy desk",
+          "camera": "Overhead macro with tiny drift",
+          "lighting": "Green task light; harsh red stamp prop accent",
+          "audio": "Paper peel, tack clicks, awkward stamp squeak",
+          "dialogue": "Matching copy… / Two screenshots… / Disclosure. Not guilt.",
+          "caption": "Exact lines; editorial WRONG INFERENCE / NOT GUILT",
+          "uiOverlay": "Real earned source cards; red strings only connect supported facts",
+          "transition": "Red-string motion becomes permission divider",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "C04-hand-detail",
+            "approved-cargo-seal",
+            "refs/V3-G03-first.png",
+            "actual-printer-copy-and-independent-claim-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Two separate blank documents, one plain metal cargo seal, red rubber stamp with blank face, loose red string; Rookie red-ring hand at one side. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Place second document beside first; align seal next to copy without stamping new evidence; blank red stamp starts lowering, stops, then withdraws. All written text is added in edit. Camera: Overhead macro with tiny drift. Lighting: Green task light; harsh red stamp prop accent. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Documents magically gain independent status, guilty face/photo appears, seal duplicates, or stamp lands as a verdict.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V3-G04",
+          "sourceDuration": 5,
+          "purpose": "Private information boundary made physical",
+          "visual": "Two notebooks separated by upright opaque divider.",
+          "characters": "C03 at edge; C01 hands",
+          "action": "Rookie stops at divider and keeps hands on his own side.",
+          "environment": "Office table",
+          "camera": "Dead-on symmetrical close framing",
+          "lighting": "Neutral utilitarian light",
+          "audio": "Folder click, dry deny tap",
+          "dialogue": "He has a private report. / His. You can’t read it.",
+          "caption": "Exact lines; PERMISSION BOUNDARY",
+          "uiOverlay": "Editorial scopes, not a native endpoint exposing whether someone has a secret report",
+          "transition": "Divider edge whip to operation table",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C03",
+            "C01-hand-detail",
+            "refs/V3-G04-first.png"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Two closed notebooks with opaque board between them, Rookie’s hand only on near notebook, printer at left edge; no labels, locks or readable hidden paper. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Hand reaches toward divider, pauses safely and returns to own closed notebook. Other notebook remains closed. No glowing scanner, hacking, transparency or revealed contents. Camera: Dead-on symmetrical close framing. Lighting: Neutral utilitarian light. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Private page is visible through blur, extra secret metadata appears, or boundary is crossed.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V3-G05",
+          "sourceDuration": 5,
+          "purpose": "Separate players supply physical and informational prerequisites",
+          "visual": "Rookie with seal, Auditor with two blank evidence cards, Don watching.",
+          "characters": "C01; C02; C04",
+          "action": "Rookie deposits seal; Auditor sets cards down; Don waits for their completion.",
+          "environment": "Same shabby operation table",
+          "camera": "Fixed medium-wide, hand crops in edit",
+          "lighting": "Warm practical bulb, flat enough to read gestures",
+          "audio": "Seal clunk, two paper flicks, chair clicks",
+          "dialogue": "Fine. Form the operation. / I’ll bring the seal. / I’ll bring the evidence.",
+          "caption": "Exact lines, no feature list",
+          "uiOverlay": "Captured two-role operation, actual wire requirement and known evidence",
+          "transition": "Hard cut to real approval panel",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C01",
+            "C02",
+            "C04",
+            "approved-cargo-seal",
+            "refs/V3-G05-first.png",
+            "actual-operation-role-contribution-captures"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Rookie holds plain cargo seal above tray; Auditor holds two blank source cards; Don sits behind without touching contributions. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Rookie places seal into tray voluntarily; Auditor lays down two cards; Don nods only after both finish. Sequential natural gestures, no transfer of private inventory by someone else. Camera: Fixed medium-wide, hand crops in edit. Lighting: Warm practical bulb, flat enough to read gestures. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Don seizes another player’s assets, extra participants imply four mandatory seats, duplicate seal, or offscreen unseen approval.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        },
+        {
+          "id": "V3-G06",
+          "sourceDuration": 5,
+          "purpose": "Consequence is recorded, guilt remains unresolved",
+          "visual": "Blank record card clipped to file; prior accusation materials stay separate.",
+          "characters": "C04 hand",
+          "action": "Clips clean card to folder without destroying the earlier papers.",
+          "environment": "Office archive shelf",
+          "camera": "Close static documentary crop",
+          "lighting": "Plain overhead white light",
+          "audio": "Dry consequence stamp and reload pip in post",
+          "dialogue": "Document the disclosure.",
+          "caption": "Exact line; PUBLIC DISCLOSURE DOCUMENTED editorial label",
+          "uiOverlay": "Actual permitted state/event; no secret actor or invented guilt finding",
+          "transition": "Paper edge match-cut into real persistent history UI",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "referenceAssets": [
+            "C04-hand-detail",
+            "refs/V3-G06-first.png",
+            "actual-trace-disclosure-result-and-history"
+          ],
+          "firstFramePrompt": "Use the approved character/prop reference images without changing their identities. Auditor’s gloved hand near plain open file, clean blank record card and loose blank papers to one side; original brass clip, no writing. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "generationPrompt": "Animate the approved scene frame. Hand clips clean blank card to file; leaves previous papers intact and closes the cover halfway, preserving readable compositing plane for overlay. No destruction, confession or verdict. Camera: Close static documentary crop. Lighting: Plain overhead white light. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Shot-specific rejection: Paper burns/erases history, guilty verdict, public identity exposure or sudden reward tokens.",
+          "settings": {
+            "duration": "5",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264",
+            "inputSeed": null,
+            "seedPolicy": "I2V has no input seed; retain request ID, reference hashes and returned seed."
+          }
+        }
+      ],
+      "editNotes": [
+        "Three prediction errors: mob interrogation → public noticeboard at 1.500; conspiratorial screenshot pile → source standards at 10.500; private-report tease → access denied at 15.000.",
+        "The printer performs the release Consigliere persona. Actual scoped adviser UI demonstrates permitted context and a staged proposal; use genuine release captures rather than passing scripted character dialogue off as a model transcript.",
+        "L04 assumes the adviser and campaigns share the same released build. Capture the real own/allowed/shared context and proposal; keep human confirmation and executor authority in the next beats.",
+        "Earlier route exposure legitimately enables the investigation. Trace-disclosure completion has a persistent result but no guaranteed extra opportunity; the last act ends on history, not an invented next quest.",
+        "For “NOT A CUTSCENE,” pair actual release state capture with STAGED VISUALS · GAME STATE. Acting footage itself is staged. Do not use the phrase over acting alone.",
+        "Optional fourth joke: a piece of red string is attached to the printer’s stapler, never to a named player. It rewards replay without smuggling in a clue."
+      ],
+      "assets": [
+        "C01/C02/C03/C04 selected reference images; printer blank-paper prop",
+        "Actual predecessor diversion → market establishment → exposure captures, permitted viewer only",
+        "Two original independent investigators and their separately earned notice/printer-copy evidence",
+        "Source-sharing/corroboration capture; duplicate screenshots must not be counted as original evidence",
+        "Released Consigliere own/shared/public context and operation proposal, on the same build as the campaign",
+        "Actual two-role trace-disclosure operation: Auditor has underboss rank and organizer/evidence seat; Rookie supplies seal/wire; Don approves, Auditor executes; same-Crew prerequisites verified",
+        "Actual public_trace result and authorized persistent history after reload; no invented follow-up opportunity",
+        "Blank notice/cargo seal/evidence-board first frames; original wordmark",
+        "Four voice parts, suspense motif, ventilation/printer/folder effects and permission-card graphics"
+      ],
+      "variants": [
+        {
+          "id": "V3-H1",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "The rat used a noticeboard.",
+          "caption": "THE RAT USED A NOTICEBOARD.",
+          "visual": "Don holds a blank suspect dossier beside a receipt printer wearing one googly eye.",
+          "generationPrompt": "Animate the approved alternate opening frame: Don taps blank dossier; printer feeds one blank strip without naming anyone. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Don holds a blank suspect dossier beside a receipt printer wearing one googly eye.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. No actual rat, guilty player identity or AI detection display.",
+          "bridge": "At 1.500 printer responds “You mean… the noticeboard?” Opening is the Don’s accusation, immediately questioned, not a factual guilt claim.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V3-H2",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "My conspiracy has permissions.",
+          "caption": "MY CONSPIRACY HAS PERMISSIONS.",
+          "visual": "Rookie stares at two notebooks divided by an opaque screen while printer sits judgmentally beside him.",
+          "generationPrompt": "Animate the approved alternate opening frame: Rookie leans left to peek but divider fully blocks view; he returns to center. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Rookie stares at two notebooks divided by an opaque screen while printer sits judgmentally beside him.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. No reveal of another notebook’s contents or supernatural surveillance.",
+          "bridge": "At 1.500 public-notice reply plays over a hard cut to noticeboard; same rest of edit.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        },
+        {
+          "id": "V3-H3",
+          "duration": 1.5,
+          "generatedSourceDuration": 4,
+          "speech": "The evidence said “skill issue.”",
+          "caption": "THE EVIDENCE SAID “SKILL ISSUE.”",
+          "visual": "Don pushes messy blank paper pile toward printer; printer’s blank receipt droops onto pile.",
+          "generationPrompt": "Animate the approved alternate opening frame: Paper strip advances and flops onto blank folder, Don pauses. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "firstFramePrompt": "Using the same approved cast identities, compose this opening still: Don pushes messy blank paper pile toward printer; printer’s blank receipt droops onto pile.. Original fictional adults and original props only. Vertical 9:16 frame. Tobacco brown, dirty cream, burgundy and institutional green; cheap practical lighting, lightly compressed phone-camera texture, awkward deadpan physical comedy. Keep primary action inside the middle two thirds. Leave lower central space for editorial captions and an upper safe strip for a contextual game-state label. Blank screens and papers; all typography will be composited later. One coherent shot, no internal montage, no spoken dialogue, no background music. No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post.",
+          "negativePromptAndFailureConditions": "No celebrity likeness, recognizable franchise character, third-party logo, watermark, readable text, fake game interface, floating financial numbers, duplicated fingers, extra limbs, face changes, morphing wardrobe, liquid metal, accidental object teleportation, gore, cinematic slow logo reveal or neon cyberpunk skyline. Keep any mouth mostly closed; dialogue is added offscreen in post. Do not generate that phrase on paper or imply a real model made a culpability judgment.",
+          "bridge": "At 1.500 correction begins. Caption carries EDITORIAL JOKE in tertiary layer; no claim of literal game evidence text.",
+          "model": "bytedance/seedance-2.5/image-to-video",
+          "settings": {
+            "duration": "4",
+            "aspect_ratio": "auto",
+            "resolution": "720p",
+            "generate_audio": false,
+            "bitrate_mode": "high",
+            "codec": "H264"
+          },
+          "referenceAssets": [
+            "Approved recurring character reference(s) shown in this variant",
+            "Dedicated 9:16 alternate first frame",
+            "Same opening music/SFX stem as master"
+          ]
+        }
+      ]
+    }
+  ]
+}

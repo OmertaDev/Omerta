@@ -407,7 +407,6 @@ function depotActions(ch, depot) {
   { treasury: -replenish.total, inventory: replenish.escrow, confidence: 0.7,
     basis: 'Commits business cash to supplier escrow within owner-set terms; the listing fee is an expense and future customer demand is uncommitted.' })];
 }
-
 async function territoryActions(db, ch, owned) {
   if (!owned.gangId || safeHoused(ch)) return [];
   const operations = (await territoryOf(db, owned.gangId))

@@ -1,7 +1,7 @@
 // Additive case selection preserves HTTP authentication, rollout and strict query parsing.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { FURNACE_IDS as ids } from '../src/content/furnace-ledger.js';
 
 assert(!process.env.DATABASE_URL, 'This HTTP lane uses only its isolated memory database');

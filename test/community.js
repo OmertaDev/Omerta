@@ -28,7 +28,7 @@ import assert from 'node:assert';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { SELL_TAX } from '../src/rules.js';
 import * as Community from '../src/community.js';
 import { recordFeePayment } from '../src/fees.js';

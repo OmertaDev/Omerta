@@ -9,13 +9,18 @@ import { encodeDeployData, encodeFunctionData, encodeAbiParameters, getContractA
 
 const ROOT = fileURLToPath(new URL('../omerta-contracts/', import.meta.url));
 export const MARKET_V2_HOOK_FLAGS = 0x35c4n;
+export const RESTRICTED_MARKET_POLICY_ID = keccak256(toHex('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS'));
+export const RESTRICTED_MARKET_SUPPLY = 100_000_000n * 10n ** 18n;
 export const MARKET_V2_ROLES = [
   ['polFunding', 'OmertaReserveFundingV2'], ['reserveFunding', 'OmertaReserveFundingV2'],
   ['gameSettlement', 'OmertaGameSettlementV2'], ['hook', 'OmertaHookV2'],
   ['marketState', 'OmertaMarketStateV2'], ['turf', 'OmertaTurfV2'],
   ['turfFeeBridge', 'OmertaTurfFeeBridgeV2'], ['controller', 'OmertaStabilityControllerV2'],
   ['bond', 'OmertaInventoryBondV2'], ['arbitrage', 'OmertaArbitrageV2'], ['commitment', 'OmertaCommitmentVaultV2'],
+  ['router', 'OmertaSwapRouterV2'],
 ];
+const RESTRICTED_OPERATORS = { hook: 2, controller: 2, bond: 2, turf: 2, arbitrage: 1, router: 1, positionManager: 1, permit2: 1 };
+const RESTRICTED_CONTRACT_HOLDERS = ['polFunding', 'reserveFunding', 'turfFeeBridge'];
 const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
 const json = (v) => JSON.stringify(v, (_, x) => typeof x === 'bigint' ? x.toString() : x, 2);
 const clone = (v) => JSON.parse(json(v));
@@ -80,7 +85,8 @@ export function loadMarketV2Artifact(contract, { contractsRoot = ROOT } = {}) {
   const sourceHashes = {};
   for (const [source, info] of Object.entries(m.sources)) {
     const p = path.resolve(root, source);
-    const mount = source.startsWith('lib/permit2/') ? fs.realpathSync(path.join(root, 'lib', 'permit2')) : root;
+    const dependency = /^lib\/(openzeppelin-contracts|v4-core|v4-periphery|permit2)\//.exec(source);
+    const mount = dependency ? fs.realpathSync(path.join(root, 'lib', dependency[1])) : root;
     if (!within(root, p) || !within(mount, fs.realpathSync(p))) throw Error(`${contract}: source outside approved source/dependency mount`);
     const sourceBytes = fs.readFileSync(p);
     const actual = keccak256(toHex(sourceBytes));
@@ -156,15 +162,16 @@ function checkedArgs(abi, args, name) {
 export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artifactLoader = loadMarketV2Artifact } = {}) {
   const m = clone(obj('manifest', input)); noSecrets(m);
   closed('manifest', m, ['schemaVersion', 'chainId', 'localRehearsal', 'sourceRevision', 'startingNonce', 'roles', 'snapshot',
-    'external', 'create2', 'artifactHashes', 'policies', 'season', 'bootstrap', 'funding']);
+    'external', 'restrictedMarket', 'create2', 'artifactHashes', 'policies', 'season', 'bootstrap', 'funding']);
   if (typeof m.localRehearsal !== 'boolean') throw Error('localRehearsal must explicitly be true or false');
-  if (m.schemaVersion !== 1) throw Error('schemaVersion must be 1');
+  if (m.schemaVersion !== 2) throw Error('schemaVersion must be 2 for the restricted market');
   integer('chainId', m.chainId, 1, Number.MAX_SAFE_INTEGER);
   if (m.chainId === 31337 && m.localRehearsal !== true) throw Error('31337 requires localRehearsal true');
   if (!/^[0-9a-f]{40}$/i.test(m.sourceRevision || '')) throw Error('sourceRevision must explicitly pin a full source commit');
   const r = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'capitalProvider']
     .map(k => [k, address(`roles.${k}`, m.roles?.[k])]));
   closed('roles', m.roles, Object.keys(r));
+  if (r.capitalProvider !== r.safe) throw Error('Restricted market capitalProvider must be the token-owning Safe; pre-seal external allocation is forbidden');
   if (r.deployer === r.safe || r.deployer === r.safeExecutor || r.deployer === r.capitalProvider || r.deployer === r.adjudicator || r.deployer === r.initializer)
     throw Error('Deployment nonce owner must be separate from setup/initialization/funding callers');
   const external = Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2'].map(k => [k, {
@@ -172,6 +179,32 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   }]));
   closed('external', m.external, Object.keys(external));
   for (const k of Object.keys(external)) closed(`external.${k}`, m.external[k], ['address', 'runtimeHash']);
+  const restricted = obj('restrictedMarket', m.restrictedMarket);
+  closed('restrictedMarket', restricted, ['policyId', 'operatorRuntimeHashes', 'additionalOperators', 'holderRuntimeHashes', 'contractHolders']);
+  exact('restrictedMarket.policyId', hash('restrictedMarket.policyId', restricted.policyId), RESTRICTED_MARKET_POLICY_ID);
+  closed('restrictedMarket.operatorRuntimeHashes', restricted.operatorRuntimeHashes, Object.keys(RESTRICTED_OPERATORS));
+  for (const role of Object.keys(RESTRICTED_OPERATORS)) hash(`restrictedMarket.operatorRuntimeHashes.${role}`, restricted.operatorRuntimeHashes[role]);
+  for (const role of ['positionManager', 'permit2']) {
+    exact(`restrictedMarket.operatorRuntimeHashes.${role}`, restricted.operatorRuntimeHashes[role], external[role].runtimeHash);
+  }
+  if (!Array.isArray(restricted.additionalOperators) || restricted.additionalOperators.length > 32) throw Error('restrictedMarket.additionalOperators: explicit bounded array required');
+  const additionalOperators = restricted.additionalOperators.map((operator, i) => {
+    const at = `restrictedMarket.additionalOperators[${i}]`;
+    closed(at, operator, ['address', 'role', 'runtimeHash', 'purpose']);
+    if (operator.role !== 2) throw Error(`${at}.role: additional operators must be reviewed ProtocolCustody contracts`);
+    if (typeof operator.purpose !== 'string' || !operator.purpose.trim() || operator.purpose.length > 200) throw Error(`${at}.purpose: explicit custody purpose required`);
+    return { address: address(`${at}.address`, operator.address), role: operator.role,
+      runtimeHash: hash(`${at}.runtimeHash`, operator.runtimeHash), purpose: operator.purpose };
+  });
+  closed('restrictedMarket.holderRuntimeHashes', restricted.holderRuntimeHashes, RESTRICTED_CONTRACT_HOLDERS);
+  for (const role of RESTRICTED_CONTRACT_HOLDERS) hash(`restrictedMarket.holderRuntimeHashes.${role}`, restricted.holderRuntimeHashes[role]);
+  if (!Array.isArray(restricted.contractHolders) || restricted.contractHolders.length > 32) throw Error('restrictedMarket.contractHolders: explicit bounded array required');
+  const additionalContractHolders = restricted.contractHolders.map((holder, i) => {
+    const at = `restrictedMarket.contractHolders[${i}]`;
+    closed(at, holder, ['address', 'runtimeHash', 'purpose']);
+    if (typeof holder.purpose !== 'string' || !holder.purpose.trim() || holder.purpose.length > 200) throw Error(`${at}.purpose: explicit receiving-only purpose required`);
+    return { address: address(`${at}.address`, holder.address), runtimeHash: hash(`${at}.runtimeHash`, holder.runtimeHash), purpose: holder.purpose };
+  });
   closed('snapshot', m.snapshot, ['timestamp', 'blockNumber', 'blockHash']);
   const now = uint('snapshot.timestamp', m.snapshot?.timestamp, 64);
   uint('snapshot.blockNumber', m.snapshot?.blockNumber, 64, true); hash('snapshot.blockHash', m.snapshot?.blockHash);
@@ -192,6 +225,14 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   }));
   const deployed = {};
   MARKET_V2_ROLES.forEach(([role], i) => { if (role !== 'hook') deployed[role] = getContractAddress({ from: r.deployer, nonce: nonce + BigInt(i) }); });
+  for (const [role, contract] of MARKET_V2_ROLES) {
+    const field = role in RESTRICTED_OPERATORS ? 'operatorRuntimeHashes' : RESTRICTED_CONTRACT_HOLDERS.includes(role) ? 'holderRuntimeHashes' : null;
+    if (!field) continue;
+    const evidence = artifacts[contract].evidence;
+    if (Object.keys(evidence.immutableReferences).length && restricted[field][role].toLowerCase() === evidence.runtimeTemplateKeccak256) {
+      throw Error(`restrictedMarket.${field}.${role}: immutable runtime template is not actual deployed runtime evidence`);
+    }
+  }
   const p = obj('policies', m.policies);
   closed('policies', p, ['pool', 'hook', 'market', 'turf', 'stability', 'bond', 'arbitrage', 'commitment']);
   closed('policies.pool', p.pool, ['fee', 'tickSpacing']);
@@ -200,7 +241,7 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   const spacing = integer('pool.tickSpacing', p.pool?.tickSpacing, 1, 200);
   const opening = obj('hook.opening', p.hook?.opening);
   closed('hook.opening', opening, ['blocks', 'buyBps', 'maxBuyQuote']);
-  integer('opening.blocks', opening.blocks, 0, 200); integer('opening.buyBps', opening.buyBps, 0, 1000);
+  integer('opening.blocks', opening.blocks, 0, 200); integer('opening.buyBps', opening.buyBps, 0, 50);
   uint('opening.maxBuyQuote', opening.maxBuyQuote, 128, true);
   if (opening.blocks === 0 && (opening.buyBps !== 0 || opening.maxBuyQuote !== '0')) throw Error('Disabled opening cannot carry a fee/cap');
   integer('surgeFullTicks', p.hook.surgeFullTicks, 1, 100_000);
@@ -209,12 +250,27 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   args.polFunding = [r.safe, external.omr.address, 0]; args.reserveFunding = [r.safe, external.omr.address, 5];
   args.gameSettlement = [r.safe, r.adjudicator];
   args.hook = [external.poolManager.address, external.omr.address, r.initializer, fee, spacing,
-    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration, r.safe];
+    [r.dev, r.rwa, r.community, deployed.polFunding, deployed.reserveFunding], opening, p.hook.surgeFullTicks, p.hook.epochDuration];
   const hookArtifact = artifacts.OmertaHookV2;
   const hookInit = encodeDeployData({ abi: hookArtifact.abi, bytecode: hookArtifact.bytecode,
     args: checkedArgs(hookArtifact.abi, args.hook, 'hook') });
   const mined = mineMarketV2Hook(factory, keccak256(hookInit), start, attempts);
   deployed.hook = mined.address;
+  const operatorAddresses = Object.fromEntries(Object.keys(RESTRICTED_OPERATORS).map(role => [role, external[role]?.address || deployed[role]]));
+  const usedOperatorAddresses = new Set([external.omr.address, external.poolManager.address, ...Object.values(operatorAddresses)].map(x => x.toLowerCase()));
+  if (usedOperatorAddresses.size !== Object.keys(operatorAddresses).length + 2) throw Error('Restricted settlement identities must be distinct');
+  for (const operator of additionalOperators) {
+    const lower = operator.address.toLowerCase();
+    if (usedOperatorAddresses.has(lower) || Object.values(r).some(x => x.toLowerCase() === lower)) throw Error('Duplicate or public-role additional operator');
+    usedOperatorAddresses.add(lower);
+  }
+  const contractHolderAddresses = Object.fromEntries(RESTRICTED_CONTRACT_HOLDERS.map(role => [role, deployed[role]]));
+  const usedRecipientAddresses = new Set([...usedOperatorAddresses, r.safe.toLowerCase()]);
+  for (const holder of [...Object.values(contractHolderAddresses), ...additionalContractHolders.map(x => x.address)]) {
+    const lower = holder.toLowerCase();
+    if (usedRecipientAddresses.has(lower)) throw Error('Duplicate, operator or genesis address cannot be a contract holder');
+    usedRecipientAddresses.add(lower);
+  }
   const pool = { currency0: zeroAddress, currency1: external.omr.address, fee, tickSpacing: spacing, hooks: deployed.hook };
   const poolId = keccak256(encodeAbiParameters([POOL_PARAM], [pool]));
   const s = obj('season', m.season);
@@ -304,6 +360,7 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   args.bond = [{ ...p.bond, ...fixedBond }];
   args.arbitrage = [external.poolManager.address, pool, deployed.reserveFunding, p.arbitrage.reserveProfitBps, p.arbitrage.maxInput];
   args.commitment = [r.safe, external.positionManager.address, deployed.marketState, pool, p.commitment.maxAge, p.commitment.minLiquidity];
+  args.router = [external.poolManager.address, external.omr.address];
   const deployment = MARKET_V2_ROLES.map(([role, contract], i) => {
     const a = artifacts[contract]; const constructorArgs = checkedArgs(a.abi, args[role], role);
     const initCode = role === 'hook' ? hookInit : encodeDeployData({ abi: a.abi, bytecode: a.bytecode, args: constructorArgs });
@@ -314,6 +371,8 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
       ...(role === 'hook' ? { salt: mined.salt, hookFlags: toHex(MARKET_V2_HOOK_FLAGS), miningAttempts: mined.attempts } : {}) };
   });
   const steps = [];
+  const externalCall = (label, to, abi, fn, values, from, value = 0n) => steps.push({ kind: 'call', label,
+    functionName: fn, args: values, transaction: { chainId: m.chainId, from, to, value, data: encodeFunctionData({ abi, functionName: fn, args: values }) } });
   function call(label, role, fn, values, caller = r.safe, value = 0n) {
     const contract = MARKET_V2_ROLES.find(([name]) => name === role)[1];
     steps.push({ kind: 'call', label, role, functionName: fn, args: values,
@@ -333,6 +392,72 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   call('Bind earned Turf fees to controller accounting', 'turfFeeBridge', 'bindSource', [deployed.controller]);
   call('Bind the only fee source for season 1 Turf 0', 'turf', 'bindFeeSource', [deployed.turfFeeBridge, 1n, 0]);
   call('Register the game fee checkpoint lane before season start', 'gameSettlement', 'registerLane', [deployed.turfFeeBridge]);
+  steps.push({ kind: 'readiness', label: 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing', required: {
+    token: { address: external.omr.address, runtimeHash: external.omr.runtimeHash, owner: r.safe, decimals: 18,
+      REVENUE_POLICY_ID: RESTRICTED_MARKET_POLICY_ID, policySealed: false, settlementManager: zeroAddress, operatorCount: 0,
+      contractHolderCount: 0, genesisTreasury: r.safe, genesisTreasuryRuntimeHashMatchesLiveCode: true,
+      totalSupply: RESTRICTED_MARKET_SUPPLY, ownerBalance: RESTRICTED_MARKET_SUPPLY, zeroExternalInventory: true },
+    manager: { address: external.poolManager.address, runtimeHash: external.poolManager.runtimeHash, owner: r.safe, omr: external.omr.address,
+      TRADE_FEE_BPS: 500, revenuePolicyId: RESTRICTED_MARKET_POLICY_ID,
+      developerRecipient: r.dev, rwaRecipient: r.rwa, communityRecipient: r.community, polRecipient: deployed.polFunding },
+    positionManager: { poolManager: external.poolManager.address, permit2: external.permit2.address },
+    operatorRuntimeHashes: restricted.operatorRuntimeHashes, additionalOperators,
+    holderRuntimeHashes: restricted.holderRuntimeHashes, contractHolders: additionalContractHolders,
+    capitalProvider: r.safe,
+  } });
+  const restrictedTokenAbi = parseAbi(['function bindSettlementManager(address manager,bytes32 expectedRuntimeHash)',
+    'function setOperator(address operator,uint8 role,bytes32 expectedRuntimeHash)',
+    'function setContractHolder(address holder,bytes32 expectedRuntimeHash)', 'function registerWallet(address wallet)', 'function sealPolicy()']);
+  externalCall('Bind the mandatory trade-revenue manager', external.omr.address, restrictedTokenAbi, 'bindSettlementManager',
+    [external.poolManager.address, external.poolManager.runtimeHash], r.safe);
+  for (const [role, operatorRole] of Object.entries(RESTRICTED_OPERATORS)) {
+    externalCall(`Register restricted ${role} operator`, external.omr.address, restrictedTokenAbi, 'setOperator',
+      [operatorAddresses[role], operatorRole, restricted.operatorRuntimeHashes[role]], r.safe);
+  }
+  for (const operator of additionalOperators) {
+    externalCall(`Register reviewed custody operator: ${operator.purpose}`, external.omr.address, restrictedTokenAbi, 'setOperator',
+      [operator.address, operator.role, operator.runtimeHash], r.safe);
+  }
+  const expectedContractHolders = [
+    ...RESTRICTED_CONTRACT_HOLDERS.map(role => ({ address: contractHolderAddresses[role], runtimeHash: restricted.holderRuntimeHashes[role], purpose: role })),
+    ...additionalContractHolders,
+  ];
+  for (const holder of expectedContractHolders) {
+    externalCall(`Register receiving-only contract holder: ${holder.purpose}`, external.omr.address, restrictedTokenAbi, 'setContractHolder',
+      [holder.address, holder.runtimeHash], r.safe);
+  }
+  const approvedRecipientAddresses = new Set([r.safe, external.poolManager.address, ...Object.values(operatorAddresses),
+    ...additionalOperators.map(x => x.address), ...expectedContractHolders.map(x => x.address)].map(x => x.toLowerCase()));
+  const walletRecipients = [...new Set([r.dev, r.rwa, r.community, ...familyMap.values()])]
+    .filter(wallet => !approvedRecipientAddresses.has(wallet.toLowerCase()));
+  if (walletRecipients.length) steps.push({ kind: 'readiness', label: 'Verify self-enrolling revenue wallets are undelegated EOAs', required: {
+    wallets: walletRecipients, liveCode: '0x', directCallerEqualsTransactionOrigin: true,
+    contractTreasuriesMustBeExplicitContractHolders: true,
+  } });
+  for (const wallet of walletRecipients) {
+    externalCall(`Self-register revenue wallet ${wallet}`, external.omr.address, restrictedTokenAbi, 'registerWallet', [wallet], wallet);
+  }
+  const expectedOperators = [
+    { address: external.poolManager.address, role: 3, runtimeHash: external.poolManager.runtimeHash },
+    ...Object.entries(RESTRICTED_OPERATORS).map(([role, operatorRole]) => ({ address: operatorAddresses[role],
+      role: operatorRole, runtimeHash: restricted.operatorRuntimeHashes[role] })),
+    ...additionalOperators,
+  ];
+  steps.push({ kind: 'readiness', label: 'Verify the exact complete operator and contract-holder registries immediately before sealing', required: {
+    token: external.omr.address, policySealed: false, settlementManager: external.poolManager.address,
+    owner: r.safe, totalSupply: RESTRICTED_MARKET_SUPPLY, ownerBalance: RESTRICTED_MARKET_SUPPLY, zeroExternalInventory: true,
+    operatorCount: expectedOperators.length,
+    operators: expectedOperators.map((operator, index) => ({ index, operatorAt: operator.address,
+      operatorRole: operator.role, operatorRuntimeHash: operator.runtimeHash })),
+    contractHolderCount: expectedContractHolders.length,
+    contractHolders: expectedContractHolders.map((holder, index) => ({ index, contractHolderAt: holder.address,
+      contractHolderRuntimeHash: holder.runtimeHash })),
+    registeredWallets: walletRecipients.map(wallet => ({ address: wallet, registeredWallet: true, isRecipient: true })),
+    treasuryRecipients: [...new Set([r.dev, r.rwa, r.community, ...familyMap.values()])],
+    eachRecipientAllowed: true, genesisTreasuryRuntimeHashMatchesLiveCode: true,
+    includesAllEverConfiguredEntries: true,
+  } });
+  externalCall('Seal the immutable restricted transfer policy before funding', external.omr.address, restrictedTokenAbi, 'sealPolicy', [], r.safe);
 
   const b = obj('bootstrap', m.bootstrap);
   closed('bootstrap', b, ['sqrtPriceX96', 'liquidity', 'maxNative', 'maxOmr', 'deadline', 'positionOwner', 'lowerTick', 'upperTick']);
@@ -352,8 +477,6 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
   const required0 = ceil(liquidity * (1n << 96n) * (upper - price), price * upper);
   const required1 = ceil(liquidity * (price - lower), 1n << 96n);
   if (required0 > max0 || required1 > max1) throw Error('Bootstrap asset caps cannot fund requested liquidity');
-  const externalCall = (label, to, abi, fn, values, from, value = 0n) => steps.push({ kind: 'call', label,
-    functionName: fn, args: values, transaction: { chainId: m.chainId, from, to, value, data: encodeFunctionData({ abi, functionName: fn, args: values }) } });
   const poolAbi = [{ type: 'function', name: 'initialize', stateMutability: 'nonpayable', inputs: [{ ...POOL_PARAM, name: 'key' }, { name: 'sqrtPriceX96', type: 'uint160' }], outputs: [{ type: 'int24' }] }];
   externalCall('Initialize the canonical pool in the authorized caller context', external.poolManager.address, poolAbi, 'initialize', [pool, price], r.initializer);
   const tokenAbi = parseAbi(['function approve(address spender,uint256 amount) returns (bool)']);
@@ -394,23 +517,38 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     call('Fund actual bond inventory', 'bond', 'fundInventory', [inventory], r.capitalProvider);
     externalCall('Revoke bond inventory funding allowance', external.omr.address, tokenAbi, 'approve', [deployed.bond, 0n], r.capitalProvider);
   }
-  const output = { schemaVersion: 1, mode: 'offline-unsigned', chainId: m.chainId, sourceRevision: m.sourceRevision,
+  const output = { schemaVersion: 2, mode: 'offline-unsigned', chainId: m.chainId, sourceRevision: m.sourceRevision,
     manifestSha256: sha(json(m)), snapshot: m.snapshot, addresses: deployed, canonicalPool: { ...pool, poolId },
-    economics: { sellBaseBps: 900, splitBps: { dev: 200, rwa: 160, community: 240, pol: 300 }, maximumSurgeBps: 100,
-      surgeRecipient: deployed.reserveFunding, ordinaryBuyBps: 0, opening, maximumHookBps: 1000, lpFeeUnits: fee },
+    economics: { baseTradeBps: 500, sellBaseBps: 500, ordinaryBuyBps: 500, enforcedBy: external.poolManager.address,
+      splitBps: { dev: 200, rwa: 100, community: 100, pol: 100 },
+      primaryRecipients: { dev: r.dev, rwa: r.rwa, community: r.community, pol: deployed.polFunding },
+      maximumSurgeBps: 50, surgeRecipient: deployed.reserveFunding, opening, maximumHookBps: 50,
+      maximumCombinedTradeBps: 550, maximumCombinedEnforcedBy: external.poolManager.address, lpFeeUnits: fee },
     artifacts: Object.fromEntries(Object.entries(artifacts).map(([c, a]) => [c, { abi: a.abi, ...a.evidence }])),
     bootstrapAmounts: { native: required0, omr: required1, nativeCap: max0, omrCap: max1 },
-    externalRuntimePins: external, create2Factory: m.create2, steps,
+    externalRuntimePins: external, restrictedMarket: { ...restricted, operatorAddresses, contractHolderAddresses }, create2Factory: m.create2, steps,
     executionConditions: [
       'No transaction has been simulated, signed or broadcast by this tool.',
+      'Readiness steps state required live checks; this offline generator does not perform them. Verify each condition independently before its next transaction.',
       'Read live chain ID, source/runtime identities, deployer nonce and empty predicted addresses before simulation.',
-      'EOA deployer sends only the eleven deployment transactions; Safe executor, initializer, adjudicator and capital provider do not consume its nonce sequence.',
+      'All twelve companion deployments consume the listed deployer nonce sequence; setup, initialization and funding use their separate callers before any optional later wallet self-registration.',
       'Safe calls are inner calls for the configured Safe; use its existing threshold and the separate Safe executor.',
       'The salt-prefix factory must have the explicitly pinned runtime and accept salt||initCode with zero value.',
       'Initialize must execute from the hook authorized address; a contract initializer needs its reviewed entry point to make the listed inner call.',
       'Season and fee lane setup must complete before the explicit season starts; bootstrap deadlines and funded balances must remain valid.',
-      'External OMR is standard 18-decimal, non-rebasing and has transfer taxes disabled for this hook-tax market.',
-      'Verify PositionManager.poolManager and PositionManager.permit2 against the explicit external bindings.',
+      'External OMR must be OmertaRestrictedOMRV2, with its Safe owner and fixed policy ID; existing ERC20 OMR is not a compatible substitute.',
+      'External manager must be OmertaPoolManagerV2 bound to the replacement OMR, 500 bps in both directions, and the exact four listed recipients.',
+      'Deploy the replacement token, custom manager and manager-paired PositionManager before this companion plan; manager POL recipient is the predicted polFunding address.',
+      'Verify PositionManager.poolManager and PositionManager.permit2 against the explicit external bindings and reviewed actual runtime.',
+      'Pin actual operator runtime hashes including immutable substitutions; reject unresolved templates and unreviewed proxy or forwarding operators.',
+      'All companions and any additional reviewed custody contracts must exist before operator registration; seal policy before bootstrap and protocol funding.',
+      'Require operatorCount and contractHolderCount zero before manager binding, then compare both complete enumerated registries, roles and runtime pins immediately before sealing; revoked or unlisted historical entries are not accepted.',
+      'Receiving-only holders need reviewed runtime pins but receive no transfer or settlement authority. Genesis Safe is pinned separately and is not an operator or enumerated holder.',
+      'Fee and family treasury recipients must be the genesis Safe, a registered operator/contract holder, or a self-registered undelegated EOA; smart treasury recipients need explicit holder entries before sealing.',
+      'Unsupported deployed or counterfactual contracts cannot directly receive native OMR; EIP-7702 delegation after receipt, custody IOUs and internal trading ledgers remain outside the supported native LP guarantee.',
+      'The token-owning Safe must hold the entire fixed 100,000,000 OMR supply before binding and sealing; no external inventory may be allocated before sealing.',
+      'CapitalProvider must equal the Safe. Bootstrap and protocol inventory move only after sealing through the approved typed operators; independent providers require a separately reviewed distribution path.',
+      'The sealed operator list cannot be extended or repaired later; wrappers, IOUs and internal ledgers are outside the LP settlement guarantee.',
       'The first pool position is required before autonomous Core deployment because observations and strategies require existing active liquidity.',
       'Runtime template hashes exclude immutable constructor substitution; verify actual deployed runtime with constructor-specific immutable references after simulation.',
     ] };

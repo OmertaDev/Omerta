@@ -18,7 +18,7 @@ if (native) {
 }
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', INVITE_MODE: 'off',
   JWT_SECRET: 'production-combined-native-fixture-secret', MARKET_SEED: 'production-combined-fixture-market-seed-long', MOD_KEY: 'production-combined-fixture-moderator' });
-const { buildServer } = await import('../src/server.js'), G = await import('../src/game.js');
+const { buildServer } = await import('./server-fixture.js'), G = await import('../src/game.js');
 const I = await import('../src/items.js'), { runEstate } = await import('../src/social/estate.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 const app = await buildServer(); let sequence = 0;

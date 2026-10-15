@@ -1,0 +1,168 @@
+{
+  "date": "2026-09-24",
+  "latestMain": "32859cf7d198d2a003160b2bb1ef005991697d73",
+  "localHead": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "productionActivationVerified": false,
+  "paidGenerationSubmitted": false,
+  "mainSources": [
+    {
+      "path": "docs/release/RC1-READINESS.md",
+      "sha256": "78ab9fb58dfe858d9c31ba55ba155a2fc1789fb2e03f3b15e32eb2c358da311c",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/release/RC1-READINESS.md"
+    },
+    {
+      "path": "docs/release/RC1-MANIFEST.md",
+      "sha256": "a259c0640e0bb9dec54224bdc02db4ecce809ae9f712ffbc8357125402f11fd5",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/release/RC1-MANIFEST.md"
+    },
+    {
+      "path": "docs/core-architecture/IMPLEMENTATION.md",
+      "sha256": "4c16be8c5a86f9d97b69837c3dc49248e95c69fd638c64ce41dae33f74fdcd87",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/core-architecture/IMPLEMENTATION.md"
+    },
+    {
+      "path": "docs/core-architecture/PLAYER-COMMAND-CONTRACT.md",
+      "sha256": "e3dbf91ddf976a2915ffc8daf124152d1515d9f43338ff53c5a6c4dce12a6c41",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/core-architecture/PLAYER-COMMAND-CONTRACT.md"
+    },
+    {
+      "path": "docs/core-architecture/PLAYER-COMMAND-HANDOFF.md",
+      "sha256": "7fd56ddb1e57109bc93f7bfc558915b990744df889af232ec93130208dee4e6b",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/core-architecture/PLAYER-COMMAND-HANDOFF.md"
+    },
+    {
+      "path": "docs/living-world-director/HANDOFF.md",
+      "sha256": "30363539306240d5502cde6dba46a4193cb2970a5695efcaf170c0f065a6782f",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/living-world-director/HANDOFF.md"
+    },
+    {
+      "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+      "sha256": "93936837be9857c5808b1814538eb88d7d768e922a6d7ebe597e99f51801b1b6",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md"
+    },
+    {
+      "path": "docs/living-world-director/OPPORTUNITY-FEED.md",
+      "sha256": "81f3e10ee355aeff26548693df9c49e023f2b0219aa1c71ee3771f260432d08d",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/docs/living-world-director/OPPORTUNITY-FEED.md"
+    },
+    {
+      "path": "src/content/campaign-network.js",
+      "sha256": "9df353f3d4fefde32b44a410fd367cbd474fd2c23e3fbd2b4a9409789c00e1aa",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/content/campaign-network.js"
+    },
+    {
+      "path": "src/director/config.js",
+      "sha256": "cca4c34e6e1fa359d098a34b91312d54ecd025a4c0eeac0e6550ee9ff890b762",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/director/config.js"
+    },
+    {
+      "path": "src/agentgateway.js",
+      "sha256": "a1611c1f2fa556dcffff71a98adc92af9a78423bdf0903ddedfd0df20069a05e",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/agentgateway.js"
+    },
+    {
+      "path": "src/market.js",
+      "sha256": "ac65c72a32ce85e1e6cb5804a5c76c15e5d8f611ffab84122d6ddade1611fb40",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/market.js"
+    },
+    {
+      "path": "src/convoy.js",
+      "sha256": "a4d98d41a3f265fd5743b7e46aa0b2ae351695cfb47cdd62f5e9caa5eac6ee7b",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/convoy.js"
+    },
+    {
+      "path": "src/territory.js",
+      "sha256": "b1575b832b75c55fd14133055db11f427746556dc30b3719890d05e139406f9c",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/territory.js"
+    },
+    {
+      "path": "src/season.js",
+      "sha256": "0969a00c2d84f869406e0a67ec3d162d403f92eb0fea4b29dd82eadb83dfd705",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/season.js"
+    },
+    {
+      "path": "src/vanity.js",
+      "sha256": "92cd9524ff89442123b3389cc1cca7a7eb19f583ceff1a7acb3bd92acda55c8c",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/vanity.js"
+    },
+    {
+      "path": "src/desk.js",
+      "sha256": "c3f93aab7cac98192f266dad21e6ec0e0687cb0a1c7541ae0710f822607157e9",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/src/desk.js"
+    },
+    {
+      "path": "omerta-contracts/docs/market-v2/DESIGN.md",
+      "sha256": "be8b601c8a191a56fd2d57eb478bd8c08bd3533503950c143acc11852370ca83",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/docs/market-v2/DESIGN.md"
+    },
+    {
+      "path": "omerta-contracts/deployments/4663/manifest.json",
+      "sha256": "181a715e2ba706bbccc4d516204df0e34ca944caf27e2fd9ac501d823d4107aa",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/deployments/4663/manifest.json"
+    },
+    {
+      "path": "omerta-contracts/DEPLOYMENT.md",
+      "sha256": "cd124d45cf8ece35b0eb7ec3942c9ddabdcbbedbb6faebb65d83bf8b7d3b0ffb",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/DEPLOYMENT.md"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+      "sha256": "6c08e149aef906db41cddef80250e0327d1906ecacae74158a7a5d2b2a47aeb1",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/src/market-v2/OmertaTurfV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+      "sha256": "f9deb4e087904a2796619a317acbd64fef32e35e3b67f434561b4b14e813888f",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol"
+    },
+    {
+      "path": "omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol",
+      "sha256": "01f8e299708d3f1b07c928633cb5b9af5c86daeb43c136d957be8b0d1ebc07c2",
+      "sourceUrl": "https://github.com/OmertaDev/Omerta/blob/32859cf7d198d2a003160b2bb1ef005991697d73/omerta-contracts/src/market-v2/OmertaTurfFeeBridgeV2.sol"
+    }
+  ],
+  "localPrototype": [
+    {
+      "path": "docs/agent-gateway-capabilities.md",
+      "sha256": "3b15199a004ee56e03089f861796fc73081c3df127a50e66e93dad26228cc004",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "docs/agent-gateway-review/README.md",
+      "sha256": "0fec67efb83ed06d7ada6f58bc821ec59436f7eafabf3e85afdf061d6aacf0e3",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "docs/agent-gateway-muse.md",
+      "sha256": "7b44af3b39c1b2123fbe1ad49ac78c4bb2d844c440acbe7964cf0d0167d58dfd",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "src/gateway/context.js",
+      "sha256": "55bb314f045aee05e3434af7bb4457c8fc0b180cdb43daeb5703b8c7240fabbf",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "src/gateway/actions.js",
+      "sha256": "95c90c7aba09a0ee31be1db5d90566d9fcec308ff27366bf86083b30e3385cfb",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "src/gateway/service.js",
+      "sha256": "53cf398350bebf069404f32d08c14a93fc38b92706cee2272f0aea225245840e",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "src/routes/gateway.js",
+      "sha256": "a609271351e826bec06d21669c1c6be65d9cafe960b524bb8f4688c7c1c885ba",
+      "status": "local uncommitted prototype; not latest-main integration"
+    },
+    {
+      "path": "public/consigliere.js",
+      "sha256": "d44808269c18b4884aed4b54cc43b5314f640c58e2b1dcde2287f87674faddfd",
+      "status": "local uncommitted prototype; not latest-main integration"
+    }
+  ],
+  "publicationScenario": "Full release live at publication, per user direction; see L01–L05 in 02-LAUNCH-ASSUMPTIONS.md",
+  "creativeRevision": 2
+}

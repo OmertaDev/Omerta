@@ -8,7 +8,7 @@ if (postgres) {
   process.env.DATABASE_URL = process.env.DEPOT_TEST_DATABASE_URL;
 }
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { ledger } from '../src/game.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepMarket, marketAvailability } from '../src/market.js';

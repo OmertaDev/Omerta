@@ -20,7 +20,7 @@ process.env.SHOOT_CD_MS = '1000';
 process.env.MOD_KEY = 'test-mod-key'; // for the mod-kill used in the directed-pot death regression
 
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { payFamilyYield } from '../src/exchange.js';
 import { runBuyback } from '../src/worker.js';
 import { huntWanted, sweepContests } from '../src/social.js';
@@ -608,8 +608,15 @@ assert.equal(k.hitman.blood.theirs, 0, 'and no bodies the other way');
   const heir3 = await meOf(marked.token);   // generation 3, fresh, with a live vendetta against Don
   assert(heir3.generation >= 3, 'the bloodline is on its third street');
   assert.equal(heir3.coach?.label, 'Blood is owed', "the murdered heir's coach leads with the vendetta");
-  assert(/put in the ground/.test(heir3.coach.hint) && /DOUBLE/.test(heir3.coach.hint),
-    'naming who fell and what settling pays');
+  const owed = heir3.vendettas.find(vendetta => vendetta.target === donName);
+  assert(owed && owed.expiresSeconds > 0, 'the coach represents a live debt against the actual killer');
+  assert.equal(owed.sworn, heir2.name, 'the debt names the most recently killed street');
+  assert(heir3.coach.hint.includes(heir2.name) && heir3.coach.hint.includes(donName),
+    'the coach names the actual deceased street and current revenge target');
+  assert(/revenge kill/i.test(heir3.coach.hint) && /double feared reputation/i.test(heir3.coach.hint),
+    'the coach states the doubled reputation reward for a revenge kill');
+  assert(/before it expires|before the vendetta lapses/i.test(heir3.coach.hint),
+    'the coach makes the expiry condition visible');
   assert.equal(heir3.coach.tab, 'pvp', 'pointing at Wet Work');
   // the vendetta settles/lapses → the heir's OWN rung leads: what the account kept, what's next
   await pool.query(`DELETE FROM vendettas WHERE avenger_account=(SELECT account_id FROM characters WHERE id='${heir3.id}')`);

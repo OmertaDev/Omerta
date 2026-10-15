@@ -20,12 +20,12 @@ const sourceHashes = evidence => Object.fromEntries(Object.entries(evidence.sour
 const artifact = loadGenesisAuctionArtifact('OmertaHookV2');
 const constructor = artifact.abi.find(entry => entry.type === 'constructor');
 const schema = constructor?.inputs.map(input => input.type);
-if (JSON.stringify(schema) !== JSON.stringify(['address', 'address', 'address', 'uint24', 'int24', 'address[5]', 'tuple', 'uint24', 'uint32', 'address'])
+if (JSON.stringify(schema) !== JSON.stringify(['address', 'address', 'address', 'uint24', 'int24', 'address[5]', 'tuple', 'uint24', 'uint32'])
   || JSON.stringify(constructor.inputs[6].components.map(input => input.type)) !== JSON.stringify(['uint16', 'uint16', 'uint128']))
-  throw Error('Trusted hook constructor is not the reviewed 10-argument, 16-word static schema.');
+  throw Error('Trusted hook constructor is not the reviewed 9-argument, 15-word static schema.');
 const hookSource = artifact.evidence.sources['src/market-v2/OmertaHookV2.sol'];
-if (hookSource.sha256 !== '614b70bcc6747310fdcb444427fba798fc6e273a7227bef9e4c61c26ae6cbf62')
-  throw Error('Hook source differs from the reviewed governance revision; review before updating this builder pin.');
+if (hookSource.sha256 !== 'ec6362e88daeb7f35bd8f95cbc6bf2344378cb29603b3bf31460a14eada0c903')
+  throw Error('Hook source differs from the reviewed fixed-policy revision; review before updating this builder pin.');
 const packageRoot = path.dirname(require.resolve('@noble/hashes/sha3'));
 const metadata = JSON.parse(fs.readFileSync(path.join(packageRoot, 'package.json')));
 if (metadata.version !== '1.8.0') throw Error('Only reviewed @noble/hashes 1.8.0 may be shipped.');
@@ -47,7 +47,7 @@ outputs.set(path.join(vendorRoot, 'LICENSE'), license);
 provenance.files.LICENSE = { originalSha256: sha(license), shippedSha256: sha(license) };
 outputs.set(path.join(vendorRoot, 'provenance.json'), Buffer.from(JSON.stringify(provenance, null, 2) + '\n'));
 const trusted = { schemaVersion: 1, contract: 'OmertaHookV2', constructorSchema: schema,
-  openingSchema: ['uint16', 'uint16', 'uint128'], constructorWords: 16,
+  openingSchema: ['uint16', 'uint16', 'uint128'], constructorWords: 15,
   compiler: artifact.evidence.compiler, optimizerRuns: 800, viaIR: true, evmVersion: 'cancun',
   sourceHashEncoding: 'compiler-verified UTF-8 LF', sourceHashes: sourceHashes(artifact.evidence),
   abiSha256: artifact.evidence.abiSha256, creationBytecode: artifact.bytecode,

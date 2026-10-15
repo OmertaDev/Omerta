@@ -1,0 +1,2 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+city-homes-api PASS: authenticated closed private DTO, deterministic bounded pages, out-of-page own address, player/agent/NPC stewards, real claim/list/purchase, actual estate/heir, external ownership, current viewer travel and auth revocation, neutral reads (pg-mem; native snapshot proof pending)

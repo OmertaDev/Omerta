@@ -22,6 +22,31 @@ for (const id of ['canonical-market', 'coordination', 'worldgraph']) {
   const summary = section.html.match(/^<p>(.*?)<\/p>/s)[1];
   assert(home.includes(summary) && markdown.includes(summary), `${id} status differs between site and Codex`);
 }
+// Current market copy binds to the fixed manager/Hook source, independently of legacy game levers.
+const manager = read('omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol');
+const hook = read('omerta-contracts/src/market-v2/OmertaHookV2.sol');
+const fee = manager.match(/uint16 public constant TRADE_FEE_BPS = (\d+);/);
+const surge = hook.match(/uint16 public constant MAX_SURGE_BPS = (\d+);/);
+assert(fee && surge, 'Current fixed market fee constants must remain discoverable');
+const basePercent = Number(fee[1]) / 100, surgePercent = Number(surge[1]) / 100;
+const currentMarket = sections.find(section => section.id === 'canonical-market');
+const fixedPolicy = sections.find(section => section.id === 'committee-tax');
+assert(fixedPolicy, 'Existing fixed-policy anchor must remain available');
+const surfaces = [home.match(/<h3>The Canonical Market<\/h3>([\s\S]*?)<\/article>/)[1],
+  currentMarket.html, markdown.slice(markdown.indexOf('### The Canonical Market'), markdown.indexOf('**Currencies:**')),
+  read('public/defi.html').match(/<p>The current source configures([\s\S]*?)<\/p>/)[0],
+  read('public/fee-flows.html').match(/<div class="scenario-notice"><b>This is an illustrative scenario([\s\S]*?)<\/div>/)[0]];
+for (const surface of surfaces.map(plain)) {
+  assert(surface.includes(`fixed ${basePercent}% base`) && surface.includes('buys and sells'), 'Both trade directions must disclose the manager fee');
+  assert(surface.includes(`${surgePercent}%`), 'Sell-pressure cap must match Hook source');
+  assert(surface.includes('2%') && surface.includes('1%'), 'Developer and other allocation shares must be disclosed');
+  assert(surface.includes('planned genesis pool') && surface.includes('0.3%'), 'LP/opening terms must be scoped to the planned genesis pool');
+  assert(/opening buy charges and caps (?:are )?disabled/.test(surface), 'Genesis opening restrictions remain off');
+  assert(/no Committee or Safe fee-change queue|cannot become an executable Committee or Safe fee-change proposal/.test(surface), 'No mutable fee-governance process may be advertised');
+  assert(!/9% base|1\.6% RWA|2\.4% community|0[–-]1% surge|48.hours|10% hook-tax/.test(surface), 'Superseded fee policy must not appear in current policy sections');
+  assert(surface.includes('inactive'), 'Source policy must not imply production activation');
+}
+assert(!/queues an exact configuration|waits at least 48 hours/.test(plain(fixedPolicy.html)), 'The preserved policy anchor cannot promise a fee-change queue');
 const ids = new Set(sections.map((s) => s.id));
 assert.equal(ids.size, sections.length, 'Codex section IDs must be unique');
 for (const [, id] of home.matchAll(/href="\/wiki#([^"?]+)"/g)) {

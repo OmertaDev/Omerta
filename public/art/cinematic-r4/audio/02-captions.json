@@ -1,0 +1,249 @@
+{
+  "film": "02",
+  "timing": "Audible sentence edges measured after conservative edge trim, atempo and voice processing. Sentences longer than 54 characters have proportional phrase-page timing; not word-level ASR alignment.",
+  "lines": [
+    {
+      "id": "C02-L01-P1",
+      "lineId": "C02-L01",
+      "text": "Game cash and OMR follow separate economic circuits.",
+      "fullText": "Game cash and OMR follow separate economic circuits.",
+      "start": 0.080125,
+      "end": 3.985771,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L02-P1",
+      "lineId": "C02-L02",
+      "text": "Defined missions and funded rewards put OMR in reach.",
+      "fullText": "Defined missions and funded rewards put OMR in reach.",
+      "start": 4.247979,
+      "end": 8.199125,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L03-P1",
+      "lineId": "C02-L03",
+      "text": "Spend on eligible gear, services, and upgrades.",
+      "fullText": "Spend on eligible gear, services, and upgrades.",
+      "start": 8.409208,
+      "end": 12.162479,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L04-P1",
+      "lineId": "C02-L04",
+      "text": "Eligible spending refills the",
+      "fullText": "Eligible spending refills the Desk’s existing token inventory.",
+      "start": 12.58,
+      "end": 14.302667,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L04-P2",
+      "lineId": "C02-L04",
+      "text": "Desk’s existing token inventory.",
+      "fullText": "Eligible spending refills the Desk’s existing token inventory.",
+      "start": 14.302667,
+      "end": 16.079167,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L05-P1",
+      "lineId": "C02-L05",
+      "text": "The funded Window converts OMR to cash only.",
+      "fullText": "The funded Window converts OMR to cash only.",
+      "start": 16.746688,
+      "end": 20.228896,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L06-P1",
+      "lineId": "C02-L06",
+      "text": "Revenue can fund buybacks and",
+      "fullText": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+      "start": 20.913917,
+      "end": 22.774521,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L06-P2",
+      "lineId": "C02-L06",
+      "text": "rewards. Funding sets the limit.",
+      "fullText": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+      "start": 22.774521,
+      "end": 24.692375,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L07-P1",
+      "lineId": "C02-L07",
+      "text": "Canonical sells route a nine-percent base fee.",
+      "fullText": "Canonical sells route a nine-percent base fee.",
+      "start": 25.079937,
+      "end": 28.282854,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L08-P1",
+      "lineId": "C02-L08",
+      "text": "Fees support development,",
+      "fullText": "Fees support development, RWA, community, and liquidity.",
+      "start": 28.846687,
+      "end": 30.887784,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L08-P2",
+      "lineId": "C02-L08",
+      "text": "RWA, community, and liquidity.",
+      "fullText": "Fees support development, RWA, community, and liquidity.",
+      "start": 30.887784,
+      "end": 33.198458,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L09-P1",
+      "lineId": "C02-L09",
+      "text": "That liquidity allocation funds Core.",
+      "fullText": "That liquidity allocation funds Core. Stability uses finite reserves.",
+      "start": 33.412687,
+      "end": 35.571794,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L09-P2",
+      "lineId": "C02-L09",
+      "text": "Stability uses finite reserves.",
+      "fullText": "That liquidity allocation funds Core. Stability uses finite reserves.",
+      "start": 35.571794,
+      "end": 37.375604,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L10-P1",
+      "lineId": "C02-L10",
+      "text": "Families contest future funded fees in seasonal Turf.",
+      "fullText": "Families contest future funded fees in seasonal Turf.",
+      "start": 37.575729,
+      "end": 40.656417,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L11-P1",
+      "lineId": "C02-L11",
+      "text": "Sieges allocate funded escrow while",
+      "fullText": "Sieges allocate funded escrow while principal stays protocol-owned.",
+      "start": 41.746687,
+      "end": 43.921055,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L11-P2",
+      "lineId": "C02-L11",
+      "text": "principal stays protocol-owned.",
+      "fullText": "Sieges allocate funded escrow while principal stays protocol-owned.",
+      "start": 43.921055,
+      "end": 45.700083,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L12-P1",
+      "lineId": "C02-L12",
+      "text": "Inventory bonds vest existing",
+      "fullText": "Inventory bonds vest existing OMR. They do not mint more.",
+      "start": 45.911313,
+      "end": 47.982646,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L12-P2",
+      "lineId": "C02-L12",
+      "text": "OMR. They do not mint more.",
+      "fullText": "Inventory bonds vest existing OMR. They do not mint more.",
+      "start": 47.982646,
+      "end": 49.859792,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L13-P1",
+      "lineId": "C02-L13",
+      "text": "Liquidity commitments lock positions",
+      "fullText": "Liquidity commitments lock positions against prefunded campaign rewards.",
+      "start": 50.077417,
+      "end": 52.110249,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L13-P2",
+      "lineId": "C02-L13",
+      "text": "against prefunded campaign rewards.",
+      "fullText": "Liquidity commitments lock positions against prefunded campaign rewards.",
+      "start": 52.110249,
+      "end": 54.038833,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L14-P1",
+      "lineId": "C02-L14",
+      "text": "Eligible assets use distinct onchain ownership rails.",
+      "fullText": "Eligible assets use distinct onchain ownership rails.",
+      "start": 54.246604,
+      "end": 57.565646,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L15-P1",
+      "lineId": "C02-L15",
+      "text": "Approved RWA acquisitions can",
+      "fullText": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+      "start": 58.411333,
+      "end": 60.260657,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L15-P2",
+      "lineId": "C02-L15",
+      "text": "reach eligible Street Deed vaults.",
+      "fullText": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+      "start": 60.260657,
+      "end": 62.370042,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L16-P1",
+      "lineId": "C02-L16",
+      "text": "Acquisition, allocation,",
+      "fullText": "Acquisition, allocation, and delivery each have separate rules.",
+      "start": 62.568583,
+      "end": 64.034553,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L16-P2",
+      "lineId": "C02-L16",
+      "text": "and delivery each have separate rules.",
+      "fullText": "Acquisition, allocation, and delivery each have separate rules.",
+      "start": 64.034553,
+      "end": 66.538917,
+      "timing": "Sentence edges measured; intra-sentence page break estimated proportionally"
+    },
+    {
+      "id": "C02-L17-P1",
+      "lineId": "C02-L17",
+      "text": "Every balance has a source. Every move has a cost.",
+      "fullText": "Every balance has a source. Every move has a cost.",
+      "start": 66.737479,
+      "end": 69.933333,
+      "timing": "Measured audible sentence edges"
+    },
+    {
+      "id": "C02-L18-P1",
+      "lineId": "C02-L18",
+      "text": "OMERTÀ. The economy has territory.",
+      "fullText": "OMERTÀ. The economy has territory.",
+      "start": 70.913104,
+      "end": 74.082292,
+      "timing": "Measured audible sentence edges"
+    }
+  ]
+}

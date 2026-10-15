@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { levelOf } from '../src/rules.js';
 
 // Cached options must never update or destroy a different current identity while its read is pending.
@@ -75,9 +75,9 @@ for (const current of [{ id: 'current', generation: 2, loc: 'docks' }, { id: 're
 }
 
 const CITY_ART = [
-  { file: '/art/city-neighborhood-v1.png', width: 960, height: 640, alpha: false },
+  { file: '/art/city-neighborhood-v2.png', width: 960, height: 640, alpha: false },
   ...['player-down', 'player-up', 'player-left', 'player-right', 'player-step', 'fixer', 'worker', 'neighbor']
-    .map(name => ({ file: '/art/city-' + name + '-v1.png', width: 38, height: 60, alpha: true })),
+    .map(name => ({ file: '/art/city-' + name + '-v2.png', width: 38, height: 60, alpha: true })),
 ];
 
 function resolveBrowser() {

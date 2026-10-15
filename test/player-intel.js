@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { bus, withTwoCharacters } from '../src/game.js';
 import { recordContact } from '../src/contacts.js';
 import { recordPlayerIntel, readPlayerIntel, playerIntelMap, playerIntelBoard,

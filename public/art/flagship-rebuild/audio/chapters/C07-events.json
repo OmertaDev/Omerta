@@ -1,0 +1,702 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Elsewhere",
+        "ms":  85,
+        "character":  125,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "in",
+        "ms":  505,
+        "character":  135,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  625,
+        "character":  138,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "city",
+        "ms":  662.1875,
+        "character":  142,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "discoveries",
+        "ms":  1431.875,
+        "character":  148,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  2056.875,
+        "character":  160,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "be",
+        "ms":  2236.875,
+        "character":  164,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "kept",
+        "ms":  2351.875,
+        "character":  167,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "private",
+        "ms":  2601.875,
+        "character":  172,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "or",
+        "ms":  2931.875,
+        "character":  180,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "shared",
+        "ms":  3081.875,
+        "character":  183,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "with",
+        "ms":  3406.875,
+        "character":  190,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "permission",
+        "ms":  3556.875,
+        "character":  195,
+        "length":  10
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U02",
+        "ms":  4766.875,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Two",
+        "ms":  4851.875,
+        "character":  256,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "investigators",
+        "ms":  5001.875,
+        "character":  260,
+        "length":  13
+    },
+    {
+        "kind":  "word",
+        "text":  "may",
+        "ms":  5711.875,
+        "character":  274,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "need",
+        "ms":  5891.875,
+        "character":  278,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "evidence",
+        "ms":  6101.875,
+        "character":  283,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "they",
+        "ms":  6501.875,
+        "character":  292,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "found",
+        "ms":  6626.875,
+        "character":  297,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "independently",
+        "ms":  6921.875,
+        "character":  303,
+        "length":  13
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U03",
+        "ms":  8353.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Copying",
+        "ms":  8438.75,
+        "character":  367,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  8843.75,
+        "character":  375,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "same",
+        "ms":  8908.75,
+        "character":  379,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "clue",
+        "ms":  9188.75,
+        "character":  384,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  9388.75,
+        "character":  389,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "not",
+        "ms":  9538.75,
+        "character":  392,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "another",
+        "ms":  9723.75,
+        "character":  396,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "witness",
+        "ms":  10023.75,
+        "character":  404,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U04",
+        "ms":  11138.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Objects",
+        "ms":  11223.75,
+        "character":  462,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "tell",
+        "ms":  11673.75,
+        "character":  470,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "stories",
+        "ms":  11903.75,
+        "character":  475,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "too",
+        "ms":  12353.75,
+        "character":  483,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "salvage",
+        "ms":  12958.75,
+        "character":  488,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "becomes",
+        "ms":  13393.75,
+        "character":  496,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "material",
+        "ms":  13763.75,
+        "character":  504,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  14723.75,
+        "character":  514,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "an",
+        "ms":  14863.75,
+        "character":  518,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "eligible",
+        "ms":  14988.75,
+        "character":  521,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "recipe",
+        "ms":  15413.75,
+        "character":  530,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "makes",
+        "ms":  15823.75,
+        "character":  537,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "an",
+        "ms":  16073.75,
+        "character":  543,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "item",
+        "ms":  16168.75,
+        "character":  546,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U05",
+        "ms":  16383.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "with",
+        "ms":  16438.75,
+        "character":  600,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  16593.75,
+        "character":  605,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "traceable",
+        "ms":  16648.75,
+        "character":  607,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "history",
+        "ms":  17138.75,
+        "character":  617,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U06",
+        "ms":  18283.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Beyond",
+        "ms":  18368.75,
+        "character":  675,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico\u0027s",
+        "ms":  18713.75,
+        "character":  682,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "small",
+        "ms":  19063.75,
+        "character":  689,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "Crew",
+        "ms":  19388.75,
+        "character":  695,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "Families",
+        "ms":  20083.75,
+        "character":  701,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "pursue",
+        "ms":  20493.75,
+        "character":  710,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "larger",
+        "ms":  20828.75,
+        "character":  717,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "ambitions",
+        "ms":  21198.75,
+        "character":  724,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "treasury",
+        "ms":  22153.75,
+        "character":  735,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "territory",
+        "ms":  22778.75,
+        "character":  745,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "rivalries",
+        "ms":  23528.75,
+        "character":  756,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  24273.75,
+        "character":  766,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "wars",
+        "ms":  24418.75,
+        "character":  770,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U07",
+        "ms":  25528.75,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Shared",
+        "ms":  25613.75,
+        "character":  825,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "operations",
+        "ms":  25933.75,
+        "character":  832,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "need",
+        "ms":  26543.75,
+        "character":  843,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "contributions",
+        "ms":  26738.75,
+        "character":  848,
+        "length":  13
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  27451.875,
+        "character":  862,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "approval",
+        "ms":  27608.4375,
+        "character":  866,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U08",
+        "ms":  28735.625,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Convoys",
+        "ms":  28820.625,
+        "character":  925,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  29240.625,
+        "character":  933,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "be",
+        "ms":  29425.625,
+        "character":  937,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "ambushed",
+        "ms":  29560.625,
+        "character":  940,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U09",
+        "ms":  30800.625,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Commission",
+        "ms":  30885.625,
+        "character":  999,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "seats",
+        "ms":  31255.625,
+        "character":  1010,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "give",
+        "ms":  31575.625,
+        "character":  1016,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "votes",
+        "ms":  31745.625,
+        "character":  1021,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "on",
+        "ms":  32005.625,
+        "character":  1027,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "specific",
+        "ms":  32155.625,
+        "character":  1030,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "city",
+        "ms":  32600.625,
+        "character":  1039,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "rules",
+        "ms":  32855.625,
+        "character":  1044,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U10",
+        "ms":  34020.625,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Events",
+        "ms":  34105.625,
+        "character":  1100,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  34445.625,
+        "character":  1107,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  34585.625,
+        "character":  1111,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "Director\u0027s",
+        "ms":  34660.625,
+        "character":  1115,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "authored",
+        "ms":  35150.625,
+        "character":  1126,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "situations",
+        "ms":  35485.625,
+        "character":  1135,
+        "length":  10
+    },
+    {
+        "kind":  "word",
+        "text":  "change",
+        "ms":  36155.625,
+        "character":  1146,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  36475.625,
+        "character":  1153,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "opportunities",
+        "ms":  36610.625,
+        "character":  1157,
+        "length":  13
+    },
+    {
+        "kind":  "word",
+        "text":  "around",
+        "ms":  37270.625,
+        "character":  1171,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  37595.625,
+        "character":  1178,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C07-U10-end",
+        "ms":  38500.625,
+        "character":  0,
+        "length":  0
+    }
+]

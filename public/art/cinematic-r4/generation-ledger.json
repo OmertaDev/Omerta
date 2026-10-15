@@ -1,0 +1,3887 @@
+{
+  "version": 4,
+  "jobs": {
+    "C01-L01": {
+      "id": "C01-L01",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "In this city, your next move can build an empire.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:32.573Z",
+      "request_id": "01a0d513-b2b3-7a81-b774-01df0c233c58",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b2b3-7a81-b774-01df0c233c58",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b2b3-7a81-b774-01df0c233c58/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b2b3-7a81-b774-01df0c233c58/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/5zpQWb6KaN4dh4cMm4xZA_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/5zpQWb6KaN4dh4cMm4xZA_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L01.mp3",
+      "sha256": "5a0df014afbb41c78be428315441879ba3ac939f14b0bd94cc0ffdced1c53fd0",
+      "bytes": 165815
+    },
+    "C01-L02": {
+      "id": "C01-L02",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Crimes earn cash and respect. Heat follows.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:32.873Z",
+      "request_id": "01a0d513-b38b-7953-a713-38c6d7150770",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b38b-7953-a713-38c6d7150770",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b38b-7953-a713-38c6d7150770/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b38b-7953-a713-38c6d7150770/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/05uA2EEoxx5Ki6rpTXdgy_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 144917
+        },
+        "duration_ms": 4466
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/05uA2EEoxx5Ki6rpTXdgy_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L02.mp3",
+      "sha256": "004fcb1edf737206fb201b94c17854b77a8f75d26d3f79bb28acc88ba4510a0f",
+      "bytes": 144917
+    },
+    "C01-L03": {
+      "id": "C01-L03",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Train skills. Choose a path. Learn by doing.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.084Z",
+      "request_id": "01a0d513-b3d6-71a2-bcc8-62a3bc7f756f",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b3d6-71a2-bcc8-62a3bc7f756f",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b3d6-71a2-bcc8-62a3bc7f756f/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b3d6-71a2-bcc8-62a3bc7f756f/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/Xz2kLKxBrHTFF88JRXxSR_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 191728
+        },
+        "duration_ms": 5929
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/Xz2kLKxBrHTFF88JRXxSR_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L03.mp3",
+      "sha256": "f47580067d7ff6d8b42f29fd7765fb1cd3b6e60132873da9767225ddd64e30b2",
+      "bytes": 191728
+    },
+    "C01-L04": {
+      "id": "C01-L04",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Steal a car. Salvage eligible wrecks into materials.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.164Z",
+      "request_id": "01a0d513-b424-7090-b9df-9307ab3c69e0",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b424-7090-b9df-9307ab3c69e0",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b424-7090-b9df-9307ab3c69e0/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b424-7090-b9df-9307ab3c69e0/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/O5NJNBqGmfDDpTCxdK50T_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 140737
+        },
+        "duration_ms": 4336
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/O5NJNBqGmfDDpTCxdK50T_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L04.mp3",
+      "sha256": "98dba6c126599fd248cd1b2ba5f701a05bf7c86936884dcd85d8a44dae31aad1",
+      "bytes": 140737
+    },
+    "C01-L05": {
+      "id": "C01-L05",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Discover recipes. Craft, repair, and track what you own.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.236Z",
+      "request_id": "01a0d513-b477-7cb1-be4a-61eaae0fc765",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b477-7cb1-be4a-61eaae0fc765",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b477-7cb1-be4a-61eaae0fc765/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b477-7cb1-be4a-61eaae0fc765/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/fMV3le39BpGdsVJD5Nbkq_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 169994
+        },
+        "duration_ms": 5250
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/fMV3le39BpGdsVJD5Nbkq_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L05.mp3",
+      "sha256": "7251c9a182972ccc348755fd191b1827122443099085508a33b03aef61964194",
+      "bytes": 169994
+    },
+    "C01-L06": {
+      "id": "C01-L06",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Build businesses. Run kitchens. Pay the people working them.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.326Z",
+      "request_id": "01a0d513-b4d6-73a3-81d2-5df15a3b8f97",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b4d6-73a3-81d2-5df15a3b8f97",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b4d6-73a3-81d2-5df15a3b8f97/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b4d6-73a3-81d2-5df15a3b8f97/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/esgaOL5zjpAbyDpuvkYwt_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 134050
+        },
+        "duration_ms": 4127
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/esgaOL5zjpAbyDpuvkYwt_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L06.mp3",
+      "sha256": "e0efb9dd26caf6e0d931fdb12940870594986c45f01037a734e38b4e071898b1",
+      "bytes": 134050
+    },
+    "C01-L07": {
+      "id": "C01-L07",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Move cargo through markets, convoys, and dangerous ports.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.414Z",
+      "request_id": "01a0d513-b53a-7d91-b8a1-cb506f914fc2",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b53a-7d91-b8a1-cb506f914fc2",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b53a-7d91-b8a1-cb506f914fc2/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b53a-7d91-b8a1-cb506f914fc2/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/9RZiytCUMt103V9b_tI3b_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 170830
+        },
+        "duration_ms": 5276
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/9RZiytCUMt103V9b_tI3b_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L07.mp3",
+      "sha256": "6e5261a835158e5c64b6857aa30df5752278fd9d1971dcb8523499931f4852c6",
+      "bytes": 170830
+    },
+    "C01-L08": {
+      "id": "C01-L08",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Recruit a Crew. Coordinate heists and harder targets.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.521Z",
+      "request_id": "01a0d513-b5ce-7d61-9809-8ed2710332ea",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b5ce-7d61-9809-8ed2710332ea",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b5ce-7d61-9809-8ed2710332ea/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b5ce-7d61-9809-8ed2710332ea/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/_v-X0W35u3XT171DNo9yn_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 153276
+        },
+        "duration_ms": 4728
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/_v-X0W35u3XT171DNo9yn_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L08.mp3",
+      "sha256": "7eec7e04e4b1fa07bdb0177ff65ef10a61662a0624c3da3e5ed62e2e413930ae",
+      "bytes": 153276
+    },
+    "C01-L09": {
+      "id": "C01-L09",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Build a Family. Turn strength into territory.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.663Z",
+      "request_id": "01a0d513-b65d-75b0-9198-190d6006d927",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b65d-75b0-9198-190d6006d927",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b65d-75b0-9198-190d6006d927/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b65d-75b0-9198-190d6006d927/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/alryzd_YG94NmBdWpsV58_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 136557
+        },
+        "duration_ms": 4205
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/alryzd_YG94NmBdWpsV58_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L09.mp3",
+      "sha256": "acb9356c5a846cf9d8388caa9c8bf1546a766ba813a616f9581a9bf8e113a042",
+      "bytes": 136557
+    },
+    "C01-L10": {
+      "id": "C01-L10",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Control brings income. Diplomacy decides who contests it.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.810Z",
+      "request_id": "01a0d513-b6ee-76f3-824c-f8a09b717656",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b6ee-76f3-824c-f8a09b717656",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b6ee-76f3-824c-f8a09b717656/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b6ee-76f3-824c-f8a09b717656/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/vnRWkD6U4rYKZ7pNh0KRF_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/vnRWkD6U4rYKZ7pNh0KRF_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L10.mp3",
+      "sha256": "99527cb84b92183cb517ad06437edfd31c73debe25b24f1d3736098106430f7c",
+      "bytes": 165815
+    },
+    "C01-L11": {
+      "id": "C01-L11",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Loans, collateral, escrow: every deal has consequences.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:33.951Z",
+      "request_id": "01a0d513-b741-79a0-8673-c8520529f432",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b741-79a0-8673-c8520529f432",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b741-79a0-8673-c8520529f432/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b741-79a0-8673-c8520529f432/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/1NfebVxvkoqp_wCQrEWJO_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 179189
+        },
+        "duration_ms": 5537
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/1NfebVxvkoqp_wCQrEWJO_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L11.mp3",
+      "sha256": "2aac744bfc7bccc391831a73926890dde697de23847a8b87243549cb1c310a9a",
+      "bytes": 179189
+    },
+    "C01-L12": {
+      "id": "C01-L12",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Race. Fight. Play the tables. Own the room.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.040Z",
+      "request_id": "01a0d513-b7c0-7c30-8895-09ae9e20bae4",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b7c0-7c30-8895-09ae9e20bae4",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b7c0-7c30-8895-09ae9e20bae4/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b7c0-7c30-8895-09ae9e20bae4/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/TXuy8iNAJ1RoF-7PcXnsF_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/TXuy8iNAJ1RoF-7PcXnsF_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L12.mp3",
+      "sha256": "6b5419530b5d9fbda5d7fb0c14fbd848dcb3271378ad784b73b56b120888d86b",
+      "bytes": 165815
+    },
+    "C01-L13": {
+      "id": "C01-L13",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Rivals strike back. So do investigators, courts, and prison.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.162Z",
+      "request_id": "01a0d513-b831-78a3-b514-17f29d2d5911",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b831-78a3-b514-17f29d2d5911",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b831-78a3-b514-17f29d2d5911/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b831-78a3-b514-17f29d2d5911/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/BwrrxaPIBLkc46_kiZRnP_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 146588
+        },
+        "duration_ms": 4519
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/BwrrxaPIBLkc46_kiZRnP_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L13.mp3",
+      "sha256": "f8066e736109434b4728697f38716d1873e4e5acb1baffb2a6d24e8f01259898",
+      "bytes": 146588
+    },
+    "C01-L14": {
+      "id": "C01-L14",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Protection costs. Death can end a character.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.278Z",
+      "request_id": "01a0d513-b8b7-7f93-a0b9-9d8427c036a4",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b8b7-7f93-a0b9-9d8427c036a4",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b8b7-7f93-a0b9-9d8427c036a4/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b8b7-7f93-a0b9-9d8427c036a4/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/aVuyANRUyvc20cg99nByI_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 103957
+        },
+        "duration_ms": 3186
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/aVuyANRUyvc20cg99nByI_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L14.mp3",
+      "sha256": "84c41b5d42c5cb89cb3e16900ece82d41e51504303c7793986a4450cd0e2ece7",
+      "bytes": 103957
+    },
+    "C01-L15": {
+      "id": "C01-L15",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Your heirs, deeds, and reputation carry the legacy.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.407Z",
+      "request_id": "01a0d513-b923-7433-a2c7-73a28e76bccd",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b923-7433-a2c7-73a28e76bccd",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b923-7433-a2c7-73a28e76bccd/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b923-7433-a2c7-73a28e76bccd/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/Eal3HtcpIbSxPGOZoNPu-_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 106464
+        },
+        "duration_ms": 3265
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/Eal3HtcpIbSxPGOZoNPu-_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L15.mp3",
+      "sha256": "0f74fa8bccd5fb4276291e69ea2880e0b5410f3565963a8216c0c64ed95d6f48",
+      "bytes": 106464
+    },
+    "C01-L16": {
+      "id": "C01-L16",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Seasons reshape the city. Its people build the monuments.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.520Z",
+      "request_id": "01a0d513-b9aa-7740-acef-8a2a5b60b2a1",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b9aa-7740-acef-8a2a5b60b2a1",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b9aa-7740-acef-8a2a5b60b2a1/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-b9aa-7740-acef-8a2a5b60b2a1/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/GfCsq4OLvMqVIvWNvI1Ga_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/GfCsq4OLvMqVIvWNvI1Ga_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L16.mp3",
+      "sha256": "a400cf7c48d508cc51e20b2d8aa72b9b6904190b9bdd00ace6bc962b9700d733",
+      "bytes": 165815
+    },
+    "C01-L17": {
+      "id": "C01-L17",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Earn. Equip. Coordinate. Control. Reinvest. Survive.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.650Z",
+      "request_id": "01a0d513-ba21-72c3-8a9b-1e9e7b4d045e",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-ba21-72c3-8a9b-1e9e7b4d045e",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-ba21-72c3-8a9b-1e9e7b4d045e/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-ba21-72c3-8a9b-1e9e7b4d045e/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/0Lb6YS7U3OShXel4a85LY_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 228508
+        },
+        "duration_ms": 7079
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/0Lb6YS7U3OShXel4a85LY_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L17.mp3",
+      "sha256": "daf7f2255c95892bf8d52e544aab4795e35ccae9722688482d13c55a641b20d5",
+      "bytes": 228508
+    },
+    "C01-L18": {
+      "id": "C01-L18",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Oh mare tah. Build something worth defending.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.776Z",
+      "request_id": "01a0d513-baa1-7ef1-8b72-ee983eff095f",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-baa1-7ef1-8b72-ee983eff095f",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-baa1-7ef1-8b72-ee983eff095f/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-baa1-7ef1-8b72-ee983eff095f/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/TtYCKYfJ4hUtbcJU_8B5P_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 138229
+        },
+        "duration_ms": 4257
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/TtYCKYfJ4hUtbcJU_8B5P_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L18.mp3",
+      "sha256": "69c79d16aee26768a52173778cf79dcea85a489e93113e07d9ae39dd9b002ebb",
+      "bytes": 138229
+    },
+    "C02-L01": {
+      "id": "C02-L01",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Cash builds the empire. O M R follows a different circuit.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:34.901Z",
+      "request_id": "01a0d513-bb2f-7320-b367-737cd1c59457",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bb2f-7320-b367-737cd1c59457",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bb2f-7320-b367-737cd1c59457/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bb2f-7320-b367-737cd1c59457/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/PmbIyQZpMyrpzgE570HrT_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 161635
+        },
+        "duration_ms": 4989
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/PmbIyQZpMyrpzgE570HrT_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L01.mp3",
+      "sha256": "11e6935bc09fe518ef904e57a5a34292eb6ae8e5e382e418b7e0634a89fe818b",
+      "bytes": 161635
+    },
+    "C02-L02": {
+      "id": "C02-L02",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Defined missions and funded rewards put O M R in reach.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.045Z",
+      "request_id": "01a0d513-bbae-7f32-bdd9-39fa328edf28",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bbae-7f32-bdd9-39fa328edf28",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bbae-7f32-bdd9-39fa328edf28/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bbae-7f32-bdd9-39fa328edf28/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09b/LNlNL_pejBpgBUpWo9SUQ_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 155784
+        },
+        "duration_ms": 4806
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09b/LNlNL_pejBpgBUpWo9SUQ_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L02.mp3",
+      "sha256": "901ca9d1805dfe59c99b9dc810b5f2516197ce84313ec4434f6e28cbda4e5155",
+      "bytes": 155784
+    },
+    "C02-L03": {
+      "id": "C02-L03",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Spend on equipment, services, status, and eligible upgrades.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.167Z",
+      "request_id": "01a0d513-bc3c-7a63-93e4-99d113309e77",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bc3c-7a63-93e4-99d113309e77",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bc3c-7a63-93e4-99d113309e77/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bc3c-7a63-93e4-99d113309e77/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/vb53kudX95BDTLrDLyPEB_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 161635
+        },
+        "duration_ms": 4989
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/vb53kudX95BDTLrDLyPEB_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L03.mp3",
+      "sha256": "211e9245798ef645bed4c934cf9d3cabc3ac5796f6c28edad42cf21c50a755fe",
+      "bytes": 161635
+    },
+    "C02-L04": {
+      "id": "C02-L04",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Those spends refill the Desk: existing inventory, sold again.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.314Z",
+      "request_id": "01a0d513-bcb2-7bf0-a29d-54e1b3ff0f72",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bcb2-7bf0-a29d-54e1b3ff0f72",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bcb2-7bf0-a29d-54e1b3ff0f72/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bcb2-7bf0-a29d-54e1b3ff0f72/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/q07fAcCIqIl2KIOgfTY9Y_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/q07fAcCIqIl2KIOgfTY9Y_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L04.mp3",
+      "sha256": "6f05f43fa069301746dfc5fdab505e218ff7dc902e1dd409ac5d21cf1e00b78a",
+      "bytes": 165815
+    },
+    "C02-L05": {
+      "id": "C02-L05",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The Window exchanges O M R for funded game cash. Never the reverse.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.427Z",
+      "request_id": "01a0d513-bd23-7fc1-970d-e72e7acaba5b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd23-7fc1-970d-e72e7acaba5b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd23-7fc1-970d-e72e7acaba5b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd23-7fc1-970d-e72e7acaba5b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/5CKNN9UPYcH2oMc5SVPE6_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 187548
+        },
+        "duration_ms": 5799
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/5CKNN9UPYcH2oMc5SVPE6_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L05.mp3",
+      "sha256": "8d227dd6f47c87311a253c75f20be152831e7d4c8ba41952ac2d9ea5e504ac10",
+      "bytes": 187548
+    },
+    "C02-L06": {
+      "id": "C02-L06",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.546Z",
+      "request_id": "01a0d513-bd9e-7241-89f0-c2d69cbda03c",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd9e-7241-89f0-c2d69cbda03c",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd9e-7241-89f0-c2d69cbda03c/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bd9e-7241-89f0-c2d69cbda03c/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/NnzTNFQKq36Uc9zgihpMW_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 142409
+        },
+        "duration_ms": 4388
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/NnzTNFQKq36Uc9zgihpMW_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L06.mp3",
+      "sha256": "bbb503e70e017251e8313b9924a2cb69f7631a894efac5ee68f5e4cb30ee3f2f",
+      "bytes": 142409
+    },
+    "C02-L07": {
+      "id": "C02-L07",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The canonical Ether-O M R market routes a nine percent base sell fee.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.663Z",
+      "request_id": "01a0d513-be11-7a33-8698-ee2791177028",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be11-7a33-8698-ee2791177028",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be11-7a33-8698-ee2791177028/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be11-7a33-8698-ee2791177028/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/cnmWUcF5nk-DaM5zo7xmX_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 170830
+        },
+        "duration_ms": 5276
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/cnmWUcF5nk-DaM5zo7xmX_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L07.mp3",
+      "sha256": "fb47329de438dedebbe91a6a02750b2c8a8699213205280f84ff78b910c377b5",
+      "bytes": 170830
+    },
+    "C02-L08": {
+      "id": "C02-L08",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Development. R W A funding. Community. Protocol-owned liquidity.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.784Z",
+      "request_id": "01a0d513-be7e-7331-8974-a3d0c5f2db08",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be7e-7331-8974-a3d0c5f2db08",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be7e-7331-8974-a3d0c5f2db08/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-be7e-7331-8974-a3d0c5f2db08/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/p8evZxEtJKvxb63DnJkP1_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 203431
+        },
+        "duration_ms": 6295
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/p8evZxEtJKvxb63DnJkP1_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L08.mp3",
+      "sha256": "ae5ad4e5f61201f42366c28788450976f2aa1256caec71635def6065e22b7eba",
+      "bytes": 203431
+    },
+    "C02-L09": {
+      "id": "C02-L09",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "That liquidity allocation funds Core. Stability uses finite reserves.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:35.888Z",
+      "request_id": "01a0d513-beec-7443-9cc5-69477b49dcab",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-beec-7443-9cc5-69477b49dcab",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-beec-7443-9cc5-69477b49dcab/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-beec-7443-9cc5-69477b49dcab/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/Ug_qkwPSFPlkFL9YE1nLB_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 155784
+        },
+        "duration_ms": 4806
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/Ug_qkwPSFPlkFL9YE1nLB_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L09.mp3",
+      "sha256": "e9b15c0b1a95ddf4496d023d62887edb9899a1796dcf92f6b68c8f5652fc52e9",
+      "bytes": 155784
+    },
+    "C02-L10": {
+      "id": "C02-L10",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Seasonal Turf is different: Families contest future funded fees.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.003Z",
+      "request_id": "01a0d513-bf88-70c1-a8ac-7c278a868990",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bf88-70c1-a8ac-7c278a868990",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bf88-70c1-a8ac-7c278a868990/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bf88-70c1-a8ac-7c278a868990/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/fjAAOiwUH-TNg2_VH2RoV_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 161635
+        },
+        "duration_ms": 4989
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/fjAAOiwUH-TNg2_VH2RoV_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L10.mp3",
+      "sha256": "455a828efc027fa37c6726e8710b9ab52f814f4e36ba7fccec34ed81ad4529a9",
+      "bytes": 161635
+    },
+    "C02-L11": {
+      "id": "C02-L11",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Sieges allocate funded escrow. The principal stays protocol-owned.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.152Z",
+      "request_id": "01a0d513-bfd3-7fa1-9d8a-fbf67d2109bb",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bfd3-7fa1-9d8a-fbf67d2109bb",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bfd3-7fa1-9d8a-fbf67d2109bb/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-bfd3-7fa1-9d8a-fbf67d2109bb/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/CfUxSmw-wzuv1aQ9L2erf_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 177517
+        },
+        "duration_ms": 5485
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/CfUxSmw-wzuv1aQ9L2erf_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L11.mp3",
+      "sha256": "4a626eb3bf224e4b91c144a1b442c0d3bc9e94e18876559a963ec7b02f68b806",
+      "bytes": 177517
+    },
+    "C02-L12": {
+      "id": "C02-L12",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Inventory bonds vest existing O M R. They do not mint more.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.234Z",
+      "request_id": "01a0d513-c02a-7933-99d6-08c5d5fd7f8d",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c02a-7933-99d6-08c5d5fd7f8d",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c02a-7933-99d6-08c5d5fd7f8d/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c02a-7933-99d6-08c5d5fd7f8d/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/rRWHmq9Uwh2RzP3XSzdiv_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 158291
+        },
+        "duration_ms": 4884
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/rRWHmq9Uwh2RzP3XSzdiv_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L12.mp3",
+      "sha256": "3f331f4fe3f682fb28e047b769a358ea6c9048dd2e2f6b32a36a8ba786decf6a",
+      "bytes": 158291
+    },
+    "C02-L13": {
+      "id": "C02-L13",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Liquidity commitments lock positions against prefunded campaign rewards.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.312Z",
+      "request_id": "01a0d513-c079-7fe3-825d-a9c176e7e306",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c079-7fe3-825d-a9c176e7e306",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c079-7fe3-825d-a9c176e7e306/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c079-7fe3-825d-a9c176e7e306/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/x0g5chKKRG92HYsch9cCk_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/x0g5chKKRG92HYsch9cCk_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L13.mp3",
+      "sha256": "a986c94270dc03e3fe4f689b48d4a724f1262fcc46b23738c17f131868f01e50",
+      "bytes": 149096
+    },
+    "C02-L14": {
+      "id": "C02-L14",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Eligible identity, gear, and vehicles have distinct onchain rails.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.399Z",
+      "request_id": "01a0d513-c0dc-7f42-97b1-bbeca8e9c596",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c0dc-7f42-97b1-bbeca8e9c596",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c0dc-7f42-97b1-bbeca8e9c596/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c0dc-7f42-97b1-bbeca8e9c596/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/nCilgvdqk3QUNh5YTpc7Q_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 175010
+        },
+        "duration_ms": 5407
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/nCilgvdqk3QUNh5YTpc7Q_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L14.mp3",
+      "sha256": "1949cb3737ec8acc88b63dcc1f7196156bb0f90b3149a8671a37e73af80a79e5",
+      "bytes": 175010
+    },
+    "C02-L15": {
+      "id": "C02-L15",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Approved R W A acquisitions can reach eligible Street Deed vaults.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.491Z",
+      "request_id": "01a0d513-c13c-78c0-8aa7-c3cd80739ac8",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c13c-78c0-8aa7-c3cd80739ac8",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c13c-78c0-8aa7-c3cd80739ac8/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c13c-78c0-8aa7-c3cd80739ac8/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/6ROSO3rnnHEC3KIfmHxNU_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 151604
+        },
+        "duration_ms": 4675
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/6ROSO3rnnHEC3KIfmHxNU_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L15.mp3",
+      "sha256": "270b236065d5811d38ecd3c739657b119eb63b8af02714295d17ea631bd0d43c",
+      "bytes": 151604
+    },
+    "C02-L16": {
+      "id": "C02-L16",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Acquisition, allocation, delivery: three steps. Ownership has boundaries.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.593Z",
+      "request_id": "01a0d513-c198-7f12-af84-80fec93ef8db",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c198-7f12-af84-80fec93ef8db",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c198-7f12-af84-80fec93ef8db/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c198-7f12-af84-80fec93ef8db/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/DdqQ59_AM4J5BLZZ7M2Rw_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 222657
+        },
+        "duration_ms": 6896
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/DdqQ59_AM4J5BLZZ7M2Rw_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L16.mp3",
+      "sha256": "4160ca28bf26595c0d3313728abad71635bc84ea31f362452d5db8b95fbbe0eb",
+      "bytes": 222657
+    },
+    "C02-L17": {
+      "id": "C02-L17",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Every balance has a source. Every move has a cost.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.679Z",
+      "request_id": "01a0d513-c1f5-7840-b08f-6905a1accee3",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c1f5-7840-b08f-6905a1accee3",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c1f5-7840-b08f-6905a1accee3/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c1f5-7840-b08f-6905a1accee3/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/jghjtKm-OBVo646Pbctc0_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 123183
+        },
+        "duration_ms": 3787
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/jghjtKm-OBVo646Pbctc0_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L17.mp3",
+      "sha256": "078b1431105eff4366fbc1d04bfc7d1e26a6a27bfdee0a137e24485e012e3273",
+      "bytes": 123183
+    },
+    "C02-L18": {
+      "id": "C02-L18",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Oh mare tah. The economy has territory.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.781Z",
+      "request_id": "01a0d513-c251-7b23-963f-0d725eef4d13",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c251-7b23-963f-0d725eef4d13",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c251-7b23-963f-0d725eef4d13/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c251-7b23-963f-0d725eef4d13/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/v-oKX7ZMwsmsb7bJqk1iX_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 120675
+        },
+        "duration_ms": 3709
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/v-oKX7ZMwsmsb7bJqk1iX_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L18.mp3",
+      "sha256": "9f1aeb92809076434eb12a747f60bbb8db6f55fd45e4b9c42f0d1e6347ef84c0",
+      "bytes": 120675
+    },
+    "C03-L01": {
+      "id": "C03-L01",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The most dangerous thing in Oh mare tah is what somebody knows.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.864Z",
+      "request_id": "01a0d513-c2a3-7db1-add4-13960a56d3be",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2a3-7db1-add4-13960a56d3be",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2a3-7db1-add4-13960a56d3be/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2a3-7db1-add4-13960a56d3be/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/6o-LBIQPkKpI9jcfi8qS0_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 183369
+        },
+        "duration_ms": 5668
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/6o-LBIQPkKpI9jcfi8qS0_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L01.mp3",
+      "sha256": "3ab667c1dbb6444897027410065b0b2702113b67cd79e6ae29e3d6c6fbb0b6a0",
+      "bytes": 183369
+    },
+    "C03-L02": {
+      "id": "C03-L02",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "A missing shipment becomes an investigation.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:36.952Z",
+      "request_id": "01a0d513-c2fe-7b10-b235-85c7759ae7fd",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2fe-7b10-b235-85c7759ae7fd",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2fe-7b10-b235-85c7759ae7fd/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c2fe-7b10-b235-85c7759ae7fd/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/V-hRytiUb6RAHZSju1_g3_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 121511
+        },
+        "duration_ms": 3735
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/V-hRytiUb6RAHZSju1_g3_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L02.mp3",
+      "sha256": "840f27dceb0602a3089219e7718efd50d2980476dd0aa51afac220b5939fe523",
+      "bytes": 121511
+    },
+    "C03-L03": {
+      "id": "C03-L03",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Clues connect people, places, objects, and past actions.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.038Z",
+      "request_id": "01a0d513-c353-7380-8e85-fb1a931a7222",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c353-7380-8e85-fb1a931a7222",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c353-7380-8e85-fb1a931a7222/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c353-7380-8e85-fb1a931a7222/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/lcdnjYM-HlIAnWTYfKjO__speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 161635
+        },
+        "duration_ms": 4989
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/lcdnjYM-HlIAnWTYfKjO__speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L03.mp3",
+      "sha256": "2740239280d36174dc15b707f22e0bc09af2ab77c67a4a954c82377ce40f6ce1",
+      "bytes": 161635
+    },
+    "C03-L04": {
+      "id": "C03-L04",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Your view is personal. Private intelligence stays private.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.131Z",
+      "request_id": "01a0d513-c3b8-7b73-8b2b-b922b3d225c3",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c3b8-7b73-8b2b-b922b3d225c3",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c3b8-7b73-8b2b-b922b3d225c3/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c3b8-7b73-8b2b-b922b3d225c3/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/lJgoAOWEbRmyPWbgADQ8A_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149096
+        },
+        "duration_ms": 4597
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/lJgoAOWEbRmyPWbgADQ8A_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L04.mp3",
+      "sha256": "b051f77522610e290b3b1cfcc5b9849d7d3be21f8aa0022519078d4d17e68551",
+      "bytes": 149096
+    },
+    "C03-L05": {
+      "id": "C03-L05",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Find an original source. Get another that stands independently.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.224Z",
+      "request_id": "01a0d513-c417-7251-8989-e6e052939a5b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c417-7251-8989-e6e052939a5b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c417-7251-8989-e6e052939a5b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c417-7251-8989-e6e052939a5b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09d/8PZnJ9CSeXOS_Ni4FOuu3_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 179189
+        },
+        "duration_ms": 5537
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09d/8PZnJ9CSeXOS_Ni4FOuu3_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L05.mp3",
+      "sha256": "3e50fa5153c98e01fbc22159247881b1a69498360f5308895675ae20875b0a0c",
+      "bytes": 179189
+    },
+    "C03-L06": {
+      "id": "C03-L06",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Share knowledge deliberately. A forwarded rumor is not proof.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.325Z",
+      "request_id": "01a0d513-c47d-7d63-8d29-b777f97c1d8f",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c47d-7d63-8d29-b777f97c1d8f",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c47d-7d63-8d29-b777f97c1d8f/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c47d-7d63-8d29-b777f97c1d8f/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/yrytlPfMSvQcEXKzGWFGD_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 181697
+        },
+        "duration_ms": 5616
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/yrytlPfMSvQcEXKzGWFGD_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L06.mp3",
+      "sha256": "c5462bbf1bdfeba30bcf4b9ea1574783a31e1d21651c533dedba9cc10d5cc145",
+      "bytes": 181697
+    },
+    "C03-L07": {
+      "id": "C03-L07",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "A recipe, a tool, a facility: preparation matters.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.420Z",
+      "request_id": "01a0d513-c4d5-7e73-bfad-ed865c0e43f1",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c4d5-7e73-bfad-ed865c0e43f1",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c4d5-7e73-bfad-ed865c0e43f1/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c4d5-7e73-bfad-ed865c0e43f1/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/EJ2AlTGCDpQu4EDIUGeSD_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 159963
+        },
+        "duration_ms": 4937
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/EJ2AlTGCDpQu4EDIUGeSD_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L07.mp3",
+      "sha256": "a1f45743787c3fb66c5fb0f7c5e2262352af8d515680e02822c8303741489e65",
+      "bytes": 159963
+    },
+    "C03-L08": {
+      "id": "C03-L08",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "One player brings equipment. Another brings intelligence.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.514Z",
+      "request_id": "01a0d513-c526-79e2-963d-f23647514179",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c526-79e2-963d-f23647514179",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c526-79e2-963d-f23647514179/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c526-79e2-963d-f23647514179/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/PENsFrg_Jdkh_wSt0Gpwx_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 173338
+        },
+        "duration_ms": 5355
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/PENsFrg_Jdkh_wSt0Gpwx_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L08.mp3",
+      "sha256": "1acb1dfc62c185bf0dfc17fbd16e0ba31c58bfe63df8846726ef454a4d26cce7",
+      "bytes": 173338
+    },
+    "C03-L09": {
+      "id": "C03-L09",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Crew roles and Family authority decide who can act.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.589Z",
+      "request_id": "01a0d513-c56e-7bc3-8e72-b9b2ce3062fa",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c56e-7bc3-8e72-b9b2ce3062fa",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c56e-7bc3-8e72-b9b2ce3062fa/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c56e-7bc3-8e72-b9b2ce3062fa/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/FgcNDGNbjekojoxNm-J-B_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 127362
+        },
+        "duration_ms": 3918
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/FgcNDGNbjekojoxNm-J-B_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L09.mp3",
+      "sha256": "3e434e1f8a6b8e14a4796a06e1fcd0bf0d161eea1516684dd8c44884c9083ea9",
+      "bytes": 127362
+    },
+    "C03-L10": {
+      "id": "C03-L10",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "An Agent can read permitted context and propose a move.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.670Z",
+      "request_id": "01a0d513-c5c0-7390-887d-e1240fc98999",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c5c0-7390-887d-e1240fc98999",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c5c0-7390-887d-e1240fc98999/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c5c0-7390-887d-e1240fc98999/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/K5oIfH5mYGRf-Rp0DJgG4_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 159963
+        },
+        "duration_ms": 4937
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/K5oIfH5mYGRf-Rp0DJgG4_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L10.mp3",
+      "sha256": "58391ed9229e7d75316e0153afdbf657c65f9c98c05461ed66b1600a2b5c2222",
+      "bytes": 159963
+    },
+    "C03-L11": {
+      "id": "C03-L11",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Bounded automation has limits. Consequential proposals need your approval.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.743Z",
+      "request_id": "01a0d513-c611-7ab0-aeb6-67b26caed8bf",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c611-7ab0-aeb6-67b26caed8bf",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c611-7ab0-aeb6-67b26caed8bf/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c611-7ab0-aeb6-67b26caed8bf/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/jW2OGVSkNRzzh63wKHe2p_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 175010
+        },
+        "duration_ms": 5407
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/jW2OGVSkNRzzh63wKHe2p_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L11.mp3",
+      "sha256": "dd56d2ecd7a5bc6fc5753539a2102ae3d94e845c86fd4f288b243a1d2a638eec",
+      "bytes": 175010
+    },
+    "C03-L12": {
+      "id": "C03-L12",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "You confirm. The server checks authority and resources again.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.832Z",
+      "request_id": "01a0d513-c66b-7513-98d2-a20a35952cbe",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c66b-7513-98d2-a20a35952cbe",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c66b-7513-98d2-a20a35952cbe/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c66b-7513-98d2-a20a35952cbe/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/Ak-gaxSU3KHEbHOEs1bOB_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 143245
+        },
+        "duration_ms": 4414
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/Ak-gaxSU3KHEbHOEs1bOB_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L12.mp3",
+      "sha256": "fa76f9443cd9cb8f56e64bc3b216589419a57f32655fde753111f0a9032c0ac8",
+      "bytes": 143245
+    },
+    "C03-L13": {
+      "id": "C03-L13",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The operation changes the world. Its receipt becomes history.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:37.915Z",
+      "request_id": "01a0d513-c6b9-7d40-bc8d-c05956b519a3",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c6b9-7d40-bc8d-c05956b519a3",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c6b9-7d40-bc8d-c05956b519a3/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c6b9-7d40-bc8d-c05956b519a3/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/HLGf0NB4oZOxuZsQQvJxX_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 151604
+        },
+        "duration_ms": 4675
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/HLGf0NB4oZOxuZsQQvJxX_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L13.mp3",
+      "sha256": "c712b5a71b898688afdfef2140ed58dadb650fa7ae0a7caaf120622b6ac6a3c9",
+      "bytes": 151604
+    },
+    "C03-L14": {
+      "id": "C03-L14",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The Director responds to real conditions with authored situations.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:38.000Z",
+      "request_id": "01a0d513-c708-7142-a3a1-14f78934f2df",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c708-7142-a3a1-14f78934f2df",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c708-7142-a3a1-14f78934f2df/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c708-7142-a3a1-14f78934f2df/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/kh2e2dgYoV-8f-46Xrvsd_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 149932
+        },
+        "duration_ms": 4623
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/kh2e2dgYoV-8f-46Xrvsd_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L14.mp3",
+      "sha256": "09a68df6c9349b6924a3d0fcdfc91508cc2e747d78265710b51f3a103b316c3b",
+      "bytes": 149932
+    },
+    "C03-L15": {
+      "id": "C03-L15",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "A diverted shipment can open a market; exposure starts another investigation.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:38.071Z",
+      "request_id": "01a0d513-c754-7430-990d-c8d173575483",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c754-7430-990d-c8d173575483",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c754-7430-990d-c8d173575483/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c754-7430-990d-c8d173575483/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/TUiM-02QVldliH7Jp1dPA_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 205103
+        },
+        "duration_ms": 6347
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/TUiM-02QVldliH7Jp1dPA_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L15.mp3",
+      "sha256": "22745981d15ed050e9884d5d1fa6d51593ce3f6da9a0db40affc76029556b9c7",
+      "bytes": 205103
+    },
+    "C03-L16": {
+      "id": "C03-L16",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Opportunities connect the next move to what actually happened.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:38.156Z",
+      "request_id": "01a0d513-c7a5-7da0-a5bd-95806447b146",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7a5-7da0-a5bd-95806447b146",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7a5-7da0-a5bd-95806447b146/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7a5-7da0-a5bd-95806447b146/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/ZvAeCXXmgES8fFEw2DKZx_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 135722
+        },
+        "duration_ms": 4179
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/ZvAeCXXmgES8fFEw2DKZx_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L16.mp3",
+      "sha256": "5a723d583824ac9ece682ec890679f0319f6337094582f0d008a5e83fa266136",
+      "bytes": 135722
+    },
+    "C03-L17": {
+      "id": "C03-L17",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Secrets, alliances, blackmail: the city gives your decisions weight.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:38.229Z",
+      "request_id": "01a0d513-c7f0-7202-911a-887c734ea37a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7f0-7202-911a-887c734ea37a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7f0-7202-911a-887c734ea37a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c7f0-7202-911a-887c734ea37a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/ZGs7EfffdfnKgLAv4Gj-D_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 203431
+        },
+        "duration_ms": 6295
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/ZGs7EfffdfnKgLAv4Gj-D_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L17.mp3",
+      "sha256": "01409578b5fcc6f08441e31fdd87836def09a972392774607bcf623ef18a6c9f",
+      "bytes": 203431
+    },
+    "C03-L18": {
+      "id": "C03-L18",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Oh mare tah. Know more. Move together.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:20:38.310Z",
+      "request_id": "01a0d513-c83e-78e0-8404-51b4c614dcd7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c83e-78e0-8404-51b4c614dcd7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c83e-78e0-8404-51b4c614dcd7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d513-c83e-78e0-8404-51b4c614dcd7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc09c/4S0xeYzPr132vbu2zWrTT_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 123183
+        },
+        "duration_ms": 3787
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc09c/4S0xeYzPr132vbu2zWrTT_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L18.mp3",
+      "sha256": "75941e48a64ce50dadfa74904537ea276e74fdccd6ca16afae4dbf201117a135",
+      "bytes": 123183
+    },
+    "C01-L01-v2": {
+      "id": "C01-L01-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Your next move could build an empire.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:33.809Z",
+      "request_id": "01a0d51d-c978-7da1-a53f-eb6325b136ea",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-c978-7da1-a53f-eb6325b136ea",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-c978-7da1-a53f-eb6325b136ea/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-c978-7da1-a53f-eb6325b136ea/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/j_f9YNRIvbc2-Fd73F3MP_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 84730
+        },
+        "duration_ms": 2586
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/j_f9YNRIvbc2-Fd73F3MP_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L01-v2.mp3",
+      "sha256": "d735e3a2a5b5dba10ef243185795e08054919c3d92bafc44319515df8d2a4f4d",
+      "bytes": 84730
+    },
+    "C01-L03-v2": {
+      "id": "C01-L03-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Train your skills and build a career through action.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.050Z",
+      "request_id": "01a0d51d-ca4a-74f0-8dad-4f3a4b6bc3d1",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca4a-74f0-8dad-4f3a4b6bc3d1",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca4a-74f0-8dad-4f3a4b6bc3d1/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca4a-74f0-8dad-4f3a4b6bc3d1/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/JXBfFdfmO1eIL18uxw7eP_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 113152
+        },
+        "duration_ms": 3474
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/JXBfFdfmO1eIL18uxw7eP_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L03-v2.mp3",
+      "sha256": "1ca6d130b3ec61acda5f581ddb436eecee16d64e5d924358598b24ff868ccb38",
+      "bytes": 113152
+    },
+    "C01-L05-v2": {
+      "id": "C01-L05-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Discover recipes to craft, repair, and track your gear.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.261Z",
+      "request_id": "01a0d51d-ca9a-73f1-a963-a420678ce6f7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca9a-73f1-a963-a420678ce6f7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca9a-73f1-a963-a420678ce6f7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ca9a-73f1-a963-a420678ce6f7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/LHS_E0NKeHZuPT74BZJJv_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 133214
+        },
+        "duration_ms": 4101
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/LHS_E0NKeHZuPT74BZJJv_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L05-v2.mp3",
+      "sha256": "1d2133a8620becbfcffc423507006f256fef6955380051333150537c050b1ca5",
+      "bytes": 133214
+    },
+    "C01-L07-v2": {
+      "id": "C01-L07-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Move cargo through markets and risky convoys.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.341Z",
+      "request_id": "01a0d51d-cae9-7e53-88ed-8cdc34b7bb39",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cae9-7e53-88ed-8cdc34b7bb39",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cae9-7e53-88ed-8cdc34b7bb39/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cae9-7e53-88ed-8cdc34b7bb39/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/fAuVvWN6GBlJyc0u-GHsi_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 131542
+        },
+        "duration_ms": 4048
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/fAuVvWN6GBlJyc0u-GHsi_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L07-v2.mp3",
+      "sha256": "9a2b5f2ff374e9422861455a3ab56e3b6e76e67ed513c15a5783cedbfbabc5b1",
+      "bytes": 131542
+    },
+    "C01-L10-v2": {
+      "id": "C01-L10-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Territory earns income while diplomacy shapes the fight.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.420Z",
+      "request_id": "01a0d51d-cb33-7640-b19e-e2252a1f2db7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb33-7640-b19e-e2252a1f2db7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb33-7640-b19e-e2252a1f2db7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb33-7640-b19e-e2252a1f2db7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/j-wCemE1fpyZLQGgv0N9T_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 120675
+        },
+        "duration_ms": 3709
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/j-wCemE1fpyZLQGgv0N9T_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L10-v2.mp3",
+      "sha256": "22fac8aa91c0fad3cfab0ea7409765292a0764205965439232786b95f4f0ce20",
+      "bytes": 120675
+    },
+    "C01-L11-v2": {
+      "id": "C01-L11-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Loans and escrow put consequences behind every deal.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.494Z",
+      "request_id": "01a0d51d-cb7d-7823-b721-c16e288dcf0a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb7d-7823-b721-c16e288dcf0a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb7d-7823-b721-c16e288dcf0a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cb7d-7823-b721-c16e288dcf0a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/c6YKYhItYko9S1Hb4OFuf_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 109808
+        },
+        "duration_ms": 3369
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/c6YKYhItYko9S1Hb4OFuf_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L11-v2.mp3",
+      "sha256": "0c677f2c7b92dea7c5c4d7c21a2eafeca2d28ba38aff0b542b6c8997d759e2f7",
+      "bytes": 109808
+    },
+    "C01-L12-v2": {
+      "id": "C01-L12-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Race, fight, and play the tables.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.568Z",
+      "request_id": "01a0d51d-cbc9-7a42-a413-c779fa198792",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cbc9-7a42-a413-c779fa198792",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cbc9-7a42-a413-c779fa198792/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cbc9-7a42-a413-c779fa198792/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/XxnFo-eB3pGCfZnq0EnQz_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 119003
+        },
+        "duration_ms": 3657
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/XxnFo-eB3pGCfZnq0EnQz_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L12-v2.mp3",
+      "sha256": "cb52eb5dc3c0754629d5165afca1f82a46d46f06077cdaf1fb89f47f015c26ea",
+      "bytes": 119003
+    },
+    "C01-L16-v2": {
+      "id": "C01-L16-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Seasons reshape the city while players build monuments.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.643Z",
+      "request_id": "01a0d51d-cc11-70c1-96d7-ddfa98ebdd67",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc11-70c1-96d7-ddfa98ebdd67",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc11-70c1-96d7-ddfa98ebdd67/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc11-70c1-96d7-ddfa98ebdd67/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/JP1M_tdz_P7Si1rHfHWHV_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 125690
+        },
+        "duration_ms": 3866
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/JP1M_tdz_P7Si1rHfHWHV_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L16-v2.mp3",
+      "sha256": "4ea5de9f21cb96cfbe01aa0fc65b06e01cdd037f9447958fd18411df044686e6",
+      "bytes": 125690
+    },
+    "C01-L17-v2": {
+      "id": "C01-L17-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Equip your Crew to take control and reinvest.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.718Z",
+      "request_id": "01a0d51d-cc68-7a30-9a78-21e16bd5c92b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc68-7a30-9a78-21e16bd5c92b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc68-7a30-9a78-21e16bd5c92b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cc68-7a30-9a78-21e16bd5c92b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/MU1Ip2wb5pNt7jB_SNzqy_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 123183
+        },
+        "duration_ms": 3787
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/MU1Ip2wb5pNt7jB_SNzqy_speech.mp3",
+      "src": "art/cinematic-r4/audio/C01-L17-v2.mp3",
+      "sha256": "e4ccaf6ced0664656c31f09d5844c11cbb5bcd559457378ce6a2853897b04518",
+      "bytes": 123183
+    },
+    "C02-L01-v2": {
+      "id": "C02-L01-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Game cash and O M R follow separate economic circuits.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.802Z",
+      "request_id": "01a0d51d-ccb6-7290-bc05-d0f3f5e5cc6b",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ccb6-7290-bc05-d0f3f5e5cc6b",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ccb6-7290-bc05-d0f3f5e5cc6b/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ccb6-7290-bc05-d0f3f5e5cc6b/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/qXI_mbGXmwyGMHoz3NcRX_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 146588
+        },
+        "duration_ms": 4519
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/qXI_mbGXmwyGMHoz3NcRX_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L01-v2.mp3",
+      "sha256": "1d3ac26719450a673c9354eafa47b61e845dbf8553d903c16fdae673a4895bca",
+      "bytes": 146588
+    },
+    "C02-L03-v2": {
+      "id": "C02-L03-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Spend on eligible gear, services, and upgrades.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.881Z",
+      "request_id": "01a0d51d-cd03-7db0-9688-1fa4599fa118",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd03-7db0-9688-1fa4599fa118",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd03-7db0-9688-1fa4599fa118/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd03-7db0-9688-1fa4599fa118/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/eH8FONstYQB7w-faCI0dh_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 139901
+        },
+        "duration_ms": 4310
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/eH8FONstYQB7w-faCI0dh_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L03-v2.mp3",
+      "sha256": "d8805d34a4cd9edc8b843819e547c211070c0dc755c8a8ee71d37afa724a238c",
+      "bytes": 139901
+    },
+    "C02-L04-v2": {
+      "id": "C02-L04-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Eligible spending refills the Desk’s existing token inventory.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:34.957Z",
+      "request_id": "01a0d51d-cd52-7471-afd3-711221b99900",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd52-7471-afd3-711221b99900",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd52-7471-afd3-711221b99900/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cd52-7471-afd3-711221b99900/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/Dpzv7PkJ6Cyeouos5IwdV_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 133214
+        },
+        "duration_ms": 4101
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/Dpzv7PkJ6Cyeouos5IwdV_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L04-v2.mp3",
+      "sha256": "555e56ca3fcc2e2645f23b8c0bade31413cb7065ef098a78f9501c2e523a5ddc",
+      "bytes": 133214
+    },
+    "C02-L05-v2": {
+      "id": "C02-L05-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "The funded Window converts O M R to cash only.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.038Z",
+      "request_id": "01a0d51d-cda2-7cc3-a4d5-cb7ffc99b5ac",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cda2-7cc3-a4d5-cb7ffc99b5ac",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cda2-7cc3-a4d5-cb7ffc99b5ac/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cda2-7cc3-a4d5-cb7ffc99b5ac/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/y1C5lBn0c2d9cujkMFbS6_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 133214
+        },
+        "duration_ms": 4101
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/y1C5lBn0c2d9cujkMFbS6_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L05-v2.mp3",
+      "sha256": "503b49423bb0a92e3151e19dd939c8d99fe1bad1e6ddeecfc02f002e190a8adf",
+      "bytes": 133214
+    },
+    "C02-L07-v2": {
+      "id": "C02-L07-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Canonical sells route a nine-percent base fee.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.116Z",
+      "request_id": "01a0d51d-cdf0-7431-b56f-9f0e2917df32",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cdf0-7431-b56f-9f0e2917df32",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cdf0-7431-b56f-9f0e2917df32/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cdf0-7431-b56f-9f0e2917df32/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0dd/n54y_7fMzF9MsstZV5NMh_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 120675
+        },
+        "duration_ms": 3709
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0dd/n54y_7fMzF9MsstZV5NMh_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L07-v2.mp3",
+      "sha256": "1947966eee76e798039a0fa1cd3c6d52a7d3139058fa298c4a4b399615243548",
+      "bytes": 120675
+    },
+    "C02-L08-v2": {
+      "id": "C02-L08-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Fees fund development, R W A, community, and protocol liquidity.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.195Z",
+      "request_id": "01a0d51d-ce41-7c61-93be-b26d5f157130",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce41-7c61-93be-b26d5f157130",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce41-7c61-93be-b26d5f157130/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce41-7c61-93be-b26d5f157130/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/5sRG_SusbfzmemlOQLvEP_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 165815
+        },
+        "duration_ms": 5120
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/5sRG_SusbfzmemlOQLvEP_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L08-v2.mp3",
+      "sha256": "6bdf860dfb855b6ce92b8df033a1fe5c126cd8838c71dee2550430a1e8ac14b6",
+      "bytes": 165815
+    },
+    "C02-L10-v2": {
+      "id": "C02-L10-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Families contest future funded fees in seasonal Turf.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.276Z",
+      "request_id": "01a0d51d-ce90-7ca2-9fd1-eaff1d460afa",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce90-7ca2-9fd1-eaff1d460afa",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce90-7ca2-9fd1-eaff1d460afa/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-ce90-7ca2-9fd1-eaff1d460afa/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/dAkzuITNGOwb68OZlaX8y_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 117331
+        },
+        "duration_ms": 3604
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/dAkzuITNGOwb68OZlaX8y_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L10-v2.mp3",
+      "sha256": "fef8fd2a50b665426f1ec275f995850f90da497aa0e0c308737d2321fe86baed",
+      "bytes": 117331
+    },
+    "C02-L11-v2": {
+      "id": "C02-L11-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Sieges allocate funded escrow while principal stays protocol-owned.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.356Z",
+      "request_id": "01a0d51d-cedf-7f42-9cd1-f9b7537ca31d",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cedf-7f42-9cd1-f9b7537ca31d",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cedf-7f42-9cd1-f9b7537ca31d/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cedf-7f42-9cd1-f9b7537ca31d/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/IfqI4rcXoh3WV2Lqd2P13_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 155784
+        },
+        "duration_ms": 4806
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/IfqI4rcXoh3WV2Lqd2P13_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L11-v2.mp3",
+      "sha256": "e9a461b26d53a8cb89f22670912bc7d960ef0a654398448c82f25bd4c64e655e",
+      "bytes": 155784
+    },
+    "C02-L14-v2": {
+      "id": "C02-L14-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Eligible assets use distinct onchain ownership rails.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.435Z",
+      "request_id": "01a0d51d-cf2e-74f0-b68c-692214fd5641",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf2e-74f0-b68c-692214fd5641",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf2e-74f0-b68c-692214fd5641/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf2e-74f0-b68c-692214fd5641/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/-mm-gd_Mc_BDnTEHAjtYK_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 127362
+        },
+        "duration_ms": 3918
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/-mm-gd_Mc_BDnTEHAjtYK_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L14-v2.mp3",
+      "sha256": "fceacd1ac5cdde58dfa7bf33d225c0e36914d505609defab0cf9ea8cf2c4e758",
+      "bytes": 127362
+    },
+    "C02-L16-v2": {
+      "id": "C02-L16-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Acquisition, allocation, and delivery each have separate rules.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.514Z",
+      "request_id": "01a0d51d-cf7d-7de0-819a-558a9c81a606",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf7d-7de0-819a-558a9c81a606",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf7d-7de0-819a-558a9c81a606/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cf7d-7de0-819a-558a9c81a606/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/tKyTKiPVXRmpB_IHUH3gm_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 155784
+        },
+        "duration_ms": 4806
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/tKyTKiPVXRmpB_IHUH3gm_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L16-v2.mp3",
+      "sha256": "1037dc3dee0a63ae5a5a03b88a4bcee57e8a4b19ca31139ada84a671e3aa7b2d",
+      "bytes": 155784
+    },
+    "C03-L01-v2": {
+      "id": "C03-L01-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "In this city, what you know changes everything.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.592Z",
+      "request_id": "01a0d51d-cfce-7b63-b5aa-4e015462900a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cfce-7b63-b5aa-4e015462900a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cfce-7b63-b5aa-4e015462900a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-cfce-7b63-b5aa-4e015462900a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/g_RDnY9xpJS-yMa0j0X1L_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 134050
+        },
+        "duration_ms": 4127
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/g_RDnY9xpJS-yMa0j0X1L_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L01-v2.mp3",
+      "sha256": "7f4297cf8e29e36f07551ac912ed46c97a1ebc0cfa5dd9bd4ead614b44f59ddb",
+      "bytes": 134050
+    },
+    "C03-L03-v2": {
+      "id": "C03-L03-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Clues connect people, places, objects, and history.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.674Z",
+      "request_id": "01a0d51d-d01c-7a61-868f-4d818ca430cc",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d01c-7a61-868f-4d818ca430cc",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d01c-7a61-868f-4d818ca430cc/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d01c-7a61-868f-4d818ca430cc/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/rr2r8BhZXnqQKl3gt4IMy_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 133214
+        },
+        "duration_ms": 4101
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/rr2r8BhZXnqQKl3gt4IMy_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L03-v2.mp3",
+      "sha256": "8b51ff81aec190fdcc0cc179f70f61984907740879459167aff15cc1e9da6549",
+      "bytes": 133214
+    },
+    "C03-L05-v2": {
+      "id": "C03-L05-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Find original evidence from two independent sources.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.752Z",
+      "request_id": "01a0d51d-d070-73f2-8232-b9ffc1bbb18a",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d070-73f2-8232-b9ffc1bbb18a",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d070-73f2-8232-b9ffc1bbb18a/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d070-73f2-8232-b9ffc1bbb18a/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/jV_HNOxca8d3Nyw3-ewXs_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 157455
+        },
+        "duration_ms": 4858
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/jV_HNOxca8d3Nyw3-ewXs_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L05-v2.mp3",
+      "sha256": "8e9c5b1bd4ac1bbfaae3cce14387d4232e6b899a774106cba41828b6b01c3fa0",
+      "bytes": 157455
+    },
+    "C03-L06-v2": {
+      "id": "C03-L06-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Share knowledge carefully: forwarded rumors are not proof.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.838Z",
+      "request_id": "01a0d51d-d0e9-7423-ba6a-600d85becd4f",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d0e9-7423-ba6a-600d85becd4f",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d0e9-7423-ba6a-600d85becd4f/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d0e9-7423-ba6a-600d85becd4f/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/fS35Hre-qEoGIwE6tQcOq_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 144917
+        },
+        "duration_ms": 4466
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/fS35Hre-qEoGIwE6tQcOq_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L06-v2.mp3",
+      "sha256": "22496c40526043c893b482fdc6b0584bf01e9dd33240a0d01711a65949269778",
+      "bytes": 144917
+    },
+    "C03-L07-v2": {
+      "id": "C03-L07-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Bring recipes and tools to the right facility.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:35.956Z",
+      "request_id": "01a0d51d-d157-7773-9413-7aea9be58ad7",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d157-7773-9413-7aea9be58ad7",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d157-7773-9413-7aea9be58ad7/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d157-7773-9413-7aea9be58ad7/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/i89_W6LObqhUlZGHYRRUA_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 112316
+        },
+        "duration_ms": 3448
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/i89_W6LObqhUlZGHYRRUA_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L07-v2.mp3",
+      "sha256": "4a5b86c72b09bd8112d101556dc0cb62b8e8100f73dab77f37665d9a2edf4a35",
+      "bytes": 112316
+    },
+    "C03-L08-v2": {
+      "id": "C03-L08-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Bring equipment while another player brings the intelligence.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:36.068Z",
+      "request_id": "01a0d51d-d1c8-7362-aba7-95bf6fdc9cb2",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d1c8-7362-aba7-95bf6fdc9cb2",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d1c8-7362-aba7-95bf6fdc9cb2/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d1c8-7362-aba7-95bf6fdc9cb2/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/1G1vs9GcMq0H8nEcSD1xN_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 129034
+        },
+        "duration_ms": 3970
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/1G1vs9GcMq0H8nEcSD1xN_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L08-v2.mp3",
+      "sha256": "90ac65ebcc96a112a4e03d33f5753a6abdc0f04fb6ac4a056e6fe784130ea1e2",
+      "bytes": 129034
+    },
+    "C03-L11-v2": {
+      "id": "C03-L11-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Agents stay bounded; you approve consequential moves.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:36.179Z",
+      "request_id": "01a0d51d-d239-7463-b4fc-580cf899fb47",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d239-7463-b4fc-580cf899fb47",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d239-7463-b4fc-580cf899fb47/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d239-7463-b4fc-580cf899fb47/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/OHfVXArzJqpXcYuYYmVDe_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 154112
+        },
+        "duration_ms": 4754
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/OHfVXArzJqpXcYuYYmVDe_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L11-v2.mp3",
+      "sha256": "ef1445868165dcd1ba741e2953bb92869d6c3040316df8b752424e4235a0387b",
+      "bytes": 154112
+    },
+    "C03-L15-v2": {
+      "id": "C03-L15-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Divert cargo; exposure can trigger a new case.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:36.294Z",
+      "request_id": "01a0d51d-d2b7-7d00-a7a7-389b7e1d57a3",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d2b7-7d00-a7a7-389b7e1d57a3",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d2b7-7d00-a7a7-389b7e1d57a3/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d2b7-7d00-a7a7-389b7e1d57a3/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/qDuLa6rUBSqWdAgqtfh9t_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 147424
+        },
+        "duration_ms": 4545
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/qDuLa6rUBSqWdAgqtfh9t_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L15-v2.mp3",
+      "sha256": "3059b36e7f822349c4f299a4786b5fd2e762394eef058144dfc1264816d717ba",
+      "bytes": 147424
+    },
+    "C03-L17-v2": {
+      "id": "C03-L17-v2",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Secrets and alliances give your decisions lasting weight.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:31:36.417Z",
+      "request_id": "01a0d51d-d301-7e32-b0b9-cafa8543cfb9",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d301-7e32-b0b9-cafa8543cfb9",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d301-7e32-b0b9-cafa8543cfb9/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d51d-d301-7e32-b0b9-cafa8543cfb9/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0de/hWjwqHPVSIoH7ZiBLCJ5U_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 136557
+        },
+        "duration_ms": 4205
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0de/hWjwqHPVSIoH7ZiBLCJ5U_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L17-v2.mp3",
+      "sha256": "b67d552c9e31e4062596fbbfc391a892e06d0fb1ae30051d9cd785f129535789",
+      "bytes": 136557
+    },
+    "C02-L08-v3": {
+      "id": "C02-L08-v3",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Fees support development, R W A, community, and liquidity.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:34:07.877Z",
+      "request_id": "01a0d520-232f-7bb0-bc91-a592be339243",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-232f-7bb0-bc91-a592be339243",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-232f-7bb0-bc91-a592be339243/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-232f-7bb0-bc91-a592be339243/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0ed/0LTJrAUPLFrmRXUyFeW4C_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 168322
+        },
+        "duration_ms": 5198
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0ed/0LTJrAUPLFrmRXUyFeW4C_speech.mp3",
+      "src": "art/cinematic-r4/audio/C02-L08-v3.mp3",
+      "sha256": "81e287780b7d0782dd40b4d762934f511f885b24d72ebc91e2687b4e353f1a37",
+      "bytes": 168322
+    },
+    "C03-L11-v3": {
+      "id": "C03-L11-v3",
+      "model": "fal-ai/minimax/speech-02-hd",
+      "input": {
+        "text": "Consequential proposals still need your approval.",
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        },
+        "output_format": "url"
+      },
+      "folder": "audio",
+      "ext": "mp3",
+      "status": "downloaded",
+      "submittedAt": "2026-09-24T20:34:08.089Z",
+      "request_id": "01a0d520-2403-7b01-843d-d3c483644199",
+      "response_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-2403-7b01-843d-d3c483644199",
+      "status_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-2403-7b01-843d-d3c483644199/status",
+      "cancel_url": "https://queue.fal.run/fal-ai/minimax/requests/01a0d520-2403-7b01-843d-d3c483644199/cancel",
+      "logs": null,
+      "metrics": {},
+      "queue_position": 0,
+      "queueState": "COMPLETED",
+      "result": {
+        "audio": {
+          "url": "https://v3b.fal.media/files/b/0aabc0ed/8nLPKzjeBL9XWYkt_4HKp_speech.mp3",
+          "content_type": "audio/mpeg",
+          "file_name": "speech.mp3",
+          "file_size": 131542
+        },
+        "duration_ms": 4048
+      },
+      "url": "https://v3b.fal.media/files/b/0aabc0ed/8nLPKzjeBL9XWYkt_4HKp_speech.mp3",
+      "src": "art/cinematic-r4/audio/C03-L11-v3.mp3",
+      "sha256": "c5eb315a8498e31e505a5d8fe6f193835c1740b029562180e8194d8a44d97df9",
+      "bytes": 131542
+    }
+  },
+  "catalog": [
+    {
+      "pricing": "fal-ai/minimax/speech-02-hd",
+      "at": "2026-09-24T20:20:32.570Z",
+      "result": {
+        "prices": [
+          {
+            "endpoint_id": "fal-ai/minimax/speech-02-hd",
+            "unit_price": 0.1,
+            "unit": "1000 characters",
+            "currency": "USD"
+          }
+        ],
+        "next_cursor": null,
+        "has_more": false
+      }
+    }
+  ]
+}

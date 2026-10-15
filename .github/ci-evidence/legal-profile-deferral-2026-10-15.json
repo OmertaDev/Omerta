@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-15T04:35:41.071Z",
+  "status": "SCOPED_CHECKS_PASSED_DEPLOYMENT_PENDING",
+  "phase": "off-chain production release; existing chain phase and liquidity activation unchanged",
+  "source": {
+    "base": "3da5328053c2fe92122a46eed30a333993208683",
+    "dirty": true,
+    "reviewedFiles": {
+      "src/preflight.js": {
+        "gitBlob": "7d71bce56f2027138522c4a3e3eb1e4219357ffa",
+        "sha256": "4130de3ec073cfd75f81a4460b17942860852cbfde1426359ed5574f5b95e94f"
+      },
+      "tools/preflight.js": {
+        "gitBlob": "b1d063b8cccdc36c303073173ea1594cd007b1d4",
+        "sha256": "0e00a2941ab41f453e8bd9fd5b2bd857b5c2aa8acfa4f7f97963c0e48a34b5f1"
+      },
+      "test/preflight.js": {
+        "gitBlob": "38d095411173f6d8acde72dc3f84e0234a2c9c6a",
+        "sha256": "3379f8587e93c3758baec3dfee9a0f5485efc87e74cd3b007760079655a6a3f1"
+      },
+      "test/legal-security.js": {
+        "gitBlob": "38cca17d5d2e48bb71e23e09e122aeab67173b74",
+        "sha256": "92267dc4d500cedd700698bc26fcfd97dc3b436b5a7a1187a27b03de7eafc9ae"
+      },
+      "render.yaml": {
+        "gitBlob": "e6377fb4281179457aff5c001a092b6326ae1e04",
+        "sha256": "e60ec1070225f8b7ceb6ead4b2c7f3780f1bc88e985dcbcb39072337c21ec360"
+      }
+    },
+    "finalAuthoredCommit": "commit containing this immutable working-tree receipt; generated-only child pins its parent"
+  },
+  "authorization": {
+    "owner": "Ignore those for now",
+    "interpretation": "defer the nine missing operator legal settings and proceed with the previously authorized production merge/deploy; production respect reset separately approved",
+    "workspace": "My Workspace"
+  },
+  "behavior": {
+    "flag": "LEGAL_PROFILE_DEFER",
+    "accepted": [
+      "on",
+      "off"
+    ],
+    "default": "strict/off",
+    "admitted": "only the closed nine legal keys, only when absent/null; supplied invalid/blank/contact/registration values still fail",
+    "reversal": "remove the flag or set off to restore strict requirements",
+    "residual": "operator profile absent; /privacy, /terms and /dmca remain truthful 503/no-store; marketing remains disabled without postal address"
+  },
+  "systemModel": {
+    "entry": "buildServer -> preflight(process.env) before makeDb; CLI -> same preflight",
+    "authority": "operator configuration only; no authentication, role, ledger, migration or route changes",
+    "unchangedConsumers": [
+      "src/legal.js",
+      "src/dispatch.js",
+      "src/server.js",
+      "src/worker.js"
+    ],
+    "deploymentOrder": "API live/health/reset-marker verification before worker deployment"
+  },
+  "review": {
+    "methods": [
+      "pashov pinned access/control/boundary and recovery lens adapted to Node configuration",
+      "Plamen pinned protocol/state-transition lens: no ledger/callback/transfer changes",
+      "Trail of Bits pinned trust-boundary, property and false-positive checks"
+    ],
+    "adaptations": "manual scoped methods, not a claim upstream tool orchestrations ran",
+    "passes": [
+      "root trace and closed-set boundary review",
+      "independent hook_review read-only diff review"
+    ],
+    "findings": [],
+    "static": "manual reachable-path/diff/classifier review; no static tool invocation claimed",
+    "inapplicable": "Solidity fuzzing, PostgreSQL concurrency, economic invariants and signer/oracle analysis are unchanged in this configuration-only delta; prior source-bound evidence retained"
+  },
+  "executed": {
+    "node": "v24.19.0",
+    "commands": [
+      {
+        "command": "node test/preflight.js",
+        "startedAt": "2026-10-15T04:35:32.534Z",
+        "finishedAt": "2026-10-15T04:35:33.140Z",
+        "exitCode": 0,
+        "log": {
+          "path": "output/release-2026-10-14/legal-deferral/preflight.log",
+          "sha256": "f01d16f1cfd4bf7d09fb73db1b2b716c4a7b6f21fc08541ac4482e7ce740d503"
+        }
+      },
+      {
+        "command": "node test/age.js",
+        "startedAt": "2026-10-15T04:35:33.140Z",
+        "finishedAt": "2026-10-15T04:35:36.826Z",
+        "exitCode": 0,
+        "log": {
+          "path": "output/release-2026-10-14/legal-deferral/age.log",
+          "sha256": "0fffe6507bf07da607aaa3c639c77cbdd3556c5421ffd4073fa6720c21932547"
+        }
+      },
+      {
+        "command": "node test/db-rls.js",
+        "startedAt": "2026-10-15T04:35:36.826Z",
+        "finishedAt": "2026-10-15T04:35:36.875Z",
+        "exitCode": 0,
+        "log": {
+          "path": "output/release-2026-10-14/legal-deferral/db-rls.log",
+          "sha256": "9cdf949b6524e98d05716dcd6ffbd857ca8ce3fafea3ce65588ba5572abb3300"
+        }
+      },
+      {
+        "command": "node test/legal-security.js",
+        "startedAt": "2026-10-15T04:35:36.875Z",
+        "finishedAt": "2026-10-15T04:35:40.537Z",
+        "exitCode": 0,
+        "log": {
+          "path": "output/release-2026-10-14/legal-deferral/legal-security.log",
+          "sha256": "a2fb477beb339baa80e74361d872ce72fc232f45a2529fbef92ccdc9aae77968"
+        }
+      },
+      {
+        "command": "node test/payment-receipts.js",
+        "startedAt": "2026-10-15T04:35:40.537Z",
+        "finishedAt": "2026-10-15T04:35:40.838Z",
+        "exitCode": 0,
+        "log": {
+          "path": "output/release-2026-10-14/legal-deferral/payment-receipts.log",
+          "sha256": "74a9b59d835dc02157e57e4c18611511caa08fc243cde723a35e37e4104ee9ca"
+        }
+      }
+    ],
+    "startup": {
+      "path": "output/release-2026-10-14/legal-deferral/startup-proof.json",
+      "sha256": "0ef9558663a13ca60507a36864c93ee84cbcc6ed3120472c02d61d76b909af7a",
+      "cases": 7,
+      "limitation": "successful production startup deferred to actual rollout; isolated proof confirms database guard remains mandatory"
+    },
+    "boundedReleaseChecks": {
+      "path": "output/release-2026-10-14/legal-deferral/bounded-release-checks-20261015T043321Z.json",
+      "sha256": "b2f009e966b8f9960ee876dc594c939de6f5e2ef38804aa249629b987b4de0c5"
+    }
+  },
+  "reusedEvidence": {
+    "baseline": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "identicalDomains": [
+      "data",
+      "omerta-contracts",
+      "schema.sql",
+      "package.json",
+      "package-lock.json",
+      "omerta-mcp"
+    ],
+    "srcExceptPreflightIdenticalTo": "3da5328053c2fe92122a46eed30a333993208683",
+    "frozen17FileTransferLeaf": "unchanged; npm run test:release-source-transfer passed freshly",
+    "priorFullLifecycle": "38656500807: prefix 420 entrypoints passed; historical later safeguard failure retained, not presented as whole-run success",
+    "priorNative": "PG16.15 and PG18.4 each 80/80 passed at b12",
+    "priorForge": "38656500911: 1486 passed, 0 failed, 2 opt-in fork skips at unchanged source",
+    "priorAffectedCI": {
+      "run": 38674225098,
+      "commit": "3da5328053c2fe92122a46eed30a333993208683",
+      "conclusion": "success",
+      "scope": "unchanged City/gateway/mobile assets, harness and economy inputs; not new preflight coverage"
+    },
+    "boundary": "prior reports remain immutable; their totals are not claimed as fresh runs of changed preflight source"
+  },
+  "conclusion": "bounded deferral delta ready for the owner-authorized off-chain production rollout; no guarantee outside this reviewed scope; live/reset verification pending"
+}

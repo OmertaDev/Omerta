@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {execFileSync,spawnSync} from 'node:child_process';
+const root=process.cwd(),out=path.resolve('output/market-v2-soul/auditions');
+const bin=path.resolve('brand/hype-flywheel-video/node_modules/@remotion/compositor-win32-x64-msvc');
+const directions=JSON.parse(fs.readFileSync('brand/market-v2-soul/voice-directions.json'));
+fs.mkdirSync(out,{recursive:true});
+const descriptions=['Warmth, weight and a little lived-in grain.','A quicker wit, relaxed energy and swagger.','Quiet confidence, clarity and understated warmth.'];
+const report=[];
+for(const [i,d] of directions.directions.entries()){
+ const letter=String.fromCharCode(65+i),src=path.resolve(`public/art/market-v2-soul/audio/SOUL-SAMPLE-${letter}.mp3`),dest=path.join(out,`Omerta-Voice-${letter}.wav`);
+ if(!fs.existsSync(src))throw Error('Sample not ready: '+letter);
+ execFileSync(path.join(bin,'ffmpeg.exe'),['-v','error','-y','-i',src,'-af','loudnorm=I=-18:TP=-1.5:LRA=8','-ar','48000','-ac','1','-c:a','pcm_s16le',dest],{stdio:['ignore','pipe','pipe']});
+ const probe=JSON.parse(execFileSync(path.join(bin,'ffprobe.exe'),['-v','error','-show_format','-show_streams','-of','json',dest],{encoding:'utf8'}));
+ const duration=Number(probe.format.duration);if(duration<8||duration>40)throw Error('Unexpected sample length');
+ const analysis=spawnSync(path.join(bin,'ffmpeg.exe'),['-hide_banner','-i',dest,'-af','loudnorm=I=-18:TP=-1.5:LRA=8:print_format=json','-c:a','pcm_s16le','-f','null','-'],{encoding:'utf8'});
+ if(analysis.status!==0)throw Error('Audio decode failed');
+ const measures=JSON.parse(analysis.stderr.slice(analysis.stderr.lastIndexOf('{'),analysis.stderr.lastIndexOf('}')+1));
+ if(Math.abs(Number(measures.input_i)+18)>.7)throw Error('Audition loudness mismatch');
+ const mp3=dest.replace('.wav','.mp3');
+ execFileSync(path.join(bin,'ffmpeg.exe'),['-v','error','-y','-i',dest,'-c:a','libmp3lame','-b:a','192k',mp3],{stdio:['ignore','pipe','pipe']});
+ execFileSync(path.join(bin,'ffmpeg.exe'),['-v','error','-i',mp3,'-c:a','pcm_s16le','-f','null','-'],{stdio:['ignore','pipe','pipe']});
+ report.push({letter,name:d.name,file:path.basename(mp3),wavMaster:path.basename(dest),duration,sampleRate:probe.streams[0].sample_rate,channels:probe.streams[0].channels,normalizationTargetLufs:-18,measuredLufs:Number(measures.input_i),truePeakDbtp:Number(measures.input_tp),fullDecode:'passed',speedAlteration:false});
+}
+fs.writeFileSync(path.join(out,'verification.json'),JSON.stringify({createdAt:new Date().toISOString(),samples:report},null,2)+'\n');
+const html=`<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OMERTÀ · Choose the voice</title><style>*{box-sizing:border-box}body{margin:0;background:#171a13;color:#eee5ce;font:17px/1.55 system-ui,sans-serif}main{max-width:1160px;margin:auto;padding:62px 34px}.eyebrow{font-size:12px;letter-spacing:.25em;color:#c6aa72}h1{font:clamp(48px,7vw,88px)/.98 Georgia,serif;font-weight:400;letter-spacing:-.04em;margin:28px 0 24px}h1 em{color:#d2ad67}p{color:#b6b6a3;max-width:650px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:46px 0}.card{border:1px solid #596047;background:#202418;padding:28px 24px 30px}.letter{font:48px Georgia,serif;color:#bd9860}.card h2{font:26px/1.12 Georgia,serif;margin:22px 0 14px;font-weight:400;min-height:60px}.card p{font-size:15px;min-height:50px}audio{width:100%;margin:18px 0 16px}a{color:#d8bd86;font-size:14px;text-underline-offset:5px}blockquote{font:25px/1.5 Georgia,serif;margin:36px 0;padding:5px 0 5px 25px;border-left:2px solid #917044;max-width:900px}small{color:#8f927e}footer{border-top:1px solid #404831;margin-top:38px;padding-top:23px;font-size:14px;color:#a4a78d}@media(max-width:820px){main{padding:34px 22px}.grid{grid-template-columns:1fr;gap:16px}.card h2,.card p{min-height:0}.card{padding:24px}.letter{float:right}.grid{margin:30px 0}}</style><main><div class="eyebrow">OMERTÀ / VOICE CASTING</div><h1>Same city.<br><em>Three different voices.</em></h1><p>Listen for the person behind the words. Each sample uses the same passage, without music, at matched loudness. Choose A, B or C in the conversation.</p><div class="grid">${directions.directions.map((d,i)=>{const r=report[i];return `<section class="card"><div class="letter">${r.letter}</div><h2>${d.name}</h2><p>${descriptions[i]}</p><audio controls preload="metadata" aria-label="Voice ${r.letter}: ${d.name}" src="${r.file}"></audio><a href="${r.file}" download>Download ${r.letter} · ${r.duration.toFixed(1)} seconds</a></section>`;}).join('')}</div><small>THE SHARED PASSAGE</small><blockquote>${directions.text}</blockquote><footer>Three newly designed original voices. Natural delivery at original generated speed. Your selection will carry through the revised film.</footer></main><script>document.querySelectorAll('audio').forEach(player=>player.addEventListener('play',()=>document.querySelectorAll('audio').forEach(other=>{if(other!==player)other.pause();})));</script></html>`;
+fs.writeFileSync(path.join(out,'index.html'),html);
+let server=fs.readFileSync('brand/market-v2-film/review-server.mjs','utf8').replaceAll('output/market-v2-film','output/market-v2-soul/auditions').replaceAll('8770','8771').replaceAll('Market V2 review','Voice auditions').replace("'.vtt':'text/vtt'","'.wav':'audio/wav','.mp3':'audio/mpeg','.vtt':'text/vtt'");
+fs.writeFileSync('brand/market-v2-soul/audition-server.mjs',server);
+console.log(JSON.stringify(report));

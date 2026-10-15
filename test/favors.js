@@ -13,7 +13,7 @@
 process.env.SEARCH_MS = '0';
 process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepFavors } from '../src/favors.js';
 import { FAVOR } from '../src/rules.js';

@@ -14,7 +14,7 @@
 //     it (it materialises the week's snapshot), and the read path succeeding is what proves the
 //     property for every board that IS — a claim about all fifteen, not a comment about one.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { HOME_BOARDS } from '../src/home.js';
 import { runBoards } from '../src/aggregate.js';
 import { runLedgerInvariants } from '../src/invariants.js';

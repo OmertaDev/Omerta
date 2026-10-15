@@ -1,0 +1,97 @@
+{"index":42,"command":"node test/deliveryfinance-guards.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","serverVersion":null,"principal":5000,"actualGross":10000,"actualMarketTake":200,"actualNet":9800,"actualDebtPayment":5500,"actualVig":275,"scope":"Actual canonical loan offer/take/full cargo purchase/delivery/repayment, manual release and paper creditor; SQL-client permission lifetime; native race/rollback when postgres. Actual canonical loan/delivery/lower-market guards exercised; no full HTTP or runEstate qualification."}
+{"index":43,"command":"node test/deliveryfinance-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+invoice API memory PASS: actual auth/private request consensus, owner-agent parity, exact retries, bound legacy take, actual full market net/loan vig, partial refusal, disabled recovery, paper creditor/heir, manual release, borrower estate history and issued paired delivery; no external financial activation
+{"index":44,"command":"node test/logisticscoverageterms.js"}
+{"status":"PASS","seed":3919,"arithmeticCases":2000,"negatives":2091,"scope":"Pure tenant-death burn terms and bounded arithmetic only; authoritative post-lock event_at instrumentation is required and legacy clocks cannot qualify. Inputs do not authenticate beneficiary, funding, replay or concurrency and no runtime payout occurs."}
+{"index":45,"command":"node test/logisticscoverage-event-clock.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","version":null,"eventAt":"2026-10-14T22:17:39.512Z","createdAt":"2026-10-14T22:17:39.512Z","scope":"Actual mod death estate journal; ordinary/legacy null clocks; native real lease-lock wait and transaction rollback; no runtime payout"}
+{"index":46,"command":"node test/logisticscoverage.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"memory","scope":"Per-policy cash/escrow accounting and actual estate successor recovery only; full ledger sweep integration pending. Native runs prove actor/asset locking, replay/concurrent allocation and trigger rollback; memory does not."}
+{"index":47,"command":"node test/logisticscoverage-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+logistics coverage API memory tests passed
+{"index":48,"command":"node test/rc1-logistics-coverage-source-compatibility.js"}
+{"status":"PASS","sourceRevision":"1a29ff10ecfa30989fdd7ada3238499ea4c85e0f","predecessorRevision":"320a27836704a1ec04d7ff79a9c88e301fde1563","files":4,"chunks":7,"negatives":44,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"index":49,"command":"node test/strategylicenses.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","version":null,"feeCash":125,"scope":"Actual atomic license cash transfer, bounded private finite rules, account estate replay, full native real five-minute holdout/race/ledger rollback when postgres; API/full ledger wiring excluded."}
+{"index":50,"command":"node test/strategylicenses-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"memory","finding":"STRAT-01 public hash removed","scope":"Actual Fastify human/agent auth, private/public boundaries, strict finite publication, fractional paired payments, account replay, OFF recovery and real invariant tamper detection. Native additionally proves HTTP same-key allocation and trigger rollback; domain prospective real-clock proof is separate."}
+{"index":51,"command":"node test/rc1-strategy-source-compatibility.js"}
+{"status":"PASS","sourceRevision":"4e3c48d38294ec9c359011c12cd46f9df0b6b645","predecessorRevision":"1a29ff10ecfa30989fdd7ada3238499ea4c85e0f","files":2,"chunks":5,"negatives":28,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"index":52,"command":"node test/companysuccession.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"memory","scope":"Explicit successor company consent, canonical newly funded 5000 depot, unchanged prior estate/loan/custody/franchise/grant data and durable account replay. Native additionally proves concurrent profile edit exclusion and injected transaction rollback; no credential or old wealth inheritance."}
+{"index":53,"command":"node test/companysuccession-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+company succession API memory tests passed
+{"index":54,"command":"node test/rc1-company-succession-source-compatibility.js"}
+{"status":"PASS","sourceRevision":"f07f6eec06f6356fcb93850de52d90794a04ed28","predecessorRevision":"4e3c48d38294ec9c359011c12cd46f9df0b6b645","files":2,"chunks":4,"negatives":24,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"index":55,"command":"node test/marketfeed.js"}
+public market feed tests passed: canonical parity, bounded privacy, digest and captured-block rollover
+{"index":56,"command":"node test/marketfeed-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+public market feed API memory tests passed
+{"index":57,"command":"node test/rc1-market-feed-source-compatibility.js"}
+{"status":"PASS","sourceRevision":"eb4fdfbdf911b560ab927da9ef54b74f8ebb0fec","predecessorRevision":"f07f6eec06f6356fcb93850de52d90794a04ed28","files":1,"chunks":2,"negatives":12,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"index":58,"command":"node test/strategyleagues.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"status":"PASS","database":"pg-mem","version":null,"scope":"Prize-free native cohort only: owned/paid private consent, human/agent parity, capacity, original-account estate replay; real common five-minute observation/sample/races/rollback when PostgreSQL. Historical expired-lobby fixture is seeded, not elapsed-time proof. No externally funded prizes or cash rewards."}
+{"index":59,"command":"node test/strategyleagues-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+strategy league API memory tests passed; actual consent, licenses, privacy and prospective pending recovery; no prize or profit claim
+{"index":60,"command":"node test/rc1-strategy-league-source-compatibility.js"}
+{"status":"PASS","sourceRevision":"8b7406dbc58b539f046f9b2a5dd7ce878b487090","predecessorRevision":"9f6f63c4141705d46352c1cfe28ee17c024c5514","files":2,"chunks":4,"negatives":24,"scope":"Complete frozen current/prior blobs, exact unique Git diff hunk inverses and regression controls only; no new native or financial qualification"}
+{"index":61,"command":"node test/supplier-history.js"}
+Supplier private history: classification, causality, deduplication, privacy and 300-active scale passed.
+{"index":62,"command":"node test/delivery.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+delivery: reserved quantities, fixed partial payouts, retry, owner price changes, budget, expiry, shutdown, death and exact custody passed
+{"index":63,"command":"node test/depot.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+depot: funded inventory business, supplier agents, customers, exact profit, custody invariants, partial deliveries, retry, expiry, shutdown and death passed
+{"index":64,"command":"node test/restock.js"}
+restock: procurement margins, route selection, reserve, capacity, ownership, expiry, turf quotes and finite supply passed
+{"index":65,"command":"node test/restock-api.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+restock-api: customer escrow → agent procurement → travel → delivery → customer pickup, stale demand and replay passed
+{"index":66,"command":"node test/smoke.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M1 smoke test passed — auth, character, crimes (both outcomes), train, bank, travel, check-in, gates, ledger invariant, lazy accrual
+{"index":67,"command":"node test/persist.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+  ✓ 66 character + 18 account persist columns exist on the schema, none duplicated
+  ✓ ESTATE_ACCOUNT_FIELDS covers every field runEstate assigns (prestige, deaths, omr, unbonding)
+  ✓ persistAccountFields writes the named subset, applies defaults, refuses an unknown field
+  ✓ no hand-rolled estate persist outside game.js
+persist: PASS
+{"index":68,"command":"node test/economy.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ M2 economy test passed — market, garage (+car conservation), workshop, goods, rackets (+lazy income), assets, THE RETIRED AMM (both directions + the private wash rail refuse; the pool is left alone), staking (principal returns whole, yield retired to the families), gear, the 12h cash-sink tick (the whole take to the window) + the legacy-pool MERGE (idempotent), ledger invariants, Risk-to-Earn bank-interest daily cap, Business Empire (catalog, level gate, buy/collect/upgrade with income cap, §10.4 faucet/sink ledgering) + the step-two PvE risk layer LIVE AGAIN (scrutiny is income-sourced — banking the take heats the front, a hot front is raided at the collect touch with the pending seized + a ledgered business:raid fine, and the view carries the real raid line) with shakedown/takeover PvP intact + THE STREET WAR (rob-a-front on the SHARED shakedown window — 15% skim ledgered business:rob, the owner keeps ~85%, a miss is lockup; PvP car theft — a pure ownership move conserving cars by row count, consent flags cleared on transfer, the victim shield + the shared GTA clock + rookie protection; and THE RIVALS LEDGER naming the aggressor bloodline via its living street with no account UUID exposed) + RECURRING SINKS "the pad" (upkeep rate/owed in the view, paying is a ledgered business:upkeep sink resetting the clock, a front unpaid past the cold window produces nothing / no upgrades until the pad thaws it) + BALANCE sign-off (safehouse blocks deposits/collection, the >$10M bank-interest taper) + BUSINESS EMPIRE → Tier 4 (THE LAUNDERER legend now a FROZEN historical board, THE ACCOUNTANT (halves the income heat) + THE FIXER back on the shelf now the Bureau layer has a feed, THE FORTRESS unchanged, the TYCOON fold-in on collect, read-derived Front-Set titles, THE HOSTILE TAKEOVER — a taxed buyout transfer + fee burn + reset handover + level/have_kind gates, §10.4 vocabulary closed) + STREET WAR step two (TRUNK ROBBERY — a goods ownership move capped by the robber's free trunk space, units conserved, zero ledger rows, the victim's own 24h shield, a miss is lockup; BOAT THEFT at the docks — a row move on the SHARED vehicle shield + GTA clock with the rendezvous consent flag cleared; SABOTAGE — a random fit racer laid up, pure pacing; REVENGE TEETH — the net-owed mark's payback strike pays honor while the net aggressor earns nothing; and the coach naming fresh malice inside the 48h window)
+{"index":69,"command":"node test/goods-market.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+goods-market: finite shared freight stock/demand, atomic failures, concurrent fills, durable reads, block refresh and exhausted-supply liquidation passed
+{"index":70,"command":"node test/social.js"}
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: naming who fell and what settling pays
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/social.js:611:3
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.19.0

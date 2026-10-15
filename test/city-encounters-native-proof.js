@@ -26,7 +26,7 @@ try {
     await admin.query('CREATE SCHEMA ' + namespace); ownsSchema = true;
     endpoint.searchParams.set('options', '-c search_path=' + namespace); process.env.DATABASE_URL = endpoint.toString();
   } else assert(!process.env.DATABASE_URL, 'Memory fixture verification requires disposable pg-mem.');
-  const { buildServer } = await import('../src/server.js'); app = await buildServer();
+  const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
   if (postgres) {
     const actual = (await app.pool.query('SELECT current_schema() AS schema,version() AS version')).rows[0];
     assert.equal(actual.schema, namespace); assert.match(actual.version, /^PostgreSQL /);

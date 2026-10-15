@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 process.env.MOD_KEY = 'test-mod-key';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const app = await buildServer();
 const pool = app.pool;

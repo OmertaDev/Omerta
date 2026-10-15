@@ -53,6 +53,8 @@ const NEW_LOOPS = !process.argv.includes('--no-newloops');
 // that rung is a real defect or an artifact of an empty world is not answerable without them.
 const POPULATE = !process.argv.includes('--no-population');
 
+// Synthetic adult identity for throwaway harness signups; the real age gate remains enabled.
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
@@ -162,7 +164,7 @@ const advance = async (id, minutes) => {
 };
 
 // ── THE PLAYER ──────────────────────────────────────────────────────────────────────────────────
-const { body: auth } = await call('POST', '/v1/auth/guest');
+const { body: auth } = await call('POST', '/v1/auth/guest', { body: { birthDate: SYNTHETIC_ADULT_BIRTH_DATE } });
 const token = auth.token;
 const created = await call('POST', '/v1/character', { token, body: { name: 'Sal Fontana' } });
 if (created.code !== 200) { console.error('character create failed', created.body); process.exit(1); }

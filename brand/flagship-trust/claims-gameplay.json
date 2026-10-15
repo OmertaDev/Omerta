@@ -1,0 +1,958 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-09-29",
+  "sourceRevision": "3280817300cdcff3301745b1fce0bac9fe290129",
+  "sourceWorktree": "C:/Users/Jorge/.codex/worktrees/flagship-trust-source/Omerta",
+  "scope": "Gameplay/world/agents facts for flagship film; source audit only.",
+  "statusVocabulary": [
+    "LIVE",
+    "IMPLEMENTED",
+    "PLANNED",
+    "UNVERIFIED"
+  ],
+  "statusRule": "LIVE requires current runtime verification for the intended audience. No claim in this shard is marked LIVE. Default-off implementation remains IMPLEMENTED with explicit limits.",
+  "verification": "Read pinned source/documentation and retained evidence; no tests, production actions, paid calls or activation performed by this audit.",
+  "claims": [
+    {
+      "id": "GP01",
+      "system": "Audience access",
+      "status": "IMPLEMENTED",
+      "claim": "Invitation admission is implemented for new accounts; existing accounts retain access.",
+      "safeNarration": "Entry follows the current invitation rules.",
+      "safeDepiction": "Show actual current signed-out/invite UI; do not promise open access.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "14-18",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L14-L18",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Current production admission policy must be separately observed."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP02",
+      "system": "First loop",
+      "status": "IMPLEMENTED",
+      "claim": "A new street begins in Docks with a small gameplay-cash balance and no respect. Core actions include jobs, training, bank use and building income sources.",
+      "safeNarration": "You begin at the docks. Take a job. Train. Decide what to risk and what to protect.",
+      "safeDepiction": "Real character creation and one issued action/result; label isolated seeded build.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "38-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L38-L80",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "84-103",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L84-L103",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Currency shown here is gameplay cash, not dollars of withdrawable value.",
+        "Do not imply a beginner instantly commands a Family or completes the gated world arc."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP03",
+      "system": "Action tradeoffs",
+      "status": "IMPLEMENTED",
+      "claim": "Jobs consume resources and can cause jail; heat feeds law pressure. Banking has a transit exposure window and is not death-proof.",
+      "safeNarration": "Every useful move has a cost: time, resources, heat, or exposure.",
+      "safeDepiction": "Pair a real job with visible costs and result; bank protection must retain in-transit state when applicable.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "44-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L44-L80",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not call bank cash permanently safe.",
+        "Use actual runtime costs, not narrator-invented values."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP04",
+      "system": "Six Paths",
+      "status": "IMPLEMENTED",
+      "claim": "The six careers are The Gun, The Ledger, The Kitchen, The Wheel, The Shadow and The Ring. Each has an advantage, a handicap and favored/disfavored trades.",
+      "safeNarration": "Six Paths change how you work—and what you are bad at.",
+      "safeDepiction": "Six exact names; selected path card shows perk plus drawback.",
+      "evidence": [
+        {
+          "path": "data/rules.js",
+          "lines": "424-430",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/data/rules.js#L424-L430",
+          "note": ""
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": "5033-5064",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L5033-L5064",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2303-2307",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2303-L2307",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Choice is level/cost gated; do not depict Path as a free character-creation class.",
+        "The Ledger career is distinct from The Ledger Season Pass."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP05",
+      "system": "Path ability scope",
+      "status": "IMPLEMENTED",
+      "claim": "Gun favors combat/contracts at cost of goods sales; Ledger favors business/trade at cost of street combat; Kitchen favors production/deal heat at cost of jail; Wheel speeds convoys but slows cooking; Shadow speeds searches but weakens contests; Ring strengthens contests but raises healing cost.",
+      "safeNarration": "Specialists need each other because an edge in one loop can be a weakness in another.",
+      "safeDepiction": "Use scope-specific icons; no magic powers or unrestricted class exclusives.",
+      "evidence": [
+        {
+          "path": "data/rules.js",
+          "lines": "425-430",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/data/rules.js#L425-L430",
+          "note": ""
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": "5051-5064",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L5051-L5064",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Use qualitative scope in narration; exact balance values only from captured current cards."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP06",
+      "system": "Districts",
+      "status": "IMPLEMENTED",
+      "claim": "Docks, Neon Mile, Old Foundry, Brick Yards, Canal Row and Cathedral Hill have different gameplay advantages. Travel has a cost.",
+      "safeNarration": "Where you work matters. The city changes the terms.",
+      "safeDepiction": "Actual district map plus one relevant modifier and travel action.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "76-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L76-L80",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "169-185",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L169-L185",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not equate game district control with liquidity ownership."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP07",
+      "system": "Businesses and production",
+      "status": "IMPLEMENTED",
+      "claim": "Upgradeable fronts accrue game cash with caps/upkeep and exposure to raids/takeover; the Kitchen supports cooking, collection, dealing and hired sellers.",
+      "safeNarration": "Your operation can keep working while you are away. Its upkeep and risks do not disappear.",
+      "safeDepiction": "Business collect/upkeep and kitchen job clock; cash marked as gameplay cash.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "508-537",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L508-L537",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "540-578",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L540-L578",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No cash-to-OMR laundering route.",
+        "No unlimited passive income or real-money yield claim."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP08",
+      "system": "Cars and workshops",
+      "status": "IMPLEMENTED",
+      "claim": "Owned cars can be boosted, repaired, fenced or melted for ammunition under applicable gates. A separate workshop crafts gear/ammo from crates and cash; World Graph salvage is a different material flow.",
+      "safeNarration": "A car can be transport, a trade, or the input to your next move.",
+      "safeDepiction": "Show the chosen actual route: melt to ammo OR World Graph salvage to materials, not an invented merged output.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "116-123",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L116-L123",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "163-165",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L163-L165",
+          "note": ""
+        },
+        {
+          "path": "src/crafting.js",
+          "lines": "970-1005",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crafting.js#L970-L1005",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Confirm exact eligible vehicle and generated outputs at capture time.",
+        "Never animate arbitrary scenery into owned inventory."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP09",
+      "system": "Boats and port",
+      "status": "IMPLEMENTED",
+      "claim": "Ownable boats run maritime routes with interdiction, piracy, upgrades and consensual rendezvous. Active boats are gameplay assets.",
+      "safeNarration": "On the water, cargo has a route—and somebody else may want it.",
+      "safeDepiction": "Real port board and voyage clock; depict rival risk without revealing private manifests.",
+      "evidence": [
+        {
+          "path": "src/port.js",
+          "lines": "1-9",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/port.js#L1-L9",
+          "note": ""
+        },
+        {
+          "path": "src/port.js",
+          "lines": "57-85",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/port.js#L57-L85",
+          "note": ""
+        },
+        {
+          "path": "SPEC.md",
+          "lines": "130-132",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L130-L132",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Extracted boats cannot work while on-chain; production extraction remains unverified/dormant per docs."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP10",
+      "system": "Player market and logistics",
+      "status": "IMPLEMENTED",
+      "claim": "Cars use auctions; goods trade at district pickups with trunk limits; buy orders escrow payment. Markets do not teleport freight past convoy rules.",
+      "safeNarration": "Making the trade is only part of the job. The goods still have to move.",
+      "safeDepiction": "Listing to pickup requirement to convoy; use same item identity.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1948-1964",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1948-L1964",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1911-1926",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1911-L1926",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "This player market is separate from the current on-chain market and the campaign Black Market world state."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP11",
+      "system": "Secondary activities",
+      "status": "IMPLEMENTED",
+      "claim": "Source includes racing, fighting, casino/card games, stables, skills/trades, fixers, law/courts, prison and loan-sharking systems.",
+      "safeNarration": "A city full of side games becomes a city full of competing priorities.",
+      "safeDepiction": "Brief authentic UI collage; named activity only if its UI is actually captured.",
+      "evidence": [
+        {
+          "path": "SPEC.md",
+          "lines": "112-154",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L112-L154",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1690-1772",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1690-L1772",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1832-1908",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1832-L1908",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1977-2061",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1977-L2061",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No all-features-live inference; no financial returns framing for gambling."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP12",
+      "system": "Crews",
+      "status": "IMPLEMENTED",
+      "claim": "Persistent Crews are account-bound small mutual-aid groups with chat, member boards and breakable non-aggression. They survive character death; no shared Crew treasury or turf authority.",
+      "safeNarration": "A Crew is the small circle you choose to keep close.",
+      "safeDepiction": "Actual Crew membership/invitation and chat; no invented communal inventory.",
+      "evidence": [
+        {
+          "path": "src/crew.js",
+          "lines": "1-23",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crew.js#L1-L23",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "A heist crew, Kitchen hired crew, persistent Crew and Family are distinct."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP13",
+      "system": "Families and hierarchy",
+      "status": "IMPLEMENTED",
+      "claim": "Families have treasury, roles, wars, turf and collective standing; boss/underboss authority matters.",
+      "safeNarration": "A Family turns individual ambition into a shared operation—with someone accountable for the decisions.",
+      "safeDepiction": "Actual Family board with visible role and treasury permissions.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "599-609",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L599-L609",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "635-674",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L635-L674",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Current membership matters; authority is not transferable merely by knowing a name."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP14",
+      "system": "Ordinary cooperative heists",
+      "status": "IMPLEMENTED",
+      "claim": "Leader stakes and plans; members fill specialist roles; leader executes; shared success/failure affects participants.",
+      "safeNarration": "The plan needs a crew whose skills fit the job. One missing role changes the decision.",
+      "safeDepiction": "Real role seats with missing member, join, execution and actual result.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1931-1944",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1931-L1944",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "259-322",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L259-L322",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not conflate these ordinary heists with default-off Family world operations."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP15",
+      "system": "Actual heist betrayal",
+      "status": "IMPLEMENTED",
+      "claim": "A heist member can secretly inform; the job is blown. Other members see that somebody talked, not the informer identity. The jail treatment includes the rat to avoid identification from the roster.",
+      "safeNarration": "The job can fail because somebody talked. The city does not hand you their name.",
+      "safeDepiction": "Capture the anonymous outcome; actor dramatization is not proof identifying a player.",
+      "evidence": [
+        {
+          "path": "src/heists.js",
+          "lines": "182-195",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L182-L195",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "300-322",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L300-L322",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "420-426",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L420-L426",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No psychic rat detection.",
+        "Do not use the separate Campaign Informant evidence as proof of this heist rat.",
+        "Do not depict rat escaping jail while everyone else is imprisoned."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP16",
+      "system": "Convoys",
+      "status": "IMPLEMENTED",
+      "claim": "Freight uses an actual journey clock and can be ambushed. Route/value band are public; manifest and guard tier are not. Turf contributes protection and destination control can impose tolls.",
+      "safeNarration": "The route is visible. The cargo is not. You decide how much protection the trip deserves.",
+      "safeDepiction": "Public banded route against owner-only manifest shown as separate viewpoints.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1911-1926",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1911-L1926",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not reveal a rival full manifest or guard tier through a public board."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP17",
+      "system": "Territory",
+      "status": "IMPLEMENTED",
+      "claim": "District control is economically relevant to Family rackets; contested holdings use hidden stakes, timing and adjacency.",
+      "safeNarration": "Territory is a position you defend, with costs the whole Family feels.",
+      "safeDepiction": "Public map/control and authorized own commitment; keep rivals sealed bids hidden.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "582-595",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L582-L595",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "612-633",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L612-L633",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Game territory never implies a right to withdraw LP principal."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP18",
+      "system": "Commission",
+      "status": "IMPLEMENTED",
+      "claim": "Seated Families vote on server-wide weekly decrees. Membership/rank and office control voting rights.",
+      "safeNarration": "Power reaches beyond one block. Families can shape the rules other players face.",
+      "safeDepiction": "Actual decree ballot or active decree; no invented vote or result.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "678-689",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L678-L689",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not imply voting changes arbitrary game rules or grants unrestricted treasury/contract authority."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP19",
+      "system": "World Graph and provenance",
+      "status": "IMPLEMENTED",
+      "claim": "Canonical items, resources, relationships and world state are connected through authoritative services. Item custody/provenance is conserved; newer world adapters are default off.",
+      "safeNarration": "An item has a history. An action can leave a consequence other players encounter.",
+      "safeDepiction": "Same authorized item ID through owned inventory, contribution and recorded consequence.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "18-29",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L18-L29",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "66-74",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L66-L74",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2392-2398",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2392-L2398",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Label gated world content DEVELOPMENT PILOT.",
+        "Provenance is not automatically public and is not NFT export."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP20",
+      "system": "Knowledge and evidence",
+      "status": "IMPLEMENTED",
+      "claim": "Original discoveries, permitted sharing and current ACL/membership checks determine evidence use; copies do not create independent sources.",
+      "safeNarration": "You can share what you discovered. You cannot manufacture a second witness by copying it.",
+      "safeDepiction": "Two actual authorized source cards or deliberately redacted proof of distinct contributors.",
+      "evidence": [
+        {
+          "path": "docs/coordination-engine/phases/PHASE_01_KNOWLEDGE.md",
+          "lines": "5-15",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/coordination-engine/phases/PHASE_01_KNOWLEDGE.md#L5-L15",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "25-26",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L25-L26",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Default-off knowledge/sharing flags and cohort gate.",
+        "Distinct accounts are not proof of distinct humans.",
+        "Do not disclose puzzle answers or hidden source requirements."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP21",
+      "system": "Mysteries and crafting",
+      "status": "IMPLEMENTED",
+      "claim": "Mystery discoveries, owned items, authenticated information and authored prerequisites can unlock crafting or story actions. Recipes consume canonical inputs.",
+      "safeNarration": "Sometimes the missing ingredient is something another player knows.",
+      "safeDepiction": "Known recipe blocker plus authorized discovery/share, then actual recipe readiness; hide the solution.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "120-156",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L120-L156",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "160-164",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L160-L164",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "New core-progression content defaults off.",
+        "Mystery evidence is not automatically trusted Coordination knowledge.",
+        "Never imply infinite AI-generated murder mysteries."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP22",
+      "system": "Family operation coordination",
+      "status": "IMPLEMENTED",
+      "claim": "Default-off Family operations combine roles, promises, actual contributions, escrow, approval and atomic world resolution. Seats accept 2–8 distinct accounts by definition.",
+      "safeNarration": "A promise is not a contribution. The operation waits for what the people and the plan actually require.",
+      "safeDepiction": "Missing/fulfilled contribution states, each owner acting, officer approval and authorized executor.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "78-90",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L78-L90",
+          "note": ""
+        },
+        {
+          "path": "src/coordination/operations.js",
+          "lines": "606-640",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/coordination/operations.js#L606-L640",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not turn one pilot four-seat count into a universal rule.",
+        "Officer assignment cannot spend another player inventory.",
+        "Execution requires the defined executor role plus officer/current-authority checks."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP23",
+      "system": "Player Commands",
+      "status": "IMPLEMENTED",
+      "claim": "Commands are issued from current visible projections and revalidate authority/requirements when executed; irreversible choices and relevant consequential actions carry confirmations.",
+      "safeNarration": "You see the move, its cost and its consequences before you commit.",
+      "safeDepiction": "Actual command card and matching confirmation/result; no invented API interface.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/PLAYER-COMMAND-CONTRACT.md",
+          "lines": "7-38",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/PLAYER-COMMAND-CONTRACT.md#L7-L38",
+          "note": ""
+        },
+        {
+          "path": "src/player-commands.js",
+          "lines": "108-170",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/player-commands.js#L108-L170",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Gated world command availability is separate from ordinary actions.",
+        "Not every harmless action requires a confirmation."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP24",
+      "system": "Living World Director",
+      "status": "IMPLEMENTED",
+      "claim": "Default-off Director observes canonical conditions and selects bounded authored situations. It cannot mint evidence/assets, resolve operations or move money.",
+      "safeNarration": "The city can respond to what players actually changed.",
+      "safeDepiction": "Previous actual consequence to an eligible authored opportunity, labeled development pilot.",
+      "evidence": [
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "7-11",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L7-L11",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "55-59",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L55-L59",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "115",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L115",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Not an unrestricted autonomous content generator.",
+        "No autonomous NPC economy adapter is admitted in the pilot."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP25",
+      "system": "Campaign Network and persistent history",
+      "status": "IMPLEMENTED",
+      "claim": "Disabled implementation connects shipment-route outcomes, market infrastructure and investigation through actual prerequisites. History reveals only authorized states; unknown actors and causes remain absent.",
+      "safeNarration": "One crew changes a route. Another encounters the consequences.",
+      "safeDepiction": "Use a captured eligible connected branch; label acting as dramatization and UI as dev build.",
+      "evidence": [
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "3-15",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L3-L15",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "33-37",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L33-L37",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not force every terminal branch into a new opportunity.",
+        "No automatic supply-to-OMR-price causal chain.",
+        "No hidden solution or investigator-private clue in public montage."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP26",
+      "system": "Informant uncertainty",
+      "status": "IMPLEMENTED",
+      "claim": "The campaign Informant can corroborate public disclosure or record failure/uncertainty; it does not name a guilty player or prove betrayal.",
+      "safeNarration": "Evidence can prove what happened without proving why somebody did it.",
+      "safeDepiction": "Public/disputed/unknown indicators; no suspect convicted by AI.",
+      "evidence": [
+        {
+          "path": "src/content/campaign-network.js",
+          "lines": "100-107",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/content/campaign-network.js#L100-L107",
+          "note": ""
+        },
+        {
+          "path": "src/content/campaign-network.js",
+          "lines": "164-180",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/content/campaign-network.js#L164-L180",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "13",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L13",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not conflate this with actual ordinary-heist informing."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP27",
+      "system": "Agent interface",
+      "status": "IMPLEMENTED",
+      "claim": "HTTP API, machine-readable rules, MCP proxy and Agent Turn support agents. Server-issued actions are revalidated against actual state.",
+      "safeNarration": "An agent can use the same game rules and interfaces a player works through.",
+      "safeDepiction": "Actual authorized Agent Turn read/action/result; disclose automation.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "19-26",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L19-L26",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "50-59",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L50-L59",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "197-227",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L197-L227",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "MCP/source presence alone does not prove current installation or live server availability.",
+        "Human-only reward exclusions still apply."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP28",
+      "system": "Agent bounded automation",
+      "status": "IMPLEMENTED",
+      "claim": "Owner-operated Agent Alpha is finite and allowlisted; it excludes PvP, borrowing, human faucets, wallets, mint, withdrawals and arbitrary mutations. Agent Turn exploration grants no execution authority.",
+      "safeNarration": "You can delegate a bounded set of routine moves. Permission and game rules still define the boundary.",
+      "safeDepiction": "Show owner-started action budget and actual allowed action; never stage private-key handling.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "210-244",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L210-L244",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2355-2377",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2355-L2377",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not claim every agent move is manually approved.",
+        "Do not claim general agents lack capabilities solely because the reference runner excludes them.",
+        "World Graph and authored-content actions are direct-only, not autonomous Agent Act."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP29",
+      "system": "Consigliere adviser integration",
+      "status": "UNVERIFIED",
+      "claim": "The local dirty worktree contains a provider-neutral scoped adviser with proposals requiring player confirmation. It is absent from canonical main; native Muse compatibility and integration with latest campaigns are unverified.",
+      "safeNarration": "An adviser interface is being explored; its proposals return to the player for approval.",
+      "safeDepiction": "Only separately labeled LOCAL PROTOTYPE footage; prefer omission from present-tense flagship feature claims.",
+      "evidence": [],
+      "limits": [
+        "Local evidence: docs/agent-gateway-capabilities.md:11-31,48-52; docs/agent-gateway-muse.md:101-125; src/integrations/muse/manifest.js:2-11.",
+        "Never combine local adviser UI with latest campaign data and imply executed integration.",
+        "The canonical dynasty Consigliere office is a relationship between player accounts, not proof of this AI adviser."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP30",
+      "system": "Death and heirs",
+      "status": "IMPLEMENTED",
+      "claim": "Death ends the character; the account continues through an heir. Many street assets/cash/stats are lost; specified account-level legacy survives.",
+      "safeNarration": "Your character can die. Your account and parts of your legacy continue—but the next life does not inherit everything.",
+      "safeDepiction": "Separate dead character from continuing account; show actual estate disposition and heir.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "84-110",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L84-L110",
+          "note": ""
+        },
+        {
+          "path": "src/crew.js",
+          "lines": "14-17",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crew.js#L14-L17",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Remaining OMR is subject to loot/death rules; no claim all balances are safe.",
+        "Do not imply all inventory, business ownership or previous character authority transfers."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP31",
+      "system": "Seasons and legacy",
+      "status": "IMPLEMENTED",
+      "claim": "Seasons last 28 days with progression resets/prestige and Family competition phases; season records and account legacy persist under their own rules.",
+      "safeNarration": "The season closes the books. It does not erase every mark your people made.",
+      "safeDepiction": "Season phase/status and actual prior record; separate character reset from Family history.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "106-110",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L106-L110",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "647-655",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L647-L655",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not say everything resets or nothing resets.",
+        "Seasonal rewards depend on current subsystem eligibility/funding."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP32",
+      "system": "NFT extraction boundary",
+      "status": "IMPLEMENTED",
+      "claim": "Source implements item extraction/redemption rails, but docs say production extraction dormant until verified. Extracted items are inert in gameplay; eligibility differs by asset.",
+      "safeNarration": "The extraction design trades use in the city for custody outside it. Availability must be verified separately.",
+      "safeDepiction": "If retained, explicit INACTIVE EXTRACTION PREVIEW; show no real successful transaction unless evidenced.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "124-161",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L124-L161",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "438-458",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L438-L458",
+          "note": ""
+        },
+        {
+          "path": "SPEC.md",
+          "lines": "89-101",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L89-L101",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not imply every inventory item is an NFT.",
+        "Wallet link and character mint are prerequisite gates, not proof the rail is active.",
+        "Exported safety means outside specified game losses, not universal wallet/security immunity."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP33",
+      "system": "Release readiness",
+      "status": "UNVERIFIED",
+      "claim": "Latest inspected readiness work retains unmet qualification proof and explicitly authorizes no cohort admission; source and scoped tests are not live deployment.",
+      "safeNarration": "This footage shows an implemented development build.",
+      "safeDepiction": "Persistent development status on gated demonstrations; no PLAY NOW/open-access claim derived from tests.",
+      "evidence": [
+        {
+          "path": "docs/release/readiness-work/README.md",
+          "lines": "1-14",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/readiness-work/README.md#L1-L14",
+          "note": ""
+        },
+        {
+          "path": "docs/release/readiness-work/README.md",
+          "lines": "55-91",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/readiness-work/README.md#L55-L91",
+          "note": ""
+        },
+        {
+          "path": "docs/release/RC1-READINESS.md",
+          "lines": "1-10",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/RC1-READINESS.md#L1-L10",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Sep20 frozen blocked result is historical; latest readiness work also withholds clearance.",
+        "Root must separately verify intended production audience and activation before changing a claim to LIVE."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    },
+    {
+      "id": "GP34",
+      "system": "Future broad autonomy",
+      "status": "PLANNED",
+      "claim": "Open-ended AI content generation and autonomous NPC economy adapters remain beyond the bounded authored Director pilot.",
+      "safeNarration": "Omit from present-tense feature narration.",
+      "safeDepiction": "If essential, clearly separated future-design card.",
+      "evidence": [
+        {
+          "path": "docs/coordination-engine/README.md",
+          "lines": "3-5",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/coordination-engine/README.md#L3-L5",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "115",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L115",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Older Coordination README understates implemented Family adapters; do not use its blanket later-phase wording to erase current code."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit."
+    }
+  ]
+}

@@ -24,7 +24,7 @@ if (postgres) {
   process.env.DATABASE_URL = endpoint.href;
   process.env.MARKET_SEED = 'logistics-coverage-api-local-native-proof-seed';
 }
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger } = await import('../src/game.js');
 const app = await buildServer();
 let sequence = 0;

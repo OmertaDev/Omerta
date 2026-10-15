@@ -1,0 +1,1244 @@
+[
+  {
+    "id": "C01-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Your next move could build an empire.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Crimes earn cash and respect. Heat follows.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Train your skills and build a career through action.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Steal a car. Salvage eligible wrecks into materials.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Discover recipes to craft, repair, and track your gear.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Build businesses. Run kitchens. Pay the people working them.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Move cargo through markets and risky convoys.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Recruit a Crew. Coordinate heists and harder targets.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Build a Family. Turn strength into territory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Territory earns income while diplomacy shapes the fight.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Loans and escrow put consequences behind every deal.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Race, fight, and play the tables.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Rivals strike back. So do investigators, courts, and prison.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Protection costs. Death can end a character.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Your heirs, deeds, and reputation carry the legacy.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Seasons reshape the city while players build monuments.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Equip your Crew to take control and reinvest.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C01-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Oh mare tah. Build something worth defending.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423050326-OrCLEqNf",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Game cash and O M R follow separate economic circuits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Defined missions and funded rewards put O M R in reach.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Spend on eligible gear, services, and upgrades.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Eligible spending refills the Desk’s existing token inventory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The funded Window converts O M R to cash only.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Canonical sells route a nine-percent base fee.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Fees support development, R W A, community, and liquidity.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "That liquidity allocation funds Core. Stability uses finite reserves.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Families contest future funded fees in seasonal Turf.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Sieges allocate funded escrow while principal stays protocol-owned.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Inventory bonds vest existing O M R. They do not mint more.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Liquidity commitments lock positions against prefunded campaign rewards.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Eligible assets use distinct onchain ownership rails.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Approved R W A acquisitions can reach eligible Street Deed vaults.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Acquisition, allocation, and delivery each have separate rules.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Every balance has a source. Every move has a cost.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C02-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Oh mare tah. The economy has territory.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044126-6qWhu9qA",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L01",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "In this city, what you know changes everything.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L02",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "A missing shipment becomes an investigation.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L03",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Clues connect people, places, objects, and history.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L04",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Your view is personal. Private intelligence stays private.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L05",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Find original evidence from two independent sources.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L06",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Share knowledge carefully: forwarded rumors are not proof.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L07",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Bring recipes and tools to the right facility.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L08",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Bring equipment while another player brings the intelligence.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L09",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Crew roles and Family authority decide who can act.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L10",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "An Agent can read permitted context and propose a move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L11",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Consequential proposals still need your approval.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L12",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "You confirm. The server checks authority and resources again.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L13",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The operation changes the world. Its receipt becomes history.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L14",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "The Director responds to real conditions with authored situations.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L15",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Divert cargo; exposure can trigger a new case.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L16",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Opportunities connect the next move to what actually happened.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L17",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Secrets and alliances give your decisions lasting weight.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  },
+  {
+    "id": "C03-L18",
+    "model": "fal-ai/minimax/speech-02-hd",
+    "input": {
+      "text": "Oh mare tah. Know more. Move together.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092423044626-Q1v4RTVQ",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    },
+    "folder": "audio",
+    "ext": "mp3"
+  }
+]

@@ -7,7 +7,7 @@
 process.env.RACE_CD_MS = '0'; // TEST-ONLY: no cooldown between runs
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { sweepGrandPrix } from '../src/races.js';
 import { RACES, carPower, carVal, levelOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';

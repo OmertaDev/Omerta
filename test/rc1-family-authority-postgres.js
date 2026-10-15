@@ -12,7 +12,7 @@ for (const key of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) process.env[key] = c
 Object.assign(process.env, { RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on', SOCIAL_VERIFY_MODE: 'off', CORE_PROGRESSION: 'on', WORLD_GRAPH_KERNEL: 'on' });
 const source = await sourceIdentity(), directory = path.resolve(process.env.RC1_FAMILY_AUTHORITY_OUTPUT || `output/rc1-family-authority-${source.revision.slice(0, 8)}`);
 const { commandDatabase, addPlayer, characterId } = await import('./lib/player-command-support.js');
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { M3, ROSTER_POSTS } = await import('../src/rules.js');
 const configuration = { phase: 'local-prerelease', database: 'explicit loopback private schema', originalWorkers: false,
   fixtures: 'Seven funded level-eligible living players and one account without character; initial last_accrued_at one hour ahead isolates separately committed accrual. All Family membership, rank, posts and chat use canonical HTTP. Measured effects are nonmonetary; no economy invariant claim for funded fixtures.',

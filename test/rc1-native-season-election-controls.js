@@ -35,7 +35,7 @@ try {
   const { runLedgerInvariants } = await import('../src/invariants.js');
   let request, actor;
   if (!childMode) {
-    const { buildServer } = await import('../src/server.js'); app = await buildServer(); pool = app.pool;
+    const { buildServer } = await import('./server-fixture.js'); app = await buildServer(); pool = app.pool;
     const completions = new Map(); let sequence = 0;
     app.addHook('onResponse', async req => { const key = req.headers['x-rc1-response-completion'], done = completions.get(key); assert(done); completions.delete(key); done(); });
     request = async options => {

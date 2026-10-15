@@ -7,7 +7,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { browserControls } from './lib/rc1-browser-controls.js';
 
 assert(process.env.COORDINATION_TEST_DATABASE_URL, 'Explicit isolated PostgreSQL required');

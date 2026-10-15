@@ -1,0 +1,40 @@
+⚠️  preflight: Neither PUBLIC_URL nor SOCIAL_GAME_URL is set — every referral link, share prompt and social card will point at the built-in default domain, not yours. Set PUBLIC_URL to this server's own origin (it is also what one-click X sign-in derives its callback from).
+⚠️  preflight: INVARIANT_WEBHOOK_URL is not set — the §10.4 economy-drift, backup-failure, oracle-halt and real-value-invariant alarms have nowhere to shout and reach only a log line. Set it (a Slack/Discord webhook) on BOTH processes: the worker fires most alarms, and the API is the only one that can page when the WORKER is dead.
+[db] Postgres ready — column migration ran 4076 ADD COLUMN IF NOT EXISTS statements.
+
+THE CONCURRENCY HARNESS — 8 players, 20s storm, real Postgres
+
+  seating 8 players… done
+  storm running (20s)… done — 3498 operations in 20.0s
+
+THROUGHPUT
+  175 requests/sec sustained across 8 concurrent players
+
+LATENCY (ms) — what a player feels
+  (absolute values depend on the machine — server, database and 8 clients all share this
+   box. The RATIOS between classes are the signal, and so is the shape as PLAYERS rises.)
+  class               n     p50     p95     p99     max
+  read             1214      19      35      94     255
+  read:board        536      22      43     114     176
+  write:bank        351      35      89     143     309
+  write:casino      347      56     122     200     250
+  write:crime       180      48     132     216     220
+  write:pvp         870      74     156     228     527
+
+OUTCOMES
+  200×2985  400×513
+
+  error taxonomy (top 12):
+       337 × hosp_self
+       176 × hosp
+
+CONTENTION, measured at the database
+  real deadlocks (pg_stat_database):        0
+  transaction rollbacks:                    1762  (vs 513 refused actions — a refusal rolls back by design, so these should track each other)
+  players who SAW a 'contention' retry:     0
+  pool/connection failures:                 0
+
+§10.4 UNDER CONCURRENCY — the delta must be zero
+  ✓ all 97 checks unmoved by 3498 concurrent operations
+
+✅ loadtest passed — 8 concurrent players, 3498 operations, 175 req/s: no 5xx, no pool exhaustion, and §10.4 conservation unmoved (0 real deadlock(s) absorbed by the retry mapping).

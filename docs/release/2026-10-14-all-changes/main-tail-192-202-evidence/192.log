@@ -1,0 +1,5 @@
+genesis auction: pinned deployment, exact unsigned calldata, NFT admission, complete bid recovery and bounded checkpoint hints PASS
+Founder terms verified: allocation/Safe/minimum raise/floor, closure claims independent of LP, and distinct funded LP budget/price PASS
+Mutable OMR supply drift blocks admission, preserves immutable recovery and avoids NFT balance reads PASS
+Validator OMR identity, runtime and immutable approved-supply snapshot bindings PASS
+Fixed 500 bps manager revenue, 50 bps surge cap and all immutable recipient bindings PASS

@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // Red-team regression suite: each test reproduces a specific exploit found in the
 // game audit and asserts it is now closed. Grouped by the finding it guards.
 // Runs on pg-mem — zero infra.
@@ -7,14 +8,14 @@ process.env.SOCIAL_VERIFY_MODE = 'trust';
 import assert from 'node:assert';
 import { MISSIONS } from '../src/rules.js';
 const M4_OMR = MISSIONS.find((m) => m.id === 'm4').reward.omr;
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 
 const app = await buildServer();
 const pool = app.pool;
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url, payload: body,
+  const res = await app.inject({ method, url, payload: adultAuthFixture(method, url, body),
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) } });
   let json; try { json = res.json(); } catch { json = null; }
   return { code: res.statusCode, body: json, headers: res.headers };
@@ -228,14 +229,19 @@ const addsNoDrift = async (name, action, label) => {
     'completed<24h and orphan<7d survive; completed>24h and orphan>7d are pruned (committed-but-unstored key stays 409ing past any real retry)');
 }
 
-// ═══ FINDING (infra HIGH-3): a 1-use invite code survives a concurrent stampede ═══
+// Public signup stays open under stale invitation settings; concurrency must
+// create distinct accounts without consuming a code that admission no longer uses.
 {
   process.env.INVITE_MODE = 'on';
   const { body: mint } = await call('POST', '/v1/mod/invites', { body: { count: 1, uses: 1 }, headers: modH });
   const code = mint.codes[0];
   const results = await Promise.all(Array.from({ length: 8 }, () => call('POST', '/v1/auth/guest', { body: { inviteCode: code } })));
   const ok = results.filter((r) => r.code === 200);
-  assert.equal(ok.length, 8, 'all concurrent public signups succeed without consuming invitations');
+  assert.equal(ok.length, 8, 'public signup stays open with stale INVITE_MODE=on');
+  assert.equal(new Set(ok.map((r) => app.jwt.verify(r.body.token).sub)).size, 8,
+    'concurrent public signups create distinct accounts');
+  assert.equal(Number((await pool.query('SELECT uses_left FROM invite_codes WHERE code=$1', [code])).rows[0].uses_left), 1,
+    'public signup does not consume unused invitation credit');
   assert(Number((await pool.query("SELECT uses_left FROM invite_codes WHERE code=$1", [code])).rows[0].uses_left) >= 0, 'uses_left never went negative');
   process.env.INVITE_MODE = 'off';
 }

@@ -18,7 +18,7 @@
 //       and never burns a second credit.
 import assert from 'node:assert';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { RIVALS } from '../src/rules.js';
 
 // every sweep the worker actually calls, with the module it lives in. Kept in step with

@@ -1,0 +1,1180 @@
+{
+  "schemaVersion": 1,
+  "title": "OMERTÀ: Trust Is the Game — economy, market, RWA and extraction claims",
+  "reviewDate": "2026-09-29",
+  "sourceRevision": "3280817300cdcff3301745b1fce0bac9fe290129",
+  "sourceWorktree": "C:/Users/Jorge/.codex/worktrees/flagship-trust-source/Omerta",
+  "scope": "Read-only source and documentation inspection; no game-state mutations, transactions, credentials, paid generation, deployment verification or new security audit.",
+  "publicNaming": "The current market is the sole canonical economic model. Use unversioned public wording. Version suffixes remain only in exact technical identifiers and evidence paths.",
+  "statusDefinitions": {
+    "LIVE": "Current authorized runtime behavior independently verified for the precise claim.",
+    "IMPLEMENTED": "Executable source and/or bounded implementation evidence supports the rule; production activation not established.",
+    "PLANNED": "The complete capability remains design/incomplete integration despite supporting implemented parts.",
+    "UNVERIFIED": "Available evidence does not establish the claimed current activation or runtime fact."
+  },
+  "statusSummary": {
+    "LIVE": 0,
+    "IMPLEMENTED": 22,
+    "PLANNED": 1,
+    "UNVERIFIED": 2
+  },
+  "globalPublicationRule": "Treat this chapter as implemented rules, not current financial availability. Preserve legible activation status for market diagrams and planned status for the full RWA pipeline.",
+  "primaryNarration": {
+    "durationSeconds": 85,
+    "wordCount": 192,
+    "text": "Three balances. Three rules.\n\nGame cash pays for city life. In-game OMR buys selected equipment, access and services. Wallet OMR lives onchain.\n\nThe funded Window moves OMR into game cash. There is no reverse cash-to-OMR conversion. Missions award limited game OMR; funded pools can distribute rewards. That is not an automatic wallet payout.\n\nWithdrawal needs eligibility, backing and an active chain rail. Fresh balances cost more to extract. Eligible gear and vehicles can leave too. Once exported, they stop working in-game. Combat cannot seize an unrelated external wallet.\n\nThe implemented market routes trading fees through a Uniswap hook into separate budgets. Inventory bonds sell OMR already held. LP rewards need qualifying positions and funded campaigns. Successful arbitrage contributes a share of actual profit.\n\nFamilies compete for designated liquidity-fee rights. The pool's principal stays protocol-controlled.\n\nMany game spends recycle OMR. They do not permanently burn token supply. The token retains controlled mint authority.\n\nThe RWA ambition includes approved Stock Tokens, Commission choices and eligible allocations. Assets must actually be bought, held and delivered. That complete pipeline is not established live.\n\nEach mechanism grants specific rights. Holding OMR does not grant everyone a payout.",
+    "delivery": "Approximately 144 words/minute leaves about five seconds total for diagram transitions in an 85-second chapter; cut adjacent death/extraction material if voiced elsewhere."
+  },
+  "claims": [
+    {
+      "id": "ECO-01",
+      "topic": "Activation boundary",
+      "status": "UNVERIFIED",
+      "priority": "PRIMARY",
+      "statement": "The current market is implemented source. Repository documentation and retained deployments do not establish that this exact market, withdrawal or RWA pipeline is operating on September 29.",
+      "safeNarration": "The implemented market has separate rules for trading, liquidity and Family fee rights.",
+      "safeDepiction": "Use a legible chapter label: IMPLEMENTED RULES · ACTIVATION UNVERIFIED. Do not fabricate wallet receipts, transactions, balances or an open trading interface.",
+      "sources": [
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            1,
+            5
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L1-L5"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            78,
+            84
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L78-L84"
+        },
+        {
+          "path": "omerta-contracts/docs/market/RUNBOOK.md",
+          "lines": [
+            72,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/RUNBOOK.md#L72-L74"
+        },
+        {
+          "path": "omerta-contracts/deployments/4663/manifest.json",
+          "lines": [
+            255,
+            262
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/deployments/4663/manifest.json#L255-L262",
+          "note": "Historical September 11 dormant snapshot only; not current market activation or a fresh live read."
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No current source-matched activation evidence was available to this shard. The historical deployment record must not be repurposed as clearance."
+      ],
+      "avoid": [
+        "live market",
+        "now earning",
+        "token launch completed",
+        "all contracts are operational"
+      ]
+    },
+    {
+      "id": "ECO-02",
+      "topic": "Three balances",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Game cash, the server's in-game OMR ledger and wallet ERC-20 OMR are separate value domains with different custody and loss rules.",
+      "safeNarration": "Three balances. Three rules. Game cash. In-game OMR. Wallet OMR.",
+      "safeDepiction": "Three labeled compartments; game cash explicitly says GAME CURRENCY. No dollar-to-dollar peg and no merged total.",
+      "sources": [
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            19,
+            29
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L19-L29"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            86,
+            105
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L86-L105"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Capture balance labels from the approved development build; redact identifying account/wallet information."
+      ],
+      "avoid": [
+        "game cash is US dollars",
+        "every in-game OMR credit is a wallet token",
+        "one seamless interchangeable balance"
+      ]
+    },
+    {
+      "id": "ECO-03",
+      "topic": "One-way Window",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "The Window spends in-game OMR for game cash from a funded till, with opening and account-limit checks. Cash has no general reverse route into OMR. An insufficient till refuses without taking OMR.",
+      "safeNarration": "The funded Window moves OMR into game cash. The arrow does not run backwards.",
+      "safeDepiction": "Single arrow IN-GAME OMR → FUNDED WINDOW → GAME CASH. Show till availability as a condition, never as an exchange-rate peg.",
+      "sources": [
+        {
+          "path": "omerta-economy-design.md",
+          "lines": [
+            5,
+            13
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-economy-design.md#L5-L13"
+        },
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            122,
+            160
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L122-L160"
+        },
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            174,
+            202
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L174-L202"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not show a currently open Window without checking the capture build's actual board and funding."
+      ],
+      "avoid": [
+        "launder game cash into tokens",
+        "cash grind prints wallet OMR",
+        "unlimited redemption",
+        "USD peg"
+      ]
+    },
+    {
+      "id": "ECO-04",
+      "topic": "Real OMR utility",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "OMR supports selected equipment/upgrades, career changes, intelligence/protection, estates, subscriptions, selected service alternatives and access stakes. Some benefits are mechanically consequential, not all cosmetic.",
+      "safeNarration": "In-game OMR buys selected equipment, access and services.",
+      "safeDepiction": "Show two verified actions or gates with current requirements. A bought item can affect gameplay; do not label all OMR utility cosmetic.",
+      "sources": [
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            31,
+            43
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L31-L43"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            188,
+            197
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L188-L197"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Use actual item/service requirements from the pinned build. Do not imply a wallet holding automatically unlocks an in-game stake gate."
+      ],
+      "avoid": [
+        "all purchases are cosmetic",
+        "every action needs OMR",
+        "paying never changes gameplay",
+        "wallet balance automatically counts as a game stake"
+      ]
+    },
+    {
+      "id": "ECO-05",
+      "topic": "Finite rewards versus wallet payouts",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Career OMR awards are limited once-per-account internal credits. Daily and other pools are funded transfers under eligibility rules. Internal credits do not automatically create ERC-20 tokens or establish immediate withdrawal backing.",
+      "safeNarration": "Missions award limited game OMR; funded pools can distribute rewards. That is not an automatic wallet payout.",
+      "safeDepiction": "Mission receipt remains in the IN-GAME OMR compartment; a separate locked withdrawal gate appears before wallet custody.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            101,
+            107
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L101-L107"
+        },
+        {
+          "path": "src/game.js",
+          "lines": [
+            158,
+            168
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/game.js#L158-L168"
+        },
+        {
+          "path": "src/invariants.js",
+          "lines": [
+            298,
+            320
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/invariants.js#L298-L320"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not present historical ledger vocabulary as permission to emit new rewards. Any displayed amount must come from source/capture."
+      ],
+      "avoid": [
+        "play-to-earn guaranteed income",
+        "every mission mints a wallet token",
+        "infinite cash farming creates OMR",
+        "automatic reward to every holder"
+      ]
+    },
+    {
+      "id": "ECO-06",
+      "topic": "Recycled game spending",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Many in-game OMR spends recycle into backend Desk inventory rather than destroying ERC-20 supply. Window OMR is split between Family funding and Desk. Backend Desk inventory is not the market controller's Desk liquidity compartment.",
+      "safeNarration": "Many game spends recycle OMR. They do not permanently burn token supply.",
+      "safeDepiction": "Spend receipt flows to REUSABLE GAME INVENTORY; never into a fire, shrinking total-supply counter or directly into the market controller's Desk.",
+      "sources": [
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            174,
+            202
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L174-L202"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            225,
+            235
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L225-L235"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            96,
+            100
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L96-L100"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not connect the two different Desk accounts merely because they share a label."
+      ],
+      "avoid": [
+        "every spend permanently burns OMR",
+        "deflation guaranteed",
+        "backend spending directly opens a liquidity position"
+      ]
+    },
+    {
+      "id": "ECO-07",
+      "topic": "Canonical sell fees",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Canonical Hook base sell charge is 9%: developer 2%, RWA allocation 1.6%, community 2.4%, POL 3%; bounded surge is 0–1% to stability. Ordinary LP fees are additional. Normal buys after the configured opening window have no Hook buy tax. Fee asset follows settlement and can be ETH or OMR.",
+      "safeNarration": "The Hook routes canonical trading fees to separate destinations.",
+      "safeDepiction": "Only if rates are useful: 9% BASE SELL CHARGE with four additive shares and a separate +0–1% STABILITY line. Label CODE POLICY, LP FEES ADDITIONAL; no selected live LP rate.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+          "lines": [
+            21,
+            41
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaHookV2.sol#L21-L41"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            26,
+            28
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L26-L28"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            59,
+            69
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L59-L69"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "all trades everywhere pay this charge",
+        "every fee receipt is ETH",
+        "all buys are always tax-free",
+        "9% includes LP fees",
+        "RWA allocation proves stock purchase"
+      ]
+    },
+    {
+      "id": "ECO-08",
+      "topic": "Protocol liquidity and finite support",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Protocol liquidity uses segregated actual capital and constrained positions. Core is intended to receive POL funding; action, episode and lifetime limits bind use. Governance has defined principal-recovery powers. This is not a guaranteed floor or a redeemable share of reserves.",
+      "safeNarration": "The market uses separate, funded liquidity budgets.",
+      "safeDepiction": "Core liquidity is a finite box, with principal separate from earned fees. Use a range diagram only if assets cannot appear from nothing.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            42,
+            52
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L42-L52"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            41,
+            45
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L41-L45"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            81
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L81"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "guaranteed price floor",
+        "OMR holders own all reserves",
+        "market recovery creates ETH",
+        "permanently locked principal",
+        "buy pressure always wins"
+      ]
+    },
+    {
+      "id": "ECO-09",
+      "topic": "Inventory bonds",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Inventory bonds reserve already-held OMR for a buyer paying ETH, then release it through linear vesting. They do not mint and cannot promise more than funded inventory. Code bounds are not selected commercial terms.",
+      "safeNarration": "Inventory bonds sell OMR already held, released over time.",
+      "safeDepiction": "Finite OMR inventory → RESERVED FOR BUYER → VESTED CLAIM. ETH proceeds feed a separately labeled recovery-capital destination, not the buyer's yield.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+          "lines": [
+            15,
+            19
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol#L15-L19"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            54,
+            54
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L54-L54"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            46,
+            46
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L46-L46"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            67
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L67"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "bond minting",
+        "guaranteed bond return",
+        "firm sellback",
+        "public offer with invented discount or vesting period"
+      ]
+    },
+    {
+      "id": "ECO-10",
+      "topic": "Qualifying LP commitments",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "The commitment vault requires an eligible canonical PositionManager NFT and measured useful liquidity; campaign rewards are prefunded ETH, bounded by campaign/position conditions and available funds. A token balance alone is not an eligible LP position.",
+      "safeNarration": "LP rewards need qualifying positions and funded campaigns.",
+      "safeDepiction": "POSITION NFT → QUALIFICATION + TIME → FINITE ETH CAMPAIGN. Do not connect every wallet OMR balance to this reward path.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            56,
+            66
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L56-L66"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            53,
+            53
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L53-L53"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "passive OMR holding earns LP rewards",
+        "guaranteed APY",
+        "unlimited campaign rewards",
+        "staking OMR is the same as committing an LP NFT"
+      ]
+    },
+    {
+      "id": "ECO-11",
+      "topic": "LP maturity and market exposure",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The original depositor can retrieve a mature LP NFT under the specified oracle/pause/budget failures; credited rewards are separate. Return of the position does not guarantee its economic value or original asset composition.",
+      "safeNarration": "At maturity, the position can return even if the reward budget is empty.",
+      "safeDepiction": "Two controls: RETURN MATURE POSITION and CLAIM CREDITED REWARD. Never show an unchanging fiat balance or a guarantee seal.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            66,
+            66
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L66-L66"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            279,
+            281
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L279-L281"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "principal guaranteed in dollar value",
+        "risk-free ETH yield",
+        "reward pool guarantees original LP value"
+      ]
+    },
+    {
+      "id": "ECO-12",
+      "topic": "Actual-profit arbitrage funding",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "A solver supplies its own collateral for an atomic cross-pool trade. Successful execution requires positive realized profit after trading charges; a configured share of profit goes to reserves. Gas and failed transactions can still cost money.",
+      "safeNarration": "Successful arbitrage contributes a share of actual profit.",
+      "safeDepiction": "SOLVER CAPITAL → COMPLETED PROFITABLE CYCLE → PROFIT SPLIT. Never route gross turnover or all solver capital to treasury; no endless-profit animation.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            72,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L72-L74"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            47,
+            47
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L47-L47"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            67
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L67"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "protocol prints arbitrage profit",
+        "all price differences are guaranteed earnings",
+        "the treasury funds unlimited trading",
+        "reserve share comes from gross notional"
+      ]
+    },
+    {
+      "id": "ECO-13",
+      "topic": "Family Turf fee rights",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Families or syndicates can hold seasonal rights to future funded fees from designated LP positions. Historical credited fees remain with their beneficiaries. Protocol principal remains controlled separately.",
+      "safeNarration": "Families compete for designated liquidity-fee rights. The pool's principal stays protocol-controlled.",
+      "safeDepiction": "One specified Turf position emits ACTUAL EARNED FEES toward a Family treasury; a solid boundary retains LP PRINCIPAL. Other pool fees do not automatically join the Family stream.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+          "lines": [
+            11,
+            13
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaTurfV2.sol#L11-L13"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            68,
+            70
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L68-L70"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            95,
+            103
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L95-L103"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "take the docks and seize the whole pool",
+        "all trading fees pay your Family",
+        "control grants LP withdrawal authority",
+        "Family flag creates fees"
+      ]
+    },
+    {
+      "id": "ECO-14",
+      "topic": "Sieges and trusted game settlement",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "A siege allocates actual funded fee escrow and future ownership through typed authenticated game outcomes. The server adjudicates combat; the contract checks the authorized result and conservation/replay rules.",
+      "safeNarration": "The contest changes who receives funded fees; it does not let a Family empty the pool.",
+      "safeDepiction": "Actual accrued fee escrow splits only after a verified outcome. Overlay GAME ADJUDICATION → AUTHORIZED SETTLEMENT, not fully onchain combat.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            68,
+            70
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L68-L70"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            95,
+            103
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L95-L103"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "all combat independently verified onchain",
+        "siege reward exists without fees",
+        "officers can rewrite prior earned claims"
+      ]
+    },
+    {
+      "id": "ECO-15",
+      "topic": "Token mint authority and supply",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The initial 100-million-OMR mint is not an immutable supply cap. The owner can appoint or disable a minter; a designated minter can mint. Inventory-funded bond sales do not remove that separate authority.",
+      "safeNarration": "The token retains controlled mint authority.",
+      "safeDepiction": "If supply is discussed, say INITIAL SUPPLY, NOT HARD CAP. Show GOVERNANCE → MINTER AUTHORITY; no permanent fixed-supply stamp.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/OMR.sol",
+          "lines": [
+            116,
+            139
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/OMR.sol#L116-L139"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            213,
+            221
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L213-L221"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            117,
+            121
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L117-L121"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current minter address and actual circulating supply require fresh chain evidence. Do not infer present mint configuration or distribution from source."
+      ],
+      "avoid": [
+        "fixed maximum supply",
+        "no one can ever mint",
+        "bond inventory makes the token permanently non-inflationary",
+        "invented circulating supply"
+      ]
+    },
+    {
+      "id": "ECO-16",
+      "topic": "Conditional OMR extraction",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "OMR withdrawal requires a qualifying account, valid destination, sufficient liquid in-game OMR and configured active signing/chain services. Gross ledger debit differs from net voucher. Funding shortages can queue requests; claims transfer existing chain tokens.",
+      "safeNarration": "Withdrawal needs eligibility, backing and an active chain rail.",
+      "safeDepiction": "IN-GAME OMR → ELIGIBILITY / FUNDED RESERVE / FEES → WALLET OMR. Queue shown as PENDING, never as settled.",
+      "sources": [
+        {
+          "path": "src/chain.js",
+          "lines": [
+            225,
+            294
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L225-L294"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            237,
+            269
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L237-L269"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            65,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L65-L74"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No withdrawals or claims are authorized for production capture. Current deployment activation/funding not verified."
+      ],
+      "avoid": [
+        "instant cash-out",
+        "every game reward immediately redeemable",
+        "funding equals guaranteed dollar value",
+        "signed voucher equals completed wallet transfer"
+      ]
+    },
+    {
+      "id": "ECO-17",
+      "topic": "Extraction fees and freshness",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Current documented withdrawal default is a 2% toll plus a fresh-balance surcharge beginning at 50% and declining to zero over 48 hours. Additive lot-based calculation; newest balances are considered first. Market-sale fees are separate. Canceling an unsigned queue returns net, not the already paid toll.",
+      "safeNarration": "Fresh balances cost more to extract.",
+      "safeDepiction": "Freshness slider is an illustration of documented rules, not a live quote; label WITHDRAWAL FEES with EXAMPLE / CHECK CURRENT QUOTE. Avoid numerical example in the master unless needed.",
+      "sources": [
+        {
+          "path": "src/chain.js",
+          "lines": [
+            228,
+            254
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L228-L254"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            241,
+            259
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L241-L259"
+        },
+        {
+          "path": "src/tax.js",
+          "lines": [
+            1,
+            28
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/tax.js#L1-L28"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current operational overrides and actual quote must be checked before using a numeric user outcome."
+      ],
+      "avoid": [
+        "after 48 hours every exit is free",
+        "withdrawal tax is market sell tax",
+        "cancel returns all gross tokens",
+        "wallet-only holdings automatically pay game withdrawal surcharge"
+      ]
+    },
+    {
+      "id": "ECO-18",
+      "topic": "Extractable assets and tradeoff",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Eligible gear, cars and boats have class-token export rails; separate StreetDeed and Dynasty portrait rails have different rights. Exported gear/vehicles become inert in gameplay. Confirmed reimport burns the exported token and restores game ownership. Not every World Graph item is exportable.",
+      "safeNarration": "Eligible gear and vehicles can leave too. Once exported, they stop working in-game.",
+      "safeDepiction": "One eligible item leaves ACTIVE LOADOUT and enters WALLET; original gameplay slot becomes unavailable. Separate receipt for confirmed reimport. No cloned active item.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            199,
+            211
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L199-L211"
+        },
+        {
+          "path": "src/nft.js",
+          "lines": [
+            24,
+            36
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/nft.js#L24-L36"
+        },
+        {
+          "path": "src/nft.js",
+          "lines": [
+            50,
+            69
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/nft.js#L50-L69"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            327,
+            339
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L327-L339"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            605,
+            654
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L605-L654"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Eligibility, contract caps, signer configuration and actual settled export require per-class evidence. Use a dry development UI or labeled diagram, not a fake mint receipt."
+      ],
+      "avoid": [
+        "all items are NFTs",
+        "exported weapon remains usable",
+        "every token is a unique immutable rarity",
+        "export sells the player login"
+      ]
+    },
+    {
+      "id": "ECO-19",
+      "topic": "Death and external-wallet boundary",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY-ADJACENT",
+      "statement": "Eligible combat can loot liquid/unbonding and staked in-game OMR under current rules; death then applies additional duty to remaining liquid/unbonding balances. Locks do not make game stake immune. An unrelated external wallet's OMR is outside this game-balance mutation.",
+      "safeNarration": "Your game balance can be lost in the city. Combat cannot seize an unrelated external wallet.",
+      "safeDepiction": "Highlight risk only inside the GAME CUSTODY box. External wallet label says OUTSIDE GAME COMBAT, not SAFE FROM ALL RISK.",
+      "sources": [
+        {
+          "path": "src/social/combat.js",
+          "lines": [
+            415,
+            424
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/social/combat.js#L415-L424"
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": [
+            1036,
+            1056
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L1036-L1056"
+        },
+        {
+          "path": "src/social/estate.js",
+          "lines": [
+            120,
+            131
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/social/estate.js#L120-L131"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            169,
+            186
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L169-L186"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            53,
+            61
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L53-L61"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "If quoting loss rates, identify them as current base rules subject to applicable eligibility and modifiers; no unconditional example for every death."
+      ],
+      "avoid": [
+        "staked game OMR cannot be looted",
+        "game death drains a connected wallet",
+        "all assets are wiped",
+        "wallet assets have no risks"
+      ]
+    },
+    {
+      "id": "ECO-20",
+      "topic": "RWA ambition and completion boundary",
+      "status": "PLANNED",
+      "priority": "PRIMARY",
+      "statement": "The broad Stock Machine ambition is approved-asset selection, bounded purchase, allocations and Stock Token delivery. Supporting modules are implemented, but the acquisition constellation is not a completed autonomous purchase service; its authority's unpause always reverts and execution scaffolding does not complete the purchase path.",
+      "safeNarration": "The RWA ambition includes approved Stock Tokens, Commission choices and eligible allocations. That complete pipeline is not established live.",
+      "safeDepiction": "Dashed PLANNED CONNECTIONS from APPROVED ASSET → PURCHASE → CUSTODY → ELIGIBLE ALLOCATION → DELIVERY. Stages do not animate as settled transactions.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            315,
+            337
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L315-L337"
+        },
+        {
+          "path": "omerta-contracts/src/AcquisitionAuthority.sol",
+          "lines": [
+            589,
+            593
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/AcquisitionAuthority.sol#L589-L593"
+        },
+        {
+          "path": "omerta-contracts/src/AcquisitionIntentExecution.sol",
+          "lines": [
+            39,
+            79
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/AcquisitionIntentExecution.sol#L39-L79"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Complete and activate the selected acquisition path, approved adapter/oracle, custody, eligibility, allocation and delivery dependencies before claiming a live end-to-end service."
+      ],
+      "avoid": [
+        "fully autonomous investment service",
+        "every holder gets shares",
+        "RWA allocation alone proves a buy",
+        "a registry entry is a completed stock purchase"
+      ]
+    },
+    {
+      "id": "ECO-21",
+      "topic": "Commission and approved assets",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Commission/Family ballot machinery selects from an approved stock catalog. Safe/registry policy limits assets; the onchain publisher commits server-authoritative results. This is not universal OMR-holder control of the Safe or all economic parameters.",
+      "safeNarration": "Commission choices operate inside an approved asset list.",
+      "safeDepiction": "Ballot → APPROVED CATALOG SELECTION. Keep selection visually distinct from purchase confirmation.",
+      "sources": [
+        {
+          "path": "src/commission.js",
+          "lines": [
+            771,
+            810
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/commission.js#L771-L810"
+        },
+        {
+          "path": "src/commission.js",
+          "lines": [
+            851,
+            873
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/commission.js#L851-L873"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            163,
+            167
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L163-L167"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            323,
+            327
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L323-L327"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Verify the production registry generation, ballot result/finality, publisher and acquisition consumer before showing a completed decision-to-buy sequence."
+      ],
+      "avoid": [
+        "every token holder votes on all funds",
+        "Commission can buy any ticker",
+        "winning ballot is itself executed purchase"
+      ]
+    },
+    {
+      "id": "ECO-22",
+      "topic": "Stock purchase and actual custody",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "RwaStockBuyer spends prefunded ETH within constraints on an approved closed-ballot asset and verifies received canonical units against price floors. StockVault holds pre-bought inventory and delivers under keeper/signer authority; neither creates external Stock Tokens.",
+      "safeNarration": "Assets must actually be bought, held and delivered.",
+      "safeDepiction": "Separate PURCHASE RECEIPT, HELD INVENTORY and DELIVERY RECEIPT; no merge into a generic green RWA badge.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/RwaStockBuyer.sol",
+          "lines": [
+            32,
+            42
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/RwaStockBuyer.sol#L32-L42"
+        },
+        {
+          "path": "omerta-contracts/src/StockVault.sol",
+          "lines": [
+            14,
+            42
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/StockVault.sol#L14-L42"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            327,
+            331
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L327-L331"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Actual funded approved route, stock receipt, vault custody, authenticated allocation and settled delivery all need evidence."
+      ],
+      "avoid": [
+        "OMERTÀ mints company shares",
+        "allocation equals custody",
+        "vault balance proves rightful recipient eligibility",
+        "held units guarantee asset value"
+      ]
+    },
+    {
+      "id": "ECO-23",
+      "topic": "RWA allocation and deed destination",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Broker distribution assigns real purchased units against published eligibility weights; an internal allocation is not acquisition or delivery. Delivery targets an eligible extracted StreetDeed's token-bound account, not a Dynasty portrait by default. With no delivery target, allocation waits. Ownership history matters.",
+      "safeNarration": "An allocation is a record of what is owed. Delivery is a separate step.",
+      "safeDepiction": "OWED → VERIFIED DEED ACCOUNT → CONFIRMED DELIVERY. A portrait has no automatic dividend arrow. Verify account contents before depicting a deed transfer.",
+      "sources": [
+        {
+          "path": "src/brokers.js",
+          "lines": [
+            4,
+            23
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/brokers.js#L4-L23"
+        },
+        {
+          "path": "src/brokers.js",
+          "lines": [
+            204,
+            221
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/brokers.js#L204-L221"
+        },
+        {
+          "path": "src/stockdeliver.js",
+          "lines": [
+            11,
+            34
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/stockdeliver.js#L11-L34"
+        },
+        {
+          "path": "src/stockdeliver.js",
+          "lines": [
+            455,
+            466
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/stockdeliver.js#L455-L466"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            329,
+            333
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L329-L333"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Verify frozen eligibility, real buy, exact units, eligible recipient and owned extracted-deed target; flags and keeper readiness are not runtime-attested."
+      ],
+      "avoid": [
+        "holding any NFT gets stock",
+        "all OMR holders receive equal payouts",
+        "a deed sale guarantees unchanged stock contents",
+        "booked allocation is paid"
+      ]
+    },
+    {
+      "id": "ECO-24",
+      "topic": "Internal treasury ETH allocation",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The treasury ETH allocation ledger can earmark value after an in-game OMR spend but explicitly has no ETH payout, withdrawal or onchain delivery. It is not a redeemable price floor.",
+      "safeNarration": "The internal treasury allocation is not an ETH payout.",
+      "safeDepiction": "If this appears, label INTERNAL ALLOCATION; no ETH arrow into a player's wallet.",
+      "sources": [
+        {
+          "path": "src/treasury.js",
+          "lines": [
+            30,
+            36
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/treasury.js#L30-L36"
+        },
+        {
+          "path": "src/treasury.js",
+          "lines": [
+            527,
+            529
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/treasury.js#L527-L529"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            261,
+            269
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L261-L269"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No payout implementation or activation evidence exists for this internal allocation path."
+      ],
+      "avoid": [
+        "burn OMR for guaranteed ETH",
+        "treasury-backed cash-out floor",
+        "internal allocation is a paid claim"
+      ]
+    },
+    {
+      "id": "ECO-25",
+      "topic": "Stock Token rights and eligibility",
+      "status": "UNVERIFIED",
+      "statusNote": "Official external-product rights and terminology verified from current primary documentation; OMERTA recipient eligibility and live delivery remain unverified.",
+      "priority": "SECONDARY",
+      "statement": "External issuer documentation describes Stock Tokens as debt securities providing exposure, not legal/beneficial ownership of the underlying company shares. Product and jurisdictional eligibility applies. This external product fact is separate from OMERTÀ implementation.",
+      "safeNarration": "Stock Tokens have their own rights and eligibility rules.",
+      "safeDepiction": "Use approved term STOCK TOKENS, or TOKENIZED REAL-WORLD ASSETS SUCH AS STOCK TOKENS. Do not use public-company logos, equity ownership certificates or an unrestricted delivery-to-everyone animation.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            337,
+            337
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L337-L337"
+        },
+        {
+          "url": "https://docs.robinhood.com/chain/stock-tokens/",
+          "retrieved": "2026-09-29",
+          "note": "Official source retrieved through web search; direct open failed. Confirms debt-security exposure and United States/US-person delivery restriction."
+        },
+        {
+          "url": "https://docs.robinhood.com/chain/terms-of-service/",
+          "retrieved": "2026-09-29",
+          "section": "2.3(j)",
+          "note": "Official current terms prescribe Stock Tokens terminology for external-facing content."
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Issuer terms, target geography and recipient eligibility need current confirmation before promotional distribution or actual delivery."
+      ],
+      "avoid": [
+        "real company shares for everyone",
+        "tokenized stocks/equities as external product wording",
+        "KYC-free means universally eligible",
+        "product disclaimer makes an unsupported payout claim true"
+      ]
+    }
+  ]
+}

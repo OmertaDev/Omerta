@@ -80,7 +80,7 @@ try {
   };
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query(`CREATE SCHEMA ${namespace}`);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap); pool = await makeWorkerDatabase(controller);
-  const { buildServer } = await import('../src/server.js'); app = await buildServer();
+  const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
   const oldDay = dayOf(), oldDistrict = shipmentDistrictOf(oldDay), nextDistrict = shipmentDistrictOf(oldDay + 1);
   for (const [i, actor] of actors.entries()) {
     await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,'test',$1)", [actor]);

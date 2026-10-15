@@ -26,7 +26,7 @@ process.env.VOUCHER_CLAIM_ADDRESS = '0x1111111111111111111111111111111111111111'
 process.env.CHAIN_ID = '46630';
 process.env.MOD_KEY = 'test-mod-key';
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { RARITY, rollRarity, rarityIdx, rarityUtilityBps, rarityBoost, nftTokenId, recyclesToDesk,
   carPower, effHold, effSpeed, boatOf, CARS, PORT, MARKET, PACING } = await import('../src/rules.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');

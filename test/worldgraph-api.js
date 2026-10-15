@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { buildOpenApi } from '../src/agentgateway.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { register as registerWorldGraphRoutes } from '../src/routes/worldgraph.js';
 
 process.env.MOD_KEY = 'world-graph-phase1-mod-key';

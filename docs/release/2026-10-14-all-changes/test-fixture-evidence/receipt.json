@@ -1,0 +1,102 @@
+{
+  "schema": "omerta.generated-test-fixture-path.v1",
+  "capturedAtUtc": "2026-10-14T22:17:59.643Z",
+  "baselineRevision": "fd9713822a96fe8eba6e9e3e582b45dd4104afb0",
+  "phase": "Test-fixture integration correction only; no runtime change, assertion relaxation, native PostgreSQL proof or production qualification.",
+  "finding": {
+    "id": "TEST-FIXTURE-01",
+    "status": "resolved integration defect",
+    "trigger": "npm test body command index42: node test/deliveryfinance-guards.js",
+    "observed": "Copied deliveryfinance.js source executes from output/delivery-finance-guards-fixture.mjs; the adopted ./server-fixture.js import incorrectly resolves to output/server-fixture.js.",
+    "fix": "A unique-seam guarded replacement changes only the generated module import to ../test/server-fixture.js, retaining the actual server fixture and all loan/delivery permission assertions."
+  },
+  "checks": [
+    {
+      "command": "npm test body (original run)",
+      "result": "failure",
+      "log": "npm-test-body-failure.log",
+      "exitCode": null,
+      "exitEvidence": "Original raw full-body log copied from root; no original exit artifact supplied, so no exit file reconstructed."
+    },
+    {
+      "command": "node test/deliveryfinance-guards.js",
+      "result": "pass",
+      "exitCode": 0,
+      "log": "deliveryfinance-guards-retest.log",
+      "exit": "deliveryfinance-guards-retest.exit",
+      "scope": "Actual canonical loan offer/take/cargo/delivery/repayment and lower-market/SQL-client permission guards on pg-mem."
+    }
+  ],
+  "focusedScan": {
+    "method": "Intersections of server-fixture.js references and writeFile/copyFile/.mjs/VM evaluation in test/**/*.js, plus source-read/generated-output searches.",
+    "helperReferenceFiles": 259,
+    "candidatePaths": [
+      "test/agent-alpha.js",
+      "test/city-scene-browser.js",
+      "test/city-world-host-browser.js",
+      "test/client.js",
+      "test/deliveryfinance-guards.js",
+      "test/gates.js",
+      "test/logisticscoverage-api.js",
+      "test/pwa.js",
+      "test/rc1-alliance-response-barrier.js",
+      "test/rc1-car-melt-provenance-postgres.js",
+      "test/rc1-command-family-postgres.js",
+      "test/rc1-golden-browser-postgres.js",
+      "test/rc1-golden-focus-race.js",
+      "test/rc1-legacy-authority-postgres.js",
+      "test/rc1-mobile-postgres.js",
+      "test/rc1-mod-ingress-postgres.js",
+      "test/rc1-phone-command-expiry-postgres.js",
+      "test/rc1-reviewer-authority-postgres.js",
+      "test/social.js"
+    ],
+    "sourceRelocationWithAffectedHelper": "test/deliveryfinance-guards.js",
+    "result": "No additional copied test modules with this relative helper-import failure found in the focused scan; other intersections write data artifacts or evaluate browser snippets without relocating their helper imports."
+  },
+  "source": [
+    {
+      "path": "test/deliveryfinance-guards.js",
+      "rawSha256": "b96f56e0a5b15d862aa94cd6f3c357a9a9faeec5f45ffb924a4fad1c9c6902a7",
+      "normalizedLfSha256": "2bdffb1ef5f5a2f8c7a54a3495fc2f0f465811c2408de589e7fff8adacd5736b",
+      "stagedBlobOid": "d6f793c0b03f3c7a3f2f9361fd9709b39d661afd",
+      "stagedRawSha256": "2bdffb1ef5f5a2f8c7a54a3495fc2f0f465811c2408de589e7fff8adacd5736b"
+    },
+    {
+      "path": "test/deliveryfinance.js",
+      "rawSha256": "c722ea3daa9e009a5c38837568ff27ca17636c2fbcd6577c123d5f0475f540fc",
+      "normalizedLfSha256": "ec7030cac977b460e77760c0c2ff456c3530b51be4a62e007abd9faf1e7f3b70",
+      "stagedBlobOid": "7ae61d8e707b03c53da03f442aca2dd504049ea0",
+      "stagedRawSha256": "ec7030cac977b460e77760c0c2ff456c3530b51be4a62e007abd9faf1e7f3b70"
+    },
+    {
+      "path": "test/server-fixture.js",
+      "rawSha256": "8d14c0df5254be2cfe8c761b40523aa22f15d1013c3cc0c8b8b5f4494c69a192",
+      "normalizedLfSha256": "4d12bb8a43b460e89a93046c31368316e795659879455d9198b5f0b071c478cf",
+      "stagedBlobOid": "565a699bd4f67a3d248f420a04fe81d41473ae96",
+      "stagedRawSha256": "4d12bb8a43b460e89a93046c31368316e795659879455d9198b5f0b071c478cf"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "npm-test-body-failure.log",
+      "bytes": 15643,
+      "rawSha256": "7c083d06e53b131215c8c4d1b050802f8eb7394cb69dc81da50cfef79cda9ddb"
+    },
+    {
+      "path": "deliveryfinance-guards-retest.log",
+      "bytes": 531,
+      "rawSha256": "25cb81790db1b59a82afdde5eb1d8a4816a03f580786f017586b28d9cee34078"
+    },
+    {
+      "path": "deliveryfinance-guards-retest.exit",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    }
+  ],
+  "limitations": [
+    "Original main-body failure log is retained in full as received; its exit code is not reconstructed.",
+    "Successful focused retest covers pg-mem only. Native concurrency and full HTTP/estate qualification remain outside this result.",
+    "The broader test body resumes separately under the release owner; this receipt claims no result for unexecuted commands."
+  ]
+}

@@ -12,7 +12,7 @@ const realNow = Date.now;
 let now = Date.parse('2026-10-09T10:13:00Z');
 Date.now = () => now;
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { priceBlock, CONSTANTS } = await import('../src/rules.js');
 const { consumeGoodsLiquidity, goodsLiquidityBoard } = await import('../src/goodsmarket.js');
 const app = await buildServer();

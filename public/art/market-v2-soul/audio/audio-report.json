@@ -1,0 +1,690 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-25T05:34:43.973Z",
+  "duration": 174.5,
+  "status": "mixed-verified",
+  "productionDataSha256": "03df8a0fe527475ee40d07e54e74568a787feb918e7c7f3b9df849eeb9177f2d",
+  "chapterTimingSha256": "af926870e038cc1a0369a0759ff9074fcda199067fdc732b9a1442d8d8bc48cd",
+  "scriptSha256": "5d4be768c17c8c8e8b229b0424efa435fcf79efaa6d03b462cca65a04b90f3f6",
+  "voiceDirection": "User-selected audition A — warm low male storyteller",
+  "sourcePolicy": "New seven-chapter narration and new organic score. Original film and earlier source takes remain unchanged.",
+  "chapters": [
+    {
+      "id": "SOUL-CH01",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH01-v2.mp3",
+      "start": 0.1,
+      "end": 36.749796,
+      "tempo": 1,
+      "sourceSha256": "3415bc1eba58c5c36fa23181397ba4d7cff7d3c272cb5c11dd72ae9e9368e003",
+      "sourceDuration": 36.637813,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "36.649796"
+          }
+        ],
+        "format": {
+          "duration": "36.649796"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 36.6378125,
+      "placedDuration": 36.637813,
+      "remainingWindow": 0.011979,
+      "status": "ready",
+      "bufferEnd": 36.737813,
+      "wordCount": 61,
+      "gapFromPriorChapter": 0.1,
+      "sourceSampleCount": 1758615,
+      "placedSampleCount": 1758615,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH02",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH02-v2.mp3",
+      "start": 37,
+      "end": 64.794286,
+      "tempo": 1,
+      "sourceSha256": "c0a5a1af47bc6eec4e2f3a5d1baafe984398aab24f7b59dda544a0a43ed13563",
+      "sourceDuration": 27.782292,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "27.794286"
+          }
+        ],
+        "format": {
+          "duration": "27.794286"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 27.782291666666666,
+      "placedDuration": 27.782292,
+      "remainingWindow": 0.012,
+      "status": "ready",
+      "bufferEnd": 64.782292,
+      "wordCount": 54,
+      "gapFromPriorChapter": 0.262187,
+      "sourceSampleCount": 1333550,
+      "placedSampleCount": 1333550,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH03",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH03-v2.mp3",
+      "start": 65.03333333333333,
+      "end": 89.24884333333333,
+      "tempo": 1,
+      "sourceSha256": "2321761cfd704c4dbf12a1e52e65011db2c85ad3ce729fb286bb5c0048667276",
+      "sourceDuration": 24.203521,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "24.215510"
+          }
+        ],
+        "format": {
+          "duration": "24.215510"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 24.203520833333332,
+      "placedDuration": 24.203521,
+      "remainingWindow": 0.011979,
+      "status": "ready",
+      "bufferEnd": 89.236854,
+      "wordCount": 53,
+      "gapFromPriorChapter": 0.251041,
+      "sourceSampleCount": 1161769,
+      "placedSampleCount": 1161769,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH04",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH04-v2.mp3",
+      "start": 89.5,
+      "end": 124.843673,
+      "tempo": 1,
+      "sourceSha256": "c6ef37a7ca136d6da4ad45d6249f90c8925f432f4a40f0fe97fcf56f80b889da",
+      "sourceDuration": 35.331688,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "35.343673"
+          }
+        ],
+        "format": {
+          "duration": "35.343673"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 35.3316875,
+      "placedDuration": 35.331688,
+      "remainingWindow": 0.011979,
+      "status": "ready",
+      "bufferEnd": 124.831688,
+      "wordCount": 68,
+      "gapFromPriorChapter": 0.263146,
+      "sourceSampleCount": 1695921,
+      "placedSampleCount": 1695921,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH05",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH05-v2.mp3",
+      "start": 125.1,
+      "end": 151.353061,
+      "tempo": 1,
+      "sourceSha256": "deff9a1cddb8b94adc53cc60676871aa54a8ec8dbd34e665e86f3e0391d0ae52",
+      "sourceDuration": 26.241083,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "26.253061"
+          }
+        ],
+        "format": {
+          "duration": "26.253061"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 26.241083333333332,
+      "placedDuration": 26.241083,
+      "remainingWindow": 0.011979,
+      "status": "ready",
+      "bufferEnd": 151.341083,
+      "wordCount": 47,
+      "gapFromPriorChapter": 0.268312,
+      "sourceSampleCount": 1259572,
+      "placedSampleCount": 1259572,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH06",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH06-v2.mp3",
+      "start": 151.6,
+      "end": 169.441633,
+      "tempo": 1,
+      "sourceSha256": "68222d27dd7eb89c3a9416736f13381414c7c85c234ce7b1ea319e15e03366db",
+      "sourceDuration": 17.805229,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "17.841633"
+          }
+        ],
+        "format": {
+          "duration": "17.841633"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 17.805229166666667,
+      "placedDuration": 17.805229,
+      "remainingWindow": 0.036396,
+      "status": "ready",
+      "bufferEnd": 169.405229,
+      "wordCount": 37,
+      "gapFromPriorChapter": 0.258917,
+      "sourceSampleCount": 854651,
+      "placedSampleCount": 854651,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    },
+    {
+      "id": "SOUL-CH07",
+      "source": "public/art/market-v2-soul/audio/SOUL-CH07.mp3",
+      "start": 169.7,
+      "end": 173.226531,
+      "tempo": 1,
+      "sourceSha256": "af4e45855b3ff0a47a9b52ba08534f3c2dc5db87328a08bd40b9c826b5e4a488",
+      "sourceDuration": 3.494604,
+      "sourceMetadata": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "mp3",
+            "sample_rate": "44100",
+            "channels": 1,
+            "duration": "3.526531"
+          }
+        ],
+        "format": {
+          "duration": "3.526531"
+        }
+      },
+      "trimStart": 0,
+      "trimEnd": 3.4946041666666665,
+      "placedDuration": 3.494604,
+      "remainingWindow": 0.031917,
+      "status": "ready",
+      "bufferEnd": 173.194604,
+      "wordCount": 3,
+      "gapFromPriorChapter": 0.294771,
+      "sourceSampleCount": 167741,
+      "placedSampleCount": 167741,
+      "removedSampleCount": 0,
+      "explicitTrimRequested": false
+    }
+  ],
+  "blockingIssues": [],
+  "captionPages": 69,
+  "alignedWords": 323,
+  "noChapterOverlap": true,
+  "nativePlaybackSpeed": 1,
+  "voiceProcessing": {
+    "globalGainDb": -1.559,
+    "maximumCompressionDb": 2.017,
+    "ratio": 1.35,
+    "attackMs": 25,
+    "releaseMs": 230,
+    "highPassHz": 48,
+    "lowPassHz": 14800,
+    "normalization": "One gain curve over all chapters; no sentence-by-sentence leveling",
+    "tempo": 1,
+    "pitchShift": 0
+  },
+  "music": {
+    "source": "public/art/market-v2-soul/audio/SOUL-SCORE.mp3",
+    "sourceSha256": "669793177b480b11b43e24e5507f8fdfc75977bc188b343704e2d2e9daadab52",
+    "sourceDuration": 180.024,
+    "sourceStart": 0,
+    "mode": "New generated organic instrumental, stereo preserved",
+    "looped": false,
+    "timeStretched": false,
+    "levelGainDb": -10.727,
+    "musicDuckingDb": -4.5,
+    "lookaheadMs": 120,
+    "releaseMs": 520,
+    "ducking": "Forced-aligned words merged into breathing phrases; no syllable pumping",
+    "fadeInSeconds": 1.15,
+    "fadeOutSeconds": 2.7
+  },
+  "phraseDuckingWindows": [
+    {
+      "start": 0.36,
+      "end": 1.9
+    },
+    {
+      "start": 2.68,
+      "end": 4.42
+    },
+    {
+      "start": 5.32,
+      "end": 7.5
+    },
+    {
+      "start": 8.28,
+      "end": 10.1
+    },
+    {
+      "start": 10.88,
+      "end": 13.06
+    },
+    {
+      "start": 13.64,
+      "end": 15.62
+    },
+    {
+      "start": 16.12,
+      "end": 17.8
+    },
+    {
+      "start": 18.28,
+      "end": 20.3
+    },
+    {
+      "start": 20.84,
+      "end": 22.12
+    },
+    {
+      "start": 22.58,
+      "end": 23.6
+    },
+    {
+      "start": 24.14,
+      "end": 26.3
+    },
+    {
+      "start": 27.08,
+      "end": 29.54
+    },
+    {
+      "start": 29.98,
+      "end": 31.76
+    },
+    {
+      "start": 32.259,
+      "end": 36.5
+    },
+    {
+      "start": 37.18,
+      "end": 39.44
+    },
+    {
+      "start": 39.92,
+      "end": 41.54
+    },
+    {
+      "start": 42.08,
+      "end": 45.3
+    },
+    {
+      "start": 45.82,
+      "end": 46.58
+    },
+    {
+      "start": 47.08,
+      "end": 49.28
+    },
+    {
+      "start": 49.72,
+      "end": 50.74
+    },
+    {
+      "start": 51.3,
+      "end": 55.22
+    },
+    {
+      "start": 55.84,
+      "end": 58.02
+    },
+    {
+      "start": 58.64,
+      "end": 60.36
+    },
+    {
+      "start": 60.96,
+      "end": 62.56
+    },
+    {
+      "start": 63.18,
+      "end": 64.48
+    },
+    {
+      "start": 65.213333,
+      "end": 67.093333
+    },
+    {
+      "start": 67.633333,
+      "end": 68.693333
+    },
+    {
+      "start": 69.233333,
+      "end": 70.693333
+    },
+    {
+      "start": 71.213333,
+      "end": 73.353333
+    },
+    {
+      "start": 73.893333,
+      "end": 76.273333
+    },
+    {
+      "start": 76.693333,
+      "end": 78.033333
+    },
+    {
+      "start": 78.673333,
+      "end": 81.393333
+    },
+    {
+      "start": 82.193333,
+      "end": 82.773333
+    },
+    {
+      "start": 83.213333,
+      "end": 84.513333
+    },
+    {
+      "start": 85.133333,
+      "end": 86.753333
+    },
+    {
+      "start": 87.313333,
+      "end": 88.953333
+    },
+    {
+      "start": 89.68,
+      "end": 92.84
+    },
+    {
+      "start": 93.32,
+      "end": 94.96
+    },
+    {
+      "start": 95.42,
+      "end": 97.08
+    },
+    {
+      "start": 97.52,
+      "end": 100.16
+    },
+    {
+      "start": 100.82,
+      "end": 102.14
+    },
+    {
+      "start": 102.76,
+      "end": 108.36
+    },
+    {
+      "start": 108.92,
+      "end": 110.86
+    },
+    {
+      "start": 111.44,
+      "end": 114.24
+    },
+    {
+      "start": 114.74,
+      "end": 116.24
+    },
+    {
+      "start": 116.68,
+      "end": 118.36
+    },
+    {
+      "start": 118.92,
+      "end": 121.14
+    },
+    {
+      "start": 121.78,
+      "end": 124.6
+    },
+    {
+      "start": 125.32,
+      "end": 127.74
+    },
+    {
+      "start": 128.4,
+      "end": 129.96
+    },
+    {
+      "start": 130.6,
+      "end": 131.92
+    },
+    {
+      "start": 132.58,
+      "end": 134.2
+    },
+    {
+      "start": 134.92,
+      "end": 138.42
+    },
+    {
+      "start": 139.06,
+      "end": 141.36
+    },
+    {
+      "start": 142.04,
+      "end": 145.76
+    },
+    {
+      "start": 146.4,
+      "end": 151.08
+    },
+    {
+      "start": 151.78,
+      "end": 153.84
+    },
+    {
+      "start": 154.5,
+      "end": 155.72
+    },
+    {
+      "start": 156.34,
+      "end": 158.08
+    },
+    {
+      "start": 158.62,
+      "end": 162.94
+    },
+    {
+      "start": 163.4,
+      "end": 166.88
+    },
+    {
+      "start": 167.5,
+      "end": 169.08
+    },
+    {
+      "start": 169.94,
+      "end": 171.1
+    },
+    {
+      "start": 171.74,
+      "end": 172.82
+    }
+  ],
+  "transitions": [
+    {
+      "at": 36.83,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH02"
+    },
+    {
+      "at": 64.863333,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH03"
+    },
+    {
+      "at": 89.33,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH04"
+    },
+    {
+      "at": 124.93,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH05"
+    },
+    {
+      "at": 151.43,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH06"
+    },
+    {
+      "at": 169.53,
+      "kind": "soft air handoff",
+      "duration": 0.72,
+      "chapter": "SOUL-CH07"
+    },
+    {
+      "at": 169.5,
+      "kind": "restrained final table/wood impact",
+      "duration": 0.4
+    }
+  ],
+  "stems": {
+    "dialogue": {
+      "file": "public/art/market-v2-soul/audio/soul-dialogue.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "codec": "pcm_s24le",
+      "samplePeakDbfs": -3,
+      "rmsDbfs": -23.502,
+      "peak": 0.7079457640647888,
+      "rms": 0.06682024395846474
+    },
+    "music": {
+      "file": "public/art/market-v2-soul/audio/soul-music.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "codec": "pcm_s24le",
+      "samplePeakDbfs": -15.501,
+      "rmsDbfs": -36.322,
+      "peak": 0.16786225140094757,
+      "rms": 0.015272730005352378
+    },
+    "sfx": {
+      "file": "public/art/market-v2-soul/audio/soul-sfx.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "codec": "pcm_s24le",
+      "samplePeakDbfs": -27.704,
+      "rmsDbfs": -65.735,
+      "peak": 0.04118850827217102,
+      "rms": 0.0005167410272511677
+    },
+    "room": {
+      "file": "public/art/market-v2-soul/audio/soul-room.wav",
+      "sampleRate": 48000,
+      "channels": 2,
+      "codec": "pcm_s24le",
+      "samplePeakDbfs": -54.428,
+      "rmsDbfs": -69.201,
+      "peak": 0.0018994337879121304,
+      "rms": 0.0003466831296328381
+    }
+  },
+  "master": {
+    "file": "public/art/market-v2-soul/audio/soul-mix.wav",
+    "durationSeconds": 174.5,
+    "integratedLufs": -14.12,
+    "truePeakDbtp": -1.49,
+    "loudnessRangeLu": 3,
+    "sampleRate": 48000,
+    "channels": 2,
+    "codec": "pcm_s24le",
+    "normalizationType": "dynamic",
+    "valid": true,
+    "preNormalization": {
+      "input_i": "-20.57",
+      "input_tp": "-2.94",
+      "input_lra": "3.20",
+      "input_thresh": "-31.32",
+      "output_i": "-14.53",
+      "output_tp": "-1.50",
+      "output_lra": "2.90",
+      "output_thresh": "-25.21",
+      "normalization_type": "dynamic",
+      "target_offset": "0.53"
+    },
+    "secondPass": {
+      "input_i": "-20.57",
+      "input_tp": "-2.94",
+      "input_lra": "3.20",
+      "input_thresh": "-31.32",
+      "output_i": "-14.12",
+      "output_tp": "-1.50",
+      "output_lra": "2.90",
+      "output_thresh": "-24.80",
+      "normalization_type": "dynamic",
+      "target_offset": "0.12"
+    },
+    "finalMeasurement": {
+      "input_i": "-14.12",
+      "input_tp": "-1.49",
+      "input_lra": "3.00",
+      "input_thresh": "-24.84",
+      "output_i": "-14.03",
+      "output_tp": "-1.50",
+      "output_lra": "2.70",
+      "output_thresh": "-24.72",
+      "normalization_type": "dynamic",
+      "target_offset": "0.03"
+    }
+  },
+  "allSourceSamplesPreserved": true
+}

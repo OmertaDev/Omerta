@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { withTwoCharacters } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { hasContact } from '../src/contacts.js';

@@ -9,7 +9,7 @@ import { preflight, isHardened, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } from
 const { errors, warnings } = preflight();
 
 console.log(`\nOMERTÀ preflight — ${isHardened()
-  ? 'REAL DEPLOYMENT (NODE_ENV=production or DATABASE_URL set): every guard is active'
+  ? 'REAL DEPLOYMENT (NODE_ENV=production or DATABASE_URL set): production checks active'
   : 'development (no NODE_ENV=production, no DATABASE_URL): guards are off and the convenient fallbacks apply'}\n`);
 
 if (!isHardened()) {
@@ -25,7 +25,7 @@ for (const e of errors) console.log(`  ✖  ${e}`);
 if (!errors.length) {
   console.log('  ✔  configuration OK — this server will boot.\n');
   console.log(`Reminders for a live alpha:`);
-  console.log(`  · required secrets set: ${Object.keys(REQUIRED_ENV).join(', ')}`);
+  console.log(`  · required settings present: ${Object.keys(REQUIRED_ENV).filter(k => process.env[k]).join(', ')}`);
   console.log(`  · ${Object.keys(EXPLICIT_ENV).map((k) => `${k}=${process.env[k]}`).join(', ')}`);
   console.log(`  · none of the ${TEST_ONLY_ENV.length} test-only roll/timer knobs are set`);
   console.log(`  · run the worker too (\`npm run worker\`) — accrual is lazy, but the sweeps, the`);

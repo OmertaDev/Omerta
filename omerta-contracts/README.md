@@ -1,6 +1,6 @@
 # OMERTÀ contracts
 
-The canonical ETH/OMR market uses funded inventory bonds, immutable Hook fee policy,
+The canonical ETH/OMR market uses funded inventory bonds, immutable manager trade fees,
 seven separately budgeted liquidity compartments, LP commitments, Family Turf and solver-funded
 arbitrage. Start with the [current market design](docs/market/DESIGN.md) and
 [market deployment runbook](docs/market/RUNBOOK.md) for the canonical ETH/OMR market.
@@ -12,7 +12,7 @@ requirements for other rails. Source availability does not mean a contract is de
 | Area | Implementation and role |
 | --- | --- |
 | Canonical market | `src/market-v2/`: hook settlement and tax buckets, finalized observations, finite stability reserves, funded inventory bonds, arbitrage, seasonal Turf and player liquidity commitments. See the [market design](docs/market/DESIGN.md). |
-| Token | `OMR.sol`: ERC-20 with permit, a founding supply of `100_000_000e18`, one owner-selected minter and a capped transfer-tax path. Leave `ammPairs(PoolManager)` false for the canonical hooked market to avoid taxing settlement twice. |
+| Token and settlement | `OmertaRestrictedOMRV2` has fixed supply and a sealed runtime-pinned transfer policy. `OmertaPoolManagerV2` collects 5% on actual buys and sells, split 2% operations / 1% RWA / 1% community / 1% POL. `OmertaSwapRouterV2` settles fee-adjusted user limits; the hook adds at most 0.5% opening or sell surge. See [bootstrap](docs/market/RESTRICTED-BOOTSTRAP.md). |
 | Withdrawals and gear | `VoucherClaim.sol` transfers prefunded OMR or requests bounded gear minting. `GearVault.sol` enforces its own per-class live-supply caps. Voucher replay protection, deadlines, daily limits and funding remain required. |
 | Liquidity commitments | `OmertaCommitmentVaultV2` holds actual canonical LP-position NFTs for fixed campaigns. Rewards are prefunded; maturity withdrawals do not depend on reward availability. Gameplay stake has separate custody and loss rules. |
 | Payments | `OmertaFees.sol` forwards character mint fees entirely to `feeRecipient` (`DEV_WALLET`). Non-mint payments use their configured dev/Vig split or reviewed `FeeRevenueRouter` binding. |

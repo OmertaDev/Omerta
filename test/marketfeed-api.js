@@ -17,7 +17,7 @@ if (native) {
 process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'market-feed-api-local-secret-only';
 process.env.MOD_KEY = 'market-feed-api-local-mod-only'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.RESOURCE_ECONOMY = 'off'; process.env.DEPOT_PILOT = 'off';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { marketPrices } = await import('../src/streets.js');
 const { canonicalBytes } = await import('../src/content/canonical.js');
 const { priceBlock } = await import('../src/rules.js');

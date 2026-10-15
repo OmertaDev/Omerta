@@ -17,7 +17,7 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { readFile } from 'node:fs/promises';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { BAND, DESK, DESK_AUCTION, DESK_RECYCLE_REASON, recyclesToDesk, auctionPriceAt, freshWindowMs } from '../src/rules.js';
 // the sink day is sized so the FLOAT CAP is the binding bound (not what came home) — read off
 // the lever, so a re-denomination cannot leave this block asserting the wrong bound

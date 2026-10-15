@@ -1,0 +1,1932 @@
+{
+  "film": {
+    "title": "OMERTÀ: Trust Is the Game",
+    "duration": 390,
+    "fps": 24,
+    "beats": [
+      {
+        "start": 0,
+        "kind": "cinema",
+        "headline": "One seat is empty.",
+        "asset": "family-film",
+        "anchor": "Nico has put up the stake.",
+        "labels": [
+          "NICO VALE / THE PAYROLL OFFICE"
+        ],
+        "chapterId": "C01",
+        "id": "R01",
+        "end": 2.5416666666666665
+      },
+      {
+        "start": 2.5416666666666665,
+        "kind": "gameplay",
+        "headline": "Who gets the other seat?",
+        "capture": "heist-open",
+        "focus": {
+          "x": 0.35,
+          "y": 0.81,
+          "scale": 2.35
+        },
+        "endFocus": {
+          "x": 0.355,
+          "y": 0.81,
+          "scale": 2.5
+        },
+        "anchor": "One seat is empty.",
+        "chapterId": "C01",
+        "id": "R02",
+        "end": 8.916666666666666
+      },
+      {
+        "start": 8.916666666666666,
+        "kind": "gameplay",
+        "headline": "OMERTÀ",
+        "capture": "heist-open",
+        "focus": {
+          "x": 0.48,
+          "y": 0.65,
+          "scale": 1.5
+        },
+        "endFocus": {
+          "x": 0.48,
+          "y": 0.65,
+          "scale": 1.65
+        },
+        "anchor": "This is OMERTÀ",
+        "labels": [
+          "Multiplayer mafia strategy RPG",
+          "Play in your browser"
+        ],
+        "chapterId": "C01",
+        "id": "R03",
+        "end": 15
+      },
+      {
+        "start": 15,
+        "kind": "gameplay",
+        "headline": "A name. A little cash.",
+        "capture": "intake",
+        "focus": {
+          "x": 0.5,
+          "y": 0.4,
+          "scale": 1.85
+        },
+        "endFocus": {
+          "x": 0.5,
+          "y": 0.47,
+          "scale": 2.25
+        },
+        "anchor": "Nico starts with a name",
+        "chapterId": "C02",
+        "id": "R04",
+        "end": 18.541666666666668
+      },
+      {
+        "start": 18.541666666666668,
+        "kind": "gameplay",
+        "headline": "Take the job.",
+        "capture": "job",
+        "focus": {
+          "x": 0.37,
+          "y": 0.6,
+          "scale": 2.45
+        },
+        "endFocus": {
+          "x": 0.47,
+          "y": 0.5,
+          "scale": 3
+        },
+        "anchor": "He takes a small job.",
+        "labels": [
+          "PICKPOCKET / COST: 2 NERVE"
+        ],
+        "chapterId": "C02",
+        "id": "R05",
+        "end": 22.583333333333332
+      },
+      {
+        "start": 22.583333333333332,
+        "kind": "gameplay",
+        "headline": "A real result.",
+        "capture": "job",
+        "focus": {
+          "x": 0.5,
+          "y": 0.51,
+          "scale": 3.25
+        },
+        "endFocus": {
+          "x": 0.5,
+          "y": 0.51,
+          "scale": 3.1
+        },
+        "anchor": "Cash and respect go up.",
+        "labels": [
+          "+$102 GAME CASH",
+          "+2 RESPECT"
+        ],
+        "chapterId": "C02",
+        "id": "R06",
+        "end": 26.333333333333332
+      },
+      {
+        "start": 26.333333333333332,
+        "kind": "flow",
+        "headline": "What matters next?",
+        "mode": "resources",
+        "labels": [
+          "Another job / Spend nerve",
+          "Train / Spend energy",
+          "Bank / Money in transit"
+        ],
+        "anchor": "Another job could build his bankroll.",
+        "chapterId": "C02",
+        "id": "R07",
+        "end": 32.541666666666664
+      },
+      {
+        "start": 32.541666666666664,
+        "kind": "gameplay",
+        "headline": "Safety takes time.",
+        "capture": "loop",
+        "focus": {
+          "x": 0.345,
+          "y": 0.7,
+          "scale": 2.1
+        },
+        "endFocus": {
+          "x": 0.45,
+          "y": 0.735,
+          "scale": 2.25
+        },
+        "camera": [
+          {
+            "at": 0,
+            "x": 0.345,
+            "y": 0.7,
+            "scale": 2.1
+          },
+          {
+            "at": 0.34,
+            "x": 0.345,
+            "y": 0.7,
+            "scale": 2.1
+          },
+          {
+            "at": 0.68,
+            "x": 0.45,
+            "y": 0.735,
+            "scale": 2.25
+          },
+          {
+            "at": 1,
+            "x": 0.45,
+            "y": 0.735,
+            "scale": 2.25
+          }
+        ],
+        "anchor": "Banking protects money",
+        "labels": [
+          "Money in transit is exposed"
+        ],
+        "chapterId": "C02",
+        "id": "R08",
+        "end": 43.666666666666664
+      },
+      {
+        "start": 43.666666666666664,
+        "kind": "type",
+        "headline": "One decision.\nThen its consequence.",
+        "anchor": "That is how a place",
+        "labels": [],
+        "chapterId": "C02",
+        "id": "R09",
+        "end": 52
+      },
+      {
+        "start": 52,
+        "kind": "flow",
+        "headline": "How will you make your name?",
+        "mode": "sequence",
+        "labels": [
+          "THE GUN / Street combat",
+          "THE LEDGER / Fronts & trade",
+          "THE KITCHEN / Cook quality",
+          "THE WHEEL / Convoy speed",
+          "THE SHADOW / Faster searches",
+          "THE RING / Duels & bouts"
+        ],
+        "anchor": "As he progresses",
+        "note": "An advantage comes with a drawback.",
+        "chapterId": "C03",
+        "id": "R10",
+        "end": 71.08333333333333
+      },
+      {
+        "start": 71.08333333333333,
+        "kind": "gameplay",
+        "headline": "Nico chooses the Wheel.",
+        "capture": "trade",
+        "focus": {
+          "x": 0.49,
+          "y": 0.065,
+          "scale": 2
+        },
+        "endFocus": {
+          "x": 0.49,
+          "y": 0.065,
+          "scale": 2.15
+        },
+        "anchor": "Nico chooses the Wheel",
+        "labels": [
+          "Faster convoys",
+          "Slower cooking"
+        ],
+        "chapterId": "C03",
+        "id": "R11",
+        "end": 74.91666666666667
+      },
+      {
+        "start": 74.91666666666667,
+        "kind": "flow",
+        "headline": "Two people. Different strengths.",
+        "mode": "roster",
+        "labels": [
+          "NICO VALE / THE WHEEL",
+          "MARA SERRANO / THE GUN"
+        ],
+        "anchor": "Mara chooses the Gun.",
+        "note": "Preparation still matters.",
+        "chapterId": "C03",
+        "id": "R12",
+        "end": 82.79166666666667
+      },
+      {
+        "start": 82.79166666666667,
+        "kind": "cinema",
+        "headline": "Become someone worth calling.",
+        "asset": "hero-film",
+        "anchor": "What can he do",
+        "labels": [],
+        "chapterId": "C03",
+        "id": "R13",
+        "end": 90
+      },
+      {
+        "start": 90,
+        "kind": "gameplay",
+        "headline": "A sack of coffee.",
+        "capture": "trade",
+        "focus": {
+          "x": 0.37,
+          "y": 0.55,
+          "scale": 2.45
+        },
+        "endFocus": {
+          "x": 0.37,
+          "y": 0.57,
+          "scale": 2.7
+        },
+        "anchor": "He buys a sack of coffee.",
+        "labels": [
+          "SPOT: $119",
+          "DEBIT: $123",
+          "IN TRUNK: 1"
+        ],
+        "note": "Game cash. Purchase fee included in debit.",
+        "chapterId": "C04",
+        "id": "R14",
+        "end": 96.79166666666667
+      },
+      {
+        "start": 96.79166666666667,
+        "kind": "flow",
+        "headline": "The route is part of the price.",
+        "mode": "route",
+        "labels": [
+          "BUY / Goods in the trunk",
+          "MOVE / Time & exposure",
+          "SELL / The next market"
+        ],
+        "anchor": "Getting a bargain",
+        "note": "A trade opportunity, not a guaranteed profit.",
+        "chapterId": "C04",
+        "id": "R15",
+        "end": 101.625
+      },
+      {
+        "start": 101.625,
+        "kind": "gameplay",
+        "headline": "Repair it. Sell it. Break it down.",
+        "capture": "garage",
+        "focus": {
+          "x": 0.245,
+          "y": 0.69,
+          "scale": 2.75
+        },
+        "endFocus": {
+          "x": 0.255,
+          "y": 0.72,
+          "scale": 2.95
+        },
+        "anchor": "Cars need repairs.",
+        "chapterId": "C04",
+        "id": "R16",
+        "end": 103.66666666666667
+      },
+      {
+        "start": 103.66666666666667,
+        "kind": "cinema",
+        "headline": "Sea routes. Different risks.",
+        "asset": "port-film",
+        "anchor": "Boats open sea runs",
+        "labels": [],
+        "chapterId": "C04",
+        "id": "R17",
+        "end": 106.83333333333333
+      },
+      {
+        "start": 106.83333333333333,
+        "kind": "gameplay",
+        "headline": "Income takes time and upkeep.",
+        "capture": "kitchen",
+        "focus": {
+          "x": 0.45,
+          "y": 0.51,
+          "scale": 1.9
+        },
+        "endFocus": {
+          "x": 0.45,
+          "y": 0.51,
+          "scale": 2.05
+        },
+        "anchor": "A business has upkeep",
+        "labels": [
+          "Business upkeep",
+          "Production takes time"
+        ],
+        "chapterId": "C04",
+        "id": "R18",
+        "end": 110.875
+      },
+      {
+        "start": 110.875,
+        "kind": "cinema",
+        "headline": "A city you return to.",
+        "asset": "speakeasy-film",
+        "anchor": "Races, boxing",
+        "labels": [
+          "Races · Boxing · The Den · The Speakeasy"
+        ],
+        "chapterId": "C04",
+        "id": "R19",
+        "end": 116.54166666666667
+      },
+      {
+        "start": 116.54166666666667,
+        "kind": "cinema",
+        "headline": "Pay attention.",
+        "asset": "market-film",
+        "anchor": "Loans, auctions",
+        "labels": [
+          "Loans · Auctions · Fixers"
+        ],
+        "chapterId": "C04",
+        "id": "R20",
+        "end": 125
+      },
+      {
+        "start": 125,
+        "kind": "gameplay",
+        "headline": "The Night Shift.",
+        "capture": "crew",
+        "focus": {
+          "x": 0.31,
+          "y": 0.53,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.31,
+          "y": 0.54,
+          "scale": 2.6
+        },
+        "anchor": "Nico forms a Crew",
+        "labels": [
+          "A small circle. Mutual aid."
+        ],
+        "chapterId": "C05",
+        "id": "R21",
+        "end": 130.66666666666666
+      },
+      {
+        "start": 130.66666666666666,
+        "kind": "gameplay",
+        "headline": "The Payroll Office.",
+        "capture": "heist-open",
+        "focus": {
+          "x": 0.34,
+          "y": 0.785,
+          "scale": 2.2
+        },
+        "endFocus": {
+          "x": 0.345,
+          "y": 0.795,
+          "scale": 2.4
+        },
+        "anchor": "Then comes the Payroll Office job.",
+        "chapterId": "C05",
+        "id": "R22",
+        "end": 133.66666666666666
+      },
+      {
+        "start": 133.66666666666666,
+        "kind": "flow",
+        "headline": "Two roles. One job.",
+        "mode": "roster",
+        "labels": [
+          "NICO VALE / WHEELMAN",
+          "OPEN SEAT / MUSCLE"
+        ],
+        "anchor": "This heist needs",
+        "note": "The stake is committed.",
+        "chapterId": "C05",
+        "id": "R23",
+        "end": 143.08333333333334
+      },
+      {
+        "start": 143.08333333333334,
+        "kind": "gameplay",
+        "headline": "Mara joins.",
+        "capture": "heist-ready",
+        "focus": {
+          "x": 0.35,
+          "y": 0.54,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.35,
+          "y": 0.55,
+          "scale": 2.5
+        },
+        "anchor": "Mara joins.",
+        "labels": [
+          "NICO VALE + MARA SERRANO"
+        ],
+        "chapterId": "C05",
+        "id": "R24",
+        "end": 147.25
+      },
+      {
+        "start": 147.25,
+        "kind": "gameplay",
+        "headline": "Preparation changes the odds.",
+        "capture": "heist-ready",
+        "focus": {
+          "x": 0.33,
+          "y": 0.575,
+          "scale": 2.55
+        },
+        "endFocus": {
+          "x": 0.34,
+          "y": 0.575,
+          "scale": 2.8
+        },
+        "anchor": "Preparation improves their odds.",
+        "labels": [
+          "It cannot guarantee loyalty."
+        ],
+        "chapterId": "C05",
+        "id": "R25",
+        "end": 154
+      },
+      {
+        "start": 154,
+        "kind": "gameplay",
+        "headline": "Commit.",
+        "capture": "heist-ready",
+        "focus": {
+          "x": 0.39,
+          "y": 0.575,
+          "scale": 3.4
+        },
+        "endFocus": {
+          "x": 0.395,
+          "y": 0.577,
+          "scale": 3.5
+        },
+        "anchor": "He commits.",
+        "labels": [],
+        "chapterId": "C05",
+        "id": "R26",
+        "end": 157.25
+      },
+      {
+        "start": 157.25,
+        "kind": "type",
+        "headline": "The law was waiting.",
+        "anchor": "The law was waiting.",
+        "labels": [],
+        "transition": "cut",
+        "chapterId": "C05",
+        "id": "R27",
+        "end": 159.25
+      },
+      {
+        "start": 159.25,
+        "kind": "gameplay",
+        "headline": "Somebody talked.",
+        "capture": "consequence",
+        "focus": {
+          "x": 0.886,
+          "y": 0.375,
+          "scale": 3.2
+        },
+        "endFocus": {
+          "x": 0.884,
+          "y": 0.375,
+          "scale": 3.3
+        },
+        "anchor": "Somebody talked.",
+        "labels": [],
+        "transition": "cut",
+        "chapterId": "C05",
+        "id": "R28",
+        "end": 161.95833333333334
+      },
+      {
+        "start": 161.95833333333334,
+        "kind": "gameplay",
+        "headline": "Both players go to jail.",
+        "capture": "consequence",
+        "focus": {
+          "x": 0.43,
+          "y": 0.53,
+          "scale": 2.1
+        },
+        "endFocus": {
+          "x": 0.43,
+          "y": 0.53,
+          "scale": 2.25
+        },
+        "anchor": "Both players go to jail.",
+        "labels": [
+          "No informant is named."
+        ],
+        "chapterId": "C05",
+        "id": "R29",
+        "end": 168.79166666666666
+      },
+      {
+        "start": 168.79166666666666,
+        "kind": "type",
+        "headline": "Who do you believe?",
+        "anchor": "Nico can read exactly",
+        "labels": [],
+        "note": "The result cannot answer that.",
+        "chapterId": "C05",
+        "id": "R30",
+        "end": 178
+      },
+      {
+        "start": 178,
+        "kind": "cinema",
+        "headline": "Would you invite them again?",
+        "asset": "family-film",
+        "anchor": "Jail ends.",
+        "labels": [],
+        "chapterId": "C06",
+        "id": "R31",
+        "end": 184.79166666666666
+      },
+      {
+        "start": 184.79166666666666,
+        "kind": "cinema",
+        "headline": "A character can die.",
+        "asset": "funeral-film",
+        "anchor": "Bigger risks can cost more",
+        "labels": [],
+        "chapterId": "C06",
+        "id": "R32",
+        "end": 188.70833333333334
+      },
+      {
+        "start": 188.70833333333334,
+        "kind": "flow",
+        "headline": "What survives?",
+        "mode": "sequence",
+        "labels": [
+          "THE CHARACTER / Can be lost",
+          "THE ACCOUNT / Continues",
+          "THE HEIR / Limited legacy"
+        ],
+        "anchor": "Your account continues",
+        "note": "Seasons have their own rules.",
+        "chapterId": "C06",
+        "id": "R33",
+        "end": 195.79166666666666
+      },
+      {
+        "start": 195.79166666666666,
+        "kind": "gameplay",
+        "headline": "Keep it in play?",
+        "capture": "garage",
+        "focus": {
+          "x": 0.255,
+          "y": 0.7,
+          "scale": 2.8
+        },
+        "endFocus": {
+          "x": 0.255,
+          "y": 0.7,
+          "scale": 2.9
+        },
+        "anchor": "Eligible gear and vehicles",
+        "labels": [
+          "Extracted gear & vehicles become inactive in-game"
+        ],
+        "chapterId": "C06",
+        "id": "R34",
+        "end": 201.95833333333334
+      },
+      {
+        "start": 201.95833333333334,
+        "kind": "type",
+        "headline": "What are you prepared to lose?",
+        "anchor": "Combat cannot take",
+        "labels": [
+          "Unrelated external-wallet assets stay outside combat."
+        ],
+        "chapterId": "C06",
+        "id": "R35",
+        "end": 212
+      },
+      {
+        "start": 212,
+        "kind": "flow",
+        "headline": "Keep it private.\nOr choose who knows.",
+        "mode": "sequence",
+        "labels": [
+          "DISCOVERY",
+          "PERMISSION",
+          "SHARED KNOWLEDGE"
+        ],
+        "anchor": "Elsewhere in the city",
+        "note": "World Graph / Information and its history",
+        "chapterId": "C07",
+        "id": "R36",
+        "end": 217.125
+      },
+      {
+        "start": 217.125,
+        "kind": "flow",
+        "headline": "Two sources.\nNot two copies.",
+        "mode": "sequence",
+        "labels": [
+          "INDEPENDENT EVIDENCE A",
+          "INDEPENDENT EVIDENCE B"
+        ],
+        "anchor": "Two investigators",
+        "note": "Some investigations require independently obtained evidence.",
+        "chapterId": "C07",
+        "id": "R37",
+        "end": 223.5
+      },
+      {
+        "start": 223.5,
+        "kind": "flow",
+        "headline": "Everything came from somewhere.",
+        "mode": "route",
+        "labels": [
+          "SALVAGE",
+          "MATERIAL + RECIPE",
+          "CRAFTED ITEM"
+        ],
+        "anchor": "Objects tell stories too",
+        "note": "A traceable history follows the eligible item.",
+        "chapterId": "C07",
+        "id": "R38",
+        "end": 230.66666666666666
+      },
+      {
+        "start": 230.66666666666666,
+        "kind": "gameplay",
+        "headline": "Bigger ambitions.",
+        "capture": "territory",
+        "focus": {
+          "x": 0.5,
+          "y": 0.55,
+          "scale": 1.7
+        },
+        "endFocus": {
+          "x": 0.52,
+          "y": 0.58,
+          "scale": 1.95
+        },
+        "anchor": "Beyond Nico's small Crew",
+        "labels": [
+          "Family treasury · Territory · Rivalries"
+        ],
+        "chapterId": "C07",
+        "id": "R39",
+        "end": 237.875
+      },
+      {
+        "start": 237.875,
+        "kind": "flow",
+        "headline": "Put something behind the promise.",
+        "mode": "roster",
+        "labels": [
+          "CONTRIBUTE",
+          "APPROVE",
+          "COMMIT"
+        ],
+        "anchor": "Shared operations",
+        "note": "Family operations are separate from Crew chat.",
+        "chapterId": "C07",
+        "id": "R40",
+        "end": 241.08333333333334
+      },
+      {
+        "start": 241.08333333333334,
+        "kind": "gameplay",
+        "headline": "A route worth fighting for.",
+        "capture": "heist-ready",
+        "focus": {
+          "x": 0.47,
+          "y": 0.88,
+          "scale": 1.8
+        },
+        "endFocus": {
+          "x": 0.5,
+          "y": 0.88,
+          "scale": 1.95
+        },
+        "anchor": "Convoys can be ambushed.",
+        "labels": [
+          "Convoy risk · Commission votes"
+        ],
+        "chapterId": "C07",
+        "id": "R41",
+        "end": 246.375
+      },
+      {
+        "start": 246.375,
+        "kind": "cinema",
+        "headline": "The city changes around you.",
+        "asset": "foundry-film",
+        "anchor": "Events and the Director",
+        "labels": [
+          "Events · Authored situations"
+        ],
+        "chapterId": "C07",
+        "id": "R42",
+        "end": 252
+      },
+      {
+        "start": 252,
+        "kind": "type",
+        "headline": "Who is across the street?",
+        "anchor": "Not every rival",
+        "labels": [
+          "Human players · Player-operated agents · NPCs"
+        ],
+        "chapterId": "C08",
+        "id": "R43",
+        "end": 257.0416666666667
+      },
+      {
+        "start": 257.0416666666667,
+        "kind": "flow",
+        "headline": "An agent takes its turn.",
+        "mode": "resources",
+        "labels": [
+          "NERVE / 10 → 7",
+          "GAME CASH / $500 → $607",
+          "RESPECT / +4"
+        ],
+        "anchor": "Here it reads",
+        "note": "Actual recorded action: a street job.",
+        "chapterId": "C08",
+        "id": "R44",
+        "end": 263.4583333333333
+      },
+      {
+        "start": 263.4583333333333,
+        "kind": "flow",
+        "headline": "A new state.\nA new decision.",
+        "mode": "sequence",
+        "labels": [
+          "READ AVAILABLE ACTIONS",
+          "CHOOSE AN ACTION",
+          "RECEIVE THE RESULT"
+        ],
+        "anchor": "The next decision",
+        "note": "Resources and permissions still apply.",
+        "chapterId": "C08",
+        "id": "R45",
+        "end": 269.375
+      },
+      {
+        "start": 269.375,
+        "kind": "cinema",
+        "headline": "Every choice leaves a consequence.",
+        "asset": "docks-film",
+        "anchor": "The city's NPCs are separate.",
+        "labels": [],
+        "chapterId": "C08",
+        "id": "R46",
+        "end": 272
+      },
+      {
+        "start": 272,
+        "kind": "gameplay",
+        "headline": "Who will you bring?",
+        "capture": "crew",
+        "focus": {
+          "x": 0.31,
+          "y": 0.53,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.31,
+          "y": 0.54,
+          "scale": 2.6
+        },
+        "anchor": "Whether you bring friends",
+        "labels": [],
+        "chapterId": "C08",
+        "id": "R47",
+        "end": 280
+      },
+      {
+        "start": 280,
+        "kind": "gameplay",
+        "headline": "Equipment. Access. People.",
+        "capture": "garage",
+        "focus": {
+          "x": 0.255,
+          "y": 0.68,
+          "scale": 2.3
+        },
+        "endFocus": {
+          "x": 0.255,
+          "y": 0.7,
+          "scale": 2.5
+        },
+        "anchor": "Nico needs equipment",
+        "labels": [],
+        "chapterId": "C09",
+        "id": "R48",
+        "end": 283.3333333333333
+      },
+      {
+        "start": 283.3333333333333,
+        "kind": "flow",
+        "headline": "What are you spending?",
+        "mode": "balances",
+        "labels": [
+          "GAME CASH / City life",
+          "IN-GAME OMR / Selected gear & services",
+          "WALLET OMR / Onchain, separate"
+        ],
+        "anchor": "Money helps",
+        "note": "Some privileges require holding or staking. Many spends recycle OMR.",
+        "chapterId": "C09",
+        "id": "R49",
+        "end": 300.9166666666667
+      },
+      {
+        "start": 300.9166666666667,
+        "kind": "flow",
+        "headline": "One way through the Window.",
+        "mode": "route",
+        "labels": [
+          "IN-GAME OMR",
+          "FUNDED WINDOW",
+          "GAME CASH"
+        ],
+        "anchor": "The funded Window",
+        "note": "No cash-to-OMR conversion. No automatic wallet payout.",
+        "chapterId": "C09",
+        "id": "R50",
+        "end": 309.375
+      },
+      {
+        "start": 309.375,
+        "kind": "flow",
+        "headline": "Fees return to separate budgets.",
+        "mode": "fees",
+        "labels": [
+          "DEVELOPER",
+          "COMMUNITY",
+          "REAL-WORLD ASSETS",
+          "LIQUIDITY"
+        ],
+        "anchor": "Trading fees fund",
+        "note": "Protocol-controlled liquidity stays protocol-controlled.",
+        "chapterId": "C09",
+        "id": "R51",
+        "end": 313.8333333333333
+      },
+      {
+        "start": 313.8333333333333,
+        "kind": "flow",
+        "headline": "Inventory. Positions. Realized profit.",
+        "mode": "sequence",
+        "labels": [
+          "BONDS / Existing OMR, released over time",
+          "LIQUIDITY REWARDS / Eligible positions + funded campaigns",
+          "RESERVES / A share of realized arbitrage profit"
+        ],
+        "anchor": "Inventory bonds release",
+        "note": "Qualification and funding determine rewards.",
+        "chapterId": "C09",
+        "id": "R52",
+        "end": 324.875
+      },
+      {
+        "start": 324.875,
+        "kind": "gameplay",
+        "headline": "A right worth competing for.",
+        "capture": "territory",
+        "focus": {
+          "x": 0.49,
+          "y": 0.54,
+          "scale": 1.8
+        },
+        "endFocus": {
+          "x": 0.5,
+          "y": 0.54,
+          "scale": 2
+        },
+        "anchor": "Families compete",
+        "labels": [
+          "Designated trading-fee rights"
+        ],
+        "note": "The pool’s principal remains protocol-controlled.",
+        "chapterId": "C09",
+        "id": "R53",
+        "end": 330.0416666666667
+      },
+      {
+        "start": 330.0416666666667,
+        "kind": "flow",
+        "headline": "Assets beyond the city.",
+        "mode": "sequence",
+        "labels": [
+          "STOCK TOKENS / Exposure outside the game",
+          "COMMISSION / Choices within its authority",
+          "ACQUISITION · CUSTODY · ELIGIBILITY"
+        ],
+        "anchor": "Real-world assets include",
+        "note": "Stock Tokens are exposure, not ownership of company shares.",
+        "chapterId": "C09",
+        "id": "R54",
+        "end": 340.0833333333333
+      },
+      {
+        "start": 340.0833333333333,
+        "kind": "type",
+        "headline": "Power has rules.",
+        "anchor": "Holding OMR does not",
+        "labels": [
+          "Holding OMR does not promise everyone a payout."
+        ],
+        "chapterId": "C09",
+        "id": "R55",
+        "end": 346.375
+      },
+      {
+        "start": 346.375,
+        "kind": "gameplay",
+        "headline": "Trust is still your decision.",
+        "capture": "heist-open",
+        "focus": {
+          "x": 0.35,
+          "y": 0.81,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.355,
+          "y": 0.81,
+          "scale": 2.5
+        },
+        "anchor": "They cannot decide",
+        "labels": [],
+        "chapterId": "C09",
+        "id": "R56",
+        "end": 350
+      },
+      {
+        "start": 350,
+        "kind": "cinema",
+        "headline": "The next invitation.",
+        "asset": "family-film",
+        "anchor": "The next job comes round.",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R57",
+        "end": 354.1666666666667
+      },
+      {
+        "start": 354.1666666666667,
+        "kind": "gameplay",
+        "headline": "Another empty seat.",
+        "capture": "heist-open",
+        "focus": {
+          "x": 0.35,
+          "y": 0.81,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.355,
+          "y": 0.81,
+          "scale": 2.5
+        },
+        "anchor": "Another stake.",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R58",
+        "end": 357.8333333333333
+      },
+      {
+        "start": 357.8333333333333,
+        "kind": "cinema",
+        "headline": "Make your name.",
+        "asset": "hero-film",
+        "anchor": "Nico has learned",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R59",
+        "end": 364.9583333333333
+      },
+      {
+        "start": 364.9583333333333,
+        "kind": "gameplay",
+        "headline": "Who comes with you?",
+        "capture": "heist-ready",
+        "focus": {
+          "x": 0.35,
+          "y": 0.54,
+          "scale": 2.4
+        },
+        "endFocus": {
+          "x": 0.35,
+          "y": 0.54,
+          "scale": 2.5
+        },
+        "anchor": "The next invitation",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R60",
+        "end": 368.3333333333333
+      },
+      {
+        "start": 368.3333333333333,
+        "kind": "cinema",
+        "headline": "You can buy equipment.",
+        "asset": "counting-film",
+        "anchor": "You can buy equipment.",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R61",
+        "end": 370.2916666666667
+      },
+      {
+        "start": 370.2916666666667,
+        "kind": "type",
+        "headline": "You cannot buy trust.",
+        "anchor": "You cannot buy trust.",
+        "labels": [],
+        "chapterId": "C10",
+        "id": "R62",
+        "end": 372.375
+      },
+      {
+        "start": 372.375,
+        "kind": "cinema",
+        "headline": "Make your name.",
+        "asset": "docks-film",
+        "anchor": "Choose your path.",
+        "labels": [
+          "Choose your path. Find your people."
+        ],
+        "chapterId": "C10",
+        "id": "R63",
+        "end": 379.1666666666667
+      },
+      {
+        "start": 379.1666666666667,
+        "kind": "end",
+        "headline": "Who will you bring?",
+        "anchor": "Who will you bring?",
+        "labels": [
+          "omerta.fun",
+          "Play now."
+        ],
+        "chapterId": "C10",
+        "id": "R64",
+        "end": 390
+      }
+    ]
+  },
+  "captions": [
+    {
+      "startMs": 181.521,
+      "endMs": 1659.625,
+      "text": "Nico has put up the stake.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 2554.604,
+      "endMs": 3607.125,
+      "text": "One seat is empty.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 4575.375,
+      "endMs": 8009.812,
+      "text": "Fill it with the wrong person, and everyone could go to jail.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 8905.396,
+      "endMs": 13635.813,
+      "text": "This is OMERTÀ, a multiplayer mafia strategy RPG in your browser.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 15351.667,
+      "endMs": 17651.979,
+      "text": "Nico starts with a name and a little cash.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 18558.104,
+      "endMs": 19852.917,
+      "text": "He takes a small job.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 20731.479,
+      "endMs": 21683.813,
+      "text": "Nerve goes down.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 22580.063,
+      "endMs": 23998.083,
+      "text": "Cash and respect go up.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 24891.542,
+      "endMs": 25449.688,
+      "text": "Now what?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 26345.458,
+      "endMs": 28300.375,
+      "text": "Another job could build his bankroll.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 29176.688,
+      "endMs": 31651.708,
+      "text": "Training spends energy to improve his stats.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 32533.5,
+      "endMs": 36680.042,
+      "text": "Banking protects money once it arrives, but the trip leaves it exposed.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 37605.229,
+      "endMs": 39767.854,
+      "text": "Three choices, different risks.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 40631.604,
+      "endMs": 42791.854,
+      "text": "Nico has to choose what matters next.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 43686.813,
+      "endMs": 48644.563,
+      "text": "That is how a place in this city begins: one decision, then its consequence.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 52340.083,
+      "endMs": 55161.729,
+      "text": "As he progresses, six Paths open different ways forward.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 55872.146,
+      "endMs": 57084.208,
+      "text": "The Gun brings street combat.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 57811.521,
+      "endMs": 59289.271,
+      "text": "The Ledger, fronts and trade.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 60007.521,
+      "endMs": 61338.5,
+      "text": "The Kitchen, better cooking.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 62049.167,
+      "endMs": 63539.896,
+      "text": "The Wheel, faster convoys.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 64254.167,
+      "endMs": 65753.292,
+      "text": "The Shadow, quicker searches.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 66464.146,
+      "endMs": 68320.958,
+      "text": "The Ring, stronger duels and bouts.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 69016.604,
+      "endMs": 70368.708,
+      "text": "Every advantage costs something.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 71081.896,
+      "endMs": 74215.542,
+      "text": "Nico chooses the Wheel: faster convoys, slower cooking.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 74932.229,
+      "endMs": 75863.25,
+      "text": "Mara chooses the Gun.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 76591.792,
+      "endMs": 79408.688,
+      "text": "Their specialties are different; their preparation still matters.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 80106.896,
+      "endMs": 81971.021,
+      "text": "Nico starts thinking beyond his next payout.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 82776.063,
+      "endMs": 84941.917,
+      "text": "What can he do that makes someone else want him around?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 90383.438,
+      "endMs": 91829.917,
+      "text": "He buys a sack of coffee.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 92734.271,
+      "endMs": 95903.208,
+      "text": "There is the price, the debit, and the cargo in his trunk.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 96790.5,
+      "endMs": 98943.292,
+      "text": "Getting a bargain is only half the decision.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 99861.021,
+      "endMs": 100729.271,
+      "text": "Goods need moving.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 101625.188,
+      "endMs": 102761.646,
+      "text": "Cars need repairs.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 103653.938,
+      "endMs": 105936.896,
+      "text": "Boats open sea runs with risks of their own.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 106830.542,
+      "endMs": 109973.125,
+      "text": "A business has upkeep; a Kitchen batch takes time.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 110866.896,
+      "endMs": 115623.292,
+      "text": "Races, boxing, the Den and the Speakeasy give people other reasons to return.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 116528.083,
+      "endMs": 119985.229,
+      "text": "Loans, auctions and fixers create other opportunities.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 120870.729,
+      "endMs": 122643.021,
+      "text": "The city rewards paying attention.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 125361.583,
+      "endMs": 129646.417,
+      "text": "Nico forms a Crew, a small circle for mutual aid and chat.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 130652.292,
+      "endMs": 132666.667,
+      "text": "Then comes the Payroll Office job.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 133656.708,
+      "endMs": 135721.438,
+      "text": "This heist needs a wheelman and muscle.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 136686.563,
+      "endMs": 139619.208,
+      "text": "Nico takes the wheelman role and puts up the stake.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 140600.854,
+      "endMs": 142076.042,
+      "text": "The second seat is empty.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 143066.729,
+      "endMs": 143975.229,
+      "text": "Mara joins.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 145008.313,
+      "endMs": 146165.521,
+      "text": "Both names are there.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 147241.188,
+      "endMs": 149099.833,
+      "text": "Preparation improves their odds.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 150085.417,
+      "endMs": 153014.833,
+      "text": "It cannot tell Nico what somebody else will choose.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 154006.417,
+      "endMs": 154718.958,
+      "text": "He commits.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 157254.604,
+      "endMs": 158273.771,
+      "text": "The law was waiting.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 159252.979,
+      "endMs": 160253.333,
+      "text": "Somebody talked.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 161941.917,
+      "endMs": 163446.292,
+      "text": "Both players go to jail.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 165994.625,
+      "endMs": 167797.104,
+      "text": "The result names no informant.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 168781.688,
+      "endMs": 170997.854,
+      "text": "Nico can read exactly what happened.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 171998.125,
+      "endMs": 174108.542,
+      "text": "He still does not know whom to believe.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 178357.104,
+      "endMs": 179028.167,
+      "text": "Jail ends.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 179910.771,
+      "endMs": 181111.104,
+      "text": "The question remains.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 182017.271,
+      "endMs": 183896.604,
+      "text": "Would you invite the same person again?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 184798.104,
+      "endMs": 187823.604,
+      "text": "Bigger risks can cost more: a character can die.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 188691,
+      "endMs": 192439.958,
+      "text": "Your account continues, but an heir keeps only a limited legacy.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 193330.042,
+      "endMs": 194919.125,
+      "text": "Seasons have their own rules.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 195805.875,
+      "endMs": 200984.396,
+      "text": "Eligible gear and vehicles can leave the game, but extracted items stop working inside it.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 201960.188,
+      "endMs": 205446.021,
+      "text": "Combat cannot take unrelated assets from your external wallet.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 206432.958,
+      "endMs": 207664.333,
+      "text": "What do you keep in play?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 208562.979,
+      "endMs": 210034.958,
+      "text": "What are you prepared to lose?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 212345.875,
+      "endMs": 216304.917,
+      "text": "Elsewhere in the city, discoveries can be kept private or shared with permission.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 217106.833,
+      "endMs": 219913.75,
+      "text": "Two investigators may need evidence they found independently.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 220704.313,
+      "endMs": 222703.792,
+      "text": "Copying the same clue is not another witness.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 223479.208,
+      "endMs": 228633.75,
+      "text": "Objects tell stories too: salvage becomes material, and an eligible recipe makes an item",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 228633.75,
+      "endMs": 229840.167,
+      "text": "with a traceable history.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 230654.354,
+      "endMs": 237083.854,
+      "text": "Beyond Nico's small Crew, Families pursue larger ambitions: treasury, territory, rivalries and wars.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 237874,
+      "endMs": 240297.229,
+      "text": "Shared operations need contributions and approval.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 241090.917,
+      "endMs": 242356.563,
+      "text": "Convoys can be ambushed.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 243154.896,
+      "endMs": 245580.896,
+      "text": "Commission seats give votes on specific city rules.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 246363.063,
+      "endMs": 250065.271,
+      "text": "Events and the Director's authored situations change the opportunities around you.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 252336.667,
+      "endMs": 253954.771,
+      "text": "Not every rival is at a keyboard.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 254740.479,
+      "endMs": 256213.396,
+      "text": "A player can operate an agent.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 257024.604,
+      "endMs": 259594,
+      "text": "Here it reads its available actions and takes a street job.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 260381.729,
+      "endMs": 262694.958,
+      "text": "Nerve falls; cash and respect change.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 263475.667,
+      "endMs": 265423.521,
+      "text": "The next decision starts from that new state.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 266295.229,
+      "endMs": 268597.104,
+      "text": "Permissions and resources still limit what it can do.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 269375.417,
+      "endMs": 271175.083,
+      "text": "The city's NPCs are separate.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 271984.25,
+      "endMs": 275971.083,
+      "text": "Whether you bring friends or build an agent, the choices still have consequences.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 280336.75,
+      "endMs": 282551.167,
+      "text": "Nico needs equipment, access and people.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 283341.813,
+      "endMs": 286121.083,
+      "text": "Money helps, but the balances have different jobs.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 286925.646,
+      "endMs": 288514.875,
+      "text": "Game cash pays for city life.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 289315.063,
+      "endMs": 294329.604,
+      "text": "In-game OMR buys selected gear and services; some privileges require holding or staking it.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 295191.75,
+      "endMs": 296919.854,
+      "text": "Most OMR spends recycle it.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 297797.167,
+      "endMs": 300131.625,
+      "text": "Wallet OMR is separate, onchain.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 300937.479,
+      "endMs": 303298.146,
+      "text": "The funded Window spends OMR for game cash.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 304088.583,
+      "endMs": 305460.854,
+      "text": "That conversion goes one way.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 306252.521,
+      "endMs": 308586.042,
+      "text": "Game rewards are not automatic wallet payouts.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 309360.083,
+      "endMs": 313057.875,
+      "text": "Trading fees fund developer, community, asset and liquidity budgets.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 313832.896,
+      "endMs": 316561.25,
+      "text": "Inventory bonds release existing OMR over time.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 317361.75,
+      "endMs": 320454.208,
+      "text": "Liquidity rewards need eligible positions and funded campaigns.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 321253.438,
+      "endMs": 324032.271,
+      "text": "Some realized arbitrage profit can support reserves.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 324877.979,
+      "endMs": 329248.854,
+      "text": "Families compete for designated trading-fee rights; they do not take the pool's principal.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 330033.479,
+      "endMs": 334348.646,
+      "text": "Real-world assets include Stock Tokens: exposure to assets outside the game.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 335152.187,
+      "endMs": 339279.917,
+      "text": "Commission choices, acquisition, custody and eligibility govern the process.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 340068.083,
+      "endMs": 342548.063,
+      "text": "Holding OMR does not promise everyone a payout.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 343445.604,
+      "endMs": 345585.438,
+      "text": "These systems shape what players can organize.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 346374.708,
+      "endMs": 348255.5,
+      "text": "They cannot decide whom Nico should trust.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 351795.771,
+      "endMs": 353274.458,
+      "text": "The next job comes round.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 354160.396,
+      "endMs": 354968.354,
+      "text": "Another stake.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 355845.396,
+      "endMs": 356927.479,
+      "text": "Another empty seat.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 357821.542,
+      "endMs": 364062.104,
+      "text": "Nico has learned how to earn, how to specialize, and how much another person's decision can cost him.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 364950.438,
+      "endMs": 367437.104,
+      "text": "The next invitation is a choice he has to make.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 368325.979,
+      "endMs": 369391.083,
+      "text": "You can buy equipment.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 370281.021,
+      "endMs": 371481.646,
+      "text": "You cannot buy trust.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 372370.792,
+      "endMs": 373256.708,
+      "text": "Choose your path.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 374175.542,
+      "endMs": 375114.708,
+      "text": "Find your people.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 375996.104,
+      "endMs": 376755.75,
+      "text": "Make your name.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 377645.542,
+      "endMs": 378275.292,
+      "text": "OMERTÀ.",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 379159.438,
+      "endMs": 379974.479,
+      "text": "Who will you bring?",
+      "timestampMs": null,
+      "confidence": null
+    },
+    {
+      "startMs": 380881.958,
+      "endMs": 383019.188,
+      "text": "Start playing at omerta.fun.",
+      "timestampMs": null,
+      "confidence": null
+    }
+  ]
+}

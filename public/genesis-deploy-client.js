@@ -59,13 +59,13 @@ function verifyHookCreation(p) {
     && configuration.surgeFullTicks === 100 && configuration.epochDuration === 3600,
     'The reviewed static 0.3% LP fee and disabled opening policy metadata differs.');
   const deployment = p.deployments[3], raw = bytes(deployment.data), template = bytes(TRUSTED_HOOK.creationBytecode);
-  check(TRUSTED_HOOK.constructorWords === 16 && template.length === TRUSTED_HOOK.creationBytecodeBytes
+  check(TRUSTED_HOOK.constructorWords === 15 && template.length === TRUSTED_HOOK.creationBytecodeBytes
     && keccakHex(TRUSTED_HOOK.creationBytecode) === TRUSTED_HOOK.creationBytecodeKeccak256,
     'The locally shipped trusted hook creation template is inconsistent.');
-  check(raw.length === 32 + template.length + 16 * 32
+  check(raw.length === 32 + template.length + 15 * 32
     && byteHex(raw.slice(32, 32 + template.length)) === lower(TRUSTED_HOOK.creationBytecode),
     'Hook calldata does not contain the trusted local compiled creation bytecode and canonical constructor size.');
-  const words = Array.from({ length: 16 }, (_, i) => byteHex(raw.slice(32 + template.length + i * 32, 32 + template.length + (i + 1) * 32)));
+  const words = Array.from({ length: 15 }, (_, i) => byteHex(raw.slice(32 + template.length + i * 32, 32 + template.length + (i + 1) * 32)));
   const addressWord = (index, expected) => check(words[index] === `0x${'00'.repeat(12)}${lower(expected).slice(2)}`,
     'A hook constructor authority, recipient, token or manager differs.');
   const uintWord = (index, expected) => check(words[index] === `0x${BigInt(expected).toString(16).padStart(64, '0')}`,
@@ -75,7 +75,7 @@ function verifyHookCreation(p) {
   [ '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
     '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments[0].predicted, p.deployments[1].predicted ]
     .forEach((address, i) => addressWord(5 + i, address));
-  [10, 11, 12].forEach(i => uintWord(i, 0)); uintWord(13, 100); uintWord(14, 3600); addressWord(15, SAFE);
+  [10, 11, 12].forEach(i => uintWord(i, 0)); uintWord(13, 100); uintWord(14, 3600);
   const predicted = predictCreate2Address(FACTORY, byteHex(raw.slice(0, 32)), byteHex(raw.slice(32)));
   check(predicted === lower(deployment.predicted) && (BigInt(predicted) & 0x3fffn) === 0x35c4n,
     'The salt/initcode CREATE2 address or hook permission flags differ from the reviewed prediction.');
@@ -151,11 +151,15 @@ export async function verifyDeploymentPacket(rawBytes, expectedSha, { now = Date
   check(p.finalManifest?.chainId === 4663 && policy && Object.entries(amounts).every(([k, v]) => policy[k] === v)
     && ['familySafe', 'liquidityOwner', 'unsoldRecipient', 'bondReserveCustodian'].every(k => lower(policy[k]) === SAFE),
   'The founder-approved allocation, proceeds or Safe custody differs.');
-  const governance = p.finalManifest.hookGovernance;
-  check(governance && Object.keys(governance).length === 5 && lower(governance.governanceSafe) === SAFE
-    && lower(governance.fixedFounderRecipient) === '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced'
-    && governance.fixedFounderBps === 200 && governance.delaySeconds === 172800 && governance.executionSafeOnly === true,
-    'The fixed founder 2% and 48-hour Safe-only tax governance differs.');
+  const hookPolicy = p.finalManifest.hookPolicy;
+  const fixed = { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100 };
+  const hookRecipients = ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
+    '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments?.[0]?.predicted, p.deployments?.[1]?.predicted];
+  check(hookPolicy && Object.keys(hookPolicy).length === 7
+    && Object.entries(fixed).every(([key, value]) => hookPolicy[key] === value)
+    && Array.isArray(hookPolicy.recipients) && hookPolicy.recipients.length === 5
+    && hookPolicy.recipients.every((recipient, i) => lower(recipient) === lower(hookRecipients[i])),
+    'The fixed 5% trade revenue, 0.5% maximum surge or reviewed recipients differ.');
   const clock = p.launchClock;
   check(clock && ['arbsys', 'block.number'].includes(clock.mode), 'The native launch clock is missing.');
   check(integer(clock.startBlock) < integer(clock.endBlock) && clock.claimBlock === clock.endBlock,
@@ -273,6 +277,24 @@ export class GenesisDeploymentClient {
     check(bytes(code).length > 0 && await sha256(bytes(code), this.crypto) === expected.toLowerCase(),
       'A required deployed runtime differs from its reviewed SHA-256.');
   }
+  async restrictedManagerAt(block) {
+    const recipients = this.loaded.packet.finalManifest.hookPolicy.recipients;
+    const expected = [
+      ['revenuePolicyId()', byteHex(keccak_256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')))],
+      ['TRADE_FEE_BPS()', `0x${abiWord(500)}`], ['omr()', `0x${abiAddress(DEPENDENCIES.omr)}`],
+      ...['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
+        .map((signature, i) => [signature, `0x${abiAddress(recipients[i])}`]),
+    ];
+    try {
+      await Promise.all(expected.map(async ([signature, word]) => {
+        const data = byteHex(keccak_256(new TextEncoder().encode(signature))).slice(0, 10);
+        const value = await this.rpc('eth_call', [{ to: DEPENDENCIES.poolManager, data }, block]);
+        check(HASH.test(value || '') && lower(value) === lower(word), 'Restricted manager policy mismatch.');
+      }));
+    } catch {
+      throw Error('Production deployment requires the reviewed restricted manager with fixed 5% revenue and exact recipients.');
+    }
+  }
   deadline() {
     check(this.loaded, 'Load and verify the reviewed packet first.');
     const p = this.loaded.packet;
@@ -308,6 +330,7 @@ export class GenesisDeploymentClient {
       const pins = [...p.dependencyChecks, ...ROLES.slice(0, s.stage).map(role => p.runtimeChecks[role])];
       const reads = await Promise.allSettled([
         ...pins.map(pin => this.codeMatches(pin.address, pin.sha256, head.number)),
+        this.restrictedManagerAt(head.number),
         this.rpc('eth_getCode', [d.predicted, head.number]).then(code =>
           check(code === '0x', 'The predicted deployment address is already occupied.')),
       ]);

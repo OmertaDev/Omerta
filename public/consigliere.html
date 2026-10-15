@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>OMERTA CONSIGLIERE</title>
+  <link rel="stylesheet" href="/omerta-ui.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--om-surface-canvas, #0a0909); color: var(--om-color-paper-100, #eee6d7); font: 16px/1.6 system-ui, sans-serif; }
+    a { color: var(--om-color-gold-300, #e0bd72); text-underline-offset: 4px; }
+    button, input { font: inherit; }
+    button, .button { min-height: 44px; padding: 10px 18px; border: 1px solid #80652f; border-radius: 3px; background: #cda653; color: #0a0909; cursor: pointer; font-weight: 650; }
+    button:disabled { opacity: .55; cursor: wait; }
+    button.secondary { background: transparent; color: #eee6d7; border-color: #655c52; }
+    button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid #e0bd72; outline-offset: 4px; }
+    main { max-width: 1120px; padding: 32px 24px 80px; margin: auto; }
+    nav, .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    nav { padding-bottom: 28px; border-bottom: 1px solid #302a2d; }
+    .wordmark, .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    .eyebrow { color: #cda653; margin: 0 0 12px; }
+    header { padding: 52px 0 36px; max-width: 820px; }
+    h1 { font-family: 'Omerta Display', Georgia, serif; font-size: clamp(36px, 6vw, 64px); letter-spacing: .04em; line-height: 1.1; font-weight: 600; margin: 0 0 24px; }
+    h2 { font-family: Georgia, serif; font-weight: 400; font-size: 26px; line-height: 1.25; margin: 0 0 20px; }
+    h3 { font-size: 17px; margin: 0 0 8px; }
+    p { margin: 0 0 16px; }
+    .muted, .hint { color: #c9c0b1; }
+    .hint { font-size: 14px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, 1fr); gap: 32px; align-items: start; }
+    section { border-top: 1px solid #655c52; padding: 28px 0; }
+    .full { grid-column: 1 / -1; }
+    .notice { padding: 16px 20px; border-left: 3px solid #cda653; background: #1a1719; }
+    #status { min-height: 28px; margin: 0 0 16px; }
+    #status[data-error="true"] { color: #eeaaa2; }
+    fieldset { border: 1px solid #302a2d; margin: 18px 0; padding: 16px; }
+    legend { padding: 0 8px; font-weight: 600; }
+    label { display: block; }
+    label.scope { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; }
+    input[type="checkbox"] { accent-color: #cda653; width: 18px; height: 18px; margin-top: 4px; flex: none; }
+    input[type="text"], input[type="password"] { width: 100%; background: #141214; border: 1px solid #655c52; border-radius: 3px; padding: 12px; color: #eee6d7; margin: 8px 0 16px; }
+    #token-value { font-family: monospace; }
+    .connection, .activity-entry { border-bottom: 1px solid #302a2d; padding: 18px 0; }
+    .connection:first-child, .activity-entry:first-child { padding-top: 0; }
+    .connection p, .activity-entry p { margin: 4px 0; }
+    .scope-list { display: flex; flex-wrap: wrap; gap: 6px 14px; padding: 0; margin: 12px 0; list-style: none; font-size: 13px; color: #c9c0b1; }
+    .prompts { padding-left: 20px; }
+    .prompts li { padding: 5px 0; }
+    details { margin: 16px 0; }
+    summary { cursor: pointer; padding: 10px 0; }
+    pre { max-height: 360px; overflow: auto; background: #141214; padding: 16px; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    time, .meta { font-size: 13px; color: #c9c0b1; }
+    [hidden] { display: none !important; }
+    @media (max-width: 720px) { .layout { grid-template-columns: 1fr; gap: 0; } main { padding: 24px 20px 48px; } header { padding-top: 36px; } }
+  </style>
+  <script src="/consigliere.js" defer></script>
+</head>
+<body>
+  <main>
+    <nav aria-label="Main"><span class="wordmark">Omerta / Intelligence</span><a href="/">Return to Omerta</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/resources">Resources</a></nav>
+    <header>
+      <p class="eyebrow">Advice for your next move</p>
+      <h1>OMERTA<br>CONSIGLIERE</h1>
+      <p class="muted">Your Consigliere is an AI adviser that helps you catch up on the city, plan your next move, and prepare your crew. You approve any actions it proposes. It can make mistakes, so check important details before acting.</p>
+    </header>
+    <p id="status" role="status" aria-live="polite">Loading your connections…</p>
+    <div id="signed-out" class="notice" hidden><p>Sign in to Omerta to manage your Consigliere.</p><a href="/">Open Omerta and sign in</a></div>
+    <div id="workspace" class="layout" hidden>
+      <section id="approval-section" class="full" hidden aria-labelledby="approval-heading">
+        <p class="eyebrow" id="approval-kind">Player decision required</p>
+        <h2 id="approval-heading">Review this proposal</h2>
+        <div id="approval-details"></div>
+        <p class="hint">You are approving the exact proposal below. The game checks its rules and your available resources before carrying it out.</p>
+        <details id="approval-payload"><summary id="approval-payload-label">Exact proposed action</summary><pre id="approval-arguments"></pre></details>
+        <button type="button" id="approve">Approve this action</button>
+        <p id="approval-result" role="status" aria-live="polite"></p>
+      </section>
+      <div>
+        <section aria-labelledby="connections-heading">
+          <div class="row"><h2 id="connections-heading">Your connections</h2><button id="refresh" type="button" class="secondary">Refresh</button></div>
+          <div id="connections"></div>
+        </section>
+        <section aria-labelledby="link-heading">
+          <h2 id="link-heading">Give your adviser access</h2>
+          <p class="hint">Choose what your adviser can read and whether it can propose actions. You can revoke access at any time.</p>
+          <p class="notice hint">Muse's native connection is awaiting platform verification. If you have a configured connector, you can give it access with a token below.</p>
+          <form id="connection-form">
+            <label for="connection-label">Connection name</label>
+            <input id="connection-label" name="label" type="text" value="Muse Consigliere" maxlength="80" required>
+            <fieldset><legend>Read access</legend><div id="read-scopes"></div></fieldset>
+            <details><summary>Optional proposal permissions</summary><div id="prepare-scopes"></div></details>
+            <button type="submit" id="create-connection">Create access token</button>
+          </form>
+          <div id="token-result" class="notice" hidden>
+            <h3>Your connection token</h3>
+            <p class="hint">This token appears only once. Save it in your connector's secure credential settings. It expires in seven days or when you revoke access.</p>
+            <label for="token-value">Delegated access token</label><input type="password" id="token-value" readonly autocomplete="off">
+            <div class="row"><button type="button" id="copy-token">Copy token</button><button type="button" id="clear-token" class="secondary">Hide token</button></div>
+          </div>
+        </section>
+      </div>
+      <aside>
+        <section aria-labelledby="starter-heading">
+          <p class="eyebrow">Start a conversation</p><h2 id="starter-heading">Ask your Consigliere</h2>
+          <ul class="prompts">
+            <li>What changed while I was gone?</li><li>What should I do next?</li><li>What does my Crew need?</li><li>What can I craft?</li><li>Help me investigate my active mysteries.</li><li>What should I complete this season?</li>
+          </ul>
+          <p class="hint">Your adviser can see what you have discovered and what your people have shared through the game.</p>
+        </section>
+        <section aria-labelledby="activity-heading"><h2 id="activity-heading">Recent agent activity</h2><div id="activity"></div></section>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

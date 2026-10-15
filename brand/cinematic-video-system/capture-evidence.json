@@ -1,0 +1,1290 @@
+{
+  "createdAt": "2026-09-24T20:03:42.218Z",
+  "environment": "Actual local repository UI and handlers; disposable pg-mem; synthetic accounts/balances; no production or external RPC",
+  "records": [
+    {
+      "method": "POST",
+      "url": "/v1/worldgraph/recipes/recipe:car_salvage_basic/salvage/c5c143cc-decf-40ef-9379-5648737a38cd",
+      "account": "cinematic-a",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "kind": "salvage_car",
+        "recipe": {
+          "packageId": "automotive-salvage",
+          "packageVersion": 1,
+          "recipeId": "recipe:car_salvage_basic",
+          "recipeVersion": 1
+        },
+        "cashCost": 0,
+        "cashAfter": 250000,
+        "car": {
+          "id": "c5c143cc-decf-40ef-9379-5648737a38cd",
+          "modelId": "junker",
+          "trimId": "stock",
+          "damage": 80
+        },
+        "inputs": [
+          {
+            "assetType": "car",
+            "quantity": 1,
+            "id": "c5c143cc-decf-40ef-9379-5648737a38cd"
+          }
+        ],
+        "outputs": [
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 6,
+            "delta": 6
+          },
+          {
+            "templateId": "mat:wire",
+            "quality": "standard",
+            "qty": 2,
+            "delta": 2
+          },
+          {
+            "templateId": "mat:salvage_parts",
+            "quality": "standard",
+            "qty": 2,
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/worldgraph/recipes/recipe:hardened_steel/craft",
+      "account": "cinematic-a",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "kind": "craft",
+        "recipe": {
+          "packageId": "automotive-salvage",
+          "packageVersion": 1,
+          "recipeId": "recipe:hardened_steel",
+          "recipeVersion": 1
+        },
+        "cashCost": 300,
+        "cashAfter": 249700,
+        "inputs": [
+          {
+            "templateId": "mat:scrap_steel",
+            "quality": "standard",
+            "qty": 2,
+            "delta": -4
+          }
+        ],
+        "outputs": [
+          {
+            "templateId": "mat:hardened_steel",
+            "quality": "standard",
+            "qty": 1,
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/crew",
+      "account": "cinematic-a",
+      "status": 200,
+      "body": {
+        "character": {
+          "id": "cinematic-a-character",
+          "name": "Mara Voss",
+          "generation": 1,
+          "level": 101,
+          "respect": 100000,
+          "energy": 50,
+          "nerve": 10,
+          "health": 100,
+          "cash": 249700,
+          "bank": 50000,
+          "omr": 350,
+          "staked": 0,
+          "rewards": 0,
+          "unbonding": 0,
+          "made": false,
+          "madeSeconds": 0,
+          "unbondSeconds": 0,
+          "bankInTransit": 0,
+          "bankClearSeconds": 0,
+          "safehouseCost": 25000,
+          "stats": {
+            "muscle": 5,
+            "cunning": 5,
+            "speed": 5
+          },
+          "eff": {
+            "muscle": 5,
+            "cunning": 5,
+            "speed": 5
+          },
+          "rerollCredits": 0,
+          "statTotal": 15,
+          "forged": null,
+          "forgedName": null,
+          "ammo": 240,
+          "cb": 0,
+          "heat": 18,
+          "welsher": false,
+          "wanted": false,
+          "wantedSeconds": 0,
+          "law": {
+            "stage": "clean",
+            "exposure": 0,
+            "indicted": false,
+            "retainerSeconds": 0,
+            "witproSeconds": 0,
+            "rat": false
+          },
+          "hunt": null,
+          "tradeRep": 0,
+          "busts": 0,
+          "gun": null,
+          "vest": null,
+          "guns": [],
+          "jailSeconds": 0,
+          "hospSeconds": 0,
+          "shootCdSeconds": 0,
+          "gtaSeconds": 0,
+          "safeSeconds": 0,
+          "safeCapSeconds": 43200,
+          "bustAttemptsLeft": 5,
+          "bustRefillSeconds": 0,
+          "guardPrice": null,
+          "fadeLimit": null,
+          "pokerLimit": null,
+          "duelElo": 1000,
+          "duelLimit": null,
+          "vendettas": [],
+          "guardedBy": null,
+          "guardSeconds": 0,
+          "loc": "foundry",
+          "path": "enforcer",
+          "title": null,
+          "bio": null,
+          "streak": 0,
+          "healCost": null,
+          "checkin": {
+            "done": false,
+            "streak": 1,
+            "pay": 35350,
+            "next": 45450
+          },
+          "maxEnergy": 252,
+          "maxNerve": 111,
+          "ladder": {
+            "rung": 0,
+            "of": 4,
+            "name": null,
+            "staked": 0,
+            "effective": 0,
+            "madeRungs": 1,
+            "lock": null,
+            "lockTiers": [
+              {
+                "id": "week",
+                "days": 7,
+                "mult": 1.25,
+                "name": "The Handshake"
+              },
+              {
+                "id": "month",
+                "days": 30,
+                "mult": 1.5,
+                "name": "The Word"
+              },
+              {
+                "id": "quarter",
+                "days": 90,
+                "mult": 2,
+                "name": "The Oath"
+              }
+            ],
+            "fx": null,
+            "next": {
+              "name": "Earner",
+              "min": 60,
+              "need": 60
+            }
+          },
+          "disciplines": {
+            "stamina": 1,
+            "composure": 1,
+            "conditioning": 1,
+            "marksmanship": 1,
+            "presence": 1,
+            "handling": 1,
+            "poise": 1,
+            "vigilance": 1
+          },
+          "crewBonusPct": 0,
+          "cargoCap": 10,
+          "skills": [],
+          "honor": {
+            "value": 0,
+            "tier": "Unproven",
+            "peak": 0,
+            "peakTier": "Unproven",
+            "low": 0,
+            "lowTier": "Unproven"
+          },
+          "skillPoints": {
+            "total": 25,
+            "spent": 0,
+            "available": 25
+          },
+          "rackets": [],
+          "assets": [],
+          "businesses": [],
+          "speakeasy": null,
+          "fighters": [],
+          "cargo": {},
+          "items": {},
+          "gear": [],
+          "racketLevels": {},
+          "racketIncomePerHr": {},
+          "tycoon": {
+            "earned": 0,
+            "rank": "Hustler"
+          },
+          "empireTitles": [],
+          "ops": {
+            "used": 0,
+            "slots": 12,
+            "free": 12,
+            "nextAt": null,
+            "max": 12,
+            "incomeAssets": [],
+            "meteredCat": "Legit Fronts"
+          },
+          "launderer": {
+            "washed": 0,
+            "rank": "Bagman"
+          },
+          "frontTitles": [],
+          "statesman": {
+            "statecraft": 0,
+            "rank": "Ward Heeler"
+          },
+          "cars": [
+            {
+              "id": "3c568266-7bf2-46cc-8d0f-57166e55beee",
+              "model": "junker",
+              "trim": "stock",
+              "dmg": 12,
+              "plate": null,
+              "listed": false,
+              "pledged": false,
+              "tune": 0,
+              "raceLimit": null,
+              "value": 792,
+              "rarity": "common",
+              "run": null,
+              "runName": null,
+              "serial": null,
+              "runCap": null
+            }
+          ],
+          "shipment": 0,
+          "bespoke": [],
+          "nftCars": [],
+          "gang": null,
+          "lab": null,
+          "crew": 0,
+          "labModules": {
+            "purity": 0,
+            "yield": 0,
+            "stealth": 0
+          },
+          "labModuleNext": {
+            "purity": {
+              "cash": 60000,
+              "omr": 0
+            },
+            "yield": {
+              "cash": 60000,
+              "omr": 0
+            },
+            "stealth": {
+              "cash": 60000,
+              "omr": 0
+            }
+          },
+          "kingpin": {
+            "moved": 0,
+            "rank": "Nobody"
+          },
+          "crewWageOwed": 0,
+          "crewWagePerHr": 0,
+          "crewCold": false,
+          "crewWagePerHead": 1200,
+          "crewMax": 5,
+          "crewCostStep": 50000,
+          "crewNextCost": 50000,
+          "crewColdSeconds": null,
+          "makings": {},
+          "stash": [],
+          "batch": null,
+          "tradeRank": 0,
+          "trades": [
+            {
+              "id": "larceny",
+              "name": "Larceny",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "jail stints on a busted job",
+              "perkNextAt": 10
+            },
+            {
+              "id": "wetwork",
+              "name": "Wet Work",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your search clock on a mark",
+              "perkNextAt": 10
+            },
+            {
+              "id": "chemistry",
+              "name": "The Cook",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "cook time on a batch",
+              "perkNextAt": 10
+            },
+            {
+              "id": "wheels",
+              "name": "Wheels",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "tuning prices at the garage",
+              "perkNextAt": 10
+            },
+            {
+              "id": "seamanship",
+              "name": "Seamanship",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "hull & engine work at the boatyard",
+              "perkNextAt": 10
+            },
+            {
+              "id": "gambling",
+              "name": "The Gambler",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your PvE table limit at the den",
+              "perkNextAt": 10
+            },
+            {
+              "id": "muscle",
+              "name": "Protection",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "jump & shakedown muscle",
+              "perkNextAt": 10
+            },
+            {
+              "id": "commerce",
+              "name": "Commerce",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "Black Market listing fees",
+              "perkNextAt": 10
+            },
+            {
+              "id": "scores",
+              "name": "Big Scores",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "the Score lines up sooner",
+              "perkNextAt": 10
+            },
+            {
+              "id": "fists",
+              "name": "Fisticuffs",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your fighters heal faster",
+              "perkNextAt": 10
+            }
+          ],
+          "heistSeconds": 0,
+          "trainSeconds": 0,
+          "missionSeconds": 0,
+          "prestige": 0,
+          "recruits": 0,
+          "estate": null,
+          "wallet": null,
+          "minted": false,
+          "respawnTokens": 0,
+          "mintCredits": 0,
+          "hitmanRep": 0,
+          "kills": 0,
+          "seasonKills": 0,
+          "hitmanTitle": "Associate",
+          "onboard": {},
+          "coach": {
+            "label": "Pull your first job",
+            "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+            "tab": "streets"
+          },
+          "coachPlan": [
+            {
+              "label": "Pull your first job",
+              "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+              "tab": "streets"
+            },
+            {
+              "label": "Finish your First Week (0/4)",
+              "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+              "tab": "start"
+            },
+            {
+              "label": "Money while you sleep",
+              "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+              "tab": "empire"
+            },
+            {
+              "label": "You've earned skill points",
+              "hint": "You have 25 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+              "tab": "life"
+            },
+            {
+              "label": "Get strapped",
+              "hint": "The Garage ▸ Armory: buy a pistol and CARRY it. A gun backs every fight in this city — jumps, hits, standing over rivals.",
+              "tab": "garage"
+            }
+          ],
+          "netWorth": 299700,
+          "cityEvent": "heat",
+          "city": {
+            "event": "heat",
+            "name": "HEAT WAVE",
+            "lawEvent": "amnesty",
+            "hour": 20,
+            "phase": "day",
+            "patrol": true
+          }
+        },
+        "ok": true,
+        "crew": "formed",
+        "id": "8aaf29e4-3ac7-4ecf-83b8-3e2d1499bded",
+        "name": "The Night Shift",
+        "members": 1,
+        "max": 4
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/gangs",
+      "account": "cinematic-a",
+      "status": 200,
+      "body": {
+        "character": {
+          "id": "cinematic-a-character",
+          "name": "Mara Voss",
+          "generation": 1,
+          "level": 101,
+          "respect": 100000,
+          "energy": 50,
+          "nerve": 10,
+          "health": 100,
+          "cash": 224700,
+          "bank": 50000,
+          "omr": 350,
+          "staked": 0,
+          "rewards": 0,
+          "unbonding": 0,
+          "made": false,
+          "madeSeconds": 0,
+          "unbondSeconds": 0,
+          "bankInTransit": 0,
+          "bankClearSeconds": 0,
+          "safehouseCost": 25000,
+          "stats": {
+            "muscle": 5,
+            "cunning": 5,
+            "speed": 5
+          },
+          "eff": {
+            "muscle": 5,
+            "cunning": 5,
+            "speed": 5
+          },
+          "rerollCredits": 0,
+          "statTotal": 15,
+          "forged": null,
+          "forgedName": null,
+          "ammo": 240,
+          "cb": 0,
+          "heat": 18,
+          "welsher": false,
+          "wanted": false,
+          "wantedSeconds": 0,
+          "law": {
+            "stage": "clean",
+            "exposure": 0,
+            "indicted": false,
+            "retainerSeconds": 0,
+            "witproSeconds": 0,
+            "rat": false
+          },
+          "hunt": null,
+          "tradeRep": 0,
+          "busts": 0,
+          "gun": null,
+          "vest": null,
+          "guns": [],
+          "jailSeconds": 0,
+          "hospSeconds": 0,
+          "shootCdSeconds": 0,
+          "gtaSeconds": 0,
+          "safeSeconds": 0,
+          "safeCapSeconds": 43200,
+          "bustAttemptsLeft": 5,
+          "bustRefillSeconds": 0,
+          "guardPrice": null,
+          "fadeLimit": null,
+          "pokerLimit": null,
+          "duelElo": 1000,
+          "duelLimit": null,
+          "vendettas": [],
+          "guardedBy": null,
+          "guardSeconds": 0,
+          "loc": "foundry",
+          "path": "enforcer",
+          "title": null,
+          "bio": null,
+          "streak": 0,
+          "healCost": null,
+          "checkin": {
+            "done": false,
+            "streak": 1,
+            "pay": 35350,
+            "next": 45450
+          },
+          "maxEnergy": 252,
+          "maxNerve": 111,
+          "ladder": {
+            "rung": 0,
+            "of": 4,
+            "name": null,
+            "staked": 0,
+            "effective": 0,
+            "madeRungs": 1,
+            "lock": null,
+            "lockTiers": [
+              {
+                "id": "week",
+                "days": 7,
+                "mult": 1.25,
+                "name": "The Handshake"
+              },
+              {
+                "id": "month",
+                "days": 30,
+                "mult": 1.5,
+                "name": "The Word"
+              },
+              {
+                "id": "quarter",
+                "days": 90,
+                "mult": 2,
+                "name": "The Oath"
+              }
+            ],
+            "fx": null,
+            "next": {
+              "name": "Earner",
+              "min": 60,
+              "need": 60
+            }
+          },
+          "disciplines": {
+            "stamina": 1,
+            "composure": 1,
+            "conditioning": 1,
+            "marksmanship": 1,
+            "presence": 1,
+            "handling": 1,
+            "poise": 1,
+            "vigilance": 1
+          },
+          "crewBonusPct": 0,
+          "cargoCap": 10,
+          "skills": [],
+          "honor": {
+            "value": 0,
+            "tier": "Unproven",
+            "peak": 0,
+            "peakTier": "Unproven",
+            "low": 0,
+            "lowTier": "Unproven"
+          },
+          "skillPoints": {
+            "total": 25,
+            "spent": 0,
+            "available": 25
+          },
+          "rackets": [],
+          "assets": [],
+          "businesses": [],
+          "speakeasy": null,
+          "fighters": [],
+          "cargo": {},
+          "items": {},
+          "gear": [],
+          "racketLevels": {},
+          "racketIncomePerHr": {},
+          "tycoon": {
+            "earned": 0,
+            "rank": "Hustler"
+          },
+          "empireTitles": [],
+          "ops": {
+            "used": 0,
+            "slots": 12,
+            "free": 12,
+            "nextAt": null,
+            "max": 12,
+            "incomeAssets": [],
+            "meteredCat": "Legit Fronts"
+          },
+          "launderer": {
+            "washed": 0,
+            "rank": "Bagman"
+          },
+          "frontTitles": [],
+          "statesman": {
+            "statecraft": 0,
+            "rank": "Ward Heeler"
+          },
+          "cars": [
+            {
+              "id": "3c568266-7bf2-46cc-8d0f-57166e55beee",
+              "model": "junker",
+              "trim": "stock",
+              "dmg": 12,
+              "plate": null,
+              "listed": false,
+              "pledged": false,
+              "tune": 0,
+              "raceLimit": null,
+              "value": 792,
+              "rarity": "common",
+              "run": null,
+              "runName": null,
+              "serial": null,
+              "runCap": null
+            }
+          ],
+          "shipment": 0,
+          "bespoke": [],
+          "nftCars": [],
+          "gang": {
+            "id": "3bc91a84-bfca-486f-bef0-444cb3c9e700",
+            "name": "The Voss Family",
+            "tag": "VOSS",
+            "role": "boss",
+            "color": null,
+            "seal": null,
+            "foundation": null,
+            "foundationTier": 0,
+            "treasury": 0,
+            "ammoBank": 0,
+            "held": []
+          },
+          "lab": null,
+          "crew": 0,
+          "labModules": {
+            "purity": 0,
+            "yield": 0,
+            "stealth": 0
+          },
+          "labModuleNext": {
+            "purity": {
+              "cash": 60000,
+              "omr": 0
+            },
+            "yield": {
+              "cash": 60000,
+              "omr": 0
+            },
+            "stealth": {
+              "cash": 60000,
+              "omr": 0
+            }
+          },
+          "kingpin": {
+            "moved": 0,
+            "rank": "Nobody"
+          },
+          "crewWageOwed": 0,
+          "crewWagePerHr": 0,
+          "crewCold": false,
+          "crewWagePerHead": 1200,
+          "crewMax": 5,
+          "crewCostStep": 50000,
+          "crewNextCost": 50000,
+          "crewColdSeconds": null,
+          "makings": {},
+          "stash": [],
+          "batch": null,
+          "tradeRank": 0,
+          "trades": [
+            {
+              "id": "larceny",
+              "name": "Larceny",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "jail stints on a busted job",
+              "perkNextAt": 10
+            },
+            {
+              "id": "wetwork",
+              "name": "Wet Work",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your search clock on a mark",
+              "perkNextAt": 10
+            },
+            {
+              "id": "chemistry",
+              "name": "The Cook",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "cook time on a batch",
+              "perkNextAt": 10
+            },
+            {
+              "id": "wheels",
+              "name": "Wheels",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "tuning prices at the garage",
+              "perkNextAt": 10
+            },
+            {
+              "id": "seamanship",
+              "name": "Seamanship",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "hull & engine work at the boatyard",
+              "perkNextAt": 10
+            },
+            {
+              "id": "gambling",
+              "name": "The Gambler",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your PvE table limit at the den",
+              "perkNextAt": 10
+            },
+            {
+              "id": "muscle",
+              "name": "Protection",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "jump & shakedown muscle",
+              "perkNextAt": 10
+            },
+            {
+              "id": "commerce",
+              "name": "Commerce",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "Black Market listing fees",
+              "perkNextAt": 10
+            },
+            {
+              "id": "scores",
+              "name": "Big Scores",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "the Score lines up sooner",
+              "perkNextAt": 10
+            },
+            {
+              "id": "fists",
+              "name": "Fisticuffs",
+              "xp": 0,
+              "lvl": 1,
+              "rank": "Green",
+              "nextAt": 15,
+              "pct": 0,
+              "perkWhat": "your fighters heal faster",
+              "perkNextAt": 10
+            }
+          ],
+          "heistSeconds": 0,
+          "trainSeconds": 0,
+          "missionSeconds": 0,
+          "prestige": 0,
+          "recruits": 0,
+          "estate": null,
+          "wallet": null,
+          "minted": false,
+          "respawnTokens": 0,
+          "mintCredits": 0,
+          "hitmanRep": 0,
+          "kills": 0,
+          "seasonKills": 0,
+          "hitmanTitle": "Associate",
+          "onboard": {},
+          "coach": {
+            "label": "Pull your first job",
+            "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+            "tab": "streets"
+          },
+          "coachPlan": [
+            {
+              "label": "Pull your first job",
+              "hint": "Head to the Streets. Pick any crime and press DO IT. That's the whole move — it pays cash and respect.",
+              "tab": "streets"
+            },
+            {
+              "label": "Finish your First Week (0/4)",
+              "hint": "The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.",
+              "tab": "start"
+            },
+            {
+              "label": "Money while you sleep",
+              "hint": "Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.",
+              "tab": "empire"
+            },
+            {
+              "label": "You've earned skill points",
+              "hint": "You have 25 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.",
+              "tab": "life"
+            },
+            {
+              "label": "Get strapped",
+              "hint": "The Garage ▸ Armory: buy a pistol and CARRY it. A gun backs every fight in this city — jumps, hits, standing over rivals.",
+              "tab": "garage"
+            }
+          ],
+          "netWorth": 274700,
+          "cityEvent": "heat",
+          "city": {
+            "event": "heat",
+            "name": "HEAT WAVE",
+            "lawEvent": "amnesty",
+            "hour": 20,
+            "phase": "day",
+            "patrol": true
+          }
+        },
+        "ok": true,
+        "gangId": "3bc91a84-bfca-486f-bef0-444cb3c9e700"
+      }
+    },
+    {
+      "method": "GET",
+      "url": "/v1/coordination",
+      "account": "cinematic-b",
+      "status": 200,
+      "body": {
+        "enabled": true,
+        "directOnly": true,
+        "graphs": [
+          {
+            "id": "omerta.coordination.dead-letter",
+            "version": 1,
+            "title": "The Dead Letter",
+            "contentHash": "519695a8262ee96126dfa378ebdd4d7010a489b59e76d924f35900964c51e3c6"
+          },
+          {
+            "id": "omerta.coordination.split-ledger",
+            "version": 1,
+            "title": "The Split Ledger",
+            "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c"
+          }
+        ],
+        "instances": []
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/omerta.coordination.split-ledger/instances",
+      "account": "cinematic-b",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "26583845-ddca-4e7f-ad76-2bdb1b5e493d",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 0,
+          "createdAt": "2026-09-24T20:03:42.051Z",
+          "updatedAt": "2026-09-24T20:03:42.051Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "available",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_d2eabeb879ecfef04aea30d76ed9625126a3beb8a7704657c4282285a8738af9",
+              "kind": "complete",
+              "label": "Complete: Read the case notes",
+              "nodeId": "briefing"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/26583845-ddca-4e7f-ad76-2bdb1b5e493d/act",
+      "account": "cinematic-b",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "26583845-ddca-4e7f-ad76-2bdb1b5e493d",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 1,
+          "createdAt": "2026-09-24T20:03:42.051Z",
+          "updatedAt": "2026-09-24T20:03:42.078Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_74bf1ece9c0aad148b39e5ce658385a927a90013d2258770e24aa595c6f1e57b",
+              "kind": "discover",
+              "label": "Follow a lead"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/26583845-ddca-4e7f-ad76-2bdb1b5e493d/act",
+      "account": "cinematic-b",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "26583845-ddca-4e7f-ad76-2bdb1b5e493d",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 2,
+          "createdAt": "2026-09-24T20:03:42.051Z",
+          "updatedAt": "2026-09-24T20:03:42.093Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "available",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_0b53b128f1c5bee635e666484a11ee1f4c6becf619880eaaadd683ee566009d1",
+              "kind": "complete",
+              "label": "Complete: Read the surviving manifest",
+              "nodeId": "docks-source"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/26583845-ddca-4e7f-ad76-2bdb1b5e493d/act",
+      "account": "cinematic-b",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "26583845-ddca-4e7f-ad76-2bdb1b5e493d",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 3,
+          "createdAt": "2026-09-24T20:03:42.051Z",
+          "updatedAt": "2026-09-24T20:03:42.124Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "docks-source",
+              "title": "Read the surviving manifest",
+              "status": "completed",
+              "description": "The manifest dates the ledger’s assembly after the warehouse fire. Its original discovery remains yours."
+            }
+          ],
+          "actions": []
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/omerta.coordination.split-ledger/instances",
+      "account": "cinematic-c",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "b7924e8a-b034-41bb-a38b-89eb3e22f0dc",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 0,
+          "createdAt": "2026-09-24T20:03:42.146Z",
+          "updatedAt": "2026-09-24T20:03:42.146Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "available",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_bf6f567bcfe4b5dda8e790c3e8c25120020eba0ce0b7ed709978e6427f1cb830",
+              "kind": "complete",
+              "label": "Complete: Read the case notes",
+              "nodeId": "briefing"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/b7924e8a-b034-41bb-a38b-89eb3e22f0dc/act",
+      "account": "cinematic-c",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "b7924e8a-b034-41bb-a38b-89eb3e22f0dc",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 1,
+          "createdAt": "2026-09-24T20:03:42.146Z",
+          "updatedAt": "2026-09-24T20:03:42.164Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_c57b36bc0ab223375a595032c11b6c30d0b339026cecdac12e3c78d2f13e7eae",
+              "kind": "discover",
+              "label": "Follow a lead"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/b7924e8a-b034-41bb-a38b-89eb3e22f0dc/act",
+      "account": "cinematic-c",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "b7924e8a-b034-41bb-a38b-89eb3e22f0dc",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 2,
+          "createdAt": "2026-09-24T20:03:42.146Z",
+          "updatedAt": "2026-09-24T20:03:42.177Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "foundry-source",
+              "title": "Inspect the saved impression",
+              "status": "available",
+              "description": "The impression confirms the ledger was assembled after the fire. Share it deliberately with another investigator."
+            }
+          ],
+          "actions": [
+            {
+              "id": "coord_d0d482415e327abc3b0ffccc558e8770d62787fbb9b8cdd4af4162c18238ddff",
+              "kind": "complete",
+              "label": "Complete: Inspect the saved impression",
+              "nodeId": "foundry-source"
+            }
+          ]
+        },
+        "replayed": false
+      }
+    },
+    {
+      "method": "POST",
+      "url": "/v1/coordination/instances/b7924e8a-b034-41bb-a38b-89eb3e22f0dc/act",
+      "account": "cinematic-c",
+      "status": 200,
+      "body": {
+        "instance": {
+          "id": "b7924e8a-b034-41bb-a38b-89eb3e22f0dc",
+          "graphId": "omerta.coordination.split-ledger",
+          "graphVersion": 1,
+          "contentHash": "eeb403e00b03ff26618b8a29344de02dccd2b818906cb276237321debf3b477c",
+          "title": "The Split Ledger",
+          "status": "active",
+          "revision": 3,
+          "createdAt": "2026-09-24T20:03:42.146Z",
+          "updatedAt": "2026-09-24T20:03:42.205Z",
+          "historical": false,
+          "canCancel": true,
+          "directOnly": true,
+          "nodes": [
+            {
+              "id": "briefing",
+              "title": "Read the case notes",
+              "status": "completed",
+              "description": "A shipping manifest and a printer’s impression tell the same story. Each source needs its own discoverer."
+            },
+            {
+              "id": "foundry-source",
+              "title": "Inspect the saved impression",
+              "status": "completed",
+              "description": "The impression confirms the ledger was assembled after the fire. Share it deliberately with another investigator."
+            }
+          ],
+          "actions": []
+        },
+        "replayed": false
+      }
+    }
+  ]
+}

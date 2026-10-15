@@ -23,7 +23,7 @@ const executablePath = ['C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find((file) => fs.existsSync(file));
 let app, browser, activePage; const findings = [], results = [];
 try {
-  const { buildServer } = await import('../src/server.js');
+  const { buildServer } = await import('./server-fixture.js');
   app = await buildServer(); const origin = await app.listen({ host: '127.0.0.1', port: 0 });
   browser = await chromium.launch({ executablePath, headless: true });
   for (const viewport of [{ width: 320, height: 568 }, { width: 360, height: 800 },

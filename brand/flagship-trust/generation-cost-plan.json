@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "title": "OMERTA flagship bounded generation plan",
+  "reviewDate": "2026-09-29",
+  "status": "PREPRODUCTION_ONLY_AWAITING_SPEND_AUTHORIZATION",
+  "actualNewSpendUsd": 0,
+  "paidRequestCount": 0,
+  "requestedIncrementalSpendCeilingUsd": 100,
+  "currency": "USD",
+  "accountAccessUsed": false,
+  "target": {
+    "durationSeconds": 390,
+    "spokenWordsMin": 780,
+    "spokenWordsMax": 860,
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "sampleRate": 48000,
+    "integratedLufs": -14,
+    "maximumTruePeakDbtp": -1,
+    "minimumGameOrGroundedGraphicsShare": 0.45
+  },
+  "limits": {
+    "benchmarkCandidates": 2,
+    "benchmarkRequests": 2,
+    "benchmarkSecondsPerRequest": 5,
+    "atmosphericInsertTarget": 10,
+    "atmosphericInsertPermissibleRange": [
+      8,
+      12
+    ],
+    "productionRequestsCeiling": 10,
+    "motionSecondsPerRequest": 5,
+    "replacementRequestsCeiling": 3,
+    "replacementRequestsPerShotCeiling": 1,
+    "imageOutputsCeiling": 16,
+    "narrationInputCharactersCeiling": 10000,
+    "alignmentRequestsCeiling": 2,
+    "musicBilledMinutesCeiling": 7,
+    "automaticExtraVariants": false,
+    "benchmarkWinnerCountsTowardShotAttempts": true
+  },
+  "budgetLines": [
+    {
+      "id": "benchmark",
+      "description": "One five-second take per candidate, maximum two candidates",
+      "quantity": 1,
+      "allowanceUsd": 6.38,
+      "calculation": "5 * 1.164 + 5 * 0.112"
+    },
+    {
+      "id": "production-motion",
+      "description": "Ten five-second atmospheric inserts; benchmark winner reused where suitable",
+      "quantity": 50,
+      "unit": "output seconds",
+      "planningRateUsd": 1.164,
+      "allowanceUsd": 58.2
+    },
+    {
+      "id": "replacement-motion",
+      "description": "At most three replacement requests total, at most one per shot",
+      "quantity": 15,
+      "unit": "output seconds",
+      "planningRateUsd": 1.164,
+      "allowanceUsd": 17.46
+    },
+    {
+      "id": "images",
+      "description": "Reference/first-frame outputs including rejected takes and corrections, each at most four input references",
+      "quantity": 16,
+      "unit": "output images",
+      "planningRateUsd": 0.081,
+      "allowanceUsd": 1.296
+    },
+    {
+      "id": "voice",
+      "description": "Selected Voice A only; total characters across all chapters and retakes",
+      "quantity": 10000,
+      "unit": "input characters",
+      "planningRateUsd": 0.0001,
+      "allowanceUsd": 1.0
+    },
+    {
+      "id": "alignment",
+      "description": "One assembled final read plus at most one correction; each request rounds to one hour",
+      "quantity": 2,
+      "unit": "requests",
+      "planningRateUsd": 0.22,
+      "allowanceUsd": 0.44
+    },
+    {
+      "id": "music",
+      "description": "Optional; prefer existing score. Rounded billed minutes across all requests including corrections",
+      "quantity": 7,
+      "unit": "billed output minutes",
+      "planningRateUsd": 0.6,
+      "allowanceUsd": 4.2
+    },
+    {
+      "id": "reserve",
+      "description": "Ring-fenced final correction/price variance; does not lift unit or retry ceilings",
+      "allowanceUsd": 11.024
+    }
+  ],
+  "firstPassAllowanceUsd": 71.516,
+  "boundedRequestsAllowanceBeforeReserveUsd": 88.976,
+  "reserveUsd": 11.024,
+  "totalUsd": 100,
+  "models": [
+    {
+      "role": "video-candidate-a",
+      "endpoint": "bytedance/seedance-2.5/image-to-video",
+      "source": "https://fal.ai/models/bytedance/seedance-2.5/image-to-video",
+      "schemaSource": "https://fal.ai/models/bytedance/seedance-2.5/image-to-video/api",
+      "reviewedAt": "2026-09-29",
+      "publicRate": {
+        "usd": 1.164,
+        "unit": "output second at1080p",
+        "qualifier": "Approximation on official page; underlying token billing"
+      },
+      "settings": {
+        "duration": "5",
+        "resolution": "1080p",
+        "aspect_ratio": "auto",
+        "generate_audio": false,
+        "bitrate_mode": "high",
+        "codec": "H264"
+      },
+      "reference": "Approved original1920x1080 first frame, optional end frame",
+      "inputSeedSupported": false,
+      "dedicatedNegativePromptSupported": false,
+      "commercialUseBadgeObserved": true,
+      "benchmarkStatus": "not run",
+      "notes": [
+        "Current API offers1080p, conflicting marketing still says720p",
+        "Draft/completion not authorized in this costed plan",
+        "Log returned seed and decoded output; never claim native1080p if output smaller"
+      ]
+    },
+    {
+      "role": "video-candidate-b",
+      "endpoint": "fal-ai/kling-video/o3/pro/image-to-video",
+      "source": "https://fal.ai/models/fal-ai/kling-video/o3/pro/image-to-video",
+      "schemaSource": "https://fal.ai/models/fal-ai/kling-video/o3/pro/image-to-video/api",
+      "reviewedAt": "2026-09-29",
+      "publicRate": {
+        "usd": 0.112,
+        "unit": "output second audio off"
+      },
+      "settings": {
+        "duration": "5",
+        "generate_audio": false,
+        "shot_type": "customize"
+      },
+      "reference": "Same approved16:9 first frame as benchmark A",
+      "inputSeedSupported": false,
+      "resolutionFieldExposed": false,
+      "aspectRatioFieldExposed": false,
+      "commercialUseBadgeObserved": true,
+      "benchmarkStatus": "not run",
+      "notes": [
+        "Up to1080p advertised in official Kling overview",
+        "Decode result to verify dimensions; no unsupported quality ranking"
+      ]
+    },
+    {
+      "role": "narration",
+      "endpoint": "fal-ai/minimax/speech-2.8-hd",
+      "source": "https://fal.ai/models/fal-ai/minimax/speech-2.8-hd",
+      "reviewedAt": "2026-09-29",
+      "evidenceMethod": "Unauthenticated official page GET200; publicEndpointBilling metadata",
+      "publicRate": {
+        "usd": 0.1,
+        "unit": "1000 input characters"
+      },
+      "settings": {
+        "voice_setting": {
+          "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+          "speed": 1,
+          "pitch": 0,
+          "vol": 1,
+          "english_normalization": false
+        },
+        "audio_setting": {
+          "sample_rate": 44100,
+          "bitrate": 256000,
+          "format": "mp3",
+          "channel": 1
+        }
+      },
+      "accountVoiceAvailability": "not checked",
+      "commercialUseBadgeObserved": true
+    },
+    {
+      "role": "reference-images",
+      "endpoint": "bytedance/seedream/v5/pro/edit",
+      "source": "https://fal.ai/models/bytedance/seedream/v5/pro/edit",
+      "reviewedAt": "2026-09-29",
+      "publicRate": {
+        "baseUsd": 0.0675,
+        "additionalInputImageUsd": 0.0045,
+        "unit": "output image <=1536*1536 total pixels",
+        "qualifier": "Tentative"
+      },
+      "settings": {
+        "image_size": {
+          "width": 1920,
+          "height": 1080
+        },
+        "num_images": 1,
+        "output_format": "png",
+        "enable_safety_checker": true
+      },
+      "maxInputReferencesPerRequest": 4,
+      "inputSeedSupported": false,
+      "commercialUseBadgeObserved": true
+    },
+    {
+      "role": "original-reference-identity",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "source": "https://fal.ai/models/bytedance/seedream/v5/pro/text-to-image",
+      "reviewedAt": "2026-09-29",
+      "publicRate": {
+        "usd": 0.0675,
+        "unit": "output image <=1536*1536 total pixels",
+        "qualifier": "Tentative"
+      },
+      "sharesImageUnitCeiling": true,
+      "commercialUseBadgeObserved": true
+    },
+    {
+      "role": "optional-score",
+      "endpoint": "elevenlabs/music/v2.5",
+      "source": "https://fal.ai/models/elevenlabs/music/v2.5",
+      "reviewedAt": "2026-09-29",
+      "evidenceMethod": "Unauthenticated official page GET200; visible price and public billing metadata",
+      "publicRate": {
+        "usd": 0.6,
+        "unit": "output minute, rounded up per request"
+      },
+      "plannedDurationSeconds": 390,
+      "settings": {
+        "music_length_ms": 390000,
+        "force_instrumental": true,
+        "output_format": "mp3_48000_192"
+      },
+      "commercialUseBadgeObserved": true,
+      "notes": [
+        "Optional score settings must be reconfirmed against exact endpoint at execution; price checked now",
+        "Do not use older unversioned model0.80/min price"
+      ]
+    },
+    {
+      "role": "alignment",
+      "endpoint": "fal-ai/elevenlabs/forced-alignment",
+      "source": "https://fal.ai/models/fal-ai/elevenlabs/forced-alignment",
+      "reviewedAt": "2026-09-29",
+      "publicRate": {
+        "usd": 0.22,
+        "unit": "input hour rounded up per request"
+      },
+      "settingsKeys": [
+        "audio_url",
+        "text"
+      ],
+      "commercialUseBadgeObserved": true
+    }
+  ],
+  "acceptance": {
+    "benchmarkChecklist": [
+      "character and wardrobe continuity",
+      "hands and prop integrity",
+      "prompt/action adherence",
+      "restrained camera motion",
+      "space for source-grounded overlays",
+      "temporal artifacts",
+      "decoded resolution and fps",
+      "measured latency",
+      "actual billed cost"
+    ],
+    "requestRecordFields": [
+      "shotId",
+      "endpoint",
+      "settings",
+      "promptSha256",
+      "referenceSha256",
+      "requestId",
+      "submittedAt",
+      "actualCostUsd",
+      "outputSha256",
+      "width",
+      "height",
+      "fps",
+      "takeNumber",
+      "accepted",
+      "rejectionReason"
+    ],
+    "stopRules": [
+      "No paid requests before claim ledger, script, storyboard and rough animatic are reviewable and user authorizes ceiling",
+      "Actual charges plus pending upper bounds must not exceed100USD including applicable fees",
+      "Reconcile uncertain submissions and failed charges before retry",
+      "No extra retries beyond unit limits, even if reserve remains",
+      "No account mutation, wallet action or publication"
+    ]
+  },
+  "publicTerms": [
+    {
+      "url": "https://fal.ai/legal/terms-of-service",
+      "reviewedAt": "2026-09-29",
+      "lastUpdated": "2026-09-08"
+    },
+    {
+      "url": "https://fal.ai/legal/api-services",
+      "reviewedAt": "2026-09-29"
+    }
+  ],
+  "remainingRightsChecks": [
+    "Original account/model commercial entitlements for accepted media",
+    "Selected Voice A remains accessible on authorized account",
+    "Input and likeness rights for selected references",
+    "Bundled display font provenance if newly used",
+    "Pin logo live-text font or approved flattening"
+  ],
+  "costCaveat": "Observed public prices are estimates, not actual billed amounts or account quote. Rate variance and fees must fit ceiling. Reuse reduces spend and does not authorize additional scope."
+}
