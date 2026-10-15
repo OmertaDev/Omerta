@@ -1,3 +1,4 @@
+import {ensureComponentDDL} from './lib/company-middle-five-fixture-schema.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 assert(!process.env.DATABASE_URL,'No ambient database endpoint');
@@ -9,7 +10,7 @@ assert.deepEqual(M.manufacturingLicenseTerms('publish',body),body);
 for(const bad of [{...body,consent:false},{...body,feeCash:0},{...body,maximumRuns:9},{...body,lifetimeSeconds:59},{...body,recipeId:'invented'},{...body,feeCash:'25'}])assert.throws(()=>M.manufacturingLicenseTerms('publish',bad));
 for(const action of ['configure','grant_recipe','mint','unknown'])assert.throws(()=>M.manufacturingLicenseTerms(action,body));
 const pool=await makeDb();try{
- await pool.query(fs.readFileSync(new URL('../docs/manufacturing-license-proposal.sql',import.meta.url),'utf8'));
+ await ensureComponentDDL(pool,fs.readFileSync(new URL('../docs/manufacturing-license-proposal.sql',import.meta.url),'utf8'),['manufacturing_licenses','manufacturing_license_requests']);
  assert.deepEqual((await M.manufacturingLicenseBoard(pool,'a')).licenses,[]);
  await assert.rejects(M.manufacturingLicenseAction(pool,'a','publish',body,'without-source'),e=>e.code==='manufacturing_license');
  assert.equal((await pool.query('SELECT * FROM manufacturing_licenses')).rows.length,0);

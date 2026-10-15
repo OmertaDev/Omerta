@@ -76,6 +76,7 @@ const KNOWN_REASONS = {
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'picking_packing:pay', 'picking_packing:receive',
+    'manufacturing_license:pay','manufacturing_license:receive',
     'merchant_return:reserve', 'merchant_return:payout', 'merchant_return:refund',
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
@@ -770,6 +771,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('merchant return escrow', merchantReturnReserve, -merchantReturnNet, 0);
   const merchantReturnIssues = await collectMerchantReturnIssues(pool);
   push('merchant return canonical books', merchantReturnIssues.length, 0, 0, {issues:merchantReturnIssues});
+  const {manufacturingLicenseAccounting}=await import('./manufacturinglicensesinvariants.js');
+  const manufacturingLicenseBooks=await manufacturingLicenseAccounting(pool);
+  push('manufacturing license canonical royalty history',manufacturingLicenseBooks.issues.length+Math.abs(manufacturingLicenseBooks.royaltyNet),0,0,{issues:manufacturingLicenseBooks.issues});
   const pickingIssues = await collectPickingPackingIssues(pool);
   const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
   push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
