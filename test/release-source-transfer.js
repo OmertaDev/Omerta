@@ -1,3 +1,4 @@
+import { economyReleaseSource } from '../tools/economy-release-composition.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -27,7 +28,7 @@ function reject(file, text) {
 for (const [file, domain] of Object.entries(RELEASE_SOURCE_DOMAINS)) {
   const current = git('show', RELEASE_SOURCE_REVISION + ':' + file);
   const prior = git('show', RELEASE_SOURCE_PREDECESSOR + ':' + file);
-  entire(lf(fs.readFileSync(file, 'utf8')), current);
+  entire(economyReleaseSource('main', file, lf(fs.readFileSync(file, 'utf8'))), current);
   entire(current, git('cat-file', 'blob', domain.currentBlob));
   entire(prior, git('cat-file', 'blob', domain.baselineBlob));
   assert.equal(hash(current), domain.currentSha256); assert.equal(blob(current), domain.currentBlob);

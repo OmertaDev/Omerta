@@ -1,3 +1,4 @@
+import { economyReleaseSource } from './economy-release-composition.js';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
@@ -243,5 +244,5 @@ export function assertFourthBatchSourceTransfer(file,input){
  return{file,baselineText,sourceRevision:FOURTH_BATCH_SOURCE_REVISION,predecessorRevision:FOURTH_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:FOURTH_BATCH_SOURCE_PHASE};
 }
 // Unknown representations remain byte-exact for the original rejecting guard.
-export function fourthBatchSourceBaseline(file,input){assert.equal(typeof input,'string');const text=lf(input),d=FOURTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer(file,input).baselineText:input;}
+export function fourthBatchSourceBaseline(file,input){input=economyReleaseSource('commercial',file,input);assert.equal(typeof input,'string');const text=lf(input),d=FOURTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFourthBatchSourceTransfer(file,input).baselineText:input;}
 export function fourthBatchMigrationSchema(input){return fourthBatchSourceBaseline('schema.sql',input);}
