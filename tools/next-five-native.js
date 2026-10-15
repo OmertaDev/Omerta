@@ -19,6 +19,9 @@ export const NEXT_FIVE_NATIVE_PROOFS=Object.freeze([
 ].map(Object.freeze));
 const INVENTORY=JSON.stringify(NEXT_FIVE_NATIVE_PROOFS);
 export const NEXT_FIVE_NATIVE_FILES=Object.freeze([...NEXT_FIVE_NATIVE_PROOFS.map(([file])=>'test/'+file+'.js'),
+ 'test/worldgraph-validation.js',
+ 'src/worldgraph-validate.js',
+ 'src/worldgraph.js',
  'src/depotacquisitionruntime.js','src/companyrestructuring.js','src/company-commercial-invariants.js','src/companyacquisitions.js','src/company-middle-five-runtime.js','test/server-fixture.js','test/auth-fixture.js','test/lib/company-middle-five-fixture-schema.js',
  'test/lib/consignments-fixture.js','test/commissionedcrafting-fixture.js','test/freightconsolidation-fixture.js',
  'schema.sql','package.json','package-lock.json','src/db.js','src/server.js','src/game.js','src/items.js','src/social/estate.js','src/equipmentrentals.js','src/invariants.js','src/warehouseleases.js','src/depot.js','src/operatingpolicy.js','src/itemdurability.js','src/crafting.js','src/companyproduction.js','src/companyspecialization.js',
