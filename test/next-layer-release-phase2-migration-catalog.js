@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import pg from 'pg';
 import { nextLayerMigrationSources, nextLayerMigrationPredecessor, nextLayerNativeHistoricalPredecessor,
-  verifyNextLayerNativeBranches, NEXT_LAYER_NATIVE_TABLES, NEXT_LAYER_NATIVE_ADDITIONS, RELEASE_PHASE2_TABLES } from '../tools/next-layer-release-phase2-migration-catalog.js';
+  verifyNextLayerNativeBranches, nextLayerNativeBranchSources, NEXT_LAYER_NATIVE_TABLES, NEXT_LAYER_NATIVE_ADDITIONS, RELEASE_PHASE2_TABLES } from '../tools/next-layer-release-phase2-migration-catalog.js';
 import { releasePhase2MigrationSources, releasePhase2MigrationPredecessor, nextFiveNativePredecessor } from '../tools/next-five-release-phase2-migration-catalog.js';
 assert(!process.env.DATABASE_URL);
 const sources=nextLayerMigrationSources(), old=releasePhase2MigrationSources();
+const nativeBranches=nextLayerNativeBranchSources();assert.deepEqual(Object.keys(nativeBranches).sort(),['common','current','iv','main']);assert.equal(nativeBranches.current,sources.current);assert.equal(nativeBranches.iv,sources.predecessor);for(const source of Object.values(nativeBranches))assert.equal(typeof source,'string');
 assert.equal(nextLayerMigrationPredecessor(sources.current),sources.predecessor);
 assert.equal(nextLayerMigrationPredecessor(sources.current.replaceAll('\n','\r\n')),sources.predecessor);
 const historical=nextLayerNativeHistoricalPredecessor(sources.predecessor);
