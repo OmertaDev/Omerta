@@ -2,7 +2,7 @@
 // Historical pins remain immutable. This is source evidence, never native migration clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const COMPOSITION_REVISION = '7303e906a8fa510d607c3e770716e48848f3c74a';
+export const COMPOSITION_REVISION = '1cd7ef5b58f337c5c6b6ee42b086eaf353693baa';
 export const COMPOSITION_PHASE = 'exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const COMPOSITION_PROFILES = {
   "commercial": {
