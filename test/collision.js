@@ -3,7 +3,7 @@
 // without live presence or automatic stranger discovery. REAL humans only —
 // residents + agents excluded. §10.4-FREE (pure reads, no ledger row). Runs on pg-mem — zero infra.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { spawnResident } from '../src/population.js';
 import { collisionBoard } from '../src/collision.js';
 import { runLedgerInvariants } from '../src/invariants.js';

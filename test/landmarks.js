@@ -6,7 +6,7 @@
 // pg-mem, zero infra. SQL-granting $OMR is an unledgered mint (the estate/portfolio precedent).
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { LANDMARKS } from '../src/rules.js';
 const DED = LANDMARKS.MIN_DEDICATE * 5; // a real flex, sized off the floor rather than restated
 import { runLedgerInvariants } from '../src/invariants.js';

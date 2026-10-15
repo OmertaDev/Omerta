@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import { NPC_CAR_SQL as SQL, NPC_CAR_SOURCE_PINS, assertNpcCarSources, verifyNpcCarAcquisition,
   createNpcCarAcquisitionCommitObserver } from '../tools/rc1-npc-car-acquisition.js';

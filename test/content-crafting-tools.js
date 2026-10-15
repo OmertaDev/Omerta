@@ -5,7 +5,7 @@ process.env.MOD_KEY = 'test-mod-key';
 
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { compileContentPack, validateCraftingContentPack } from '../src/content/compiler.js';
 
 const NAMESPACE = 'omerta.workshop.bellini-lockbox';

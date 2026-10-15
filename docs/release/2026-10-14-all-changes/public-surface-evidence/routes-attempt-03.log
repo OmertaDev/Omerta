@@ -1,0 +1,10 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+✅ Mounted-surface test passed — 1119 registrations, 1054 under /v1: every one authenticated except the 56 declared public, each with a stated reason, (checked BOTH ways, so neither a dropped auth preHandler nor a stale allowlist entry can hide), every /v1/mod route behind modAuth rather than a player token, and no route registered twice; plus every src/routes module self-contained (no identifier read that it never binds).
+{"component":"player-command","phase":"request","correlationId":"a8f7101a-d9ce-4f1e-bf97-859e1a336a2f"}
+{"component":"player-command","phase":"authorization","correlationId":"a8f7101a-d9ce-4f1e-bf97-859e1a336a2f","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"a8f7101a-d9ce-4f1e-bf97-859e1a336a2f","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"a8f7101a-d9ce-4f1e-bf97-859e1a336a2f","statusCode":409,"elapsedMs":2}
+✅ the envelope survives all 78 enveloped routes (1 of them param routes; 15 params this cannot synthesise are named, not skipped) — none replaces `character`, and none carries an `events` key except 1 board that owns the name by declaration
+✅ every immutable research-sheet reference is versioned by its current content hash
+✅ landing media is responsive, all retained below-fold videos are deferred, and each film range-streams
+✅ the wire: the 1417 KB shell ships as 413 KB and revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched

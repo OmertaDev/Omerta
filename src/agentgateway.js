@@ -5,6 +5,8 @@ import { COMPANY_AUTONOMY_CONTRACTS, COMPANY_AUTONOMY_SCHEMAS } from './company-
 // the live route registry (server.js collects routes via an onRoute hook, so this never drifts from
 // what's actually mounted). Read-only, keyless, zero §10.4 surface.
 import { KNOWLEDGE_SCHEMAS, knowledgeContracts } from './coordination/http-contract.js';
+import { GATEWAY_CONTRACTS } from './gateway/http-contract.js';
+import { MUSE_CONTRACTS } from './integrations/muse/schemas.js';
 import { DEPOT_CONTRACTS } from './depotcontracts.js';
 import { CITY_SOCIAL_CONTRACTS, CITY_SOCIAL_SCHEMAS } from './city-social-contract.js';
 import { CITY_HOME_BODIES, CITY_HOME_SCHEMAS } from './city-home-contract.js';
@@ -24,12 +26,12 @@ const PUBLIC_PATHS = new Set([
   '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',
   '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',
   '/v1/auth/guest', '/v1/auth/x', '/v1/auth/privy',
-  '/v1/access/redeem', '/v1/access/logout',
+  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',
 ]);
 
 // Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).
 // /arena is the human-facing showcase page; /v1/arena (its JSON) IS in the contract (agents read it).
-const DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json']);
+const DOC_PATHS = new Set(['/', '/wiki', '/admin', '/arena', '/agents', '/AGENTS.md', '/llms.txt', '/openapi.json', '/consigliere', '/consigliere.js', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js', '/vendor/walletconnect-manifest.json', '/vendor/walletconnect.js.LEGAL.txt']);
 
 // A short, human-legible summary per top-level system (the OpenAPI tag). Anything unmapped falls
 // through to a generic line — the contract stays complete even as new systems land.
@@ -343,7 +345,15 @@ const OPERATION_CONTRACTS = {
     requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {
       inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },
       bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },
+      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },
     } },
+  },
+  'POST /v1/age-check': {
+    operationId: 'checkAgeEligibility',
+    requestSchema: { type: 'object', required: ['birthDate'], properties: {
+      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },
+    } },
+    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },
   },
   'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
   'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },
@@ -885,6 +895,7 @@ const OPERATION_CONTRACTS = {
     'getWorldGraphMysteries', '#/components/schemas/WorldGraphMysteryDiscovery',
   ),
   'POST /v1/worldgraph/mysteries/:graphId/start': worldGraphMutation('startWorldGraphMystery'),
+  'POST /v1/worldgraph/mysteries/:graphId/explore': worldGraphMutation('exploreWorldGraphMystery'),
   'GET /v1/worldgraph/mysteries/:graphId': worldGraphRead(
     'getWorldGraphMystery', '#/components/schemas/WorldGraphMysteryBoard',
   ),
@@ -2149,8 +2160,8 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
     // spec can't drift from enforcement or mask a route that shipped without auth (audit F2). The
     // PUBLIC_PATHS set is only a fallback for callers that don't supply the flag.
     const isPublic = (r.hasAuth !== undefined) ? !r.hasAuth : PUBLIC_PATHS.has(url);
-    const security = isPublic ? [] : [{ bearerAuth: [] }];
-    const contract = OPERATION_CONTRACTS[`${method} ${url}`];
+    const security = isPublic ? [] : [{ [r.authKind === 'gatewayAuth' ? 'delegatedAgentAuth' : 'bearerAuth']: [] }];
+    const contract = GATEWAY_CONTRACTS[`${method} ${url}`] || MUSE_CONTRACTS[`${method} ${url}`] || OPERATION_CONTRACTS[`${method} ${url}`];
     const op = {
       tags: [tag],
       summary: `${method} ${url}`,
@@ -2177,7 +2188,7 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       content: { 'application/json': { schema: contract.responseSchema } },
     };
     if (method !== 'GET' && method !== 'DELETE' && contract?.executable !== false) {
-      op.requestBody = { required: !!contract?.requestSchema?.required,
+      op.requestBody = { required: !!(contract?.requestSchema?.required || contract?.requestSchema?.oneOf),
         content: { 'application/json': { schema: contract?.requestSchema || { type: 'object' } } } };
     }
     paths[p] = paths[p] || {};
@@ -2204,6 +2215,8 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       // Only the player/agent bearer scheme is advertised — the moderator surface is excluded from
       // the public contract entirely (audit F1), so its header name is never disclosed here.
       securitySchemes: {
+        delegatedAgentAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'opaque',
+          description: 'Scoped, revocable Consigliere connection credential issued by the signed-in player at /consigliere. Cannot authorize ordinary game routes or confirmations.' },
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT',
           description: 'Player/agent token from /v1/auth/*. Agent tokens (POST /v1/auth/agent-key) throttle at 1/3s.' },
       },
@@ -2217,16 +2230,16 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
 export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
   return `# OMERTÀ
 
-> A server-authoritative, multiplayer noir mafia RPG with a real, ledgered economy.
-> Autonomous agents are first-class players: the whole game is a JSON HTTP API with an
-> OpenAPI contract, stable error codes, machine-readable rules, and an on-chain $OMR
-> extraction rail, which is built but dormant in production. Agents compete in the economy on skill — not by faucets.
+> A multiplayer noir mafia RPG where the server checks actions and records transactions.
+> Agents play through a JSON HTTP API with an OpenAPI contract, stable error codes and
+> machine-readable rules. On-chain $OMR extraction is implemented but dormant in production.
+> Agents can earn through game actions and qualified recruitment under the rules below.
 
 ## Play as an agent
 - [Agent quickstart](${baseUrl}/agents): auth → agent key → create → poll opportunities → act. Extraction setup: link EVM wallet → mint character.
 - [Arena snapshot (JSON)](${baseUrl}/v1/arena): the public banded board behind this page.
-- [Opportunity Board](${baseUrl}/v1/opportunities): every open economic action + skill-loop, EV-ranked, with a \`best\` move — poll this.
-- [Agent Turn](${baseUrl}/v1/agent/turn): transparent EV ranking + refresh-safe multi-loop plans + executable next steps + blockers + next wake time in one throttled read.
+- [Opportunity Board](${baseUrl}/v1/opportunities): open economic actions and standing loops, EV-ranked, with a \`best\` move.
+- [Agent Turn](${baseUrl}/v1/agent/turn): EV ranking, refresh-safe multi-loop plans, executable next steps, blockers and the next wake time in one throttled read.
 - Agent Turn also returns the required \`exploration\` coverage object with \`catalog\`, \`progress\`, \`next\`, and \`blocked\`. Its \`exploration.next\` member is exactly one relevant unvisited eligible system from the canonical 40-system catalog, or null. Exploration is read-only, non-EV, non-executable, and outside actions and action authority; it cannot change \`recommendedActionId\` or be submitted to \`POST /v1/agent/act\`.
 - Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
 - Agent Alpha is the owner-operated bounded runner in \`tools/agent-alpha.js\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.
@@ -2238,7 +2251,7 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.
 - [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.
 
-## Phase 1 world graph — deliberate direct play
+## Phase 1 world graph: direct play
 - [Inventory](${baseUrl}/v1/worldgraph/inventory): conserved account-owned materials and unique items.
 - [Recipes](${baseUrl}/v1/worldgraph/recipes): discovered recipes with current cash, material, skill, location, and car blockers. Use the issued recipe and owned-car identifiers with the craft/salvage routes.
 - Assign an eligible crafted unique item to the authenticated account's current living character with POST ${baseUrl}/v1/worldgraph/items/:itemId/assign-current-character. The body is empty; the server chooses both owners.
@@ -2261,8 +2274,9 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
   signs a full-reserve-backed EIP-712 voucher you claim on-chain (extraction ≤ inflow).
 
 ## Fair play
-- Agent accounts are excluded from the human anti-Sybil faucets (referrals, social tasks,
-  assassin-reputation leaderboard) and throttled harder. Every economic loop is fully open.
+- Agent accounts are excluded from human-only referral and social-task faucets and
+  assassin-reputation leaderboard rewards, and have a stricter throttle. Qualified agent-recruiter
+  claims use separate approved campaign budgets and checks. The economic loops are open to agents.
 
 ## Human reference
 - [Playable console](${baseUrl}/): the web client.

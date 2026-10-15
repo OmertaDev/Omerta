@@ -3,7 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { decodeFunctionData, decodeAbiParameters, encodeAbiParameters, getContractAddress, getAddress,
   keccak256, parseAbi, zeroAddress } from 'viem';
-import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, loadMarketV2Artifact, mineMarketV2Hook,
+import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, RESTRICTED_MARKET_POLICY_ID, RESTRICTED_MARKET_SUPPLY, loadMarketV2Artifact, mineMarketV2Hook,
   buildMarketV2DeploymentPlan } from '../tools/market-v2-deployment-plan.js';
 
 const A = n => getAddress(`0x${BigInt(n).toString(16).padStart(40, '0')}`);
@@ -18,19 +18,24 @@ export function marketV2DeploymentExample() {
   const sourceRevision = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout.trim();
   const roles = Object.fromEntries(['safe', 'deployer', 'safeExecutor', 'adjudicator', 'initializer', 'dev', 'rwa', 'community', 'capitalProvider']
     .map((name, i) => [name, A(0x10000 + i)]));
+  roles.capitalProvider = roles.safe;
   const artifactHashes = Object.fromEntries([...new Set(MARKET_V2_ROLES.map(([, c]) => c))]
     .map(c => [c, loadMarketV2Artifact(c).evidence.artifactSha256]));
   const limit = { nativePerAction: String(E), omrPerAction: String(E), nativePerEpisode: String(5n * E), omrPerEpisode: String(5n * E),
     nativeLifetime: String(100n * E), omrLifetime: String(100n * E), nativeRegeneration: String(E), omrRegeneration: String(E) };
   return {
-    schemaVersion: 1, chainId: 31337, localRehearsal: true, sourceRevision, startingNonce: '17', roles,
+    schemaVersion: 2, chainId: 31337, localRehearsal: true, sourceRevision, startingNonce: '17', roles,
     snapshot: { blockNumber: '123', blockHash: H, timestamp: '2000000000' },
     external: Object.fromEntries(['omr', 'poolManager', 'positionManager', 'permit2'].map((k, i) => [k, { address: A(0x20000 + i), runtimeHash: H }])),
+    restrictedMarket: { policyId: RESTRICTED_MARKET_POLICY_ID,
+      operatorRuntimeHashes: Object.fromEntries(['hook', 'controller', 'bond', 'turf', 'arbitrage', 'router', 'positionManager', 'permit2'].map(k => [k, H])),
+      additionalOperators: [], holderRuntimeHashes: Object.fromEntries(['polFunding', 'reserveFunding', 'turfFeeBridge'].map(k => [k, H])),
+      contractHolders: [] },
     create2: { factory: A(0x30000), runtimeHash: H, kind: 'salt-prefix', saltStart: '0', maxAttempts: 200000 },
     artifactHashes,
     policies: {
       pool: { fee: 3000, tickSpacing: 60 },
-      hook: { opening: { blocks: 200, buyBps: 500, maxBuyQuote: String(10n * E) }, surgeFullTicks: 100, epochDuration: 60 },
+      hook: { opening: { blocks: 200, buyBps: 50, maxBuyQuote: String(10n * E) }, surgeFullTicks: 100, epochDuration: 60 },
       market: { requiredLiquidity: String(500n * E), maxAge: '120', fullStressTicks: 100 },
       turf: { maxAge: 120 },
       stability: { limits: Array.from({ length: 7 }, () => clone(limit)), maxObservationAge: 120, cooldown: 60,
@@ -58,9 +63,9 @@ if (process.argv.includes('--example')) {
   const plan = buildMarketV2DeploymentPlan(fixture);
   let passed = 0;
   const test = (name, fn) => { fn(); ++passed; console.log(`PASS ${name}`); };
-  test('eleven deployments resolve future CREATE addresses and one mined CREATE2 hook', () => {
+  test('twelve deployments preserve companion CREATE addresses and append one restricted router', () => {
     const ds = plan.steps.filter(x => x.kind === 'deployment');
-    assert.equal(ds.length, 11);
+    assert.equal(ds.length, 12);
     assert.equal(ds.filter(x => x.method === 'CREATE2').length, 1);
     ds.forEach((d, i) => {
       assert.equal(d.transaction.nonce, String(17 + i));
@@ -71,6 +76,8 @@ if (process.argv.includes('--example')) {
         assert.equal(keccak256(`0x${d.transaction.data.slice(66)}`), d.initCodeHash);
       } else assert.equal(d.expectedAddress, getContractAddress({ from: fixture.roles.deployer, nonce: BigInt(17 + i) }));
     });
+    assert.equal(ds.at(-1).role, 'router');
+    assert.deepEqual(ds.at(-1).constructorArgs, [fixture.external.poolManager.address, fixture.external.omr.address]);
   });
   test('hook constructor encodes all native funding recipients with immutable intended taxes', () => {
     const d = plan.steps.find(x => x.role === 'hook' && x.kind === 'deployment');
@@ -79,12 +86,153 @@ if (process.argv.includes('--example')) {
     const decoded = decodeAbiParameters(a.abi.find(x => x.type === 'constructor').inputs, `0x${initCode.slice(a.bytecode.length)}`);
     assert.equal(decoded[0], fixture.external.poolManager.address);
     assert.equal(decoded[1], fixture.external.omr.address);
-    assert.equal(decoded.length, 10);
-    assert.equal(decoded[9], fixture.roles.safe, 'Tax governance uses the same explicitly supplied immutable Safe as the market');
+    assert.equal(decoded.length, 9, 'Fixed fees and recipients have no mutable tax authority');
     assert.deepEqual(decoded[5], [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, plan.addresses.polFunding, plan.addresses.reserveFunding]);
-    assert.deepEqual(plan.economics.splitBps, { dev: 200, rwa: 160, community: 240, pol: 300 });
-    assert.equal(plan.economics.sellBaseBps, 900);
-    assert.equal(plan.economics.ordinaryBuyBps, 0);
+    assert.deepEqual(plan.economics.splitBps, { dev: 200, rwa: 100, community: 100, pol: 100 });
+    assert.equal(plan.economics.sellBaseBps, 500);
+    assert.equal(plan.economics.ordinaryBuyBps, 500);
+    assert.equal(plan.economics.baseTradeBps, 500);
+    assert.equal(plan.economics.enforcedBy, fixture.external.poolManager.address);
+    assert.equal(plan.economics.primaryRecipients.pol, plan.addresses.polFunding);
+    assert.equal(plan.economics.maximumCombinedTradeBps, 550);
+    assert.equal(plan.economics.maximumCombinedEnforcedBy, fixture.external.poolManager.address);
+    assert.equal(plan.economics.maximumSurgeBps, 50);
+    assert.equal(plan.economics.maximumHookBps, 50);
+    assert.equal(Object.values(plan.economics.splitBps).reduce((sum, bps) => sum + bps, 0), 500);
+  });
+  test('manager binding and reviewed roles are Safe calls sealed after deployments and before asset funding', () => {
+    const abi = parseAbi(['function bindSettlementManager(address manager,bytes32 expectedRuntimeHash)',
+      'function setOperator(address operator,uint8 role,bytes32 expectedRuntimeHash)', 'function sealPolicy()']);
+    const bind = plan.steps.findIndex(x => x.functionName === 'bindSettlementManager');
+    const seal = plan.steps.findIndex(x => x.functionName === 'sealPolicy');
+    assert.ok(plan.steps.filter(x => x.kind === 'deployment').every(x => plan.steps.indexOf(x) < bind));
+    assert.ok(bind < seal);
+    const decodedBind = decodeFunctionData({ abi, data: plan.steps[bind].transaction.data });
+    assert.deepEqual(decodedBind.args, [fixture.external.poolManager.address, H]);
+    const registers = plan.steps.filter(x => x.functionName === 'setOperator');
+    assert.equal(registers.length, 8);
+    const roles = { hook: 2, controller: 2, bond: 2, turf: 2, arbitrage: 1, router: 1, positionManager: 1, permit2: 1 };
+    for (const [role, n] of Object.entries(roles)) {
+      const step = registers.find(x => x.label === `Register restricted ${role} operator`);
+      const decoded = decodeFunctionData({ abi, data: step.transaction.data });
+      assert.deepEqual(decoded.args, [plan.restrictedMarket.operatorAddresses[role], n, H]);
+      assert.equal(step.transaction.from, fixture.roles.safe);
+      assert.equal(step.transaction.to, fixture.external.omr.address);
+      assert.ok(plan.steps.indexOf(step) < seal);
+    }
+    assert.ok(plan.steps.filter(x => ['approve', 'initialize', 'modifyLiquidities', 'fund', 'fundInventory'].includes(x.functionName))
+      .every(x => seal < plan.steps.indexOf(x)));
+    const readiness = plan.steps.find(x => x.label === 'Verify replacement market contracts and actual operator runtime before irrevocable policy sealing');
+    assert.equal(readiness.required.manager.polRecipient, plan.addresses.polFunding);
+    assert.equal(readiness.required.manager.TRADE_FEE_BPS, 500);
+    assert.equal(readiness.required.positionManager.poolManager, fixture.external.poolManager.address);
+    assert.equal(readiness.required.token.operatorCount, 0);
+    assert.equal(readiness.required.token.contractHolderCount, 0);
+    assert.equal(readiness.required.token.genesisTreasury, fixture.roles.safe);
+    assert.equal(readiness.required.token.totalSupply, String(RESTRICTED_MARKET_SUPPLY));
+    assert.equal(readiness.required.token.ownerBalance, String(RESTRICTED_MARKET_SUPPLY));
+    assert.equal(readiness.required.token.zeroExternalInventory, true);
+    assert.equal(readiness.required.capitalProvider, fixture.roles.safe);
+    assert.ok(plan.steps.indexOf(readiness) < bind);
+    const finalRegistry = plan.steps[seal - 1];
+    assert.equal(finalRegistry.kind, 'readiness');
+    assert.equal(finalRegistry.label, 'Verify the exact complete operator and contract-holder registries immediately before sealing');
+    assert.equal(finalRegistry.required.operatorCount, 9);
+    assert.equal(finalRegistry.required.ownerBalance, String(RESTRICTED_MARKET_SUPPLY));
+    assert.equal(finalRegistry.required.zeroExternalInventory, true);
+    assert.equal(finalRegistry.required.includesAllEverConfiguredEntries, true);
+    assert.deepEqual(finalRegistry.required.operators[0], { index: 0, operatorAt: fixture.external.poolManager.address,
+      operatorRole: 3, operatorRuntimeHash: H });
+    Object.entries(roles).forEach(([role, n], i) => {
+      assert.deepEqual(finalRegistry.required.operators[i + 1], { index: i + 1,
+        operatorAt: plan.restrictedMarket.operatorAddresses[role], operatorRole: n, operatorRuntimeHash: H });
+    });
+    assert.equal(finalRegistry.required.contractHolderCount, 3);
+    ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, index) => {
+      assert.deepEqual(finalRegistry.required.contractHolders[index], { index, contractHolderAt: plan.addresses[role], contractHolderRuntimeHash: H });
+    });
+    assert.ok(plan.executionConditions.some(x => x.includes('offline generator does not perform them')));
+  });
+  test('inventory must remain entirely with the Safe until sealing and typed funding uses that Safe', () => {
+    const x = clone(fixture); x.roles.capitalProvider = A(0x10008);
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /capitalProvider must be the token-owning Safe/);
+    assert.ok(plan.steps.filter(step => ['approve', 'modifyLiquidities', 'fund', 'fundInventory'].includes(step.functionName))
+      .every(step => step.transaction.from === fixture.roles.safe));
+    assert.equal(plan.executionConditions.some(x => x.includes('already hold its explicitly allocated')), false);
+  });
+  test('old unrestricted manifests and mismatched revenue policy cannot silently plan', () => {
+    const x = clone(fixture); delete x.restrictedMarket;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /restrictedMarket.*missing required/);
+    const y = clone(fixture); y.schemaVersion = 1;
+    assert.throws(() => buildMarketV2DeploymentPlan(y), /schemaVersion must be 2/);
+    const z = clone(fixture); z.restrictedMarket.policyId = H;
+    assert.throws(() => buildMarketV2DeploymentPlan(z), /policyId.*binding mismatch/);
+  });
+  test('runtime identities are complete and external operator pins agree', () => {
+    const x = clone(fixture); delete x.restrictedMarket.operatorRuntimeHashes.router;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /router.*missing required/);
+    const y = clone(fixture); y.restrictedMarket.operatorRuntimeHashes.positionManager = `0x${'20'.repeat(32)}`;
+    assert.throws(() => buildMarketV2DeploymentPlan(y), /positionManager.*binding mismatch/);
+    const z = clone(fixture); z.restrictedMarket.operatorRuntimeHashes.hook = loadMarketV2Artifact('OmertaHookV2').evidence.runtimeTemplateKeccak256;
+    assert.throws(() => buildMarketV2DeploymentPlan(z), /immutable runtime template/);
+  });
+  test('additional custody operators are explicit and cannot duplicate or acquire settlement input authority', () => {
+    const operator = { address: A(0x50000), role: 2, runtimeHash: H, purpose: 'Reviewed bounded game payout custody' };
+    const x = clone(fixture); x.restrictedMarket.additionalOperators = [operator];
+    const extended = buildMarketV2DeploymentPlan(x);
+    const added = extended.steps.find(step => step.label === `Register reviewed custody operator: ${operator.purpose}`);
+    assert.deepEqual(added.args, [operator.address, 2, H]);
+    const registry = extended.steps.find(step => step.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing');
+    assert.equal(registry.required.operatorCount, 10);
+    assert.deepEqual(registry.required.operators.at(-1), { index: 9, operatorAt: operator.address, operatorRole: 2, operatorRuntimeHash: H });
+    x.restrictedMarket.additionalOperators[0].role = 1;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /ProtocolCustody/);
+    x.restrictedMarket.additionalOperators[0].role = 2;
+    x.restrictedMarket.additionalOperators[0].address = fixture.external.poolManager.address;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /Duplicate/);
+    x.restrictedMarket.additionalOperators[0].address = fixture.roles.safe;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /public-role/);
+  });
+  test('receiving-only adapter holders are Safe-registered before sealing and cannot acquire operator authority', () => {
+    const holders = plan.steps.filter(step => step.functionName === 'setContractHolder');
+    assert.equal(holders.length, 3);
+    const seal = plan.steps.findIndex(step => step.functionName === 'sealPolicy');
+    const abi = parseAbi(['function setContractHolder(address holder,bytes32 expectedRuntimeHash)']);
+    ['polFunding', 'reserveFunding', 'turfFeeBridge'].forEach((role, i) => {
+      const step = holders[i];
+      assert.equal(step.transaction.from, fixture.roles.safe);
+      assert.deepEqual(decodeFunctionData({ abi, data: step.transaction.data }).args, [plan.addresses[role], H]);
+      assert.ok(plan.steps.indexOf(step) < seal);
+      assert.equal(plan.steps.some(x => x.functionName === 'setOperator' && x.args[0] === plan.addresses[role]), false);
+    });
+    const x = clone(fixture); delete x.restrictedMarket.holderRuntimeHashes.reserveFunding;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /reserveFunding.*missing required/);
+    const y = clone(fixture); y.restrictedMarket.holderRuntimeHashes.polFunding = loadMarketV2Artifact('OmertaReserveFundingV2').evidence.runtimeTemplateKeccak256;
+    assert.throws(() => buildMarketV2DeploymentPlan(y), /holderRuntimeHashes.polFunding.*immutable runtime template/);
+  });
+  test('fee wallets self-enroll from the same undelegated EOA and contract treasuries need explicit holder pins', () => {
+    const wallets = plan.steps.filter(step => step.functionName === 'registerWallet');
+    assert.deepEqual(wallets.map(x => x.args[0]), [fixture.roles.dev, fixture.roles.rwa, fixture.roles.community, fixture.season.families[0].treasury]);
+    const abi = parseAbi(['function registerWallet(address wallet)']);
+    for (const step of wallets) {
+      assert.equal(step.transaction.from, step.args[0]);
+      assert.equal(decodeFunctionData({ abi, data: step.transaction.data }).args[0], step.transaction.from);
+    }
+    const readiness = plan.steps.find(step => step.label === 'Verify self-enrolling revenue wallets are undelegated EOAs');
+    assert.equal(readiness.required.liveCode, '0x');
+    assert.equal(readiness.required.directCallerEqualsTransactionOrigin, true);
+    const x = clone(fixture); x.restrictedMarket.contractHolders = [{ address: x.roles.rwa, runtimeHash: H, purpose: 'Reviewed RWA treasury' }];
+    const p = buildMarketV2DeploymentPlan(x);
+    assert.equal(p.steps.some(step => step.functionName === 'registerWallet' && step.args[0] === x.roles.rwa), false);
+    const registry = p.steps.find(step => step.label === 'Verify the exact complete operator and contract-holder registries immediately before sealing');
+    assert.equal(registry.required.contractHolderCount, 4);
+    assert.deepEqual(registry.required.contractHolders.at(-1), { index: 3, contractHolderAt: x.roles.rwa, contractHolderRuntimeHash: H });
+    x.restrictedMarket.contractHolders[0].address = x.roles.safe;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /genesis address/);
+    x.restrictedMarket.contractHolders[0].address = p.addresses.router;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /operator.*genesis address/);
+    x.restrictedMarket.contractHolders[0].address = p.addresses.polFunding;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /Duplicate/);
   });
   test('season/Turf setup precedes bridge deployment and complete one-time binding calls follow controller', () => {
     const index = label => plan.steps.findIndex(x => x.label === label);
@@ -133,7 +281,7 @@ if (process.argv.includes('--example')) {
     const x = clone(fixture); x.policies.hook.baseSellBps = 1000;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /unknown manifest field/);
     const y = clone(fixture); y.policies.hook.governanceSafe = A(0x999);
-    assert.throws(() => buildMarketV2DeploymentPlan(y), /unknown manifest field/, 'Governance authority cannot override the derived Safe');
+    assert.throws(() => buildMarketV2DeploymentPlan(y), /unknown manifest field/, 'A tax governance authority cannot be introduced');
   });
   test('nonce owner cannot also execute setup calls', () => {
     const x = clone(fixture); x.roles.safeExecutor = x.roles.deployer;
@@ -143,11 +291,13 @@ if (process.argv.includes('--example')) {
     const x = clone(fixture); x.bootstrap.maxNative = '1';
     assert.throws(() => buildMarketV2DeploymentPlan(x), /asset caps cannot fund/);
   });
-  test('opening is immutable, bounded and cannot manufacture a permanent buy tax', () => {
+  test('opening is immutable and cannot add more than half a percent to the mandatory base fee', () => {
     const x = clone(fixture); x.policies.hook.opening.blocks = 201;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /opening.blocks/);
     x.policies.hook.opening.blocks = 0;
     assert.throws(() => buildMarketV2DeploymentPlan(x), /Disabled opening/);
+    x.policies.hook.opening.blocks = 200; x.policies.hook.opening.buyBps = 51;
+    assert.throws(() => buildMarketV2DeploymentPlan(x), /opening.buyBps/);
   });
   test('family treasuries and exact ownership split are mandatory before bridge deployment', () => {
     const x = clone(fixture); x.season.owners.shares[0] = 9000;

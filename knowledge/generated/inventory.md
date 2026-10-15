@@ -1,41 +1,41 @@
 # Generated repository inventory
 
-> Source: worktree at `33c578931da9`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `ff3421ca1239`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 4,918 |
-| Text lines | 1,624,329 |
-| Repository bytes inventoried | 821,873,754 |
-| Backend/route modules | 469 |
-| HTTP route registrations / unique routes | 1,011 / 1,011 |
-| Database tables | 510 |
-| Solidity declarations | 127 |
-| Git commits | 3,838 |
+| Current artifacts | 6,462 |
+| Text lines | 5,935,736 |
+| Repository bytes inventoried | 3,043,584,384 |
+| Backend/route modules | 471 |
+| HTTP route registrations / unique routes | 1,019 / 1,019 |
+| Database tables | 500 |
+| Solidity declarations | 133 |
+| Git commits | 3,738 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 13,366 / 54,132 |
+| Graph nodes / edges | 14,907 / 58,742 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 1,204 |
-| artifact | 674 |
-| test-suite | 657 |
-| contract-project | 646 |
-| documentation | 554 |
-| backend-module | 387 |
-| engineering-harness | 239 |
-| contract-test | 112 |
-| contract-source | 106 |
+| media-asset | 2,158 |
+| contract-project | 995 |
+| artifact | 863 |
+| test-suite | 662 |
+| documentation | 570 |
+| backend-module | 393 |
+| engineering-harness | 247 |
+| contract-test | 118 |
+| contract-source | 109 |
 | audit | 98 |
-| design | 88 |
-| route-module | 82 |
-| web-surface | 35 |
-| operations | 11 |
+| design | 85 |
+| route-module | 78 |
+| web-surface | 40 |
+| operations | 21 |
 | knowledge-base | 11 |
 | workflow | 6 |
 | agent-interface | 4 |
@@ -46,61 +46,63 @@
 
 | File | Lines | Kind | Last change |
 |---|---:|---|---|
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaGuardedAuction.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaGuardedAuction.json) | 498,009 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaGuardedAuction.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaGuardedAuction.json) | 498,009 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaGuardedAuction.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaGuardedAuction.json) | 497,835 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-AcquisitionAuthority.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-AcquisitionAuthority.json) | 152,248 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/ir-AcquisitionAuthority.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/ir-AcquisitionAuthority.json) | 152,248 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/ir-AcquisitionAuthority.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/ir-AcquisitionAuthority.json) | 152,248 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-AcquisitionVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-AcquisitionVault.json) | 117,016 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/native-AcquisitionVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/native-AcquisitionVault.json) | 117,016 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-AcquisitionVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-AcquisitionVault.json) | 117,016 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-ProtocolLiquidityVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-ProtocolLiquidityVault.json) | 88,172 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/ir-ProtocolLiquidityVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/ir-ProtocolLiquidityVault.json) | 88,172 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/ir-ProtocolLiquidityVault.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/ir-ProtocolLiquidityVault.json) | 88,172 | contract-project | 2026-10-14 |
 | [omerta-contracts/x-ray/slither.json](../../omerta-contracts/x-ray/slither.json) | 64,621 | contract-project | 2026-08-25 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaGameSettlementV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaGameSettlementV2.json) | 56,809 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaGameSettlementV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaGameSettlementV2.json) | 56,809 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaGameSettlementV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaGameSettlementV2.json) | 56,809 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaTurfFeeBridgeV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaTurfFeeBridgeV2.json) | 54,337 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaTurfFeeBridgeV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaTurfFeeBridgeV2.json) | 54,337 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaTurfFeeBridgeV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaTurfFeeBridgeV2.json) | 54,337 | contract-project | 2026-10-14 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json](../../omerta-contracts/audits/2026-09-08-comprehensive/shared-static-triage.json) | 52,258 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json](../../omerta-contracts/audits/2026-09-08-comprehensive/hook-retest-static.json) | 47,392 | contract-project | 2026-09-09 |
 | [omerta-contracts/audits/2026-10-01-red-team/static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage.json) | 46,122 | contract-project | 2026-10-02 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-pair-age-fix/static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-pair-age-fix/static-triage.json) | 46,106 | contract-project | 2026-10-14 |
 | [omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json](../../omerta-contracts/audits/2026-10-01-red-team/initial-static-triage.json) | 46,071 | contract-project | 2026-10-02 |
 | [omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json](../../omerta-contracts/audits/2026-10-01-red-team/static-triage-draft.json) | 44,807 | contract-project | 2026-10-02 |
-| [docs/release/evidence/simulation/quality/projection-samples.json](../../docs/release/evidence/simulation/quality/projection-samples.json) | 33,646 | artifact | 2026-09-19 |
-| [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/result.json) | 22,972 | artifact | 2026-09-21 |
-| [docs/release/readiness-work/authority-inventory.json](../../docs/release/readiness-work/authority-inventory.json) | 20,579 | artifact | 2026-09-21 |
-| [docs/release/evidence/gates/fresh-forge-linux.txt](../../docs/release/evidence/gates/fresh-forge-linux.txt) | 18,797 | artifact | 2026-09-20 |
-| [docs/release/evidence/gates/baseline-forge-linux.txt](../../docs/release/evidence/gates/baseline-forge-linux.txt) | 18,663 | artifact | 2026-09-19 |
-| [docs/release/evidence/simulation/model/matrix.json](../../docs/release/evidence/simulation/model/matrix.json) | 18,188 | artifact | 2026-09-19 |
-| [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-crosscheck-run.txt) | 16,132 | contract-project | 2026-10-02 |
-| [docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json](../../docs/release/readiness-work/resource-runs/04230658acbd-d161250dc8/requests.json) | 15,946 | artifact | 2026-09-21 |
-| [public/index.html](../../public/index.html) | 15,104 | web-surface | 2026-10-13 |
-| [omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt](../../omerta-contracts/audits/2026-10-04-character-checkout/character-checkout-daybreak-retest-console.txt) | 14,990 | contract-project | 2026-10-04 |
-| [docs/release/evidence/gates/baseline-ci-linux.txt](../../docs/release/evidence/gates/baseline-ci-linux.txt) | 13,189 | artifact | 2026-09-19 |
-| [docs/release/evidence/gates/fresh-ci-linux.txt](../../docs/release/evidence/gates/fresh-ci-linux.txt) | 13,110 | artifact | 2026-09-20 |
-| [docs/release/evidence/gates/corrected-ci-linux.txt](../../docs/release/evidence/gates/corrected-ci-linux.txt) | 12,917 | artifact | 2026-09-20 |
-| [omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt](../../omerta-contracts/audits/2026-10-01-red-team/evidence/daybreak-run.txt) | 11,104 | contract-project | 2026-10-02 |
-| [omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/package-manifest.json) | 10,623 | contract-project | 2026-09-09 |
-| [docs/release/evidence/gates/fresh-postgres-linux.txt](../../docs/release/evidence/gates/fresh-postgres-linux.txt) | 10,278 | artifact | 2026-09-20 |
-| [test/client.js](../../test/client.js) | 9,564 | test-suite | 2026-10-13 |
-| [omerta-contracts/x-ray/slither-vars-and-auth.json](../../omerta-contracts/x-ray/slither-vars-and-auth.json) | 9,374 | contract-project | 2026-08-25 |
-| [schema.sql](../../schema.sql) | 8,949 | data-schema | 2026-10-13 |
-| [omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json](../../omerta-contracts/audits/2026-09-08-liquidity-automation/source-manifest.json) | 8,690 | contract-project | 2026-09-09 |
-| [.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-best-practices/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
-| [.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json](../../.agents/skills/remotion-markup/remotion-maps/techniques/maptiler/assets/sample-data/country-meta.json) | 7,536 | artifact | 2026-08-24 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaReserveFundingV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/native-OmertaReserveFundingV2.json) | 37,915 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaReserveFundingV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/native-OmertaReserveFundingV2.json) | 37,915 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaReserveFundingV2.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/pre-remediation-static/native-OmertaReserveFundingV2.json) | 37,915 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-AcquisitionVaultCore.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/initial-static/ir-AcquisitionVaultCore.json) | 37,807 | contract-project | 2026-10-14 |
+| [omerta-contracts/audits/2026-10-01-red-team/evidence/ir-AcquisitionVaultCore.json](../../omerta-contracts/audits/2026-10-01-red-team/evidence/ir-AcquisitionVaultCore.json) | 37,807 | contract-project | 2026-10-14 |
 
 ## Media estate
 
 | Extension | Files | Bytes |
 |---|---:|---:|
-| .png | 248 | 283,589,518 |
-| .mp4 | 208 | 273,426,998 |
-| .jpg | 326 | 63,294,254 |
-| .mp3 | 33 | 9,082,974 |
-| .svg | 153 | 7,012,049 |
+| .wav | 168 | 1,218,737,842 |
+| .png | 409 | 550,487,711 |
+| .mp4 | 235 | 380,054,233 |
+| .jpg | 339 | 65,056,612 |
+| .mp3 | 256 | 52,633,677 |
+| .svg | 154 | 7,014,908 |
 | .m4a | 10 | 6,069,278 |
+| .json | 154 | 5,832,622 |
 | .webp | 57 | 2,969,224 |
-| .json | 28 | 735,029 |
-| .mjs | 27 | 297,220 |
-| .html | 26 | 246,694 |
-| .md | 26 | 202,832 |
-| .tsx | 23 | 112,581 |
-| .csv | 3 | 105,826 |
+| .mjs | 108 | 914,421 |
+| .md | 73 | 852,445 |
+| .csv | 9 | 351,226 |
+| .tsx | 76 | 313,083 |
+| .html | 26 | 246,696 |
+| .txt | 20 | 111,036 |
 | .woff2 | 4 | 50,960 |
-| .txt | 6 | 18,258 |
-| .ts | 7 | 15,972 |
+| .ts | 24 | 31,586 |
+| .srt | 5 | 20,993 |
+| .ps1 | 6 | 19,870 |
+| .py | 8 | 15,477 |
 | .js | 5 | 13,998 |
 | .css | 4 | 12,612 |
 | .pdf | 3 | 8,849 |
-| .ps1 | 1 | 8,530 |
-| .py | 1 | 2,249 |
 | .vtt | 2 | 1,969 |
 | (none) | 3 | 262 |

@@ -1,0 +1,94 @@
+{
+  "duration": 15,
+  "fps": 24,
+  "canvas": {
+    "width": 1672,
+    "height": 941
+  },
+  "layers": {
+    "background": {
+      "src": "art/flagship-animation/opening-background.png"
+    },
+    "nico": {
+      "src": "art/flagship-animation/nico-body.png",
+      "rect": [
+        0.045,
+        0.009,
+        0.66,
+        0.66
+      ],
+      "pivot": [
+        0.26,
+        0.605
+      ]
+    },
+    "hand": {
+      "src": "art/flagship-animation/nico-forearm.png",
+      "rect": [
+        0.0397,
+        0.375,
+        0.34,
+        0.34
+      ],
+      "pivot": [
+        0.108,
+        0.568
+      ]
+    },
+    "envelope": {
+      "src": "art/flagship-animation/envelope.png",
+      "rect": [
+        0.328,
+        0.5915,
+        0.188,
+        0.101
+      ],
+      "pivot": [
+        0.422,
+        0.64
+      ]
+    }
+  },
+  "action": {
+    "envelopeTravel": [
+      0.205,
+      0.018
+    ],
+    "handTravel": [
+      0.043,
+      0.002
+    ],
+    "envelopeShadow": [
+      0.349,
+      0.65,
+      0.162,
+      0.021
+    ]
+  },
+  "audio": {
+    "src": "art/flagship-animation/audio/animated-mix.wav",
+    "offsetSeconds": 0
+  },
+  "captions": [
+    {
+      "startMs": 181.521,
+      "endMs": 1659.625,
+      "text": "Nico has put up the stake."
+    },
+    {
+      "startMs": 2554.604,
+      "endMs": 3607.125,
+      "text": "One seat is empty."
+    },
+    {
+      "startMs": 4575.375,
+      "endMs": 8009.812,
+      "text": "Fill it with the wrong person, and everyone could go to jail."
+    },
+    {
+      "startMs": 8905.396,
+      "endMs": 13635.813,
+      "text": "This is OMERTÀ, a multiplayer mafia strategy RPG in your browser."
+    }
+  ]
+}

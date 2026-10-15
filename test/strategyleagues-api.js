@@ -19,7 +19,7 @@ process.env.RESOURCE_ECONOMY = 'off'; process.env.JWT_SECRET = 'strategy-league-
 process.env.MOD_KEY = 'strategy-league-api-local-test-mod';
 // Execution awaits the coordinator's finalized module commit. Fixture source
 // never supplies private strategy rules, outcomes or target clocks to league APIs.
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger } = await import('../src/game.js');
 const { priceBlock } = await import('../src/rules.js');
 const app = await buildServer();

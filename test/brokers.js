@@ -11,7 +11,7 @@
 // somebody who did not play earns NOTHING. That assertion is the point of this file.
 import assert from 'node:assert';
 import { readFile } from 'node:fs/promises';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { BROKERS, ACTIVITY, MASTERY, brokerWeight, activityScore, activityQualifies, dayOf } from '../src/rules.js';
 import { allocateEpoch, epochBoard, gainsFor, distributeBuy } from '../src/brokers.js';
 import { recordStockBuy, runTreasuryInvariants } from '../src/treasury.js';

@@ -13,7 +13,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.TRAIN_CD_MS = '180000'; // the shared clock ON — the whole point under test
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { REGIMEN, UNDERWORLD, disciplineLvlOf, energyCapOf, nerveCapOf, dayOf } from '../src/rules.js';
 
 const app = await buildServer();

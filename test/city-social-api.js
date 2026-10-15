@@ -89,7 +89,7 @@ if (postgres) {
 } else assert(!process.env.DATABASE_URL, 'Without --postgres, require disposable pg-mem.');
 process.env.RATE_LIMIT = 'off';
 process.env.INVITE_MODE = 'off';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const app = await buildServer();
 const validator = new Ajv({ strict: false, allErrors: true }); addFormats(validator);
 const typed = name => validator.compile({ $ref: '#/components/schemas/' + name, components: { schemas: CITY_SOCIAL_SCHEMAS } });

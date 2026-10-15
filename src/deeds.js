@@ -20,6 +20,22 @@ import { DEEDS, DISTRICTS, deedRankOf, deedRenown, deedCornerOwed, deedControlle
   deedNeighborhoodsOpen, deedNeighborhoodOf, dayOf,
   effStat, levelOf, jailed, hospitalized, safeHoused, SAFE_STORED, usd, districtName , coolLeft, coolWait } from './rules.js';
 
+// Same lifetime identity limit as StreetDeed.MAX_DEED_IDENTITIES. Extracted and released streets
+// still consume their original slot; trading or bringing one back never creates another identity.
+export const MAX_DEED_IDENTITIES = 2500;
+
+async function deedSupply(client, { lock = false } = {}) {
+  const state = (lock
+    ? await client.query('SELECT issued FROM street_deed_supply WHERE id=1 FOR UPDATE')
+    : await client.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0];
+  if (!state) throw new GameError('deed_supply_unconfigured', 'Street supply is not configured.');
+  // Existing streets include synthetic onchain owners. Counting also catches streets imported by
+  // older tooling, while the durable counter never releases a slot if a row is removed later.
+  const existing = Number((await client.query('SELECT COUNT(*) n FROM street_deeds')).rows[0].n);
+  const issued = Math.max(Number(state.issued), existing);
+  return { maximum: MAX_DEED_IDENTITIES, issued, remaining: Math.max(0, MAX_DEED_IDENTITIES - issued) };
+}
+
 // living-player population (drives the growing map — Phase 4). NPCs/dead excluded (the ops.js count).
 async function livingPlayers(client) {
   return Number((await client.query('SELECT COUNT(*) n FROM characters WHERE alive AND NOT is_npc')).rows[0].n);
@@ -83,6 +99,10 @@ export async function claimDeed(ch, body, client, h) {
   const nameLc = name.toLowerCase();
   if ((await client.query('SELECT 1 FROM street_deeds WHERE name_lc=$1', [nameLc])).rowCount)
     throw new GameError('taken', 'That street is already on the map. Pick another name.');
+  // withCharacter owns the transaction. A shared row lock serializes cross-account creation;
+  // checking COUNT before INSERT alone would let concurrent claimants overrun the final slot.
+  const supply = await deedSupply(client, { lock: true });
+  if (!supply.remaining) throw new GameError('deed_supply_exhausted', 'All 2,500 streets have been issued. Buy an existing deed from another player.');
   try {
     // corner_at starts the corner-take clock at claim (Phase 2 — the owner controls their own corner)
     await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token) VALUES ($1,$2,$3,$4,now(),$5)',
@@ -92,6 +112,7 @@ export async function claimDeed(ch, body, client, h) {
     if (String(err?.code) === '23505') throw new GameError('taken', 'That street was just claimed. Pick another name.');
     throw err;
   }
+  await client.query('UPDATE street_deed_supply SET issued=$1 WHERE id=1', [supply.issued + 1]);
   await recordDeedEvent(client, ch.account_id, 'claim', `claimed by ${ch.name}`);
   if (h?.track) await h.track(client, ch.account_id, 'deed_claim', { district });
   return { ok: true, name, district, districtName: districtName(district) };
@@ -101,6 +122,7 @@ export async function claimDeed(ch, body, client, h) {
 // built-up each is — the growing-world texture). Read-only; the client re-derives no game state.
 export async function deedBoard(ch, client, h) {
   const deed = await loadDeed(client, ch.account_id);
+  const supply = await deedSupply(client);
   const acct = (await client.query('SELECT minted, wallet_address FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
   const history = deed ? await deedHistory(client, ch.account_id) : [];
   const renown = deedRenown(history);
@@ -233,7 +255,8 @@ export async function deedBoard(ch, client, h) {
     districts: DISTRICTS.map((d) => ({ id: d.id, name: d.name, perk: d.perk, deeds: counts.get(d.id) || 0,
       neighborhoods: districtHoods[d.id] })),
     nameMin: DEEDS.NAME_MIN, nameMax: DEEDS.NAME_MAX,
-    canClaim: !deed,
+    supply,
+    canClaim: !deed && supply.remaining > 0,
   };
 }
 
@@ -549,13 +572,13 @@ export function deedPage(deed, { gameUrl } = {}) {
   if (!deed) {
     return `<!doctype html><meta charset="utf-8"><title>A Street of OMERTÀ</title>
 <body style="background:#0c0b0d;color:#c9c3d0;font-family:Georgia,serif;text-align:center;padding:80px">
-<h1 style="color:#f4f1ea">A Street of OMERTÀ</h1><p>This deed is not on-chain right now.</p>
+<h1 style="color:#f4f1ea">A Street of OMERTÀ</h1><p>This deed has no current on-chain record.</p>
 <p><a href="${esc(url)}" style="color:#c99">Enter the city →</a></p></body>`;
   }
   const rows = (deed.history || []).slice(0, 20).map((e) =>
-    `<li><b style="color:hsl(280,20%,70%)">${esc(e.kind)}</b> &mdash; ${esc(e.detail || '')}</li>`).join('');
-  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(deed.name)} — OMERTÀ</title>
-<meta property="og:title" content="${esc(deed.name)} — a Street of OMERTÀ">
+    `<li><b style="color:hsl(280,20%,70%)">${esc(e.kind)}</b>: ${esc(e.detail || '')}</li>`).join('');
+  return `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(deed.name)} · OMERTÀ</title>
+<meta property="og:title" content="${esc(deed.name)} · a Street of OMERTÀ">
 <meta property="og:description" content="${esc(deed.districtName || deed.district)} · ${esc(deed.rank)}. Property with a history.">
 <body style="background:#0c0b0d;color:#c9c3d0;font-family:Georgia,serif;max-width:720px;margin:0 auto;padding:48px 20px">
 <div class="deed-art" style="max-width:620px;margin:0 auto 32px;line-height:0"><style>.deed-art svg{display:block;width:100%;height:auto}</style>${deedPlateSvg(deed)}</div>
@@ -564,10 +587,10 @@ export function deedPage(deed, { gameUrl } = {}) {
   <p style="color:#8a8290;letter-spacing:4px;text-transform:uppercase;margin:8px 0">${esc(deed.districtName || deed.district)}</p>
   <p style="color:#a99;font-style:italic">${esc(deed.rank)}</p>
 </div>
-<h2 style="color:#c9c3d0;font-size:18px;letter-spacing:2px;text-transform:uppercase">The record on this block</h2>
+<h2 style="color:#c9c3d0;font-size:18px;letter-spacing:2px;text-transform:uppercase">This block's history</h2>
 <ul style="line-height:1.9;color:#b0aab8">${rows || '<li>Nothing has happened here yet.</li>'}</ul>
 <p style="text-align:center;margin-top:40px"><a href="${esc(url)}" style="color:#c99;letter-spacing:2px">ENTER THE CITY →</a></p>
-<p style="text-align:center;color:#555;font-size:13px">A Street Deed — property with a history. The market sets its price; the story is player-made.</p>
+<p style="text-align:center;color:#555;font-size:13px">Players write this street's history. Buyers and sellers set the deed's price.</p>
 </body>`;
 }
 

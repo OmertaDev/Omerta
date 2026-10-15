@@ -9,7 +9,7 @@
 // vocabulary closed + the hush transfer delta-0). pg-mem, zero infra.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { SECRETS } from '../src/rules.js';
 import { sweepSecrets } from '../src/secrets.js';

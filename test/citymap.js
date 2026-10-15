@@ -4,7 +4,7 @@
 // racket surfaces its type), the power ranking ranks by districts held, and the whole read moves no
 // value.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import * as S from '../src/social/gangs.js';
 

@@ -12,7 +12,7 @@ if (!process.argv.includes('--postgres')) process.argv.push('--postgres');
 for (const flag of ['CORE_PROGRESSION', 'WORLD_GRAPH_KERNEL', 'COORDINATION_ENGINE', 'COORDINATION_KNOWLEDGE', 'COORDINATION_KNOWLEDGE_SHARING', 'COORDINATION_OPERATIONS']) process.env[flag] = 'on';
 Object.assign(process.env, { LIVING_WORLD_DIRECTOR: 'LIVE', RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_OFF: 'on', SOCIAL_VERIFY_MODE: 'off' });
 for (const key of ['JWT_SECRET', 'MARKET_SEED', 'MOD_KEY']) process.env[key] = crypto.randomBytes(32).toString('hex');
-const [{ dockFixture }, { buildServer }] = await Promise.all([import('./lib/director-support.js'), import('../src/server.js')]);
+const [{ dockFixture }, { buildServer }] = await Promise.all([import('./lib/director-support.js'), import('./server-fixture.js')]);
 const width = Number(process.env.RC1_GOLDEN_BROWSER_WIDTH || 320), output = process.env.RC1_GOLDEN_BROWSER_OUTPUT;
 fs.mkdirSync(output, { recursive: true }); assert(!fs.existsSync(path.join(output, 'results.json')));
 const result = { source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(), status: 'RUNNING', width,

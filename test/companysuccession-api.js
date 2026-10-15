@@ -17,7 +17,7 @@ if (native) {
 } else assert(!process.env.DATABASE_URL, 'Memory proof refuses ambient DATABASE_URL');
 process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.DEPOT_PILOT = 'on';
 process.env.JWT_SECRET = 'company-succession-api-local-test-secret'; process.env.MOD_KEY = 'company-succession-api-local-mod';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger } = await import('../src/game.js');
 const app = await buildServer();
 // pg-mem misuses the open-only partial index for closed history. Native keeps it.

@@ -1,0 +1,1198 @@
+{
+  "revision": "da88c4b784b497697bfd9418e6153ddf2817ab91",
+  "date": "2026-09-24",
+  "setting": "Future fully live release. Availability, funding and integration are publication assumptions, not current deployment evidence.",
+  "status": "Implemented additive Market V2 candidate. No live deployment, funded reserves, production signer, or player route is established by these source files.",
+  "statusSource": {
+    "path": "omerta-contracts/docs/market-v2/DESIGN.md",
+    "lines": [
+      3,
+      5
+    ]
+  },
+  "comparison": {
+    "path": "brand/cinematic-video-system/production-data.json",
+    "filmId": "02",
+    "durationSeconds": 75,
+    "meaning": "Comparison includes narration, headline, flow graphic and tags; a name in a tag is not a mechanism explanation.",
+    "sha256": "a60c6673f64c9dfd87ecaa965735c3f02a378903a960072687851eacd7673324"
+  },
+  "freshness": "git diff from 32859cf7 to da88c4b was empty for docs/market-v2/DESIGN.md, src/market-v2, marketv2keeper.js, marketv2solver.js and market-v2-deployment-plan.js.",
+  "sourceAliases": {
+    "D": "omerta-contracts/docs/market-v2/DESIGN.md",
+    "H": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+    "C": "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol",
+    "T": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+    "G": "omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol",
+    "B": "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+    "V": "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol"
+  },
+  "mechanisms": [
+    {
+      "id": "M01",
+      "capabilityTableRow": 37,
+      "name": "Canonical base sell fee",
+      "prior": "covered",
+      "previousBeats": [
+        "C2-B07",
+        "C2-B08"
+      ],
+      "claim": "Canonical sells carry a 9% base Hook fee: 2% developer, 1.6% RWA recipient, 2.4% community and 3% POL.",
+      "missing": "Explain routing of actual settled fees rather than universal transfer taxation; rounding residual belongs to POL.",
+      "pitfall": "These percentages apply to the chosen canonical pool. They are not a universal OMR tax or the entire swap cost.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            37,
+            37
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            61,
+            69
+          ]
+        },
+        {
+          "source": "H",
+          "lines": [
+            33,
+            35
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M02",
+      "capabilityTableRow": 38,
+      "name": "Sell-pressure surcharge",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B08"
+      ],
+      "claim": "Sell pressure can add up to one percentage point for stability; that pressure fades with time.",
+      "missing": "Previous tag named 0–1%, but not the accumulated tick-pressure mechanism or decay.",
+      "pitfall": "A buy does not instantly erase accumulated pressure. This surcharge is a Hook fee, not a dynamic LP-fee override.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            38,
+            38
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            93,
+            93
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M03",
+      "capabilityTableRow": 39,
+      "name": "Bounded opening controls",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Opening buys have a preset, limited window of special rules. That window cannot be extended.",
+      "missing": "Temporary opening buy fee and optional actual quote-size limit.",
+      "pitfall": "Per swap, not per human: splitting trades or accounts remains possible. No anti-bot or fair-launch guarantee.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            39,
+            39
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            61,
+            63
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            91,
+            91
+          ]
+        },
+        {
+          "source": "H",
+          "lines": [
+            33,
+            36
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M04",
+      "capabilityTableRow": 40,
+      "name": "Completed market observations",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "The market records completed intervals of price, trading pressure and liquidity before reserve actions use them.",
+      "missing": "Mean tick, dispersion, gross ETH turnover, imbalance, minimum liquidity and liquidity-time measurements.",
+      "pitfall": "This is historical pool information, not an outside fair-value oracle. Same-block liquidity and incomplete genesis intervals do not establish valid depth history.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            40,
+            40
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            85,
+            89
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M05",
+      "capabilityTableRow": 41,
+      "name": "Range-bound reserve policy",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B09"
+      ],
+      "claim": "Separate reserves respond to selling and buying under preset limits, cooldowns and observed conditions.",
+      "missing": "Stress hysteresis, directional ranges, per-action/per-observation/episode limits and qualified recovery.",
+      "pitfall": "Finite inventory does not guarantee a price floor, ceiling or stable token value.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            41,
+            41
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            77,
+            81
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            273,
+            311
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M06",
+      "capabilityTableRow": 42,
+      "name": "Core protocol-owned liquidity",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B08",
+        "C2-B09",
+        "C2-B11"
+      ],
+      "claim": "The protocol supplies Core liquidity and accounts for principal separately from earned fees.",
+      "missing": "Actual pool position custody, idle/deployed/returned principal and fee accounting.",
+      "pitfall": "Fee income is not principal gain; Family fee rights do not grant withdrawal of protocol capital.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            42,
+            42
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            67,
+            67
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            77,
+            81
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M07",
+      "capabilityTableRow": 43,
+      "name": "Lower Cushion and Garrison",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "ETH-funded ranges stand ready to exchange ETH for OMR as selling moves through them.",
+      "missing": "Two named downside compartments and what they actually hold and exchange.",
+      "pitfall": "Raw OMR-per-ETH ticks run opposite an ETH-per-OMR price chart. A downside range is above the raw reference tick.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            43,
+            43
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            73,
+            75
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M08",
+      "capabilityTableRow": 44,
+      "name": "Upper Cushion and Desk",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "OMR-funded ranges supply OMR as buying moves through them.",
+      "missing": "Two named upside compartments and their inventory direction.",
+      "pitfall": "The Market V2 Desk tranche is distinct from the in-game recycled-inventory Desk. An upside range is below the raw reference tick.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            44,
+            44
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            73,
+            81
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M09",
+      "capabilityTableRow": 45,
+      "name": "War Chest",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B09"
+      ],
+      "claim": "The War Chest holds real reserve inventory for qualified replenishment.",
+      "missing": "It does not deploy a range directly. Surge, inventory-bond proceeds and arbitrage reserve shares fund its separate adapter.",
+      "pitfall": "Depositing more assets does not reset capacity; recovering prices do not create reserves.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            45,
+            45
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            67,
+            79
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            275,
+            278
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M10",
+      "capabilityTableRow": 46,
+      "name": "Inventory bonds",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B12"
+      ],
+      "claim": "A bond purchases already funded OMR with ETH and releases a reserved entitlement over time.",
+      "missing": "Purchase/epoch/lifetime limits in both assets, absolute rate bound, immediate reservation, nontransferability and independent vested claims.",
+      "pitfall": "No mint authority, sellback promise, guaranteed discount or guaranteed return. Canonical sell fee still applies when vested OMR is sold.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            46,
+            46
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            113,
+            113
+          ]
+        },
+        {
+          "source": "B",
+          "lines": [
+            162,
+            230
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M11",
+      "capabilityTableRow": 47,
+      "name": "Arbitrage participation",
+      "prior": "name_only",
+      "previousBeats": [
+        "C2-B09"
+      ],
+      "claim": "A solver commits a specific trade cycle, then executes it only if realized profit clears its required threshold.",
+      "missing": "Atomic two-pool cycle, solver-bound commit/reveal, reserve share, collateral claims and fee/gas-aware planning.",
+      "pitfall": "No exclusive arbitrage, private orderflow or guaranteed profit. A failed transaction can still cost gas.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            47,
+            47
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            91,
+            91
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            119,
+            119
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M12",
+      "capabilityTableRow": 48,
+      "name": "Seasonal Family Turf",
+      "prior": "covered",
+      "previousBeats": [
+        "C2-B10",
+        "C2-B11"
+      ],
+      "claim": "A Family's Turf grants rights to future funded fees from a designated seasonal liquidity range.",
+      "missing": "Fixed price slabs and explicit lane/controller/bridge custody topology.",
+      "pitfall": "Turf is a fee entitlement, not possession of LP principal or a promise of a payout.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            48,
+            48
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            81,
+            81
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            97,
+            103
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M13",
+      "capabilityTableRow": 49,
+      "name": "Syndicates",
+      "prior": "name_only",
+      "previousBeats": [
+        "C2-B10"
+      ],
+      "claim": "Up to four Families can share a Turf's future fee rights under a fixed split.",
+      "missing": "At most four recipients; shares must total 10,000 basis points; prospective ownership.",
+      "pitfall": "No retroactive transfer of already credited fees; no invented profit multiplier for alliance size.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            49,
+            49
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            97,
+            97
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M14",
+      "capabilityTableRow": 50,
+      "name": "Sieges",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B11"
+      ],
+      "claim": "During a siege, actual fees enter escrow under frozen participant wallets and configured outcome rules.",
+      "missing": "Bounded duration/victory allocation, frozen recipients, expected revision/epoch and replay-safe resolution.",
+      "pitfall": "Winning does not necessarily take all escrow. Nothing permits seizing LP principal or creating unfunded fees.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            50,
+            50
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            99,
+            105
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            115,
+            143
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M15",
+      "capabilityTableRow": 51,
+      "name": "Corridors, loyalty and fortification",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Adjacent ranges with matching owners can form corridors; loyalty and fortification record game status.",
+      "missing": "These named territorial status mechanics were absent.",
+      "pitfall": "Status never multiplies a monetary claim. Do not draw a yield boost beside fortification.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            51,
+            51
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            57,
+            57
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            102,
+            113
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M16",
+      "capabilityTableRow": 52,
+      "name": "Historical fee ownership and checkpoints",
+      "prior": "name_only",
+      "previousBeats": [
+        "C2-B10"
+      ],
+      "claim": "Fees earned before a transfer are checkpointed before future rights change hands.",
+      "missing": "Atomic collection/forwarding before ownership, siege or treasury transitions; historical credits stay with their recipients.",
+      "pitfall": "The cutoff is the actual onchain checkpoint, not an inferred earlier gameplay timestamp. A failed source may delay a treasury-wallet change.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            52,
+            52
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            97,
+            105
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            77,
+            99
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            129,
+            149
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M17",
+      "capabilityTableRow": 53,
+      "name": "Player LP commitments",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B13"
+      ],
+      "claim": "Commit an eligible canonical liquidity-position NFT for a finite term; qualifying depth draws rewards from a funded campaign.",
+      "missing": "Two distinct fresh observations, conservative sampled depth-time, invalid-gap/pause breaks, first-come checkpoint funding and independent maturity withdrawal.",
+      "pitfall": "No guaranteed yield or continuous depth proof. Empty, foreign-pool, subscribed and previously committed NFTs are rejected.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            53,
+            53
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            109,
+            111
+          ]
+        },
+        {
+          "source": "V",
+          "lines": [
+            137,
+            200
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M18",
+      "capabilityTableRow": 54,
+      "name": "Bounded keepers",
+      "prior": "name_only",
+      "previousBeats": [
+        "C2-B09"
+      ],
+      "claim": "Keepers carry out a narrow set of checked maintenance jobs with bounded gas and transaction scope.",
+      "missing": "Pinned one-block reads, simulation, runtime verification, one new transaction per invocation and durable reconciliation.",
+      "pitfall": "A keeper is not an unrestricted AI agent, does not schedule itself, and cannot be described as running endlessly by itself.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            54,
+            54
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            117,
+            117
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M19",
+      "capabilityTableRow": 55,
+      "name": "Deployment, binding and funding plan",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Each market component has an explicit binding, funding source and authority boundary.",
+      "missing": "Offline constructor/address calculation, initialization, recipient custody, binding and funding transactions.",
+      "pitfall": "Example deployment inputs are local-chain fixtures, not the actual launch price, liquidity or reserve budget. Do not say source presence activates the release.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            3,
+            5
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            55,
+            57
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            121,
+            121
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M20",
+      "name": "Fee currency, partial fills and LP fees",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B08"
+      ],
+      "claim": "Fees follow what actually settles, in ETH or OMR. Pool LP fees are separate.",
+      "missing": "Exact-input/exact-output fee-currency selection and actual partial-fill deltas.",
+      "pitfall": "Do not animate every fee as ETH or charge the fee against an unfilled order's requested amount.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            61,
+            61
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            93,
+            93
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M21",
+      "name": "Independent immutable recipient buckets",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B08"
+      ],
+      "claim": "Each fee recipient claims its own bucket independently.",
+      "missing": "Fixed recipients/rates/policy; recipient failure does not block swaps or unrelated claims; a recipient can choose its claim destination.",
+      "pitfall": "Independence of fee claims does not mean every operation is failure-independent: all-lane wallet checkpointing has explicit coupling.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            63,
+            63
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            101,
+            101
+          ]
+        },
+        {
+          "source": "H",
+          "lines": [
+            263,
+            278
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M22",
+      "name": "Canonical venue scope and transfer-tax interlock",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B07"
+      ],
+      "claim": "This Hook's policy applies to its canonical ETH/OMR pool; other venues have their own rules.",
+      "missing": "Alternative unhooked pools are possible. PoolManager must not also be registered for OMR transfer tax.",
+      "pitfall": "Never claim the Hook prohibits external venues or taxes all token transfers. Avoid diagramming double taxation of liquidity funding and settlements.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            65,
+            69
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M23",
+      "name": "Core funding versus War Chest funding",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B09"
+      ],
+      "claim": "POL fees fund Core. Surge, bond proceeds and the solver reserve share feed the War Chest.",
+      "missing": "Exact source-to-compartment routing and actual-received-asset flush; funding does not restore deployment capacity.",
+      "pitfall": "Do not route all Hook buckets to the Family, or treat reserve funding as new budget authority.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            67,
+            67
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            252,
+            264
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M24",
+      "name": "Price-axis direction",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Label the price axis clearly: ETH per OMR and OMR per ETH move in opposite directions.",
+      "missing": "Native ETH is currency0, 18-decimal OMR currency1; raw ticks quote OMR per ETH.",
+      "pitfall": "On raw ticks ETH-funded downside sits above reference, OMR-funded upside below. On an intuitive ETH-per-OMR chart invert and explicitly label the axis.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            73,
+            73
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M25",
+      "name": "Reversible range inventory and finalization",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "A crossed range can trade back if price reverses. Finalization removes the converted position and locks that inventory result.",
+      "missing": "Actual directional conversion and later-block condition before permissionless finalize.",
+      "pitfall": "Touching/crossing a drawn wall is not an irreversible purchase or a settled removal. A price bounce alone does not mean the protocol realized profit.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            75,
+            75
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            333,
+            349
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M26",
+      "name": "Principal, fees and nonresetting limits",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B09",
+        "C2-B11"
+      ],
+      "claim": "Assets, principal, fees and permission to deploy are separate accounts.",
+      "missing": "Idle assets, deployed/returned principal, earned fees, episode capacity and lifetime deployment; principal uses callerDelta minus feesAccrued.",
+      "pitfall": "Funding or removing a position does not replenish capacity. Returned principal or fees are not evidence of fresh permission or investment gain.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            77,
+            77
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            252,
+            264
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            273,
+            311
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M27",
+      "name": "Qualified recovery and partial regeneration",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Replenishment needs a full spaced observation window, enough healthy samples, and actual War Chest assets.",
+      "missing": "Distinct epochs, minimum interval, X-of-Y conditions, gap reset, bounded transfer and exhausted lifetime limits remain consumed.",
+      "pitfall": "No invented X/Y numbers, timing or refill amount. Do not depict a price recovery refilling ETH automatically.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            79,
+            79
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            368,
+            419
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M28",
+      "name": "One active position per compartment / explicit lanes",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Each active range has its own compartment and budget. Additional Turf slabs need their own controller and bridge.",
+      "missing": "Core, Lower Cushion, Garrison, Upper Cushion, Desk and Turf each have at most one active position per controller; fixed Turf season/slab.",
+      "pitfall": "Do not animate one controller into unlimited active ranges or let lanes silently share capital/fee authority.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            81,
+            81
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            285,
+            289
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M29",
+      "name": "Observation validity and manipulation bounds",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Reserve actions use fresh completed observations and still check current price deviation and liquidity.",
+      "missing": "Idle gap handling, previous-state time integration, negative tick flooring, nonnegative dispersion, turnover-attenuated imbalance and actual spot/depth checks.",
+      "pitfall": "Historical pool measures do not prove fair value, full-range executable depth or immunity to wash trading/manipulation. No market floor guarantee.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            85,
+            93
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M30",
+      "name": "Game authority versus capital custody",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B11"
+      ],
+      "claim": "The game can settle typed territory outcomes. It cannot withdraw protocol principal or invent fees.",
+      "missing": "Immutable settlement adapter, replay IDs, expected revision/epoch, Safe-created preseason ranges and one-time lane bindings.",
+      "pitfall": "Do not imply the Don, player, AI or adjudicator has unrestricted contract control. Combat and story adjudication remain server responsibilities.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            57,
+            57
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            99,
+            99
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            33,
+            60
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M31",
+      "name": "Treasury transitions and active-lane limits",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Changing a Family treasury checkpoints every active fee lane first; old credited claims remain where they were earned.",
+      "missing": "Bound of 64 active lanes, source-failure coupling, closing/archive of expired lanes to release operational capacity.",
+      "pitfall": "A failed checkpoint can delay the wallet change, while existing credited claims and trading remain independent. Not an all-or-nothing claim freeze.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            97,
+            101
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            67,
+            87
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M32",
+      "name": "Siege expiry and season exit",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Expired sieges have a callable default-defender outcome. Season expiry removes Turf liquidity and returns principal to protocol custody.",
+      "missing": "Permissionless expiry through adapter; last fee batch to frozen recipients; season removal independent of oracle/pause; Safe retirement after return.",
+      "pitfall": "Expiry is settled by transaction, not a magic wall-clock transfer. Fees earned until that removal still follow the recorded lane.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            103,
+            103
+          ]
+        },
+        {
+          "source": "G",
+          "lines": [
+            138,
+            149
+          ]
+        },
+        {
+          "source": "C",
+          "lines": [
+            326,
+            341
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M33",
+      "name": "Settlement receipts and confirmation",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "A territory settlement is displayed as final only after the chain's confirmation and reorg rules.",
+      "missing": "Receipt chain, registry, season, Turf, revision, epoch, unique settlement ID and lane-scoped replay protection.",
+      "pitfall": "Public logs are evidence, not authority to pay game cash; an animation is not a real settled transaction.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            105,
+            105
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M34",
+      "name": "Maturity exit versus reward availability",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B13"
+      ],
+      "claim": "When the LP commitment matures, the depositor can withdraw even if rewards are unavailable.",
+      "missing": "Reward availability is distinct from NFT exit; two-sample depth-time accounting, first-come campaign funds and timing/splitting limitations.",
+      "pitfall": "Locking an NFT does not guarantee a funded reward, permanent range occupancy or fair allocation across split positions.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            109,
+            111
+          ]
+        },
+        {
+          "source": "V",
+          "lines": [
+            169,
+            200
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M35",
+      "name": "Vested bond claim independence",
+      "prior": "partial",
+      "previousBeats": [
+        "C2-B12"
+      ],
+      "claim": "A reserved vested bond claim remains claimable when new purchases are paused, inventory runs out or the oracle is unavailable.",
+      "missing": "The purchase gate and the vested-claim gate have different dependencies.",
+      "pitfall": "An independent claim does not imply a guaranteed resale value, early refund, buyback or token mint.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            113,
+            113
+          ]
+        },
+        {
+          "source": "B",
+          "lines": [
+            212,
+            230
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M36",
+      "name": "Operational separation and configuration limits",
+      "prior": "omitted",
+      "previousBeats": [],
+      "claim": "Trading, strategy, fee claims and game settlement have separate responsibilities and explicit budgets.",
+      "missing": "Read-only plan mode, durable signed-transaction journal, reconcile-before-new-send, daily gas budget, no legacy cash/POL booking; actual launch parameters require measured configuration.",
+      "pitfall": "No invented reserve size, price, width, epochs, APY, reward campaign terms or solver profitability. Market V2 does not redefine RWA budgets, voucher withdrawals, leveraged Family debt, transferable future-revenue securities or DNR.",
+      "evidence": [
+        {
+          "source": "D",
+          "lines": [
+            57,
+            57
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            69,
+            69
+          ]
+        },
+        {
+          "source": "D",
+          "lines": [
+            117,
+            121
+          ]
+        }
+      ]
+    }
+  ],
+  "recommendedFilmEmphasis": [
+    "Begin with two range inventories exchanging opposite assets as the market moves; name both cushion/Garrison and cushion/Desk pairs.",
+    "Show a reversal before finalize, then actual removal: a crossed wall is not final settlement.",
+    "Show completed observations -> bounded deploy -> capacity consumed -> qualified observations + War Chest funding -> partial refill. Keep lifetime meter consumed.",
+    "Connect 3% POL -> Core separately from surge/bonds/solver share -> War Chest, and designated Turf LP fees -> Family/siege escrow.",
+    "Use a checkpoint boundary to demonstrate old fee credits staying with the old recipient and future rights changing prospectively.",
+    "Close with funded bond/LP campaign claims and independent exits; use small operational labels for opening controls, syndicates/status, receipt confirmation and keeper budgets."
+  ],
+  "releaseBoundaries": [
+    "Future activation is assumed for creative setting only. The current implementation is a candidate; do not claim an actual deployment or transaction from these diagrams.",
+    "No guaranteed price floor, ceiling, reserve adequacy, APY, profit or payout.",
+    "Use ETH-per-OMR as the intuitive price axis only if explicitly labeled and correctly inverted from raw OMR-per-ETH ticks.",
+    "The deployed interface, game adjudication and onchain configuration must exist at publication; these contracts alone do not create every player-facing integration.",
+    "Keep game cash, ledger OMR, actual ETH/OMR pool assets, NFT custody and RWA units separate."
+  ],
+  "counts": {
+    "implementationCapabilities": 19,
+    "mechanismRows": 36,
+    "priorCoverage": {
+      "covered": 2,
+      "partial": 15,
+      "name_only": 4,
+      "omitted": 15
+    }
+  },
+  "sourceHashes": {
+    "omerta-contracts/docs/market-v2/DESIGN.md": "be8b601c8a191a56fd2d57eb478bd8c08bd3533503950c143acc11852370ca83",
+    "omerta-contracts/src/market-v2/OmertaHookV2.sol": "fc8b9eb84ade96cb8d6c9e9b5db3b69372bfe33174fef65d05549733687c69ea",
+    "omerta-contracts/src/market-v2/OmertaStabilityControllerV2.sol": "e2d4200aa9ad51c1df2567ad52708d719fa11a9b693bf5c7acd2943f5b6cd645",
+    "omerta-contracts/src/market-v2/OmertaTurfV2.sol": "6c08e149aef906db41cddef80250e0327d1906ecacae74158a7a5d2b2a47aeb1",
+    "omerta-contracts/src/market-v2/OmertaGameSettlementV2.sol": "f9deb4e087904a2796619a317acbd64fef32e35e3b67f434561b4b14e813888f",
+    "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol": "2c46d627b7f4ac92131cd9d448e42235ab34b2d1b37d1875d2856702e56aa66f",
+    "omerta-contracts/src/market-v2/OmertaCommitmentVaultV2.sol": "605e24016bad0f6b58e7c872d0eed72885d7a65639a5cd3b19a0fb3dd79f1b04"
+  },
+  "newDraftReview": {
+    "path": "brand/market-v2-film/production-data.json",
+    "sha256": "d739896fcf01427bc648e1477f45ca80548e4c455facb5ff94b27c29060ec236",
+    "durationSeconds": 173,
+    "beatCount": 33,
+    "assessment": "Substantively supported. All 19 implementation-table capabilities represented; deployment/binding is implicit and should be explicit. Suggested changes supplied before audio generation.",
+    "requestedCorrections": [
+      {
+        "beat": "M04-B02",
+        "change": "Use Six reserve compartments; add one active position per compartment if legible. Turf is introduced later."
+      },
+      {
+        "beat": "M04-B03",
+        "change": "Qualify conversion with price crossing an active range; not every sell necessarily traverses either deployed downside range."
+      },
+      {
+        "beat": "M04-B04",
+        "change": "Qualify conversion with price crossing an active range; same condition for upside inventory."
+      },
+      {
+        "beat": "M04-B06",
+        "change": "Add Fully converted / later block to explain finalize eligibility."
+      },
+      {
+        "beat": "M04-B08",
+        "change": "Use Average tick / dispersion and Turnover / imbalance / liquidity; avoid implying raw liquidity proves full executable depth."
+      },
+      {
+        "beat": "M04-B26",
+        "change": "Include loyalty with corridor and fortification status; none multiplies monetary claims."
+      },
+      {
+        "beat": "M04-B28",
+        "change": "Label Expiry call -> default defender to avoid implying settlement happens without a transaction."
+      },
+      {
+        "beat": "M04-B30",
+        "change": "Explicitly name Safe-controlled binding/funding and include confirmation/reorg treatment for final game receipts."
+      }
+    ],
+    "optionalDetailCards": [
+      "Claims remain available independent of unrelated fee recipient failure.",
+      "A full X-of-Y recovery window is required; gaps cannot be stitched into healthy history.",
+      "Mature LP NFT exit does not depend on reward claims or oracle readiness.",
+      "Vested bond claims survive exhausted inventory or unavailable oracle, not only purchase pause.",
+      "Family treasury change checkpoints all active lanes, bounded to 64; a failed source can delay that change."
+    ],
+    "operatorHandoffOnly": [
+      "PoolManager must not also be registered for OMR transfer taxation.",
+      "Use actual launch bindings/configuration, not the local example manifest.",
+      "Additional Turf slabs require their own controller/bridge budgets.",
+      "Keep immutable fee recipients, typed adjudication, Safe authority and permissionless deterministic calls distinct."
+    ]
+  }
+}

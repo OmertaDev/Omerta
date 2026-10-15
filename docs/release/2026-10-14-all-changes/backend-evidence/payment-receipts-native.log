@@ -1,0 +1,1 @@
+payment-receipts-postgres: 488 tables protected; real commit/rollback isolation, digest opt-out independence, replay prevention, concurrent claim and direct-client RLS deny passed

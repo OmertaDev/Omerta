@@ -114,8 +114,17 @@ jobs:
       # suite did not run at all, on a path-filtered workflow nobody was watching. Same shape as the
       # v4-core dependency gap recorded above, different cause. A size regression must fail on its
       # own step, after the suite has already proven the contracts work.
+      # Forge 1.7.1's --threads limits its global pools, while the compiler creates a separate
+      # pool from the available CPU affinity. Pin only the two build steps to one allowed CPU
+      # to serialize profile compilation; leave tests normally parallel. The termination
+      # trigger remains unproven. Compiler profiles, inputs and downstream gates stay intact.
+      - name: Runner resources before compilation
+        run: |
+          free -m
+          df -h .
+
       - name: forge build
-        run: forge build
+        run: taskset --cpu-list "$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')" forge build --threads 1
 
       - name: Market V2 artifact contracts and keeper orchestration
         working-directory: .
@@ -193,4 +202,4 @@ jobs:
       # A1Task4RawCreateFactory), which costs a few hundred bytes and keeps this gate's claim true.
       - name: forge build --sizes (EIP-170)
         working-directory: omerta-contracts
-        run: forge build --sizes --skip FuzzTester
+        run: taskset --cpu-list "$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')" forge build --sizes --skip FuzzTester --threads 1

@@ -1,0 +1,52 @@
+
+Detector: arbitrary-send-eth
+RwaStockBuyer._acquire(address,uint256,uint256,bytes) (src/RwaStockBuyer.sol#215-224) sends eth to arbitrary user
+	Dangerous calls:
+	- IStockSwapAdapter(adapter).buy{value: ethIn}(token,stockVault,minUnits,routeData) (src/RwaStockBuyer.sol#220)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations
+
+Detector: reentrancy-balance
+Reentrancy in RwaStockBuyer._acquire(address,uint256,uint256,bytes) (src/RwaStockBuyer.sol#215-224):
+	External call allowing reentrancy:
+	- IStockSwapAdapter(adapter).buy{value: ethIn}(token,stockVault,minUnits,routeData) (src/RwaStockBuyer.sol#220)
+	Balance read before the call:
+	- beforeBalance = IERC20(token).balanceOf(stockVault) (src/RwaStockBuyer.sol#219)
+	Possible stale balance used after the call in a condition:
+	- afterBalance < beforeBalance || afterBalance - beforeBalance < minUnits (src/RwaStockBuyer.sol#222)
+		- stale variable `beforeBalance`
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities
+
+Detector: incorrect-equality
+RwaStockBuyer.buy(uint256,uint256,uint256,bytes) (src/RwaStockBuyer.sol#168-192) uses a dangerous strict equality:
+	- currentDay == 0 || ballotDay != currentDay - 1 (src/RwaStockBuyer.sol#178)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: unused-return
+RwaStockBuyer._resolveActiveBallot(uint256) (src/RwaStockBuyer.sol#194-198) ignores return value by (assetKey,token,None,None,active) = registry.resolveBallot(ballotDay) (src/RwaStockBuyer.sol#196)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: missing-zero-check
+RwaStockBuyer.constructor(address,address,address,address,address,uint256).keeper_ (src/RwaStockBuyer.sol#98) lacks a zero-check on :
+		- keeper = keeper_ (src/RwaStockBuyer.sol#111)
+RwaStockBuyer.setKeeper(address).keeper_ (src/RwaStockBuyer.sol#124) lacks a zero-check on :
+		- keeper = keeper_ (src/RwaStockBuyer.sol#125)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Detector: timestamp
+RwaStockBuyer.buy(uint256,uint256,uint256,bytes) (src/RwaStockBuyer.sol#168-192) uses timestamp for comparisons
+	Dangerous comparisons:
+	- currentDay == 0 || ballotDay != currentDay - 1 (src/RwaStockBuyer.sol#178)
+RwaStockBuyer._enforcedMinimum(address,uint256,uint256) (src/RwaStockBuyer.sol#207-213) uses timestamp for comparisons
+	Dangerous comparisons:
+	- oracleMinUnits == 0 || observedAt == 0 || observedAt > block.timestamp (src/RwaStockBuyer.sol#210)
+	- block.timestamp - observedAt > maxQuoteAge (src/RwaStockBuyer.sol#211)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: low-level-calls
+Low level call in RwaStockBuyer.sweepEth(address,uint256) (src/RwaStockBuyer.sol#228-234):
+	- (ok,None) = to.call{value: amount}() (src/RwaStockBuyer.sol#231)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src\RwaStockBuyer.sol analyzed (14 contracts with 102 detectors), 9 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\RwaStockBuyer.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

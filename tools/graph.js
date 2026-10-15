@@ -117,6 +117,120 @@ export function extractEmploymentHelperReconciliations(invariants, helper) {
   return terms;
 }
 
+// These imported checks verify real money and source provenance. They are not mute/noncurrency.
+// Full normalized reviewed helper bytes bind dependencies and all witness comparisons; unknown
+// helper shapes fail closed. Updating a helper requires reviewing this explicit source pin.
+const COMMERCIAL_HELPER_RECONCILIATIONS = [
+  {
+    "check": "company restructuring canonical receipt books",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCompanyRestructuringIssues",
+    "variable": "restructuringIssues",
+    "parameter": "c,depotId=null",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "reasons": [
+      "market:refund",
+      "depot:withdraw"
+    ],
+    "anchors": [
+      "const issues=[],rows=",
+      "Number(j.amount)!==amount",
+      "j.character_id!==(cancel?null:p.original_character)",
+      "Number(returned[0].cash_delta)!==refund"
+    ],
+    "sha256": "d9e847ca45bb496f81e777fdb71895cc875a9838055fe65045e42154d4674935"
+  },
+  {
+    "check": "commercial original source histories",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCommercialHistoryIssues",
+    "variable": "commercialHistoryIssues",
+    "parameter": "c,depotId=null",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "reasons": [
+      "market:refund"
+    ],
+    "anchors": [
+      "tx.reason!=='market:refund'",
+      "tx.counterparty!==p.depot_id",
+      "Number(tx.amount)!==amount",
+      "Number(backing.cash_delta)!==-Number(q.quantity)*Number(q.unitPrice)"
+    ],
+    "sha256": "d9e847ca45bb496f81e777fdb71895cc875a9838055fe65045e42154d4674935"
+  },
+  {
+    "check": "equipment insurance original loss bindings",
+    "file": "src/equipmentinsurance.js",
+    "fn": "collectEquipmentInsuranceIssues",
+    "variable": "equipmentInsuranceIssues",
+    "parameter": "client",
+    "import": "import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';",
+    "reasons": [
+      "equipment_insurance:reserve",
+      "equipment_insurance:premium_pay",
+      "equipment_insurance:premium_receive",
+      "equipment_insurance:claim",
+      "equipment_insurance:refund",
+      "equipment_insurance:burn",
+      "death:equipment_insurance"
+    ],
+    "anchors": [
+      "Number(p.maximum_cash)!==Number(p.escrow_cash)+Number(p.paid_cash)+Number(p.refunded_cash)+Number(p.burned_cash)",
+      "t.currency==='cash'&&Number(t.amount)===amount",
+      "t?.character_id===ch&&t.account_id===account",
+      "Math.min(fee,Number(p.maximum_cash))"
+    ],
+    "sha256": "42ac825bedacbbd080d0ca6431c545ba2c85629e7756c1b9aae2c66ce0aef0e7"
+  },
+  {
+    "check": "territory economics source and tribute bindings",
+    "file": "src/territoryeconomics.js",
+    "fn": "collectTerritoryEconomicsIssues",
+    "variable": "territoryIssues",
+    "parameter": "pool",
+    "import": "import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';",
+    "reasons": [
+      "depot:withdraw",
+      "gang:tribute"
+    ],
+    "anchors": [
+      "a.character_id!==p.original_character",
+      "Number(a.amount)!==Number(pay.amount_cash)",
+      "Number(b.amount)!==-Number(pay.amount_cash)",
+      "observed+=Number(j.cash_delta)+Number(j.cost_delta)",
+      "observed-=Number(j.expense)"
+    ],
+    "sha256": "2df30357205184201fdaabbe3d27acfd1b8b81bd72658a880b9416de38d02e17"
+  }
+];
+export function extractCommercialHelperReconciliations(invariants, helpers) {
+  invariants = normalizeText(invariants);
+  const terms = [];
+  const once = (text, literal) => text.split(literal).length === 2;
+  const statement = (text, literal) => text.split('\n').filter(line => line.trim() === literal).length === 1;
+  for (const spec of COMMERCIAL_HELPER_RECONCILIATIONS) {
+    const raw = helpers[spec.file];
+    if (typeof raw !== 'string') continue;
+    const source = normalizeText(raw);
+    if (crypto.createHash('sha256').update(source).digest('hex') !== spec.sha256) continue;
+    const declaration = 'export async function ' + spec.fn + '(' + spec.parameter + '){';
+    const call = 'const ' + spec.variable + ' = await ' + spec.fn + '(pool);';
+    const binding = "push('" + spec.check + "', " + spec.variable + '.length, 0, 0, { issues: ' + spec.variable + ' });';
+    if (!statement(invariants, spec.import) || !statement(invariants, call) || !statement(invariants, binding)
+        || invariants.indexOf(spec.import) > invariants.indexOf(call)
+        || invariants.indexOf(call) > invariants.indexOf(binding)
+        || !once(source, declaration) || !spec.anchors.every(literal => source.includes(literal))) continue;
+    for (const reason of spec.reasons) {
+      const index = source.indexOf("'" + reason + "'", source.indexOf(declaration));
+      if (index < 0) continue;
+      terms.push({ check: spec.check, reason, file: spec.file,
+        line: source.slice(0, index).split('\n').length,
+        bindingLine: invariants.slice(0, invariants.indexOf(binding)).split('\n').length });
+    }
+  }
+  return terms;
+}
+
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
 export function isMainModule(moduleUrl, argvEntry) {
@@ -352,6 +466,15 @@ export function build() {
       node('Reason', term.reason, { isPrefix: true }, prov);
       edge('RECONCILES', `Check:${term.check}`, `Reason:${term.reason}`, prov);
     }
+  }
+
+  const commercialHelpers = Object.fromEntries([...new Set(COMMERCIAL_HELPER_RECONCILIATIONS.map(spec => spec.file))]
+    .filter(file => fs.existsSync(path.join(ROOT, file))).map(file => [file, read(path.join(ROOT, file))]));
+  for (const term of extractCommercialHelperReconciliations(inv, commercialHelpers)) {
+    const prov = { file: term.file, line: term.line, hash: sha(commercialHelpers[term.file]),
+      binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
+    node('Reason', term.reason, {}, prov);
+    edge('RECONCILES', 'Check:' + term.check, 'Reason:' + term.reason, prov);
   }
 
   // ── Suites: what they cover, what they pin ─────────────────────────────────────────────────────

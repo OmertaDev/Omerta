@@ -21,7 +21,7 @@ if (native) {
 }
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', INVITE_MODE: 'off',
   JWT_SECRET: 'rental-integration-fixture-secret', MARKET_SEED: 'rental-integration-fixture-market', MOD_KEY: 'rental-integration-fixture-moderator' });
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const I = await import('../src/items.js'), C = await import('../src/crafting.js'), R = await import('../src/equipmentrentals.js'),
   Q = await import('../src/itemdurability.js'), G = await import('../src/game.js');
 const Inv = await import('../src/invariants.js');

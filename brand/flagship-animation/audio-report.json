@@ -1,0 +1,441 @@
+{
+  "status": "ANIMATED SCRATCH MIX VERIFIED",
+  "createdAt": "2026-10-01T21:56:57.999Z",
+  "master": {
+    "file": "public/art/flagship-animation/audio/animated-mix.wav",
+    "durationSeconds": 390,
+    "sampleRate": 48000,
+    "channels": 2,
+    "codec": "pcm_s24le",
+    "integratedLufs": -15.53,
+    "truePeakDbtp": -1.89,
+    "loudnessRangeLu": 3.2,
+    "processing": "Original mastered dialogue/music plus restrained foley; only0.08dB global attenuation. No new dynamic normalization.",
+    "valid": true
+  },
+  "source": {
+    "file": "public/art/flagship-rebuild/audio/rebuild-mix.wav",
+    "sha256": "d6b7d480f8fbe7273512b8883396f52d0a1ef23593f24f1c7fc67adbc94ac854",
+    "film": "public/art/flagship-animation/film.json",
+    "filmSha256": "5364fee81d36b3f9a1c4c42fb2a42247ef8b8079c95ca1601131f133ec240cbe",
+    "inheritedReport": "brand/flagship-rebuild/audio-report.json",
+    "voice": "Unchanged Microsoft David Desktop connected scratch; selected final Voice A was not generated or used.",
+    "music": "Unchanged existing SOUL-SCORE arrangement from the verified rebuild mix."
+  },
+  "costs": {
+    "newSpendUsd": 0,
+    "paidCalls": 0,
+    "newLicenses": 0
+  },
+  "foley": {
+    "provenance": "Original local deterministic synthesis written for this edit; no externally sourced sound effects, voice cloning or new music.",
+    "cues": [
+      {
+        "id": "paper-opening",
+        "shot": "A01",
+        "type": "paper",
+        "offset": 1.1,
+        "length": 1.2,
+        "peak": -22,
+        "pan": -0.12,
+        "start": 1.1,
+        "end": 2.3,
+        "shotStart": 0,
+        "shotEnd": 15,
+        "source": "Original deterministic local synthesis",
+        "seed": 731090,
+        "actualMonoPeakDbfs": -25,
+        "actualMonoRmsDbfs": -41.07,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "street-pass",
+        "shot": "A07",
+        "type": "engine",
+        "offset": 0.65,
+        "length": 4.1,
+        "peak": -28,
+        "pan": -0.4,
+        "start": 38.275,
+        "end": 42.375,
+        "shotStart": 37.625,
+        "shotEnd": 43.666666666666664,
+        "source": "Original deterministic local synthesis",
+        "seed": 731227,
+        "actualMonoPeakDbfs": -28,
+        "actualMonoRmsDbfs": -41.75,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "coffee-drive",
+        "shot": "A21",
+        "type": "engine",
+        "offset": 0.4,
+        "length": 3.7,
+        "peak": -29,
+        "pan": 0.35,
+        "start": 97.191667,
+        "end": 100.891667,
+        "shotStart": 96.79166666666667,
+        "shotEnd": 101.625,
+        "source": "Original deterministic local synthesis",
+        "seed": 731364,
+        "actualMonoPeakDbfs": -29.01,
+        "actualMonoRmsDbfs": -43.52,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "prison-latch",
+        "shot": "A34",
+        "type": "latch",
+        "absolute": 162.7,
+        "length": 0.36,
+        "peak": -33,
+        "pan": 0.05,
+        "start": 162.7,
+        "end": 163.06,
+        "shotStart": 161.95833333333334,
+        "shotEnd": 168.79166666666666,
+        "source": "Original deterministic local synthesis",
+        "seed": 731501,
+        "actualMonoPeakDbfs": -36,
+        "actualMonoRmsDbfs": -51.81,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "private-clue",
+        "shot": "A42",
+        "type": "paper",
+        "offset": 0.28,
+        "length": 0.58,
+        "peak": -20,
+        "pan": -0.2,
+        "start": 212.28,
+        "end": 212.86,
+        "shotStart": 212,
+        "shotEnd": 217.125,
+        "source": "Original deterministic local synthesis",
+        "seed": 731638,
+        "actualMonoPeakDbfs": -23,
+        "actualMonoRmsDbfs": -40.35,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "second-clue",
+        "shot": "A43",
+        "type": "paper",
+        "offset": 0.24,
+        "length": 0.46,
+        "peak": -21,
+        "pan": 0.2,
+        "start": 217.365,
+        "end": 217.825,
+        "shotStart": 217.125,
+        "shotEnd": 223.5,
+        "source": "Original deterministic local synthesis",
+        "seed": 731775,
+        "actualMonoPeakDbfs": -24,
+        "actualMonoRmsDbfs": -40.34,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "convoy-pass",
+        "shot": "A47",
+        "type": "engine",
+        "offset": 0.2,
+        "length": 1.7,
+        "peak": -32,
+        "pan": -0.25,
+        "start": 241.283333,
+        "end": 242.983333,
+        "shotStart": 241.08333333333334,
+        "shotEnd": 243.16666666666666,
+        "source": "Original deterministic local synthesis",
+        "seed": 731912,
+        "actualMonoPeakDbfs": -35,
+        "actualMonoRmsDbfs": -47.23,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "coin-balances",
+        "shot": "A55",
+        "type": "coin",
+        "offset": 0.48,
+        "length": 0.58,
+        "peak": -24,
+        "pan": 0.1,
+        "start": 283.813333,
+        "end": 284.393333,
+        "shotStart": 283.3333333333333,
+        "shotEnd": 295.2083333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732049,
+        "actualMonoPeakDbfs": -27,
+        "actualMonoRmsDbfs": -47.83,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "ledger-budget",
+        "shot": "A58",
+        "type": "paper",
+        "offset": 0.25,
+        "length": 0.65,
+        "peak": -22,
+        "pan": -0.1,
+        "start": 309.625,
+        "end": 310.275,
+        "shotStart": 309.375,
+        "shotEnd": 313.8333333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732186,
+        "actualMonoPeakDbfs": -25,
+        "actualMonoRmsDbfs": -42.27,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "custody-folder",
+        "shot": "A64",
+        "type": "paper",
+        "offset": 0.34,
+        "length": 0.54,
+        "peak": -23,
+        "pan": 0.08,
+        "start": 335.506667,
+        "end": 336.046667,
+        "shotStart": 335.1666666666667,
+        "shotEnd": 340.0833333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732323,
+        "actualMonoPeakDbfs": -26,
+        "actualMonoRmsDbfs": -42.73,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "paper-return",
+        "shot": "A67",
+        "type": "paper",
+        "offset": 1.1,
+        "length": 1.2,
+        "peak": -23,
+        "pan": -0.12,
+        "start": 351.1,
+        "end": 352.3,
+        "shotStart": 350,
+        "shotEnd": 357.8333333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732460,
+        "actualMonoPeakDbfs": -23,
+        "actualMonoRmsDbfs": -40.62,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "closing-drive",
+        "shot": "A68",
+        "type": "engine",
+        "offset": 0.7,
+        "length": 4.7,
+        "peak": -30,
+        "pan": 0.3,
+        "start": 358.533333,
+        "end": 363.233333,
+        "shotStart": 357.8333333333333,
+        "shotEnd": 364.9583333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732597,
+        "actualMonoPeakDbfs": -33,
+        "actualMonoRmsDbfs": -46.54,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "paper-last-invitation",
+        "shot": "A69",
+        "type": "paper",
+        "offset": 0.95,
+        "length": 0.72,
+        "peak": -22,
+        "pan": -0.08,
+        "start": 365.908333,
+        "end": 366.628333,
+        "shotStart": 364.9583333333333,
+        "shotEnd": 368.3333333333333,
+        "source": "Original deterministic local synthesis",
+        "seed": 732734,
+        "actualMonoPeakDbfs": -25,
+        "actualMonoRmsDbfs": -40.27,
+        "speechDuckDb": -3
+      }
+    ],
+    "ambience": [
+      {
+        "id": "muffled-room-rain",
+        "start": 0,
+        "end": 15,
+        "rms": -61,
+        "highpass": 180,
+        "lowpass": 1900,
+        "source": "Original locally synthesized filtered noise; not a field recording",
+        "stereoIndependent": true,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "street-rain",
+        "start": 15,
+        "end": 43.6666666667,
+        "rms": -56,
+        "highpass": 360,
+        "lowpass": 6500,
+        "source": "Original locally synthesized filtered noise; not a field recording",
+        "stereoIndependent": true,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "street-return",
+        "start": 116.5416666667,
+        "end": 125,
+        "rms": -58,
+        "highpass": 360,
+        "lowpass": 5500,
+        "source": "Original locally synthesized filtered noise; not a field recording",
+        "stereoIndependent": true,
+        "speechDuckDb": -3
+      },
+      {
+        "id": "room-reprise",
+        "start": 350,
+        "end": 357.8333333333,
+        "rms": -61,
+        "highpass": 180,
+        "lowpass": 1900,
+        "source": "Original locally synthesized filtered noise; not a field recording",
+        "stereoIndependent": true,
+        "speechDuckDb": -3
+      }
+    ],
+    "protectedDrop": {
+      "start": 157.209604,
+      "end": 165.446292,
+      "soleException": {
+        "cue": "prison-latch",
+        "start": 162.7,
+        "end": 163.06,
+        "targetPeakDbfs": -33
+      },
+      "additionalLayerBeforeLatchRms": -240,
+      "additionalLayerAfterLatchRms": -240
+    },
+    "cueBalanceBeforeRevision": [
+      {
+        "id": "paper-opening",
+        "baseRmsDbfs": -22.238,
+        "addedRmsDbfs": -44.028,
+        "separationDb": 21.79
+      },
+      {
+        "id": "street-pass",
+        "baseRmsDbfs": -19.599,
+        "addedRmsDbfs": -44.589,
+        "separationDb": 24.99
+      },
+      {
+        "id": "coffee-drive",
+        "baseRmsDbfs": -17.881,
+        "addedRmsDbfs": -46.526,
+        "separationDb": 28.65
+      },
+      {
+        "id": "prison-latch",
+        "baseRmsDbfs": -17.023,
+        "addedRmsDbfs": -54.82,
+        "separationDb": 37.8
+      },
+      {
+        "id": "private-clue",
+        "baseRmsDbfs": -16.421,
+        "addedRmsDbfs": -43.359,
+        "separationDb": 26.94
+      },
+      {
+        "id": "second-clue",
+        "baseRmsDbfs": -17.344,
+        "addedRmsDbfs": -43.349,
+        "separationDb": 26
+      },
+      {
+        "id": "convoy-pass",
+        "baseRmsDbfs": -18.677,
+        "addedRmsDbfs": -50.241,
+        "separationDb": 31.56
+      },
+      {
+        "id": "coin-balances",
+        "baseRmsDbfs": -21.495,
+        "addedRmsDbfs": -50.841,
+        "separationDb": 29.35
+      },
+      {
+        "id": "ledger-budget",
+        "baseRmsDbfs": -17.312,
+        "addedRmsDbfs": -45.285,
+        "separationDb": 27.97
+      },
+      {
+        "id": "custody-folder",
+        "baseRmsDbfs": -17.81,
+        "addedRmsDbfs": -45.74,
+        "separationDb": 27.93
+      },
+      {
+        "id": "paper-return",
+        "baseRmsDbfs": -20.411,
+        "addedRmsDbfs": -43.572,
+        "separationDb": 23.16
+      },
+      {
+        "id": "closing-drive",
+        "baseRmsDbfs": -17.942,
+        "addedRmsDbfs": -49.55,
+        "separationDb": 31.61
+      },
+      {
+        "id": "paper-last-invitation",
+        "baseRmsDbfs": -16.183,
+        "addedRmsDbfs": -43.275,
+        "separationDb": 27.09
+      }
+    ],
+    "revisionReductionDb": 0,
+    "finalAddedLayer": {
+      "samplePeakDbfs": -24.841,
+      "rmsDbfs": -58.433,
+      "peak": 0.05727401748299599,
+      "rms": 0.0011976759885752163
+    }
+  },
+  "selfCritique": {
+    "findings": [
+      "The first measured layer sat31.31–46.80dB below the base mix across cue windows; several details were too faint to contribute.",
+      "Sounding every finance transition would compete with the explanation and make the sequence feel like interface feedback.",
+      "A large metallic jail hit would weaken the betrayal pause and cover the voice.",
+      "Continuous rain under the whole film would flatten changes in place."
+    ],
+    "improvements": [
+      "Raised the sparse paper, coin and vehicle details individually by9–17dB; the jail closure remains deliberately lower.",
+      "Kept only one coin settlement and two paper/ledger touches across the finance passage.",
+      "Used a0.36-second muted latch after the measured word “players”, then returned the added layer to exact silence through165.45s.",
+      "Restricted very low ambience to the opening and visible street passages; no ambient bed under the betrayal or final CTA.",
+      "Measured cue separation did not require further attenuation."
+    ],
+    "limitations": [
+      "These are restrained synthetic approximations of physical sounds, not recorded location foley.",
+      "No complete human listening review is claimed. Measurements verify timing, levels and protected pauses.",
+      "The narration remains a local scratch performance."
+    ]
+  },
+  "validation": {
+    "sourceAudioUnchanged": true,
+    "filmTimingUnchanged": true,
+    "allCuesInsideShots": true,
+    "protectedPausesContainNoAddedSound": true,
+    "masterValid": true
+  }
+}

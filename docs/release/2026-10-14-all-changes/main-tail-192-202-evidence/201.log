@@ -1,0 +1,34 @@
+
+> omerta-backend@1.5.0 test:city-gameplay
+> node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js
+
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+city-district-arcs PASS: six actual districts, both permanent branches, native HTTP owner/location/learned-skill authority, hidden-node privacy, unique inert character keepsakes, unchanged currencies, exact replay and preserved Neighborhood action IDs; disposable pg-mem
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+staged-crew-missions PASS: real mystery bridge, three consenting distinct roles, ordered planning/lookout/execution/getaway, private evidence and ownership projection, contribution rollback/exact retry, concurrent one-winner close, durable driver artifact and participant death abandonment
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+[500] POST /v1/worldgraph/operations/19cf6a1c-f288-4ab5-ad52-90ac3ce50f6b/complete Error: owned staged Crew closing fault
+    at Proxy.value (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/test/staged-crew-missions-api.js:157:33)
+    at setStatus (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/operations.js:999:32)
+    at file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/operations.js:1544:31
+    at async runMutation (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/items.js:635:20)
+    at async file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/items.js:1319:18
+    at async ownedAction (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/items.js:328:24)
+    at async file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/content/phase2-transactions.js:124:22
+    at async file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/items.js:365:7
+    at async mutate (file:///C:/Users/Jorge/.codex/worktrees/production-all-changes-20261014/Omerta/src/routes/worldgraph.js:445:21)
+staged-crew-missions-api PASS: actual Crew invite/accept and mystery bridge, consenting distinct roles, current-district refusal/canonical travel, role-private and ghost denial, issued stage order, same-key contributions, closing rollback/concurrent one-winner/exact replay, durable driver-only inert artifact, unchanged currencies and Crew-leave abandonment; disposable pg-mem
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+Home fault boundary: late receipt started
+Home fault boundary: late receipt completed
+Home fault boundary: committed acknowledgement started
+Home fault boundary: committed acknowledgement completed
+Home fault boundary: puzzle receipt started
+Home fault boundary: puzzle receipt completed
+Home authority PASS: actual signed reservation, extraction/replay, observed owner change/replay, reimport, confirmed-unused voucher clear and stranded reservation; historical deadline/burn fixtures seeded, elapsed grace/age and deployed chain activation not claimed.
+city-home-interiors-api PASS: real activation/layout, explicit invite/accept/revoke/leave, private owner storage, own-input canonical workbench, opt-in furnishing puzzles with private outcomes and no economic effects, sale/same-day rebuy and original-account recovery, actual estate/retirement, late receipt rollback and committed-ACK recovery; pg-mem functional/compensation evidence only; native locking and restart durability not claimed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+City encounters: actual prepare/intent/turns/core skill, exact replay, stale revision/body/owner/district/privacy, late rollback/retry and persistent clues passed
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"proof":"city-world-opportunities controls PASS","mode":"pg-mem","closedAdapters":true,"boundedEffects":true,"sortedActorLocks":true,"postEffectRollback":true,"duplicateCompletion":"serial pg-mem compensation proof","exactReceiptAck":true,"oldVersionDeadActorsCustody":true,"postReleaseRollback":true,"forgedRecoveryDenied":4,"recoveryNoFavorOrHeat":true,"publicNpcMetadataLeak":false}
+city-world-opportunities API PASS: real resident/owner epochs, private discovery, durable three-stage favor, pass consumption, three learned approaches, permanent heat branch, server-clock rotation, guarded start admission/ACK, closed DTOs, replay and no currency grant; mode=pg-mem

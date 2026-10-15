@@ -32,6 +32,17 @@ concurrency:                        # a new push supersedes an in-flight run of 
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  LEGAL_OPERATOR_NAME: CI Test Operator
+  LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+  PRIVACY_CONTACT_EMAIL: privacy@example.test
+  DMCA_AGENT_NAME: CI Test Agent
+  DMCA_AGENT_EMAIL: copyright@example.test
+  DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+  DMCA_AGENT_PHONE: '+1 202 555 0100'
+  DMCA_AGENT_REGISTERED: 'true'
+  PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+
 jobs:
   suites:
     name: suites + sim (pg-mem)
@@ -145,11 +156,12 @@ jobs:
     name: City + mobile browser journeys
     needs: suites
     runs-on: ubuntu-latest
-    # Candidate748 completed all five City scripts in 6m04s, then the serial job's
-    # 60m limit cut off mobile after its first phone size. Require the complete client
-    # checks on this same checkout after the full suite/sim job passes, with a finite
-    # 20m hang bound. Neither a prefix result nor a partial phone run qualifies it.
-    timeout-minutes: 20
+    # Hosted a03 completed setup/early controls in 149s and the full City chain in 770s.
+    # Adding the measured local mobile run (229s) and gateway (8s) projects 19m16s,
+    # leaving only 44s under 20m before hosted runtime variance. Require every client
+    # check on this checkout within a finite 25m hang bound. Neither a prefix result
+    # nor a partial phone run qualifies it; native and fuzz budgets are unchanged.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
@@ -184,6 +196,9 @@ jobs:
 
       - name: City Mode and RPG desktop/mobile journeys
         run: npm run test:city:browser
+
+      - name: Consigliere gateway recovery in the browser
+        run: npm run test:gateway:browser
 
       - name: mobile (every screen at phone size — overflow, the fold, nav targets, page errors)
         env:
@@ -243,6 +258,17 @@ jobs:
 
       - name: Install PostgreSQL client tools matching the server major
         run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+
+      - name: Gateway, RLS and receipt concurrency on real PostgreSQL
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+          GATEWAY_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+        run: |
+          node test/db-rls.js --postgres
+          node test/payment-receipts-postgres.js
+          npm run test:gateway:postgres
+          node test/deeds-supply-postgres.js
+          node test/readiness-migration-failure.js
 
       # FIRST, because it is the cheapest and the most diagnostic. `PREPARE`s every static SQL string
       # in src/ against the real engine: full parse and type resolution, no rows read, about a second.

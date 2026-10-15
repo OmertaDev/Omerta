@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared_not_hosted_validated",
+  "baselineHead": "6e997246cb2ad1c8a55277b302c8011cd57f8293",
+  "contractSourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "reason": "Correct the earlier assumption that --threads 1 serializes compiler profiles. The pinned compiler creates a separate pool using Rust available_parallelism; pinning the build process to one allowed CPU selects its sequential path.",
+  "primarySources": {
+    "forge": {
+      "version": "1.7.1",
+      "commit": "4072e48705af9d93e3c0f6e29e93b5e9a40caed8",
+      "globalPools": "https://github.com/foundry-rs/foundry/blob/4072e48705af9d93e3c0f6e29e93b5e9a40caed8/crates/cli/src/opts/global.rs#L110-L141",
+      "projectConfiguration": "https://github.com/foundry-rs/foundry/blob/4072e48705af9d93e3c0f6e29e93b5e9a40caed8/crates/config/src/lib.rs#L1241-L1273",
+      "dependencyLock": "https://github.com/foundry-rs/foundry/blob/4072e48705af9d93e3c0f6e29e93b5e9a40caed8/Cargo.lock#L5122-L5125"
+    },
+    "compiler": {
+      "crate": "foundry-compilers",
+      "version": "0.20.0",
+      "crateSha256": "8a46823427db611c6b97506ee8f26b4424058366abcc9a97ac5c4c3419798518",
+      "sourceCommit": "af56317fd491addde43dfc92c052bf3979a3f48a",
+      "defaultJobs": "https://github.com/foundry-rs/foundry-core/blob/af56317fd491addde43dfc92c052bf3979a3f48a/crates/compilers/crates/compilers/src/lib.rs#L735-L737",
+      "modeSelection": "https://github.com/foundry-rs/foundry-core/blob/af56317fd491addde43dfc92c052bf3979a3f48a/crates/compilers/crates/compilers/src/compile/project.rs#L170-L191",
+      "sequentialAndParallelPools": "https://github.com/foundry-rs/foundry-core/blob/af56317fd491addde43dfc92c052bf3979a3f48a/crates/compilers/crates/compilers/src/compile/project.rs#L581-L638"
+    },
+    "rustLinuxAffinity": "https://github.com/rust-lang/rust/blob/1.89.0/library/std/src/sys/pal/unix/thread.rs#L364-L379",
+    "rustVersionCaveat": "1.89 is the pinned Forge source's minimum Rust version; the release binary's actual rustc version was not exposed by its banner. The current official Rust documentation also describes Linux affinity accounting and its query-failure limitations.",
+    "rustDocumentation": "https://doc.rust-lang.org/std/thread/fn.available_parallelism.html",
+    "pythonAllowedCpuSet": "https://docs.python.org/3/library/os.html#os.sched_getaffinity",
+    "linuxInheritance": "https://man7.org/linux/man-pages/man2/sched_setaffinity.2.html",
+    "taskset": "https://man7.org/linux/man-pages/man1/taskset.1.html"
+  },
+  "historicalFailure": {
+    "runId": 38653210885,
+    "jobId": 116156734327,
+    "headSha": "6e997246cb2ad1c8a55277b302c8011cd57f8293",
+    "url": "https://github.com/OmertaDev/Omerta/actions/runs/38653210885",
+    "command": "forge build --threads 1",
+    "exitCode": 143,
+    "compilerDiagnosticPresent": false,
+    "underlyingTrigger": "unproven",
+    "memoryExhaustionConfirmed": false,
+    "correctedLocalReceipt": "output/release-2026-10-14/remote-forge-38653210885-receipt-v2.json",
+    "correctedLocalReceiptSha256": "dcb1db893cde399de6a939ab14e0ed72094c57af5b7aa578aeb2beb0db062298",
+    "originalLocalReceiptSha256": "860fa6c8d288e723929e4717260c66ccea0850e25109efce49dc7a4821805c1e",
+    "cleanupCorrection": "Complete job orphan-process cleanup ran at 23:28:41.9570897 UTC. Later tests, post-action steps and container cleanup were skipped; the earlier broad cleanup statement is corrected without rewriting its original receipt.",
+    "rawLogSha256": "089dcd414a2459a5a693119e3fa841c2141d0d2b6f5c3ae0f8192fe1899fed3b",
+    "rawArchiveSha256": "db909513db900aed2a4e5d29cbe8a81070a65c3901bad764711971759b9d89e2"
+  },
+  "change": {
+    "workflow": ".github/workflows/forge.yml",
+    "buildCommand": "taskset --cpu-list \"$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')\" forge build --threads 1",
+    "sizeCommand": "taskset --cpu-list \"$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')\" forge build --sizes --skip FuzzTester --threads 1",
+    "cpuSelection": "Choose the lowest CPU in the actual allowed affinity set, rather than assuming CPU 0 is permitted. Missing commands or invalid affinity fail the step; no parallel fallback is added.",
+    "preserved": [
+      "All input sources, configured compiler profiles, Solidity 0.8.26, optimizer 800 and Cancun EVM",
+      "Output selection, canonical out/cache paths and artifact-reading checks",
+      "Normally parallel full unit/fuzz/invariant test command and existing budgets",
+      "Every E2E step and final production/test size assertion with only the existing FuzzTester exclusion"
+    ],
+    "docsGuard": "Exact literal allowlist adds only the affinity-prefixed plain build command. Existing plain build forms remain accepted; size ordering and rejection of additional arguments remain enforced."
+  },
+  "localValidation": {
+    "status": "passed",
+    "checkedAt": "2026-10-14T23:43:36.1923975Z",
+    "sourceHeadAtCheck": "6e997246cb2ad1c8a55277b302c8011cd57f8293",
+    "workingTreeScope": "The two edited tracked files and this new sanitized receipt; no commit or hosted execution",
+    "docs": {
+      "command": "node test/docs.js",
+      "exitCode": 0,
+      "logSha256": "f2491c8205c6dba6b45ed59654702cf507629456ff09172a13cd22a6782b6de8"
+    },
+    "gates": {
+      "command": "node test/gates.js",
+      "exitCode": 0,
+      "logSha256": "16e978fda15ee08f128c872f46c26bb1b68d502a5ab106afe8185471c0bc6e91"
+    },
+    "yamlStructuralComparison": "passed; deep equality after exactly two run-command substitutions",
+    "nonCommentTextComparison": "passed; exactly the two expected command substitutions",
+    "comparisonRepresentation": "Canonical LF; original Windows checkout line endings preserved",
+    "workflowCanonicalLfSha256": "f70fa7613f13d4f7e38d19abb30fd5fc65cb42c41dba2f366d083223a6914710",
+    "docsCommandGuard": {
+      "acceptedLiteralForms": 3,
+      "rejectedVariants": 8,
+      "rejections": [
+        "size flag",
+        "threads 2",
+        "skip tests",
+        "affinity-prefixed size flag",
+        "affinity-prefixed skip tests",
+        "affinity-prefixed threads 2",
+        "hardcoded CPU 0",
+        "failure suppression"
+      ]
+    },
+    "testsCommand": "forge test -vvv unchanged",
+    "thirdFailureReceiptHashVerified": true,
+    "diffWhitespaceCheck": "passed",
+    "contractBuildOrRemoteRerunExecuted": false
+  },
+  "prospectiveValidation": {
+    "status": "not_executed",
+    "required": [
+      "Observe the affinity-prefixed full build complete on the hosted Linux runner without a compiler error",
+      "Complete existing artifact checks, all unit/fuzz/invariant suites, all E2E steps and final size gate on the same candidate",
+      "Retain actual results and compare production artifact bytecode against the source-pinned full-build baseline before any chain activation"
+    ]
+  },
+  "limitations": [
+    "This is a scheduling correction, not a proven diagnosis or fix for the prior exit 143 failures.",
+    "Serial compilation may take longer and does not remove a single compiler profile's peak resource requirement.",
+    "Rust's Linux affinity query must succeed; official documentation describes overcounting when that query is unavailable. The ordinary hosted runner is expected to permit it, but this command has not yet been executed there.",
+    "No compiler settings, sources or output-selection changes are introduced; artifact byte identity is not claimed as newly measured by this preparation.",
+    "Historical local 1486-test evidence remains tied to its reviewed contract source and phase; it does not turn a failed hosted check green or authorize on-chain activation."
+  ],
+  "publicationScope": "Sanitized source references and hashes only. Historical raw runner archives and corrected local receipt remain outside Git. No new Markdown or frozen-report edits."
+}

@@ -13,7 +13,7 @@ process.env.MOD_KEY = 'test-mod-key';
 // a real DATABASE_URL arms the rate limiter (ratelimit.js:52) and the Solana leg drives one account
 // through a burst of gate probes — the limiter has its own suite (hardening/security), not this one
 process.env.RATE_LIMIT = 'off';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { foldTransfers, commitmentOf } from '../tools/snapshot.js';
 import { allocateCoin, allocateNft, mergeAllocations } from '../tools/allocate-drop.js';

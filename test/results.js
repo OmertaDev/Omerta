@@ -5,7 +5,7 @@
 // notifications (won/lost), and §10.4-NEUTRALITY — a result is a log + a notification, never a ledger row.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { PACING, BOXING } from '../src/rules.js';
 import { recordEventResult, resultsBoard } from '../src/events.js';
 import { sweepMainEvents } from '../src/boxing.js';

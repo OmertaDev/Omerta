@@ -9,7 +9,7 @@
 //   P4  the day/night clock — patrol hours convict harder (bustProbOf), the small hours favour a raid.
 // pg-mem, zero infra. §10.4 vocabulary stays closed (world:raid cash faucet + ammo sink).
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { LIVING, WORLD, WORLD_NPCS, worldNpcOf, worldRankOf, cityHourOf, cityForecast, regionShockOf, cityLawEventOf,
          cityEventOf, goodPriceOf, bustProbOf, priceBlock, dayOf, GOODS, DISTRICTS, hash01, MARKET_SEED, cartelUprisingOf,
          SHIPMENT } from '../src/rules.js';

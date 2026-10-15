@@ -148,6 +148,36 @@ export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
     "territory_economics_sources"
   ])
 });
+// Separate main-branch composition; all four historical profiles remain unchanged.
+export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
+  "predecessor": "5c18acaaf47c84851729b82354340c4d56734dd9",
+  "reviewedCandidate": "279dc5e93a246daf1e1c422de262e7f2a0a0b4d2",
+  "predecessorTree": "c85dedb8f78e6e8c919bf779b9b011b73c6b3f52773312b97143364520f2de0f",
+  "predecessorSchema": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
+  "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
+  "candidateTree": "66df6c4b0ffb3f88724b2e6682c2466d4fe9f73081ce5897022833db798cd8ce",
+  "candidateSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
+  "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
+  "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
+  "constraints": 132,
+  "notNull": 114,
+  "tables": Object.freeze([
+    "commercial_dispute_requests",
+    "commercial_disputes",
+    "company_restructuring_plans",
+    "company_restructuring_requests",
+    "equipment_insurance_claims",
+    "equipment_insurance_policies",
+    "equipment_insurance_requests",
+    "infrastructure_concession_requests",
+    "infrastructure_concessions",
+    "territory_economics_payments",
+    "territory_economics_profiles",
+    "territory_economics_requests",
+    "territory_economics_sources"
+  ])
+});
+
 export const FIFTH_BATCH_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "0c72a29748df6b1c6955ebcb648efe5f20fec6a1",
   "reviewedCandidate": "94ae0cf067939d05e18f997aef7ddd7b3fd18615",
@@ -363,7 +393,42 @@ export function qualifyFourthBatchAdditiveBootstrap(a, b, predecessor, candidate
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
 }
 
+export function qualifyCommercialMainAdditiveBootstrap(a, b, predecessor, candidate) {
+  const pin = COMMERCIAL_MAIN_ADDITIVE_PAIR;
+  assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
+  assert(/^[a-f0-9]{40}$/.test(candidate.source), 'Additive candidate source identity is invalid');
+  for (const [identity, tree, schema, catalog] of [
+    [predecessor, pin.predecessorTree, pin.predecessorSchema, pin.predecessorCatalog],
+    [candidate, pin.candidateTree, pin.candidateSchema, pin.candidateCatalog],
+  ]) {
+    assert.equal(identity.fourthBatchAdditiveSource?.tree, tree, 'Unrelated source changed outside the three owned qualification files and closed derivative outputs');
+    assert.equal(identity.fourthBatchAdditiveSource?.schema, schema, 'Additive schema definitions differ from reviewed source');
+    assert.equal(identity.fourthBatchAdditiveSource?.catalog, catalog, 'Frozen inverse/source catalog differs from reviewed evidence');
+  }
+  assert.equal(sha256(canonicalJson(candidate.fourthBatchAdditiveSource.catalogTables)), pin.candidateTableCatalog,
+    'Thirteen-table definition/NN catalog evidence differs from reviewed source');
+  for (const name of pin.tables) {
+    const evidence = candidate.fourthBatchAdditiveSource.catalogTables[name];
+    assert(evidence?.constraints?.length && Array.isArray(evidence.notNullColumns) && evidence.notNullColumns.length,
+      `Missing frozen definition/NN catalog evidence: ${name}`);
+  }
+  assert.equal(Object.values(candidate.fourthBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.constraints.length, 0), pin.constraints, 'Exact 132 native constraints required');
+  assert.equal(Object.values(candidate.fourthBatchAdditiveSource.catalogTables).reduce((n, row) => n + row.notNullColumns.length, 0), pin.notNull, 'Exact 114 NOT NULL bindings required');
+  for (const name of pin.tables) assert(Array.isArray(b.tables[name]), `New table snapshot type invalid: ${name}`);
+  const delta = sourcePairStateDifference(a, b);
+  assert.deepEqual(delta.added, pin.tables, 'Missing expected or unlisted additive tables');
+  assert.deepEqual(delta.removed, [], 'Predecessor table removed');
+  assert.deepEqual(delta.changed, [], 'Pre-existing row/table changed');
+  assert(delta.sequenceStateEqual, 'Sequence state changed');
+  for (const name of pin.tables) assert.deepEqual(b.tables[name], [], `New table is not empty: ${name}`);
+  return { relation: 'REVIEWED_COMMERCIAL_MAIN_THIRTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP', reviewedCandidate: pin.reviewedCandidate,
+    addedEmptyTables: [...pin.tables], predecessorRowsExact: true, allSequencesExact: true,
+    beforeNormalizedSha256: sha256(canonicalJson(a)), afterNormalizedSha256: sha256(canonicalJson(b)),
+    excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
+}
 
+// Only source-declared bootstrap differences are normalized. In particular a
+// populated resident turn remains authority state and must compare exactly.
 export function qualifyFifthBatchAdditiveBootstrap(a, b, predecessor, candidate) {
   const pin = FIFTH_BATCH_ADDITIVE_PAIR;
   assert.equal(predecessor.source, pin.predecessor, 'Additive predecessor is not the reviewed source');
@@ -398,8 +463,6 @@ export function qualifyFifthBatchAdditiveBootstrap(a, b, predecessor, candidate)
     excludedClaim: 'No new-authority or native-schema validity is established by empty tables' };
 }
 
-// Only source-declared bootstrap differences are normalized. In particular a
-// populated resident turn remains authority state and must compare exactly.
 export function normalizeSourcePairBootstrap(snapshot, { schema, appVersion, predecessorSchema, candidateSchema }) {
   assert([predecessorSchema, candidateSchema].includes(schema), 'Snapshot schema is not one of the pinned source pair');
   const statement = 'ALTER TABLE population_state ADD COLUMN IF NOT EXISTS behaviour_turn JSONB;';
@@ -732,6 +795,8 @@ export async function runSourcePair() {
       assert(['upgrade preserves acknowledged state', 'upgrade replay creates no new effect'].includes(label), 'Additive qualification is not allowed in this phase');
       const qualified = predecessor.source === FIFTH_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifyFifthBatchAdditiveBootstrap(a, b, predecessor, candidate)
+        : predecessor.source === COMMERCIAL_MAIN_ADDITIVE_PAIR.predecessor
+        ? qualifyCommercialMainAdditiveBootstrap(a, b, predecessor, candidate)
         : predecessor.source === FOURTH_BATCH_ADDITIVE_PAIR.predecessor
         ? qualifyFourthBatchAdditiveBootstrap(a, b, predecessor, candidate)
         : predecessor.source === THIRD_BATCH_ADDITIVE_PAIR.predecessor

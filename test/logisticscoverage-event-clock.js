@@ -5,7 +5,7 @@ if(postgres){const u=new URL(process.env.LOGISTICS_COVERAGE_TEST_DATABASE_URL||'
   process.env.DATABASE_URL=u.href;process.env.MARKET_SEED='logistics-event-clock-fixture-1947';
 }else delete process.env.DATABASE_URL;
 process.env.RATE_LIMIT='off';process.env.JWT_SECRET='logistics-clock-fixture-secret-1947';process.env.SOCIAL_VERIFY_MODE='off';process.env.MOD_KEY='logistics-clock-local';process.env.DEPOT_PILOT='on';
-const {buildServer}=await import('../src/server.js');
+const {buildServer}=await import('./server-fixture.js');
 const {logisticsCoverageBenefit}=await import('../src/logisticscoverageterms.js');
 const app=await buildServer();let seq=0;
 async function call(method,url,p,payload){return app.inject({method,url,payload,headers:{...(p?{authorization:`Bearer ${p.token}`}:{ }),'idempotency-key':`clock-${++seq}`}});}

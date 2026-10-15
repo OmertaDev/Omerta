@@ -4,7 +4,7 @@ import crypto from 'node:crypto';
 import Fastify from 'fastify';
 import { buildOpenApi, COORDINATION_SCHEMAS } from '../src/agentgateway.js';
 import { register } from '../src/routes/coordination.js';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 const routeTable = [
   ['GET', '/v1/coordination'],

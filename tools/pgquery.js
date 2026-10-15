@@ -186,7 +186,16 @@ if (failures.length) {
 // with every value bound. test/gates.js audits these fragments; the native --lots lane exercises
 // their filtering, precise FIFO, complete-root revalidation and canonical locks. These two sites
 // remain counted as unpreparable here; this records their reviewed growth, not further headroom.
-const CEILING = { interpolated: 168, unreadable: 40 };
+// 168 -> 172 / 40 -> 41 (2026-10-14 release integration): the measured upstream
+// set was 164/40. Eight new bounded reads add numbered-placeholder lists in crew
+// (1), diplomacy (2), dynasty (2), and closed timestamp/cursor expressions in
+// gateway events (3). Values remain bound; test/gates.js classifies their exact
+// expressions and the native gateway suite exercises PostgreSQL timestamp replay.
+// The ninth site is db-rls.js's exported, constant DO block: its catalog-derived
+// identifiers use PostgreSQL format('%I'), and native role-isolation tests verify
+// enforcement. Static lock variants were kept literal instead of consuming room.
+// This ceiling matches the measured set, adding no spare unchecked-query budget.
+const CEILING = { interpolated: 172, unreadable: 41 };
 const overflow = [];
 if (interpolated.length > CEILING.interpolated)
   overflow.push(`interpolated queries grew to ${interpolated.length} (ceiling ${CEILING.interpolated}) — these are UNCHECKED by this guard`);

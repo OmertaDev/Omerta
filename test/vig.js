@@ -13,7 +13,7 @@ process.env.CHAIN_ID = '46630';
 process.env.MOD_KEY = 'test-mod-key';
 process.env.ALLOW_MOD_REAL_REVENUE = 'on'; // QA: let the mod route drive the real-revenue flywheel (D-MED2 gate)
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 
 const app = await buildServer();

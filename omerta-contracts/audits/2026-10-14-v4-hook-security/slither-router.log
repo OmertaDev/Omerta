@@ -1,0 +1,55 @@
+
+Detector: arbitrary-send-erc20
+OmertaSwapRouterV2.unlockCallback(bytes) (src/market-v2/OmertaSwapRouterV2.sol#87-121) uses arbitrary from in transferFrom: IERC20(address(omr)).safeTransferFrom(request.payer,address(manager),amount_scope_0) (src/market-v2/OmertaSwapRouterV2.sol#113)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#arbitrary-from-in-transferfrom
+
+Detector: reentrancy-balance
+Reentrancy in OmertaSwapRouterV2.unlockCallback(bytes) (src/market-v2/OmertaSwapRouterV2.sol#87-121):
+	External call allowing reentrancy:
+	- omr.balanceOf(address(manager)) - balanceBefore != amount_scope_0 || manager.settle() != amount_scope_0 (src/market-v2/OmertaSwapRouterV2.sol#114)
+	Balance read before the call:
+	- balanceBefore = omr.balanceOf(address(manager)) (src/market-v2/OmertaSwapRouterV2.sol#112)
+	Possible stale balance used after the call in a condition:
+	- omr.balanceOf(address(manager)) - balanceBefore != amount_scope_0 || manager.settle() != amount_scope_0 (src/market-v2/OmertaSwapRouterV2.sol#114)
+		- stale variable `balanceBefore`
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities
+
+Detector: reentrancy-benign
+Reentrancy in OmertaSwapRouterV2.swap(PoolKey,SwapParams,uint256,uint256,uint64) (src/market-v2/OmertaSwapRouterV2.sol#54-85):
+	External calls:
+	- omr.registerWallet(msg.sender) (src/market-v2/OmertaSwapRouterV2.sol#70)
+	State variables written after the call(s):
+	- _activePayloadHash = keccak256(bytes)(payload) (src/market-v2/OmertaSwapRouterV2.sol#73)
+	- _callbackPending = true (src/market-v2/OmertaSwapRouterV2.sol#74)
+Reentrancy in OmertaSwapRouterV2.swap(PoolKey,SwapParams,uint256,uint256,uint64) (src/market-v2/OmertaSwapRouterV2.sol#54-85):
+	External calls:
+	- omr.registerWallet(msg.sender) (src/market-v2/OmertaSwapRouterV2.sol#70)
+	- result = manager.unlock(payload) (src/market-v2/OmertaSwapRouterV2.sol#75)
+	State variables written after the call(s):
+	- _activePayloadHash = bytes32(0) (src/market-v2/OmertaSwapRouterV2.sol#80)
+	- _nativeSpent = 0 (src/market-v2/OmertaSwapRouterV2.sol#79)
+Reentrancy in OmertaSwapRouterV2.unlockCallback(bytes) (src/market-v2/OmertaSwapRouterV2.sol#87-121):
+	External calls:
+	- delta = manager.swap(request.key,request.params,) (src/market-v2/OmertaSwapRouterV2.sol#93)
+	State variables written after the call(s):
+	- _nativeSpent = amount (src/market-v2/OmertaSwapRouterV2.sol#105)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
+
+Detector: timestamp
+OmertaSwapRouterV2.swap(PoolKey,SwapParams,uint256,uint256,uint64) (src/market-v2/OmertaSwapRouterV2.sol#54-85) uses timestamp for comparisons
+	Dangerous comparisons:
+	- block.timestamp > deadline (src/market-v2/OmertaSwapRouterV2.sol#60)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: cyclomatic-complexity
+OmertaSwapRouterV2.unlockCallback(bytes) (src/market-v2/OmertaSwapRouterV2.sol#87-121) has a high cyclomatic complexity (14).
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#cyclomatic-complexity
+
+Detector: low-level-calls
+Low level call in OmertaSwapRouterV2.swap(PoolKey,SwapParams,uint256,uint256,uint64) (src/market-v2/OmertaSwapRouterV2.sol#54-85):
+	- (ok,None) = msg.sender.call{value: refund}() (src/market-v2/OmertaSwapRouterV2.sol#82)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src/market-v2/OmertaSwapRouterV2.sol analyzed (22 contracts with 102 detectors), 8 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/market-v2/OmertaSwapRouterV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running

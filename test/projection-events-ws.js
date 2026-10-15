@@ -1,7 +1,7 @@
 // Mounted gateway proof: existing sockets rederive membership after real HTTP writes,
 // and stale private subscriptions fail closed even when a writer bypasses HTTP.
 import assert from 'node:assert/strict';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { bus, withCharacter } from '../src/game.js';
 import { createCrew, inviteToCrew, acceptInvite, CREW_FIRST_CHARACTER_LOCKS } from '../src/crew.js';
 import { createGang, joinGang } from '../src/social.js';

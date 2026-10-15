@@ -237,7 +237,7 @@ async function nativeExercise() {
       JWT_SECRET: crypto.randomBytes(32).toString('hex'), MARKET_SEED: crypto.randomBytes(32).toString('hex'),
       MOD_KEY: crypto.randomBytes(32).toString('hex') });
     const [{ buildServer }, { M3 }, { runLedgerInvariants }, { directorConfiguration }] = await Promise.all([
-      import('../src/server.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../src/director/config.js')]);
+      import('./server-fixture.js'), import('../src/rules.js'), import('../src/invariants.js'), import('../src/director/config.js')]);
     assert.equal(directorConfiguration().mode, 'DIRECTOR_DISABLED', 'Validate the local Director mode before allocating the server pool');
     assert.equal(M3.JUMP_ENERGY, 25); assert.equal(M3.JUMP_AMMO, 5); assert.equal(M3.JUMP_MIN_HEALTH, 20); assert.equal(M3.JUMP_HOSP_MS, 180000);
     app = await buildServer();

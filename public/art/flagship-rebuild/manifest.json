@@ -1,0 +1,173 @@
+{
+  "assets": {
+    "intake": {
+      "src": "art/flagship-trust/captures/01-intake.jpg",
+      "width": 1920,
+      "height": 1080,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "welcome": {
+      "src": "art/flagship-trust/captures/02-welcome.jpg",
+      "width": 1920,
+      "height": 1080,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "job": {
+      "src": "art/flagship-trust/captures/03-first-job-result.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "loop": {
+      "src": "art/flagship-trust/captures/04-first-loop.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "heist-open": {
+      "src": "art/flagship-trust/captures/05-heist-open-seat.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "heist-ready": {
+      "src": "art/flagship-trust/captures/06-heist-ready.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "garage": {
+      "src": "art/flagship-trust/captures/07-garage.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "city-ui": {
+      "src": "art/flagship-trust/captures/08-city.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "kitchen": {
+      "src": "art/flagship-trust/captures/09-kitchen.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "crew": {
+      "src": "art/flagship-trust/captures/10-crew.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "consequence": {
+      "src": "art/flagship-trust/captures/11-heist-consequence.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "trade": {
+      "src": "art/flagship-trust/captures/12-trade-receipt.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "territory": {
+      "src": "art/flagship-trust/captures/13-territory.jpg",
+      "width": 1910,
+      "height": 1074,
+      "type": "image",
+      "provenance": "Actual isolated development UI; synthetic accounts; source 3280817300cdcff3301745b1fce0bac9fe290129"
+    },
+    "family-film": {
+      "src": "art/hype/interior-family.mp4",
+      "width": 960,
+      "height": 540,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)"
+    },
+    "hero-film": {
+      "src": "art/hype/hero-poster.mp4",
+      "width": 1470,
+      "height": 630,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.5/image-to-video"
+    },
+    "market-film": {
+      "src": "art/hype/interior-market.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.5/image-to-video"
+    },
+    "port-film": {
+      "src": "art/hype/interior-port.mp4",
+      "width": 960,
+      "height": 540,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)"
+    },
+    "speakeasy-film": {
+      "src": "art/hype/interior-speakeasy.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.5/image-to-video"
+    },
+    "funeral-film": {
+      "src": "art/hype/cine-funeral.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)"
+    },
+    "foundry-film": {
+      "src": "art/hype/district-foundry.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)"
+    },
+    "docks-film": {
+      "src": "art/hype/district-docks.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.5/image-to-video"
+    },
+    "counting-film": {
+      "src": "art/hype/crime-counting.mp4",
+      "width": 1280,
+      "height": 720,
+      "type": "video",
+      "duration": 5.041667,
+      "provenance": "Existing project-generated cinematic atmosphere, not recorded gameplay. Original source bytedance/seedance-2.5/image-to-video"
+    }
+  },
+  "brandLogo": "art/flagship-trust/logo.svg",
+  "audio": {
+    "src": "art/flagship-rebuild/audio/rebuild-mix.wav",
+    "scratch": true,
+    "label": "Connected local narration and recut existing noir score; selected Voice A remains pending"
+  }
+}

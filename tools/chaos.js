@@ -76,6 +76,8 @@ for (const ev of ['uncaughtException', 'unhandledRejection']) process.on(ev, (er
 
 const { buildServer } = await import('../src/server.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
+// Synthetic adult identity for throwaway harness signups; the real age gate remains enabled.
+const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 let app = await buildServer();
 let pool = app.pool;
 await app.listen({ port: 0, host: '127.0.0.1' });
@@ -114,7 +116,7 @@ const guest = async (origin, name) => {
   await pool.query('INSERT INTO invite_codes (code, uses_left, created_by) VALUES ($1,1,$2)',
     [inviteCode, 'chaos-fixture']);
   const response = await fetch(origin + '/v1/auth/guest', { method: 'POST',
-    headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inviteCode }) });
+    headers: { 'content-type': 'application/json' }, body: JSON.stringify({ inviteCode, birthDate: SYNTHETIC_ADULT_BIRTH_DATE }) });
   const g = await response.json().catch(() => null);
   if (response.status !== 200 || typeof g?.token !== 'string' || !g.token) {
     const error = typeof g?.error === 'string' && /^[a-z0-9_:-]{1,80}$/.test(g.error) ? g.error : 'invalid_response';

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f",
+  "releasePhase": "Local production integration verification before any on-chain activation",
+  "files": [
+    {
+      "file": ".gitattributes",
+      "bytes": 74,
+      "sha256": "4255330cb00188101766f8072a4da171931436414b3565dcc40061e73e309006"
+    },
+    {
+      "file": "VERIFICATION.md",
+      "bytes": 5643,
+      "sha256": "ef2b5f6dbd79901f68dfdccd6b3b21ee82e4bcfc8df1e3cf3a68aaf14f6ff777"
+    },
+    {
+      "file": "commands-results.json",
+      "bytes": 12370,
+      "sha256": "78bc3374e9d383753262e4aa9e682230d8fe0a1aebb3487282741dba24c50464"
+    },
+    {
+      "file": "forge-build.log.gz",
+      "bytes": 25229,
+      "sha256": "08fb08af556b05d6a98359086f5addbad554ac1f1acd78033fcd9162ce2b9182"
+    },
+    {
+      "file": "forge-full-tests.log.gz",
+      "bytes": 69662,
+      "sha256": "ed3a79bf647c66bbf29cb36b5bdf5a4f7a7d8accc0d3a5c684c8af0fcc898dd9"
+    },
+    {
+      "file": "forge-size-gate.log.gz",
+      "bytes": 31696,
+      "sha256": "2ec07cf283fba61ad1fc3612d979915b096b80c38f2438557ae5642bb16eb45b"
+    },
+    {
+      "file": "source-manifest.json",
+      "bytes": 34318,
+      "sha256": "680e81f2b92103ad06daace7dd2ecd534efc477b05e24cf713428b6e513d09a6"
+    }
+  ],
+  "contentFingerprintAlgorithm": "SHA256 of ascending ordinal relative filename + NUL + file SHA256 + newline records; excludes this package-manifest.json to avoid self-reference.",
+  "contentFingerprintSha256": "58c8d2286407bc2a65384ce3fc1ce47a4dddc74eb0986b39dfa8049f09f7a3a6"
+}

@@ -1,0 +1,322 @@
+- text: + • • •
+- main:
+  - heading "OMERTÀ" [level=1]
+  - generic: the city breathes
+  - text: Nico Vale · gen 1 · lvl 25 ·
+  - button "docks ⇄"
+  - button "Open the $OMR finance dashboard":
+    - generic: $OMR
+    - generic: finance
+    - generic: "0"
+  - link "CODEX":
+    - /url: /wiki
+  - button "Jump to a screen":
+  - button "Open phone and messages":
+  - button "Toggle sound effects":
+  - button "Open help and glossary": "?"
+  - button "sign out"
+  - generic "Language — menus only": 🌐
+  - combobox "Language — menus only (the game text stays English) / Idioma — solo menús / 语言 — 仅菜单":
+    - option "English" [selected]
+    - option "Español (menus)"
+    - option "Português (menus)"
+    - option "Français (menus)"
+    - option "Deutsch (menus)"
+    - option "Русский (menus)"
+    - option "العربية (menus)"
+    - option "हिन्दी (menus)"
+    - option "Bahasa Indonesia (menus)"
+    - option "Tiếng Việt (menus)"
+    - option "Filipino (menus)"
+    - option "Türkçe (menus)"
+    - option "中文 (menus)"
+    - option "日本語 (menus)"
+    - option "한국어 (menus)"
+  - region "YOUR TURN · CITY-RANKED MOVE":
+    - generic: YOUR TURN · CITY-RANKED MOVE
+    - generic: READY
+    - generic "Finish your First Week (0/4)"
+    - generic: The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.
+    - generic: Costs and risk are shown beside each operation.
+    - generic "Current resources":
+      - generic: 35 / 35 nerve
+      - generic: 100 / 100 energy
+      - generic: 0 heat
+      - generic: $129,877 cash
+    - button "OPEN START →"
+    - button "UP NEXT:"
+    - button "2 Money while you sleep"
+    - button "3 You've earned skill points"
+    - button "4 Get strapped"
+    - button "5 Learn the trade winds"
+    - generic: RECENT OPERATIONS · THIS SESSION
+    - log:
+      - article:
+        - generic: ✓
+        - generic: buy
+        - time: 12:01 AM
+        - generic: bought 1 × Green Coffee Sacks at $119 a unit — $123 out of pocket
+        - generic: cash −$123
+  - heading "The Sheet" [level=2]
+  - generic: $129,877
+  - generic: bank
+  - generic: $0
+  - generic: $OMR
+  - generic: 0 liquid · 0 staked
+  - generic: respect
+  - generic: LVL 25 5,760
+  - generic: 490 to lvl 26
+  - 'generic "Energy is the PHYSICAL work: the gym, boosting cars, heist crews, cartel raids, convoy ambushes, shakedowns, races. Crime doesn''t touch it. Tap for how to refill it."':
+    - generic: energy (gym · garage · crews) ⓘ
+    - generic: 100/100
+  - generic "Nerve is what crime costs — the clock on the street loop. Tap for how to refill it.":
+    - generic: nerve (crime) ⓘ
+    - generic: 35/35
+  - generic "Tap for how to heal up.":
+    - generic: health ⓘ
+    - generic: 100/100
+  - generic "Tap for how to cool off.":
+    - generic: heat ⓘ
+    - generic: "0"
+  - generic: muscle / cunning / speed
+  - generic: 180 / 160 / 190
+  - generic: base build (rolled at birth · total 530)
+  - generic: 180 / 160 / 190
+  - generic: gun
+  - generic: —
+  - generic: ammo / crates
+  - generic: 25 / 0
+  - generic: cars
+  - generic: "1"
+  - button "heal" [disabled]
+  - button "check in"
+  - button "refresh"
+  - generic: check in — day 1 pays $8,750, and tomorrow it's $11,250
+  - text: CLAIM YOUR ACCOUNT
+  - generic: you're a ghost — this street exists only in this browser. Tie it to X and keep everything.
+  - generic: One-click X claim isn't switched on for this server yet — keep playing, nothing is lost.
+  - 'generic "developers only: paste a raw provider token"'
+  - option "X" [selected]
+  - option "Privy"
+  - heading "Last Word" [level=2]
+  - generic: "POST /v1/goods/buy { \"character\": { \"id\": \"e4e08eae-8707-442d-a9d7-45138eba1001\", \"name\": \"Nico Vale\", \"generation\": 1, \"level\": 25, \"respect\": 5760, \"energy\": 100, \"nerve\": 35, \"health\": 100, \"cash\": 129877, \"bank\": 0, \"omr\": 0, \"staked\": 0, \"rewards\": 0, \"unbonding\": 0, \"made\": false, \"madeSeconds\": 0, \"unbondSeconds\": 0, \"bankInTransit\": 0, \"bankClearSeconds\": 0, \"safehouseCost\": 25000, \"stats\": { \"muscle\": 180, \"cunning\": 160, \"speed\": 190 }, \"eff\": { \"muscle\": 180, \"cunning\": 160, \"speed\": 190 }, \"rerollCredits\": 0, \"statTotal\": 530, \"forged\": null, \"forgedName\": null, \"ammo\": 25, \"cb\": 0, \"heat\": 0, \"welsher\": false, \"wanted\": false, \"wantedSeconds\": 0, \"law\": { \"stage\": \"clean\", \"exposure\": 0, \"indicted\": false, \"retainerSeconds\": 0, \"witproSeconds\": 0, \"rat\": false }, \"hunt\": null, \"tradeRep\": 0, \"busts\": 0, \"gun\": null, \"vest\": null, \"guns\": [], \"jailSeconds\": 0, \"hospSeconds\": 0, \"shootCdSeconds\": 0, \"gtaSeconds\": 0, \"safeSeconds\": 0, \"safeCapSeconds\": 43200, \"bustAttemptsLeft\": 5, \"bustRefillSeconds\": 0, \"guardPrice\": null, \"fadeLimit\": null, \"pokerLimit\": null, \"duelElo\": 1000, \"duelLimit\": null, \"vendettas\": [], \"guardedBy\": null, \"guardSeconds\": 0, \"loc\": \"docks\", \"path\": \"wheel\", \"title\": null, \"bio\": null, \"streak\": 0, \"healCost\": null, \"checkin\": { \"done\": false, \"streak\": 1, \"pay\": 8750, \"next\": 11250 }, \"maxEnergy\": 100, \"maxNerve\": 35, \"ladder\": { \"rung\": 0, \"of\": 4, \"name\": null, \"staked\": 0, \"effective\": 0, \"madeRungs\": 1, \"lock\": null, \"lockTiers\": [ { \"id\": \"week\", \"days\": 7, \"mult\": 1.25, \"name\": \"The Handshake\" }, { \"id\": \"month\", \"days\": 30, \"mult\": 1.5, \"name\": \"The Word\" }, { \"id\": \"quarter\", \"days\": 90, \"mult\": 2, \"name\": \"The Oath\" } ], \"fx\": null, \"next\": { \"name\": \"Earner\", \"min\": 60, \"need\": 60 } }, \"disciplines\": { \"stamina\": 1, \"composure\": 1, \"conditioning\": 1, \"marksmanship\": 1, \"presence\": 1, \"handling\": 1, \"poise\": 1, \"vigilance\": 1 }, \"crewBonusPct\": 0, \"cargoCap\": 10, \"skills\": [], \"honor\": { \"value\": 0, \"tier\": \"Unproven\", \"peak\": 0, \"peakTier\": \"Unproven\", \"low\": 0, \"lowTier\": \"Unproven\" }, \"skillPoints\": { \"total\": 6, \"spent\": 0, \"available\": 6 }, \"rackets\": [], \"assets\": [], \"businesses\": [], \"speakeasy\": null, \"fighters\": [], \"cargo\": { \"coffee\": 1 }, \"items\": {}, \"gear\": [], \"racketLevels\": {}, \"racketIncomePerHr\": {}, \"tycoon\": { \"earned\": 0, \"rank\": \"Hustler\" }, \"empireTitles\": [], \"ops\": { \"used\": 0, \"slots\": 8, \"free\": 8, \"nextAt\": 28, \"max\": 12, \"incomeAssets\": [], \"meteredCat\": \"Legit Fronts\" }, \"launderer\": { \"washed\": 0, \"rank\": \"Bagman\" }, \"frontTitles\": [], \"statesman\": { \"statecraft\": 0, \"rank\": \"Ward Heeler\" }, \"cars\": [ { \"id\": \"e92c6ee3-c6fb-4361-a0f6-2bc725119af5\", \"model\": \"junker\", \"trim\": \"stock\", \"dmg\": 12, \"plate\": null, \"listed\": false, \"pledged\": false, \"tune\": 0, \"raceLimit\": null, \"value\": 792, \"rarity\": \"common\", \"run\": null, \"runName\": null, \"serial\": null, \"runCap\": null } ], \"shipment\": 0, \"bespoke\": [], \"nftCars\": [], \"gang\": null, \"lab\": null, \"crew\": 0, \"labModules\": { \"purity\": 0, \"yield\": 0, \"stealth\": 0 }, \"labModuleNext\": { \"purity\": { \"cash\": 60000, \"omr\": 0 }, \"yield\": { \"cash\": 60000, \"omr\": 0 }, \"stealth\": { \"cash\": 60000, \"omr\": 0 } }, \"kingpin\": { \"moved\": 0, \"rank\": \"Nobody\" }, \"crewWageOwed\": 0, \"crewWagePerHr\": 0, \"crewCold\": false, \"crewWagePerHead\": 1200, \"crewMax\": 5, \"crewCostStep\": 50000, \"crewNextCost\": 50000, \"crewColdSeconds\": null, \"makings\": {}, \"stash\": [], \"batch\": null, \"tradeRank\": 0, \"trades\": [ { \"id\": \"larceny\", \"name\": \"Larceny\", \"xp\": 3, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 20, \"perkWhat\": \"jail stints on a busted job\", \"perkNextAt\": 10 }, { \"id\": \"wetwork\", \"name\": \"Wet Work\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"your search clock on a mark\", \"perkNextAt\": 10 }, { \"id\": \"chemistry\", \"name\": \"The Cook\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"cook time on a batch\", \"perkNextAt\": 10 }, { \"id\": \"wheels\", \"name\": \"Wheels\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"tuning prices at the garage\", \"perkNextAt\": 10 }, { \"id\": \"seamanship\", \"name\": \"Seamanship\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"hull & engine work at the boatyard\", \"perkNextAt\": 10 }, { \"id\": \"gambling\", \"name\": \"The Gambler\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"your PvE table limit at the den\", \"perkNextAt\": 10 }, { \"id\": \"muscle\", \"name\": \"Protection\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"jump & shakedown muscle\", \"perkNextAt\": 10 }, { \"id\": \"commerce\", \"name\": \"Commerce\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"Black Market listing fees\", \"perkNextAt\": 10 }, { \"id\": \"scores\", \"name\": \"Big Scores\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"the Score lines up sooner\", \"perkNextAt\": 10 }, { \"id\": \"fists\", \"name\": \"Fisticuffs\", \"xp\": 0, \"lvl\": 1, \"rank\": \"Green\", \"nextAt\": 15, \"pct\": 0, \"perkWhat\": \"your fighters heal faster\", \"perkNextAt\": 10 } ], \"heistSeconds\": 28520, \"trainSeconds\": 0, \"missionSeconds\": 0, \"prestige\": 0, \"recruits\": 0, \"estate\": null, \"wallet\": null, \"minted\": false, \"respawnTokens\": 0, \"mintCredits\": 0, \"hitmanRep\": 0, \"kills\": 0, \"seasonKills\": 0, \"hitmanTitle\": \"Associate\", \"onboard\": {}, \"coach\": { \"label\": \"Finish your First Week (0/4)\", \"hint\": \"The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.\", \"tab\": \"start\" }, \"coachPlan\": [ { \"label\": \"Finish your First Week (0/4)\", \"hint\": \"The checklist pays cash to teach you the ropes — claim what's ready over on Start Here.\", \"tab\": \"start\" }, { \"label\": \"Money while you sleep\", \"hint\": \"Buy a racket in The Empire — cheap passive income that pays while you're offline. Kitchens and fronts come later.\", \"tab\": \"empire\" }, { \"label\": \"You've earned skill points\", \"hint\": \"You have 6 unspent points. The Life ▸ Skills: press LEARN on a tier-1 skill — Bruiser (hit harder), Fast Talker (lay low cheaper), Pack Mule (bigger trunk). Tier-1s cost 1 point.\", \"tab\": \"life\" }, { \"label\": \"Get strapped\", \"hint\": \"The Garage ▸ Armory: buy a pistol and CARRY it. A gun backs every fight in this city — jumps, hits, standing over rivals.\", \"tab\": \"garage\" }, { \"label\": \"Learn the trade winds\", \"hint\": \"Streets ▸ Trade Goods: buy something cheap where you stand, haul it where it's rich (The City ▸ Trade Winds shows the spread), sell high. This is the on-ramp to convoys and the Black Market.\", \"tab\": \"streets\" } ], \"netWorth\": 129877, \"cityEvent\": \"raceday\", \"city\": { \"event\": \"raceday\", \"name\": \"RACE DAY\", \"lawEvent\": \"drought\", \"hour\": 4, \"phase\": \"night\", \"patrol\": false } }, \"ok\": true, \"good\": \"coffee\", \"unit\": 119, \"qty\": 1, \"spent\": 123 }"
+  - navigation "City districts":
+    - button "Start Here"
+    - button "Streets" [pressed]
+    - button "Earners"
+    - button "Vice"
+    - button "Blood"
+    - button "Family"
+    - button "Legit"
+    - button "Desk"
+    - button "The Console"
+  - tablist "Operations":
+    - tab "Streets" [selected]
+    - tab "The Garage"
+    - tab "The Life"
+    - tab "The City"
+  - generic: Streets
+  - text: ▸
+  - tabpanel "Streets":
+    - generic: The Bank
+    - generic: Bank amount
+    - textbox "Bank amount":
+      - /placeholder: amount
+    - button "deposit"
+    - button "withdraw"
+    - generic: DEPOSIT leaves your pocket, then rides in lootable transit before clearing. WITHDRAW returns cash to your lootable pocket. Interest is capped daily.
+    - generic: The Map
+    - generic: you're in docks ·
+    - button "The Docks"
+    - button "The Neon Mile"
+    - button "Old Foundry"
+    - button "Brick Yards"
+    - button "Canal Row"
+    - button "Cathedral Hill"
+    - generic: 😈 tonight's hustle — three stops, real money
+    - text: Stop 1 of 3
+    - generic: ◉◉◉
+    - generic: Meet the contact — Ade the Ghost is waiting at Brick Yards. Travel there and check in.
+    - button "travel to Brick Yards"
+    - text: then check in there
+    - generic: 📋 word on the street — The Docks's board
+    - generic: Every district posts its own work each day. Take a job HERE, do the work anywhere it happens, collect HERE — $400 + 15 respect an envelope, 5 of 5 left today.
+    - text: melt one down
+    - button "take the job"
+    - text: move trade goods (buy or sell)
+    - button "take the job"
+    - text: 🗡 jump somebody — conflict pays, and you walk away with their number CONFLICT
+    - button "take the job"
+    - generic: only work done AFTER you take a job counts — travel to another district for a different board
+    - generic: The block's standing job — work this corner on 3 separate days and it pays $1,500 + 40 respect on the last one. 0/3 days
+    - generic: 🎓 the trades — every job schools you
+    - generic: Larceny · lvl 1 Green
+    - generic: "3 xp · next level at 15 · L10: jail stints on a busted job"
+    - generic: Commerce · lvl 1 Green
+    - generic: "0 xp · next level at 15 · L10: Black Market listing fees"
+    - text: Ten trades learn by doing — no cost, no clicking, just the work.
+    - button "the full board →"
+    - heading "Crimes — your best jobs at level 25" [level=2]:
+      - text: Crimes
+      - generic: — your best jobs at level 25
+    - text: Knock over the uptown cathouse's count
+    - generic: COST 12 nerve · PAY $2,600–$7,600 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Rob a bail bondsman's safe
+    - generic: COST 12 nerve · PAY $2,400–$7,000 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Hit an armored car
+    - generic: COST 12 nerve · PAY $2,200–$6,500 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Take the night deposit off a manager
+    - generic: COST 12 nerve · PAY $2,050–$6,000 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Intercept a precinct payoff
+    - generic: COST 11 nerve · PAY $1,950–$5,600 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Blackmail a crooked alderman
+    - generic: COST 11 nerve · PAY $1,800–$5,200 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Stuff the ward's ballot boxes
+    - generic: COST 11 nerve · PAY $1,700–$4,700 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - text: Switch the bagman's satchel
+    - generic: COST 10 nerve · PAY $1,600–$4,300 · RISK jail on a miss
+    - generic: QUIET 12% safer, 0 added heat, 20% shorter jail · STANDARD baseline odds and take · LOUD 22% larger win, +6 heat, 40% longer jail
+    - button "case it"
+    - button "do it"
+    - button "go loud"
+    - generic "▸ The Full Book every job in the city (43)":
+      - text: ▸
+      - heading "The Full Book" [level=2]
+      - generic: every job in the city (43)
+    - heading "Your Path" [level=2]
+    - text: The Wheel
+    - generic: Your convoys run 10% faster — but no patience for the burner (+15% cook time). Wheels & Seamanship come easy; The Cook & The Gambler fight you. Everything moves because you do.
+    - generic: "home trades ×1.5: Wheels, Seamanship · rival ×0.6: The Cook, The Gambler"
+    - generic "▸ Daily Work 3 contracts a day (all three pays a $OMR bonus) + the Daily Score":
+      - text: ▸
+      - heading "Daily Work" [level=2]
+      - generic: 3 contracts a day (all three pays a $OMR bonus) + the Daily Score
+    - generic "▸ The Gym & The Regimen raise your core stats + eight trainable disciplines · daily drills from the fixtures":
+      - text: ▸
+      - heading "The Gym & The Regimen" [level=2]
+      - generic: raise your core stats + eight trainable disciplines · daily drills from the fixtures
+    - generic "▸ Trade Goods — the Freight Game buy low, haul it, sell high (feeds the Black Market, convoys & the Port)":
+      - text: ▸
+      - heading "Trade Goods — the Freight Game" [level=2]
+      - generic: buy low, haul it, sell high (feeds the Black Market, convoys & the Port)
+    - text: THE FREIGHT GAME
+    - generic: "Every district posts its own prices, fresh each day. The whole racket in one line: buy where it's cheap, travel, sell where it's rich — the spread is your margin, your trunk is your ceiling. Today's best board: Swiss Movement Watches — neon $688 → cathedral $1,824 (+165%). Bulk players move the same freight by convoy (Big Scores) and by boat (the Port)."
+    - generic: 🚚 your trunk holds 10 weight of cargo. Your cars are for muscle & melt value — to haul more, buy a bigger set of Wheels (a truck / muscle car) in The Empire ▸ Assets.
+    - text: Bathtub Gin
+    - generic: "spot here: $145 · in trunk: 0"
+    - generic: "cheapest: cathedral $87 · richest: brick $167 · +92% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Green Coffee Sacks CHEAPEST HERE — buy
+    - generic: "spot here: $119 · in trunk: 1"
+    - generic: "cheapest: docks $119 · richest: cathedral $251 · +111% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell"
+    - text: Smuggled Cigars CHEAPEST HERE — buy
+    - generic: "spot here: $152 · in trunk: 0"
+    - generic: "cheapest: docks $152 · richest: brick $235 · +55% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Black-Market Nylons
+    - generic: "spot here: $332 · in trunk: 0"
+    - generic: "cheapest: foundry $240 · richest: brick $589 · +145% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Mountain Shine RICHEST HERE — sell
+    - generic: "spot here: $640 · in trunk: 0"
+    - generic: "cheapest: brick $385 · richest: docks $640 · +66% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Clinic Penicillin
+    - generic: "spot here: $918 · in trunk: 0"
+    - generic: "cheapest: cathedral $555 · richest: neon $1,019 · +84% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Counterfeit Silk
+    - generic: "spot here: $659 · in trunk: 0"
+    - generic: "cheapest: cathedral $602 · richest: neon $1,327 · +120% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Swiss Movement Watches
+    - generic: "spot here: $1,457 · in trunk: 0"
+    - generic: "cheapest: neon $688 · richest: cathedral $1,824 · +165% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Hot Ice
+    - generic: "spot here: $2,459 · in trunk: 0"
+    - generic: "cheapest: neon $1,396 · richest: brick $2,638 · +89% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - text: Bearer Bonds
+    - generic: "spot here: $2,961 · in trunk: 0"
+    - generic: "cheapest: neon $1,803 · richest: brick $3,662 · +103% spread"
+    - textbox "qty"
+    - button "buy"
+    - button "sell" [disabled]
+    - generic "▸ Your Second named muscle who rides along on jobs, takes 5% of the take… and can DIE for good":
+      - text: ▸
+      - heading "Your Second" [level=2]
+      - generic: named muscle who rides along on jobs, takes 5% of the take… and can DIE for good
+  - text: ▸ ▸
+  - heading "The Street ●" [level=2]:
+    - generic: The Street
+    - generic: ●
+  - generic: ● 3 in the city
+  - tablist "Street communications":
+    - tab "LIVE FEED" [selected]
+    - tab "CITY CHAT"
+  - generic "mute a category — the wire remembers":
+    - button "combat":
+      - text: combat
+    - button "law":
+      - text: law
+    - button "money":
+      - text: money
+    - button "family":
+      - text: family
+    - button "world":
+      - text: world
+  - tabpanel "LIVE FEED":
+    - generic: ● a The Payroll Office job got blown — somebody talked
+    - generic: — you are on the wire —
+- status:
+  - generic: ✓
+  - generic: bought 1 × Green Coffee Sacks at $119 a unit — $123 out of pocket
+- status

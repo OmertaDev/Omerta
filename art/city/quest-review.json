@@ -1,0 +1,146 @@
+{
+  "reviewedAt": "2026-10-09T04:54:41.552Z",
+  "phase": "local implementation, not deployed",
+  "sourceRevision": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": [
+    "M src/content/phase1-policy.js",
+    " M src/content/phase1.js",
+    " M test/worldgraph-validation.js",
+    "?? src/content/neighborhood-initiation.js",
+    "?? src/content/neighborhood-initiation.json",
+    "?? test/city-rpg.js"
+  ],
+  "files": {
+    "src/content/neighborhood-initiation.json": "b91af199e40c197f7df71bb28517b0b961641380abaaf12fba0086dcfa64b267",
+    "src/content/neighborhood-initiation.js": "0647a219cd993b8885cfda3e19507b219845ed153cbb93485cf15155650fde6b",
+    "src/content/phase1.js": "e61c16584688e35717ed33ea0c5049af22b021f75391262a313bcc425f5dbf12",
+    "src/content/phase1-policy.js": "e1e7b21e48bb7011cc1c900204e9db711e6f7ca4a7ee5fc9a1946fd1dffc39e8",
+    "test/city-rpg.js": "a0bf9ef1abafe7cb57774d109608f21443d4ee3a5e5be08fae529f77235434ce",
+    "test/worldgraph-validation.js": "cf1d6e57fc0c6f4fe95f28cebb38f5b0125dca788dc6a33208dd811bb97b21ca"
+  },
+  "dependencies": {
+    "src/mysteries.js": "c0b8e9794bfd48cd749187815c75bb4d5b75ba4b92ba0284e1210ce94add06c5",
+    "src/items.js": "ae46f8c806ce50031caa9b7ef4e690993480b7ad15ef3f0a654d6e149af23cc1",
+    "src/worldgraph.js": "c7d857551b9f29c742c02bada8282d41d1311b48fb4d52ab7170a5aded2f0979",
+    "src/worldgraph-validate.js": "50c10cfc3439d85d4ba129427dc044d853237f84e1b8f1b8f67c14f4a11084b5",
+    "src/content/phase1-validation.js": "58e6a620385d19a3f203c8a1e1900f3401d29f2e310e321b3a3da5dd168e23fb",
+    "src/db.js": "911be45b67fc8d679db1fb5229543f6b02193d33724730a5d30dbe4984ada61c"
+  },
+  "node": "v24.19.0",
+  "scope": "Original neighborhood-initiation definitions and registration, native mystery transactions, bounded exploration/action-descriptor review, and complete City GUI acceptance.",
+  "excluded": [
+    "PostgreSQL locking/contention proof",
+    "Full security audit of unrelated existing gameplay domains",
+    "Contracts, payments, deployment and economic rails"
+  ],
+  "contentHash": "b94eb4b9912385db091a31c6634a4d41c8d1218837cf0d51b0be546355374c4f",
+  "methodAdaptation": {
+    "source": "omerta-contracts/SECURITY-REVIEW-POLICY.md pinned method baseline",
+    "skillsInvoked": [],
+    "pashov": "Adapted access-control/execution-boundary pass: character owner isolation, exact interaction gates, irreversible choice, replay-key payload conflict.",
+    "plamen": "Adapted state/accounting pass: both narrative branches converge, unique reward count stays bounded across retries/restarts, cash/bank/respect/OMR/transaction ledger unchanged.",
+    "trailOfBits": "Adapted context/specification/invariant pass: immutable closed graph schema, hidden-node projection, fresh-context progress persistence, death/history/no-inheritance, native parser checks."
+  },
+  "checks": [
+    {
+      "command": "node test/city-rpg.js",
+      "exitCode": 0,
+      "database": "disposable pg-mem",
+      "paths": 2,
+      "output": "canonical validation, three NPC objectives, both irreversible paths, private leads/explicit exploration, replay conflicts, transaction rollback, exactly-once cosmetic rewards, economic neutrality, persistent progress, owner isolation, and death/no-inheritance pass"
+    },
+    {
+      "command": "node test/worldgraph-validation.js",
+      "exitCode": 0,
+      "output": "world graph static validation passed"
+    },
+    {
+      "command": "node tools/worldgraph-content.js",
+      "exitCode": 0,
+      "packages": 4,
+      "nodes": 30,
+      "recipes": 3,
+      "omrAuthorityPaths": 0,
+      "cashRewardSourcePaths": 0
+    },
+    {
+      "command": "node --check src/content/neighborhood-initiation.js",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check test/city-rpg.js",
+      "exitCode": 0
+    }
+  ],
+  "resolvedAuthoringIssues": [
+    {
+      "id": "QUEST-AUTHORING-01",
+      "issue": "The closed mystery runtime forbids discover effects targeting a choice.",
+      "remediation": "The approach choice is public and prerequisite-gated on the fixer introduction; undiscovered branches remain hidden.",
+      "retest": "Production graph validator and both native branching paths pass."
+    },
+    {
+      "id": "QUEST-CENSUS-01",
+      "issue": "Canonical package/module census initially expected three packages and21 nodes.",
+      "remediation": "Registered the reviewed fourth package and updated required census guards to four packages and30 nodes without relaxing economic restrictions.",
+      "retest": "worldgraph-validation passes."
+    }
+  ],
+  "findings": [],
+  "conclusion": "Definition/native-engine and final browser acceptance checks pass for the recorded file hashes. Explicit NPC interactions and exploration create persistent original quest progress; walking remains cosmetic. Each completed character receives one inert, nontradeable, nonexportable keepsake and status. PostgreSQL contention and deployment are not claimed.",
+  "retests": [
+    {
+      "at": "2026-10-09T04:30:47.633Z",
+      "command": "node test/city-rpg.js",
+      "exitCode": 0,
+      "previousMysteryRuntimeHash": "56a94430d18553d2235caa9b12d092b26add017d652435f248134392917c2326",
+      "mysteryRuntimeHash": "c0b8e9794bfd48cd749187815c75bb4d5b75ba4b92ba0284e1210ce94add06c5",
+      "scope": "Both quest paths, owner/replay/privacy boundaries, reward counts and death/history retested after the parent added dialogue projection and exploration."
+    },
+    {
+      "at": "2026-10-09T04:36:38.011Z",
+      "command": "node test/city-rpg.js; node test/worldgraph-validation.js; node tools/worldgraph-content.js",
+      "exitCode": 0,
+      "scope": "Final definition explicitly investigates the eligible hidden newsroom lead before completion. Both branch paths cover private lead IDs, owner isolation, exact replay, changed-action replay conflicts, duplicate-discovery refusal, keepsake bounds and economic neutrality."
+    }
+  ],
+  "codeReview": {
+    "scope": "Parent readyDiscoveries/exploreMystery and worldgraph-ui.js inspected read-only; dialogue precedence and escaped confirmation markup findings delivered to parent.",
+    "replayAndPrivacy": "Candidate selection uses the existing actor/instance locks and replay guard. Public discovery exposes eligibility without publishing undiscovered candidate IDs. No further concrete issue found.",
+    "explorationExecutableProof": "test/city-rpg.js exercises both exploration branches and replay/owner/private-ID boundaries; the final real-server city-scene-browser.js passes the complete NPC/Journal/inventory flow."
+  },
+  "browserAcceptance": {
+    "command": "node test/city-scene-browser.js",
+    "exitCode": 0,
+    "testSourceHash": "3b315e512cb97460ab835ac6db0f161f16bab38b8e4496c1c2ebc01b2658eac5",
+    "sourceHashes": {
+      "public/index.html": "f54ec4af3e9015553c6142b73d8a20d776384514d058e7fba20909245834790b",
+      "public/city-scene.js": "8ceaf463d3e8d29722b1b76b46e5bd46e82891f16490660839291fefd3bc4556",
+      "public/city-scene.css": "13c677500cefa032f0dc76f8cb6d0144e839acc1672281c74ab0dad66e308723",
+      "public/world-fieldwork.js": "1a08db4915d9101d1f4c81d9ee977c2b35bae215e635bf0717b1190c0eb11dd6",
+      "src/routes/worldgraph.js": "0b47b4228f88356cb7956c21ac4179d79cf8cf7808b78927d305c700b0d8cc2c",
+      "src/worldgraph-ui.js": "7291a2d736edb824b39afff2f9f6a194e6add73376dfe4dc5b57ed73f98d2261"
+    },
+    "coverage": [
+      "live HUD and real resource updates",
+      "all gameplay destinations",
+      "real crime and gym stat/energy action with idempotency receipt",
+      "return/reload scoped position",
+      "NPC dialogue, permanent choice, explicit newsroom exploration, completion and cosmetic inventory/journal",
+      "real touch hold/release/cancel and44px movement target",
+      "image/module/engine fallbacks",
+      "district/generation reset",
+      "no-character and revoked-session cleanup"
+    ],
+    "screenshotStyle": "Only captures hide out-of-target #top/#vitals/#bnav sticky chrome; functional checks use the unchanged real interface.",
+    "screenshots": {
+      "art/city/qa/city-desktop.png": "0fd6fbd54e55ff57f42bf062ff31634bf79166169c428595d9943c2131073852",
+      "art/city/qa/city-quest.png": "05f37b06b5ac79aa895fa9dfc5370426191ed00760e182248647fd3f9a4b41c5",
+      "art/city/qa/city-mobile.png": "920346e90234f421bbbff081a150dd8f469d18b86cab78781c55a2f534515c74"
+    },
+    "visualReview": "The Docks header, real resources/progress, original generated neighborhood, seven venues, bounded readable Ada dialogue/action card and narrow mobile controls are visible.",
+    "environment": {
+      "CITY_SCENE_SHOTS": "C:/Users/Jorge/Documents/Omerta/art/city/qa"
+    }
+  }
+}

@@ -184,22 +184,41 @@ export async function leaveCoalition(ch, coalitionId, client, h) {
 }
 
 // ── the public board ──
-export async function diplomacyBoard(client, h) {
+export async function diplomacyBoard(client, h, { limit } = {}) {
+  if (limit !== undefined && (!Number.isSafeInteger(limit) || limit < 1 || limit > 100)) throw new TypeError('Invalid diplomacy board limit');
+  const bounded = limit !== undefined;
   const gid = h.owned.gangId || null;
-  const names = Object.fromEntries((await client.query('SELECT id, name, tag FROM gangs')).rows.map((g) => [g.id, { name: g.name, tag: g.tag }]));
-  const rel = gid ? (await client.query(
-    'SELECT * FROM gang_relations WHERE gang_a=$1 OR gang_b=$1 ORDER BY created_at DESC', [gid])).rows : [];
+  let rel = gid ? (await client.query(
+    'SELECT * FROM gang_relations WHERE gang_a=$1 OR gang_b=$1 ORDER BY created_at DESC'
+      + (bounded ? ',gang_a,gang_b LIMIT $2' : ''), bounded ? [gid, limit + 1] : [gid])).rows : [];
   // two flat queries — pg-mem can't parse a correlated subquery (the /v1/gangs precedent)
-  const coalRows = (await client.query(
-    'SELECT * FROM coalitions WHERE expires_at > now() ORDER BY created_at DESC')).rows;
+  let coalRows = (await client.query(
+    'SELECT * FROM coalitions WHERE expires_at > now() ORDER BY created_at DESC'
+      + (bounded ? ',id LIMIT $1' : ''), bounded ? [limit + 1] : [])).rows;
+  // The bounded intelligence view does not request global dominance rankings.
+  // The ordinary game board retains that complete authoritative calculation.
+  const truncated = bounded ? { relations: rel.length > limit, coalitions: coalRows.length > limit, dominant: true } : null;
+  if (bounded) { rel = rel.slice(0, limit); coalRows = coalRows.slice(0, limit); }
+  const familyIds = [...new Set([...rel.flatMap((r) => [r.gang_a, r.gang_b]), ...coalRows.map((r) => r.target_gang)])];
+  const names = Object.fromEntries((bounded
+    ? familyIds.length ? (await client.query(`SELECT id,name,tag FROM gangs
+      WHERE id IN (${familyIds.map((_, index) => `$${index + 1}`).join(',')})`, familyIds)).rows : []
+    : (await client.query('SELECT id, name, tag FROM gangs')).rows).map((g) => [g.id, { name: g.name, tag: g.tag }]));
   const memberCounts = {};
-  for (const m of (await client.query('SELECT coalition_id FROM coalition_members')).rows)
+  const coalitionIds = coalRows.map((row) => row.id);
+  const coalitionSlots = coalitionIds.map((_, index) => `$${index + 1}`).join(',');
+  if (bounded) {
+    if (coalitionIds.length) for (const m of (await client.query(`SELECT coalition_id,COUNT(*) n FROM coalition_members
+      WHERE coalition_id IN (${coalitionSlots}) GROUP BY coalition_id`, coalitionIds)).rows) memberCounts[m.coalition_id] = Number(m.n);
+  } else for (const m of (await client.query('SELECT coalition_id FROM coalition_members')).rows)
     memberCounts[m.coalition_id] = (memberCounts[m.coalition_id] || 0) + 1;
   const coals = coalRows.map((c) => ({ ...c, members: memberCounts[c.id] || 0 }));
-  const myMemberships = gid ? new Set((await client.query(
-    'SELECT coalition_id FROM coalition_members WHERE gang_id=$1', [gid])).rows.map((r) => r.coalition_id)) : new Set();
+  const myMemberships = gid && (!bounded || coalitionIds.length) ? new Set((await client.query(
+    'SELECT coalition_id FROM coalition_members WHERE gang_id=$1'
+      + (bounded ? ` AND coalition_id IN (${coalitionIds.map((_, index) => `$${index + 2}`).join(',')})` : ''),
+    bounded ? [gid, ...coalitionIds] : [gid])).rows.map((r) => r.coalition_id)) : new Set();
   const dom = [];
-  for (const g of Object.keys(names)) { // small N (families) — the commission-seats read precedent
+  for (const g of bounded ? [] : Object.keys(names)) { // small N (families) — the commission-seats read precedent
     const d = await dominanceOf(client, g);
     if (d.dominant) dom.push({ gangId: g, ...names[g], districts: d.districts, standing: d.standing });
   }
@@ -221,6 +240,7 @@ export async function diplomacyBoard(client, h) {
       ? { seconds: Math.floor((new Date(my.oathbreaker_until) - Date.now()) / 1000) } : null,
     levers: { pactDays: DIPLOMACY.PACT_MS / 86400000, coalitionMin: DIPLOMACY.COALITION_MIN,
       warMult: DIPLOMACY.COALITION_WAR_MULT, seizeMult: DIPLOMACY.COALITION_SEIZE_MULT },
+    ...(bounded ? { truncated } : {}),
   };
 }
 

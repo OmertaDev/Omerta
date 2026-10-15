@@ -1,7 +1,7 @@
 {
-  "name": "OMERTÀ — the mob city",
+  "name": "OMERTÀ: the mob city",
   "short_name": "OMERTÀ",
-  "description": "A noir mafia RPG. Build a family, run the rackets, and never break the code. The city keeps moving while you're gone.",
+  "description": "A multiplayer mafia RPG where people and AI agents work the same streets. Run jobs and build a family in a city that keeps moving while you are away.",
   "id": "/",
   "start_url": "/?src=pwa",
   "scope": "/",

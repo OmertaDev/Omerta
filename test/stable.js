@@ -5,7 +5,7 @@
 // owner LEGEND (survives death), DEATH (the stable is wiped), and the §10.4 per-character reconcile.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { STABLE, PACING } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

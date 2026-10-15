@@ -7,7 +7,7 @@
 // currency, so SQL-seeding them here is legitimate (the hitman-rep/portfolio board precedent — the sim's
 // "never seed value" rule is about the ledger, and standing legends move no value).
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { memo } from '../src/memo.js';
 import { cityStanding, myStanding, STANDING_PILLARS } from '../src/standing.js';
 

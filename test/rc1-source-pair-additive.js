@@ -108,6 +108,49 @@ console.log('rc1-source-pair-additive FOURTH COMPLETE PASS: '+fourthNegatives+' 
 fourthNegative('sequence removed',(_a,b)=>{b.sequences=[];},/Sequence state changed/);
 assert.equal(fourthNegatives,826);
 console.log('rc1-source-pair-additive FOURTH FINAL PASS: '+fourthNegatives+' negatives; all three original profiles and every unknown/old row/sequence remain exact');
+
+// The current main branch has additional gateway/legal work. Its separate exact
+// source relation retains that work and the four historical qualification pins.
+const { COMMERCIAL_MAIN_ADDITIVE_PAIR: commercialMainPin, qualifyCommercialMainAdditiveBootstrap } = await import('../tools/rc1-source-pair.js');
+assert.equal(commercialMainPin.predecessor, '5c18acaaf47c84851729b82354340c4d56734dd9');
+assert.deepEqual(commercialMainPin.tables, fourthPin.tables);
+const commercialMainPredecessor = structuredClone(fourthPredecessor);
+const commercialMainCandidate = structuredClone(fourthCandidate);
+commercialMainPredecessor.source = commercialMainPin.predecessor;
+commercialMainCandidate.source = commercialMainPin.reviewedCandidate;
+for (const [identity, side] of [[commercialMainPredecessor, 'predecessor'], [commercialMainCandidate, 'candidate']])
+  for (const field of ['tree', 'schema', 'catalog'])
+    identity.fourthBatchAdditiveSource[field] = commercialMainPin[side + field[0].toUpperCase() + field.slice(1)];
+const commercialMainQualified = qualifyCommercialMainAdditiveBootstrap(fourthOld, fourthFresh, commercialMainPredecessor, commercialMainCandidate);
+assert.equal(commercialMainQualified.relation, 'REVIEWED_COMMERCIAL_MAIN_THIRTEEN_EMPTY_TABLE_ADDITIVE_BOOTSTRAP');
+let commercialMainNegatives = 0;
+const commercialMainNegative = mutate => {
+  const a = structuredClone(fourthOld), b = structuredClone(fourthFresh);
+  const p = structuredClone(commercialMainPredecessor), c = structuredClone(commercialMainCandidate);
+  mutate(a, b, p, c);
+  assert.throws(() => qualifyCommercialMainAdditiveBootstrap(a, b, p, c));
+  commercialMainNegatives++;
+};
+for (const table of commercialMainPin.tables) {
+  commercialMainNegative((_a, b) => { delete b.tables[table]; });
+  commercialMainNegative((_a, b) => { b.tables[table] = ['{"unreviewed":true}']; });
+  for (let i = 0; i < commercialMainCandidate.fourthBatchAdditiveSource.catalogTables[table].constraints.length; i++)
+    commercialMainNegative((_a, _b, _p, c) => { c.fourthBatchAdditiveSource.catalogTables[table].constraints[i].definition = 'CHECK (true)'; });
+  for (let i = 0; i < commercialMainCandidate.fourthBatchAdditiveSource.catalogTables[table].notNullColumns.length; i++)
+    commercialMainNegative((_a, _b, _p, c) => { c.fourthBatchAdditiveSource.catalogTables[table].notNullColumns.splice(i, 1); });
+}
+for (const field of ['tree', 'schema', 'catalog']) for (const side of ['predecessor', 'candidate'])
+  commercialMainNegative((_a, _b, p, c) => { (side === 'predecessor' ? p : c).fourthBatchAdditiveSource[field] = '0'.repeat(64); });
+commercialMainNegative((_a, b) => { b.tables.unreviewed_authority = []; });
+commercialMainNegative((_a, b) => { b.tables.accounts = ['{"replacement":true}']; });
+commercialMainNegative((_a, b) => { delete b.tables.unknown_existing_custody; });
+commercialMainNegative((_a, b) => { b.sequences[0].last_value = '11'; });
+commercialMainNegative((_a, _b, p) => { p.source = fourthPin.predecessor; });
+commercialMainNegative((_a, _b, _p, c) => { c.source = 'unknown'; });
+assert.throws(() => qualifyFourthBatchAdditiveBootstrap(fourthOld, fourthFresh, commercialMainPredecessor, commercialMainCandidate));
+assert.throws(() => qualifyCommercialMainAdditiveBootstrap(fourthOld, fourthFresh, fourthPredecessor, fourthCandidate));
+assert.deepEqual(qualifyFourthBatchAdditiveBootstrap(fourthOld, fourthFresh, fourthPredecessor, fourthCandidate), fourthQualified);
+console.log(`rc1-source-pair additive commercial/main: ${commercialMainNegatives} rejecting controls; four historical profiles unchanged`);
 const { SOURCE_PAIR_COMMAND_WINDOW: clockPolicy, sourcePairCommandWindow, waitForSourcePairCommandWindow, assertSourcePairCommandWindow } = await import('../tools/rc1-source-pair.js');
 assert.deepEqual(clockPolicy,{periodMs:600000,minimumCampaignMs:240000,schedulingHeadroomMs:30000,waitSliceMs:30000});
 assert.equal(sourcePairCommandWindow(330000).ready,true);

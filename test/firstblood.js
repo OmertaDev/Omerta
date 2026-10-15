@@ -9,7 +9,7 @@ process.env.SEASON_MOD = 'dead_quiet';   // TEST-ONLY — pin the armed seasonal
 process.env.SEASON_PHASE = 'long_game';  // TEST-ONLY — pin the season phase
 
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { spawnResident, retireResident } from '../src/population.js';
 import { AHA, levelOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';

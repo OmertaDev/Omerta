@@ -130,7 +130,7 @@ const spec = read('SPEC.md');
     for (const craftingPack of craftingPacks) {
       assert(prose.includes(craftingPack), `${name} must list the authored workshop ${craftingPack}`);
     }
-    assert(/personal/i.test(guide) && /district-gated|location-gated/i.test(guide),
+    assert(/personal/i.test(guide) && /district-gated|location-gated|stories require their named district/i.test(guide),
       `${name} must explain personal, district-gated authored stories`);
     assert(/value-neutral|gameplay-inert/i.test(guide),
       `${name} must state that the authored rewards are gameplay-inert`);
@@ -1050,7 +1050,12 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
       + 'which is exactly how the pre-mainnet gate went red for 19 hours with the suite not running '
       + 'at all. Keep the size table LAST.');
   // and the parse gate itself must stay free of it, or the split above buys nothing
-  assert(/run:\s*forge build\s*$/m.test(wf),
+  const parseBuildLines = new Set([
+    'run: forge build',
+    'run: forge build --threads 1',
+    `run: taskset --cpu-list "$(python3 -c 'import os; print(min(os.sched_getaffinity(0)))')" forge build --threads 1`,
+  ]);
+  assert(wf.split('\n').some((line) => parseBuildLines.has(line.trim())),
     ".github/workflows/forge.yml has no bare `forge build` step — the parse gate and the size gate "
     + 'must be separate steps, or a size regression skips the suite again.');
 }
@@ -1186,9 +1191,12 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   const R = await import('../src/rules.js');
   const wikiMd  = fs.readFileSync('docs/WIKI.md', 'utf8');
   const wikiWeb = fs.readFileSync('public/wiki.html', 'utf8');
+  const managerSource = fs.readFileSync('omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol', 'utf8');
+  const tradeFee = managerSource.match(/uint16 public constant TRADE_FEE_BPS = (\d+);/);
+  assert(tradeFee, 'Current market manager must expose its fixed trade fee');
 
   // slice each codex to its OWN risk section so a matching figure elsewhere can never satisfy us
-  const mdStart = wikiMd.indexOf('Risk Factors — the honest register');
+  const mdStart = wikiMd.indexOf('Risk Factors: losses, fees and launch limits');
   assert(mdStart > 0, 'docs/WIKI.md has lost its Risk Factors section');
   const mdEnd = wikiMd.indexOf('\n## ', mdStart);
   const mdRisk = wikiMd.slice(mdStart, mdEnd > 0 ? mdEnd : undefined);
@@ -1200,7 +1208,7 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     .replace(/<[^>]+>/g, '');  // markup-free, so a <b> split can never hide a phrase
 
   const phrases = [
-    ['the sell tax',        `${R.SELL_TAX.BPS / 100}% comes off the top`],
+    ['the market sell fee', `${Number(tradeFee[1]) / 100}% comes off the top`],
     ['the surcharge window',`younger than ${R.freshWindowMs() / 3600000} hours`],
     ['the surcharge rate',  `up to an extra ${R.earlySellTaxBps() / 100}% that fades to zero`],
     ['the exit toll',       `a flat ${R.withdrawTaxBps() / 100}% toll`],

@@ -17,7 +17,7 @@ process.env.MOD_KEY = 'test-mod-key';
 process.env.WITHDRAW_TAX_BPS = '0'; // legacy exact-amount assertions run toll-free; the EXIT TOLL block below re-arms it
 process.env.EARLY_SELL_TAX_BPS = '0'; // same for the early-exit surcharge (its own block below re-arms it)
 
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { chainConfig, VOUCHER_TYPES, markClaimed, bondChainConfig, BOND_QUOTE_TYPES } = await import('../src/chain.js');
 const { recordBond } = await import('../src/bonds.js');
 const { reconcileFees } = await import('../src/fees.js');

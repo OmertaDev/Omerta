@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-15T00:58:07.655Z",
+  "status": "prepared_focused_checks_pass_final_full_harness_pending",
+  "headAtPreparation": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "historicalSourceRevision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+  "phase": "Deterministic historical observer/reviewer controls only. Current C2 and financial/native/world/deployment qualification are not transferred.",
+  "reason": "Current rules.tail and generated onboarding/social copy differ from the whole-file historical guard pins. Existing historical positive fixtures must execute the same complete historical rule modules they attest.",
+  "helper": {
+    "file": "test/lib/rc1-historical-source-fixture.js",
+    "rawSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d",
+    "canonicalLfSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d"
+  },
+  "sourceInputs": [
+    {
+      "file": "src/rules.js",
+      "historical": {
+        "revision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+        "blob": "6d31ecfdee691f573d39061705cb1fcd893094a1",
+        "sha256": "57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae"
+      },
+      "release": {
+        "revision": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+        "blob": "6d31ecfdee691f573d39061705cb1fcd893094a1",
+        "sha256": "57c85fd727e1d21d51c19b71ee5860ff4d4f18e500dafd7eac4d6d73591254ae"
+      }
+    },
+    {
+      "file": "src/rules.tail.js",
+      "historical": {
+        "revision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+        "blob": "cff60311805f3f2059d706cbf702ee2acfaa7a09",
+        "sha256": "83b05a40c16eaa43d383fdf5c7ee1a7794e0b3b5c0be92fa20af19ced99699fb"
+      },
+      "release": {
+        "revision": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+        "blob": "33db41906771f1594b004e916cdbdb031bfaf170",
+        "sha256": "84eeb263dcfc13cc4ea13683a9460dc8429df126182562c5b6986654be6f9e05"
+      }
+    },
+    {
+      "file": "src/rules.generated.js",
+      "historical": {
+        "revision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+        "blob": "b8243f01d9bf9d044c66ee1162847cf4a093e7f8",
+        "sha256": "4b991a9f5a6eab6864cd570821a65802496865c7210945a39bc054ac8ea3932f"
+      },
+      "release": {
+        "revision": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+        "blob": "79e59ce682e6ada70082b4f522611e68550f0392",
+        "sha256": "e322ec08219d4637eced874e6a558432a9d138e4ece8145c8a4f18f2a4880a0b"
+      }
+    },
+    {
+      "file": "src/population.js",
+      "historical": {
+        "revision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+        "blob": "c4118c150f9df6a645ba473b955d04cf30b0103c",
+        "sha256": "7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb"
+      },
+      "release": {
+        "revision": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+        "blob": "c4118c150f9df6a645ba473b955d04cf30b0103c",
+        "sha256": "7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb"
+      }
+    }
+  ],
+  "isolation": {
+    "exactDirectEntryAllowlist": [
+      "test/rc1-npc-retirement-journal.js",
+      "test/rc1-car-melt-provenance.js",
+      "test/rc1-world-car-melt-witness.js",
+      "test/rc1-npc-car-acquisition.js",
+      "test/rc1-npc-boat-journal.js",
+      "test/rc1-npc-market-order-journal.js",
+      "test/rc1-npc-provenance-composition.js",
+      "test/rc1-lifecycle-applicability.js",
+      "test/rc1-checkpoint-recovery-review.js",
+      "test/rc1-world-backlog-review.js"
+    ],
+    "currentInputPin": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "applicationModuleAndGuardInputs": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+    "mechanism": "Fresh Node child preloads closed hooks before test imports, executes exact historical src/data module bytes, and supplies identical source bytes to sync/promises guards. Historical schema text is read-only input; no SQL is executed. Current on-disk inputs must match b12 complete Git blobs before substitution. Tools execute at their unchanged b12 bytes; frozen historical admission pins are not edited.",
+    "cleanup": "Entry wrapper restores module hooks, filesystem readers, pg constructors/methods and network methods in finally.",
+    "operations": "Actual pg Pool/Client construction, connect/query and network attempts throw; final counts must remain0/0. Named/default/CJS pg identities must match the guarded exports. No successful DB result is emulated.",
+    "refusal": "Native workload/retained/unknown targets and extra arguments reject. src/server.js and src/worker.js entry execution rejects."
+  },
+  "bodies": [
+    {
+      "file": "test/rc1-npc-retirement-journal.js",
+      "rawSha256": "e8254a244d31fb267102970d41b47c9e86c173f594c7216a7bb94efb178809e9",
+      "canonicalLfSha256": "6ac274436728b77ff7ef78a10b9df667f73d90876d91e8b1416156237f0f28de",
+      "positiveBodySha256": "e985f7f1747dc59435801ba3cb3a54882240b29b3cc6c856247af4983a90ed6f",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-car-melt-provenance.js",
+      "rawSha256": "2a78e226729095ba906a5fd9d55317c36fec4fac129d0ec42e735a8d365c23fb",
+      "canonicalLfSha256": "cb41c469349b57d5d8d38e70ae833baff09ee674f581e520f6121169cd7d7700",
+      "positiveBodySha256": "270409a857b92e1a2595ec6a5368493e93c985af526085c941021f2e37f7daef",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-world-car-melt-witness.js",
+      "rawSha256": "b697bb6344a93444533f051a69f7e120c5fd02f172e6550daed3ae880e0414ec",
+      "canonicalLfSha256": "077f54adc1b3fac930573fcd4fb6f606edd4e0013ab7771d3f83d417f7b43fb6",
+      "positiveBodySha256": "bff34ca7809bb9a3ef18c98cb9b28e6116670c1f8a6a2808c782026fba5306aa",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-npc-car-acquisition.js",
+      "rawSha256": "dbdd3492a96f4758adf1d682f61acf19aedfbe295c0d8ecee7aff01f305b21ca",
+      "canonicalLfSha256": "b1b57ef218cf586c0dbac3deb6b7c0f0fafd2a197d6b83fd05e90ee7c254ea3b",
+      "positiveBodySha256": "d5db02959082de7d51464619d50a73ca8c4e0610d67995c5914a98108df7ab4b",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-npc-boat-journal.js",
+      "rawSha256": "589994ac9963cb9eb59165a1ede640bc3c0d404dc833301c1f7e4c410209911d",
+      "canonicalLfSha256": "ce49ac31b27227ec1c66c410bea32fe166c3a2a923030230464f9fabd76d13cd",
+      "positiveBodySha256": "2e328dd00cb2eaf3d86b4425df52927418cfc45b517834243133ab2b041f72ff",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-npc-market-order-journal.js",
+      "rawSha256": "b9360e349f56753863c0a64ac066352b1e4c09b2888aa229fa1eaf01f446afe4",
+      "canonicalLfSha256": "c5d9af232dd5cb543f7cd6c2c87d187a5419c7a2654ad60464151f4b65f2091d",
+      "positiveBodySha256": "a25712146908d4d08356bbe7a73d7694a69aefc597fb697037aec4240ea053b7",
+      "positiveBodyUnchanged": true
+    },
+    {
+      "file": "test/rc1-npc-provenance-composition.js",
+      "rawSha256": "ecb92f65190863c89d4119d7098c4f91a453cbd33bf94694b133f47d90f4fcf9",
+      "canonicalLfSha256": "3941c2f306d9187059a65bb902317061d2a49ae1bedb7e22d255c92fcf530159",
+      "positiveBodySha256": "f92185a4ff8fa2c66c9d064874c600ac807ef7e4756f5ac08a20dc969764ac4b",
+      "positiveBodyUnchanged": true
+    }
+  ],
+  "controls": {
+    "perNpcEntry": "18 independent refusals: C2 LF/CRLF/tamper, each of two source files, three unchanged NPC source guards. The other file stays historical so neither refusal is masked.",
+    "negativeOperations": "Native target and retained-argument refusal controls; no source writes or Git shadowing."
+  },
+  "focusedResults": {
+    "initialSeries": {
+      "file": "output/release-2026-10-14/rc1-historical-npc-retests/records.json",
+      "scope": "Six passed; boat failed because the first guard incorrectly refused harmless pg import. Helper changed during preparation and per-test helper hashes were not captured in this initial series; these are diagnostic outcomes, not one frozen-helper full pass."
+    },
+    "finalBoat": {
+      "command": "node test/rc1-npc-boat-journal.js",
+      "exitCode": 0,
+      "helperSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d",
+      "log": {
+        "file": "rc1-npc-boat-historical-final.log",
+        "bytes": 495,
+        "sha256": "7be30caca7221a77bec45c7f0d74b60b56d4c52c78fb5a73ebf9e8d161ebd83a"
+      },
+      "existingCorruptionControls": 37,
+      "sourceRejectionControls": 18,
+      "databaseAttempts": 0,
+      "networkAttempts": 0
+    },
+    "finalFullHarness": {
+      "status": "pending",
+      "command": "npm run test:rc1:harness",
+      "owner": "Coordinated separate uninterrupted90-command run at frozen helper; its actual receipt will qualify completion."
+    }
+  },
+  "scopePreserved": [
+    "package.json and all17 protected C2 domains unchanged",
+    "No tools/runtime/compiler-profile/source-admission-pin changes",
+    "Previously passing current-input tests64 and69 unchanged",
+    "No current native/financial qualification from historical fixtures"
+  ]
+}

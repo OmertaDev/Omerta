@@ -1,0 +1,74 @@
+{
+  "schema": "omerta.harness-adult-fixture-compatibility.v1",
+  "sourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "fixture": "1990-01-01 synthetic adult birthDate, explicit at guest signup only",
+  "harnessSha256": {
+    "tools/pgcheck.js": "073d0f500fecbdd4c14573b5d28c55530bf4124a02140452585ed125a8079e09",
+    "tools/playthrough.js": "62340e0e8fe0413b7c5d43f98e563f2ec295a23642a43de86f3a77d290cfd2e4",
+    "tools/sim.js": "0cc6796ec3428d689e63d78cde4c974884294acbf7e70e2cceefb7953b04493b",
+    "tools/loadtest.js": "085ea4b9c7f72248abc6289cad41df435d9e47e718b1396441c6adb5b4a0f27e",
+    "tools/chaos.js": "d018238ec38d28e79490e557ca20dccbf92a154865cc94bc6dd882b78a3b4a18",
+    "tools/concurrency.js": "a8deeef599fc4d2c268d03bb2b47daac1c3c684eaecbe61cab3b7f6156e63a1d"
+  },
+  "protectedSource": "All17 source-envelope domains verified unchanged; production server import and age guard retained. No missing-age or underage negative calls rewritten.",
+  "syntaxExitCodes": {
+    "tools/pgcheck.js": 0,
+    "tools/playthrough.js": 0,
+    "tools/sim.js": 0,
+    "tools/loadtest.js": 0,
+    "tools/chaos.js": 0,
+    "tools/concurrency.js": 0
+  },
+  "runs": [
+    {
+      "command": "node tools/playthrough.js --days 1 --sessions 1 --session 1",
+      "exitCode": 1,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-before.log",
+          "bytes": 107,
+          "sha256": "90e673c00ea8c1e31e9ecc2d962a0d970f4ca1b86631d7d78bb8030cb12a94d5"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-before.exit",
+          "bytes": 3,
+          "sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+        }
+      }
+    },
+    {
+      "command": "node tools/playthrough.js --days 1 --sessions 1 --session 1",
+      "exitCode": 0,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-playthrough-retest.log",
+          "bytes": 4954,
+          "sha256": "63c8543cb32add66159c27f8a38fdea92d7f9b4b2c5a9124c65ec7d1c841e3b3"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-playthrough-retest.exit",
+          "bytes": 3,
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        }
+      }
+    },
+    {
+      "command": "node tools/sim.js",
+      "exitCode": 0,
+      "evidence": {
+        "log": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-sim-retest.log",
+          "bytes": 110117,
+          "sha256": "3176aeca15e64f3cc0a07622f5f1426b1e81a91e9e1391f161336bae994eb676"
+        },
+        "exit": {
+          "path": "docs/release/2026-10-14-all-changes/test-fixture-evidence/harness-age-sim-retest.exit",
+          "bytes": 3,
+          "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        }
+      }
+    }
+  ],
+  "environment": "Committed CI synthetic legal profile; pg-mem for executed playthrough and simulation.",
+  "limits": "pgcheck/loadtest/chaos/concurrency received syntax and signup-payload checks; their native PostgreSQL executions are not claimed by this receipt. No production data writes or native/deployment qualification asserted."
+}

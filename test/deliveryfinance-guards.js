@@ -4,6 +4,7 @@ import { spawnSync } from 'node:child_process';
 const root=fileURLToPath(new URL('..',import.meta.url));
 let source=fs.readFileSync(new URL('./deliveryfinance.js',import.meta.url),'utf8').replaceAll('\r\n','\n');
 function replaceOnce(before,after) { if(source.split(before).length!==2)throw Error('Guard fixture seam changed: '+before.slice(0,60));source=source.replace(before,after); }
+replaceOnce("await import('./server-fixture.js')","await import('../test/server-fixture.js')");
 source=source.replace("const Loans = await import('../src/loans.js');","const Loans = await import('../src/loans.js');\nconst Market = await import('../src/market.js');");
 const beforeTake="  await assert.rejects(single(supplier,(ch,client)=>Finance.assertDeliveryFinanceLoanTake(client,{...ch,invoicePermit:true},funded.loanId)),e=>e.code==='delivery_finance');";
 replaceOnce(beforeTake,`  const nakedTakeBefore=await snapshot(c);\n${beforeTake}\n  await assert.rejects(single(supplier,(ch,client,h)=>Loans.takeLoan(ch,funded.loanId,{invoicePermit:true,requestId:r.id},client,h)),e=>e.code==='delivery_finance');\n  assert.deepEqual(await snapshot(c),nakedTakeBefore,'Actual canonical solo take cannot spend bound loan escrow without opaque validated context');`);

@@ -2,7 +2,7 @@
 // HTTP reservation. The domain command journal remains authoritative and value-neutral.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'receipt regression uses only pg-mem');
 process.env.COORDINATION_ENGINE = 'on';

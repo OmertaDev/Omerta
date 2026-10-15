@@ -1,0 +1,44 @@
+
+Detector: divide-before-multiply
+OmertaPoolManagerV2._accrueTradeRevenue(PoolKey,SwapParams,BalanceDelta) (src/market-v2/core/OmertaPoolManagerV2.sol#519-539) performs a multiplication on the result of a division:
+	- fee = magnitude * TRADE_FEE_BPS / 10_000 (src/market-v2/core/OmertaPoolManagerV2.sol#525)
+	- developer = fee * 200 / TRADE_FEE_BPS (src/market-v2/core/OmertaPoolManagerV2.sol#528)
+OmertaPoolManagerV2._accrueTradeRevenue(PoolKey,SwapParams,BalanceDelta) (src/market-v2/core/OmertaPoolManagerV2.sol#519-539) performs a multiplication on the result of a division:
+	- fee = magnitude * TRADE_FEE_BPS / 10_000 (src/market-v2/core/OmertaPoolManagerV2.sol#525)
+	- rwa = fee * 100 / TRADE_FEE_BPS (src/market-v2/core/OmertaPoolManagerV2.sol#529)
+OmertaPoolManagerV2._accrueTradeRevenue(PoolKey,SwapParams,BalanceDelta) (src/market-v2/core/OmertaPoolManagerV2.sol#519-539) performs a multiplication on the result of a division:
+	- fee = magnitude * TRADE_FEE_BPS / 10_000 (src/market-v2/core/OmertaPoolManagerV2.sol#525)
+	- community = fee * 100 / TRADE_FEE_BPS (src/market-v2/core/OmertaPoolManagerV2.sol#530)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: missing-zero-check
+OmertaProtocolFeesV2.setProtocolFeeController(address).controller (src/market-v2/core/OmertaPoolManagerV2.sol#47) lacks a zero-check on :
+		- protocolFeeController = controller (src/market-v2/core/OmertaPoolManagerV2.sol#48)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Detector: dead-code
+OmertaPoolManagerV2._isUnlocked() (src/market-v2/core/OmertaPoolManagerV2.sol#480-482) is never used and should be removed
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dead-code
+
+Detector: low-level-calls
+Low level call in OmertaPoolManagerV2._checkPoolKey(PoolKey) (src/market-v2/core/OmertaPoolManagerV2.sol#575-589):
+	- (ok,data) = hook.staticcall(abi.encodeWithSignature(poolManager())) (src/market-v2/core/OmertaPoolManagerV2.sol#585)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src/market-v2/core/OmertaPoolManagerV2.sol analyzed (45 contracts with 102 detectors), 6 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/market-v2/core/OmertaPoolManagerV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2\core' running
+Compilation warnings/errors on src/market-v2/core/OmertaPoolManagerV2.sol:
+Warning: Transient storage as defined by EIP-1153 can break the composability of smart contracts: Since transient storage is cleared only at the end of the transaction and not at the end of the outermost call frame to the contract within a transaction, your contract may unintentionally misbehave when invoked multiple times in a complex transaction. To avoid this, be sure to clear all transient storage at the end of any call to your contract. The use of transient storage for reentrancy guards that are cleared at the end of the call is safe.
+
+  --> lib/v4-core/src/libraries/CurrencyDelta.sol:39:13:
+
+   |
+
+39 |             tstore(hashSlot, next)
+
+   |             ^^^^^^
+
+
+
+

@@ -12,7 +12,8 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: public.ecr.aws/docker/library/postgres:18
+        # Match the verified PostgreSQL 18.4 lane; the ECR mirror exhausted its data quota.
+        image: docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres

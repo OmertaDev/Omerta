@@ -1,0 +1,8 @@
+{
+  "currency": "USD",
+  "incrementalPaidSpend": 0,
+  "paidRequests": [],
+  "requestedMaximum": 100,
+  "approvalReceived": false,
+  "priorProjectAssetCosts": "Historical sunk costs excluded; reused media does not imply new expenditure."
+}

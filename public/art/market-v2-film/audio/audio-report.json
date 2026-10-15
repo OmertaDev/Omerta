@@ -1,0 +1,1816 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-25T02:48:30.651Z",
+  "source": "brand/market-v2-film/production-data.json",
+  "productionDataSha256": "0a3d75fbe88707d5adb62f61a7c696ec052494baf81f77b428bee54617fabe86",
+  "scriptSha256": "a1df15b769c39a2fefa594706b3a3730dc15c693906653f985682b69fc40a45a",
+  "sourcePolicy": "Fresh Market V2 narration plus a new deterministic mechanical noir score, with no prior campaign media or borrowed samples.",
+  "targets": {
+    "sampleRate": 48000,
+    "channels": 2,
+    "masterCodec": "pcm_s24le",
+    "integratedLufs": -14,
+    "maximumTruePeakDbtp": -1,
+    "workingTruePeakDbtp": -1.3,
+    "maximumTempo": 1.12,
+    "speechIsNeverHardTrimmedToFit": true
+  },
+  "film": {
+    "id": "04",
+    "title": "MARKET V2 — THE CITY’S RESERVES",
+    "duration": 173,
+    "status": "mixed-verified",
+    "lines": [
+      {
+        "id": "M04-L01",
+        "text": "The market has defenses. Every one can run out.",
+        "start": 0,
+        "end": 5,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L01.mp3",
+            "version": 0,
+            "sha256": "b785c11d0bd3593d8a1eb80b758cc78255306b87e568650667eb5088326ff34f"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L01.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "b785c11d0bd3593d8a1eb80b758cc78255306b87e568650667eb5088326ff34f",
+        "decodedDurationSeconds": 3.564271,
+        "trimmedDurationSeconds": 3.22675,
+        "leadingSilenceRemovedSeconds": 0.159438,
+        "trailingSilenceRemovedSeconds": 0.178083,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.33,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.22675,
+        "status": "ready",
+        "placedAtSeconds": 0.05,
+        "spokenBufferEndSeconds": 3.27675,
+        "audibleSpeechStartSeconds": 0.080104,
+        "audibleSpeechEndSeconds": 3.245146,
+        "remainingBeatSeconds": 1.72325,
+        "processingGainDb": -0.571,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.396,
+          "peak": 0.7079457640647888,
+          "rms": 0.06028424487498088
+        }
+      },
+      {
+        "id": "M04-L02",
+        "text": "Core supplies two-sided liquidity. The other compartments have specific jobs.",
+        "start": 5,
+        "end": 10,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L02.mp3",
+            "version": 0,
+            "sha256": "25fd9afe5343f494606f6d76642ceecafff37486fe2dfbebc3e6f9fd5e27e71b"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L02.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "25fd9afe5343f494606f6d76642ceecafff37486fe2dfbebc3e6f9fd5e27e71b",
+        "decodedDurationSeconds": 4.992292,
+        "trimmedDurationSeconds": 4.590125,
+        "leadingSilenceRemovedSeconds": 0.135813,
+        "trailingSilenceRemovedSeconds": 0.266354,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.06,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.590125,
+        "status": "ready",
+        "placedAtSeconds": 5.05,
+        "spokenBufferEndSeconds": 9.640125,
+        "audibleSpeechStartSeconds": 5.08,
+        "audibleSpeechEndSeconds": 9.610833,
+        "remainingBeatSeconds": 0.359875,
+        "processingGainDb": 2.123,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.713,
+          "peak": 0.7079457640647888,
+          "rms": 0.08209765514137707
+        }
+      },
+      {
+        "id": "M04-L03",
+        "text": "As selling crosses active ranges, Ether converts into OMR.",
+        "start": 10,
+        "end": 15,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L03-v2.mp3",
+            "version": 2,
+            "sha256": "53c6e103f344b29a935bd707cece67fcd09e61de82edf0dfdc19e6cd2b6e6d7a"
+          },
+          {
+            "file": "public/art/market-v2-film/audio/M04-L03.mp3",
+            "version": 0,
+            "sha256": "730df0c14415c2df8d79856cf7e39f4fdf896ae5a5871b68754df52d6c562f40"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L03-v2.mp3",
+        "selectedVersion": 2,
+        "sourceSha256": "53c6e103f344b29a935bd707cece67fcd09e61de82edf0dfdc19e6cd2b6e6d7a",
+        "decodedDurationSeconds": 4.829771,
+        "trimmedDurationSeconds": 4.457396,
+        "leadingSilenceRemovedSeconds": 0.177813,
+        "trailingSilenceRemovedSeconds": 0.194562,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.57,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.457396,
+        "status": "ready",
+        "placedAtSeconds": 10.05,
+        "spokenBufferEndSeconds": 14.507396,
+        "audibleSpeechStartSeconds": 10.080229,
+        "audibleSpeechEndSeconds": 14.479437,
+        "remainingBeatSeconds": 0.492604,
+        "processingGainDb": -1.467,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -25.821,
+          "peak": 0.7079457640647888,
+          "rms": 0.051160879662713696
+        }
+      },
+      {
+        "id": "M04-L04",
+        "text": "As buying crosses active ranges, OMR converts into Ether.",
+        "start": 15,
+        "end": 20,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L04-v2.mp3",
+            "version": 2,
+            "sha256": "6d635b7fd620f3506ac2df96aabb758ce88cf9af2055ad410c437ba664e93f39"
+          },
+          {
+            "file": "public/art/market-v2-film/audio/M04-L04.mp3",
+            "version": 0,
+            "sha256": "43391e2bf67867adca05c72e2b2c496ddb5dcfc08308e4883745a814913b1b1e"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L04-v2.mp3",
+        "selectedVersion": 2,
+        "sourceSha256": "6d635b7fd620f3506ac2df96aabb758ce88cf9af2055ad410c437ba664e93f39",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.189188,
+        "leadingSilenceRemovedSeconds": 0.160292,
+        "trailingSilenceRemovedSeconds": 0.201646,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.71,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.189188,
+        "status": "ready",
+        "placedAtSeconds": 15.05,
+        "spokenBufferEndSeconds": 19.239187,
+        "audibleSpeechStartSeconds": 15.081313,
+        "audibleSpeechEndSeconds": 19.208729,
+        "remainingBeatSeconds": 0.760813,
+        "processingGainDb": -1.241,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.462,
+          "peak": 0.7079457640647888,
+          "rms": 0.05983058266160675
+        }
+      },
+      {
+        "id": "M04-L05",
+        "text": "Crossing a range isn’t final. Inventory can still convert back.",
+        "start": 20,
+        "end": 25,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L05.mp3",
+            "version": 0,
+            "sha256": "18b5f91b2d36f033af5f413e71bf77cddded2432060385cd1b1a97f06a95b721"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L05.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "18b5f91b2d36f033af5f413e71bf77cddded2432060385cd1b1a97f06a95b721",
+        "decodedDurationSeconds": 3.970625,
+        "trimmedDurationSeconds": 3.753708,
+        "leadingSilenceRemovedSeconds": 0.158042,
+        "trailingSilenceRemovedSeconds": 0.058875,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -51.25,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.753708,
+        "status": "ready",
+        "placedAtSeconds": 20.05,
+        "spokenBufferEndSeconds": 23.803708,
+        "audibleSpeechStartSeconds": 20.080021,
+        "audibleSpeechEndSeconds": 23.773917,
+        "remainingBeatSeconds": 1.196292,
+        "processingGainDb": 4.55,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -19.614,
+          "peak": 0.7079457640647888,
+          "rms": 0.10454511507258281
+        }
+      },
+      {
+        "id": "M04-L06",
+        "text": "Finalization removes eligible positions and separates returned principal from fees.",
+        "start": 25,
+        "end": 30,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L06.mp3",
+            "version": 0,
+            "sha256": "ce0a3eb0323af0cc0f6acaa4c61d33fef17594d065327b7761fe6bbd77e15fc0"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L06.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "ce0a3eb0323af0cc0f6acaa4c61d33fef17594d065327b7761fe6bbd77e15fc0",
+        "decodedDurationSeconds": 5.282542,
+        "trimmedDurationSeconds": 4.899188,
+        "leadingSilenceRemovedSeconds": 0.166417,
+        "trailingSilenceRemovedSeconds": 0.216938,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.47,
+        "requiredTempo": 1.010142,
+        "appliedTempo": 1.010142,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.844604,
+        "status": "ready",
+        "placedAtSeconds": 25.05,
+        "spokenBufferEndSeconds": 29.894604,
+        "audibleSpeechStartSeconds": 25.081688,
+        "audibleSpeechEndSeconds": 29.866979,
+        "remainingBeatSeconds": 0.105396,
+        "processingGainDb": -2.092,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -26.811,
+          "peak": 0.7079457640647888,
+          "rms": 0.04564969900625554
+        }
+      },
+      {
+        "id": "M04-L07",
+        "text": "Deployment consumes finite capacity. Deposits and withdrawals don’t reset it.",
+        "start": 30,
+        "end": 35,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L07.mp3",
+            "version": 0,
+            "sha256": "7f23221a52fba92262b97919a3c6ac5859bfeb7f77e91970281a7ff19ac5151f"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L07.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "7f23221a52fba92262b97919a3c6ac5859bfeb7f77e91970281a7ff19ac5151f",
+        "decodedDurationSeconds": 4.992292,
+        "trimmedDurationSeconds": 4.613021,
+        "leadingSilenceRemovedSeconds": 0.129938,
+        "trailingSilenceRemovedSeconds": 0.249333,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.67,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.613021,
+        "status": "ready",
+        "placedAtSeconds": 30.05,
+        "spokenBufferEndSeconds": 34.663021,
+        "audibleSpeechStartSeconds": 30.125625,
+        "audibleSpeechEndSeconds": 34.635604,
+        "remainingBeatSeconds": 0.336979,
+        "processingGainDb": 1.874,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -22.933,
+          "peak": 0.7079457640647888,
+          "rms": 0.07134091766873758
+        }
+      },
+      {
+        "id": "M04-L08",
+        "text": "Historical pool readings inform decisions. They aren’t an external price oracle.",
+        "start": 35,
+        "end": 40,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L08.mp3",
+            "version": 0,
+            "sha256": "11a0a973c4160bfa1b0bdde7544bc71982bcc6d3f9c7dcf182f59c585b813dc7"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L08.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "11a0a973c4160bfa1b0bdde7544bc71982bcc6d3f9c7dcf182f59c585b813dc7",
+        "decodedDurationSeconds": 5.12,
+        "trimmedDurationSeconds": 4.703875,
+        "leadingSilenceRemovedSeconds": 0.163438,
+        "trailingSilenceRemovedSeconds": 0.252688,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.68,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.703875,
+        "status": "ready",
+        "placedAtSeconds": 35.05,
+        "spokenBufferEndSeconds": 39.753875,
+        "audibleSpeechStartSeconds": 35.079875,
+        "audibleSpeechEndSeconds": 39.726146,
+        "remainingBeatSeconds": 0.246125,
+        "processingGainDb": 1.159,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -23.151,
+          "peak": 0.7079457640647888,
+          "rms": 0.06957642087269596
+        }
+      },
+      {
+        "id": "M04-L09",
+        "text": "Stress gates and cooldowns restrain deployment. Every response has limits.",
+        "start": 40,
+        "end": 45,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L09.mp3",
+            "version": 0,
+            "sha256": "27dfb057e60bdbf49d56c78119ec1e2e47f493e9ee6b94f08c0753606dcf6740"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L09.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "27dfb057e60bdbf49d56c78119ec1e2e47f493e9ee6b94f08c0753606dcf6740",
+        "decodedDurationSeconds": 4.829771,
+        "trimmedDurationSeconds": 4.439271,
+        "leadingSilenceRemovedSeconds": 0.169083,
+        "trailingSilenceRemovedSeconds": 0.221417,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.25,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.439271,
+        "status": "ready",
+        "placedAtSeconds": 40.05,
+        "spokenBufferEndSeconds": 44.489271,
+        "audibleSpeechStartSeconds": 40.077583,
+        "audibleSpeechEndSeconds": 44.459271,
+        "remainingBeatSeconds": 0.510729,
+        "processingGainDb": 0.495,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.501,
+          "peak": 0.7079457640647888,
+          "rms": 0.059557518885532526
+        }
+      },
+      {
+        "id": "M04-L10",
+        "text": "Surge fees, bond proceeds and an arbitrage share fund the War Chest.",
+        "start": 45,
+        "end": 51,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L10.mp3",
+            "version": 0,
+            "sha256": "b5a57905b4d605971dec44955e19343f97670ab653cea036f3c1b137800f57cc"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L10.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "b5a57905b4d605971dec44955e19343f97670ab653cea036f3c1b137800f57cc",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.232146,
+        "leadingSilenceRemovedSeconds": 0.129208,
+        "trailingSilenceRemovedSeconds": 0.189771,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.97,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.232146,
+        "status": "ready",
+        "placedAtSeconds": 45.05,
+        "spokenBufferEndSeconds": 49.282146,
+        "audibleSpeechStartSeconds": 45.080021,
+        "audibleSpeechEndSeconds": 49.252125,
+        "remainingBeatSeconds": 1.717854,
+        "processingGainDb": 3.014,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.473,
+          "peak": 0.7079457640647888,
+          "rms": 0.09470056188576134
+        }
+      },
+      {
+        "id": "M04-L11",
+        "text": "Spaced healthy observations can unlock a bounded, funded refill.",
+        "start": 51,
+        "end": 57,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L11.mp3",
+            "version": 0,
+            "sha256": "469fb301003cb8b10043492e3b6a20ede7c8354d748e97713ef4eb77591599c8"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L11.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "469fb301003cb8b10043492e3b6a20ede7c8354d748e97713ef4eb77591599c8",
+        "decodedDurationSeconds": 4.260875,
+        "trimmedDurationSeconds": 3.864021,
+        "leadingSilenceRemovedSeconds": 0.138146,
+        "trailingSilenceRemovedSeconds": 0.258708,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.62,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.864021,
+        "status": "ready",
+        "placedAtSeconds": 51.05,
+        "spokenBufferEndSeconds": 54.914021,
+        "audibleSpeechStartSeconds": 51.078542,
+        "audibleSpeechEndSeconds": 54.889604,
+        "remainingBeatSeconds": 2.085979,
+        "processingGainDb": 2.372,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.286,
+          "peak": 0.7079457640647888,
+          "rms": 0.08623761694378493
+        }
+      },
+      {
+        "id": "M04-L12",
+        "text": "Only real idle assets move. Lifetime limits stay consumed.",
+        "start": 57,
+        "end": 62,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L12.mp3",
+            "version": 0,
+            "sha256": "56f80988ff92838f2e284fd24876fe09caee10e95347bcee5f35064d634c0e73"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L12.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "56f80988ff92838f2e284fd24876fe09caee10e95347bcee5f35064d634c0e73",
+        "decodedDurationSeconds": 4.342146,
+        "trimmedDurationSeconds": 3.903521,
+        "leadingSilenceRemovedSeconds": 0.166667,
+        "trailingSilenceRemovedSeconds": 0.271958,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.15,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.903521,
+        "status": "ready",
+        "placedAtSeconds": 57.05,
+        "spokenBufferEndSeconds": 60.953521,
+        "audibleSpeechStartSeconds": 57.08,
+        "audibleSpeechEndSeconds": 60.928187,
+        "remainingBeatSeconds": 1.046479,
+        "processingGainDb": 0.957,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -22.386,
+          "peak": 0.7079457640647888,
+          "rms": 0.07597677224476623
+        }
+      },
+      {
+        "id": "M04-L13",
+        "text": "A price recovery creates no Ether. There is no guaranteed floor.",
+        "start": 62,
+        "end": 67,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L13.mp3",
+            "version": 0,
+            "sha256": "b8eac13c856224b83056ec759967ca3849919133da48b55332ec975e4ab5d313"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L13.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "b8eac13c856224b83056ec759967ca3849919133da48b55332ec975e4ab5d313",
+        "decodedDurationSeconds": 4.829771,
+        "trimmedDurationSeconds": 4.324917,
+        "leadingSilenceRemovedSeconds": 0.225917,
+        "trailingSilenceRemovedSeconds": 0.278938,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.59,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.324917,
+        "status": "ready",
+        "placedAtSeconds": 62.05,
+        "spokenBufferEndSeconds": 66.374917,
+        "audibleSpeechStartSeconds": 62.079583,
+        "audibleSpeechEndSeconds": 66.347521,
+        "remainingBeatSeconds": 0.625083,
+        "processingGainDb": 3.356,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.78,
+          "peak": 0.7079457640647888,
+          "rms": 0.09140643476196565
+        }
+      },
+      {
+        "id": "M04-L14",
+        "text": "Canonical sells pay nine percent, split across four recipients.",
+        "start": 67,
+        "end": 73,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L14.mp3",
+            "version": 0,
+            "sha256": "2da04aa3b9447dfb059a5ce5fe869f9f8c3076a0213a04d18feefea22fa42680"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L14.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "2da04aa3b9447dfb059a5ce5fe869f9f8c3076a0213a04d18feefea22fa42680",
+        "decodedDurationSeconds": 4.713667,
+        "trimmedDurationSeconds": 4.351,
+        "leadingSilenceRemovedSeconds": 0.152646,
+        "trailingSilenceRemovedSeconds": 0.210021,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.76,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.351,
+        "status": "ready",
+        "placedAtSeconds": 67.05,
+        "spokenBufferEndSeconds": 71.401,
+        "audibleSpeechStartSeconds": 67.079979,
+        "audibleSpeechEndSeconds": 71.373167,
+        "remainingBeatSeconds": 1.599,
+        "processingGainDb": 2.774,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.51,
+          "peak": 0.7079457640647888,
+          "rms": 0.09430200645840368
+        }
+      },
+      {
+        "id": "M04-L15",
+        "text": "Three percent funds Core. Additional sell pressure funds stability.",
+        "start": 73,
+        "end": 78,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L15.mp3",
+            "version": 0,
+            "sha256": "a019384670bfbf130335b318c5f96879e1db5b168bdbd137af95266efceb8e68"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L15.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "a019384670bfbf130335b318c5f96879e1db5b168bdbd137af95266efceb8e68",
+        "decodedDurationSeconds": 4.260875,
+        "trimmedDurationSeconds": 3.858875,
+        "leadingSilenceRemovedSeconds": 0.151062,
+        "trailingSilenceRemovedSeconds": 0.250937,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.63,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.858875,
+        "status": "ready",
+        "placedAtSeconds": 73.05,
+        "spokenBufferEndSeconds": 76.908875,
+        "audibleSpeechStartSeconds": 73.080021,
+        "audibleSpeechEndSeconds": 76.88075,
+        "remainingBeatSeconds": 1.091125,
+        "processingGainDb": 0.087,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.336,
+          "peak": 0.7079457640647888,
+          "rms": 0.060698344052332515
+        }
+      },
+      {
+        "id": "M04-L16",
+        "text": "A fee receipt can contain Ether or OMR.",
+        "start": 78,
+        "end": 82,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L16.mp3",
+            "version": 0,
+            "sha256": "d458fadfdc28cbaae074f808b3aece67ef726691bf03ee763c5d338d5e4c31a5"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L16.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "d458fadfdc28cbaae074f808b3aece67ef726691bf03ee763c5d338d5e4c31a5",
+        "decodedDurationSeconds": 3.77325,
+        "trimmedDurationSeconds": 3.379,
+        "leadingSilenceRemovedSeconds": 0.157958,
+        "trailingSilenceRemovedSeconds": 0.236292,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -52.55,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.379,
+        "status": "ready",
+        "placedAtSeconds": 78.05,
+        "spokenBufferEndSeconds": 81.429,
+        "audibleSpeechStartSeconds": 78.079958,
+        "audibleSpeechEndSeconds": 81.400042,
+        "remainingBeatSeconds": 0.571,
+        "processingGainDb": 4.822,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.267,
+          "peak": 0.7079457640647888,
+          "rms": 0.09697766125052033
+        }
+      },
+      {
+        "id": "M04-L17",
+        "text": "Opening buys have temporary rules. Later buys have no Hook tax.",
+        "start": 82,
+        "end": 87,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L17.mp3",
+            "version": 0,
+            "sha256": "ea45fcdfb26442c5e71c5dae47bad9b42864b9eb7cf22eb01857c6fdf9f4370e"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L17.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "ea45fcdfb26442c5e71c5dae47bad9b42864b9eb7cf22eb01857c6fdf9f4370e",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.183687,
+        "leadingSilenceRemovedSeconds": 0.146833,
+        "trailingSilenceRemovedSeconds": 0.220604,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.89,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.183687,
+        "status": "ready",
+        "placedAtSeconds": 82.05,
+        "spokenBufferEndSeconds": 86.233688,
+        "audibleSpeechStartSeconds": 82.08,
+        "audibleSpeechEndSeconds": 86.208271,
+        "remainingBeatSeconds": 0.766312,
+        "processingGainDb": 1.269,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -22.444,
+          "peak": 0.7079457640647888,
+          "rms": 0.07547797134031331
+        }
+      },
+      {
+        "id": "M04-L18",
+        "text": "These rules cover the canonical pool, not every trading venue.",
+        "start": 87,
+        "end": 91,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L18.mp3",
+            "version": 0,
+            "sha256": "e5f5a9d64f1abe611fad52f2bb275d2e936d09e36aad1a061dd4e7a1b47d51ec"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L18.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "e5f5a9d64f1abe611fad52f2bb275d2e936d09e36aad1a061dd4e7a1b47d51ec",
+        "decodedDurationSeconds": 3.691979,
+        "trimmedDurationSeconds": 3.350146,
+        "leadingSilenceRemovedSeconds": 0.170208,
+        "trailingSilenceRemovedSeconds": 0.171625,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.35,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.350146,
+        "status": "ready",
+        "placedAtSeconds": 87.05,
+        "spokenBufferEndSeconds": 90.400146,
+        "audibleSpeechStartSeconds": 87.08,
+        "audibleSpeechEndSeconds": 90.372479,
+        "remainingBeatSeconds": 0.599854,
+        "processingGainDb": 2.72,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.403,
+          "peak": 0.7079457640647888,
+          "rms": 0.08508446701787882
+        }
+      },
+      {
+        "id": "M04-L19",
+        "text": "Bonds reserve existing OMR upfront, then release it through linear vesting.",
+        "start": 91,
+        "end": 97,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L19.mp3",
+            "version": 0,
+            "sha256": "cceee6a2135a2036209338d133aecb02fd5b00357aa3a87991535958c3797dd3"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L19.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "cceee6a2135a2036209338d133aecb02fd5b00357aa3a87991535958c3797dd3",
+        "decodedDurationSeconds": 5.479917,
+        "trimmedDurationSeconds": 5.147854,
+        "leadingSilenceRemovedSeconds": 0.154292,
+        "trailingSilenceRemovedSeconds": 0.177771,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.85,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 5.147854,
+        "status": "ready",
+        "placedAtSeconds": 91.05,
+        "spokenBufferEndSeconds": 96.197854,
+        "audibleSpeechStartSeconds": 91.079979,
+        "audibleSpeechEndSeconds": 96.170687,
+        "remainingBeatSeconds": 0.802146,
+        "processingGainDb": 3.309,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.688,
+          "peak": 0.7079457640647888,
+          "rms": 0.09238505708113508
+        }
+      },
+      {
+        "id": "M04-L20",
+        "text": "No minting or sellback. Vested claims survive a purchasing pause.",
+        "start": 97,
+        "end": 102,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L20.mp3",
+            "version": 0,
+            "sha256": "6fc146d9a55f61404c2b54d843b4da2198ee0c52cc86dfab51b79dcdd6ec03ba"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L20.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "6fc146d9a55f61404c2b54d843b4da2198ee0c52cc86dfab51b79dcdd6ec03ba",
+        "decodedDurationSeconds": 4.9,
+        "trimmedDurationSeconds": 4.488333,
+        "leadingSilenceRemovedSeconds": 0.139625,
+        "trailingSilenceRemovedSeconds": 0.272042,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.79,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.488333,
+        "status": "ready",
+        "placedAtSeconds": 97.05,
+        "spokenBufferEndSeconds": 101.538333,
+        "audibleSpeechStartSeconds": 97.079708,
+        "audibleSpeechEndSeconds": 101.512062,
+        "remainingBeatSeconds": 0.461667,
+        "processingGainDb": 3.678,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.163,
+          "peak": 0.7079457640647888,
+          "rms": 0.08746505132187035
+        }
+      },
+      {
+        "id": "M04-L21",
+        "text": "Solvers commit a plan, then execute a funded, two-pool arbitrage cycle.",
+        "start": 102,
+        "end": 108,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L21.mp3",
+            "version": 0,
+            "sha256": "f22fe043e9918fb2ab8568529af1741c0271d376bf6ddf5195c119d8424c5f82"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L21.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "f22fe043e9918fb2ab8568529af1741c0271d376bf6ddf5195c119d8424c5f82",
+        "decodedDurationSeconds": 4.829771,
+        "trimmedDurationSeconds": 4.485208,
+        "leadingSilenceRemovedSeconds": 0.138708,
+        "trailingSilenceRemovedSeconds": 0.205854,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.11,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.485208,
+        "status": "ready",
+        "placedAtSeconds": 102.05,
+        "spokenBufferEndSeconds": 106.535208,
+        "audibleSpeechStartSeconds": 102.077687,
+        "audibleSpeechEndSeconds": 106.507312,
+        "remainingBeatSeconds": 1.464792,
+        "processingGainDb": -0.359,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.386,
+          "peak": 0.7079457640647888,
+          "rms": 0.060350118373621545
+        }
+      },
+      {
+        "id": "M04-L22",
+        "text": "Actual profit is checked. Competition and failed gas remain your risk.",
+        "start": 108,
+        "end": 113,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L22.mp3",
+            "version": 0,
+            "sha256": "b788b077bc9858d92e33d9522abc4473cb97e7a5c983e6ffbd0c81222ee33a94"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L22.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "b788b077bc9858d92e33d9522abc4473cb97e7a5c983e6ffbd0c81222ee33a94",
+        "decodedDurationSeconds": 4.632396,
+        "trimmedDurationSeconds": 4.291437,
+        "leadingSilenceRemovedSeconds": 0.167292,
+        "trailingSilenceRemovedSeconds": 0.173667,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.01,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.291437,
+        "status": "ready",
+        "placedAtSeconds": 108.05,
+        "spokenBufferEndSeconds": 112.341437,
+        "audibleSpeechStartSeconds": 108.080062,
+        "audibleSpeechEndSeconds": 112.306646,
+        "remainingBeatSeconds": 0.658563,
+        "processingGainDb": -1.161,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -26.559,
+          "peak": 0.7079457640647888,
+          "rms": 0.046992156640030425
+        }
+      },
+      {
+        "id": "M04-L23",
+        "text": "Players commit canonical position NFTs. Rewards require qualifying, fresh depth samples.",
+        "start": 113,
+        "end": 119,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L23.mp3",
+            "version": 0,
+            "sha256": "44ae99755ea47843aefab22a3b5daa1276ee5d9002026111d9ce635ccf2570df"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L23.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "44ae99755ea47843aefab22a3b5daa1276ee5d9002026111d9ce635ccf2570df",
+        "decodedDurationSeconds": 6.327458,
+        "trimmedDurationSeconds": 5.933479,
+        "leadingSilenceRemovedSeconds": 0.176271,
+        "trailingSilenceRemovedSeconds": 0.217708,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.05,
+        "requiredTempo": 1.01427,
+        "appliedTempo": 1.01427,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 5.849812,
+        "status": "ready",
+        "placedAtSeconds": 113.05,
+        "spokenBufferEndSeconds": 118.899812,
+        "audibleSpeechStartSeconds": 113.08,
+        "audibleSpeechEndSeconds": 118.869979,
+        "remainingBeatSeconds": 0.100188,
+        "processingGainDb": 2.42,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.143,
+          "peak": 0.7079457640647888,
+          "rms": 0.08766696819991954
+        }
+      },
+      {
+        "id": "M04-L24",
+        "text": "Rewards draw from funded campaigns. Mature positions can exit independently.",
+        "start": 119,
+        "end": 124,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L24.mp3",
+            "version": 0,
+            "sha256": "11d3b0a51a8145ed180cf79803ec6c1babc747e370daf69a4723a86b25967732"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L24.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "11d3b0a51a8145ed180cf79803ec6c1babc747e370daf69a4723a86b25967732",
+        "decodedDurationSeconds": 5.12,
+        "trimmedDurationSeconds": 4.635167,
+        "leadingSilenceRemovedSeconds": 0.227854,
+        "trailingSilenceRemovedSeconds": 0.256979,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.56,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.635167,
+        "status": "ready",
+        "placedAtSeconds": 119.05,
+        "spokenBufferEndSeconds": 123.685167,
+        "audibleSpeechStartSeconds": 119.079896,
+        "audibleSpeechEndSeconds": 123.657604,
+        "remainingBeatSeconds": 0.314833,
+        "processingGainDb": -0.552,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -23.821,
+          "peak": 0.7079457640647888,
+          "rms": 0.06440920320800551
+        }
+      },
+      {
+        "id": "M04-L25",
+        "text": "Families contest seasonal price slabs and future funded fee credits.",
+        "start": 124,
+        "end": 129,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L25.mp3",
+            "version": 0,
+            "sha256": "e99130466e0485281b4fb52f69579055f8340ed4bb09e213663f4d7f9dcd4b8c"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L25.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "e99130466e0485281b4fb52f69579055f8340ed4bb09e213663f4d7f9dcd4b8c",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.135208,
+        "leadingSilenceRemovedSeconds": 0.161125,
+        "trailingSilenceRemovedSeconds": 0.254792,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.55,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.135208,
+        "status": "ready",
+        "placedAtSeconds": 124.05,
+        "spokenBufferEndSeconds": 128.185208,
+        "audibleSpeechStartSeconds": 124.079667,
+        "audibleSpeechEndSeconds": 128.155438,
+        "remainingBeatSeconds": 0.814792,
+        "processingGainDb": 2.147,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.771,
+          "peak": 0.7079457640647888,
+          "rms": 0.08155034377778031
+        }
+      },
+      {
+        "id": "M04-L26",
+        "text": "Syndicates split fee rights. Status bonuses don’t multiply money.",
+        "start": 129,
+        "end": 134,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L26-v2.mp3",
+            "version": 2,
+            "sha256": "9313a7d92f393efd658d956ffaae7d64945ef67a81d4b48cb891399c3f2c814d"
+          },
+          {
+            "file": "public/art/market-v2-film/audio/M04-L26.mp3",
+            "version": 0,
+            "sha256": "f445b9693bc1e8ad54e01e69c3a84082084c70d736eac3e9c8c38a582edc2a6b"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L26-v2.mp3",
+        "selectedVersion": 2,
+        "sourceSha256": "9313a7d92f393efd658d956ffaae7d64945ef67a81d4b48cb891399c3f2c814d",
+        "decodedDurationSeconds": 4.829771,
+        "trimmedDurationSeconds": 4.429396,
+        "leadingSilenceRemovedSeconds": 0.163354,
+        "trailingSilenceRemovedSeconds": 0.237021,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -50.23,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.429396,
+        "status": "ready",
+        "placedAtSeconds": 129.05,
+        "spokenBufferEndSeconds": 133.479396,
+        "audibleSpeechStartSeconds": 129.083688,
+        "audibleSpeechEndSeconds": 133.454792,
+        "remainingBeatSeconds": 0.520604,
+        "processingGainDb": 3.524,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.987,
+          "peak": 0.7079457640647888,
+          "rms": 0.08926162344555581
+        }
+      },
+      {
+        "id": "M04-L27",
+        "text": "Before control changes, an onchain checkpoint assigns the fees already earned.",
+        "start": 134,
+        "end": 140,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L27.mp3",
+            "version": 0,
+            "sha256": "2c8ac192e156e9b3ce20afebb7ccc3ea328f12683a027b953378015439d5088d"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L27.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "2c8ac192e156e9b3ce20afebb7ccc3ea328f12683a027b953378015439d5088d",
+        "decodedDurationSeconds": 5.479917,
+        "trimmedDurationSeconds": 5.074708,
+        "leadingSilenceRemovedSeconds": 0.158979,
+        "trailingSilenceRemovedSeconds": 0.246229,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.69,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 5.074708,
+        "status": "ready",
+        "placedAtSeconds": 134.05,
+        "spokenBufferEndSeconds": 139.124708,
+        "audibleSpeechStartSeconds": 134.079958,
+        "audibleSpeechEndSeconds": 139.091333,
+        "remainingBeatSeconds": 0.875292,
+        "processingGainDb": -0.725,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.872,
+          "peak": 0.7079457640647888,
+          "rms": 0.057071825377239496
+        }
+      },
+      {
+        "id": "M04-L28",
+        "text": "Sieges freeze participant wallets and allocate only funded escrow.",
+        "start": 140,
+        "end": 145,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L28.mp3",
+            "version": 0,
+            "sha256": "49f3f2d46332b458b8d06752b5225e60d4a419e32eeccd771ac5d41766862d88"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L28.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "49f3f2d46332b458b8d06752b5225e60d4a419e32eeccd771ac5d41766862d88",
+        "decodedDurationSeconds": 4.342146,
+        "trimmedDurationSeconds": 4.008167,
+        "leadingSilenceRemovedSeconds": 0.165458,
+        "trailingSilenceRemovedSeconds": 0.168521,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.29,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.008167,
+        "status": "ready",
+        "placedAtSeconds": 140.05,
+        "spokenBufferEndSeconds": 144.058167,
+        "audibleSpeechStartSeconds": 140.080333,
+        "audibleSpeechEndSeconds": 144.0275,
+        "remainingBeatSeconds": 0.941833,
+        "processingGainDb": -0.896,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -26.096,
+          "peak": 0.7079457640647888,
+          "rms": 0.04956733886294876
+        }
+      },
+      {
+        "id": "M04-L29",
+        "text": "At season exit, fees settle and protocol principal returns for retirement.",
+        "start": 145,
+        "end": 151,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L29.mp3",
+            "version": 0,
+            "sha256": "992d46aca80797015109210b28a5ed9736b89e8860b534c7bb3f54f9776fea0f"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L29.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "992d46aca80797015109210b28a5ed9736b89e8860b534c7bb3f54f9776fea0f",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.144375,
+        "leadingSilenceRemovedSeconds": 0.168229,
+        "trailingSilenceRemovedSeconds": 0.238521,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.98,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.144375,
+        "status": "ready",
+        "placedAtSeconds": 145.05,
+        "spokenBufferEndSeconds": 149.194375,
+        "audibleSpeechStartSeconds": 145.079333,
+        "audibleSpeechEndSeconds": 149.164396,
+        "remainingBeatSeconds": 1.805625,
+        "processingGainDb": 0.024,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -23.464,
+          "peak": 0.7079457640647888,
+          "rms": 0.0671120948430017
+        }
+      },
+      {
+        "id": "M04-L30",
+        "text": "The Safe binds and funds systems. Keepers simulate budgeted execution.",
+        "start": 151,
+        "end": 156.2,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L30-v2.mp3",
+            "version": 2,
+            "sha256": "6e03884d9bf5cd939dfed13c93da973b0be9cd9ef9a4ef47118b05c6cf84209f"
+          },
+          {
+            "file": "public/art/market-v2-film/audio/M04-L30.mp3",
+            "version": 0,
+            "sha256": "9ab2d3b339a61ade013ac6b259a963f5cf20e828809e849a8c277f57e71fe1b6"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L30-v2.mp3",
+        "selectedVersion": 2,
+        "sourceSha256": "6e03884d9bf5cd939dfed13c93da973b0be9cd9ef9a4ef47118b05c6cf84209f",
+        "decodedDurationSeconds": 4.551125,
+        "trimmedDurationSeconds": 4.179792,
+        "leadingSilenceRemovedSeconds": 0.159521,
+        "trailingSilenceRemovedSeconds": 0.211812,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.34,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 4.179792,
+        "status": "ready",
+        "placedAtSeconds": 151.05,
+        "spokenBufferEndSeconds": 155.229792,
+        "audibleSpeechStartSeconds": 151.078063,
+        "audibleSpeechEndSeconds": 155.201625,
+        "remainingBeatSeconds": 0.970208,
+        "processingGainDb": 1.311,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -22.697,
+          "peak": 0.7079457640647888,
+          "rms": 0.07330424164055362
+        }
+      },
+      {
+        "id": "M04-L31",
+        "text": "Game cash, OMR, Ether and RWA allocations remain separate.",
+        "start": 156.2,
+        "end": 162,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L31.mp3",
+            "version": 0,
+            "sha256": "59d1592d7e034a563c66d02d52344dc3c4659e2eafa89c52ea0d5ef3d95bfd73"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L31.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "59d1592d7e034a563c66d02d52344dc3c4659e2eafa89c52ea0d5ef3d95bfd73",
+        "decodedDurationSeconds": 6.257792,
+        "trimmedDurationSeconds": 5.823958,
+        "leadingSilenceRemovedSeconds": 0.177937,
+        "trailingSilenceRemovedSeconds": 0.255896,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -49.11,
+        "requiredTempo": 1.030789,
+        "appliedTempo": 1.032151,
+        "tempoPasses": 2,
+        "fittedDurationSeconds": 5.647062,
+        "status": "ready",
+        "placedAtSeconds": 156.25,
+        "spokenBufferEndSeconds": 161.897063,
+        "audibleSpeechStartSeconds": 156.280125,
+        "audibleSpeechEndSeconds": 161.867063,
+        "remainingBeatSeconds": 0.102937,
+        "processingGainDb": 0.185,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.177,
+          "peak": 0.7079457640647888,
+          "rms": 0.06182283970015246
+        }
+      },
+      {
+        "id": "M04-L32",
+        "text": "Trades change inventory. Funded revenue supports reserves. Conditions gate the next move.",
+        "start": 162,
+        "end": 168,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L32.mp3",
+            "version": 0,
+            "sha256": "d4efce8eb5515520cd4fd18dad8a515b6fbc06b4979de81bbf2da04041413b7d"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L32.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "d4efce8eb5515520cd4fd18dad8a515b6fbc06b4979de81bbf2da04041413b7d",
+        "decodedDurationSeconds": 5.561187,
+        "trimmedDurationSeconds": 5.1905,
+        "leadingSilenceRemovedSeconds": 0.136958,
+        "trailingSilenceRemovedSeconds": 0.233729,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -48.83,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 5.1905,
+        "status": "ready",
+        "placedAtSeconds": 162.05,
+        "spokenBufferEndSeconds": 167.2405,
+        "audibleSpeechStartSeconds": 162.079854,
+        "audibleSpeechEndSeconds": 167.210521,
+        "remainingBeatSeconds": 0.7595,
+        "processingGainDb": -0.002,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -24.215,
+          "peak": 0.7079457640647888,
+          "rms": 0.06155508585980036
+        }
+      },
+      {
+        "id": "M04-L33",
+        "text": "OMERTÀ Market V2. Learn what moves the city.",
+        "start": 168,
+        "end": 173,
+        "availableTakes": [
+          {
+            "file": "public/art/market-v2-film/audio/M04-L33.mp3",
+            "version": 0,
+            "sha256": "5b69a60160aea372abdef4cc7c8e64f48ca2294d66eb1ad8ae39785e5eaa3d20"
+          }
+        ],
+        "source": "public/art/market-v2-film/audio/M04-L33.mp3",
+        "selectedVersion": 0,
+        "sourceSha256": "5b69a60160aea372abdef4cc7c8e64f48ca2294d66eb1ad8ae39785e5eaa3d20",
+        "decodedDurationSeconds": 4.0635,
+        "trimmedDurationSeconds": 3.582458,
+        "leadingSilenceRemovedSeconds": 0.207187,
+        "trailingSilenceRemovedSeconds": 0.273854,
+        "retainedEdgeGuardSeconds": 0.03,
+        "trimThresholdDbfs": -51.28,
+        "requiredTempo": 1,
+        "appliedTempo": 1,
+        "tempoPasses": 1,
+        "fittedDurationSeconds": 3.582458,
+        "status": "ready",
+        "placedAtSeconds": 168.05,
+        "spokenBufferEndSeconds": 171.632458,
+        "audibleSpeechStartSeconds": 168.079854,
+        "audibleSpeechEndSeconds": 171.603938,
+        "remainingBeatSeconds": 1.367542,
+        "processingGainDb": 3.027,
+        "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+        "outputStats": {
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -19.632,
+          "peak": 0.7079457640647888,
+          "rms": 0.10432916539362777
+        }
+      }
+    ],
+    "blockingIssues": [],
+    "reviewRequired": "Manual listening for pronunciation, complete words, timbre, pacing and balance remains necessary. Captions are estimated line/chunk timing, not ASR word alignment.",
+    "noSpeechOverlap": true,
+    "bpm": 96,
+    "musicDirection": "Mechanical noir: E/D/C/B low harmony, felt plucks, sparse relay clicks and muted rotating machinery; a new five-step motif over ten-quarter harmonic phrases.",
+    "musicRules": {
+      "quarterSeconds": 0.625,
+      "phraseSeconds": 6.25,
+      "harmonicStartFormula": "-0.9 + n * 10q",
+      "harmonicDurationSeconds": 8.05,
+      "harmonicFrequenciesHz": [
+        [
+          41.203,
+          82.406,
+          123.471,
+          195.998
+        ],
+        [
+          36.708,
+          73.416,
+          110,
+          184.997
+        ],
+        [
+          32.703,
+          65.406,
+          97.999,
+          164.814
+        ],
+        [
+          30.868,
+          61.735,
+          92.499,
+          155.563
+        ]
+      ],
+      "brandAt": 168,
+      "brandChordAt": 168.1,
+      "brandFrequenciesHz": [
+        82.406,
+        123.471,
+        164.814
+      ],
+      "rhythmStopsBefore": 167.5,
+      "acts": [
+        {
+          "start": 0,
+          "end": 55.440000000000005,
+          "gain": 0.72
+        },
+        {
+          "start": 55.440000000000005,
+          "end": 120.96,
+          "gain": 0.95
+        },
+        {
+          "start": 120.96,
+          "end": 168,
+          "gain": 0.83
+        }
+      ],
+      "finalFadeSeconds": 0.48
+    },
+    "silenceBefore": [
+      {
+        "beat": "M04-B07",
+        "at": 30,
+        "reason": "Finite inventory / funding boundary"
+      },
+      {
+        "beat": "M04-B11",
+        "at": 51,
+        "reason": "Recovery / reconciliation boundary"
+      }
+    ],
+    "ducking": {
+      "musicUnderSpeechDb": -7,
+      "attackMs": 10,
+      "releaseMs": 220
+    },
+    "cues": [
+      {
+        "at": 0,
+        "kind": "whoosh",
+        "duration": 0.29,
+        "gain": 0.093,
+        "pan": -0.18,
+        "panEnd": 0.18,
+        "frequency": 220
+      },
+      {
+        "at": 0,
+        "kind": "impact",
+        "duration": 0.34,
+        "gain": 0.23,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 0.03,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.038,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 20,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 29.78,
+        "kind": "whoosh",
+        "duration": 0.46,
+        "gain": 0.16,
+        "pan": -0.8,
+        "panEnd": 0.8,
+        "frequency": 220
+      },
+      {
+        "at": 30.025,
+        "kind": "impact",
+        "duration": 0.46,
+        "gain": 0.19,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 30.06,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.043,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 40,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 44.86,
+        "kind": "whoosh",
+        "duration": 0.29,
+        "gain": 0.093,
+        "pan": -0.18,
+        "panEnd": 0.18,
+        "frequency": 220
+      },
+      {
+        "at": 45,
+        "kind": "impact",
+        "duration": 0.34,
+        "gain": 0.125,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 45.03,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.038,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 61.78,
+        "kind": "whoosh",
+        "duration": 0.46,
+        "gain": 0.16,
+        "pan": -0.8,
+        "panEnd": 0.8,
+        "frequency": 220
+      },
+      {
+        "at": 62.025,
+        "kind": "impact",
+        "duration": 0.46,
+        "gain": 0.19,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 62.06,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.043,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 82,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 90.86,
+        "kind": "whoosh",
+        "duration": 0.29,
+        "gain": 0.093,
+        "pan": -0.18,
+        "panEnd": 0.18,
+        "frequency": 220
+      },
+      {
+        "at": 91,
+        "kind": "impact",
+        "duration": 0.34,
+        "gain": 0.125,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 91.03,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.038,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 102,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 124,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 128.78,
+        "kind": "whoosh",
+        "duration": 0.46,
+        "gain": 0.16,
+        "pan": -0.8,
+        "panEnd": 0.8,
+        "frequency": 220
+      },
+      {
+        "at": 129.025,
+        "kind": "impact",
+        "duration": 0.46,
+        "gain": 0.19,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 129.06,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.043,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 133.86,
+        "kind": "whoosh",
+        "duration": 0.29,
+        "gain": 0.093,
+        "pan": -0.18,
+        "panEnd": 0.18,
+        "frequency": 220
+      },
+      {
+        "at": 134,
+        "kind": "impact",
+        "duration": 0.34,
+        "gain": 0.125,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 134.03,
+        "kind": "marker",
+        "duration": 0.085,
+        "gain": 0.038,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      },
+      {
+        "at": 145,
+        "kind": "relay",
+        "duration": 0.075,
+        "gain": 0.063,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 1410
+      },
+      {
+        "at": 168,
+        "kind": "brand",
+        "duration": 2.25,
+        "gain": 0.23,
+        "pan": 0,
+        "panEnd": 0,
+        "frequency": 220
+      }
+    ],
+    "silenceChecks": [
+      {
+        "start": 29.62,
+        "end": 30.48,
+        "exactZero": true,
+        "scope": "Music, SFX and room silence; narration retains all words."
+      },
+      {
+        "start": 50.62,
+        "end": 51.48,
+        "exactZero": true,
+        "scope": "Music, SFX and room silence; narration retains all words."
+      },
+      {
+        "start": 167.64,
+        "end": 168,
+        "exactZero": true,
+        "scope": "Music, SFX and room silence; narration retains all words."
+      }
+    ],
+    "stems": {
+      "dialogue": {
+        "file": "public/art/market-v2-film/audio/04-dialogue.wav",
+        "codec": "pcm_s24le",
+        "sampleRate": 48000,
+        "channels": 2,
+        "samplePeakDbfs": -3,
+        "rmsDbfs": -23.246,
+        "peak": 0.7079457640647888,
+        "rms": 0.06882137451767036
+      },
+      "music": {
+        "file": "public/art/market-v2-film/audio/04-music.wav",
+        "codec": "pcm_s24le",
+        "sampleRate": 48000,
+        "channels": 2,
+        "samplePeakDbfs": -21.84,
+        "rmsDbfs": -37.275,
+        "peak": 0.08090773224830627,
+        "rms": 0.013685126459777671
+      },
+      "sfx": {
+        "file": "public/art/market-v2-film/audio/04-sfx.wav",
+        "codec": "pcm_s24le",
+        "sampleRate": 48000,
+        "channels": 2,
+        "samplePeakDbfs": -12.664,
+        "rmsDbfs": -46.063,
+        "peak": 0.23269446194171906,
+        "rms": 0.004975675568111753
+      },
+      "room": {
+        "file": "public/art/market-v2-film/audio/04-room.wav",
+        "codec": "pcm_s24le",
+        "sampleRate": 48000,
+        "channels": 2,
+        "samplePeakDbfs": -50.402,
+        "rmsDbfs": -63.772,
+        "peak": 0.003019249066710472,
+        "rms": 0.0006477272475695354
+      }
+    },
+    "rawMixStats": {
+      "samplePeakDbfs": -1.779,
+      "rmsDbfs": -23.054,
+      "peak": 0.8148074150085449,
+      "rms": 0.07035720618962382
+    },
+    "master": {
+      "file": "public/art/market-v2-film/audio/04-mix.wav",
+      "durationSeconds": 173,
+      "integratedLufs": -14.15,
+      "truePeakDbtp": -1.29,
+      "loudnessRangeLu": 5.3,
+      "sampleRate": 48000,
+      "channels": 2,
+      "codec": "pcm_s24le",
+      "normalizationType": "dynamic",
+      "valid": true,
+      "preNormalization": {
+        "input_i": "-18.34",
+        "input_tp": "-1.78",
+        "input_lra": "6.30",
+        "input_thresh": "-29.35",
+        "output_i": "-14.45",
+        "output_tp": "-1.30",
+        "output_lra": "5.40",
+        "output_thresh": "-25.39",
+        "normalization_type": "dynamic",
+        "target_offset": "0.45"
+      },
+      "secondPass": {
+        "input_i": "-18.34",
+        "input_tp": "-1.78",
+        "input_lra": "6.30",
+        "input_thresh": "-29.35",
+        "output_i": "-14.16",
+        "output_tp": "-1.30",
+        "output_lra": "5.30",
+        "output_thresh": "-25.10",
+        "normalization_type": "dynamic",
+        "target_offset": "0.16"
+      },
+      "finalMeasurement": {
+        "input_i": "-14.15",
+        "input_tp": "-1.29",
+        "input_lra": "5.30",
+        "input_thresh": "-25.11",
+        "output_i": "-14.16",
+        "output_tp": "-1.30",
+        "output_lra": "5.20",
+        "output_thresh": "-25.06",
+        "normalization_type": "dynamic",
+        "target_offset": "0.16"
+      }
+    }
+  }
+}

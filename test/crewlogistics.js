@@ -83,7 +83,7 @@ if (native) {
   process.env.DATABASE_URL = dbUrl.href; process.env.MARKET_SEED = 'crew-logistics-local-test-seed';
 }
 process.env.MOD_KEY = 'crew-logistics-local-test-mod'; process.env.RATE_LIMIT = 'off'; process.env.JWT_SECRET = 'crew-logistics-module-local-secret'; process.env.SOCIAL_VERIFY_MODE = 'off'; process.env.DEPOT_PILOT = 'on';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const C = await import('../src/crew.js');
 const D = await import('../src/depot.js');

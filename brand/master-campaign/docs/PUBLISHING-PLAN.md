@@ -14,8 +14,8 @@ This pack contains 108 posts: one source-tagged post for every campaign card. Th
 
 - Never promise income, yield, token appreciation, liquidity, or an extraction date.
 - Say that the production extraction rail is dormant until its audit and launch gates clear.
-- Keep the one-way Cash Window precise: $OMR can be burned for game cash only while the funded till can honor it; game cash cannot be converted to $OMR.
-- Describe RWA, bond, BANK, POL, oracle, and withdrawal systems by their displayed lifecycle/status. “Built” is not the same as “live.”
+- Keep the one-way Cash Window precise: eligible $OMR can be exchanged for game cash only while the funded till can honor it; accepted tokens are recycled to the Desk, not burned from supply; game cash cannot be converted to $OMR.
+- Describe RWA, bonds, POL, the canonical hook, and withdrawal systems by their current deployment and funding status. The current market model is a candidate, not a live player market.
 - Authored cases and workshop keepsakes are gameplay-inert and do not pay cash or $OMR.
 - Agent marketing must plainly disclose that the recruiter is an AI. No spam, sockpuppets, earnings promises, or undisclosed astroturfing.
 

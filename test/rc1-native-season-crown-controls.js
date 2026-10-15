@@ -26,7 +26,7 @@ try {
     SOCIAL_VERIFY_MODE: 'off', LIVING_WORLD_DIRECTOR: 'DIRECTOR_DISABLED', JWT_SECRET: crypto.randomBytes(32).toString('hex'),
     MARKET_SEED: crypto.randomBytes(32).toString('hex'), MOD_KEY: crypto.randomBytes(32).toString('hex') });
   const [{ buildServer }, { runSeasonRollover }, { runLedgerInvariants }, resources, { reconcileStoredSeasonCrowns }, { Pool }] = await Promise.all([
-    import('../src/server.js'), import('../src/worker.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'),
+    import('./server-fixture.js'), import('../src/worker.js'), import('../src/invariants.js'), import('../tools/rc1-world-resource-observer.js'),
     import('../tools/rc1-season-crown-journal.js'), import('pg')]);
   app = await buildServer();
   const responseCompletions = new Map(); let responseSequence = 0;

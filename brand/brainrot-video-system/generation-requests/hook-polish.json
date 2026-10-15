@@ -1,0 +1,22 @@
+[
+  {
+    "id": "R3-V2-G01-poly-first-v2",
+    "model": "bytedance/seedream/v5/pro/edit",
+    "input": {
+      "prompt": "Unmistakably stylized low-poly fictional game scene. Use only the two supplied low-poly original avatar references: pale polygon-buzzcut silver-jacket Rookie and teal-square-glasses black-poncho Auditor. No photographs, real human faces, realistic skin, human scans or celebrity likeness. A ridiculous two-and-a-half-meter tower of TWELVE black hard shipping cases on a full-size freight scale. Polygonal Rookie peeks out of a narrow gap halfway up the tower, her silver jacket and violet blocky gloves visible. Auditor at right points to a blank pickup terminal. The load is absurdly too large from frame one. Wide phone fisheye, entire tower dominates the middle frame. Warehouse architecture entirely low-poly, angular flat shading, acid-lime straps and cobalt beams. No single-case composition. Exactly one Rookie and one Auditor. Blank signs and screens. No text, logo, numbers or UI. Vertical9:16 with lower caption space. Stylized absurd prop gag, no injury.",
+      "image_urls": [
+        "https://v3b.fal.media/files/b/0aabb970/HrONLy8unSdOCTfontI-2_3599b164b3674ea49b47b623df705810.png",
+        "https://v3b.fal.media/files/b/0aabb96f/fguw25e27ifizoC3orZLR_300a0b32f00e408b9e904d850fd7db67.png"
+      ],
+      "image_size": {
+        "width": 1080,
+        "height": 1920
+      },
+      "num_images": 1,
+      "output_format": "png",
+      "enable_safety_checker": true
+    },
+    "folder": "frames",
+    "ext": "png"
+  }
+]

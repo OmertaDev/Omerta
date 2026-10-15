@@ -8,7 +8,7 @@
 //   · the gates (level / own_family / cooldown / bad_target) + the leaderboard
 //   · §10.4 vocabulary stays closed (family:raid cash faucet + ammo sink). FAMILY_RAID_P pins the roll.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { FAMILY_WAR, familyWarRankOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { sweepFamilyAggro, sweepNpcWars, sweepNpcAggression } from '../src/npcwar.js';

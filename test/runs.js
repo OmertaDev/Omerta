@@ -13,7 +13,7 @@
 process.env.MOD_KEY = 'test-mod-key';
 process.env.RATE_LIMIT = 'off';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { CARS, LIMITED_RUNS, runOf, collectionCatalog, carVal, carMelt, carCollateralValue } from '../src/rules.js';
 import { mintLimitedRun } from '../src/economy.js';
 import { runLedgerInvariants } from '../src/invariants.js';

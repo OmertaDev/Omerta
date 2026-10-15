@@ -25,7 +25,7 @@ class TestDate extends RealDate {
   static now() { return clock; }
 }
 globalThis.Date = TestDate;
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js');
 const Intel = await import('../src/intelforecastjobs.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');

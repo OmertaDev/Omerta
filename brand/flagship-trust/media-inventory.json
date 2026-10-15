@@ -1,0 +1,2901 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-09-29",
+  "scope": "Read-only reusable media inventory for OMERTA flagship preproduction; selected source media, not complete repository rights audit",
+  "actualNewSpendUsd": 0,
+  "target": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "durationSeconds": 390,
+    "minGameOrGroundedGraphicsShare": 0.45
+  },
+  "voice": {
+    "choice": "A",
+    "voiceId": "ttv-voice-2026092513153126-73DRGCkR",
+    "endpoint": "fal-ai/minimax/speech-2.8-hd",
+    "selectionSource": "brand/market-v2-soul/narrative-map.json",
+    "originalDesignSource": "brand/market-v2-soul/generation-requests/voice-designs.json",
+    "accountAvailability": "Not checked; no account/key used"
+  },
+  "summary": {
+    "assetCount": 111,
+    "developmentCaptures": 50,
+    "generatedAudioOrArtIsNotOwnershipProof": true,
+    "newGenerationRequests": 0,
+    "landscapeMotionSelected": 15
+  },
+  "assets": [
+    {
+      "id": "public--art--cinematic-r4--captures--approval.png",
+      "path": "public/art/cinematic-r4/captures/approval.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "approval",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:41.329Z",
+      "manifestSha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 70319,
+      "sha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--boxing.png",
+      "path": "public/art/cinematic-r4/captures/boxing.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "boxing",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:01.327Z",
+      "manifestSha256": "9ede89af28ee9f3fb3a97380b2fd27a273f0a8171866ecfea472d71e02e6a918",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 66979,
+      "sha256": "9ede89af28ee9f3fb3a97380b2fd27a273f0a8171866ecfea472d71e02e6a918",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--brokers.png",
+      "path": "public/art/cinematic-r4/captures/brokers.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "brokers",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:01.894Z",
+      "manifestSha256": "8ff31d3dfbfa2dffbde7896581a9ebbb72cbb020748994eb39205b6baed7cf56",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 75671,
+      "sha256": "8ff31d3dfbfa2dffbde7896581a9ebbb72cbb020748994eb39205b6baed7cf56",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--business.png",
+      "path": "public/art/cinematic-r4/captures/business.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "business",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:43.397Z",
+      "manifestSha256": "4ad4350e777932cc0fe0bfdb4ef346ac1b17de4a426d3f03f44111e47ba9069e",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 85767,
+      "sha256": "4ad4350e777932cc0fe0bfdb4ef346ac1b17de4a426d3f03f44111e47ba9069e",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--case-detail.png",
+      "path": "public/art/cinematic-r4/captures/case-detail.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "case-detail",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:23:12.194Z",
+      "manifestSha256": "e8101217ddeeb0054e66c19aea8140b34c12ad237e228f4ee294eee59b5dc830",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 70984,
+      "sha256": "e8101217ddeeb0054e66c19aea8140b34c12ad237e228f4ee294eee59b5dc830",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--cases.png",
+      "path": "public/art/cinematic-r4/captures/cases.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "cases",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:21:53.335Z",
+      "manifestSha256": "0f5ad5ad74f1ea804cd4c1d3d5c2933ffe03a54d3c23815f33e0e86fe940fc5e",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 88074,
+      "sha256": "0f5ad5ad74f1ea804cd4c1d3d5c2933ffe03a54d3c23815f33e0e86fe940fc5e",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--casino.png",
+      "path": "public/art/cinematic-r4/captures/casino.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "casino",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:58.400Z",
+      "manifestSha256": "abb59b1034dfe3c65a8cb26d381bbd5de30a924cbddbd3252b54117f42e5554f",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 80617,
+      "sha256": "abb59b1034dfe3c65a8cb26d381bbd5de30a924cbddbd3252b54117f42e5554f",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--chain.png",
+      "path": "public/art/cinematic-r4/captures/chain.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "chain",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:01.341Z",
+      "manifestSha256": "946fd253362529f8360443a9eb88c348de9041434b0a47a1111acf707d476e3b",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 73055,
+      "sha256": "946fd253362529f8360443a9eb88c348de9041434b0a47a1111acf707d476e3b",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--city.png",
+      "path": "public/art/cinematic-r4/captures/city.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "city",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:30:15.437Z",
+      "manifestSha256": "7aa21238ce3d5b7f195fb281990f555aaa9d2dd1c4dea2d439b800069aef353f",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 72052,
+      "sha256": "7aa21238ce3d5b7f195fb281990f555aaa9d2dd1c4dea2d439b800069aef353f",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--combat.png",
+      "path": "public/art/cinematic-r4/captures/combat.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "combat",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:24.842Z",
+      "manifestSha256": "a0046f05df5791362de85131ee91a4981c9e797d0aa56f36fe30eb84df1ba8c5",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 78382,
+      "sha256": "a0046f05df5791362de85131ee91a4981c9e797d0aa56f36fe30eb84df1ba8c5",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--consigliere.png",
+      "path": "public/art/cinematic-r4/captures/consigliere.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "consigliere",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:30:47.572Z",
+      "manifestSha256": "c4f30e7a94cf5a206b356bb3d34c4f3946a9a5160d43b4475cafcc52740b4298",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 54644,
+      "sha256": "c4f30e7a94cf5a206b356bb3d34c4f3946a9a5160d43b4475cafcc52740b4298",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--coordination.png",
+      "path": "public/art/cinematic-r4/captures/coordination.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "coordination",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:22:46.800Z",
+      "manifestSha256": "558a750c686e69d3c2361fed3ce8a86dcaa8587ec382d500b0888484e15e5cb2",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 72785,
+      "sha256": "558a750c686e69d3c2361fed3ce8a86dcaa8587ec382d500b0888484e15e5cb2",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--crafting.png",
+      "path": "public/art/cinematic-r4/captures/crafting.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "crafting",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:19.164Z",
+      "manifestSha256": "910efa9b273d5bcb1b1027a662da4fdde98539cba5e21141061ad6429ead9c00",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 62201,
+      "sha256": "910efa9b273d5bcb1b1027a662da4fdde98539cba5e21141061ad6429ead9c00",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--crew.png",
+      "path": "public/art/cinematic-r4/captures/crew.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "crew",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:33.028Z",
+      "manifestSha256": "6929bd2da48bbdd25ac9be2021cd33bc33d93b53d93a847a8a84f79eeaf6effc",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 68713,
+      "sha256": "6929bd2da48bbdd25ac9be2021cd33bc33d93b53d93a847a8a84f79eeaf6effc",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--deeds.png",
+      "path": "public/art/cinematic-r4/captures/deeds.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "deeds",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:34.011Z",
+      "manifestSha256": "1d004a16709b1a00033d519d4013aedf401d48ae3487e8d99652be7ce49c091d",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 89701,
+      "sha256": "1d004a16709b1a00033d519d4013aedf401d48ae3487e8d99652be7ce49c091d",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--desk.png",
+      "path": "public/art/cinematic-r4/captures/desk.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "desk",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.260Z",
+      "manifestSha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 93725,
+      "sha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--estate.png",
+      "path": "public/art/cinematic-r4/captures/estate.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "estate",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:32.381Z",
+      "manifestSha256": "4e237dd73c5364506d3201448e7e121bb18f11cbd0c6b3c2531bdfd7ee7cfa81",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 80742,
+      "sha256": "4e237dd73c5364506d3201448e7e121bb18f11cbd0c6b3c2531bdfd7ee7cfa81",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--evidence.png",
+      "path": "public/art/cinematic-r4/captures/evidence.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "evidence",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:23:12.798Z",
+      "manifestSha256": "c64e166f2b0c22bcf35f275310574e051b3e95cb9813d191e45d06eaa0efd6f6",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 57662,
+      "sha256": "c64e166f2b0c22bcf35f275310574e051b3e95cb9813d191e45d06eaa0efd6f6",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--family.png",
+      "path": "public/art/cinematic-r4/captures/family.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "family",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:29.962Z",
+      "manifestSha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 89951,
+      "sha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--finance.png",
+      "path": "public/art/cinematic-r4/captures/finance.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "finance",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:12:08.025Z",
+      "manifestSha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 82205,
+      "sha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--garage.png",
+      "path": "public/art/cinematic-r4/captures/garage.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "garage",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:05:14.963Z",
+      "manifestSha256": "1541b106798853182422f55664592efd698b0bad008a7b65db275181a27bb39a",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 85497,
+      "sha256": "1541b106798853182422f55664592efd698b0bad008a7b65db275181a27bb39a",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--heists.png",
+      "path": "public/art/cinematic-r4/captures/heists.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "heists",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:44.862Z",
+      "manifestSha256": "3db382eecf4f50a80a884542439c05136458db7da658b9dc10419024c4dbc680",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 79544,
+      "sha256": "3db382eecf4f50a80a884542439c05136458db7da658b9dc10419024c4dbc680",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--history.png",
+      "path": "public/art/cinematic-r4/captures/history.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "history",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:22.540Z",
+      "manifestSha256": "0c6db002049025a288812ca5699a19739ff5a20956f25035f3e1d3e4f696e675",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 67964,
+      "sha256": "0c6db002049025a288812ca5699a19739ff5a20956f25035f3e1d3e4f696e675",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--inventory.png",
+      "path": "public/art/cinematic-r4/captures/inventory.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "inventory",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:19.950Z",
+      "manifestSha256": "1f488deb5f35995a4f8c52a89f9f364dcc7ef1c714835878f673e086df3eab6c",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 98452,
+      "sha256": "1f488deb5f35995a4f8c52a89f9f364dcc7ef1c714835878f673e086df3eab6c",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--kitchen.png",
+      "path": "public/art/cinematic-r4/captures/kitchen.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "kitchen",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:41.549Z",
+      "manifestSha256": "d01fbe5b90e15006fec1d2e12e31dc77d4da3683000f579178e827b08a8eb10d",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 85378,
+      "sha256": "d01fbe5b90e15006fec1d2e12e31dc77d4da3683000f579178e827b08a8eb10d",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--knowledge.png",
+      "path": "public/art/cinematic-r4/captures/knowledge.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "knowledge",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:41.329Z",
+      "manifestSha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 70319,
+      "sha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--law.png",
+      "path": "public/art/cinematic-r4/captures/law.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "law",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:26.327Z",
+      "manifestSha256": "1d1bb786b68fdd9b660b24fe1560f12e4c8442398e30c784da0f50014198f50b",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 70945,
+      "sha256": "1d1bb786b68fdd9b660b24fe1560f12e4c8442398e30c784da0f50014198f50b",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--loans.png",
+      "path": "public/art/cinematic-r4/captures/loans.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "loans",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:27.894Z",
+      "manifestSha256": "ffb8fcdcbcda1227f79f62a82463cc80f48c95158836f474b19005b64f4f51a2",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 76898,
+      "sha256": "ffb8fcdcbcda1227f79f62a82463cc80f48c95158836f474b19005b64f4f51a2",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--logistics.png",
+      "path": "public/art/cinematic-r4/captures/logistics.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "logistics",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:47.828Z",
+      "manifestSha256": "a45da50d5c6f69a4be456368d4d6e21d5487108c5c21e1585b953c439c687769",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 78209,
+      "sha256": "a45da50d5c6f69a4be456368d4d6e21d5487108c5c21e1585b953c439c687769",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--market.png",
+      "path": "public/art/cinematic-r4/captures/market.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "market",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:46.312Z",
+      "manifestSha256": "dbe776c0474f2c921c64a2b0167fcd9f1f22fc22d7d9a86b77a2b7bc4fef4f5e",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 86707,
+      "sha256": "dbe776c0474f2c921c64a2b0167fcd9f1f22fc22d7d9a86b77a2b7bc4fef4f5e",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--prison.png",
+      "path": "public/art/cinematic-r4/captures/prison.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "prison",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:30.860Z",
+      "manifestSha256": "1fb45a14f5b033d892759662e8a70aa3338eef1bdb845481ca38f15d18184394",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 68801,
+      "sha256": "1fb45a14f5b033d892759662e8a70aa3338eef1bdb845481ca38f15d18184394",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--races.png",
+      "path": "public/art/cinematic-r4/captures/races.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "races",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:02.910Z",
+      "manifestSha256": "1ac0130321acbe362d118187863e50432dbf993995f7c6db7d78a667329da78a",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 78110,
+      "sha256": "1ac0130321acbe362d118187863e50432dbf993995f7c6db7d78a667329da78a",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--roles.png",
+      "path": "public/art/cinematic-r4/captures/roles.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "roles",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:47.084Z",
+      "manifestSha256": "ab64b2aab52583459f912de6abb347dc7553e8e8a37b3abe53ca3ae662633205",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 72675,
+      "sha256": "ab64b2aab52583459f912de6abb347dc7553e8e8a37b3abe53ca3ae662633205",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--rwa.png",
+      "path": "public/art/cinematic-r4/captures/rwa.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "rwa",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:30.227Z",
+      "manifestSha256": "f2710661ad47650611315d8f7fadac25d7ce4aabe17340f6cac7d0ffc69da447",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 79048,
+      "sha256": "f2710661ad47650611315d8f7fadac25d7ce4aabe17340f6cac7d0ffc69da447",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--skills.png",
+      "path": "public/art/cinematic-r4/captures/skills.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "skills",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:56.416Z",
+      "manifestSha256": "cd843e136f5b2bbc9fa20db2c5e66e33fab90abb91b0c5cd1f3a2cc2b7e0040b",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 92660,
+      "sha256": "cd843e136f5b2bbc9fa20db2c5e66e33fab90abb91b0c5cd1f3a2cc2b7e0040b",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--speakeasy.png",
+      "path": "public/art/cinematic-r4/captures/speakeasy.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "speakeasy",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:59.861Z",
+      "manifestSha256": "1ecad6badffdafd24c2d231166026dc49adf8254b60ba0b37c2fcde78afd3d9c",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 83596,
+      "sha256": "1ecad6badffdafd24c2d231166026dc49adf8254b60ba0b37c2fcde78afd3d9c",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--stable.png",
+      "path": "public/art/cinematic-r4/captures/stable.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "stable",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:04.460Z",
+      "manifestSha256": "b6b42d5e4f5afec74e7227e7ce3479fdd7357943c5490210826ed154a5351396",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 76906,
+      "sha256": "b6b42d5e4f5afec74e7227e7ce3479fdd7357943c5490210826ed154a5351396",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--store.png",
+      "path": "public/art/cinematic-r4/captures/store.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "store",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:33.943Z",
+      "manifestSha256": "b0a6795c51452b0337ba6cff77bc4892d3412a918eef5d1feccb4bb8c9946b5e",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 77336,
+      "sha256": "b0a6795c51452b0337ba6cff77bc4892d3412a918eef5d1feccb4bb8c9946b5e",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--streets.png",
+      "path": "public/art/cinematic-r4/captures/streets.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "streets",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:04:35.079Z",
+      "manifestSha256": "cf5741cb3033e21037ec31f8726d3eff0b7457fa5355998c15c11aa93ed6b830",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 87313,
+      "sha256": "cf5741cb3033e21037ec31f8726d3eff0b7457fa5355998c15c11aa93ed6b830",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--territory.png",
+      "path": "public/art/cinematic-r4/captures/territory.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "territory",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:31.513Z",
+      "manifestSha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 91740,
+      "sha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--treasury.png",
+      "path": "public/art/cinematic-r4/captures/treasury.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "treasury",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.825Z",
+      "manifestSha256": "0b2482f3e4cc997fdf622d14e5f784077e46ac59e4bb5a97b44b558cc41d734e",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 77115,
+      "sha256": "0b2482f3e4cc997fdf622d14e5f784077e46ac59e4bb5a97b44b558cc41d734e",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--cinematic-r4--captures--wire.png",
+      "path": "public/art/cinematic-r4/captures/wire.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/cinematic-r4/manifest.json",
+      "sceneKey": "wire",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:29.409Z",
+      "manifestSha256": "cb2024fb9abd3dc6bf928c068d0dd17bea9666b8bb3b242570bafe3c73ffa472",
+      "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 77506,
+      "sha256": "cb2024fb9abd3dc6bf928c068d0dd17bea9666b8bb3b242570bafe3c73ffa472",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--captures--finance.png",
+      "path": "public/art/market-v2-soul/captures/finance.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/manifest.json",
+      "sceneKey": "finance",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:12:08.025Z",
+      "manifestSha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 82205,
+      "sha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--captures--territory.png",
+      "path": "public/art/market-v2-soul/captures/territory.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/manifest.json",
+      "sceneKey": "territory",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:31.513Z",
+      "manifestSha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 91740,
+      "sha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--captures--desk.png",
+      "path": "public/art/market-v2-soul/captures/desk.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/manifest.json",
+      "sceneKey": "desk",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.260Z",
+      "manifestSha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 93725,
+      "sha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--captures--family.png",
+      "path": "public/art/market-v2-soul/captures/family.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/manifest.json",
+      "sceneKey": "family",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:29.962Z",
+      "manifestSha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 89951,
+      "sha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-film--captures--finance.png",
+      "path": "public/art/market-v2-film/captures/finance.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-film/manifest.json",
+      "sceneKey": "finance",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:12:08.025Z",
+      "manifestSha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 82205,
+      "sha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-film--captures--territory.png",
+      "path": "public/art/market-v2-film/captures/territory.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-film/manifest.json",
+      "sceneKey": "territory",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:31.513Z",
+      "manifestSha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 91740,
+      "sha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-film--captures--desk.png",
+      "path": "public/art/market-v2-film/captures/desk.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-film/manifest.json",
+      "sceneKey": "desk",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.260Z",
+      "manifestSha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 93725,
+      "sha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-film--captures--family.png",
+      "path": "public/art/market-v2-film/captures/family.png",
+      "category": "development-interface-capture",
+      "exists": true,
+      "evidence": "public/art/market-v2-film/manifest.json",
+      "sceneKey": "family",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:29.962Z",
+      "manifestSha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "sourceRevision": null,
+      "reuse": "animatic-and-labeled-development-demonstration",
+      "requiredLabel": "Development build · representative test data",
+      "publicationChecks": [
+        "Reconcile visible controls and figures with current claim ledger",
+        "Recapture at 1920x1080 for full-screen final demonstration; current capture is about 1270x714",
+        "Do not treat still capture as a recorded action-result sequence"
+      ],
+      "rightsStatus": "Project-interface provenance documented; third-party art/font chain not fully verified",
+      "bytes": 89951,
+      "sha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "width": 1270,
+      "height": 714,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--hero-backdrop.jpg",
+      "path": "public/art/hero-backdrop.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "hero-backdrop",
+      "model": "fal-ai/flux-pro/v1.1-ultra",
+      "generatedAt": "2026-07-28T03:13:49.351Z",
+      "manifestDimensions": [
+        3136,
+        1344
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 523104,
+      "sha256": "7e23bd41d3a1c4f40b107c7d2b8380a9a7d6d1b08b9f25729e281168084569d3",
+      "width": 3136,
+      "height": 1344,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--district-docks.jpg",
+      "path": "public/art/district-docks.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "district-docks",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:51.964Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 163361,
+      "sha256": "a0cac527769a2b477bc2fcc58e25c6218bcdfef757d9405f374993d8d468b196",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--district-cathedral.jpg",
+      "path": "public/art/district-cathedral.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "district-cathedral",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:54.366Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 167788,
+      "sha256": "0b8742d148a775bc663c53fb90244122a9ed00fac02ed3b5904673a6b49747b8",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--district-foundry.jpg",
+      "path": "public/art/district-foundry.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "district-foundry",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:55.056Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 203176,
+      "sha256": "43337a657fa214747b1e6acca0341e4932906a8b3243af8905865bee6d00562a",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--district-canal.jpg",
+      "path": "public/art/district-canal.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "district-canal",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:55.953Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 153553,
+      "sha256": "9402275a837b45259f50d68dac2a05713afd3b6f0400d3c2f40ce791fe850e26",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--district-brick.jpg",
+      "path": "public/art/district-brick.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "district-brick",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:57.810Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 175496,
+      "sha256": "ed0bfec01e8bf13317cc22829a47f9b9b0f171c28f2b8e039874ec4c74a4c3a8",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-start.jpg",
+      "path": "public/art/interior-start.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-start",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:31:20.205Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 113688,
+      "sha256": "5c06cfb039c6e8fcc9d3c15073df590210c71d092eefe0e1ed37780cb8be7293",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-family.jpg",
+      "path": "public/art/interior-family.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-family",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:31:16.096Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 90499,
+      "sha256": "f613080a80138d443e202b2bdadd33dc11e676a320b8d94e9dc16b44ba18d919",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-kitchen.jpg",
+      "path": "public/art/interior-kitchen.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-kitchen",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:13:58.166Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 161914,
+      "sha256": "ff973bc312b9b494d21bd8078e8242004933b817e5fce237a9b21b5b3e2bec89",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-garage.jpg",
+      "path": "public/art/interior-garage.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-garage",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:06.966Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 206431,
+      "sha256": "5cfff5c17959116a350dca18acb5db64759a8716e76ffd288190e423d3017eb3",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-market.jpg",
+      "path": "public/art/interior-market.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-market",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:08.912Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 185516,
+      "sha256": "a1ce711006d00dd563608a92de22932264ff12ef1149c42b9c5d93263d148764",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-port.jpg",
+      "path": "public/art/interior-port.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-port",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:09.560Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 122798,
+      "sha256": "a96be0cd4fa701374fa9e562d2f92073d2c9cfd96315cc02de0889c7c3dc3905",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-law.jpg",
+      "path": "public/art/interior-law.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-law",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:31:14.119Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 170829,
+      "sha256": "5ef346812dbce0d615c29831784310f39338984998516057338c0ab2d0abbad6",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-estate.jpg",
+      "path": "public/art/interior-estate.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-estate",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:03.015Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 163311,
+      "sha256": "9b97781a5dfd930ed4ba42c3749523d1c352675a56d77540fad822cd7eb1e127",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-speakeasy.jpg",
+      "path": "public/art/interior-speakeasy.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-speakeasy",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:00.968Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 105335,
+      "sha256": "3dcd51586e33e6481d1f661556b3e1b00683dd4299b7e5270e06f42414b7fec0",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-races.jpg",
+      "path": "public/art/interior-races.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-races",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:31:16.688Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 154754,
+      "sha256": "9dc311a808a7707f97406671c4ea271814aa4bf714d4796c1d5122753fb1d9cf",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--game-ring.jpg",
+      "path": "public/art/game-ring.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "game-ring",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-30T04:23:07.842Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 89553,
+      "sha256": "6f9eadb80b9ae3cd94388659cc63efb8624dede809c2cc8f2b602513ca27b75a",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--game-track.jpg",
+      "path": "public/art/game-track.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "game-track",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-30T04:16:21.748Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 165986,
+      "sha256": "8bce50e71ec2b0a4a2b6a6bd22fef79f7110b37ecaf3cf321bb82f3093b5d92e",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--interior-den.jpg",
+      "path": "public/art/interior-den.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "interior-den",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:03.049Z",
+      "manifestDimensions": [
+        1024,
+        576
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 121599,
+      "sha256": "85f199dfcfc082e0e7724b04d329298daf720a05019fe99f0feae8ffc8840615",
+      "width": 1024,
+      "height": 576,
+      "decodedFormat": "JPEG",
+      "orientation": "landscape"
+    },
+    {
+      "id": "public--art--citymap.jpg",
+      "path": "public/art/citymap.jpg",
+      "category": "existing-editorial-art",
+      "exists": true,
+      "evidence": "public/art/manifest.json",
+      "sceneKey": "citymap",
+      "model": "fal-ai/flux-pro/v1.1",
+      "generatedAt": "2026-07-28T03:14:14.236Z",
+      "manifestDimensions": [
+        1024,
+        1024
+      ],
+      "reuse": "Atmosphere or dossier/map inset, never gameplay proof",
+      "rightsStatus": "Generation metadata only; commercial grant/account entitlement not independently verified",
+      "framing": "Preserve aspect ratio; most files below native 1080p; use insets or replace for native full-screen final",
+      "bytes": 620187,
+      "sha256": "7688525d0a195972eab2e539b532eed9ba90c19689d17dd60d1d1707333ff384",
+      "width": 1024,
+      "height": 1024,
+      "decodedFormat": "JPEG",
+      "orientation": "square"
+    },
+    {
+      "id": "public--art--market-v2-soul--voice-design--SOUL-VOICE-A.mp3",
+      "path": "public/art/market-v2-soul/voice-design/SOUL-VOICE-A.mp3",
+      "category": "selected-voice",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-VOICE-A",
+      "endpoint": "fal-ai/minimax/voice-design",
+      "requestId": "01a0d6fd-4b40-7b90-a40f-43b70cf4c78b",
+      "generatedAt": "2026-09-25T05:15:19.127Z",
+      "manifestSha256": "632edec1ee8df23a2cc29ae3b9ece828d2e34c6266664b64176770741d4c085c",
+      "reuse": "Audition only; regenerate new exact script using same voice ID",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 218868,
+      "sha256": "632edec1ee8df23a2cc29ae3b9ece828d2e34c6266664b64176770741d4c085c",
+      "durationSeconds": 18.108,
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "32000",
+          "channels": 1,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-city.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-city.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-city",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-9fd7-7692-ab90-3bc6bd010008",
+      "generatedAt": "2026-09-25T05:16:46.384Z",
+      "manifestSha256": "bec862ae53d9b484b9efa3680da2d1debe487856f47eb137c0ddb5ae4b0cae33",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3322312,
+      "sha256": "bec862ae53d9b484b9efa3680da2d1debe487856f47eb137c0ddb5ae4b0cae33",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-reserves.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-reserves.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-reserves",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-a027-7572-86bf-54475e12b106",
+      "generatedAt": "2026-09-25T05:16:46.594Z",
+      "manifestSha256": "130622853d4db6410854142944649e5a905749f6997a7f2c02700fc3c68d3956",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3567609,
+      "sha256": "130622853d4db6410854142944649e5a905749f6997a7f2c02700fc3c68d3956",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-vault.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-vault.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-vault",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-a07d-7950-9ae5-432f4abf9250",
+      "generatedAt": "2026-09-25T05:16:46.674Z",
+      "manifestSha256": "306d99048fbccd0bca91752e46799583d89797897bdbe59e2b3f30707ffeeb6f",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3590988,
+      "sha256": "306d99048fbccd0bca91752e46799583d89797897bdbe59e2b3f30707ffeeb6f",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-harbor.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-harbor.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-harbor",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-a0ce-7a63-b9f3-e23595195778",
+      "generatedAt": "2026-09-25T05:16:46.760Z",
+      "manifestSha256": "2fc7375d82392ac3250d16873cf25c98edb4abc8a74f4a1304bad5a493c53eaa",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3718059,
+      "sha256": "2fc7375d82392ac3250d16873cf25c98edb4abc8a74f4a1304bad5a493c53eaa",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-ledger.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-ledger.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-ledger",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-a121-7f30-8976-f657d0a4611c",
+      "generatedAt": "2026-09-25T05:16:46.841Z",
+      "manifestSha256": "5d9e6856a86ef9d1197dc1fe28dd74fb9c43fc6c600d793ea049e64eb95d4dbd",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3371200,
+      "sha256": "5d9e6856a86ef9d1197dc1fe28dd74fb9c43fc6c600d793ea049e64eb95d4dbd",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--frames--SOUL-PLATE-family.png",
+      "path": "public/art/market-v2-soul/frames/SOUL-PLATE-family.png",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-PLATE-family",
+      "endpoint": "bytedance/seedream/v5/pro/text-to-image",
+      "requestId": "01a0d6fe-a178-7a02-a4e7-8f4482509d31",
+      "generatedAt": "2026-09-25T05:16:46.923Z",
+      "manifestSha256": "0adbcce9d2b0ec635150cf29692da7db58cca3937ffce297e12acc8db2bcbe0d",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 3158657,
+      "sha256": "0adbcce9d2b0ec635150cf29692da7db58cca3937ffce297e12acc8db2bcbe0d",
+      "width": 1080,
+      "height": 1920,
+      "decodedFormat": "PNG",
+      "orientation": "portrait",
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--SOUL-SAMPLE-A.mp3",
+      "path": "public/art/market-v2-soul/audio/SOUL-SAMPLE-A.mp3",
+      "category": "selected-voice",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-SAMPLE-A",
+      "endpoint": "fal-ai/minimax/speech-2.8-hd",
+      "requestId": "01a0d6ff-3c8b-75d0-853e-9e423c79924d",
+      "generatedAt": "2026-09-25T05:17:26.494Z",
+      "manifestSha256": "1f4d26ff6f16a4e2deabf73cb4c9caf3e37058e046e609649950f3d55b4f0b58",
+      "reuse": "Audition only; regenerate new exact script using same voice ID",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 563710,
+      "sha256": "1f4d26ff6f16a4e2deabf73cb4c9caf3e37058e046e609649950f3d55b4f0b58",
+      "durationSeconds": 17.554286,
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 1,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--clips--SOUL-MOTION-city.mp4",
+      "path": "public/art/market-v2-soul/clips/SOUL-MOTION-city.mp4",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-MOTION-city",
+      "endpoint": "bytedance/seedance-2.5/image-to-video",
+      "requestId": "01a0d709-35ce-7eb0-8280-d8b2e139a7cb",
+      "generatedAt": "2026-09-25T05:28:20.219Z",
+      "manifestSha256": "cf8a0a94cc847c68b220a128e5bef03f8b06ea8de5da41ba9ffad8002a66e643",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 9073778,
+      "sha256": "cf8a0a94cc847c68b220a128e5bef03f8b06ea8de5da41ba9ffad8002a66e643",
+      "durationSeconds": 8.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 720,
+          "height": 1280,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "matchesManifestHash": true,
+      "orientation": "portrait"
+    },
+    {
+      "id": "public--art--market-v2-soul--clips--SOUL-MOTION-vault.mp4",
+      "path": "public/art/market-v2-soul/clips/SOUL-MOTION-vault.mp4",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-MOTION-vault",
+      "endpoint": "bytedance/seedance-2.5/image-to-video",
+      "requestId": "01a0d709-364e-7052-97d4-76a162286f62",
+      "generatedAt": "2026-09-25T05:28:20.336Z",
+      "manifestSha256": "3abe37153002c3f2fd5a3fa42a5cb2ca5fcafe2b3e89304db3b1bbed00e8ae98",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 6324767,
+      "sha256": "3abe37153002c3f2fd5a3fa42a5cb2ca5fcafe2b3e89304db3b1bbed00e8ae98",
+      "durationSeconds": 8.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 720,
+          "height": 1280,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "matchesManifestHash": true,
+      "orientation": "portrait"
+    },
+    {
+      "id": "public--art--market-v2-soul--clips--SOUL-MOTION-harbor.mp4",
+      "path": "public/art/market-v2-soul/clips/SOUL-MOTION-harbor.mp4",
+      "category": "portrait-atmosphere",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-MOTION-harbor",
+      "endpoint": "bytedance/seedance-2.5/image-to-video",
+      "requestId": "01a0d709-36d5-7642-9638-a5d2ecac72fb",
+      "generatedAt": "2026-09-25T05:28:20.466Z",
+      "manifestSha256": "bf29b1a9d9cc1fefdf995e01f159f61d0374569c2c65fda2e9f7818d59a8976d",
+      "reuse": "Portrait dossier inset only, do not stretch or claim native landscape",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 11334928,
+      "sha256": "bf29b1a9d9cc1fefdf995e01f159f61d0374569c2c65fda2e9f7818d59a8976d",
+      "durationSeconds": 8.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 720,
+          "height": 1280,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "matchesManifestHash": true,
+      "orientation": "portrait"
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--SOUL-SCORE.mp3",
+      "path": "public/art/market-v2-soul/audio/SOUL-SCORE.mp3",
+      "category": "generated-score",
+      "exists": true,
+      "evidence": "public/art/market-v2-soul/generation-ledger.json",
+      "generationId": "SOUL-SCORE",
+      "endpoint": "elevenlabs/music/v2.5",
+      "requestId": "01a0d709-cb6f-7031-8755-d862dfbb6cd9",
+      "generatedAt": "2026-09-25T05:28:58.432Z",
+      "manifestSha256": "669793177b480b11b43e24e5507f8fdfc75977bc188b343704e2d2e9daadab52",
+      "reuse": "Reuse musical material if rights confirmed; do not reuse old narration",
+      "rightsStatus": "Original prompt and request recorded; publication entitlement and provider terms for original account not independently verified",
+      "bytes": 4320621,
+      "sha256": "669793177b480b11b43e24e5507f8fdfc75977bc188b343704e2d2e9daadab52",
+      "durationSeconds": 180.024,
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "matchesManifestHash": true
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--soul-music.wav",
+      "path": "public/art/market-v2-soul/audio/soul-music.wav",
+      "category": "existing-audio-stem",
+      "exists": true,
+      "evidence": "brand/market-v2-soul/mix-audio.mjs; public/art/market-v2-soul/audio/audio-report.json",
+      "reuse": "Editable source stem; sound review and music rights needed",
+      "rightsStatus": "Derived from documented score or procedural audio; inherited rights status",
+      "bytes": 50256102,
+      "sha256": "477277fcd99fc638da08152cf83c27f8ef95466babcbe8b9477c6a59a9700936",
+      "durationSeconds": 174.5,
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--soul-room.wav",
+      "path": "public/art/market-v2-soul/audio/soul-room.wav",
+      "category": "existing-audio-stem",
+      "exists": true,
+      "evidence": "brand/market-v2-soul/mix-audio.mjs; public/art/market-v2-soul/audio/audio-report.json",
+      "reuse": "Editable source stem; sound review and music rights needed",
+      "rightsStatus": "Derived from documented score or procedural audio; inherited rights status",
+      "bytes": 50256102,
+      "sha256": "ed82ce7e64a3772c0e3d6a9c356a9dba95a8cdafa8fc9860e02cc229a9681f42",
+      "durationSeconds": 174.5,
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--soul-sfx.wav",
+      "path": "public/art/market-v2-soul/audio/soul-sfx.wav",
+      "category": "existing-audio-stem",
+      "exists": true,
+      "evidence": "brand/market-v2-soul/mix-audio.mjs; public/art/market-v2-soul/audio/audio-report.json",
+      "reuse": "Editable source stem; sound review and music rights needed",
+      "rightsStatus": "Derived from documented score or procedural audio; inherited rights status",
+      "bytes": 50256102,
+      "sha256": "62dba734ed094bbc0b8f232ef1d985fa2d4b44b615bbf73f5be8fa71f605b5ca",
+      "durationSeconds": 174.5,
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--soul-dialogue.wav",
+      "path": "public/art/market-v2-soul/audio/soul-dialogue.wav",
+      "category": "existing-audio-stem",
+      "exists": true,
+      "evidence": "brand/market-v2-soul/mix-audio.mjs; public/art/market-v2-soul/audio/audio-report.json",
+      "reuse": "Do not reuse obsolete script or final mix; selected voice reference only",
+      "rightsStatus": "Derived from documented score or procedural audio; inherited rights status",
+      "bytes": 50256102,
+      "sha256": "2a94084e518ccfe59a9f82f09f5f648644843322851d179b2328ef1598af11ff",
+      "durationSeconds": 174.5,
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "id": "public--art--market-v2-soul--audio--soul-mix.wav",
+      "path": "public/art/market-v2-soul/audio/soul-mix.wav",
+      "category": "existing-audio-stem",
+      "exists": true,
+      "evidence": "brand/market-v2-soul/mix-audio.mjs; public/art/market-v2-soul/audio/audio-report.json",
+      "reuse": "Do not reuse obsolete script or final mix; selected voice reference only",
+      "rightsStatus": "Derived from documented score or procedural audio; inherited rights status",
+      "bytes": 50256102,
+      "sha256": "6312aa24d657ab4c9f721b03d38121191493b3694669cdba4fecc066cbd1b5aa",
+      "durationSeconds": 174.5,
+      "streams": [
+        {
+          "codec_name": "pcm_s24le",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ]
+    },
+    {
+      "id": "brand--logo.svg",
+      "path": "brand/logo.svg",
+      "category": "official-wordmark",
+      "exists": true,
+      "evidence": "User brief; brand/logo.svg",
+      "reuse": "Use exact SVG; preserve accent and proportions",
+      "rightsStatus": "Project asset explicitly requested; independent trademark registration/title not reviewed",
+      "bytes": 1434,
+      "sha256": "50ff4cbc43afbb751b8e57115bdf74e075af47e78e50c46442e0f2b4f138c611",
+      "fontDependency": "Live SVG text requires Liberation Serif or DejaVu Serif; pin renderer, do not silently alter wordmark via fallback."
+    },
+    {
+      "id": "public--art--display.woff2",
+      "path": "public/art/display.woff2",
+      "category": "bundled-project-font",
+      "exists": true,
+      "evidence": "public/omerta-ui.css:12",
+      "reuse": "Preproduction existing screenshots only; no new external packaging until font origin/license resolved",
+      "rightsStatus": "UNVERIFIED: no publisher/license file identified in scoped inspection",
+      "bytes": 12740,
+      "sha256": "f6cb541f4d9794b86145c9c3e7d778ffb78c92f8180c577e245238991503da6f"
+    },
+    {
+      "id": "windows-arial.ttf",
+      "path": "C:\\Windows\\Fonts\\arial.ttf",
+      "exists": true,
+      "category": "system-font",
+      "reuse": "Render bitmap text in video on licensed Windows workstation; do not copy font into editable delivery",
+      "rightsStatus": "Conditional on Windows/app licensing; Microsoft public FAQ permits bitmap video text",
+      "licenseUrl": "https://learn.microsoft.com/en-us/typography/fonts/font-faq"
+    },
+    {
+      "id": "windows-georgia.ttf",
+      "path": "C:\\Windows\\Fonts\\georgia.ttf",
+      "exists": true,
+      "category": "system-font",
+      "reuse": "Render bitmap text in video on licensed Windows workstation; do not copy font into editable delivery",
+      "rightsStatus": "Conditional on Windows/app licensing; Microsoft public FAQ permits bitmap video text",
+      "licenseUrl": "https://learn.microsoft.com/en-us/typography/fonts/font-faq"
+    },
+    {
+      "id": "hype-interior-market",
+      "path": "public/art/hype/interior-market.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1673284,
+      "sha256": "d8dde09c86db9d3564f7a5e0c59e7b7c064bae0b0e42fffb03a5e620a6beabd5",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-family",
+      "path": "public/art/hype/interior-family.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 166536,
+      "sha256": "b764c434e5ab6a324d70629a9ff3696863bfd4da0563a2c93078e9e29bae11d5",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-kitchen",
+      "path": "public/art/hype/interior-kitchen.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 273905,
+      "sha256": "3aa6e28bf795792b7b19f90f1a3f5cb7d9eac29b0bf2be94f9c7bd0bb22d5863",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-port",
+      "path": "public/art/hype/interior-port.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 169290,
+      "sha256": "011627c93b95c35a43061e8ff6a6c24bfa2952f5410142e1fb39add2daadac37",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-start",
+      "path": "public/art/hype/interior-start.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 207673,
+      "sha256": "1f438eaf130d953ee27f8efbb1fe74e09357901bd714c6d043f1ae4f0585e949",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-garage",
+      "path": "public/art/hype/interior-garage.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 296725,
+      "sha256": "fe2c4fddb4d8efc4006dd62ecf6ca4fea1faaa990391c5d23601f24d8b34ecc5",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 540,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-law",
+      "path": "public/art/hype/interior-law.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1047425,
+      "sha256": "d3ef6fb779c838f6bbb310ded1937db791520858aa00ece835f2e773f0ade3de",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-interior-speakeasy",
+      "path": "public/art/hype/interior-speakeasy.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1687177,
+      "sha256": "61c9c833cb3f36309e273a1794b40feb33e812310cabe48e111626cb22b035eb",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-district-foundry",
+      "path": "public/art/hype/district-foundry.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 534517,
+      "sha256": "c6603c22508e04e1959d4dafbe3a10d57df09477ce8028213133abd1aa6c8989",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-district-docks",
+      "path": "public/art/hype/district-docks.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1303112,
+      "sha256": "1601ce2337cfa0f063e978f9bcf2ff03f691d14aacfd393a4174666a37389274",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-crime-counting",
+      "path": "public/art/hype/crime-counting.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1280094,
+      "sha256": "963e6eb11387b627a84564ceefc291bbc518f4c645c24ba9af557d08cfc2eb2f",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-heist-vault",
+      "path": "public/art/hype/heist-vault.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 90665,
+      "sha256": "893fac6b99f43dd809ecea7272c4676c889af9d5061dec6870ed019316b356c6",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 480,
+          "height": 270,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-citymap",
+      "path": "public/art/hype/citymap.mp4",
+      "exists": true,
+      "category": "existing-square-atmosphere",
+      "bytes": 1767523,
+      "sha256": "424b735587c523d86e09e6ca3f03623e3c7a52eb64acf203085163d378477d43",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 960,
+          "height": 960,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "square"
+    },
+    {
+      "id": "hype-cine-funeral",
+      "path": "public/art/hype/cine-funeral.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 648251,
+      "sha256": "d3cd7deb2660acded01c7094502ed6515fdc130ea3ad3e62e110956cca5eb9d8",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-cine-champion",
+      "path": "public/art/hype/cine-champion.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 815272,
+      "sha256": "520437538a043fbc1021b501f8820979f0e7f3b342a186b80e78d3a0813d2640",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.0/fast (image-to-video @720p; t2v for the cine payoffs)",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-hero-poster",
+      "path": "public/art/hype/hero-poster.mp4",
+      "exists": true,
+      "category": "existing-landscape-atmosphere",
+      "bytes": 1489497,
+      "sha256": "170773b7450438f300b859abe71d797a76087a3ef198d29300a97b8f9f5597cc",
+      "durationSeconds": 5.041667,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1470,
+          "height": 630,
+          "r_frame_rate": "24/1"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "bytedance/seedance-2.5/image-to-video",
+      "sourceRecord": {
+        "directClip": true,
+        "passDate": null
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ],
+      "orientation": "landscape"
+    },
+    {
+      "id": "hype-bed-family",
+      "path": "public/art/hype/bed-family.m4a",
+      "exists": true,
+      "category": "existing-ambience",
+      "bytes": 733053,
+      "sha256": "0a3bdcc1572503f8efc04d58b7d43a70e1edf9d84f7cb83d5a7f3ac7abe94d64",
+      "durationSeconds": 60.0,
+      "streams": [
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "fal-ai/stable-audio-25/text-to-audio",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ]
+    },
+    {
+      "id": "hype-bed-docks",
+      "path": "public/art/hype/bed-docks.m4a",
+      "exists": true,
+      "category": "existing-ambience",
+      "bytes": 733285,
+      "sha256": "c8b5e8cf557868d57045e584d5ba68c61897f7d16cdf8c134a87814f093af826",
+      "durationSeconds": 60.0,
+      "streams": [
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "fal-ai/stable-audio-25/text-to-audio",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ]
+    },
+    {
+      "id": "hype-bed-streets",
+      "path": "public/art/hype/bed-streets.m4a",
+      "exists": true,
+      "category": "existing-ambience",
+      "bytes": 734094,
+      "sha256": "108474d980883f4afba9f170e6868ec175c170c7ff0401871e6da9e43169bb60",
+      "durationSeconds": 60.0,
+      "streams": [
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "fal-ai/stable-audio-25/text-to-audio",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ]
+    },
+    {
+      "id": "hype-sting-death",
+      "path": "public/art/hype/sting-death.m4a",
+      "exists": true,
+      "category": "existing-ambience",
+      "bytes": 98365,
+      "sha256": "d9db70c659ea5734acaaede0825f10f81e1eb41b31c2ed7ea3a831694b0a1d7b",
+      "durationSeconds": 8.0,
+      "streams": [
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "44100",
+          "channels": 2,
+          "r_frame_rate": "0/0"
+        }
+      ],
+      "evidence": "public/art/hype/hype-manifest.json",
+      "generationModel": "fal-ai/stable-audio-25/text-to-audio",
+      "sourceRecord": {
+        "directClip": false,
+        "passDate": "2026-08-14"
+      },
+      "reuse": "Rough animatic atmosphere; inspect imagery and claims before final reuse. Do not stretch. Not gameplay evidence.",
+      "rightsStatus": "Generation manifest exists; historical account/model entitlement not independently verified",
+      "publicationChecks": [
+        "Native resolution generally below1080p; inset or replace",
+        "Generated atmosphere must not imply third-person gameplay or unverified event mechanics"
+      ]
+    }
+  ],
+  "exclusions": [
+    "Prior completed vertical trailers: wrong aspect ratio and stale economic/publication context",
+    "Unrelated or superseded economic explainer cards: rebuild current unversioned diagrams from claim ledger",
+    "Failed SOUL-MOTION-family: no usable clip",
+    "No stock/music/franchise material with absent licenses",
+    "All prior narration: retain voice identity, not prior script"
+  ],
+  "repositoryRevisionAtInventory": "e56cf576065c5f1bbb9bb55115f5961267f7d654"
+}

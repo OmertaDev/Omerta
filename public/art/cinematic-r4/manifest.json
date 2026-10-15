@@ -1,0 +1,480 @@
+{
+  "version": 4,
+  "createdAt": "2026-09-24T20:31:11.397Z",
+  "sourceRevision": "32859cf7d198d2a003160b2bb1ef005991697d73 (fact audit); current dirty local checkout for captures",
+  "captures": {
+    "approval": {
+      "src": "art/cinematic-r4/captures/approval.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "source": "http://127.0.0.1:8825/consigliere",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:41.329Z"
+    },
+    "boxing": {
+      "src": "art/cinematic-r4/captures/boxing.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "9ede89af28ee9f3fb3a97380b2fd27a273f0a8171866ecfea472d71e02e6a918",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:01.327Z"
+    },
+    "brokers": {
+      "src": "art/cinematic-r4/captures/brokers.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "8ff31d3dfbfa2dffbde7896581a9ebbb72cbb020748994eb39205b6baed7cf56",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:01.894Z"
+    },
+    "business": {
+      "src": "art/cinematic-r4/captures/business.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "4ad4350e777932cc0fe0bfdb4ef346ac1b17de4a426d3f03f44111e47ba9069e",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:43.397Z"
+    },
+    "case-detail": {
+      "src": "art/cinematic-r4/captures/case-detail.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "e8101217ddeeb0054e66c19aea8140b34c12ad237e228f4ee294eee59b5dc830",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:23:12.194Z"
+    },
+    "cases": {
+      "src": "art/cinematic-r4/captures/cases.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "0f5ad5ad74f1ea804cd4c1d3d5c2933ffe03a54d3c23815f33e0e86fe940fc5e",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:21:53.335Z"
+    },
+    "casino": {
+      "src": "art/cinematic-r4/captures/casino.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "abb59b1034dfe3c65a8cb26d381bbd5de30a924cbddbd3252b54117f42e5554f",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:58.400Z"
+    },
+    "chain": {
+      "src": "art/cinematic-r4/captures/chain.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "946fd253362529f8360443a9eb88c348de9041434b0a47a1111acf707d476e3b",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:01.341Z"
+    },
+    "city": {
+      "src": "art/cinematic-r4/captures/city.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "7aa21238ce3d5b7f195fb281990f555aaa9d2dd1c4dea2d439b800069aef353f",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:30:15.437Z"
+    },
+    "combat": {
+      "src": "art/cinematic-r4/captures/combat.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "a0046f05df5791362de85131ee91a4981c9e797d0aa56f36fe30eb84df1ba8c5",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:24.842Z"
+    },
+    "consigliere": {
+      "src": "art/cinematic-r4/captures/consigliere.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "c4f30e7a94cf5a206b356bb3d34c4f3946a9a5160d43b4475cafcc52740b4298",
+      "source": "http://127.0.0.1:8825/consigliere",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:30:47.572Z"
+    },
+    "coordination": {
+      "src": "art/cinematic-r4/captures/coordination.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "558a750c686e69d3c2361fed3ce8a86dcaa8587ec382d500b0888484e15e5cb2",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:22:46.800Z"
+    },
+    "crafting": {
+      "src": "art/cinematic-r4/captures/crafting.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "910efa9b273d5bcb1b1027a662da4fdde98539cba5e21141061ad6429ead9c00",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:19.164Z"
+    },
+    "crew": {
+      "src": "art/cinematic-r4/captures/crew.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "6929bd2da48bbdd25ac9be2021cd33bc33d93b53d93a847a8a84f79eeaf6effc",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:33.028Z"
+    },
+    "deeds": {
+      "src": "art/cinematic-r4/captures/deeds.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1d004a16709b1a00033d519d4013aedf401d48ae3487e8d99652be7ce49c091d",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:34.011Z"
+    },
+    "desk": {
+      "src": "art/cinematic-r4/captures/desk.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "c5afb2147a7483ca24305255e7e2fb7a4b35965f3d86283e81a0d8a48241b408",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.260Z"
+    },
+    "estate": {
+      "src": "art/cinematic-r4/captures/estate.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "4e237dd73c5364506d3201448e7e121bb18f11cbd0c6b3c2531bdfd7ee7cfa81",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:32.381Z"
+    },
+    "evidence": {
+      "src": "art/cinematic-r4/captures/evidence.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "c64e166f2b0c22bcf35f275310574e051b3e95cb9813d191e45d06eaa0efd6f6",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:23:12.798Z"
+    },
+    "family": {
+      "src": "art/cinematic-r4/captures/family.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "9aa71cd1c3c6e36d1c0b92940a2d1a9cf14ed5c74f52eb8e112cbf2b0b54ab8d",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:29.962Z"
+    },
+    "finance": {
+      "src": "art/cinematic-r4/captures/finance.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "d187179a60b4db338946e8d86b0970c5fb9b051478f88acc859007a50721e5d2",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:12:08.025Z"
+    },
+    "garage": {
+      "src": "art/cinematic-r4/captures/garage.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1541b106798853182422f55664592efd698b0bad008a7b65db275181a27bb39a",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:05:14.963Z"
+    },
+    "heists": {
+      "src": "art/cinematic-r4/captures/heists.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "3db382eecf4f50a80a884542439c05136458db7da658b9dc10419024c4dbc680",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:44.862Z"
+    },
+    "history": {
+      "src": "art/cinematic-r4/captures/history.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "0c6db002049025a288812ca5699a19739ff5a20956f25035f3e1d3e4f696e675",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:22.540Z"
+    },
+    "inventory": {
+      "src": "art/cinematic-r4/captures/inventory.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1f488deb5f35995a4f8c52a89f9f364dcc7ef1c714835878f673e086df3eab6c",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:19.950Z"
+    },
+    "kitchen": {
+      "src": "art/cinematic-r4/captures/kitchen.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "d01fbe5b90e15006fec1d2e12e31dc77d4da3683000f579178e827b08a8eb10d",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:41.549Z"
+    },
+    "knowledge": {
+      "src": "art/cinematic-r4/captures/knowledge.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "47ce02a11caad2e9ce805186a2f9353ac632ae32dc6eed5883599fd820b300e8",
+      "source": "http://127.0.0.1:8825/consigliere",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:27:41.329Z"
+    },
+    "law": {
+      "src": "art/cinematic-r4/captures/law.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1d1bb786b68fdd9b660b24fe1560f12e4c8442398e30c784da0f50014198f50b",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:26.327Z"
+    },
+    "loans": {
+      "src": "art/cinematic-r4/captures/loans.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "ffb8fcdcbcda1227f79f62a82463cc80f48c95158836f474b19005b64f4f51a2",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:27.894Z"
+    },
+    "logistics": {
+      "src": "art/cinematic-r4/captures/logistics.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "a45da50d5c6f69a4be456368d4d6e21d5487108c5c21e1585b953c439c687769",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:47.828Z"
+    },
+    "market": {
+      "src": "art/cinematic-r4/captures/market.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "dbe776c0474f2c921c64a2b0167fcd9f1f22fc22d7d9a86b77a2b7bc4fef4f5e",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:07:46.312Z"
+    },
+    "prison": {
+      "src": "art/cinematic-r4/captures/prison.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1fb45a14f5b033d892759662e8a70aa3338eef1bdb845481ca38f15d18184394",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:30.860Z"
+    },
+    "races": {
+      "src": "art/cinematic-r4/captures/races.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1ac0130321acbe362d118187863e50432dbf993995f7c6db7d78a667329da78a",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:02.910Z"
+    },
+    "roles": {
+      "src": "art/cinematic-r4/captures/roles.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "ab64b2aab52583459f912de6abb347dc7553e8e8a37b3abe53ca3ae662633205",
+      "source": "http://127.0.0.1:8825/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:47.084Z"
+    },
+    "rwa": {
+      "src": "art/cinematic-r4/captures/rwa.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "f2710661ad47650611315d8f7fadac25d7ce4aabe17340f6cac7d0ffc69da447",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:30.227Z"
+    },
+    "skills": {
+      "src": "art/cinematic-r4/captures/skills.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "cd843e136f5b2bbc9fa20db2c5e66e33fab90abb91b0c5cd1f3a2cc2b7e0040b",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:28:56.416Z"
+    },
+    "speakeasy": {
+      "src": "art/cinematic-r4/captures/speakeasy.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "1ecad6badffdafd24c2d231166026dc49adf8254b60ba0b37c2fcde78afd3d9c",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:59.861Z"
+    },
+    "stable": {
+      "src": "art/cinematic-r4/captures/stable.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "b6b42d5e4f5afec74e7227e7ce3479fdd7357943c5490210826ed154a5351396",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:04.460Z"
+    },
+    "store": {
+      "src": "art/cinematic-r4/captures/store.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "b0a6795c51452b0337ba6cff77bc4892d3412a918eef5d1feccb4bb8c9946b5e",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:09:33.943Z"
+    },
+    "streets": {
+      "src": "art/cinematic-r4/captures/streets.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "cf5741cb3033e21037ec31f8726d3eff0b7457fa5355998c15c11aa93ed6b830",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:04:35.079Z"
+    },
+    "territory": {
+      "src": "art/cinematic-r4/captures/territory.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "ccacbe513221786f2af9d2e631e32c0cf20be3c4afa093d20a365a7336db0706",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:06:31.513Z"
+    },
+    "treasury": {
+      "src": "art/cinematic-r4/captures/treasury.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "0b2482f3e4cc997fdf622d14e5f784077e46ac59e4bb5a97b44b558cc41d734e",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:13:00.825Z"
+    },
+    "wire": {
+      "src": "art/cinematic-r4/captures/wire.png",
+      "width": 1270,
+      "height": 714,
+      "format": "JPEG",
+      "sha256": "cb2024fb9abd3dc6bf928c068d0dd17bea9666b8bb3b242570bafe3c73ffa472",
+      "source": "http://127.0.0.1:8824/",
+      "caption": "OMERTÀ · local preview build",
+      "provenance": "Screenshot of actual repository UI with synthetic local accounts; no production balance or activation claim.",
+      "capturedAt": "2026-09-24T20:08:29.409Z"
+    }
+  },
+  "audio": {
+    "01": {
+      "src": "art/cinematic-r4/audio/01-mix.wav"
+    },
+    "02": {
+      "src": "art/cinematic-r4/audio/02-mix.wav"
+    },
+    "03": {
+      "src": "art/cinematic-r4/audio/03-mix.wav"
+    }
+  }
+}

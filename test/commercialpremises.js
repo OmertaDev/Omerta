@@ -23,7 +23,7 @@ if (native) {
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'commercial-premises-local-test-secret',
   MARKET_SEED:'commercial-premises-local-proof-seed',MOD_KEY:'commercial-premises-local-mod-key' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js'), D=await import('../src/depot.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js'), D=await import('../src/depot.js');
 const { setAgentCompany }=await import('../src/agentcompany.js'), { runEstate }=await import('../src/social/estate.js');
 const app=await buildServer(); let serial=0;
 if (!native) await app.pool.query('DROP INDEX ix_depot_owner_open');

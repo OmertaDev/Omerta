@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { Pool } from 'pg';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { addPlayer, findCommand } from './lib/player-command-support.js';
 import { FURNACE_IDS as ids } from '../src/content/furnace-ledger.js';
 import { authoritativeState, roleKnowledgeProbes } from './lib/rc1-authority-probes.js';

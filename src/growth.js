@@ -20,7 +20,7 @@ export async function choosePath(ch, pathId, client, h) {
   // rate arbitrage the switch burn alone doesn't price; a week between moves makes it a COMMITMENT
   const pathCool = ch.path ? coolLeft(new Date(ch.path_at).getTime() + PATH_SWITCH_CD_MS) : 0;
   if (pathCool)
-    throw new GameError('cooldown', `You just changed careers — the street needs ${coolWait(pathCool)} more to take you seriously.`, { cooldownSeconds: pathCool });
+    throw new GameError('cooldown', `You can change your Path again in ${coolWait(pathCool)}.`, { cooldownSeconds: pathCool });
   if (!ch.path) {
     if (Number(ch.cash) < CONSTANTS.PATH_FIRST_COST) throw new GameError('cash', `Declaring a path costs ${usd(CONSTANTS.PATH_FIRST_COST)}.`);
     ch.cash = Number(ch.cash) - CONSTANTS.PATH_FIRST_COST;
@@ -46,7 +46,7 @@ export async function respec(ch, alloc, client, h) {
   for (const s of ['muscle', 'cunning', 'speed']) {
     want[s] = Math.floor(Number(alloc?.[s]));
     if (!Number.isFinite(want[s]) || want[s] < M8.RESPEC_STAT_MIN)
-      throw new GameError('alloc', `Each stat needs at least ${M8.RESPEC_STAT_MIN} — nobody forgets how to walk.`);
+      throw new GameError('alloc', `Each stat needs at least ${M8.RESPEC_STAT_MIN} points.`);
   }
   const total = Number(ch.muscle) + Number(ch.cunning) + Number(ch.speed);
   if (want.muscle + want.cunning + want.speed !== total)
@@ -57,7 +57,7 @@ export async function respec(ch, alloc, client, h) {
   // fights. One respec a day; failed attempts above never arm the clock.
   const reshapeCool = coolLeft(new Date(ch.respec_at).getTime() + M8.RESPEC_CD_MS);
   if (reshapeCool)
-    throw new GameError('cooldown', `The trainer works miracles, not shift changes — one re-shaping a day, ${coolWait(reshapeCool)} to go.`, { cooldownSeconds: reshapeCool });
+    throw new GameError('cooldown', `You can redistribute your stats once a day. Try again in ${coolWait(reshapeCool)}.`, { cooldownSeconds: reshapeCool });
   await spendOmr(client, h, M8.RESPEC_OMR, 'respec');
   ch.respec_at = new Date();
   ch.muscle = want.muscle; ch.cunning = want.cunning; ch.speed = want.speed;
@@ -106,19 +106,31 @@ export async function heist(ch, client, h) {
     nextScoreSeconds: Math.ceil(cdMs / 1000) };
 }
 
-// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──
-export async function doMission(ch, missionId, client, h) {
-  const m = MISSIONS.find((x) => x.id === missionId);
-  if (!m) throw new GameError('bad_mission', 'No such job on the books.');
-  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;
-  if (done) throw new GameError('done', 'That chapter is closed.');
-  const eff = (s) => effStat(ch[s], s, h.owned.assets, h.owned.gear);
+// One eligibility calculation for the game command and read-only agent previews.
+// Completion ownership remains a database check at each caller.
+export function missionReadiness(ch, mission, owned = {}) {
+  const eff = (s) => effStat(ch[s], s, owned.assets || [], owned.gear || []);
   const gunFp = gunObjOf(ch.gun)?.fp || 0;
   const have = (k) =>
     k === 'lvl' ? levelOf(Number(ch.respect))
     : k === 'fp' ? gunFp
     : k === 'trade' ? Number(ch.trade_rep || 0)
     : eff(k);
+  const missing = Object.entries(mission.req)
+    .map(([k, v]) => ({ k, need: v, got: have(k) }))
+    .filter((s) => s.got < s.need);
+  const cooldownMs = Number(process.env.MISSION_CD_MS ?? PACING.MISSION_CD_MS);
+  const cooldownSeconds = cooldownMs > 0 ? coolLeft(ch.mission_at) : 0;
+  return { available: missing.length === 0 && !cooldownSeconds, missing, cooldownSeconds, cooldownMs };
+}
+
+// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──
+export async function doMission(ch, missionId, client, h) {
+  const m = MISSIONS.find((x) => x.id === missionId);
+  if (!m) throw new GameError('bad_mission', 'No such job on the books.');
+  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;
+  if (done) throw new GameError('done', 'That chapter is closed.');
+  const { missing: short, cooldownMs: missionCd, cooldownSeconds: missionCool } = missionReadiness(ch, m, h.owned);
   // NAME WHAT IS SHORT. This gate knows exactly which requirement failed and by how much, and used
   // to throw "You're not ready" — a refusal that hands the player nothing to act on and a machine
   // nothing at all (the F16 class: a figure that exists only inside a sentence can only be acted on
@@ -128,9 +140,6 @@ export async function doMission(ch, missionId, client, h) {
   // The `need` payload rides the GameError's third argument (the district-refusal precedent) so the
   // client and an agent read the same numbers the server enforced, rather than re-deriving them.
   const label = { lvl: 'level', fp: 'a gun with', trade: 'trade reputation' };
-  const short = Object.entries(m.req)
-    .map(([k, v]) => ({ k, need: v, got: have(k) }))
-    .filter((s) => s.got < s.need);
   if (short.length) {
     const parts = short.map(({ k, need, got }) =>
       k === 'fp' ? `a gun with ${need} firepower (you're carrying ${got})`
@@ -139,7 +148,7 @@ export async function doMission(ch, missionId, client, h) {
     // a missing job can be short on three counts at once; "a and b and c" reads badly, so comma the
     // list and keep "and" for the last clause the way a person would say it out loud.
     const say = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}` : parts[0];
-    throw new GameError('reqs', `You're not ready — that job wants ${say}. The family doesn't hand out second chances.`,
+    throw new GameError('reqs', `This job requires ${say}.`,
       { need: Object.fromEntries(short.map(({ k, need }) => [k, need])), have: Object.fromEntries(short.map(({ k, got }) => [k, got])) });
   }
   // PACING (founder-directed, from live alpha): the ladder SELF-UNLOCKS — from ~m6 on each reward
@@ -148,8 +157,6 @@ export async function doMission(ch, missionId, client, h) {
   // makes the chain a story you walk over days, not a number you collect in an afternoon.
   // MISSION_CD_MS = 0 restores the old cascade. `mission_at` is direct-SQL (outside
   // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.
-  const missionCd = Number(process.env.MISSION_CD_MS ?? PACING.MISSION_CD_MS);
-  const missionCool = missionCd > 0 ? coolLeft(ch.mission_at) : 0;
   if (missionCool)
     throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });
   await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);
@@ -727,11 +734,11 @@ export async function onboardBoard(ch, h, client) {
 // case-insensitive — a shift key must not cost the recruiter their credit.
 export async function claimReferral(ch, code, client, h) {
   const name = cleanText(String(code ?? '')).slice(0, 40).trim();
-  if (!name) throw new GameError('no_code', 'Whose name? Tell us who sent you.');
+  if (!name) throw new GameError('no_code', 'Enter the name of the player who sent you.');
   if (h.acct.referred_by) throw new GameError('already_referred', 'Your referrer is already on record.');
   const born = (await client.query('SELECT created_at FROM accounts WHERE id=$1', [h.accountId])).rows[0];
   if (!born || Date.now() - new Date(born.created_at).getTime() > M4.REF_CLAIM_WINDOW_MS)
-    throw new GameError('window', 'That window has closed — a referrer is named in your first days in the city.');
+    throw new GameError('window', 'The time to name your referrer has passed. You can do this only in your first days in the city.');
   if (name.toLowerCase() === String(ch.name).toLowerCase())
     throw new GameError('self', "You can't have sent yourself.");
   let rec = (await client.query(
@@ -774,7 +781,7 @@ export async function claimOnboard(ch, taskId, client, h) {
     await throttleXCheck(client, h.accountId, 'follow', h.pool);
   if (t.social) await verifySocial(taskId, ident);          // §4: verifies once
   // `Object.hasOwn`, not truthiness (a prototype key indexes truthy — red team #8)
-  else if (!Object.hasOwn(CHECKS, taskId) || !CHECKS[taskId](ch, h)) throw new GameError('unfinished', 'Not done yet — the checklist pays on completion.');
+  else if (!Object.hasOwn(CHECKS, taskId) || !CHECKS[taskId](ch, h)) throw new GameError('unfinished', 'Complete this task before claiming its reward.');
   onboard[taskId] = true;
   h.acct.onboard = JSON.stringify(onboard);
   // the same list the board showed — see offeredTasks. `onboard` already carries THIS claim, so a
@@ -857,7 +864,7 @@ export async function socialBoard(pool, accountId, ch) {
 }
 
 export async function claimSocial(ch, taskId, proof, client, h) {
-  if (!socialRewardsLive()) throw new GameError('social_off', "Word-of-mouth rewards aren't live on this server yet — but sharing still helps.");
+  if (!socialRewardsLive()) throw new GameError('social_off', 'Word-of-mouth rewards are not active on this server yet. You can still share the game.');
   if (h.acct.agent_flag) throw new GameError('agent', "Agent accounts don't earn word-of-mouth rewards.");
   const t = SOCIAL_TASKS.TASKS.find((x) => x.id === taskId);
   if (!t) throw new GameError('bad_task', 'Not a word-of-mouth task.');
@@ -894,7 +901,7 @@ export async function claimSocial(ch, taskId, proof, client, h) {
   }
   // (2) no live registration → register today's share (once per task per day)
   const dup = await client.query('SELECT 1 FROM social_claims WHERE account_id=$1 AND day=$2 AND task_id=$3', [h.accountId, day, taskId]);
-  if (dup.rowCount) throw new GameError('claimed', 'Already spread that word today — come back tomorrow.');
+  if (dup.rowCount) throw new GameError('claimed', 'You have already submitted this task today. Try again tomorrow.');
   // (red-team R7 HIGH) cleanText the proof — it's player free-text surfaced verbatim on the mod /admin
   // activity feed (innerHTML), where the mod key lives in sessionStorage → unescaped markup was a
   // mod-side stored XSS → root escalation. Strip < > " ` at the source like every other display field.

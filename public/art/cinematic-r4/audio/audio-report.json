@@ -1,0 +1,3422 @@
+{
+  "version": 1,
+  "createdAt": "2026-09-24T20:37:45.386Z",
+  "source": "brand/cinematic-video-system/production-data.json",
+  "productionDataSha256": "465a59897c310fd61f2479a449528f529dcfcb1820c1753919053d583080eb4e",
+  "scriptSha256": "674b88eb4761eacb0e5277b199d983fb26a7c233215e29cee607537cc1de17a1",
+  "sourcePolicy": "Fresh R4 fal narration plus original deterministic oscillators and noise; no third-party samples or previous campaign media.",
+  "targets": {
+    "sampleRate": 48000,
+    "channels": 2,
+    "masterCodec": "pcm_s24le",
+    "integratedLufs": -14,
+    "maximumTruePeakDbtp": -1,
+    "workingTruePeakDbtp": -1.3,
+    "maximumTempo": 1.12,
+    "speechIsNeverHardTrimmedToFit": true
+  },
+  "films": [
+    {
+      "id": "01",
+      "title": "BUILD AN EMPIRE",
+      "duration": 72,
+      "status": "mixed-verified",
+      "lines": [
+        {
+          "id": "C01-L01",
+          "text": "Your next move could build an empire.",
+          "start": 0,
+          "end": 4,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L01-v2.mp3",
+              "version": 2,
+              "sha256": "d735e3a2a5b5dba10ef243185795e08054919c3d92bafc44319515df8d2a4f4d"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L01.mp3",
+              "version": 0,
+              "sha256": "5a0df014afbb41c78be428315441879ba3ac939f14b0bd94cc0ffdced1c53fd0"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L01-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "d735e3a2a5b5dba10ef243185795e08054919c3d92bafc44319515df8d2a4f4d",
+          "decodedDurationSeconds": 2.554208,
+          "trimmedDurationSeconds": 2.397833,
+          "leadingSilenceRemovedSeconds": 0.141313,
+          "trailingSilenceRemovedSeconds": 0.015062,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.17,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 2.397833,
+          "status": "ready",
+          "placedAtSeconds": 0.05,
+          "spokenBufferEndSeconds": 2.447833,
+          "audibleSpeechStartSeconds": 0.079083,
+          "audibleSpeechEndSeconds": 2.417854,
+          "remainingBeatSeconds": 1.552167,
+          "processingGainDb": 3.862,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -18.613,
+            "peak": 0.7079457640647888,
+            "rms": 0.1173111784396293
+          }
+        },
+        {
+          "id": "C01-L02",
+          "text": "Crimes earn cash and respect. Heat follows.",
+          "start": 4,
+          "end": 8,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L02.mp3",
+              "version": 0,
+              "sha256": "004fcb1edf737206fb201b94c17854b77a8f75d26d3f79bb28acc88ba4510a0f"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L02.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "004fcb1edf737206fb201b94c17854b77a8f75d26d3f79bb28acc88ba4510a0f",
+          "decodedDurationSeconds": 4.435021,
+          "trimmedDurationSeconds": 4.145292,
+          "leadingSilenceRemovedSeconds": 0.056833,
+          "trailingSilenceRemovedSeconds": 0.232896,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.05,
+          "requiredTempo": 1.076699,
+          "appliedTempo": 1.080488,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.845917,
+          "status": "ready",
+          "placedAtSeconds": 4.05,
+          "spokenBufferEndSeconds": 7.895917,
+          "audibleSpeechStartSeconds": 4.080021,
+          "audibleSpeechEndSeconds": 7.872104,
+          "remainingBeatSeconds": 0.104083,
+          "processingGainDb": 2.633,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.203,
+            "peak": 0.7079457640647888,
+            "rms": 0.08706649948295714
+          }
+        },
+        {
+          "id": "C01-L03",
+          "text": "Train your skills and build a career through action.",
+          "start": 8,
+          "end": 12,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L03-v2.mp3",
+              "version": 2,
+              "sha256": "1ca6d130b3ec61acda5f581ddb436eecee16d64e5d924358598b24ff868ccb38"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L03.mp3",
+              "version": 0,
+              "sha256": "f47580067d7ff6d8b42f29fd7765fb1cd3b6e60132873da9767225ddd64e30b2"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L03-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "1ca6d130b3ec61acda5f581ddb436eecee16d64e5d924358598b24ff868ccb38",
+          "decodedDurationSeconds": 3.448167,
+          "trimmedDurationSeconds": 3.165938,
+          "leadingSilenceRemovedSeconds": 0.132583,
+          "trailingSilenceRemovedSeconds": 0.149646,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.82,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.165938,
+          "status": "ready",
+          "placedAtSeconds": 8.05,
+          "spokenBufferEndSeconds": 11.215938,
+          "audibleSpeechStartSeconds": 8.082729,
+          "audibleSpeechEndSeconds": 11.211458,
+          "remainingBeatSeconds": 0.784062,
+          "processingGainDb": 3.886,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -18.358,
+            "peak": 0.7079457640647888,
+            "rms": 0.12081452011704655
+          }
+        },
+        {
+          "id": "C01-L04",
+          "text": "Steal a car. Salvage eligible wrecks into materials.",
+          "start": 12,
+          "end": 16,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L04.mp3",
+              "version": 0,
+              "sha256": "98dba6c126599fd248cd1b2ba5f701a05bf7c86936884dcd85d8a44dae31aad1"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L04.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "98dba6c126599fd248cd1b2ba5f701a05bf7c86936884dcd85d8a44dae31aad1",
+          "decodedDurationSeconds": 4.307313,
+          "trimmedDurationSeconds": 4.0985,
+          "leadingSilenceRemovedSeconds": 0.114896,
+          "trailingSilenceRemovedSeconds": 0.093917,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.46,
+          "requiredTempo": 1.064545,
+          "appliedTempo": 1.070304,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.843458,
+          "status": "ready",
+          "placedAtSeconds": 12.05,
+          "spokenBufferEndSeconds": 15.893458,
+          "audibleSpeechStartSeconds": 12.076625,
+          "audibleSpeechEndSeconds": 15.876917,
+          "remainingBeatSeconds": 0.106542,
+          "processingGainDb": 5.515,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.061,
+            "peak": 0.7079457640647888,
+            "rms": 0.11141591114914898
+          }
+        },
+        {
+          "id": "C01-L05",
+          "text": "Discover recipes to craft, repair, and track your gear.",
+          "start": 16,
+          "end": 20,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L05-v2.mp3",
+              "version": 2,
+              "sha256": "1d2133a8620becbfcffc423507006f256fef6955380051333150537c050b1ca5"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L05.mp3",
+              "version": 0,
+              "sha256": "7251c9a182972ccc348755fd191b1827122443099085508a33b03aef61964194"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L05-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "1d2133a8620becbfcffc423507006f256fef6955380051333150537c050b1ca5",
+          "decodedDurationSeconds": 4.051896,
+          "trimmedDurationSeconds": 3.838146,
+          "leadingSilenceRemovedSeconds": 0.108479,
+          "trailingSilenceRemovedSeconds": 0.105271,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.81,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.838146,
+          "status": "ready",
+          "placedAtSeconds": 16.05,
+          "spokenBufferEndSeconds": 19.888146,
+          "audibleSpeechStartSeconds": 16.080021,
+          "audibleSpeechEndSeconds": 19.784521,
+          "remainingBeatSeconds": 0.111854,
+          "processingGainDb": 2.04,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.719,
+            "peak": 0.7079457640647888,
+            "rms": 0.08204043888067081
+          }
+        },
+        {
+          "id": "C01-L06",
+          "text": "Build businesses. Run kitchens. Pay the people working them.",
+          "start": 20,
+          "end": 24,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L06.mp3",
+              "version": 0,
+              "sha256": "e0efb9dd26caf6e0d931fdb12940870594986c45f01037a734e38b4e071898b1"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L06.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "e0efb9dd26caf6e0d931fdb12940870594986c45f01037a734e38b4e071898b1",
+          "decodedDurationSeconds": 4.086729,
+          "trimmedDurationSeconds": 3.801542,
+          "leadingSilenceRemovedSeconds": 0.149979,
+          "trailingSilenceRemovedSeconds": 0.135208,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.51,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.801542,
+          "status": "ready",
+          "placedAtSeconds": 20.05,
+          "spokenBufferEndSeconds": 23.851542,
+          "audibleSpeechStartSeconds": 20.079917,
+          "audibleSpeechEndSeconds": 23.831583,
+          "remainingBeatSeconds": 0.148458,
+          "processingGainDb": 1.923,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -23.173,
+            "peak": 0.7079457640647888,
+            "rms": 0.06939793140392315
+          }
+        },
+        {
+          "id": "C01-L07",
+          "text": "Move cargo through markets and risky convoys.",
+          "start": 24,
+          "end": 28,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L07-v2.mp3",
+              "version": 2,
+              "sha256": "9a2b5f2ff374e9422861455a3ab56e3b6e76e67ed513c15a5783cedbfbabc5b1"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L07.mp3",
+              "version": 0,
+              "sha256": "6e5261a835158e5c64b6857aa30df5752278fd9d1971dcb8523499931f4852c6"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L07-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "9a2b5f2ff374e9422861455a3ab56e3b6e76e67ed513c15a5783cedbfbabc5b1",
+          "decodedDurationSeconds": 4.005458,
+          "trimmedDurationSeconds": 3.619542,
+          "leadingSilenceRemovedSeconds": 0.141937,
+          "trailingSilenceRemovedSeconds": 0.243979,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.11,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.619542,
+          "status": "ready",
+          "placedAtSeconds": 24.05,
+          "spokenBufferEndSeconds": 27.669542,
+          "audibleSpeechStartSeconds": 24.080271,
+          "audibleSpeechEndSeconds": 27.633875,
+          "remainingBeatSeconds": 0.330458,
+          "processingGainDb": 1.698,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.318,
+            "peak": 0.7079457640647888,
+            "rms": 0.07657901878167284
+          }
+        },
+        {
+          "id": "C01-L08",
+          "text": "Recruit a Crew. Coordinate heists and harder targets.",
+          "start": 28,
+          "end": 32,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L08.mp3",
+              "version": 0,
+              "sha256": "7eec7e04e4b1fa07bdb0177ff65ef10a61662a0624c3da3e5ed62e2e413930ae"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L08.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "7eec7e04e4b1fa07bdb0177ff65ef10a61662a0624c3da3e5ed62e2e413930ae",
+          "decodedDurationSeconds": 4.690437,
+          "trimmedDurationSeconds": 4.304021,
+          "leadingSilenceRemovedSeconds": 0.111687,
+          "trailingSilenceRemovedSeconds": 0.274729,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.03,
+          "requiredTempo": 1.117927,
+          "appliedTempo": 1.117927,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.847583,
+          "status": "ready",
+          "placedAtSeconds": 28.05,
+          "spokenBufferEndSeconds": 31.897583,
+          "audibleSpeechStartSeconds": 28.080104,
+          "audibleSpeechEndSeconds": 31.891687,
+          "remainingBeatSeconds": 0.102417,
+          "processingGainDb": 4.5,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.35,
+            "peak": 0.7079457640647888,
+            "rms": 0.07629290863045401
+          }
+        },
+        {
+          "id": "C01-L09",
+          "text": "Build a Family. Turn strength into territory.",
+          "start": 32,
+          "end": 36,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L09.mp3",
+              "version": 0,
+              "sha256": "acb9356c5a846cf9d8388caa9c8bf1546a766ba813a616f9581a9bf8e113a042"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L09.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "acb9356c5a846cf9d8388caa9c8bf1546a766ba813a616f9581a9bf8e113a042",
+          "decodedDurationSeconds": 4.179604,
+          "trimmedDurationSeconds": 3.927812,
+          "leadingSilenceRemovedSeconds": 0.123521,
+          "trailingSilenceRemovedSeconds": 0.128271,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.92,
+          "requiredTempo": 1.020211,
+          "appliedTempo": 1.023143,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.844208,
+          "status": "ready",
+          "placedAtSeconds": 32.05,
+          "spokenBufferEndSeconds": 35.894208,
+          "audibleSpeechStartSeconds": 32.066792,
+          "audibleSpeechEndSeconds": 35.873958,
+          "remainingBeatSeconds": 0.105792,
+          "processingGainDb": 3.656,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.892,
+            "peak": 0.7079457640647888,
+            "rms": 0.10125647554899753
+          }
+        },
+        {
+          "id": "C01-L10",
+          "text": "Territory earns income while diplomacy shapes the fight.",
+          "start": 36,
+          "end": 40,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L10-v2.mp3",
+              "version": 2,
+              "sha256": "22fac8aa91c0fad3cfab0ea7409765292a0764205965439232786b95f4f0ce20"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L10.mp3",
+              "version": 0,
+              "sha256": "99527cb84b92183cb517ad06437edfd31c73debe25b24f1d3736098106430f7c"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L10-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "22fac8aa91c0fad3cfab0ea7409765292a0764205965439232786b95f4f0ce20",
+          "decodedDurationSeconds": 3.668771,
+          "trimmedDurationSeconds": 3.352729,
+          "leadingSilenceRemovedSeconds": 0.095646,
+          "trailingSilenceRemovedSeconds": 0.220396,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.67,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.352729,
+          "status": "ready",
+          "placedAtSeconds": 36.05,
+          "spokenBufferEndSeconds": 39.402729,
+          "audibleSpeechStartSeconds": 36.080021,
+          "audibleSpeechEndSeconds": 39.365083,
+          "remainingBeatSeconds": 0.597271,
+          "processingGainDb": 3.354,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.709,
+            "peak": 0.7079457640647888,
+            "rms": 0.10340152430035517
+          }
+        },
+        {
+          "id": "C01-L11",
+          "text": "Loans and escrow put consequences behind every deal.",
+          "start": 40,
+          "end": 44,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L11-v2.mp3",
+              "version": 2,
+              "sha256": "0c677f2c7b92dea7c5c4d7c21a2eafeca2d28ba38aff0b542b6c8997d759e2f7"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L11.mp3",
+              "version": 0,
+              "sha256": "2aac744bfc7bccc391831a73926890dde697de23847a8b87243549cb1c310a9a"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L11-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "0c677f2c7b92dea7c5c4d7c21a2eafeca2d28ba38aff0b542b6c8997d759e2f7",
+          "decodedDurationSeconds": 3.320458,
+          "trimmedDurationSeconds": 3.069542,
+          "leadingSilenceRemovedSeconds": 0.134896,
+          "trailingSilenceRemovedSeconds": 0.116021,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.74,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.069542,
+          "status": "ready",
+          "placedAtSeconds": 40.05,
+          "spokenBufferEndSeconds": 43.119542,
+          "audibleSpeechStartSeconds": 40.079396,
+          "audibleSpeechEndSeconds": 43.11325,
+          "remainingBeatSeconds": 0.880458,
+          "processingGainDb": 4.366,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.639,
+            "peak": 0.7079457640647888,
+            "rms": 0.10424862071968385
+          }
+        },
+        {
+          "id": "C01-L12",
+          "text": "Race, fight, and play the tables.",
+          "start": 44,
+          "end": 48,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L12-v2.mp3",
+              "version": 2,
+              "sha256": "cb52eb5dc3c0754629d5165afca1f82a46d46f06077cdaf1fb89f47f015c26ea"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L12.mp3",
+              "version": 0,
+              "sha256": "6b5419530b5d9fbda5d7fb0c14fbd848dcb3271378ad784b73b56b120888d86b"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L12-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "cb52eb5dc3c0754629d5165afca1f82a46d46f06077cdaf1fb89f47f015c26ea",
+          "decodedDurationSeconds": 3.622333,
+          "trimmedDurationSeconds": 3.375812,
+          "leadingSilenceRemovedSeconds": 0.125583,
+          "trailingSilenceRemovedSeconds": 0.120938,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.46,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.375812,
+          "status": "ready",
+          "placedAtSeconds": 44.05,
+          "spokenBufferEndSeconds": 47.425812,
+          "audibleSpeechStartSeconds": 44.080958,
+          "audibleSpeechEndSeconds": 47.266479,
+          "remainingBeatSeconds": 0.574188,
+          "processingGainDb": 1.247,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -25.679,
+            "peak": 0.7079457640647888,
+            "rms": 0.05200669503443211
+          }
+        },
+        {
+          "id": "C01-L13",
+          "text": "Rivals strike back. So do investigators, courts, and prison.",
+          "start": 48,
+          "end": 52,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L13.mp3",
+              "version": 0,
+              "sha256": "f8066e736109434b4728697f38716d1873e4e5acb1baffb2a6d24e8f01259898"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L13.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "f8066e736109434b4728697f38716d1873e4e5acb1baffb2a6d24e8f01259898",
+          "decodedDurationSeconds": 4.469854,
+          "trimmedDurationSeconds": 4.230875,
+          "leadingSilenceRemovedSeconds": 0.112979,
+          "trailingSilenceRemovedSeconds": 0.126,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.45,
+          "requiredTempo": 1.098929,
+          "appliedTempo": 1.102873,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.837813,
+          "status": "ready",
+          "placedAtSeconds": 48.05,
+          "spokenBufferEndSeconds": 51.887812,
+          "audibleSpeechStartSeconds": 48.104437,
+          "audibleSpeechEndSeconds": 51.849708,
+          "remainingBeatSeconds": 0.112188,
+          "processingGainDb": 0.019,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -23.622,
+            "peak": 0.7079457640647888,
+            "rms": 0.06590488765079497
+          }
+        },
+        {
+          "id": "C01-L14",
+          "text": "Protection costs. Death can end a character.",
+          "start": 52,
+          "end": 56,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L14.mp3",
+              "version": 0,
+              "sha256": "84c41b5d42c5cb89cb3e16900ece82d41e51504303c7793986a4450cd0e2ece7"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L14.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "84c41b5d42c5cb89cb3e16900ece82d41e51504303c7793986a4450cd0e2ece7",
+          "decodedDurationSeconds": 3.146313,
+          "trimmedDurationSeconds": 2.796646,
+          "leadingSilenceRemovedSeconds": 0.149896,
+          "trailingSilenceRemovedSeconds": 0.199771,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.91,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 2.796646,
+          "status": "ready",
+          "placedAtSeconds": 52.05,
+          "spokenBufferEndSeconds": 54.846646,
+          "audibleSpeechStartSeconds": 52.08,
+          "audibleSpeechEndSeconds": 54.8275,
+          "remainingBeatSeconds": 1.153354,
+          "processingGainDb": 4.794,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.481,
+            "peak": 0.7079457640647888,
+            "rms": 0.08431993261469602
+          }
+        },
+        {
+          "id": "C01-L15",
+          "text": "Your heirs, deeds, and reputation carry the legacy.",
+          "start": 56,
+          "end": 60,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L15.mp3",
+              "version": 0,
+              "sha256": "0f74fa8bccd5fb4276291e69ea2880e0b5410f3565963a8216c0c64ed95d6f48"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L15.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "0f74fa8bccd5fb4276291e69ea2880e0b5410f3565963a8216c0c64ed95d6f48",
+          "decodedDurationSeconds": 3.239187,
+          "trimmedDurationSeconds": 2.961083,
+          "leadingSilenceRemovedSeconds": 0.137813,
+          "trailingSilenceRemovedSeconds": 0.140292,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.55,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 2.961083,
+          "status": "ready",
+          "placedAtSeconds": 56.05,
+          "spokenBufferEndSeconds": 59.011083,
+          "audibleSpeechStartSeconds": 56.082125,
+          "audibleSpeechEndSeconds": 58.980979,
+          "remainingBeatSeconds": 0.988917,
+          "processingGainDb": 3.842,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -18.209,
+            "peak": 0.7079457640647888,
+            "rms": 0.12290448143618864
+          }
+        },
+        {
+          "id": "C01-L16",
+          "text": "Seasons reshape the city while players build monuments.",
+          "start": 60,
+          "end": 64,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L16-v2.mp3",
+              "version": 2,
+              "sha256": "4ea5de9f21cb96cfbe01aa0fc65b06e01cdd037f9447958fd18411df044686e6"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L16.mp3",
+              "version": 0,
+              "sha256": "a400cf7c48d508cc51e20b2d8aa72b9b6904190b9bdd00ace6bc962b9700d733"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L16-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "4ea5de9f21cb96cfbe01aa0fc65b06e01cdd037f9447958fd18411df044686e6",
+          "decodedDurationSeconds": 3.831313,
+          "trimmedDurationSeconds": 3.507687,
+          "leadingSilenceRemovedSeconds": 0.139583,
+          "trailingSilenceRemovedSeconds": 0.184042,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.5,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.507687,
+          "status": "ready",
+          "placedAtSeconds": 60.05,
+          "spokenBufferEndSeconds": 63.557688,
+          "audibleSpeechStartSeconds": 60.079125,
+          "audibleSpeechEndSeconds": 63.522167,
+          "remainingBeatSeconds": 0.442312,
+          "processingGainDb": 1.396,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.182,
+            "peak": 0.7079457640647888,
+            "rms": 0.09792745951515565
+          }
+        },
+        {
+          "id": "C01-L17",
+          "text": "Equip your Crew to take control and reinvest.",
+          "start": 64,
+          "end": 68,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L17-v2.mp3",
+              "version": 2,
+              "sha256": "e4ccaf6ced0664656c31f09d5844c11cbb5bcd559457378ce6a2853897b04518"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L17.mp3",
+              "version": 0,
+              "sha256": "daf7f2255c95892bf8d52e544aab4795e35ccae9722688482d13c55a641b20d5"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L17-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "e4ccaf6ced0664656c31f09d5844c11cbb5bcd559457378ce6a2853897b04518",
+          "decodedDurationSeconds": 3.750042,
+          "trimmedDurationSeconds": 3.4025,
+          "leadingSilenceRemovedSeconds": 0.141729,
+          "trailingSilenceRemovedSeconds": 0.205813,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.66,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.4025,
+          "status": "ready",
+          "placedAtSeconds": 64.05,
+          "spokenBufferEndSeconds": 67.4525,
+          "audibleSpeechStartSeconds": 64.078771,
+          "audibleSpeechEndSeconds": 67.404542,
+          "remainingBeatSeconds": 0.5475,
+          "processingGainDb": 4.584,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.374,
+            "peak": 0.7079457640647888,
+            "rms": 0.10747663353734827
+          }
+        },
+        {
+          "id": "C01-L18",
+          "text": "OMERTÀ. Build something worth defending.",
+          "start": 68,
+          "end": 72,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C01-L18.mp3",
+              "version": 0,
+              "sha256": "69c79d16aee26768a52173778cf79dcea85a489e93113e07d9ae39dd9b002ebb"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C01-L18.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "69c79d16aee26768a52173778cf79dcea85a489e93113e07d9ae39dd9b002ebb",
+          "decodedDurationSeconds": 4.214437,
+          "trimmedDurationSeconds": 3.984146,
+          "leadingSilenceRemovedSeconds": 0.115583,
+          "trailingSilenceRemovedSeconds": 0.114708,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.34,
+          "requiredTempo": 1.034843,
+          "appliedTempo": 1.03756,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.845542,
+          "status": "ready",
+          "placedAtSeconds": 68.05,
+          "spokenBufferEndSeconds": 71.895542,
+          "audibleSpeechStartSeconds": 68.085208,
+          "audibleSpeechEndSeconds": 71.875729,
+          "remainingBeatSeconds": 0.104458,
+          "processingGainDb": 1.861,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.95,
+            "peak": 0.7079457640647888,
+            "rms": 0.07989245072280027
+          }
+        }
+      ],
+      "blockingIssues": [],
+      "reviewRequired": "Manual listening for pronunciation, complete words, timbre, pacing and balance remains necessary. Captions are estimated line/chunk timing, not ASR word alignment.",
+      "noSpeechOverlap": true,
+      "bpm": 84,
+      "musicDirection": "D minor low pulse, sparse heavy percussion, sustained tense chords",
+      "ducking": {
+        "musicUnderSpeechDb": -7,
+        "attackMs": 10,
+        "releaseMs": 220
+      },
+      "cues": [
+        {
+          "at": 0,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 0,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 0.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 4,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 11.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 12.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 12.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 16,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 19.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 20,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 20.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 28,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 31.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 32.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 32.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 39.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 40,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 40.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 51.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 52.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 52.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 59.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 60,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 60.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 64,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 68,
+          "kind": "brand",
+          "duration": 2.1,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        }
+      ],
+      "silenceChecks": [
+        {
+          "start": 51.6,
+          "end": 52.42,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        },
+        {
+          "start": 67.68,
+          "end": 68,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        }
+      ],
+      "stems": {
+        "dialogue": {
+          "file": "public/art/cinematic-r4/audio/01-dialogue.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -21.247,
+          "peak": 0.7079457640647888,
+          "rms": 0.08663111548721625
+        },
+        "music": {
+          "file": "public/art/cinematic-r4/audio/01-music.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -14.522,
+          "rmsDbfs": -33.115,
+          "peak": 0.18789473176002502,
+          "rms": 0.02209171227673178
+        },
+        "sfx": {
+          "file": "public/art/cinematic-r4/audio/01-sfx.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -11.726,
+          "rmsDbfs": -40.937,
+          "peak": 0.2592266798019409,
+          "rms": 0.008977023852030976
+        },
+        "room": {
+          "file": "public/art/cinematic-r4/audio/01-room.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -52.618,
+          "rmsDbfs": -66.252,
+          "peak": 0.0023394166491925716,
+          "rms": 0.0004868709432365681
+        }
+      },
+      "rawMixStats": {
+        "samplePeakDbfs": -2.482,
+        "rmsDbfs": -20.929,
+        "peak": 0.7514553666114807,
+        "rms": 0.08985936486105223
+      },
+      "master": {
+        "file": "public/art/cinematic-r4/audio/01-mix.wav",
+        "durationSeconds": 72,
+        "integratedLufs": -14.2,
+        "truePeakDbtp": -1.29,
+        "loudnessRangeLu": 4.5,
+        "sampleRate": 48000,
+        "channels": 2,
+        "codec": "pcm_s24le",
+        "normalizationType": "dynamic",
+        "valid": true,
+        "preNormalization": {
+          "input_i": "-18.16",
+          "input_tp": "-2.46",
+          "input_lra": "5.00",
+          "input_thresh": "-28.75",
+          "output_i": "-14.57",
+          "output_tp": "-1.30",
+          "output_lra": "4.80",
+          "output_thresh": "-25.12",
+          "normalization_type": "dynamic",
+          "target_offset": "0.57"
+        },
+        "secondPass": {
+          "input_i": "-18.16",
+          "input_tp": "-2.46",
+          "input_lra": "5.00",
+          "input_thresh": "-28.75",
+          "output_i": "-14.15",
+          "output_tp": "-1.30",
+          "output_lra": "4.60",
+          "output_thresh": "-24.68",
+          "normalization_type": "dynamic",
+          "target_offset": "0.15"
+        },
+        "finalMeasurement": {
+          "input_i": "-14.20",
+          "input_tp": "-1.29",
+          "input_lra": "4.50",
+          "input_thresh": "-24.73",
+          "output_i": "-14.19",
+          "output_tp": "-1.30",
+          "output_lra": "4.60",
+          "output_thresh": "-24.72",
+          "normalization_type": "dynamic",
+          "target_offset": "0.19"
+        }
+      }
+    },
+    {
+      "id": "02",
+      "title": "THE ECONOMY HAS TERRITORY",
+      "duration": 75,
+      "status": "mixed-verified",
+      "lines": [
+        {
+          "id": "C02-L01",
+          "text": "Game cash and OMR follow separate economic circuits.",
+          "start": 0,
+          "end": 4.166666666666667,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L01-v2.mp3",
+              "version": 2,
+              "sha256": "1d3ac26719450a673c9354eafa47b61e845dbf8553d903c16fdae673a4895bca"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L01.mp3",
+              "version": 0,
+              "sha256": "11e6935bc09fe518ef904e57a5a34292eb6ae8e5e382e418b7e0634a89fe818b"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L01-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "1d3ac26719450a673c9354eafa47b61e845dbf8553d903c16fdae673a4895bca",
+          "decodedDurationSeconds": 4.469854,
+          "trimmedDurationSeconds": 3.970396,
+          "leadingSilenceRemovedSeconds": 0.176646,
+          "trailingSilenceRemovedSeconds": 0.322813,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.5,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.970396,
+          "status": "ready",
+          "placedAtSeconds": 0.05,
+          "spokenBufferEndSeconds": 4.020396,
+          "audibleSpeechStartSeconds": 0.080125,
+          "audibleSpeechEndSeconds": 3.985771,
+          "remainingBeatSeconds": 0.146271,
+          "processingGainDb": 0.601,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -23.343,
+            "peak": 0.7079457640647888,
+            "rms": 0.06805448018713026
+          }
+        },
+        {
+          "id": "C02-L02",
+          "text": "Defined missions and funded rewards put OMR in reach.",
+          "start": 4.166666666666667,
+          "end": 8.333333333333334,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L02.mp3",
+              "version": 0,
+              "sha256": "901ca9d1805dfe59c99b9dc810b5f2516197ce84313ec4434f6e28cbda4e5155"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L02.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "901ca9d1805dfe59c99b9dc810b5f2516197ce84313ec4434f6e28cbda4e5155",
+          "decodedDurationSeconds": 4.771708,
+          "trimmedDurationSeconds": 4.259271,
+          "leadingSilenceRemovedSeconds": 0.212312,
+          "trailingSilenceRemovedSeconds": 0.300125,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.26,
+          "requiredTempo": 1.060399,
+          "appliedTempo": 1.064521,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.012458,
+          "status": "ready",
+          "placedAtSeconds": 4.216667,
+          "spokenBufferEndSeconds": 8.229125,
+          "audibleSpeechStartSeconds": 4.247979,
+          "audibleSpeechEndSeconds": 8.199125,
+          "remainingBeatSeconds": 0.104208,
+          "processingGainDb": 1.952,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.18,
+            "peak": 0.7079457640647888,
+            "rms": 0.09794501258558164
+          }
+        },
+        {
+          "id": "C02-L03",
+          "text": "Spend on eligible gear, services, and upgrades.",
+          "start": 8.333333333333334,
+          "end": 12.5,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L03-v2.mp3",
+              "version": 2,
+              "sha256": "d8805d34a4cd9edc8b843819e547c211070c0dc755c8a8ee71d37afa724a238c"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L03.mp3",
+              "version": 0,
+              "sha256": "211e9245798ef645bed4c934cf9d3cabc3ac5796f6c28edad42cf21c50a755fe"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L03-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "d8805d34a4cd9edc8b843819e547c211070c0dc755c8a8ee71d37afa724a238c",
+          "decodedDurationSeconds": 4.260875,
+          "trimmedDurationSeconds": 3.805979,
+          "leadingSilenceRemovedSeconds": 0.210396,
+          "trailingSilenceRemovedSeconds": 0.2445,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.25,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.805979,
+          "status": "ready",
+          "placedAtSeconds": 8.383333,
+          "spokenBufferEndSeconds": 12.189313,
+          "audibleSpeechStartSeconds": 8.409208,
+          "audibleSpeechEndSeconds": 12.162479,
+          "remainingBeatSeconds": 0.310687,
+          "processingGainDb": 3.1,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.667,
+            "peak": 0.7079457640647888,
+            "rms": 0.08253850491701749
+          }
+        },
+        {
+          "id": "C02-L04",
+          "text": "Eligible spending refills the Desk’s existing token inventory.",
+          "start": 12.5,
+          "end": 16.666666666666668,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L04-v2.mp3",
+              "version": 2,
+              "sha256": "555e56ca3fcc2e2645f23b8c0bade31413cb7065ef098a78f9501c2e523a5ddc"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L04.mp3",
+              "version": 0,
+              "sha256": "6f05f43fa069301746dfc5fdab505e218ff7dc902e1dd409ac5d21cf1e00b78a"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L04-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "555e56ca3fcc2e2645f23b8c0bade31413cb7065ef098a78f9501c2e523a5ddc",
+          "decodedDurationSeconds": 4.051896,
+          "trimmedDurationSeconds": 3.560042,
+          "leadingSilenceRemovedSeconds": 0.219604,
+          "trailingSilenceRemovedSeconds": 0.27225,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.08,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.560042,
+          "status": "ready",
+          "placedAtSeconds": 12.55,
+          "spokenBufferEndSeconds": 16.110042,
+          "audibleSpeechStartSeconds": 12.58,
+          "audibleSpeechEndSeconds": 16.079167,
+          "remainingBeatSeconds": 0.556625,
+          "processingGainDb": 0.722,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -24.663,
+            "peak": 0.7079457640647888,
+            "rms": 0.05846149008559213
+          }
+        },
+        {
+          "id": "C02-L05",
+          "text": "The funded Window converts OMR to cash only.",
+          "start": 16.666666666666668,
+          "end": 20.833333333333332,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L05-v2.mp3",
+              "version": 2,
+              "sha256": "503b49423bb0a92e3151e19dd939c8d99fe1bad1e6ddeecfc02f002e190a8adf"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L05.mp3",
+              "version": 0,
+              "sha256": "8d227dd6f47c87311a253c75f20be152831e7d4c8ba41952ac2d9ea5e504ac10"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L05-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "503b49423bb0a92e3151e19dd939c8d99fe1bad1e6ddeecfc02f002e190a8adf",
+          "decodedDurationSeconds": 4.051896,
+          "trimmedDurationSeconds": 3.539854,
+          "leadingSilenceRemovedSeconds": 0.246396,
+          "trailingSilenceRemovedSeconds": 0.265646,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.07,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.539854,
+          "status": "ready",
+          "placedAtSeconds": 16.716667,
+          "spokenBufferEndSeconds": 20.256521,
+          "audibleSpeechStartSeconds": 16.746688,
+          "audibleSpeechEndSeconds": 20.228896,
+          "remainingBeatSeconds": 0.576812,
+          "processingGainDb": 2.034,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.538,
+            "peak": 0.7079457640647888,
+            "rms": 0.08377555502124086
+          }
+        },
+        {
+          "id": "C02-L06",
+          "text": "Revenue can fund buybacks and rewards. Funding sets the limit.",
+          "start": 20.833333333333332,
+          "end": 25,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L06.mp3",
+              "version": 0,
+              "sha256": "bbb503e70e017251e8313b9924a2cb69f7631a894efac5ee68f5e4cb30ee3f2f"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L06.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "bbb503e70e017251e8313b9924a2cb69f7631a894efac5ee68f5e4cb30ee3f2f",
+          "decodedDurationSeconds": 4.342146,
+          "trimmedDurationSeconds": 3.837792,
+          "leadingSilenceRemovedSeconds": 0.244729,
+          "trailingSilenceRemovedSeconds": 0.259625,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.66,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.837792,
+          "status": "ready",
+          "placedAtSeconds": 20.883333,
+          "spokenBufferEndSeconds": 24.721125,
+          "audibleSpeechStartSeconds": 20.913917,
+          "audibleSpeechEndSeconds": 24.692375,
+          "remainingBeatSeconds": 0.278875,
+          "processingGainDb": 1.884,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.291,
+            "peak": 0.7079457640647888,
+            "rms": 0.07681790790621722
+          }
+        },
+        {
+          "id": "C02-L07",
+          "text": "Canonical sells route a nine-percent base fee.",
+          "start": 25,
+          "end": 28.766666666666666,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L07-v2.mp3",
+              "version": 2,
+              "sha256": "1947966eee76e798039a0fa1cd3c6d52a7d3139058fa298c4a4b399615243548"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L07.mp3",
+              "version": 0,
+              "sha256": "fb47329de438dedebbe91a6a02750b2c8a8699213205280f84ff78b910c377b5"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L07-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "1947966eee76e798039a0fa1cd3c6d52a7d3139058fa298c4a4b399615243548",
+          "decodedDurationSeconds": 3.668771,
+          "trimmedDurationSeconds": 3.262563,
+          "leadingSilenceRemovedSeconds": 0.158771,
+          "trailingSilenceRemovedSeconds": 0.247438,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.28,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.262563,
+          "status": "ready",
+          "placedAtSeconds": 25.05,
+          "spokenBufferEndSeconds": 28.312563,
+          "audibleSpeechStartSeconds": 25.079937,
+          "audibleSpeechEndSeconds": 28.282854,
+          "remainingBeatSeconds": 0.454104,
+          "processingGainDb": 0.978,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.692,
+            "peak": 0.7079457640647888,
+            "rms": 0.08229981135395394
+          }
+        },
+        {
+          "id": "C02-L08",
+          "text": "Fees support development, RWA, community, and liquidity.",
+          "start": 28.766666666666666,
+          "end": 33.333333333333336,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L08-v3.mp3",
+              "version": 3,
+              "sha256": "81e287780b7d0782dd40b4d762934f511f885b24d72ebc91e2687b4e353f1a37"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L08-v2.mp3",
+              "version": 2,
+              "sha256": "6bdf860dfb855b6ce92b8df033a1fe5c126cd8838c71dee2550430a1e8ac14b6"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L08.mp3",
+              "version": 0,
+              "sha256": "ae5ad4e5f61201f42366c28788450976f2aa1256caec71635def6065e22b7eba"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L08-v3.mp3",
+          "selectedVersion": 3,
+          "sourceSha256": "81e287780b7d0782dd40b4d762934f511f885b24d72ebc91e2687b4e353f1a37",
+          "decodedDurationSeconds": 5.154833,
+          "trimmedDurationSeconds": 4.706729,
+          "leadingSilenceRemovedSeconds": 0.196292,
+          "trailingSilenceRemovedSeconds": 0.251812,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.82,
+          "requiredTempo": 1.065675,
+          "appliedTempo": 1.068411,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.405167,
+          "status": "ready",
+          "placedAtSeconds": 28.816667,
+          "spokenBufferEndSeconds": 33.221833,
+          "audibleSpeechStartSeconds": 28.846687,
+          "audibleSpeechEndSeconds": 33.198458,
+          "remainingBeatSeconds": 0.1115,
+          "processingGainDb": 1.448,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.189,
+            "peak": 0.7079457640647888,
+            "rms": 0.07772749595262994
+          }
+        },
+        {
+          "id": "C02-L09",
+          "text": "That liquidity allocation funds Core. Stability uses finite reserves.",
+          "start": 33.333333333333336,
+          "end": 37.5,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L09.mp3",
+              "version": 0,
+              "sha256": "e9b15c0b1a95ddf4496d023d62887edb9899a1796dcf92f6b68c8f5652fc52e9"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L09.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "e9b15c0b1a95ddf4496d023d62887edb9899a1796dcf92f6b68c8f5652fc52e9",
+          "decodedDurationSeconds": 4.771708,
+          "trimmedDurationSeconds": 4.259917,
+          "leadingSilenceRemovedSeconds": 0.198042,
+          "trailingSilenceRemovedSeconds": 0.31375,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.98,
+          "requiredTempo": 1.06056,
+          "appliedTempo": 1.06515,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.014146,
+          "status": "ready",
+          "placedAtSeconds": 33.383333,
+          "spokenBufferEndSeconds": 37.397479,
+          "audibleSpeechStartSeconds": 33.412687,
+          "audibleSpeechEndSeconds": 37.375604,
+          "remainingBeatSeconds": 0.102521,
+          "processingGainDb": 2.356,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.437,
+            "peak": 0.7079457640647888,
+            "rms": 0.07553118730257466
+          }
+        },
+        {
+          "id": "C02-L10",
+          "text": "Families contest future funded fees in seasonal Turf.",
+          "start": 37.5,
+          "end": 41.666666666666664,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L10-v2.mp3",
+              "version": 2,
+              "sha256": "fef8fd2a50b665426f1ec275f995850f90da497aa0e0c308737d2321fe86baed"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L10.mp3",
+              "version": 0,
+              "sha256": "455a828efc027fa37c6726e8710b9ab52f814f4e36ba7fccec34ed81ad4529a9"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L10-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "fef8fd2a50b665426f1ec275f995850f90da497aa0e0c308737d2321fe86baed",
+          "decodedDurationSeconds": 3.575875,
+          "trimmedDurationSeconds": 3.13375,
+          "leadingSilenceRemovedSeconds": 0.166208,
+          "trailingSilenceRemovedSeconds": 0.275917,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.37,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.13375,
+          "status": "ready",
+          "placedAtSeconds": 37.55,
+          "spokenBufferEndSeconds": 40.68375,
+          "audibleSpeechStartSeconds": 37.575729,
+          "audibleSpeechEndSeconds": 40.656417,
+          "remainingBeatSeconds": 0.982917,
+          "processingGainDb": 3.147,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.55,
+            "peak": 0.7079457640647888,
+            "rms": 0.07455799431409624
+          }
+        },
+        {
+          "id": "C02-L11",
+          "text": "Sieges allocate funded escrow while principal stays protocol-owned.",
+          "start": 41.666666666666664,
+          "end": 45.833333333333336,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L11-v2.mp3",
+              "version": 2,
+              "sha256": "e9a461b26d53a8cb89f22670912bc7d960ef0a654398448c82f25bd4c64e655e"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L11.mp3",
+              "version": 0,
+              "sha256": "4a626eb3bf224e4b91c144a1b442c0d3bc9e94e18876559a963ec7b02f68b806"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L11-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "e9a461b26d53a8cb89f22670912bc7d960ef0a654398448c82f25bd4c64e655e",
+          "decodedDurationSeconds": 4.771708,
+          "trimmedDurationSeconds": 4.271979,
+          "leadingSilenceRemovedSeconds": 0.192208,
+          "trailingSilenceRemovedSeconds": 0.307521,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.49,
+          "requiredTempo": 1.063563,
+          "appliedTempo": 1.06787,
+          "tempoPasses": 3,
+          "fittedDurationSeconds": 4.00925,
+          "status": "ready",
+          "placedAtSeconds": 41.716667,
+          "spokenBufferEndSeconds": 45.725917,
+          "audibleSpeechStartSeconds": 41.746687,
+          "audibleSpeechEndSeconds": 45.700083,
+          "remainingBeatSeconds": 0.107417,
+          "processingGainDb": 0.754,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -23.133,
+            "peak": 0.7079457640647888,
+            "rms": 0.06972212520249613
+          }
+        },
+        {
+          "id": "C02-L12",
+          "text": "Inventory bonds vest existing OMR. They do not mint more.",
+          "start": 45.833333333333336,
+          "end": 50,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L12.mp3",
+              "version": 0,
+              "sha256": "3f331f4fe3f682fb28e047b769a358ea6c9048dd2e2f6b32a36a8ba786decf6a"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L12.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "3f331f4fe3f682fb28e047b769a358ea6c9048dd2e2f6b32a36a8ba786decf6a",
+          "decodedDurationSeconds": 4.852979,
+          "trimmedDurationSeconds": 4.383021,
+          "leadingSilenceRemovedSeconds": 0.229687,
+          "trailingSilenceRemovedSeconds": 0.240271,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.27,
+          "requiredTempo": 1.091209,
+          "appliedTempo": 1.09541,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.006396,
+          "status": "ready",
+          "placedAtSeconds": 45.883333,
+          "spokenBufferEndSeconds": 49.889729,
+          "audibleSpeechStartSeconds": 45.911313,
+          "audibleSpeechEndSeconds": 49.859792,
+          "remainingBeatSeconds": 0.110271,
+          "processingGainDb": 2.17,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.451,
+            "peak": 0.7079457640647888,
+            "rms": 0.0754160220072143
+          }
+        },
+        {
+          "id": "C02-L13",
+          "text": "Liquidity commitments lock positions against prefunded campaign rewards.",
+          "start": 50,
+          "end": 54.166666666666664,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L13.mp3",
+              "version": 0,
+              "sha256": "a986c94270dc03e3fe4f689b48d4a724f1262fcc46b23738c17f131868f01e50"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L13.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "a986c94270dc03e3fe4f689b48d4a724f1262fcc46b23738c17f131868f01e50",
+          "decodedDurationSeconds": 4.562729,
+          "trimmedDurationSeconds": 4.033792,
+          "leadingSilenceRemovedSeconds": 0.238958,
+          "trailingSilenceRemovedSeconds": 0.289979,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -48.76,
+          "requiredTempo": 1.004263,
+          "appliedTempo": 1.004263,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 4.014833,
+          "status": "ready",
+          "placedAtSeconds": 50.05,
+          "spokenBufferEndSeconds": 54.064833,
+          "audibleSpeechStartSeconds": 50.077417,
+          "audibleSpeechEndSeconds": 54.038833,
+          "remainingBeatSeconds": 0.101833,
+          "processingGainDb": 2.863,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.925,
+            "peak": 0.7079457640647888,
+            "rms": 0.08989848078989661
+          }
+        },
+        {
+          "id": "C02-L14",
+          "text": "Eligible assets use distinct onchain ownership rails.",
+          "start": 54.166666666666664,
+          "end": 58.333333333333336,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L14-v2.mp3",
+              "version": 2,
+              "sha256": "fceacd1ac5cdde58dfa7bf33d225c0e36914d505609defab0cf9ea8cf2c4e758"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L14.mp3",
+              "version": 0,
+              "sha256": "1949cb3737ec8acc88b63dcc1f7196156bb0f90b3149a8671a37e73af80a79e5"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L14-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "fceacd1ac5cdde58dfa7bf33d225c0e36914d505609defab0cf9ea8cf2c4e758",
+          "decodedDurationSeconds": 3.87775,
+          "trimmedDurationSeconds": 3.369687,
+          "leadingSilenceRemovedSeconds": 0.253417,
+          "trailingSilenceRemovedSeconds": 0.254646,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.47,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.369687,
+          "status": "ready",
+          "placedAtSeconds": 54.216667,
+          "spokenBufferEndSeconds": 57.586354,
+          "audibleSpeechStartSeconds": 54.246604,
+          "audibleSpeechEndSeconds": 57.565646,
+          "remainingBeatSeconds": 0.746979,
+          "processingGainDb": 0.062,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -24.744,
+            "peak": 0.7079457640647888,
+            "rms": 0.057917291355324654
+          }
+        },
+        {
+          "id": "C02-L15",
+          "text": "Approved RWA acquisitions can reach eligible Street Deed vaults.",
+          "start": 58.333333333333336,
+          "end": 62.5,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L15.mp3",
+              "version": 0,
+              "sha256": "270b236065d5811d38ecd3c739657b119eb63b8af02714295d17ea631bd0d43c"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L15.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "270b236065d5811d38ecd3c739657b119eb63b8af02714295d17ea631bd0d43c",
+          "decodedDurationSeconds": 4.644,
+          "trimmedDurationSeconds": 4.178104,
+          "leadingSilenceRemovedSeconds": 0.168813,
+          "trailingSilenceRemovedSeconds": 0.297083,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -50.4,
+          "requiredTempo": 1.040192,
+          "appliedTempo": 1.042706,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.011333,
+          "status": "ready",
+          "placedAtSeconds": 58.383333,
+          "spokenBufferEndSeconds": 62.394667,
+          "audibleSpeechStartSeconds": 58.411333,
+          "audibleSpeechEndSeconds": 62.370042,
+          "remainingBeatSeconds": 0.105333,
+          "processingGainDb": 1.337,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.817,
+            "peak": 0.7079457640647888,
+            "rms": 0.08112553609288775
+          }
+        },
+        {
+          "id": "C02-L16",
+          "text": "Acquisition, allocation, and delivery each have separate rules.",
+          "start": 62.5,
+          "end": 66.66666666666667,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L16-v2.mp3",
+              "version": 2,
+              "sha256": "1037dc3dee0a63ae5a5a03b88a4bcee57e8a4b19ca31139ada84a671e3aa7b2d"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L16.mp3",
+              "version": 0,
+              "sha256": "4160ca28bf26595c0d3313728abad71635bc84ea31f362452d5db8b95fbbe0eb"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L16-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "1037dc3dee0a63ae5a5a03b88a4bcee57e8a4b19ca31139ada84a671e3aa7b2d",
+          "decodedDurationSeconds": 4.771708,
+          "trimmedDurationSeconds": 4.240021,
+          "leadingSilenceRemovedSeconds": 0.2225,
+          "trailingSilenceRemovedSeconds": 0.309188,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.07,
+          "requiredTempo": 1.055607,
+          "appliedTempo": 1.059737,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 4.008667,
+          "status": "ready",
+          "placedAtSeconds": 62.55,
+          "spokenBufferEndSeconds": 66.558667,
+          "audibleSpeechStartSeconds": 62.568583,
+          "audibleSpeechEndSeconds": 66.538917,
+          "remainingBeatSeconds": 0.108,
+          "processingGainDb": -1.53,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -26.082,
+            "peak": 0.7079457640647888,
+            "rms": 0.049648552385756786
+          }
+        },
+        {
+          "id": "C02-L17",
+          "text": "Every balance has a source. Every move has a cost.",
+          "start": 66.66666666666667,
+          "end": 70.83333333333333,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L17.mp3",
+              "version": 0,
+              "sha256": "078b1431105eff4366fbc1d04bfc7d1e26a6a27bfdee0a137e24485e012e3273"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L17.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "078b1431105eff4366fbc1d04bfc7d1e26a6a27bfdee0a137e24485e012e3273",
+          "decodedDurationSeconds": 3.750042,
+          "trimmedDurationSeconds": 3.246646,
+          "leadingSilenceRemovedSeconds": 0.214375,
+          "trailingSilenceRemovedSeconds": 0.289021,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -49.56,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.246646,
+          "status": "ready",
+          "placedAtSeconds": 66.716667,
+          "spokenBufferEndSeconds": 69.963313,
+          "audibleSpeechStartSeconds": 66.737479,
+          "audibleSpeechEndSeconds": 69.933333,
+          "remainingBeatSeconds": 0.870021,
+          "processingGainDb": 1.031,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -24.124,
+            "peak": 0.7079457640647888,
+            "rms": 0.0621996684214395
+          }
+        },
+        {
+          "id": "C02-L18",
+          "text": "OMERTÀ. The economy has territory.",
+          "start": 70.83333333333333,
+          "end": 75,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C02-L18.mp3",
+              "version": 0,
+              "sha256": "9f1aeb92809076434eb12a747f60bbb8db6f55fd45e4b9c42f0d1e6347ef84c0"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C02-L18.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "9f1aeb92809076434eb12a747f60bbb8db6f55fd45e4b9c42f0d1e6347ef84c0",
+          "decodedDurationSeconds": 3.668771,
+          "trimmedDurationSeconds": 3.224417,
+          "leadingSilenceRemovedSeconds": 0.169146,
+          "trailingSilenceRemovedSeconds": 0.275208,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.67,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.224417,
+          "status": "ready",
+          "placedAtSeconds": 70.883333,
+          "spokenBufferEndSeconds": 74.10775,
+          "audibleSpeechStartSeconds": 70.913104,
+          "audibleSpeechEndSeconds": 74.082292,
+          "remainingBeatSeconds": 0.89225,
+          "processingGainDb": 2.917,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.432,
+            "peak": 0.7079457640647888,
+            "rms": 0.10675864071530222
+          }
+        }
+      ],
+      "blockingIssues": [],
+      "reviewRequired": "Manual listening for pronunciation, complete words, timbre, pacing and balance remains necessary. Captions are estimated line/chunk timing, not ASR word alignment.",
+      "noSpeechOverlap": true,
+      "bpm": 108,
+      "musicDirection": "C minor clock pulse, muted alternating arpeggio, finite low-frequency movement",
+      "ducking": {
+        "musicUnderSpeechDb": -7,
+        "attackMs": 10,
+        "releaseMs": 220
+      },
+      "cues": [
+        {
+          "at": 0,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 0,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 0.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 4.166667,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 12.3,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 12.52,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 12.555,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 16.666667,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 20.713333,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 20.833333,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 20.851333,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 28.766667,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 33.133333,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 33.353333,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 33.388333,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 41.546667,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 41.666667,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 41.684667,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 53.966667,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 54.186667,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 54.221667,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 62.38,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 62.5,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 62.518,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 66.666667,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 70.833333,
+          "kind": "brand",
+          "duration": 2.1,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        }
+      ],
+      "silenceChecks": [
+        {
+          "start": 41.266666666666666,
+          "end": 42.086666666666666,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        },
+        {
+          "start": 70.51333333333334,
+          "end": 70.83333333333333,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        }
+      ],
+      "stems": {
+        "dialogue": {
+          "file": "public/art/cinematic-r4/audio/02-dialogue.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -22.696,
+          "peak": 0.7079457640647888,
+          "rms": 0.07331384409613528
+        },
+        "music": {
+          "file": "public/art/cinematic-r4/audio/02-music.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -19.11,
+          "rmsDbfs": -33.861,
+          "peak": 0.11079270392656326,
+          "rms": 0.020274052742752607
+        },
+        "sfx": {
+          "file": "public/art/cinematic-r4/audio/02-sfx.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -11.914,
+          "rmsDbfs": -40.7,
+          "peak": 0.2536793053150177,
+          "rms": 0.009225797620914048
+        },
+        "room": {
+          "file": "public/art/cinematic-r4/audio/02-room.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -52.851,
+          "rmsDbfs": -66.282,
+          "peak": 0.0022775770630687475,
+          "rms": 0.0004851557854856595
+        }
+      },
+      "rawMixStats": {
+        "samplePeakDbfs": -1.784,
+        "rmsDbfs": -22.309,
+        "peak": 0.8143215179443359,
+        "rms": 0.07665618239720959
+      },
+      "master": {
+        "file": "public/art/cinematic-r4/audio/02-mix.wav",
+        "durationSeconds": 75,
+        "integratedLufs": -14.27,
+        "truePeakDbtp": -1.3,
+        "loudnessRangeLu": 4,
+        "sampleRate": 48000,
+        "channels": 2,
+        "codec": "pcm_s24le",
+        "normalizationType": "dynamic",
+        "valid": true,
+        "preNormalization": {
+          "input_i": "-18.36",
+          "input_tp": "-1.65",
+          "input_lra": "4.40",
+          "input_thresh": "-28.67",
+          "output_i": "-14.71",
+          "output_tp": "-1.30",
+          "output_lra": "4.00",
+          "output_thresh": "-24.93",
+          "normalization_type": "dynamic",
+          "target_offset": "0.71"
+        },
+        "secondPass": {
+          "input_i": "-18.36",
+          "input_tp": "-1.65",
+          "input_lra": "4.40",
+          "input_thresh": "-28.67",
+          "output_i": "-14.25",
+          "output_tp": "-1.30",
+          "output_lra": "4.00",
+          "output_thresh": "-24.47",
+          "normalization_type": "dynamic",
+          "target_offset": "0.25"
+        },
+        "finalMeasurement": {
+          "input_i": "-14.27",
+          "input_tp": "-1.30",
+          "input_lra": "4.00",
+          "input_thresh": "-24.51",
+          "output_i": "-14.30",
+          "output_tp": "-1.30",
+          "output_lra": "3.50",
+          "output_thresh": "-24.52",
+          "normalization_type": "dynamic",
+          "target_offset": "0.30"
+        }
+      }
+    },
+    {
+      "id": "03",
+      "title": "THE CITY REMEMBERS",
+      "duration": 72,
+      "status": "mixed-verified",
+      "lines": [
+        {
+          "id": "C03-L01",
+          "text": "In this city, what you know changes everything.",
+          "start": 0,
+          "end": 4,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L01-v2.mp3",
+              "version": 2,
+              "sha256": "7f4297cf8e29e36f07551ac912ed46c97a1ebc0cfa5dd9bd4ead614b44f59ddb"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L01.mp3",
+              "version": 0,
+              "sha256": "3ab667c1dbb6444897027410065b0b2702113b67cd79e6ae29e3d6c6fbb0b6a0"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L01-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "7f4297cf8e29e36f07551ac912ed46c97a1ebc0cfa5dd9bd4ead614b44f59ddb",
+          "decodedDurationSeconds": 4.086729,
+          "trimmedDurationSeconds": 3.449604,
+          "leadingSilenceRemovedSeconds": 0.321437,
+          "trailingSilenceRemovedSeconds": 0.315688,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.87,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.449604,
+          "status": "ready",
+          "placedAtSeconds": 0.05,
+          "spokenBufferEndSeconds": 3.499604,
+          "audibleSpeechStartSeconds": 0.078458,
+          "audibleSpeechEndSeconds": 3.479437,
+          "remainingBeatSeconds": 0.500396,
+          "processingGainDb": 4.242,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.199,
+            "peak": 0.7079457640647888,
+            "rms": 0.08710663107749508
+          }
+        },
+        {
+          "id": "C03-L02",
+          "text": "A missing shipment becomes an investigation.",
+          "start": 4,
+          "end": 8,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L02.mp3",
+              "version": 0,
+              "sha256": "840f27dceb0602a3089219e7718efd50d2980476dd0aa51afac220b5939fe523"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L02.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "840f27dceb0602a3089219e7718efd50d2980476dd0aa51afac220b5939fe523",
+          "decodedDurationSeconds": 3.703583,
+          "trimmedDurationSeconds": 3.075021,
+          "leadingSilenceRemovedSeconds": 0.293417,
+          "trailingSilenceRemovedSeconds": 0.335146,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.72,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.075021,
+          "status": "ready",
+          "placedAtSeconds": 4.05,
+          "spokenBufferEndSeconds": 7.125021,
+          "audibleSpeechStartSeconds": 4.082167,
+          "audibleSpeechEndSeconds": 7.094708,
+          "remainingBeatSeconds": 0.874979,
+          "processingGainDb": 1.794,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -24.916,
+            "peak": 0.7079457640647888,
+            "rms": 0.056780423831449364
+          }
+        },
+        {
+          "id": "C03-L03",
+          "text": "Clues connect people, places, objects, and history.",
+          "start": 8,
+          "end": 12,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L03-v2.mp3",
+              "version": 2,
+              "sha256": "8b51ff81aec190fdcc0cc179f70f61984907740879459167aff15cc1e9da6549"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L03.mp3",
+              "version": 0,
+              "sha256": "2740239280d36174dc15b707f22e0bc09af2ab77c67a4a954c82377ce40f6ce1"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L03-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "8b51ff81aec190fdcc0cc179f70f61984907740879459167aff15cc1e9da6549",
+          "decodedDurationSeconds": 4.051896,
+          "trimmedDurationSeconds": 3.897104,
+          "leadingSilenceRemovedSeconds": 0.073646,
+          "trailingSilenceRemovedSeconds": 0.081146,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -54.23,
+          "requiredTempo": 1.012235,
+          "appliedTempo": 1.016078,
+          "tempoPasses": 3,
+          "fittedDurationSeconds": 3.844271,
+          "status": "ready",
+          "placedAtSeconds": 8.05,
+          "spokenBufferEndSeconds": 11.894271,
+          "audibleSpeechStartSeconds": 8.079729,
+          "audibleSpeechEndSeconds": 11.845667,
+          "remainingBeatSeconds": 0.105729,
+          "processingGainDb": 5.944,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.979,
+            "peak": 0.7079457640647888,
+            "rms": 0.10024567337145432
+          }
+        },
+        {
+          "id": "C03-L04",
+          "text": "Your view is personal. Private intelligence stays private.",
+          "start": 12,
+          "end": 16,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L04.mp3",
+              "version": 0,
+              "sha256": "b051f77522610e290b3b1cfcc5b9849d7d3be21f8aa0022519078d4d17e68551"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L04.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "b051f77522610e290b3b1cfcc5b9849d7d3be21f8aa0022519078d4d17e68551",
+          "decodedDurationSeconds": 4.562729,
+          "trimmedDurationSeconds": 3.930958,
+          "leadingSilenceRemovedSeconds": 0.225104,
+          "trailingSilenceRemovedSeconds": 0.406667,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.77,
+          "requiredTempo": 1.021028,
+          "appliedTempo": 1.022591,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.846792,
+          "status": "ready",
+          "placedAtSeconds": 12.05,
+          "spokenBufferEndSeconds": 15.896792,
+          "audibleSpeechStartSeconds": 12.079958,
+          "audibleSpeechEndSeconds": 15.879438,
+          "remainingBeatSeconds": 0.103208,
+          "processingGainDb": 6.916,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -18.645,
+            "peak": 0.7079457640647888,
+            "rms": 0.11688632118985225
+          }
+        },
+        {
+          "id": "C03-L05",
+          "text": "Find original evidence from two independent sources.",
+          "start": 16,
+          "end": 20,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L05-v2.mp3",
+              "version": 2,
+              "sha256": "8e9c5b1bd4ac1bbfaae3cce14387d4232e6b899a774106cba41828b6b01c3fa0"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L05.mp3",
+              "version": 0,
+              "sha256": "3e50fa5153c98e01fbc22159247881b1a69498360f5308895675ae20875b0a0c"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L05-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "8e9c5b1bd4ac1bbfaae3cce14387d4232e6b899a774106cba41828b6b01c3fa0",
+          "decodedDurationSeconds": 4.818146,
+          "trimmedDurationSeconds": 4.062229,
+          "leadingSilenceRemovedSeconds": 0.350271,
+          "trailingSilenceRemovedSeconds": 0.405646,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.63,
+          "requiredTempo": 1.055124,
+          "appliedTempo": 1.058706,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.843812,
+          "status": "ready",
+          "placedAtSeconds": 16.05,
+          "spokenBufferEndSeconds": 19.893812,
+          "audibleSpeechStartSeconds": 16.084375,
+          "audibleSpeechEndSeconds": 19.869104,
+          "remainingBeatSeconds": 0.106188,
+          "processingGainDb": 5.253,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.685,
+            "peak": 0.7079457640647888,
+            "rms": 0.10368826796484619
+          }
+        },
+        {
+          "id": "C03-L06",
+          "text": "Share knowledge carefully: forwarded rumors are not proof.",
+          "start": 20,
+          "end": 24,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L06-v2.mp3",
+              "version": 2,
+              "sha256": "22496c40526043c893b482fdc6b0584bf01e9dd33240a0d01711a65949269778"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L06.mp3",
+              "version": 0,
+              "sha256": "c5462bbf1bdfeba30bcf4b9ea1574783a31e1d21651c533dedba9cc10d5cc145"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L06-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "22496c40526043c893b482fdc6b0584bf01e9dd33240a0d01711a65949269778",
+          "decodedDurationSeconds": 4.435021,
+          "trimmedDurationSeconds": 3.884729,
+          "leadingSilenceRemovedSeconds": 0.192625,
+          "trailingSilenceRemovedSeconds": 0.357667,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.22,
+          "requiredTempo": 1.009021,
+          "appliedTempo": 1.01033,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.845542,
+          "status": "ready",
+          "placedAtSeconds": 20.05,
+          "spokenBufferEndSeconds": 23.895542,
+          "audibleSpeechStartSeconds": 20.079271,
+          "audibleSpeechEndSeconds": 23.871063,
+          "remainingBeatSeconds": 0.104458,
+          "processingGainDb": 5.329,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.81,
+            "peak": 0.7079457640647888,
+            "rms": 0.10220930553133571
+          }
+        },
+        {
+          "id": "C03-L07",
+          "text": "Bring recipes and tools to the right facility.",
+          "start": 24,
+          "end": 28,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L07-v2.mp3",
+              "version": 2,
+              "sha256": "4a5b86c72b09bd8112d101556dc0cb62b8e8100f73dab77f37665d9a2edf4a35"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L07.mp3",
+              "version": 0,
+              "sha256": "a1f45743787c3fb66c5fb0f7c5e2262352af8d515680e02822c8303741489e65"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L07-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "4a5b86c72b09bd8112d101556dc0cb62b8e8100f73dab77f37665d9a2edf4a35",
+          "decodedDurationSeconds": 3.413333,
+          "trimmedDurationSeconds": 2.830687,
+          "leadingSilenceRemovedSeconds": 0.227563,
+          "trailingSilenceRemovedSeconds": 0.355083,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.8,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 2.830687,
+          "status": "ready",
+          "placedAtSeconds": 24.05,
+          "spokenBufferEndSeconds": 26.880688,
+          "audibleSpeechStartSeconds": 24.080021,
+          "audibleSpeechEndSeconds": 26.864208,
+          "remainingBeatSeconds": 1.119312,
+          "processingGainDb": 5.834,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.535,
+            "peak": 0.7079457640647888,
+            "rms": 0.09402324630507947
+          }
+        },
+        {
+          "id": "C03-L08",
+          "text": "Bring equipment while another player brings the intelligence.",
+          "start": 28,
+          "end": 32,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L08-v2.mp3",
+              "version": 2,
+              "sha256": "90ac65ebcc96a112a4e03d33f5753a6abdc0f04fb6ac4a056e6fe784130ea1e2"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L08.mp3",
+              "version": 0,
+              "sha256": "1acb1dfc62c185bf0dfc17fbd16e0ba31c58bfe63df8846726ef454a4d26cce7"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L08-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "90ac65ebcc96a112a4e03d33f5753a6abdc0f04fb6ac4a056e6fe784130ea1e2",
+          "decodedDurationSeconds": 3.924187,
+          "trimmedDurationSeconds": 3.419792,
+          "leadingSilenceRemovedSeconds": 0.229313,
+          "trailingSilenceRemovedSeconds": 0.275083,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.42,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.419792,
+          "status": "ready",
+          "placedAtSeconds": 28.05,
+          "spokenBufferEndSeconds": 31.469792,
+          "audibleSpeechStartSeconds": 28.08,
+          "audibleSpeechEndSeconds": 31.440042,
+          "remainingBeatSeconds": 0.530208,
+          "processingGainDb": 5.86,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.313,
+            "peak": 0.7079457640647888,
+            "rms": 0.09646386024188654
+          }
+        },
+        {
+          "id": "C03-L09",
+          "text": "Crew roles and Family authority decide who can act.",
+          "start": 32,
+          "end": 36,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L09.mp3",
+              "version": 0,
+              "sha256": "3e434e1f8a6b8e14a4796a06e1fcd0bf0d161eea1516684dd8c44884c9083ea9"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L09.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "3e434e1f8a6b8e14a4796a06e1fcd0bf0d161eea1516684dd8c44884c9083ea9",
+          "decodedDurationSeconds": 3.87775,
+          "trimmedDurationSeconds": 3.548479,
+          "leadingSilenceRemovedSeconds": 0.098229,
+          "trailingSilenceRemovedSeconds": 0.231042,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -54.15,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.548479,
+          "status": "ready",
+          "placedAtSeconds": 32.05,
+          "spokenBufferEndSeconds": 35.598479,
+          "audibleSpeechStartSeconds": 32.08075,
+          "audibleSpeechEndSeconds": 35.567979,
+          "remainingBeatSeconds": 0.401521,
+          "processingGainDb": 3.984,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -21.158,
+            "peak": 0.7079457640647888,
+            "rms": 0.08752084426396277
+          }
+        },
+        {
+          "id": "C03-L10",
+          "text": "An Agent can read permitted context and propose a move.",
+          "start": 36,
+          "end": 40,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L10.mp3",
+              "version": 0,
+              "sha256": "58391ed9229e7d75316e0153afdbf657c65f9c98c05461ed66b1600a2b5c2222"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L10.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "58391ed9229e7d75316e0153afdbf657c65f9c98c05461ed66b1600a2b5c2222",
+          "decodedDurationSeconds": 4.899417,
+          "trimmedDurationSeconds": 4.083146,
+          "leadingSilenceRemovedSeconds": 0.355812,
+          "trailingSilenceRemovedSeconds": 0.460458,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.96,
+          "requiredTempo": 1.060557,
+          "appliedTempo": 1.060557,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.8465,
+          "status": "ready",
+          "placedAtSeconds": 36.05,
+          "spokenBufferEndSeconds": 39.8965,
+          "audibleSpeechStartSeconds": 36.079896,
+          "audibleSpeechEndSeconds": 39.863333,
+          "remainingBeatSeconds": 0.1035,
+          "processingGainDb": 3.988,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -22.559,
+            "peak": 0.7079457640647888,
+            "rms": 0.07448443372068775
+          }
+        },
+        {
+          "id": "C03-L11",
+          "text": "Consequential proposals still need your approval.",
+          "start": 40,
+          "end": 44,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L11-v3.mp3",
+              "version": 3,
+              "sha256": "c5eb315a8498e31e505a5d8fe6f193835c1740b029562180e8194d8a44d97df9"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L11-v2.mp3",
+              "version": 2,
+              "sha256": "ef1445868165dcd1ba741e2953bb92869d6c3040316df8b752424e4235a0387b"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L11.mp3",
+              "version": 0,
+              "sha256": "dd56d2ecd7a5bc6fc5753539a2102ae3d94e845c86fd4f288b243a1d2a638eec"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L11-v3.mp3",
+          "selectedVersion": 3,
+          "sourceSha256": "c5eb315a8498e31e505a5d8fe6f193835c1740b029562180e8194d8a44d97df9",
+          "decodedDurationSeconds": 4.005458,
+          "trimmedDurationSeconds": 3.644833,
+          "leadingSilenceRemovedSeconds": 0.141875,
+          "trailingSilenceRemovedSeconds": 0.21875,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.73,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.644833,
+          "status": "ready",
+          "placedAtSeconds": 40.05,
+          "spokenBufferEndSeconds": 43.694833,
+          "audibleSpeechStartSeconds": 40.080021,
+          "audibleSpeechEndSeconds": 43.664875,
+          "remainingBeatSeconds": 0.305167,
+          "processingGainDb": 4.71,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.444,
+            "peak": 0.7079457640647888,
+            "rms": 0.10661044834038232
+          }
+        },
+        {
+          "id": "C03-L12",
+          "text": "You confirm. The server checks authority and resources again.",
+          "start": 44,
+          "end": 48,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L12.mp3",
+              "version": 0,
+              "sha256": "fa76f9443cd9cb8f56e64bc3b216589419a57f32655fde753111f0a9032c0ac8"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L12.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "fa76f9443cd9cb8f56e64bc3b216589419a57f32655fde753111f0a9032c0ac8",
+          "decodedDurationSeconds": 4.388583,
+          "trimmedDurationSeconds": 3.759354,
+          "leadingSilenceRemovedSeconds": 0.247542,
+          "trailingSilenceRemovedSeconds": 0.381688,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.52,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.759354,
+          "status": "ready",
+          "placedAtSeconds": 44.05,
+          "spokenBufferEndSeconds": 47.809354,
+          "audibleSpeechStartSeconds": 44.0785,
+          "audibleSpeechEndSeconds": 47.781437,
+          "remainingBeatSeconds": 0.190646,
+          "processingGainDb": 6.309,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.705,
+            "peak": 0.7079457640647888,
+            "rms": 0.09220523048632592
+          }
+        },
+        {
+          "id": "C03-L13",
+          "text": "The operation changes the world. Its receipt becomes history.",
+          "start": 48,
+          "end": 52,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L13.mp3",
+              "version": 0,
+              "sha256": "c712b5a71b898688afdfef2140ed58dadb650fa7ae0a7caaf120622b6ac6a3c9"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L13.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "c712b5a71b898688afdfef2140ed58dadb650fa7ae0a7caaf120622b6ac6a3c9",
+          "decodedDurationSeconds": 4.644,
+          "trimmedDurationSeconds": 4.147458,
+          "leadingSilenceRemovedSeconds": 0.337458,
+          "trailingSilenceRemovedSeconds": 0.159083,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.25,
+          "requiredTempo": 1.077262,
+          "appliedTempo": 1.080586,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.842375,
+          "status": "ready",
+          "placedAtSeconds": 48.05,
+          "spokenBufferEndSeconds": 51.892375,
+          "audibleSpeechStartSeconds": 48.078958,
+          "audibleSpeechEndSeconds": 51.870271,
+          "remainingBeatSeconds": 0.107625,
+          "processingGainDb": 6.747,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.714,
+            "peak": 0.7079457640647888,
+            "rms": 0.10334675894142607
+          }
+        },
+        {
+          "id": "C03-L14",
+          "text": "The Director responds to real conditions with authored situations.",
+          "start": 52,
+          "end": 56,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L14.mp3",
+              "version": 0,
+              "sha256": "09a68df6c9349b6924a3d0fcdfc91508cc2e747d78265710b51f3a103b316c3b"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L14.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "09a68df6c9349b6924a3d0fcdfc91508cc2e747d78265710b51f3a103b316c3b",
+          "decodedDurationSeconds": 4.597563,
+          "trimmedDurationSeconds": 4.004646,
+          "leadingSilenceRemovedSeconds": 0.311979,
+          "trailingSilenceRemovedSeconds": 0.280938,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -52.62,
+          "requiredTempo": 1.040168,
+          "appliedTempo": 1.043479,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.845479,
+          "status": "ready",
+          "placedAtSeconds": 52.05,
+          "spokenBufferEndSeconds": 55.895479,
+          "audibleSpeechStartSeconds": 52.079979,
+          "audibleSpeechEndSeconds": 55.865729,
+          "remainingBeatSeconds": 0.104521,
+          "processingGainDb": 5.324,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.311,
+            "peak": 0.7079457640647888,
+            "rms": 0.09648100240140728
+          }
+        },
+        {
+          "id": "C03-L15",
+          "text": "Divert cargo; exposure can trigger a new case.",
+          "start": 56,
+          "end": 60,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L15-v2.mp3",
+              "version": 2,
+              "sha256": "3059b36e7f822349c4f299a4786b5fd2e762394eef058144dfc1264816d717ba"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L15.mp3",
+              "version": 0,
+              "sha256": "22745981d15ed050e9884d5d1fa6d51593ce3f6da9a0db40affc76029556b9c7"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L15-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "3059b36e7f822349c4f299a4786b5fd2e762394eef058144dfc1264816d717ba",
+          "decodedDurationSeconds": 4.516292,
+          "trimmedDurationSeconds": 4.181229,
+          "leadingSilenceRemovedSeconds": 0.120563,
+          "trailingSilenceRemovedSeconds": 0.2145,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.65,
+          "requiredTempo": 1.086034,
+          "appliedTempo": 1.090243,
+          "tempoPasses": 2,
+          "fittedDurationSeconds": 3.84,
+          "status": "ready",
+          "placedAtSeconds": 56.05,
+          "spokenBufferEndSeconds": 59.89,
+          "audibleSpeechStartSeconds": 56.075208,
+          "audibleSpeechEndSeconds": 59.814521,
+          "remainingBeatSeconds": 0.11,
+          "processingGainDb": 4.524,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.346,
+            "peak": 0.7079457640647888,
+            "rms": 0.09609251206567425
+          }
+        },
+        {
+          "id": "C03-L16",
+          "text": "Opportunities connect the next move to what actually happened.",
+          "start": 60,
+          "end": 64,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L16.mp3",
+              "version": 0,
+              "sha256": "5a723d583824ac9ece682ec890679f0319f6337094582f0d008a5e83fa266136"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L16.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "5a723d583824ac9ece682ec890679f0319f6337094582f0d008a5e83fa266136",
+          "decodedDurationSeconds": 4.133167,
+          "trimmedDurationSeconds": 3.741583,
+          "leadingSilenceRemovedSeconds": 0.136104,
+          "trailingSilenceRemovedSeconds": 0.255479,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -51.31,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.741583,
+          "status": "ready",
+          "placedAtSeconds": 60.05,
+          "spokenBufferEndSeconds": 63.791583,
+          "audibleSpeechStartSeconds": 60.079583,
+          "audibleSpeechEndSeconds": 63.767271,
+          "remainingBeatSeconds": 0.208417,
+          "processingGainDb": 5.138,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -20.364,
+            "peak": 0.7079457640647888,
+            "rms": 0.09590132047588627
+          }
+        },
+        {
+          "id": "C03-L17",
+          "text": "Secrets and alliances give your decisions lasting weight.",
+          "start": 64,
+          "end": 68,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L17-v2.mp3",
+              "version": 2,
+              "sha256": "b67d552c9e31e4062596fbbfc391a892e06d0fb1ae30051d9cd785f129535789"
+            },
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L17.mp3",
+              "version": 0,
+              "sha256": "01409578b5fcc6f08441e31fdd87836def09a972392774607bcf623ef18a6c9f"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L17-v2.mp3",
+          "selectedVersion": 2,
+          "sourceSha256": "b67d552c9e31e4062596fbbfc391a892e06d0fb1ae30051d9cd785f129535789",
+          "decodedDurationSeconds": 4.179604,
+          "trimmedDurationSeconds": 3.789354,
+          "leadingSilenceRemovedSeconds": 0.090479,
+          "trailingSilenceRemovedSeconds": 0.299771,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -53.51,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.789354,
+          "status": "ready",
+          "placedAtSeconds": 64.05,
+          "spokenBufferEndSeconds": 67.839354,
+          "audibleSpeechStartSeconds": 64.073792,
+          "audibleSpeechEndSeconds": 67.812354,
+          "remainingBeatSeconds": 0.160646,
+          "processingGainDb": 6.478,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.506,
+            "peak": 0.7079457640647888,
+            "rms": 0.10585623467313128
+          }
+        },
+        {
+          "id": "C03-L18",
+          "text": "OMERTÀ. Know more. Move together.",
+          "start": 68,
+          "end": 72,
+          "availableTakes": [
+            {
+              "file": "public/art/cinematic-r4/audio/C03-L18.mp3",
+              "version": 0,
+              "sha256": "75941e48a64ce50dadfa74904537ea276e74fdccd6ca16afae4dbf201117a135"
+            }
+          ],
+          "source": "public/art/cinematic-r4/audio/C03-L18.mp3",
+          "selectedVersion": 0,
+          "sourceSha256": "75941e48a64ce50dadfa74904537ea276e74fdccd6ca16afae4dbf201117a135",
+          "decodedDurationSeconds": 3.750042,
+          "trimmedDurationSeconds": 3.166313,
+          "leadingSilenceRemovedSeconds": 0.179125,
+          "trailingSilenceRemovedSeconds": 0.404604,
+          "retainedEdgeGuardSeconds": 0.03,
+          "trimThresholdDbfs": -55.21,
+          "requiredTempo": 1,
+          "appliedTempo": 1,
+          "tempoPasses": 1,
+          "fittedDurationSeconds": 3.166313,
+          "status": "ready",
+          "placedAtSeconds": 68.05,
+          "spokenBufferEndSeconds": 71.216313,
+          "audibleSpeechStartSeconds": 68.081437,
+          "audibleSpeechEndSeconds": 71.182542,
+          "remainingBeatSeconds": 0.783687,
+          "processingGainDb": 6.444,
+          "eq": "75 Hz high-pass; 12.5 kHz low-pass; gentle 2:1 compression; mono center",
+          "outputStats": {
+            "samplePeakDbfs": -3,
+            "rmsDbfs": -19.669,
+            "peak": 0.7079457640647888,
+            "rms": 0.1038791274300714
+          }
+        }
+      ],
+      "blockingIssues": [],
+      "reviewRequired": "Manual listening for pronunciation, complete words, timbre, pacing and balance remains necessary. Captions are estimated line/chunk timing, not ASR word alignment.",
+      "noSpeechOverlap": true,
+      "bpm": 72,
+      "musicDirection": "A suspended minor atmosphere, irregular high plucks, low room drone",
+      "ducking": {
+        "musicUnderSpeechDb": -7,
+        "attackMs": 10,
+        "releaseMs": 220
+      },
+      "cues": [
+        {
+          "at": 0,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 0,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 0.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 4,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 11.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 12.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 12.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 16,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 19.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 20,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 20.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 28,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 31.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 32.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 32.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 39.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 40,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 40.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 51.8,
+          "kind": "whoosh",
+          "duration": 0.42,
+          "gain": 0.2,
+          "pan": -0.8,
+          "panEnd": 0.8,
+          "frequency": 220
+        },
+        {
+          "at": 52.02,
+          "kind": "impact",
+          "duration": 0.5,
+          "gain": 0.23,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 52.055,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.055,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 59.88,
+          "kind": "whoosh",
+          "duration": 0.24,
+          "gain": 0.105,
+          "pan": -0.2,
+          "panEnd": 0.2,
+          "frequency": 220
+        },
+        {
+          "at": 60,
+          "kind": "impact",
+          "duration": 0.34,
+          "gain": 0.15,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 60.018,
+          "kind": "marker",
+          "duration": 0.085,
+          "gain": 0.05,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        },
+        {
+          "at": 64,
+          "kind": "tick",
+          "duration": 0.07,
+          "gain": 0.075,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 1570
+        },
+        {
+          "at": 68,
+          "kind": "brand",
+          "duration": 2.1,
+          "gain": 0.25,
+          "pan": 0,
+          "panEnd": 0,
+          "frequency": 220
+        }
+      ],
+      "silenceChecks": [
+        {
+          "start": 43.6,
+          "end": 44.42,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        },
+        {
+          "start": 67.68,
+          "end": 68,
+          "exactZero": true,
+          "scope": "Music, SFX and room silence; narration retains all words."
+        }
+      ],
+      "stems": {
+        "dialogue": {
+          "file": "public/art/cinematic-r4/audio/03-dialogue.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -3,
+          "rmsDbfs": -20.714,
+          "peak": 0.7079457640647888,
+          "rms": 0.09210981407704989
+        },
+        "music": {
+          "file": "public/art/cinematic-r4/audio/03-music.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -20.221,
+          "rmsDbfs": -34.063,
+          "peak": 0.09749172627925873,
+          "rms": 0.0198082353906624
+        },
+        "sfx": {
+          "file": "public/art/cinematic-r4/audio/03-sfx.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -12.066,
+          "rmsDbfs": -40.359,
+          "peak": 0.24927642941474915,
+          "rms": 0.009595082207558983
+        },
+        "room": {
+          "file": "public/art/cinematic-r4/audio/03-room.wav",
+          "codec": "pcm_s24le",
+          "sampleRate": 48000,
+          "channels": 2,
+          "samplePeakDbfs": -46.061,
+          "rmsDbfs": -57.961,
+          "peak": 0.004976996686309576,
+          "rms": 0.0012646580414044683
+        }
+      },
+      "rawMixStats": {
+        "samplePeakDbfs": -2.543,
+        "rmsDbfs": -20.472,
+        "peak": 0.7461534738540649,
+        "rms": 0.09470890251296787
+      },
+      "master": {
+        "file": "public/art/cinematic-r4/audio/03-mix.wav",
+        "durationSeconds": 72,
+        "integratedLufs": -14,
+        "truePeakDbtp": -1.3,
+        "loudnessRangeLu": 4.1,
+        "sampleRate": 48000,
+        "channels": 2,
+        "codec": "pcm_s24le",
+        "normalizationType": "dynamic",
+        "valid": true,
+        "preNormalization": {
+          "input_i": "-17.22",
+          "input_tp": "-2.54",
+          "input_lra": "4.30",
+          "input_thresh": "-27.73",
+          "output_i": "-13.98",
+          "output_tp": "-1.30",
+          "output_lra": "4.10",
+          "output_thresh": "-24.42",
+          "normalization_type": "dynamic",
+          "target_offset": "-0.02"
+        },
+        "secondPass": {
+          "input_i": "-17.22",
+          "input_tp": "-2.54",
+          "input_lra": "4.30",
+          "input_thresh": "-27.73",
+          "output_i": "-13.99",
+          "output_tp": "-1.30",
+          "output_lra": "4.10",
+          "output_thresh": "-24.44",
+          "normalization_type": "dynamic",
+          "target_offset": "-0.01"
+        },
+        "finalMeasurement": {
+          "input_i": "-14.00",
+          "input_tp": "-1.30",
+          "input_lra": "4.10",
+          "input_thresh": "-24.48",
+          "output_i": "-13.98",
+          "output_tp": "-1.30",
+          "output_lra": "3.70",
+          "output_thresh": "-24.41",
+          "normalization_type": "dynamic",
+          "target_offset": "-0.02"
+        }
+      }
+    }
+  ]
+}

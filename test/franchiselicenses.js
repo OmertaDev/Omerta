@@ -62,7 +62,7 @@ if (postgres) {
 process.env.DEPOT_PILOT = 'on'; process.env.RATE_LIMIT = 'off'; process.env.SOCIAL_VERIFY_MODE = 'off';
 process.env.JWT_SECRET = 'local-franchise-proof-not-production-secret'; process.env.MOD_KEY = 'franchise-local-proof';
 process.env.MARKET_SEED = 'franchise-local-proof-seed';
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const G = await import('../src/game.js'), D = await import('../src/depot.js');
 const { bookDepot, closeDepotsAtDeath } = await import('../src/depotbook.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');

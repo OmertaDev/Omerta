@@ -14,7 +14,7 @@ Object.assign(process.env, { RATE_LIMIT: 'off', INVITE_MODE: 'off', POPULATION_O
 const source = await sourceIdentity();
 const directory = path.resolve(process.env.RC1_AUTHORITY_RESIDUAL_OUTPUT || `output/rc1-authority-residual-${source.revision.slice(0, 8)}`);
 const { commandDatabase, addPlayer, characterId } = await import('./lib/player-command-support.js');
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { CARS, carVal } = await import('../src/rules.js');
 const configuration = { phase: 'local-prerelease', database: 'explicit loopback private schema', originalWorkers: false,
   fixtures: 'Three living funded accounts, one without character, owned cars/searches/convoy/club/raid; future accrual checkpoint. Fixtures are declared before each measured boundary.',

@@ -1,0 +1,89 @@
+
+Detector: divide-before-multiply
+OmertaHookV2._surgeRate() (src/market-v2/OmertaHookV2.sol#344-364) performs a multiplication on the result of a division:
+	- rate = uint16(pressure * MAX_SURGE_BPS / limit) (src/market-v2/OmertaHookV2.sol#356)
+	- pressure = uint256(sellPressureTicks) * (PRESSURE_DECAY_SECONDS - elapsed) / PRESSURE_DECAY_SECONDS (src/market-v2/OmertaHookV2.sol#346-347)
+OmertaHookV2._advance() (src/market-v2/OmertaHookV2.sol#403-421) performs a multiplication on the result of a division:
+	- epoch = now_ / epochDuration (src/market-v2/OmertaHookV2.sol#407)
+	- _active = _integrate(_newEpoch(epoch),uint32(now_ - epoch * epochDuration)) (src/market-v2/OmertaHookV2.sol#418)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#divide-before-multiply
+
+Detector: incorrect-equality
+OmertaHookV2._advance() (src/market-v2/OmertaHookV2.sol#403-421) uses a dangerous strict equality:
+	- now_ == lastTimestamp (src/market-v2/OmertaHookV2.sol#405)
+OmertaHookV2._advance() (src/market-v2/OmertaHookV2.sol#403-421) uses a dangerous strict equality:
+	- epoch == _active.id (src/market-v2/OmertaHookV2.sol#408)
+OmertaHookV2._collectFee(address,PoolKey,SwapParams,BalanceDelta) (src/market-v2/OmertaHookV2.sol#224-247) uses a dangerous strict equality:
+	- total == 0 (src/market-v2/OmertaHookV2.sol#239)
+OmertaHookV2._integrate(OmertaHookV2.Epoch,uint32) (src/market-v2/OmertaHookV2.sol#392-401) uses a dangerous strict equality:
+	- seconds_ == 0 (src/market-v2/OmertaHookV2.sol#393)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: unused-return
+OmertaHookV2.beforeSwap(address,PoolKey,SwapParams,bytes) (src/market-v2/OmertaHookV2.sol#204-213) ignores return value by (None,tick,None,None) = StateLibrary.getSlot0(poolManager,key.toId()) (src/market-v2/OmertaHookV2.sol#209)
+OmertaHookV2._adoptPoolState(PoolId) (src/market-v2/OmertaHookV2.sol#312-315) ignores return value by (None,lastTick,None,None) = StateLibrary.getSlot0(poolManager,id) (src/market-v2/OmertaHookV2.sol#313)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unused-return
+
+Detector: timestamp
+OmertaHookV2._collectFee(address,PoolKey,SwapParams,BalanceDelta) (src/market-v2/OmertaHookV2.sol#224-247) uses timestamp for comparisons
+	Dangerous comparisons:
+	- total == 0 (src/market-v2/OmertaHookV2.sol#239)
+OmertaHookV2._surgeRate() (src/market-v2/OmertaHookV2.sol#344-364) uses timestamp for comparisons
+	Dangerous comparisons:
+	- end <= limit (src/market-v2/OmertaHookV2.sol#357)
+	- elapsed >= PRESSURE_DECAY_SECONDS (src/market-v2/OmertaHookV2.sol#346-347)
+	- end > limit (src/market-v2/OmertaHookV2.sol#362)
+OmertaHookV2._integrate(OmertaHookV2.Epoch,uint32) (src/market-v2/OmertaHookV2.sol#392-401) uses timestamp for comparisons
+	Dangerous comparisons:
+	- seconds_ == 0 (src/market-v2/OmertaHookV2.sol#393)
+	- lastLiquidity < e.minLiquidity (src/market-v2/OmertaHookV2.sol#399)
+OmertaHookV2._advance() (src/market-v2/OmertaHookV2.sol#403-421) uses timestamp for comparisons
+	Dangerous comparisons:
+	- now_ == lastTimestamp (src/market-v2/OmertaHookV2.sol#405)
+	- epoch == _active.id (src/market-v2/OmertaHookV2.sol#408)
+	- epoch > finished.id + 1 (src/market-v2/OmertaHookV2.sol#415)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+
+Detector: assembly
+OmertaHookV2.beforeSwap(address,PoolKey,SwapParams,bytes) (src/market-v2/OmertaHookV2.sol#204-213) uses assembly
+	- INLINE ASM (src/market-v2/OmertaHookV2.sol#211)
+OmertaHookV2._surgeRate() (src/market-v2/OmertaHookV2.sol#344-364) uses assembly
+	- INLINE ASM (src/market-v2/OmertaHookV2.sol#350)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#assembly-usage
+
+Detector: low-level-calls
+Low level call in OmertaHookV2._managerRevenuePolicy(address,address) (src/market-v2/OmertaHookV2.sol#331-339):
+	- (ok,data) = manager_.staticcall(abi.encodeWithSignature(revenuePolicyId())) (src/market-v2/OmertaHookV2.sol#332)
+	- (ok,data) = manager_.staticcall(abi.encodeWithSignature(omr())) (src/market-v2/OmertaHookV2.sol#334)
+	- (ok,data) = manager_.staticcall(abi.encodeWithSignature(TRADE_FEE_BPS())) (src/market-v2/OmertaHookV2.sol#336)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+src/market-v2/OmertaHookV2.sol analyzed (29 contracts with 102 detectors), 15 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src/market-v2/OmertaHookV2.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src\market-v2' running
+Compilation warnings/errors on src/market-v2/OmertaHookV2.sol:
+Warning: Transient storage as defined by EIP-1153 can break the composability of smart contracts: Since transient storage is cleared only at the end of the transaction and not at the end of the outermost call frame to the contract within a transaction, your contract may unintentionally misbehave when invoked multiple times in a complex transaction. To avoid this, be sure to clear all transient storage at the end of any call to your contract. The use of transient storage for reentrancy guards that are cleared at the end of the call is safe.
+
+   --> src/market-v2/OmertaHookV2.sol:211:36:
+
+    |
+
+211 |         assembly ("memory-safe") { tstore(slot, tick) }
+
+    |                                    ^^^^^^
+
+
+
+Warning: Function state mutability can be restricted to view
+
+   --> src/market-v2/OmertaHookV2.sol:181:5:
+
+    |
+
+181 |     function beforeInitialize(address sender, PoolKey calldata key, uint160)
+
+    |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+
+

@@ -14,7 +14,7 @@ process.env.CLUE_DROP_P = '1'; // TEST-ONLY (boot-guard rejects it in production
 // every casket before the relic test deterministic instead of merely usually-right.
 process.env.CLUE_RELIC_P = '0';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { CLUES, clueStepOf, cityHourOf } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 

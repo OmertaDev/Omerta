@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-15T00:38:30.478Z",
+  "scope": "Synthetic guest admission in the pg-mem population scale harness only",
+  "candidate": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "applicationSourceCommit": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "source": {
+    "file": "tools/scale.js",
+    "baselineLfSha256": "f75a76223925f7777eb7b94001f5d49f21015bce74d4756154d58cc957ca04e9",
+    "retestLfSha256": "12bb081a85d626e38f055343fdb7720e1fedfcab73a53342ebd6a8cd6f89b518",
+    "exactTwoSitePatchVerified": true
+  },
+  "failure": {
+    "exitCode": 1,
+    "assertion": "only 0/18 characters were created",
+    "cause": "Synthetic guest requests omitted the required birthDate."
+  },
+  "correction": "Supply the same explicit synthetic adult date 1990-01-01 used by sibling harnesses. No runtime or admission guard changes.",
+  "command": "SCALE_PLAYERS=18 SCALE_DAYS=2 npm run scale",
+  "environment": "Owned pg-mem fixture, with the nine synthetic CI legal values; no production connection or writes",
+  "result": {
+    "exitCode": 0,
+    "simulatedDays": 2,
+    "players": 18,
+    "conservationChecks": 97,
+    "conservationDelta": 0,
+    "drivenMarkets": 9,
+    "allMarketsReachable": true,
+    "censusReconciled": true
+  },
+  "limitations": [
+    "This is the exact CI-sized pg-mem correctness run, not a native PostgreSQL banking/accrual or full-size liquidity qualification.",
+    "Existing economic assertions, player diet, market reachability and census checks are unchanged."
+  ],
+  "artifacts": [
+    {
+      "kind": "failure",
+      "file": "docs/release/readiness-work/2026-10-14-scale-admission/failure.log.gz",
+      "exitCode": 1,
+      "rawBytes": 733,
+      "rawSha256": "34ff4e1df0c526d9543b820b4593e40ce8d91c3ca3ba3a9e7d465fae2803387b",
+      "gzipBytes": 450,
+      "gzipSha256": "007b16bcc6316de49eaa9be0764bd81f2198b6fb28d42394bd18de1ca36b0f2e"
+    },
+    {
+      "kind": "retest",
+      "file": "docs/release/readiness-work/2026-10-14-scale-admission/retest.log.gz",
+      "exitCode": 0,
+      "rawBytes": 5389,
+      "rawSha256": "50a43c1dfe88e099786ae2a1325f0688014ec73efb641d55d80f665e3d7818f6",
+      "gzipBytes": 2317,
+      "gzipSha256": "47ba222c9aea4152d2768955252730b588759188e1dc2bb75580a5e9cf78cab7"
+    }
+  ]
+}

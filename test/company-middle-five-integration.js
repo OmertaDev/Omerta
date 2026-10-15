@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 assert(!process.env.DATABASE_URL,'No ambient endpoint');const native=process.argv.includes('--postgres');
 if(native){const checked=await assertFreshMiddleFiveNative(process.env.COMPANY_MIDDLE_FIVE_TEST_DATABASE_URL,'company_middle_five_test_');process.env.DATABASE_URL=checked.endpoint;}
 Object.assign(process.env,{DEPOT_PILOT:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',INVITE_MODE:'off',JWT_SECRET:'middle-five-fixture-secret',MOD_KEY:'middle-five-fixture-moderator-key',MARKET_SEED:'middle-five-fixture-market-seed'});
-const{buildServer}=await import('../src/server.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js'),R=await import('../src/depotacquisitionruntime.js'),{runLedgerInvariants}=await import('../src/invariants.js');
+const{buildServer}=await import('./server-fixture.js'),G=await import('../src/game.js'),T=await import('../src/workertraining.js'),R=await import('../src/depotacquisitionruntime.js'),{runLedgerInvariants}=await import('../src/invariants.js');
 const app=await buildServer(),pool=app.pool;let serial=0;
 const Depot=await import('../src/depot.js'),Economy=await import('../src/economy.js'),Market=await import('../src/market.js');
 const call=(p,method,url,payload,key='middle-'+(++serial),agent=false)=>app.inject({method,url,payload,headers:{...(p?{authorization:'Bearer '+(agent?p.agent:p.token)}:{}),'idempotency-key':key}});

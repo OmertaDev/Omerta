@@ -35,7 +35,7 @@ try {
   for (const level of Object.keys(savedConsole)) console[level] = (...args) => controller.log(level, args);
   await proof.record({ kind: 'database-created', ...await database.create() }); await base.query('CREATE SCHEMA ' + namespace);
   const bootstrap = new controller.Pool({ connectionString: database.url, options: '', max: 20 }); await seam.clock.initialize(bootstrap);
-  const [{ buildServer }, { runLedgerInvariants }, { PACING }, observer] = await Promise.all([import('../src/server.js'), import('../src/invariants.js'), import('../src/rules.js'), import('../tools/rc1-world-resource-observer.js')]);
+  const [{ buildServer }, { runLedgerInvariants }, { PACING }, observer] = await Promise.all([import('./server-fixture.js'), import('../src/invariants.js'), import('../src/rules.js'), import('../tools/rc1-world-resource-observer.js')]);
   app = await buildServer();
   app.addHook('onResponse', async req => { const key = req.headers['x-rc1-response-completion'], done = completions.get(key); assert(done, 'Missing terminal response completion'); completions.delete(key); done(); });
   const pool = app.pool, resources = () => observer.snapshotWorldResources(pool);

@@ -10,23 +10,26 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
+/// @dev ERC-5192 exposes the permanent soulbound status to wallets and indexers.
+interface IERC5192 {
+    event Locked(uint256 tokenId);
+    event Unlocked(uint256 tokenId);
+
+    function locked(uint256 tokenId) external view returns (bool);
+}
+
 /// @title DynastyNFT — OMERTÀ's identity NFT (omerta-dynasty-machine-design.md §4, omerta-identity-nft-design.md §5).
-/// @notice The player's on-chain bloodline identity: the tradeable trophy an account mints. Deliberately
-///         "the plainest possible ERC-721" — it holds no value, gates nothing, and carries no 6551 code.
+/// @notice The player's on-chain bloodline identity: a permanently soulbound ERC-721 with ERC-5192
+///         discovery. Minting binds it to the receiving wallet; no transfer, burn, or unlock path exists.
 ///
-///         NO STOCK IS DELIVERED HERE, and that is a decision rather than an omission (red-team C5).
-///         An earlier cut of this header named this token as the host for the ERC-6551 account
-///         `StockVault` pushes tokenized stock into; the shipped rail targets the STREET DEED's
-///         token-bound account instead (`src/stockdeliver.js` — own the street, and the street holds
-///         your legit book). Keeping stock OFF the identity token is what preserves the wall below: a
-///         token that held real assets would be a bearer instrument, and its floor would become a
-///         function of its contents rather than of the bloodline it commemorates.
+///         Stock delivery targets the STREET DEED's token-bound account (`src/stockdeliver.js`),
+///         not this identity. Character custody of deeds and death settlement require a separate rail;
+///         this contract does not implement a token-bound account or confer custody by itself.
 ///
 ///         THE WALL (identity §1, dynasty §2.2): the game ENTITLEMENT (`account_persistent.minted`, the
 ///         wage/withdraw gates) stays ACCOUNT-BOUND in the backend and is NEVER read off `balanceOf`. This
-///         contract therefore gates NOTHING on a balance — the trophy transfers, the entitlement does not.
-///         Selling this token sells the portrait and the record; it never sells the account, the login,
-///         the legends, or the extraction entitlement.
+///         contract therefore gates NOTHING on a balance; the login, legends, and extraction entitlement
+///         remain separate from on-chain identity ownership.
 ///
 ///         SUPPLY IS UNCAPPED (founder rule 1: a cap on the identity would cap the player count). tokenId is
 ///         a plain sequential counter — a dynasty is not named at mint, and the backend maps tokenId → the
@@ -40,13 +43,11 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 ///         token carries NO extraction entitlement, so a signer minting trophies to itself steals nothing.
 ///
 ///         tokenURI is OFF-CHAIN (the layered portrait compositor), because the portrait is LIVE game history
-///         that must resolve to the OWNING ACCOUNT'S CURRENT STREET — a thing the contract cannot know — and
-///         it FREEZES at the first transfer away from the minting wallet (a sold portrait is a photograph;
-///         the backend owns that semantics off the standard Transfer log + the `Minted` event's minter). No
+///         that must resolve to the minting account's current street — a thing the contract cannot know. No
 ///         mutable street name, no exact field-conjunction and no wealth is engraved on-chain (the
 ///         wallet↔character firewall + the anti-precise-kill-EV rule); provenance traits are an OPT-IN,
 ///         DISPLAY-ONLY off-chain metadata attribute and touch nothing here.
-contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
+contract DynastyNFT is ERC721, ERC2981, IERC5192, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     using Strings for uint256;
 
     /// @notice Deadline backstop (VoucherClaim.MAX_VOUCHER_TTL mirror) — a leaked-then-rotated signer key's
@@ -73,8 +74,7 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
     event SignerSet(address indexed signer);
     event DailyMintCapSet(uint256 cap);
     event BaseUriSet(string base);
-    // `minter` is the wallet the token was minted to — the backend's freeze anchor (dynamic while the current
-    // owner still equals `minter`, frozen once it transfers away). `nonce` ties the mint to the backend request.
+    // `minter` is the permanently bound receiving wallet. `nonce` ties the mint to the backend request.
     event Minted(uint256 indexed nonce, address indexed minter, uint256 indexed tokenId);
 
     /// @dev `dailyMintCap_` is a CONSTRUCTOR argument rather than a setter-only field on purpose: this
@@ -117,15 +117,14 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
         emit BaseUriSet(base_);
     }
 
-    /// @notice Rotate the EIP-2981 royalty (recipient + bps). "Royalties are ordinary and fine" (design §6);
-    ///         a revenue-share / floor-support framing is not — that is a COPY rule, enforced off-chain.
+    /// @notice Rotate the legacy EIP-2981 royalty configuration (recipient + bps). The interface remains
+    ///         available for compatibility; it does not make this soulbound token saleable.
     function setDefaultRoyalty(address recipient, uint96 bps) external onlyOwner {
         require(recipient != address(0), "DN: zero royalty recipient");
         _setDefaultRoyalty(recipient, bps); // ERC2981 reverts if bps > 10000
     }
 
-    // Pausing stops new MINTS only; it can never trap a holder's token (there is no vault here and nothing
-    // is delivered here — the token simply lives in the holder's wallet).
+    // Pausing stops new MINTS only. Existing identities are permanently soulbound in either pause state.
     function pause() external onlyOwner {
         _pause();
     }
@@ -162,7 +161,22 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
         return id;
     }
 
-    // ── metadata (off-chain, resolves to the OWNING ACCOUNT'S current street + freezes on transfer) ──
+    /// @notice Every existing identity is permanently locked to its receiving wallet.
+    function locked(uint256 id) external view returns (bool) {
+        _requireOwned(id);
+        return true;
+    }
+
+    /// @dev Enforce the lock at the shared ownership-update boundary, including receiver callbacks and
+    ///      approved operators. No public burn path exists; internal non-mint updates are rejected too.
+    function _update(address to, uint256 id, address auth) internal override returns (address) {
+        require(_ownerOf(id) == address(0), "DN: soulbound");
+        address from = super._update(to, id, auth);
+        emit Locked(id);
+        return from;
+    }
+
+    // ── metadata (off-chain, resolves to the minting account's current street) ──
     function tokenURI(uint256 id) public view override returns (string memory) {
         _requireOwned(id); // reverts for a nonexistent token (ERC721NonexistentToken)
         return string.concat(_baseUri, id.toString());
@@ -170,6 +184,6 @@ contract DynastyNFT is ERC721, ERC2981, EIP712, Ownable2Step, Pausable, Reentran
 
     // ERC721 + ERC2981 both declare supportsInterface — combine them.
     function supportsInterface(bytes4 interfaceId) public view override(ERC721, ERC2981) returns (bool) {
-        return super.supportsInterface(interfaceId);
+        return interfaceId == type(IERC5192).interfaceId || super.supportsInterface(interfaceId);
     }
 }

@@ -1,0 +1,590 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Jail",
+        "ms":  100,
+        "character":  125,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "ends",
+        "ms":  400,
+        "character":  130,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U02",
+        "ms":  1550,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  1650,
+        "character":  185,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "question",
+        "ms":  1760,
+        "character":  189,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "remains",
+        "ms":  2280,
+        "character":  198,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U03",
+        "ms":  3645,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Would",
+        "ms":  3745,
+        "character":  256,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  3935,
+        "character":  262,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "invite",
+        "ms":  4085,
+        "character":  266,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  4440,
+        "character":  273,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "same",
+        "ms":  4520,
+        "character":  277,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "person",
+        "ms":  4840,
+        "character":  282,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "again",
+        "ms":  5240,
+        "character":  289,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U04",
+        "ms":  6425,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Bigger",
+        "ms":  6525,
+        "character":  345,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "risks",
+        "ms":  6820,
+        "character":  352,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  7135,
+        "character":  358,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "cost",
+        "ms":  7345,
+        "character":  362,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "more",
+        "ms":  7720,
+        "character":  367,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  8480,
+        "character":  373,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "character",
+        "ms":  8570,
+        "character":  375,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  9080,
+        "character":  385,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "die",
+        "ms":  9315,
+        "character":  389,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U05",
+        "ms":  10330,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Your",
+        "ms":  10430,
+        "character":  443,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "account",
+        "ms":  10630,
+        "character":  448,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "continues",
+        "ms":  10995,
+        "character":  456,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "but",
+        "ms":  12085,
+        "character":  467,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "an",
+        "ms":  12260,
+        "character":  471,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "heir",
+        "ms":  12400,
+        "character":  474,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "keeps",
+        "ms":  12580,
+        "character":  479,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "only",
+        "ms":  12885,
+        "character":  485,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  13185,
+        "character":  490,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "limited",
+        "ms":  13255,
+        "character":  492,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "legacy",
+        "ms":  13645,
+        "character":  500,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U06",
+        "ms":  14965,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Seasons",
+        "ms":  15065,
+        "character":  557,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "have",
+        "ms":  15570,
+        "character":  565,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "their",
+        "ms":  15740,
+        "character":  570,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "own",
+        "ms":  15940,
+        "character":  576,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "rules",
+        "ms":  16145,
+        "character":  580,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U07",
+        "ms":  17445,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Eligible",
+        "ms":  17545,
+        "character":  636,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "gear",
+        "ms":  18025,
+        "character":  645,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  18325,
+        "character":  650,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "vehicles",
+        "ms":  18500,
+        "character":  654,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  18970,
+        "character":  663,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "leave",
+        "ms":  19185,
+        "character":  667,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  19405,
+        "character":  673,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "game",
+        "ms":  19510,
+        "character":  677,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "but",
+        "ms":  20305,
+        "character":  683,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "extracted",
+        "ms":  20475,
+        "character":  687,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "items",
+        "ms":  21095,
+        "character":  697,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "stop",
+        "ms":  21455,
+        "character":  703,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "working",
+        "ms":  21800,
+        "character":  708,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "inside",
+        "ms":  22185,
+        "character":  716,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  22620,
+        "character":  723,
+        "length":  2
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U08",
+        "ms":  23595,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Combat",
+        "ms":  23695,
+        "character":  776,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "cannot",
+        "ms":  24180,
+        "character":  783,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "take",
+        "ms":  24515,
+        "character":  790,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "unrelated",
+        "ms":  24770,
+        "character":  795,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "assets",
+        "ms":  25380,
+        "character":  805,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "from",
+        "ms":  25855,
+        "character":  812,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "your",
+        "ms":  26075,
+        "character":  817,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "external",
+        "ms":  26240,
+        "character":  822,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "wallet",
+        "ms":  26775,
+        "character":  831,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U09",
+        "ms":  28060,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "What",
+        "ms":  28160,
+        "character":  888,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "do",
+        "ms":  28375,
+        "character":  893,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  28525,
+        "character":  896,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "keep",
+        "ms":  28670,
+        "character":  900,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "in",
+        "ms":  28920,
+        "character":  905,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "play",
+        "ms":  29070,
+        "character":  908,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U10",
+        "ms":  30190,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "What",
+        "ms":  30290,
+        "character":  963,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "are",
+        "ms":  30505,
+        "character":  968,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  30600,
+        "character":  972,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "prepared",
+        "ms":  30770,
+        "character":  976,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  31230,
+        "character":  985,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "lose",
+        "ms":  31345,
+        "character":  988,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C06-U10-end",
+        "ms":  32565,
+        "character":  0,
+        "length":  0
+    }
+]

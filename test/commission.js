@@ -10,7 +10,7 @@ process.env.CONVOY_MS = '600000';
 // recorded flake class. test/seasons.js is where the armed path is exercised.
 process.env.SEASON_MOD = 'dead_quiet'; // TEST-ONLY (the boot guard rejects it in production)
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { M3, M4, COMMISSION, FAMILY_YIELD, weekOf } from '../src/rules.js';
 import { payFamilyYield } from '../src/exchange.js';
 import { runLedgerInvariants } from '../src/invariants.js';

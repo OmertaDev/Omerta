@@ -1,0 +1,2796 @@
+{
+  "reviewDate": "2026-09-29",
+  "sourceRevision": "3280817300cdcff3301745b1fce0bac9fe290129",
+  "statusRule": "LIVE requires current runtime verification for the intended audience. No claim in this shard is marked LIVE. Default-off implementation remains IMPLEMENTED with explicit limits.",
+  "claims": [
+    {
+      "id": "GP01",
+      "system": "Audience access",
+      "status": "IMPLEMENTED",
+      "claim": "Invitation admission is implemented for new accounts; existing accounts retain access.",
+      "safeNarration": "Entry follows the current invitation rules.",
+      "safeDepiction": "Show actual current signed-out/invite UI; do not promise open access.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "14-18",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L14-L18",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Current production admission policy must be separately observed."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "GP02",
+      "system": "First loop",
+      "status": "IMPLEMENTED",
+      "claim": "A new street begins in Docks with a small gameplay-cash balance and no respect. Core actions include jobs, training, bank use and building income sources.",
+      "safeNarration": "You begin at the docks. Take a job. Train. Decide what to risk and what to protect.",
+      "safeDepiction": "Real character creation and one issued action/result; label isolated seeded build.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "38-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L38-L80",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "84-103",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L84-L103",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Currency shown here is gameplay cash, not dollars of withdrawable value.",
+        "Do not imply a beginner instantly commands a Family or completes the gated world arc."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S02",
+        "S03",
+        "S04"
+      ],
+      "depiction": [
+        {
+          "id": "S02",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S03",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S04",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP03",
+      "system": "Action tradeoffs",
+      "status": "IMPLEMENTED",
+      "claim": "Jobs consume resources and can cause jail; heat feeds law pressure. Banking has a transit exposure window and is not death-proof.",
+      "safeNarration": "Every useful move has a cost: time, resources, heat, or exposure.",
+      "safeDepiction": "Pair a real job with visible costs and result; bank protection must retain in-transit state when applicable.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "44-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L44-L80",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not call bank cash permanently safe.",
+        "Use actual runtime costs, not narrator-invented values."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S04",
+        "S05",
+        "S06"
+      ],
+      "depiction": [
+        {
+          "id": "S04",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S05",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S06",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP04",
+      "system": "Six Paths",
+      "status": "IMPLEMENTED",
+      "claim": "The six careers are The Gun, The Ledger, The Kitchen, The Wheel, The Shadow and The Ring. Each has an advantage, a handicap and favored/disfavored trades.",
+      "safeNarration": "Six Paths change how you work—and what you are bad at.",
+      "safeDepiction": "Six exact names; selected path card shows perk plus drawback.",
+      "evidence": [
+        {
+          "path": "data/rules.js",
+          "lines": "424-430",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/data/rules.js#L424-L430",
+          "note": ""
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": "5033-5064",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L5033-L5064",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2303-2307",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2303-L2307",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Choice is level/cost gated; do not depict Path as a free character-creation class.",
+        "The Ledger career is distinct from The Ledger Season Pass."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S07",
+        "S08"
+      ],
+      "depiction": [
+        {
+          "id": "S07",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S08",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP05",
+      "system": "Path ability scope",
+      "status": "IMPLEMENTED",
+      "claim": "Gun favors combat/contracts at cost of goods sales; Ledger favors business/trade at cost of street combat; Kitchen favors production/deal heat at cost of jail; Wheel speeds convoys but slows cooking; Shadow speeds searches but weakens contests; Ring strengthens contests but raises healing cost.",
+      "safeNarration": "Specialists need each other because an edge in one loop can be a weakness in another.",
+      "safeDepiction": "Use scope-specific icons; no magic powers or unrestricted class exclusives.",
+      "evidence": [
+        {
+          "path": "data/rules.js",
+          "lines": "425-430",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/data/rules.js#L425-L430",
+          "note": ""
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": "5051-5064",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L5051-L5064",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Use qualitative scope in narration; exact balance values only from captured current cards."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S07",
+        "S08",
+        "S09",
+        "S10"
+      ],
+      "depiction": [
+        {
+          "id": "S07",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S08",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S09",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S10",
+          "kind": "dossier",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP06",
+      "system": "Districts",
+      "status": "IMPLEMENTED",
+      "claim": "Docks, Neon Mile, Old Foundry, Brick Yards, Canal Row and Cathedral Hill have different gameplay advantages. Travel has a cost.",
+      "safeNarration": "Where you work matters. The city changes the terms.",
+      "safeDepiction": "Actual district map plus one relevant modifier and travel action.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "76-80",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L76-L80",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "169-185",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L169-L185",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not equate game district control with liquidity ownership."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S13"
+      ],
+      "depiction": [
+        {
+          "id": "S13",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP07",
+      "system": "Businesses and production",
+      "status": "IMPLEMENTED",
+      "claim": "Upgradeable fronts accrue game cash with caps/upkeep and exposure to raids/takeover; the Kitchen supports cooking, collection, dealing and hired sellers.",
+      "safeNarration": "Your operation can keep working while you are away. Its upkeep and risks do not disappear.",
+      "safeDepiction": "Business collect/upkeep and kitchen job clock; cash marked as gameplay cash.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "508-537",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L508-L537",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "540-578",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L540-L578",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No cash-to-OMR laundering route.",
+        "No unlimited passive income or real-money yield claim."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S11",
+        "S12"
+      ],
+      "depiction": [
+        {
+          "id": "S11",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S12",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP08",
+      "system": "Cars and workshops",
+      "status": "IMPLEMENTED",
+      "claim": "Owned cars can be boosted, repaired, fenced or melted for ammunition under applicable gates. A separate workshop crafts gear/ammo from crates and cash; World Graph salvage is a different material flow.",
+      "safeNarration": "A car can be transport, a trade, or the input to your next move.",
+      "safeDepiction": "Show the chosen actual route: melt to ammo OR World Graph salvage to materials, not an invented merged output.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "116-123",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L116-L123",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "163-165",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L163-L165",
+          "note": ""
+        },
+        {
+          "path": "src/crafting.js",
+          "lines": "970-1005",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crafting.js#L970-L1005",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Confirm exact eligible vehicle and generated outputs at capture time.",
+        "Never animate arbitrary scenery into owned inventory."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S09"
+      ],
+      "depiction": [
+        {
+          "id": "S09",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP09",
+      "system": "Boats and port",
+      "status": "IMPLEMENTED",
+      "claim": "Ownable boats run maritime routes with interdiction, piracy, upgrades and consensual rendezvous. Active boats are gameplay assets.",
+      "safeNarration": "On the water, cargo has a route—and somebody else may want it.",
+      "safeDepiction": "Real port board and voyage clock; depict rival risk without revealing private manifests.",
+      "evidence": [
+        {
+          "path": "src/port.js",
+          "lines": "1-9",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/port.js#L1-L9",
+          "note": ""
+        },
+        {
+          "path": "src/port.js",
+          "lines": "57-85",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/port.js#L57-L85",
+          "note": ""
+        },
+        {
+          "path": "SPEC.md",
+          "lines": "130-132",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L130-L132",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Extracted boats cannot work while on-chain; production extraction remains unverified/dormant per docs."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S13"
+      ],
+      "depiction": [
+        {
+          "id": "S13",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP10",
+      "system": "Player market and logistics",
+      "status": "IMPLEMENTED",
+      "claim": "Cars use auctions; goods trade at district pickups with trunk limits; buy orders escrow payment. Markets do not teleport freight past convoy rules.",
+      "safeNarration": "Making the trade is only part of the job. The goods still have to move.",
+      "safeDepiction": "Listing to pickup requirement to convoy; use same item identity.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1948-1964",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1948-L1964",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1911-1926",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1911-L1926",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "This player market is separate from the current on-chain market and the campaign Black Market world state."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S11",
+        "S13",
+        "S14"
+      ],
+      "depiction": [
+        {
+          "id": "S11",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S13",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S14",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP11",
+      "system": "Secondary activities",
+      "status": "IMPLEMENTED",
+      "claim": "Source includes racing, fighting, casino/card games, stables, skills/trades, fixers, law/courts, prison and loan-sharking systems.",
+      "safeNarration": "A city full of side games becomes a city full of competing priorities.",
+      "safeDepiction": "Brief authentic UI collage; named activity only if its UI is actually captured.",
+      "evidence": [
+        {
+          "path": "SPEC.md",
+          "lines": "112-154",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L112-L154",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1690-1772",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1690-L1772",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1832-1908",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1832-L1908",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1977-2061",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1977-L2061",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No all-features-live inference; no financial returns framing for gambling."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S15"
+      ],
+      "depiction": [
+        {
+          "id": "S15",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP12",
+      "system": "Crews",
+      "status": "IMPLEMENTED",
+      "claim": "Persistent Crews are account-bound small mutual-aid groups with chat, member boards and breakable non-aggression. They survive character death; no shared Crew treasury or turf authority.",
+      "safeNarration": "A Crew is the small circle you choose to keep close.",
+      "safeDepiction": "Actual Crew membership/invitation and chat; no invented communal inventory.",
+      "evidence": [
+        {
+          "path": "src/crew.js",
+          "lines": "1-23",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crew.js#L1-L23",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "A heist crew, Kitchen hired crew, persistent Crew and Family are distinct."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S16"
+      ],
+      "depiction": [
+        {
+          "id": "S16",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP13",
+      "system": "Families and hierarchy",
+      "status": "IMPLEMENTED",
+      "claim": "Families have treasury, roles, wars, turf and collective standing; boss/underboss authority matters.",
+      "safeNarration": "A Family turns individual ambition into a shared operation—with someone accountable for the decisions.",
+      "safeDepiction": "Actual Family board with visible role and treasury permissions.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "599-609",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L599-L609",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "635-674",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L635-L674",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Current membership matters; authority is not transferable merely by knowing a name."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S17"
+      ],
+      "depiction": [
+        {
+          "id": "S17",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP14",
+      "system": "Ordinary cooperative heists",
+      "status": "IMPLEMENTED",
+      "claim": "Leader stakes and plans; members fill specialist roles; leader executes; shared success/failure affects participants.",
+      "safeNarration": "The plan needs a crew whose skills fit the job. One missing role changes the decision.",
+      "safeDepiction": "Real role seats with missing member, join, execution and actual result.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1931-1944",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1931-L1944",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "259-322",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L259-L322",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not conflate these ordinary heists with default-off Family world operations."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S01",
+        "S02",
+        "S10",
+        "S18",
+        "S19"
+      ],
+      "depiction": [
+        {
+          "id": "S01",
+          "kind": "dossier",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S02",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S10",
+          "kind": "dossier",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S18",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S19",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP15",
+      "system": "Actual heist betrayal",
+      "status": "IMPLEMENTED",
+      "claim": "A heist member can secretly inform; the job is blown. Other members see that somebody talked, not the informer identity. The jail treatment includes the rat to avoid identification from the roster.",
+      "safeNarration": "The job can fail because somebody talked. The city does not hand you their name.",
+      "safeDepiction": "Capture the anonymous outcome; actor dramatization is not proof identifying a player.",
+      "evidence": [
+        {
+          "path": "src/heists.js",
+          "lines": "182-195",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L182-L195",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "300-322",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L300-L322",
+          "note": ""
+        },
+        {
+          "path": "src/heists.js",
+          "lines": "420-426",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/heists.js#L420-L426",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "No psychic rat detection.",
+        "Do not use the separate Campaign Informant evidence as proof of this heist rat.",
+        "Do not depict rat escaping jail while everyone else is imprisoned."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S36"
+      ],
+      "depiction": [
+        {
+          "id": "S36",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP16",
+      "system": "Convoys",
+      "status": "IMPLEMENTED",
+      "claim": "Freight uses an actual journey clock and can be ambushed. Route/value band are public; manifest and guard tier are not. Turf contributes protection and destination control can impose tolls.",
+      "safeNarration": "The route is visible. The cargo is not. You decide how much protection the trip deserves.",
+      "safeDepiction": "Public banded route against owner-only manifest shown as separate viewpoints.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "1911-1926",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L1911-L1926",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not reveal a rival full manifest or guard tier through a public board."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S13",
+        "S20"
+      ],
+      "depiction": [
+        {
+          "id": "S13",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S20",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP17",
+      "system": "Territory",
+      "status": "IMPLEMENTED",
+      "claim": "District control is economically relevant to Family rackets; contested holdings use hidden stakes, timing and adjacency.",
+      "safeNarration": "Territory is a position you defend, with costs the whole Family feels.",
+      "safeDepiction": "Public map/control and authorized own commitment; keep rivals sealed bids hidden.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "582-595",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L582-L595",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "612-633",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L612-L633",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Game territory never implies a right to withdraw LP principal."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S20"
+      ],
+      "depiction": [
+        {
+          "id": "S20",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP18",
+      "system": "Commission",
+      "status": "IMPLEMENTED",
+      "claim": "Seated Families vote on server-wide weekly decrees. Membership/rank and office control voting rights.",
+      "safeNarration": "Power reaches beyond one block. Families can shape the rules other players face.",
+      "safeDepiction": "Actual decree ballot or active decree; no invented vote or result.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "678-689",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L678-L689",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not imply voting changes arbitrary game rules or grants unrestricted treasury/contract authority."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S20"
+      ],
+      "depiction": [
+        {
+          "id": "S20",
+          "kind": "gameplay",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP19",
+      "system": "World Graph and provenance",
+      "status": "IMPLEMENTED",
+      "claim": "Canonical items, resources, relationships and world state are connected through authoritative services. Item custody/provenance is conserved; newer world adapters are default off.",
+      "safeNarration": "An item has a history. An action can leave a consequence other players encounter.",
+      "safeDepiction": "Same authorized item ID through owned inventory, contribution and recorded consequence.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "18-29",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L18-L29",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "66-74",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L66-L74",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2392-2398",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2392-L2398",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Label gated world content DEVELOPMENT PILOT.",
+        "Provenance is not automatically public and is not NFT export."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S21"
+      ],
+      "depiction": [
+        {
+          "id": "S21",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP20",
+      "system": "Knowledge and evidence",
+      "status": "IMPLEMENTED",
+      "claim": "Original discoveries, permitted sharing and current ACL/membership checks determine evidence use; copies do not create independent sources.",
+      "safeNarration": "You can share what you discovered. You cannot manufacture a second witness by copying it.",
+      "safeDepiction": "Two actual authorized source cards or deliberately redacted proof of distinct contributors.",
+      "evidence": [
+        {
+          "path": "docs/coordination-engine/phases/PHASE_01_KNOWLEDGE.md",
+          "lines": "5-15",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/coordination-engine/phases/PHASE_01_KNOWLEDGE.md#L5-L15",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "25-26",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L25-L26",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Default-off knowledge/sharing flags and cohort gate.",
+        "Distinct accounts are not proof of distinct humans.",
+        "Do not disclose puzzle answers or hidden source requirements."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S22",
+        "S25"
+      ],
+      "depiction": [
+        {
+          "id": "S22",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S25",
+          "kind": "dossier",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP21",
+      "system": "Mysteries and crafting",
+      "status": "IMPLEMENTED",
+      "claim": "Mystery discoveries, owned items, authenticated information and authored prerequisites can unlock crafting or story actions. Recipes consume canonical inputs.",
+      "safeNarration": "Sometimes the missing ingredient is something another player knows.",
+      "safeDepiction": "Known recipe blocker plus authorized discovery/share, then actual recipe readiness; hide the solution.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "120-156",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L120-L156",
+          "note": ""
+        },
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "160-164",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L160-L164",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "New core-progression content defaults off.",
+        "Mystery evidence is not automatically trusted Coordination knowledge.",
+        "Never imply infinite AI-generated murder mysteries."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S21",
+        "S25"
+      ],
+      "depiction": [
+        {
+          "id": "S21",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S25",
+          "kind": "dossier",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP22",
+      "system": "Family operation coordination",
+      "status": "IMPLEMENTED",
+      "claim": "Default-off Family operations combine roles, promises, actual contributions, escrow, approval and atomic world resolution. Seats accept 2–8 distinct accounts by definition.",
+      "safeNarration": "A promise is not a contribution. The operation waits for what the people and the plan actually require.",
+      "safeDepiction": "Missing/fulfilled contribution states, each owner acting, officer approval and authorized executor.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/IMPLEMENTATION.md",
+          "lines": "78-90",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/IMPLEMENTATION.md#L78-L90",
+          "note": ""
+        },
+        {
+          "path": "src/coordination/operations.js",
+          "lines": "606-640",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/coordination/operations.js#L606-L640",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not turn one pilot four-seat count into a universal rule.",
+        "Officer assignment cannot spend another player inventory.",
+        "Execution requires the defined executor role plus officer/current-authority checks."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S23"
+      ],
+      "depiction": [
+        {
+          "id": "S23",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP23",
+      "system": "Player Commands",
+      "status": "IMPLEMENTED",
+      "claim": "Commands are issued from current visible projections and revalidate authority/requirements when executed; irreversible choices and relevant consequential actions carry confirmations.",
+      "safeNarration": "You see the move, its cost and its consequences before you commit.",
+      "safeDepiction": "Actual command card and matching confirmation/result; no invented API interface.",
+      "evidence": [
+        {
+          "path": "docs/core-architecture/PLAYER-COMMAND-CONTRACT.md",
+          "lines": "7-38",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/core-architecture/PLAYER-COMMAND-CONTRACT.md#L7-L38",
+          "note": ""
+        },
+        {
+          "path": "src/player-commands.js",
+          "lines": "108-170",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/player-commands.js#L108-L170",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Gated world command availability is separate from ordinary actions.",
+        "Not every harmless action requires a confirmation."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S23"
+      ],
+      "depiction": [
+        {
+          "id": "S23",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP24",
+      "system": "Living World Director",
+      "status": "IMPLEMENTED",
+      "claim": "Default-off Director observes canonical conditions and selects bounded authored situations. It cannot mint evidence/assets, resolve operations or move money.",
+      "safeNarration": "The city can respond to what players actually changed.",
+      "safeDepiction": "Previous actual consequence to an eligible authored opportunity, labeled development pilot.",
+      "evidence": [
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "7-11",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L7-L11",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "55-59",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L55-L59",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "115",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L115",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Not an unrestricted autonomous content generator.",
+        "No autonomous NPC economy adapter is admitted in the pilot."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S24"
+      ],
+      "depiction": [
+        {
+          "id": "S24",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP25",
+      "system": "Campaign Network and persistent history",
+      "status": "IMPLEMENTED",
+      "claim": "Disabled implementation connects shipment-route outcomes, market infrastructure and investigation through actual prerequisites. History reveals only authorized states; unknown actors and causes remain absent.",
+      "safeNarration": "One crew changes a route. Another encounters the consequences.",
+      "safeDepiction": "Use a captured eligible connected branch; label acting as dramatization and UI as dev build.",
+      "evidence": [
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "3-15",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L3-L15",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "33-37",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L33-L37",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not force every terminal branch into a new opportunity.",
+        "No automatic supply-to-OMR-price causal chain.",
+        "No hidden solution or investigator-private clue in public montage."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "GP26",
+      "system": "Informant uncertainty",
+      "status": "IMPLEMENTED",
+      "claim": "The campaign Informant can corroborate public disclosure or record failure/uncertainty; it does not name a guilty player or prove betrayal.",
+      "safeNarration": "Evidence can prove what happened without proving why somebody did it.",
+      "safeDepiction": "Public/disputed/unknown indicators; no suspect convicted by AI.",
+      "evidence": [
+        {
+          "path": "src/content/campaign-network.js",
+          "lines": "100-107",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/content/campaign-network.js#L100-L107",
+          "note": ""
+        },
+        {
+          "path": "src/content/campaign-network.js",
+          "lines": "164-180",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/content/campaign-network.js#L164-L180",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md",
+          "lines": "13",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/WORLD-CAMPAIGN-NETWORK.md#L13",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not conflate this with actual ordinary-heist informing."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "GP27",
+      "system": "Agent interface",
+      "status": "IMPLEMENTED",
+      "claim": "HTTP API, machine-readable rules, MCP proxy and Agent Turn support agents. Server-issued actions are revalidated against actual state.",
+      "safeNarration": "An agent can use the same game rules and interfaces a player works through.",
+      "safeDepiction": "Actual authorized Agent Turn read/action/result; disclose automation.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "19-26",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L19-L26",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "50-59",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L50-L59",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "197-227",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L197-L227",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "MCP/source presence alone does not prove current installation or live server availability.",
+        "Human-only reward exclusions still apply."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S26",
+        "S27",
+        "S28"
+      ],
+      "depiction": [
+        {
+          "id": "S26",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S27",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S28",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP28",
+      "system": "Agent bounded automation",
+      "status": "IMPLEMENTED",
+      "claim": "Owner-operated Agent Alpha is finite and allowlisted; it excludes PvP, borrowing, human faucets, wallets, mint, withdrawals and arbitrary mutations. Agent Turn exploration grants no execution authority.",
+      "safeNarration": "You can delegate a bounded set of routine moves. Permission and game rules still define the boundary.",
+      "safeDepiction": "Show owner-started action budget and actual allowed action; never stage private-key handling.",
+      "evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "210-244",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L210-L244",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "2355-2377",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L2355-L2377",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not claim every agent move is manually approved.",
+        "Do not claim general agents lack capabilities solely because the reference runner excludes them.",
+        "World Graph and authored-content actions are direct-only, not autonomous Agent Act."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S26",
+        "S28"
+      ],
+      "depiction": [
+        {
+          "id": "S26",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S28",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP29",
+      "system": "Consigliere adviser integration",
+      "status": "UNVERIFIED",
+      "claim": "The local dirty worktree contains a provider-neutral scoped adviser with proposals requiring player confirmation. It is absent from canonical main; native Muse compatibility and integration with latest campaigns are unverified.",
+      "safeNarration": "An adviser interface is being explored; its proposals return to the player for approval.",
+      "safeDepiction": "Only separately labeled LOCAL PROTOTYPE footage; prefer omission from present-tense flagship feature claims.",
+      "evidence": [],
+      "limits": [
+        "Local evidence: docs/agent-gateway-capabilities.md:11-31,48-52; docs/agent-gateway-muse.md:101-125; src/integrations/muse/manifest.js:2-11.",
+        "Never combine local adviser UI with latest campaign data and imply executed integration.",
+        "The canonical dynasty Consigliere office is a relationship between player accounts, not proof of this AI adviser."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "GP30",
+      "system": "Death and heirs",
+      "status": "IMPLEMENTED",
+      "claim": "Death ends the character; the account continues through an heir. Many street assets/cash/stats are lost; specified account-level legacy survives.",
+      "safeNarration": "Your character can die. Your account and parts of your legacy continue—but the next life does not inherit everything.",
+      "safeDepiction": "Separate dead character from continuing account; show actual estate disposition and heir.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "84-110",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L84-L110",
+          "note": ""
+        },
+        {
+          "path": "src/crew.js",
+          "lines": "14-17",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/crew.js#L14-L17",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Remaining OMR is subject to loot/death rules; no claim all balances are safe.",
+        "Do not imply all inventory, business ownership or previous character authority transfers."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S37"
+      ],
+      "depiction": [
+        {
+          "id": "S37",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP31",
+      "system": "Seasons and legacy",
+      "status": "IMPLEMENTED",
+      "claim": "Seasons last 28 days with progression resets/prestige and Family competition phases; season records and account legacy persist under their own rules.",
+      "safeNarration": "The season closes the books. It does not erase every mark your people made.",
+      "safeDepiction": "Season phase/status and actual prior record; separate character reset from Family history.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "106-110",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L106-L110",
+          "note": ""
+        },
+        {
+          "path": "docs/WIKI.md",
+          "lines": "647-655",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L647-L655",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not say everything resets or nothing resets.",
+        "Seasonal rewards depend on current subsystem eligibility/funding."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S37"
+      ],
+      "depiction": [
+        {
+          "id": "S37",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP32",
+      "system": "NFT extraction boundary",
+      "status": "IMPLEMENTED",
+      "claim": "Source implements item extraction/redemption rails, but docs say production extraction dormant until verified. Extracted items are inert in gameplay; eligibility differs by asset.",
+      "safeNarration": "The extraction design trades use in the city for custody outside it. Availability must be verified separately.",
+      "safeDepiction": "If retained, explicit INACTIVE EXTRACTION PREVIEW; show no real successful transaction unless evidenced.",
+      "evidence": [
+        {
+          "path": "docs/WIKI.md",
+          "lines": "124-161",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/WIKI.md#L124-L161",
+          "note": ""
+        },
+        {
+          "path": "AGENTS.md",
+          "lines": "438-458",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/AGENTS.md#L438-L458",
+          "note": ""
+        },
+        {
+          "path": "SPEC.md",
+          "lines": "89-101",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/SPEC.md#L89-L101",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Do not imply every inventory item is an NFT.",
+        "Wallet link and character mint are prerequisite gates, not proof the rail is active.",
+        "Exported safety means outside specified game losses, not universal wallet/security immunity."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [
+        "S38"
+      ],
+      "depiction": [
+        {
+          "id": "S38",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "GP33",
+      "system": "Release readiness",
+      "status": "UNVERIFIED",
+      "claim": "Latest inspected readiness work retains unmet qualification proof and explicitly authorizes no cohort admission; source and scoped tests are not live deployment.",
+      "safeNarration": "This footage shows an implemented development build.",
+      "safeDepiction": "Persistent development status on gated demonstrations; no PLAY NOW/open-access claim derived from tests.",
+      "evidence": [
+        {
+          "path": "docs/release/readiness-work/README.md",
+          "lines": "1-14",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/readiness-work/README.md#L1-L14",
+          "note": ""
+        },
+        {
+          "path": "docs/release/readiness-work/README.md",
+          "lines": "55-91",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/readiness-work/README.md#L55-L91",
+          "note": ""
+        },
+        {
+          "path": "docs/release/RC1-READINESS.md",
+          "lines": "1-10",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/release/RC1-READINESS.md#L1-L10",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Sep20 frozen blocked result is historical; latest readiness work also withholds clearance.",
+        "Root must separately verify intended production audience and activation before changing a claim to LIVE."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "GP34",
+      "system": "Future broad autonomy",
+      "status": "PLANNED",
+      "claim": "Open-ended AI content generation and autonomous NPC economy adapters remain beyond the bounded authored Director pilot.",
+      "safeNarration": "Omit from present-tense feature narration.",
+      "safeDepiction": "If essential, clearly separated future-design card.",
+      "evidence": [
+        {
+          "path": "docs/coordination-engine/README.md",
+          "lines": "3-5",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/coordination-engine/README.md#L3-L5",
+          "note": ""
+        },
+        {
+          "path": "docs/living-world-director/HANDOFF.md",
+          "lines": "115",
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/living-world-director/HANDOFF.md#L115",
+          "note": ""
+        }
+      ],
+      "limits": [
+        "Older Coordination README understates implemented Family adapters; do not use its blanket later-phase wording to erase current code."
+      ],
+      "liveVerification": "Not verified for an intended production audience in this audit.",
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "ECO-01",
+      "topic": "Activation boundary",
+      "status": "UNVERIFIED",
+      "priority": "PRIMARY",
+      "statement": "The current market is implemented source. Repository documentation and retained deployments do not establish that this exact market, withdrawal or RWA pipeline is operating on September 29.",
+      "safeNarration": "The implemented market has separate rules for trading, liquidity and Family fee rights.",
+      "safeDepiction": "Use a legible chapter label: IMPLEMENTED RULES · ACTIVATION UNVERIFIED. Do not fabricate wallet receipts, transactions, balances or an open trading interface.",
+      "sources": [
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            1,
+            5
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L1-L5"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            78,
+            84
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L78-L84"
+        },
+        {
+          "path": "omerta-contracts/docs/market/RUNBOOK.md",
+          "lines": [
+            72,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/RUNBOOK.md#L72-L74"
+        },
+        {
+          "path": "omerta-contracts/deployments/4663/manifest.json",
+          "lines": [
+            255,
+            262
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/deployments/4663/manifest.json#L255-L262",
+          "note": "Historical September 11 dormant snapshot only; not current market activation or a fresh live read."
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No current source-matched activation evidence was available to this shard. The historical deployment record must not be repurposed as clearance."
+      ],
+      "avoid": [
+        "live market",
+        "now earning",
+        "token launch completed",
+        "all contracts are operational"
+      ],
+      "depictedIn": [
+        "S31"
+      ],
+      "depiction": [
+        {
+          "id": "S31",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-02",
+      "topic": "Three balances",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Game cash, the server's in-game OMR ledger and wallet ERC-20 OMR are separate value domains with different custody and loss rules.",
+      "safeNarration": "Three balances. Three rules. Game cash. In-game OMR. Wallet OMR.",
+      "safeDepiction": "Three labeled compartments; game cash explicitly says GAME CURRENCY. No dollar-to-dollar peg and no merged total.",
+      "sources": [
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            19,
+            29
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L19-L29"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            86,
+            105
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L86-L105"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Capture balance labels from the approved development build; redact identifying account/wallet information."
+      ],
+      "avoid": [
+        "game cash is US dollars",
+        "every in-game OMR credit is a wallet token",
+        "one seamless interchangeable balance"
+      ],
+      "depictedIn": [
+        "S29"
+      ],
+      "depiction": [
+        {
+          "id": "S29",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-03",
+      "topic": "One-way Window",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "The Window spends in-game OMR for game cash from a funded till, with opening and account-limit checks. Cash has no general reverse route into OMR. An insufficient till refuses without taking OMR.",
+      "safeNarration": "The funded Window moves OMR into game cash. The arrow does not run backwards.",
+      "safeDepiction": "Single arrow IN-GAME OMR → FUNDED WINDOW → GAME CASH. Show till availability as a condition, never as an exchange-rate peg.",
+      "sources": [
+        {
+          "path": "omerta-economy-design.md",
+          "lines": [
+            5,
+            13
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-economy-design.md#L5-L13"
+        },
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            122,
+            160
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L122-L160"
+        },
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            174,
+            202
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L174-L202"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not show a currently open Window without checking the capture build's actual board and funding."
+      ],
+      "avoid": [
+        "launder game cash into tokens",
+        "cash grind prints wallet OMR",
+        "unlimited redemption",
+        "USD peg"
+      ],
+      "depictedIn": [
+        "S29",
+        "S30"
+      ],
+      "depiction": [
+        {
+          "id": "S29",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S30",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-04",
+      "topic": "Real OMR utility",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "OMR supports selected equipment/upgrades, career changes, intelligence/protection, estates, subscriptions, selected service alternatives and access stakes. Some benefits are mechanically consequential, not all cosmetic.",
+      "safeNarration": "In-game OMR buys selected equipment, access and services.",
+      "safeDepiction": "Show two verified actions or gates with current requirements. A bought item can affect gameplay; do not label all OMR utility cosmetic.",
+      "sources": [
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            31,
+            43
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L31-L43"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            188,
+            197
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L188-L197"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Use actual item/service requirements from the pinned build. Do not imply a wallet holding automatically unlocks an in-game stake gate."
+      ],
+      "avoid": [
+        "all purchases are cosmetic",
+        "every action needs OMR",
+        "paying never changes gameplay",
+        "wallet balance automatically counts as a game stake"
+      ],
+      "depictedIn": [
+        "S30"
+      ],
+      "depiction": [
+        {
+          "id": "S30",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-05",
+      "topic": "Finite rewards versus wallet payouts",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Career OMR awards are limited once-per-account internal credits. Daily and other pools are funded transfers under eligibility rules. Internal credits do not automatically create ERC-20 tokens or establish immediate withdrawal backing.",
+      "safeNarration": "Missions award limited game OMR; funded pools can distribute rewards. That is not an automatic wallet payout.",
+      "safeDepiction": "Mission receipt remains in the IN-GAME OMR compartment; a separate locked withdrawal gate appears before wallet custody.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            101,
+            107
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L101-L107"
+        },
+        {
+          "path": "src/game.js",
+          "lines": [
+            158,
+            168
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/game.js#L158-L168"
+        },
+        {
+          "path": "src/invariants.js",
+          "lines": [
+            298,
+            320
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/invariants.js#L298-L320"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not present historical ledger vocabulary as permission to emit new rewards. Any displayed amount must come from source/capture."
+      ],
+      "avoid": [
+        "play-to-earn guaranteed income",
+        "every mission mints a wallet token",
+        "infinite cash farming creates OMR",
+        "automatic reward to every holder"
+      ],
+      "depictedIn": [
+        "S30"
+      ],
+      "depiction": [
+        {
+          "id": "S30",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-06",
+      "topic": "Recycled game spending",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Many in-game OMR spends recycle into backend Desk inventory rather than destroying ERC-20 supply. Window OMR is split between Family funding and Desk. Backend Desk inventory is not the market controller's Desk liquidity compartment.",
+      "safeNarration": "Many game spends recycle OMR. They do not permanently burn token supply.",
+      "safeDepiction": "Spend receipt flows to REUSABLE GAME INVENTORY; never into a fire, shrinking total-supply counter or directly into the market controller's Desk.",
+      "sources": [
+        {
+          "path": "src/exchange.js",
+          "lines": [
+            174,
+            202
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/exchange.js#L174-L202"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            225,
+            235
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L225-L235"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            96,
+            100
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L96-L100"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Do not connect the two different Desk accounts merely because they share a label."
+      ],
+      "avoid": [
+        "every spend permanently burns OMR",
+        "deflation guaranteed",
+        "backend spending directly opens a liquidity position"
+      ],
+      "depictedIn": [
+        "S30"
+      ],
+      "depiction": [
+        {
+          "id": "S30",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-07",
+      "topic": "Canonical sell fees",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Canonical Hook base sell charge is 9%: developer 2%, RWA allocation 1.6%, community 2.4%, POL 3%; bounded surge is 0–1% to stability. Ordinary LP fees are additional. Normal buys after the configured opening window have no Hook buy tax. Fee asset follows settlement and can be ETH or OMR.",
+      "safeNarration": "The Hook routes canonical trading fees to separate destinations.",
+      "safeDepiction": "Only if rates are useful: 9% BASE SELL CHARGE with four additive shares and a separate +0–1% STABILITY line. Label CODE POLICY, LP FEES ADDITIONAL; no selected live LP rate.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaHookV2.sol",
+          "lines": [
+            21,
+            41
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaHookV2.sol#L21-L41"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            26,
+            28
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L26-L28"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            59,
+            69
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L59-L69"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "all trades everywhere pay this charge",
+        "every fee receipt is ETH",
+        "all buys are always tax-free",
+        "9% includes LP fees",
+        "RWA allocation proves stock purchase"
+      ],
+      "depictedIn": [
+        "S31"
+      ],
+      "depiction": [
+        {
+          "id": "S31",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-08",
+      "topic": "Protocol liquidity and finite support",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Protocol liquidity uses segregated actual capital and constrained positions. Core is intended to receive POL funding; action, episode and lifetime limits bind use. Governance has defined principal-recovery powers. This is not a guaranteed floor or a redeemable share of reserves.",
+      "safeNarration": "The market uses separate, funded liquidity budgets.",
+      "safeDepiction": "Core liquidity is a finite box, with principal separate from earned fees. Use a range diagram only if assets cannot appear from nothing.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            42,
+            52
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L42-L52"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            41,
+            45
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L41-L45"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            81
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L81"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "guaranteed price floor",
+        "OMR holders own all reserves",
+        "market recovery creates ETH",
+        "permanently locked principal",
+        "buy pressure always wins"
+      ],
+      "depictedIn": [
+        "S32"
+      ],
+      "depiction": [
+        {
+          "id": "S32",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-09",
+      "topic": "Inventory bonds",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Inventory bonds reserve already-held OMR for a buyer paying ETH, then release it through linear vesting. They do not mint and cannot promise more than funded inventory. Code bounds are not selected commercial terms.",
+      "safeNarration": "Inventory bonds sell OMR already held, released over time.",
+      "safeDepiction": "Finite OMR inventory → RESERVED FOR BUYER → VESTED CLAIM. ETH proceeds feed a separately labeled recovery-capital destination, not the buyer's yield.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol",
+          "lines": [
+            15,
+            19
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaInventoryBondV2.sol#L15-L19"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            54,
+            54
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L54-L54"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            46,
+            46
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L46-L46"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            67
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L67"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "bond minting",
+        "guaranteed bond return",
+        "firm sellback",
+        "public offer with invented discount or vesting period"
+      ],
+      "depictedIn": [
+        "S32"
+      ],
+      "depiction": [
+        {
+          "id": "S32",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-10",
+      "topic": "Qualifying LP commitments",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "The commitment vault requires an eligible canonical PositionManager NFT and measured useful liquidity; campaign rewards are prefunded ETH, bounded by campaign/position conditions and available funds. A token balance alone is not an eligible LP position.",
+      "safeNarration": "LP rewards need qualifying positions and funded campaigns.",
+      "safeDepiction": "POSITION NFT → QUALIFICATION + TIME → FINITE ETH CAMPAIGN. Do not connect every wallet OMR balance to this reward path.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            56,
+            66
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L56-L66"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            53,
+            53
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L53-L53"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "passive OMR holding earns LP rewards",
+        "guaranteed APY",
+        "unlimited campaign rewards",
+        "staking OMR is the same as committing an LP NFT"
+      ],
+      "depictedIn": [
+        "S32"
+      ],
+      "depiction": [
+        {
+          "id": "S32",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-11",
+      "topic": "LP maturity and market exposure",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The original depositor can retrieve a mature LP NFT under the specified oracle/pause/budget failures; credited rewards are separate. Return of the position does not guarantee its economic value or original asset composition.",
+      "safeNarration": "At maturity, the position can return even if the reward budget is empty.",
+      "safeDepiction": "Two controls: RETURN MATURE POSITION and CLAIM CREDITED REWARD. Never show an unchanging fiat balance or a guarantee seal.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            66,
+            66
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L66-L66"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            279,
+            281
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L279-L281"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "principal guaranteed in dollar value",
+        "risk-free ETH yield",
+        "reward pool guarantees original LP value"
+      ],
+      "depictedIn": [
+        "S32"
+      ],
+      "depiction": [
+        {
+          "id": "S32",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-12",
+      "topic": "Actual-profit arbitrage funding",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "A solver supplies its own collateral for an atomic cross-pool trade. Successful execution requires positive realized profit after trading charges; a configured share of profit goes to reserves. Gas and failed transactions can still cost money.",
+      "safeNarration": "Successful arbitrage contributes a share of actual profit.",
+      "safeDepiction": "SOLVER CAPITAL → COMPLETED PROFITABLE CYCLE → PROFIT SPLIT. Never route gross turnover or all solver capital to treasury; no endless-profit animation.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            72,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L72-L74"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            47,
+            47
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L47-L47"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            67,
+            67
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L67-L67"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "protocol prints arbitrage profit",
+        "all price differences are guaranteed earnings",
+        "the treasury funds unlimited trading",
+        "reserve share comes from gross notional"
+      ],
+      "depictedIn": [
+        "S33"
+      ],
+      "depiction": [
+        {
+          "id": "S33",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-13",
+      "topic": "Family Turf fee rights",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Families or syndicates can hold seasonal rights to future funded fees from designated LP positions. Historical credited fees remain with their beneficiaries. Protocol principal remains controlled separately.",
+      "safeNarration": "Families compete for designated liquidity-fee rights. The pool's principal stays protocol-controlled.",
+      "safeDepiction": "One specified Turf position emits ACTUAL EARNED FEES toward a Family treasury; a solid boundary retains LP PRINCIPAL. Other pool fees do not automatically join the Family stream.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/market-v2/OmertaTurfV2.sol",
+          "lines": [
+            11,
+            13
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/market-v2/OmertaTurfV2.sol#L11-L13"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            68,
+            70
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L68-L70"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            95,
+            103
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L95-L103"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "take the docks and seize the whole pool",
+        "all trading fees pay your Family",
+        "control grants LP withdrawal authority",
+        "Family flag creates fees"
+      ],
+      "depictedIn": [
+        "S33"
+      ],
+      "depiction": [
+        {
+          "id": "S33",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-14",
+      "topic": "Sieges and trusted game settlement",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "A siege allocates actual funded fee escrow and future ownership through typed authenticated game outcomes. The server adjudicates combat; the contract checks the authorized result and conservation/replay rules.",
+      "safeNarration": "The contest changes who receives funded fees; it does not let a Family empty the pool.",
+      "safeDepiction": "Actual accrued fee escrow splits only after a verified outcome. Overlay GAME ADJUDICATION → AUTHORIZED SETTLEMENT, not fully onchain combat.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            68,
+            70
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L68-L70"
+        },
+        {
+          "path": "omerta-contracts/docs/market/DESIGN.md",
+          "lines": [
+            95,
+            103
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/docs/market/DESIGN.md#L95-L103"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current deployment/runtime match, configuration, actual funding, authorized integration and activation evidence are required before describing this mechanism as live."
+      ],
+      "avoid": [
+        "all combat independently verified onchain",
+        "siege reward exists without fees",
+        "officers can rewrite prior earned claims"
+      ],
+      "depictedIn": [
+        "S33"
+      ],
+      "depiction": [
+        {
+          "id": "S33",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-15",
+      "topic": "Token mint authority and supply",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The initial 100-million-OMR mint is not an immutable supply cap. The owner can appoint or disable a minter; a designated minter can mint. Inventory-funded bond sales do not remove that separate authority.",
+      "safeNarration": "The token retains controlled mint authority.",
+      "safeDepiction": "If supply is discussed, say INITIAL SUPPLY, NOT HARD CAP. Show GOVERNANCE → MINTER AUTHORITY; no permanent fixed-supply stamp.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/OMR.sol",
+          "lines": [
+            116,
+            139
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/OMR.sol#L116-L139"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            213,
+            221
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L213-L221"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            117,
+            121
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L117-L121"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current minter address and actual circulating supply require fresh chain evidence. Do not infer present mint configuration or distribution from source."
+      ],
+      "avoid": [
+        "fixed maximum supply",
+        "no one can ever mint",
+        "bond inventory makes the token permanently non-inflationary",
+        "invented circulating supply"
+      ],
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "ECO-16",
+      "topic": "Conditional OMR extraction",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "OMR withdrawal requires a qualifying account, valid destination, sufficient liquid in-game OMR and configured active signing/chain services. Gross ledger debit differs from net voucher. Funding shortages can queue requests; claims transfer existing chain tokens.",
+      "safeNarration": "Withdrawal needs eligibility, backing and an active chain rail.",
+      "safeDepiction": "IN-GAME OMR → ELIGIBILITY / FUNDED RESERVE / FEES → WALLET OMR. Queue shown as PENDING, never as settled.",
+      "sources": [
+        {
+          "path": "src/chain.js",
+          "lines": [
+            225,
+            294
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L225-L294"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            237,
+            269
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L237-L269"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            65,
+            74
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L65-L74"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No withdrawals or claims are authorized for production capture. Current deployment activation/funding not verified."
+      ],
+      "avoid": [
+        "instant cash-out",
+        "every game reward immediately redeemable",
+        "funding equals guaranteed dollar value",
+        "signed voucher equals completed wallet transfer"
+      ],
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "ECO-17",
+      "topic": "Extraction fees and freshness",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Current documented withdrawal default is a 2% toll plus a fresh-balance surcharge beginning at 50% and declining to zero over 48 hours. Additive lot-based calculation; newest balances are considered first. Market-sale fees are separate. Canceling an unsigned queue returns net, not the already paid toll.",
+      "safeNarration": "Fresh balances cost more to extract.",
+      "safeDepiction": "Freshness slider is an illustration of documented rules, not a live quote; label WITHDRAWAL FEES with EXAMPLE / CHECK CURRENT QUOTE. Avoid numerical example in the master unless needed.",
+      "sources": [
+        {
+          "path": "src/chain.js",
+          "lines": [
+            228,
+            254
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L228-L254"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            241,
+            259
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L241-L259"
+        },
+        {
+          "path": "src/tax.js",
+          "lines": [
+            1,
+            28
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/tax.js#L1-L28"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Current operational overrides and actual quote must be checked before using a numeric user outcome."
+      ],
+      "avoid": [
+        "after 48 hours every exit is free",
+        "withdrawal tax is market sell tax",
+        "cancel returns all gross tokens",
+        "wallet-only holdings automatically pay game withdrawal surcharge"
+      ],
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "ECO-18",
+      "topic": "Extractable assets and tradeoff",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY",
+      "statement": "Eligible gear, cars and boats have class-token export rails; separate StreetDeed and Dynasty portrait rails have different rights. Exported gear/vehicles become inert in gameplay. Confirmed reimport burns the exported token and restores game ownership. Not every World Graph item is exportable.",
+      "safeNarration": "Eligible gear and vehicles can leave too. Once exported, they stop working in-game.",
+      "safeDepiction": "One eligible item leaves ACTIVE LOADOUT and enters WALLET; original gameplay slot becomes unavailable. Separate receipt for confirmed reimport. No cloned active item.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            199,
+            211
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L199-L211"
+        },
+        {
+          "path": "src/nft.js",
+          "lines": [
+            24,
+            36
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/nft.js#L24-L36"
+        },
+        {
+          "path": "src/nft.js",
+          "lines": [
+            50,
+            69
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/nft.js#L50-L69"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            327,
+            339
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L327-L339"
+        },
+        {
+          "path": "src/chain.js",
+          "lines": [
+            605,
+            654
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/chain.js#L605-L654"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Eligibility, contract caps, signer configuration and actual settled export require per-class evidence. Use a dry development UI or labeled diagram, not a fake mint receipt."
+      ],
+      "avoid": [
+        "all items are NFTs",
+        "exported weapon remains usable",
+        "every token is a unique immutable rarity",
+        "export sells the player login"
+      ],
+      "depictedIn": [
+        "S38"
+      ],
+      "depiction": [
+        {
+          "id": "S38",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-19",
+      "topic": "Death and external-wallet boundary",
+      "status": "IMPLEMENTED",
+      "priority": "PRIMARY-ADJACENT",
+      "statement": "Eligible combat can loot liquid/unbonding and staked in-game OMR under current rules; death then applies additional duty to remaining liquid/unbonding balances. Locks do not make game stake immune. An unrelated external wallet's OMR is outside this game-balance mutation.",
+      "safeNarration": "Your game balance can be lost in the city. Combat cannot seize an unrelated external wallet.",
+      "safeDepiction": "Highlight risk only inside the GAME CUSTODY box. External wallet label says OUTSIDE GAME COMBAT, not SAFE FROM ALL RISK.",
+      "sources": [
+        {
+          "path": "src/social/combat.js",
+          "lines": [
+            415,
+            424
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/social/combat.js#L415-L424"
+        },
+        {
+          "path": "src/rules.tail.js",
+          "lines": [
+            1036,
+            1056
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/rules.tail.js#L1036-L1056"
+        },
+        {
+          "path": "src/social/estate.js",
+          "lines": [
+            120,
+            131
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/social/estate.js#L120-L131"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            169,
+            186
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L169-L186"
+        },
+        {
+          "path": "docs/investors/01-plain-language.md",
+          "lines": [
+            53,
+            61
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/01-plain-language.md#L53-L61"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "If quoting loss rates, identify them as current base rules subject to applicable eligibility and modifiers; no unconditional example for every death."
+      ],
+      "avoid": [
+        "staked game OMR cannot be looted",
+        "game death drains a connected wallet",
+        "all assets are wiped",
+        "wallet assets have no risks"
+      ],
+      "depictedIn": [
+        "S37",
+        "S38"
+      ],
+      "depiction": [
+        {
+          "id": "S37",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S38",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-20",
+      "topic": "RWA ambition and completion boundary",
+      "status": "PLANNED",
+      "priority": "PRIMARY",
+      "statement": "The broad Stock Machine ambition is approved-asset selection, bounded purchase, allocations and Stock Token delivery. Supporting modules are implemented, but the acquisition constellation is not a completed autonomous purchase service; its authority's unpause always reverts and execution scaffolding does not complete the purchase path.",
+      "safeNarration": "The RWA ambition includes approved Stock Tokens, Commission choices and eligible allocations. That complete pipeline is not established live.",
+      "safeDepiction": "Dashed PLANNED CONNECTIONS from APPROVED ASSET → PURCHASE → CUSTODY → ELIGIBLE ALLOCATION → DELIVERY. Stages do not animate as settled transactions.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            315,
+            337
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L315-L337"
+        },
+        {
+          "path": "omerta-contracts/src/AcquisitionAuthority.sol",
+          "lines": [
+            589,
+            593
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/AcquisitionAuthority.sol#L589-L593"
+        },
+        {
+          "path": "omerta-contracts/src/AcquisitionIntentExecution.sol",
+          "lines": [
+            39,
+            79
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/AcquisitionIntentExecution.sol#L39-L79"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Complete and activate the selected acquisition path, approved adapter/oracle, custody, eligibility, allocation and delivery dependencies before claiming a live end-to-end service."
+      ],
+      "avoid": [
+        "fully autonomous investment service",
+        "every holder gets shares",
+        "RWA allocation alone proves a buy",
+        "a registry entry is a completed stock purchase"
+      ],
+      "depictedIn": [
+        "S34",
+        "S35"
+      ],
+      "depiction": [
+        {
+          "id": "S34",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        },
+        {
+          "id": "S35",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-21",
+      "topic": "Commission and approved assets",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Commission/Family ballot machinery selects from an approved stock catalog. Safe/registry policy limits assets; the onchain publisher commits server-authoritative results. This is not universal OMR-holder control of the Safe or all economic parameters.",
+      "safeNarration": "Commission choices operate inside an approved asset list.",
+      "safeDepiction": "Ballot → APPROVED CATALOG SELECTION. Keep selection visually distinct from purchase confirmation.",
+      "sources": [
+        {
+          "path": "src/commission.js",
+          "lines": [
+            771,
+            810
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/commission.js#L771-L810"
+        },
+        {
+          "path": "src/commission.js",
+          "lines": [
+            851,
+            873
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/commission.js#L851-L873"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            163,
+            167
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L163-L167"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            323,
+            327
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L323-L327"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Verify the production registry generation, ballot result/finality, publisher and acquisition consumer before showing a completed decision-to-buy sequence."
+      ],
+      "avoid": [
+        "every token holder votes on all funds",
+        "Commission can buy any ticker",
+        "winning ballot is itself executed purchase"
+      ],
+      "depictedIn": [
+        "S34"
+      ],
+      "depiction": [
+        {
+          "id": "S34",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-22",
+      "topic": "Stock purchase and actual custody",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "RwaStockBuyer spends prefunded ETH within constraints on an approved closed-ballot asset and verifies received canonical units against price floors. StockVault holds pre-bought inventory and delivers under keeper/signer authority; neither creates external Stock Tokens.",
+      "safeNarration": "Assets must actually be bought, held and delivered.",
+      "safeDepiction": "Separate PURCHASE RECEIPT, HELD INVENTORY and DELIVERY RECEIPT; no merge into a generic green RWA badge.",
+      "sources": [
+        {
+          "path": "omerta-contracts/src/RwaStockBuyer.sol",
+          "lines": [
+            32,
+            42
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/RwaStockBuyer.sol#L32-L42"
+        },
+        {
+          "path": "omerta-contracts/src/StockVault.sol",
+          "lines": [
+            14,
+            42
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/omerta-contracts/src/StockVault.sol#L14-L42"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            327,
+            331
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L327-L331"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Actual funded approved route, stock receipt, vault custody, authenticated allocation and settled delivery all need evidence."
+      ],
+      "avoid": [
+        "OMERTÀ mints company shares",
+        "allocation equals custody",
+        "vault balance proves rightful recipient eligibility",
+        "held units guarantee asset value"
+      ],
+      "depictedIn": [
+        "S35"
+      ],
+      "depiction": [
+        {
+          "id": "S35",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-23",
+      "topic": "RWA allocation and deed destination",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "Broker distribution assigns real purchased units against published eligibility weights; an internal allocation is not acquisition or delivery. Delivery targets an eligible extracted StreetDeed's token-bound account, not a Dynasty portrait by default. With no delivery target, allocation waits. Ownership history matters.",
+      "safeNarration": "An allocation is a record of what is owed. Delivery is a separate step.",
+      "safeDepiction": "OWED → VERIFIED DEED ACCOUNT → CONFIRMED DELIVERY. A portrait has no automatic dividend arrow. Verify account contents before depicting a deed transfer.",
+      "sources": [
+        {
+          "path": "src/brokers.js",
+          "lines": [
+            4,
+            23
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/brokers.js#L4-L23"
+        },
+        {
+          "path": "src/brokers.js",
+          "lines": [
+            204,
+            221
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/brokers.js#L204-L221"
+        },
+        {
+          "path": "src/stockdeliver.js",
+          "lines": [
+            11,
+            34
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/stockdeliver.js#L11-L34"
+        },
+        {
+          "path": "src/stockdeliver.js",
+          "lines": [
+            455,
+            466
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/stockdeliver.js#L455-L466"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            329,
+            333
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L329-L333"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Verify frozen eligibility, real buy, exact units, eligible recipient and owned extracted-deed target; flags and keeper readiness are not runtime-attested."
+      ],
+      "avoid": [
+        "holding any NFT gets stock",
+        "all OMR holders receive equal payouts",
+        "a deed sale guarantees unchanged stock contents",
+        "booked allocation is paid"
+      ],
+      "depictedIn": [
+        "S35"
+      ],
+      "depiction": [
+        {
+          "id": "S35",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-24",
+      "topic": "Internal treasury ETH allocation",
+      "status": "IMPLEMENTED",
+      "priority": "SECONDARY",
+      "statement": "The treasury ETH allocation ledger can earmark value after an in-game OMR spend but explicitly has no ETH payout, withdrawal or onchain delivery. It is not a redeemable price floor.",
+      "safeNarration": "The internal treasury allocation is not an ETH payout.",
+      "safeDepiction": "If this appears, label INTERNAL ALLOCATION; no ETH arrow into a player's wallet.",
+      "sources": [
+        {
+          "path": "src/treasury.js",
+          "lines": [
+            30,
+            36
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/treasury.js#L30-L36"
+        },
+        {
+          "path": "src/treasury.js",
+          "lines": [
+            527,
+            529
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/src/treasury.js#L527-L529"
+        },
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            261,
+            269
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L261-L269"
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "No payout implementation or activation evidence exists for this internal allocation path."
+      ],
+      "avoid": [
+        "burn OMR for guaranteed ETH",
+        "treasury-backed cash-out floor",
+        "internal allocation is a paid claim"
+      ],
+      "depictedIn": [
+        "S35"
+      ],
+      "depiction": [
+        {
+          "id": "S35",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "ECO-25",
+      "topic": "Stock Token rights and eligibility",
+      "status": "UNVERIFIED",
+      "statusNote": "Official external-product rights and terminology verified from current primary documentation; OMERTA recipient eligibility and live delivery remain unverified.",
+      "priority": "SECONDARY",
+      "statement": "External issuer documentation describes Stock Tokens as debt securities providing exposure, not legal/beneficial ownership of the underlying company shares. Product and jurisdictional eligibility applies. This external product fact is separate from OMERTÀ implementation.",
+      "safeNarration": "Stock Tokens have their own rights and eligibility rules.",
+      "safeDepiction": "Use approved term STOCK TOKENS, or TOKENIZED REAL-WORLD ASSETS SUCH AS STOCK TOKENS. Do not use public-company logos, equity ownership certificates or an unrestricted delivery-to-everyone animation.",
+      "sources": [
+        {
+          "path": "docs/investors/02-technical-detail.md",
+          "lines": [
+            337,
+            337
+          ],
+          "url": "https://github.com/OmertaDev/Omerta/blob/3280817300cdcff3301745b1fce0bac9fe290129/docs/investors/02-technical-detail.md#L337-L337"
+        },
+        {
+          "url": "https://docs.robinhood.com/chain/stock-tokens/",
+          "retrieved": "2026-09-29",
+          "note": "Official source retrieved through web search; direct open failed. Confirms debt-security exposure and United States/US-person delivery restriction."
+        },
+        {
+          "url": "https://docs.robinhood.com/chain/terms-of-service/",
+          "retrieved": "2026-09-29",
+          "section": "2.3(j)",
+          "note": "Official current terms prescribe Stock Tokens terminology for external-facing content."
+        }
+      ],
+      "liveActivation": "UNVERIFIED",
+      "publicationBlockers": [
+        "Issuer terms, target geography and recipient eligibility need current confirmation before promotional distribution or actual delivery."
+      ],
+      "avoid": [
+        "real company shares for everyone",
+        "tokenized stocks/equities as external product wording",
+        "KYC-free means universally eligible",
+        "product disclaimer makes an unsupported payout claim true"
+      ],
+      "depictedIn": [
+        "S34"
+      ],
+      "depiction": [
+        {
+          "id": "S34",
+          "kind": "diagram",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    },
+    {
+      "id": "PUB01",
+      "status": "LIVE",
+      "claim": "The signed-out public website displays an invitation-required entry flow.",
+      "evidence": [
+        {
+          "url": "https://www.omerta.fun",
+          "observed": "2026-09-29",
+          "capture": "art/flagship-trust/captures/public-invitation.jpg"
+        }
+      ],
+      "limits": [
+        "This verifies the access UI, not gameplay admission, deployed financial flows or release readiness."
+      ],
+      "depictedIn": [],
+      "depiction": []
+    },
+    {
+      "id": "LAUNCH01",
+      "status": "EDITORIAL_PREMISE",
+      "claim": "The film is set at full public launch, as explicitly directed by the user on September 30, 2026.",
+      "evidence": [],
+      "limits": [
+        "Editorial premise; historical source verification is retained separately."
+      ],
+      "depictedIn": [
+        "S42"
+      ],
+      "depiction": [
+        {
+          "id": "S42",
+          "kind": "end",
+          "statusLabel": "OMERTÀ · TRUST IS THE GAME"
+        }
+      ]
+    }
+  ]
+}

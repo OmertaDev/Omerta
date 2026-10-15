@@ -10,7 +10,9 @@ process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
 import { recoverTypedDataAddress } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
+import { recordMeeting } from '../src/contacts.js';
+import { MAX_DEED_IDENTITIES } from '../src/deeds.js';
 import { DEEDS, deedRankOf, deedRenown, deedNeighborhoodsOpen,
          GOODS, goodPriceOf, CONSUMABLES, cityEventOf, dayOf, seasonModOf,
          OPERATIONS, opSlotsOf, RACKETS, ASSETS } from '../src/rules.js';
@@ -54,6 +56,7 @@ assert.equal(deedRenown([{ kind: 'claim' }, { kind: 'fell' }]), 6, 'renown sums 
 const b0 = (await call('GET', '/v1/deeds', { token: a.token })).body;
 assert.equal(b0.deed, null, 'no deed yet');
 assert.equal(b0.canClaim, true, 'a deedless account can claim');
+assert.deepEqual(b0.supply, { maximum: 2500, issued: 0, remaining: 2500 }, 'new city advertises the fixed lifetime supply');
 assert.equal(b0.districts.length, 6, 'all six core districts are shown to claim in');
 assert(b0.ranks.length >= 3, 'the renown-rank ladder is published');
 
@@ -359,6 +362,7 @@ assert(bg.deed.neighborhood, 'your deed shows which neighborhood it sits in');
 
 // ════════════ PHASE 3 — THE SECONDARY MARKET (the off-chain deed trade) ════════════
 const cc = await mk('Clemenza');           // a DEEDLESS buyer
+await recordMeeting(pool, cc.acct, b.acct); // sale fixtures satisfy the current known-player gate
 await pool.query('UPDATE characters SET cash=200000 WHERE id=$1', [cc.id]);
 // LIST gates: a deedless account can't list; a price under the floor is refused
 assert.equal((await call('POST', '/v1/deeds/list', { token: cc.token, body: { price: 50000 } })).body.error, 'no_deed', 'a deedless account has no street to sell');
@@ -395,7 +399,7 @@ const ccCash0 = Number((await pool.query('SELECT cash FROM characters WHERE id=$
 const bCash0 = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [b.id])).rows[0].cash);
 const pool0 = Number((await pool.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool);
 const buy = await call('POST', `/v1/deeds/buy/${b.id}`, { token: cc.token });
-assert.equal(buy.code, 200, 'the sale goes through');
+assert.equal(buy.code, 200, `the sale goes through: ${JSON.stringify(buy.body)}`);
 const fee = Math.ceil(50000 * DEEDS.SALE_FEE_BPS / 10000), tax = Math.ceil(50000 * DEEDS.SALE_TAX_BPS / 10000);
 assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [cc.id])).rows[0].cash), ccCash0 - 50000, 'the buyer pays the full price');
 assert.equal(Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [b.id])).rows[0].cash), bCash0 + (50000 - fee - tax), 'the seller nets 98% (1% dev + 1% street tax)');
@@ -693,6 +697,7 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
 // the LOCK that closes the cause as a labelled source tripwire.
 {
   const sellerD = await mk('Rocco Doublecross'), buyerD = await mk('Marco Mark');
+  await recordMeeting(pool, buyerD.acct, sellerD.acct);
   await call('POST', '/v1/deeds/claim', { token: sellerD.token, body: { district: 'canal', name: 'Doublecross Row' } });
   await call('POST', '/v1/deeds/list', { token: sellerD.token, body: { price: 500000 } });
   await pool.query('UPDATE characters SET cash=9000000 WHERE id=$1', [buyerD.id]);
@@ -761,6 +766,32 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
   const held = await call('POST', '/v1/deeds/corner', { token: nobody.token });
   assert.equal(held.body.error, 'rookie', 'a rookie who DOES hold a street still gets the level rule');
   assert.ok(/street is yours/i.test(String(held.body.message)), 'stated in the words it was written in');
+}
+
+// A finite collection counts permanent identities, including ones extracted or released later.
+// PostgreSQL serialization and rollback are exercised separately in deeds-supply-postgres.js.
+{
+  assert.equal(MAX_DEED_IDENTITIES, 2500);
+  const last = await mk('Last Street Holder');
+  const excess = await mk('Late Street Seeker');
+  await pool.query('UPDATE street_deed_supply SET issued=$1 WHERE id=1', [MAX_DEED_IDENTITIES - 1]);
+  const open = (await call('GET', '/v1/deeds', { token: last.token })).body;
+  assert.equal(open.canClaim, true);
+  assert.equal(open.supply.remaining, 1);
+  assert.equal((await call('POST', '/v1/deeds/claim', { token: last.token,
+    body: { name: 'Final Street', district: 'neon' } })).code, 200, 'last permanent slot can be claimed');
+  assert.equal(Number((await pool.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0].issued), 2500);
+  const closed = (await call('GET', '/v1/deeds', { token: excess.token })).body;
+  assert.equal(closed.canClaim, false, 'exhausted collection hides new issuance');
+  assert.deepEqual(closed.supply, { maximum: 2500, issued: 2500, remaining: 0 });
+  const no = await call('POST', '/v1/deeds/claim', { token: excess.token,
+    body: { name: 'Excess Street', district: 'neon' } });
+  assert.equal(no.body.error, 'deed_supply_exhausted', 'API refuses the 2,501st identity');
+  assert.equal((await pool.query("SELECT 1 FROM street_deeds WHERE name='Excess Street'")).rowCount, 0);
+  await pool.query('DELETE FROM street_deeds WHERE account_id=$1', [last.acct]);
+  assert.equal((await call('POST', '/v1/deeds/claim', { token: excess.token,
+    body: { name: 'Replacement Street', district: 'neon' } })).body.error, 'deed_supply_exhausted',
+  'even losing a database row cannot refill lifetime issuance');
 }
 
 console.log('deeds: PASS');

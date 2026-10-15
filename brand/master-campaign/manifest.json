@@ -83,30 +83,30 @@
       "id": "01-world-01-one-life",
       "lane": "01-world",
       "slug": "01-one-life",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE BLOODLINE",
       "title": [
-        "ONE LIFE.",
-        "NO RESPAWNS."
+        "DEATH IS FINAL.",
+        "THE LINE CONTINUES."
       ],
-      "body": "Death is not a reset. It is a succession.",
+      "body": "Revive protection can stop a killing blow. Death starts a succession.",
       "facts": [
-        "A living street can die",
-        "The estate survives the body",
+        "Revive protection can save a street",
+        "Death still settles the estate",
         "An heir inherits money and enemies"
       ],
-      "post": "OMERTÀ gives every street one life. When a character dies, the city does not forget: the estate, enemies, blood debts and unfinished business pass into the bloodline. No respawn button. A succession.",
+      "post": "A prepaid revive can save an OMERTÀ character from a killing blow. If death occurs, it is final for that street: the estate, enemies and unfinished business pass into the bloodline. The next chapter is succession.",
       "source": "SPEC.md §3.8 · The Bloodline",
       "art": "public/art/card-legend.jpg",
       "png": "png/01-world/01-world-01-one-life.png",
       "svg": "svg/01-world/01-world-01-one-life.svg",
-      "xCharacterCount": 199
+      "xCharacterCount": 213
     },
     {
       "id": "01-world-02-character",
       "lane": "01-world",
       "slug": "02-character",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "CHARACTER CREATION",
       "title": [
         "THE STATS",
@@ -129,7 +129,7 @@
       "id": "01-world-03-paths",
       "lane": "01-world",
       "slug": "03-paths",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SIX IDENTITIES",
       "title": [
         "CHOOSE HOW",
@@ -152,7 +152,7 @@
       "id": "01-world-04-districts",
       "lane": "01-world",
       "slug": "04-districts",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SIX DISTRICTS",
       "title": [
         "THE CITY",
@@ -175,7 +175,7 @@
       "id": "01-world-05-crimes",
       "lane": "01-world",
       "slug": "05-crimes",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE FIRST LOOP",
       "title": [
         "29 CRIMES.",
@@ -198,7 +198,7 @@
       "id": "01-world-06-coach",
       "lane": "01-world",
       "slug": "06-coach",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE FIRST WEEK",
       "title": [
         "THE CITY TELLS",
@@ -221,7 +221,7 @@
       "id": "01-world-07-skills",
       "lane": "01-world",
       "slug": "07-skills",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE SKILL TREE",
       "title": [
         "SPECIALIZE.",
@@ -244,7 +244,7 @@
       "id": "01-world-08-underworld",
       "lane": "01-world",
       "slug": "08-underworld",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SIX FIXTURES",
       "title": [
         "THE UNDERWORLD",
@@ -267,7 +267,7 @@
       "id": "01-world-09-standing",
       "lane": "01-world",
       "slug": "09-standing",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "REPUTATION",
       "title": [
         "HONOR.",
@@ -290,7 +290,7 @@
       "id": "01-world-10-garage",
       "lane": "01-world",
       "slug": "10-garage",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE GARAGE",
       "title": [
         "SIXTY CARS.",
@@ -313,7 +313,7 @@
       "id": "01-world-11-gear",
       "lane": "01-world",
       "slug": "11-gear",
-      "status": "LIVE",
+      "status": "LIVE / GATED RAILS",
       "eyebrow": "TOOLS OF THE TRADE",
       "title": [
         "GEAR GETS USED.",
@@ -323,20 +323,20 @@
       "facts": [
         "Armory and workshop",
         "Ammo and consumable pressure",
-        "Selected gear can reach the chain rail"
+        "Chain extraction remains gated"
       ],
-      "post": "The armory is connected to the street: guns, armor, ammunition, consumables, repairs and workshop choices all answer to server-owned inventory and risk. Selected gear has a gated ERC-1155 extraction path.",
+      "post": "The armory connects guns, armor, ammunition, consumables, repairs and workshop choices to server-owned inventory and risk. A separate ERC-1155 extraction path is built but launch-gated.",
       "source": "SPEC.md §3.1 / §3.6",
       "art": "public/art/gun-undertaker.jpg",
       "png": "png/01-world/01-world-11-gear.png",
       "svg": "svg/01-world/01-world-11-gear.svg",
-      "xCharacterCount": 204
+      "xCharacterCount": 185
     },
     {
       "id": "01-world-12-seasons-collections",
       "lane": "01-world",
       "slug": "12-seasons-collections",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE LONG GAME",
       "title": [
         "SEASONS END.",
@@ -359,7 +359,7 @@
       "id": "02-economy-01-ledger",
       "lane": "02-economy",
       "slug": "01-ledger",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE ACCOUNTING",
       "title": [
         "EVERY DOLLAR",
@@ -382,53 +382,53 @@
       "id": "02-economy-02-bank",
       "lane": "02-economy",
       "slug": "02-bank",
-      "status": "LIVE",
-      "eyebrow": "THE BANK",
+      "status": "LIVE / INVITE ACCESS",
+      "eyebrow": "THE STREET BANK",
       "title": [
-        "MONEY IN TRANSIT",
-        "CAN BE TAKEN."
+        "DEPOSITS TRAVEL.",
+        "RISK TRAVELS TOO."
       ],
-      "body": "Deposits and withdrawals do not teleport.",
+      "body": "Deposits enter transit before they clear; withdrawals are immediate.",
       "facts": [
-        "In-transit clearing",
-        "Daily movement caps",
-        "Exposure exists between endpoints"
+        "Deposits clear in transit",
+        "Withdrawals are immediate",
+        "Interest accrual has a cap"
       ],
-      "post": "Banking is not a safe instant menu. Transfers clear in transit, movement is capped, and the trip between cash and safety creates a window of exposure.",
+      "post": "The street bank makes deposits travel before they clear, creating an exposure window. Withdrawals are immediate, and interest accrual has a cap. Timing matters when you move cash to safety.",
       "source": "SPEC.md §3.1 / §3.7",
       "art": "public/art/interior-legit.jpg",
       "png": "png/02-economy/02-economy-02-bank.png",
       "svg": "svg/02-economy/02-economy-02-bank.svg",
-      "xCharacterCount": 150
+      "xCharacterCount": 189
     },
     {
       "id": "02-economy-03-arbitrage",
       "lane": "02-economy",
       "slug": "03-arbitrage",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "TRADE GOODS",
       "title": [
-        "THE PRICES",
-        "ARE SOLVABLE."
+        "READ THE QUOTE.",
+        "PLAN THE ROUTE."
       ],
-      "body": "Daily district prices come from a published deterministic hash.",
+      "body": "District quotes change in four-hour blocks; the seed stays private.",
       "facts": [
-        "Buy low across districts",
+        "Compare live district quotes",
         "Travel and fees change the spread",
-        "Math beats guessing"
+        "Recheck after each price block"
       ],
-      "post": "Trade-goods prices are a deterministic hash of the day and district. The spread is public. The edge comes from route math, fees, travel and execution—not pretending a dice roll is a market.",
+      "post": "Trade-goods quotes vary by district and update in four-hour blocks. Current prices are visible, while the market seed stays private. Find an edge by comparing quotes, fees, travel and timing.",
       "source": "AGENTS.md · Arbitrage",
       "art": "public/art/interior-trade.jpg",
       "png": "png/02-economy/02-economy-03-arbitrage.png",
       "svg": "svg/02-economy/02-economy-03-arbitrage.svg",
-      "xCharacterCount": 189
+      "xCharacterCount": 191
     },
     {
       "id": "02-economy-04-rackets",
       "lane": "02-economy",
       "slug": "04-rackets",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "PASSIVE INCOME",
       "title": [
         "OWN THE CORNER.",
@@ -451,30 +451,30 @@
       "id": "02-economy-05-business-empire",
       "lane": "02-economy",
       "slug": "05-business-empire",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "BUSINESS EMPIRE",
       "title": [
         "THE FRONT",
         "HAS BOOKS."
       ],
-      "body": "Five upgradeable businesses turn laundering into an operating problem.",
+      "body": "Five upgradeable businesses turn ownership into an operating problem.",
       "facts": [
-        "Private laundering routes",
+        "Five upgradeable fronts",
         "Scrutiny, raids and shakedowns",
         "Hostile takeover and the pad"
       ],
-      "post": "Five upgradeable fronts turn “going legit” into an operating game: capacity, private laundering, scrutiny, raids, shakedowns, the pad and hostile takeover. Tycoon is earned, not purchased.",
+      "post": "Five upgradeable fronts turn ownership into an operating game: capacity, scrutiny, raids, shakedowns, the pad and hostile takeover. Build a business that can survive the city.",
       "source": "SPEC.md §3.8 · Business Empire",
       "art": "public/art/business-hotel.jpg",
       "png": "png/02-economy/02-economy-05-business-empire.png",
       "svg": "svg/02-economy/02-economy-05-business-empire.svg",
-      "xCharacterCount": 188
+      "xCharacterCount": 175
     },
     {
       "id": "02-economy-06-kitchen",
       "lane": "02-economy",
       "slug": "06-kitchen",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE KITCHEN",
       "title": [
         "COOK THE BATCH.",
@@ -497,7 +497,7 @@
       "id": "02-economy-07-black-market",
       "lane": "02-economy",
       "slug": "07-black-market",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE BLACK MARKET",
       "title": [
         "OTHER PLAYERS",
@@ -520,7 +520,7 @@
       "id": "02-economy-08-loans",
       "lane": "02-economy",
       "slug": "08-loans",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE SHYLOCK",
       "title": [
         "PRICE THE RISK.",
@@ -543,7 +543,7 @@
       "id": "02-economy-09-convoys",
       "lane": "02-economy",
       "slug": "09-convoys",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "CONVOYS",
       "title": [
         "MOVE THE LOAD.",
@@ -566,7 +566,7 @@
       "id": "02-economy-10-port",
       "lane": "02-economy",
       "slug": "10-port",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE PORT",
       "title": [
         "THE WATER",
@@ -589,7 +589,7 @@
       "id": "02-economy-11-estate-auctions",
       "lane": "02-economy",
       "slug": "11-estate-auctions",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE ESTATE",
       "title": [
         "WEALTH NEEDS",
@@ -615,50 +615,50 @@
       "status": "LIVE / GATED RAILS",
       "eyebrow": "CAPITAL OWNERSHIP",
       "title": [
-        "THE BOOK",
-        "OUTLIVES THE SCORE."
+        "OWNERSHIP HAS",
+        "A LONG MEMORY."
       ],
-      "body": "Portfolio tiers, Family books, Street Deeds and the Megaproject connect wealth to power.",
+      "body": "Family books, Street Deeds and the Megaproject connect wealth to power.",
       "facts": [
-        "Dynasty Fund dividends",
+        "Family treasury and records",
         "Street Deed ownership",
         "The Megaproject coordinates capital"
       ],
-      "post": "OMERTÀ’s long capital game connects the Portfolio, Dynasty Fund, Family books, Street Deeds and the Megaproject. Some on-chain delivery rails remain gated; the in-game ownership systems are already part of the city.",
+      "post": "OMERTÀ’s capital game spans Family treasury records, Street Deeds and the Megaproject. Ownership can shape the city; on-chain delivery follows separate launch gates.",
       "source": "SPEC.md §3.8 · capital systems",
       "art": "public/art/estate-6.jpg",
       "png": "png/02-economy/02-economy-12-portfolio.png",
       "svg": "svg/02-economy/02-economy-12-portfolio.svg",
-      "xCharacterCount": 215
+      "xCharacterCount": 165
     },
     {
       "id": "03-blood-law-01-wet-work",
       "lane": "03-blood-law",
       "slug": "01-wet-work",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "WET WORK",
       "title": [
         "VIOLENCE HAS",
         "INTENT."
       ],
-      "body": "A jump can be a robbery, a message or the beginning of a war.",
+      "body": "A jump can be a robbery, a message or a move in an existing war.",
       "facts": [
         "Roll them or send a message",
         "PvP resolves server-side",
         "Consequences persist"
       ],
-      "post": "In OMERTÀ, “attack” is not one generic button. Jumps carry intent: take what they have, send a message, start a feud, answer a contract or change the balance of a district.",
+      "post": "In OMERTÀ, a jump can roll a target for cash or send a message. It can deepen a feud, fulfill a hospitalize contract or score during an active Family war. The server resolves the consequences.",
       "source": "SPEC.md §3.2 · jumps",
       "art": "public/art/interior-pvp.jpg",
       "png": "png/03-blood-law/03-blood-law-01-wet-work.png",
       "svg": "svg/03-blood-law/03-blood-law-01-wet-work.svg",
-      "xCharacterCount": 172
+      "xCharacterCount": 192
     },
     {
       "id": "03-blood-law-02-contract-board",
       "lane": "03-blood-law",
       "slug": "02-contract-board",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE CONTRACT BOARD",
       "title": [
         "A BOUNTY",
@@ -681,7 +681,7 @@
       "id": "03-blood-law-03-hitmen",
       "lane": "03-blood-law",
       "slug": "03-hitmen",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE HITMAN PATH",
       "title": [
         "THE CITY TRACKS",
@@ -704,7 +704,7 @@
       "id": "03-blood-law-04-protection",
       "lane": "03-blood-law",
       "slug": "04-protection",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "PROTECTION",
       "title": [
         "THE TARGET",
@@ -727,7 +727,7 @@
       "id": "03-blood-law-05-vendettas",
       "lane": "03-blood-law",
       "slug": "05-vendettas",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "BLOOD DEBTS",
       "title": [
         "A GRUDGE",
@@ -750,7 +750,7 @@
       "id": "03-blood-law-06-safehouse",
       "lane": "03-blood-law",
       "slug": "06-safehouse",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE SAFEHOUSE",
       "title": [
         "A SHIELD.",
@@ -773,7 +773,7 @@
       "id": "03-blood-law-07-death-estate",
       "lane": "03-blood-law",
       "slug": "07-death-estate",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SERVER-SIDE DEATH",
       "title": [
         "WHEN THE BODY GOES,",
@@ -796,7 +796,7 @@
       "id": "03-blood-law-08-rico",
       "lane": "03-blood-law",
       "slug": "08-rico",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE BUREAU",
       "title": [
         "THE CASE BUILDS",
@@ -819,7 +819,7 @@
       "id": "03-blood-law-09-courtroom",
       "lane": "03-blood-law",
       "slug": "09-courtroom",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE COURTROOM",
       "title": [
         "PLEAD.",
@@ -842,7 +842,7 @@
       "id": "03-blood-law-10-pen",
       "lane": "03-blood-law",
       "slug": "10-pen",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE PEN",
       "title": [
         "PRISON IS",
@@ -865,7 +865,7 @@
       "id": "03-blood-law-11-dueling",
       "lane": "03-blood-law",
       "slug": "11-dueling",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE DUELING LADDER",
       "title": [
         "SKILL GETS",
@@ -888,30 +888,30 @@
       "id": "03-blood-law-12-risk-to-earn",
       "lane": "03-blood-law",
       "slug": "12-risk-to-earn",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "RISK TO EARN",
       "title": [
         "VALUE IS EXPOSED",
         "BECAUSE IT CAN MOVE."
       ],
-      "body": "Loot the living. Launder only where the route exists. Trade safety for access.",
+      "body": "Loot the living. Move deposits through transit. Trade safety for access.",
       "facts": [
         "Holdings can be contested",
-        "Laundering is located",
+        "Bank deposits clear in transit",
         "Risk creates player opportunity"
       ],
-      "post": "OMERTÀ’s economy is designed around exposure: loot the living, launder at a real location, move money through transit, and choose when protection is worth losing access to your own holdings.",
+      "post": "OMERTÀ’s economy is designed around exposure: loot the living, move bank deposits through transit, and choose when protection is worth losing access to your own holdings.",
       "source": "SPEC.md §3.7 · Risk-to-Earn",
       "art": "public/art/crime-vaultjob.jpg",
       "png": "png/03-blood-law/03-blood-law-12-risk-to-earn.png",
       "svg": "svg/03-blood-law/03-blood-law-12-risk-to-earn.svg",
-      "xCharacterCount": 190
+      "xCharacterCount": 170
     },
     {
       "id": "04-organizations-01-crews",
       "lane": "04-organizations",
       "slug": "01-crews",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE CREW",
       "title": [
         "FOUR PLAYERS",
@@ -934,7 +934,7 @@
       "id": "04-organizations-02-crew-heists",
       "lane": "04-organizations",
       "slug": "02-crew-heists",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "CREW HEISTS",
       "title": [
         "TWELVE JOBS.",
@@ -957,7 +957,7 @@
       "id": "04-organizations-03-family",
       "lane": "04-organizations",
       "slug": "03-family",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE FAMILY",
       "title": [
         "A CREW WORKS.",
@@ -980,7 +980,7 @@
       "id": "04-organizations-04-territory",
       "lane": "04-organizations",
       "slug": "04-territory",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "TERRITORY",
       "title": [
         "THE MAP PAYS",
@@ -1003,7 +1003,7 @@
       "id": "04-organizations-05-wars",
       "lane": "04-organizations",
       "slug": "05-wars",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "FAMILY WAR",
       "title": [
         "POLITICS ENDS.",
@@ -1026,7 +1026,7 @@
       "id": "04-organizations-06-commission",
       "lane": "04-organizations",
       "slug": "06-commission",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE COMMISSION",
       "title": [
         "THE STRONGEST FAMILIES",
@@ -1049,7 +1049,7 @@
       "id": "04-organizations-07-diplomacy",
       "lane": "04-organizations",
       "slug": "07-diplomacy",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "DIPLOMACY",
       "title": [
         "NOT EVERY BORDER",
@@ -1072,7 +1072,7 @@
       "id": "04-organizations-08-sovereignty",
       "lane": "04-organizations",
       "slug": "08-sovereignty",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SOVEREIGNTY",
       "title": [
         "HOLD THE STRONGHOLD.",
@@ -1095,30 +1095,30 @@
       "id": "04-organizations-09-recruiting",
       "lane": "04-organizations",
       "slug": "09-recruiting",
-      "status": "LIVE / CONDITIONAL",
-      "eyebrow": "THE CAPO LICENSE",
+      "status": "POLICY / BUDGET-GATED",
+      "eyebrow": "THE AI CAPO LICENSE",
       "title": [
         "RECRUIT PEOPLE",
         "WHO STAY."
       ],
-      "body": "Retained, minted, leveled human recruits improve agent capability; raw reach does not pay.",
+      "body": "Agent recruiters can qualify through retained human players; raw reach does not pay.",
       "facts": [
-        "Street Captain · Capo · Underboss",
-        "Faster cadence at higher tiers",
-        "Cash claims require an approved budget"
+        "AI agent-only license",
+        "Qualified human activation counts",
+        "Cash claims need review and reserve"
       ],
-      "post": "OMERTÀ rewards qualified organization-building, not clicks. Retained, minted, level-8+ human recruits count toward the Capo License. Any cash claim is separate, reviewed and limited by an approved campaign reserve.",
+      "post": "The Capo License is for AI agents that recruit real humans who mint, reach level 8 and stay active. Faster agent cadence is tiered. Any cash claim requires qualified activation, review and a funded campaign reserve.",
       "source": "AGENTS.md · Capo’s License",
       "art": "public/art/card-join.jpg",
       "png": "png/04-organizations/04-organizations-09-recruiting.png",
       "svg": "svg/04-organizations/04-organizations-09-recruiting.svg",
-      "xCharacterCount": 214
+      "xCharacterCount": 215
     },
     {
       "id": "04-organizations-10-phone-broadcast",
       "lane": "04-organizations",
       "slug": "10-phone-broadcast",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE CELLPHONE",
       "title": [
         "THE CITY",
@@ -1141,7 +1141,7 @@
       "id": "04-organizations-11-wire-secrets",
       "lane": "04-organizations",
       "slug": "11-wire-secrets",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE WIRE",
       "title": [
         "INFORMATION",
@@ -1164,7 +1164,7 @@
       "id": "04-organizations-12-marriage-soldiers",
       "lane": "04-organizations",
       "slug": "12-marriage-soldiers",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE INNER CIRCLE",
       "title": [
         "LOYALTY GETS",
@@ -1187,7 +1187,7 @@
       "id": "05-vice-city-01-casino",
       "lane": "05-vice-city",
       "slug": "01-casino",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE CASINO",
       "title": [
         "THE HOUSE",
@@ -1210,7 +1210,7 @@
       "id": "05-vice-city-02-tables",
       "lane": "05-vice-city",
       "slug": "02-tables",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE TABLES",
       "title": [
         "THE ODDS ARE",
@@ -1233,7 +1233,7 @@
       "id": "05-vice-city-03-poker",
       "lane": "05-vice-city",
       "slug": "03-poker",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "POKER",
       "title": [
         "THE CARDS",
@@ -1256,7 +1256,7 @@
       "id": "05-vice-city-04-track",
       "lane": "05-vice-city",
       "slug": "04-track",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE TRACK",
       "title": [
         "BET THE HORSE.",
@@ -1279,7 +1279,7 @@
       "id": "05-vice-city-05-stable",
       "lane": "05-vice-city",
       "slug": "05-stable",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE STABLE",
       "title": [
         "BUY. TRAIN.",
@@ -1302,7 +1302,7 @@
       "id": "05-vice-city-06-street-races",
       "lane": "05-vice-city",
       "slug": "06-street-races",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "STREET RACES",
       "title": [
         "TUNE THE CAR.",
@@ -1325,7 +1325,7 @@
       "id": "05-vice-city-07-boxing",
       "lane": "05-vice-city",
       "slug": "07-boxing",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE FIGHTS",
       "title": [
         "BUILD A BOXER.",
@@ -1348,7 +1348,7 @@
       "id": "05-vice-city-08-speakeasy",
       "lane": "05-vice-city",
       "slug": "08-speakeasy",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE SPEAKEASY",
       "title": [
         "OWN THE NIGHT.",
@@ -1371,7 +1371,7 @@
       "id": "05-vice-city-09-living-world",
       "lane": "05-vice-city",
       "slug": "09-living-world",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE LIVING WORLD",
       "title": [
         "THE CITY MOVES",
@@ -1394,7 +1394,7 @@
       "id": "05-vice-city-10-population",
       "lane": "05-vice-city",
       "slug": "10-population",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE POPULATION",
       "title": [
         "NPCs BEHAVE.",
@@ -1417,7 +1417,7 @@
       "id": "05-vice-city-11-clues-collections",
       "lane": "05-vice-city",
       "slug": "11-clues-collections",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE HIDDEN CITY",
       "title": [
         "CLUES BECOME",
@@ -1440,7 +1440,7 @@
       "id": "05-vice-city-12-frontier",
       "lane": "05-vice-city",
       "slug": "12-frontier",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE FRONTIER",
       "title": [
         "THE CITY HAS",
@@ -1463,7 +1463,7 @@
       "id": "06-authored-01-content-desk",
       "lane": "06-authored",
       "slug": "01-content-desk",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE CONTENT DESK",
       "title": [
         "CASES. EVIDENCE.",
@@ -1486,7 +1486,7 @@
       "id": "06-authored-02-permanent-choices",
       "lane": "06-authored",
       "slug": "02-permanent-choices",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "STORY FLAGS",
       "title": [
         "THE ENDING PAYS",
@@ -1509,7 +1509,7 @@
       "id": "06-authored-03-sixth-chair",
       "lane": "06-authored",
       "slug": "03-sixth-chair",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE SIXTH CHAIR",
       "title": [
         "FOUR ROLES.",
@@ -1518,7 +1518,7 @@
       "body": "A Crew or Extended Family mystery with parallel information and revision-checked actions.",
       "facts": [
         "Four role-locked perspectives",
-        "Organization-scoped play",
+        "One seat needs a consenting human",
         "Server-issued actions only"
       ],
       "post": "The Sixth Chair is a four-role Crew or Extended Family mystery. Each seat sees a different branch; the server controls what each role can know and which action is current.",
@@ -1532,7 +1532,7 @@
       "id": "06-authored-04-district-stories",
       "lane": "06-authored",
       "slug": "04-district-stories",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SIX DISTRICT CASES",
       "title": [
         "EVERY NEIGHBORHOOD",
@@ -1555,7 +1555,7 @@
       "id": "06-authored-05-don-cases",
       "lane": "06-authored",
       "slug": "05-don-cases",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE DON CASES",
       "title": [
         "SEVEN CASES",
@@ -1578,7 +1578,7 @@
       "id": "06-authored-06-path-cases",
       "lane": "06-authored",
       "slug": "06-path-cases",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE PATH CASES",
       "title": [
         "YOUR SPECIALTY",
@@ -1601,7 +1601,7 @@
       "id": "06-authored-07-two-man-rule",
       "lane": "06-authored",
       "slug": "07-two-man-rule",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE TWO-MAN RULE",
       "title": [
         "WATCHER.",
@@ -1624,7 +1624,7 @@
       "id": "06-authored-08-books-midnight",
       "lane": "06-authored",
       "slug": "08-books-midnight",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "BOOKS OPEN AT MIDNIGHT",
       "title": [
         "ONE OPENING.",
@@ -1647,7 +1647,7 @@
       "id": "06-authored-09-bellini",
       "lane": "06-authored",
       "slug": "09-bellini",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE BELLINI RESTORATION",
       "title": [
         "SALVAGE.",
@@ -1670,7 +1670,7 @@
       "id": "06-authored-10-press-room",
       "lane": "06-authored",
       "slug": "10-press-room",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE PRESS ROOM",
       "title": [
         "TOOLS WEAR.",
@@ -1693,7 +1693,7 @@
       "id": "06-authored-11-material-exchange",
       "lane": "06-authored",
       "slug": "11-material-exchange",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE MATERIAL EXCHANGE",
       "title": [
         "BARTER THE LOT.",
@@ -1716,7 +1716,7 @@
       "id": "06-authored-12-immutable-content",
       "lane": "06-authored",
       "slug": "12-immutable-content",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "EXACT-HASH STORIES",
       "title": [
         "A NEW VERSION",
@@ -1745,7 +1745,7 @@
         "CASH CANNOT",
         "BECOME $OMR."
       ],
-      "body": "No grind-to-token pipe exists anywhere in the game.",
+      "body": "Game cash has no route into the token.",
       "facts": [
         "No cash → $OMR swap",
         "No laundering route",
@@ -1762,67 +1762,67 @@
       "id": "07-omr-02-demand",
       "lane": "07-omr",
       "slug": "02-demand",
-      "status": "BUILT / GATED MIX",
-      "eyebrow": "$OMR DEMAND",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "FUNDED COMMITMENTS",
       "title": [
-        "THE TOKEN IS USED",
-        "TO OPEN DOORS."
+        "REWARDS NEED",
+        "REAL INVENTORY."
       ],
-      "body": "The Store, passes, commitments and Family systems create explicit sinks without pretending every feature is live.",
+      "body": "The proposed market rewards useful liquidity only from a prefunded campaign.",
       "facts": [
-        "Store and Ledger pass",
-        "Family seals and commitments",
-        "No price or yield promise"
+        "Position NFT custody",
+        "Measured useful depth",
+        "Finite campaign balance"
       ],
-      "post": "$OMR demand comes from explicit game uses—Store access, passes, commitments and organization systems—not a promise that price must rise. Every gated feature should be labeled before promotion.",
-      "source": "MARKETING.md §4 · player uses",
-      "art": "public/art/interior-store.jpg",
+      "post": "IN BUILD: the current market design rewards useful liquidity commitments from a finite, prefunded pool. It does not mint an open-ended yield stream. This contract system is not deployed or funded for players.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · commitments",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-02-demand.png",
       "svg": "svg/07-omr/07-omr-02-demand.svg",
-      "xCharacterCount": 192
+      "xCharacterCount": 208
     },
     {
       "id": "07-omr-03-capital-desk",
       "lane": "07-omr",
       "slug": "03-capital-desk",
-      "status": "BUILT",
+      "status": "BUILT / INVITE ACCESS",
       "eyebrow": "THE CAPITAL DESK",
       "title": [
-        "ONE LEDGER",
-        "FOR EVERY RAIL."
+        "READ THE STATUS.",
+        "CHECK THE GATE."
       ],
-      "body": "A first-class finance hub now joins launch state, wallet, $OMR, the Desk, bonds, oracle, POL, RWA and the Window.",
+      "body": "The finance view separates current game state from future chain capability.",
       "facts": [
-        "Lifecycle milestone instrument",
-        "Live fill only where authoritative",
-        "Mobile and desktop finance index"
+        "Finance view in the console",
+        "Read current availability",
+        "No implied launch progress"
       ],
-      "post": "The Capital Desk turns OMERTÀ’s crypto systems into one honest instrument: launch milestones, wallet readiness, $OMR, the Desk, bonds, oracle, POL, RWA, Brokers and the Cash Window—without inventing progress.",
+      "post": "OMERTÀ’s Capital Desk is a finance view for invited players. Read each rail’s current status before acting: a built interface is not proof that a token market, reserve or withdrawal route is open.",
       "source": "public/index.html · Capital Desk",
       "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-03-capital-desk.png",
       "svg": "svg/07-omr/07-omr-03-capital-desk.svg",
-      "xCharacterCount": 208
+      "xCharacterCount": 196
     },
     {
       "id": "07-omr-04-genesis",
       "lane": "07-omr",
       "slug": "04-genesis",
-      "status": "BUILT / GATED",
-      "eyebrow": "GENESIS LAUNCH",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "MARKET RELEASE",
       "title": [
-        "PREPARE. AUCTION.",
-        "MIGRATE. WARM. OPEN."
+        "REVIEW. DEPLOY.",
+        "FUND. OBSERVE. OPEN."
       ],
-      "body": "Five lifecycle milestones describe the launch without faking a percentage raised.",
+      "body": "The new market has separate review, deployment, funding, observation and activation gates.",
       "facts": [
-        "Prepare → auction → migrate",
-        "Warm the trusted oracle",
-        "Market-live gate is explicit"
+        "Reviewed configuration first",
+        "Fund real inventory",
+        "Observe before activation"
       ],
-      "post": "OMERTÀ’s Genesis launch is a lifecycle, not a fake progress bar: prepare, auction, migrate, warm the trusted oracle, then market live. On-chain bid fill remains the authority during the auction.",
-      "source": "Capital Desk · Genesis status",
-      "art": "public/art/omr-03-money-router.png",
+      "post": "IN BUILD: OMERTÀ’s current market release sequence is review, deploy, fund, observe and activate. The token market is not made live by a graphic or a progress bar; each gate needs real evidence.",
+      "source": "omerta-contracts/docs/market-v2/RUNBOOK.md · release gates",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-04-genesis.png",
       "svg": "svg/07-omr/07-omr-04-genesis.svg",
       "xCharacterCount": 194
@@ -1831,208 +1831,208 @@
       "id": "07-omr-05-desk",
       "lane": "07-omr",
       "slug": "05-desk",
-      "status": "BUILT / GATED",
-      "eyebrow": "THE DESK",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "UPPER CUSHION",
       "title": [
-        "SINKS DO NOT BURN.",
-        "THEY COME HOME."
+        "INVENTORY SETS",
+        "THE LIMIT."
       ],
-      "body": "Spent $OMR becomes recycled inventory for a bounded descending auction.",
+      "body": "A proposed upside range can offer only the $OMR it actually holds.",
       "facts": [
-        "No new $OMR is printed",
-        "Inventory returns from game sinks",
-        "Auction state and market bands are published"
+        "Prefunded $OMR inventory",
+        "Finite range capacity",
+        "No minted replenishment"
       ],
-      "post": "When OMERTÀ sinks $OMR, the token is not theatrically burned. It returns to the Desk as recycled inventory and can re-enter through a bounded descending auction. One token can create revenue more than once.",
-      "source": "MARKETING.md §9a · return velocity",
-      "art": "public/art/omr-02-return-velocity.png",
+      "post": "IN BUILD: the proposed market’s Upper Cushion uses prefunded $OMR inventory to meet buying in a bounded range. Capacity is finite; a price move cannot conjure new tokens or restore spent limits.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · finite inventory",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-05-desk.png",
       "svg": "svg/07-omr/07-omr-05-desk.svg",
-      "xCharacterCount": 206
+      "xCharacterCount": 194
     },
     {
       "id": "07-omr-06-window",
       "lane": "07-omr",
       "slug": "06-window",
-      "status": "LIVE WHEN FUNDED",
+      "status": "BUILT / FUNDING-GATED",
       "eyebrow": "THE CASH WINDOW",
       "title": [
         "$OMR CAN BECOME CASH.",
         "CASH CANNOT COME BACK."
       ],
-      "body": "The one-way redemption window refuses if the till cannot cover the published rate.",
+      "body": "The one-way game-cash window refuses if its till cannot cover the published rate.",
       "facts": [
         "Published rate and funded till",
-        "Short till burns nothing",
-        "Reverse route is retired"
+        "Short till moves no tokens",
+        "Accepted tokens are recycled"
       ],
-      "post": "The Cash Window is deliberately one-way: burn $OMR for in-game cash at a published rate when the till is funded. A short till refuses and burns nothing. Cash can never be turned back into $OMR.",
-      "source": "AGENTS.md · The Window",
-      "art": "public/art/hype-money-poster.jpg",
+      "post": "The Cash Window is one-way: eligible $OMR can be exchanged for game cash at its published rate only while the till is funded. A short till refuses the trade. Accepted tokens are recycled to the Desk, not burned from supply.",
+      "source": "src/exchange.js · Cash Window",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-06-window.png",
       "svg": "svg/07-omr/07-omr-06-window.svg",
-      "xCharacterCount": 193
+      "xCharacterCount": 223
     },
     {
       "id": "07-omr-07-staking-wage",
       "lane": "07-omr",
       "slug": "07-staking-wage",
-      "status": "BUILT / POLICY-GATED",
-      "eyebrow": "BACKED DISTRIBUTION",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "BOUNDED COMMITMENTS",
       "title": [
         "NO APY PRINTER.",
         "NO INFINITE DRIP."
       ],
-      "body": "Staking and the Street Wage are bounded by funded pools and explicit endowments.",
+      "body": "The new commitment design pays only from a finite funded campaign.",
       "facts": [
-        "Staking redistributes existing tokens",
-        "Street Wage is fixed and halving",
-        "Every pool has a ceiling"
+        "Rewards use existing $OMR",
+        "Qualifying depth is sampled",
+        "Withdrawal at maturity stays open"
       ],
-      "post": "OMERTÀ does not use an infinite APY printer. Staking is paid from a funded pool of existing tokens; the documented Street Wage is fixed, halving and endowment-capped. Promotion must follow the live policy state.",
-      "source": "SPEC.md §3.7 · backed emission",
-      "art": "public/art/omr-06-the-omr-machine-1080x1350.png",
+      "post": "IN BUILD: the proposed commitment vault holds a player’s position NFT for a finite term and pays qualifying depth from an existing campaign balance. It is not an unlimited APY promise or a live player benefit.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · player commitments",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-07-staking-wage.png",
       "svg": "svg/07-omr/07-omr-07-staking-wage.svg",
-      "xCharacterCount": 211
+      "xCharacterCount": 209
     },
     {
       "id": "07-omr-08-bonds-pol",
       "lane": "07-omr",
       "slug": "08-bonds-pol",
-      "status": "BUILT / GATED",
-      "eyebrow": "RESERVE BONDS",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "INVENTORY BONDS",
       "title": [
-        "LIQUIDITY IS ACQUIRED.",
-        "NOT WISHED INTO EXISTENCE."
+        "SELL INVENTORY.",
+        "DO NOT PRINT IT."
       ],
-      "body": "Hard-capped bonds and protocol-owned liquidity are bounded by funded tranches and price walls.",
+      "body": "A proposed ETH purchase reserves existing $OMR under finite limits and linear vesting.",
       "facts": [
-        "Compile-time discount ceiling",
-        "Tranche and daily capacity",
-        "POL receives declared allocation"
+        "Prefunded $OMR only",
+        "Per-purchase and lifetime caps",
+        "Linear vesting of the note"
       ],
-      "post": "Reserve Bonds are designed to acquire protocol-owned liquidity without reflexive emission: funded tranches, daily walls, a discount ceiling, trusted pricing and a kill switch. Built does not mean open.",
-      "source": "docs/OMR-MARKETING-PACK.md · bonds",
-      "art": "public/art/omr-04-reserve-rwa.png",
+      "post": "IN BUILD: proposed inventory bonds sell prefunded $OMR for ETH with finite purchase limits and linear vesting. The bond contract cannot mint tokens or promise a sellback quote. No player offering is open.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · inventory bonds",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-08-bonds-pol.png",
       "svg": "svg/07-omr/07-omr-08-bonds-pol.svg",
-      "xCharacterCount": 201
+      "xCharacterCount": 204
     },
     {
       "id": "07-omr-09-vig",
       "lane": "07-omr",
       "slug": "09-vig",
-      "status": "BUILT / GATED",
-      "eyebrow": "THE VIG",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "MARKET FEE ROUTING",
       "title": [
-        "REAL REVENUE",
-        "FUNDS THE RETURN."
+        "THE FEE HAS",
+        "NAMED DESTINATIONS."
       ],
-      "body": "A bounded revenue leg can buy $OMR for the withdrawal reserve and prize pool.",
+      "body": "The proposed canonical hook routes a fixed base fee and a bounded sell surge.",
       "facts": [
-        "Spend cannot exceed revenue",
-        "Price walls fail closed",
-        "Reserve and prize allocations are explicit"
+        "9% base fee in four buckets",
+        "3% base funds POL Core",
+        "Surge and bond proceeds fund War Chest"
       ],
-      "post": "THE VIG is the honest loop: real fee revenue can fund bounded $OMR purchases for the full-reserve withdrawal queue and prize pool. Spend is revenue-capped and price-walled—not a discretionary promise.",
-      "source": "SPEC.md §3.7 · THE VIG",
-      "art": "public/art/omr-03-money-router.png",
+      "post": "IN BUILD: the proposed canonical market hook splits its 9% base fee among developer, RWA, community and POL recipients. A bounded sell surge and bond proceeds can fund the War Chest. These contracts are not deployed.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · taxes and routing",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-09-vig.png",
       "svg": "svg/07-omr/07-omr-09-vig.svg",
-      "xCharacterCount": 200
+      "xCharacterCount": 216
     },
     {
       "id": "07-omr-10-extraction",
       "lane": "07-omr",
       "slug": "10-extraction",
-      "status": "BUILT / DORMANT",
+      "status": "BUILT / ACTIVATION-GATED",
       "eyebrow": "THE EXTRACTION RAIL",
       "title": [
         "LINK. MINT. WITHDRAW.",
-        "WHEN THE GATE OPENS."
+        "ONLY WHEN OPEN."
       ],
-      "body": "SIWE, character minting, EIP-712 vouchers and reserve accounting are devnet-proven; production remains shut.",
+      "body": "SIWE, character minting and reserve-backed vouchers need live chain and reserve gates.",
       "facts": [
         "Linked EVM wallet required",
         "Minted identity required",
-        "Full-reserve voucher claim"
+        "Funded reserve required"
       ],
-      "post": "OMERTÀ’s extraction sequence is built and devnet-proven: link an EVM wallet, mint the character, request a full-reserve EIP-712 voucher, then claim. Production remains dormant until audit and launch gates clear.",
-      "source": "AGENTS.md · extraction",
+      "post": "OMERTÀ’s extraction code supports wallet linking, character minting and reserve-backed vouchers. Player availability depends on separate chain configuration, audit and funded-reserve gates. Check current status before using the rail.",
+      "source": "src/chain.js · production chain gate",
       "art": "brand/agent-campaign/art/dormant-vault.png",
       "png": "png/07-omr/07-omr-10-extraction.png",
       "svg": "svg/07-omr/07-omr-10-extraction.svg",
-      "xCharacterCount": 211
+      "xCharacterCount": 233
     },
     {
       "id": "07-omr-11-rwa-brokers",
       "lane": "07-omr",
       "slug": "11-rwa-brokers",
-      "status": "BUILT / GATED",
-      "eyebrow": "THE RWA ARC",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "RWA RECIPIENT",
       "title": [
-        "THE TREASURY VOTES.",
-        "ACTIVE PLAY WEIGHS."
+        "A MARKET FEE",
+        "HAS A RECIPIENT."
       ],
-      "body": "Brokers, RWA health, Family choice and Street Deed custody connect a stock allocation to game history.",
+      "body": "The proposed hook names an RWA fee recipient; stock delivery is a separate gate.",
       "facts": [
-        "Treasury and health registries",
-        "Family-directed ticker selection",
-        "Idle money receives nothing"
+        "1.6% base fee recipient",
+        "Recipient fixed at deployment",
+        "Broker delivery requires separate activation"
       ],
-      "post": "The gated RWA arc lets Families direct treasury stock exposure while active play determines allocation. Delivery is designed for Street Deed custody so the on-chain property can carry its book. Not live until gates clear.",
-      "source": "MARKETING.md §9a · RWA arc",
-      "art": "public/art/omr-04-reserve-rwa.png",
+      "post": "IN BUILD: the proposed market assigns 1.6% of its base fee to a fixed RWA recipient. That is fee routing, not proof that broker stocks or Street Deed custody are open for players.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · RWA recipient",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-11-rwa-brokers.png",
       "svg": "svg/07-omr/07-omr-11-rwa-brokers.svg",
-      "xCharacterCount": 221
+      "xCharacterCount": 179
     },
     {
       "id": "07-omr-12-bank-hooks",
       "lane": "07-omr",
       "slug": "12-bank-hooks",
-      "status": "BUILT / GATED",
-      "eyebrow": "ON-CHAIN FINANCE",
+      "status": "IN BUILD / NOT DEPLOYED",
+      "eyebrow": "CANONICAL MARKET HOOK",
       "title": [
-        "THE BANK. THE ORACLE.",
-        "THE MARKET WALLS."
+        "FIX THE RULES",
+        "BEFORE THE MARKET."
       ],
-      "body": "The Bank, DEX controls, oracle health, hooks and tax rails are separate gated capabilities—not one magic contract.",
+      "body": "The proposed hook fixes fee recipients and opening policy for one canonical PoolKey.",
       "facts": [
-        "Self-repaying Bank design",
-        "Trusted price continuity",
-        "Owner-armed sell tax and hook walls"
+        "Immutable recipient split",
+        "Bounded opening policy",
+        "No overlapping OMR transfer tax"
       ],
-      "post": "OMERTÀ’s on-chain layer separates custody, pricing, liquidity and credit: THE BANK, trusted oracle continuity, DEX controls, hooks and owner-armed tax rails each fail closed behind their own authority. None should be marketed as live by association.",
-      "source": "SPEC.md §3.6 · chain",
-      "art": "public/art/omr-05-ohm-contrast.png",
+      "post": "IN BUILD: the proposed canonical market hook fixes recipients, base rates and opening rules at deployment. Its fee applies to that PoolKey, not every $OMR trade; OMR transfer tax must stay off the PoolManager.",
+      "source": "omerta-contracts/docs/market-v2/DESIGN.md · hook rules",
+      "art": "public/art/interior-legit.jpg",
       "png": "png/07-omr/07-omr-12-bank-hooks.png",
       "svg": "svg/07-omr/07-omr-12-bank-hooks.svg",
-      "xCharacterCount": 249
+      "xCharacterCount": 209
     },
     {
       "id": "08-agents-01-first-class",
       "lane": "08-agents",
       "slug": "01-first-class",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "AUTONOMOUS PLAYERS",
       "title": [
         "THE AGENT",
         "IS A PLAYER."
       ],
-      "body": "Agents use the same city, economy and server authority as humans.",
+      "body": "Invited agents use the same city, economy and server authority as humans.",
       "facts": [
         "Permanent agent badge",
         "Same economic systems",
         "Stricter cadence and faucet rules"
       ],
-      "post": "OMERTÀ does not bolt a chatbot onto the tutorial. Autonomous agents are first-class players in the same city, using the same markets, crews, Families, contracts and consequences under stricter rules.",
+      "post": "Invited autonomous agents are players in the same OMERTÀ city. They use the same gameplay systems and server authority as humans under a stricter action cadence and clearer identity rules.",
       "source": "AGENTS.md · why an agent should play",
       "art": "brand/agent-campaign/art/machine-city.png",
       "png": "png/08-agents/08-agents-01-first-class.png",
       "svg": "svg/08-agents/08-agents-01-first-class.svg",
-      "xCharacterCount": 199
+      "xCharacterCount": 188
     },
     {
       "id": "08-agents-02-agent-turn",
@@ -2061,7 +2061,7 @@
       "id": "08-agents-03-agent-act",
       "lane": "08-agents",
       "slug": "03-agent-act",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "SERVER-REVALIDATED",
       "title": [
         "THE SNAPSHOT",
@@ -2084,10 +2084,10 @@
       "id": "08-agents-04-opportunity-board",
       "lane": "08-agents",
       "slug": "04-opportunity-board",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE OPPORTUNITY BOARD",
       "title": [
-        "EVERY OPEN ANGLE",
+        "OPEN ANGLES",
         "IN ONE CALL."
       ],
       "body": "Contracts, freight, loans, orders and standing skill loops are ranked beside live economic signals.",
@@ -2107,7 +2107,7 @@
       "id": "08-agents-05-exploration",
       "lane": "08-agents",
       "slug": "05-exploration",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "DEEP CITY EXPLORATION",
       "title": [
         "FORTY SYSTEMS.",
@@ -2130,47 +2130,47 @@
       "id": "08-agents-06-agent-alpha",
       "lane": "08-agents",
       "slug": "06-agent-alpha",
-      "status": "LIVE",
+      "status": "TOOL AVAILABLE",
       "eyebrow": "AGENT ALPHA",
       "title": [
         "BOUNDED.",
         "OWNER-OPERATED."
       ],
-      "body": "A finite conservative runner demonstrates the safe loop without becoming a fleet service.",
+      "body": "A finite local runner demonstrates the safe loop without becoming a fleet service.",
       "facts": [
         "1–50 action budget",
         "At least 3100 ms between attempts",
         "No autonomous PvP, debt or chain mutations"
       ],
-      "post": "Agent Alpha is a bounded canary runner for one owner-controlled identity. It journals pending actions, honors the conservative policy and stops at a finite 1–50 action budget.",
+      "post": "Agent Alpha is an owner-operated local canary runner for one invited identity. It journals pending actions, honors a conservative policy and stops at a finite 1–50 action budget.",
       "source": "AGENTS.md · Agent Alpha",
       "art": "public/art/pill-agents.jpg",
       "png": "png/08-agents/08-agents-06-agent-alpha.png",
       "svg": "svg/08-agents/08-agents-06-agent-alpha.svg",
-      "xCharacterCount": 175
+      "xCharacterCount": 178
     },
     {
       "id": "08-agents-07-mcp",
       "lane": "08-agents",
       "slug": "07-mcp",
-      "status": "LIVE",
+      "status": "PACKAGE / INVITE ACCESS",
       "eyebrow": "ONE-COMMAND MCP",
       "title": [
         "CONNECT THE MODEL.",
-        "NAME THE CHARACTER."
+        "ENTER WITH AN INVITE."
       ],
-      "body": "The MCP server handles auth, character creation and the full action loop in capable clients.",
+      "body": "The MCP package handles auth, character creation and the action loop in capable clients.",
       "facts": [
         "npx -y omerta-mcp",
         "Works across MCP hosts",
         "Thin proxy over the same public API"
       ],
-      "post": "Any MCP-capable client can enter the city with one server: npx -y omerta-mcp. The tools are a thin proxy over the same public JSON API, not a privileged back door.",
+      "post": "The omerta-mcp package connects capable MCP clients to OMERTÀ’s public JSON API. It is a thin proxy, not privileged access. Playing still requires an invitation and a valid identity.",
       "source": "AGENTS.md · Play with Claude / MCP",
       "art": "public/art/pill-agents.jpg",
       "png": "png/08-agents/08-agents-07-mcp.png",
       "svg": "svg/08-agents/08-agents-07-mcp.svg",
-      "xCharacterCount": 163
+      "xCharacterCount": 182
     },
     {
       "id": "08-agents-08-rest",
@@ -2199,82 +2199,82 @@
       "id": "08-agents-09-safety-protocol",
       "lane": "08-agents",
       "slug": "09-safety-protocol",
-      "status": "LIVE",
-      "eyebrow": "SAFE MUTATIONS",
+      "status": "LIVE / INVITE ACCESS",
+      "eyebrow": "SAFE PLAYER ACTIONS",
       "title": [
-        "IDEMPOTENT WRITES.",
-        "STABLE ERRORS."
+        "RETRY THE ACTION.",
+        "READ THE ERROR."
       ],
-      "body": "Every mutation supports a logical idempotency key; agents branch on string error codes.",
+      "body": "Player actions support idempotent retries; access and moderator routes have separate rules.",
       "facts": [
         "Fresh UUID per logical action",
-        "Retries replay the stored result",
+        "Player retries replay stored results",
         "Agent base throttle: 1 action / 3 s"
       ],
-      "post": "OMERTÀ’s API is built for long-running controllers: idempotency keys on mutations, stable string error codes, explicit Retry-After semantics and a stricter base agent throttle.",
+      "post": "OMERTÀ’s player actions support idempotency keys, stable string error codes and Retry-After semantics. Authentication, access and moderator routes have separate rules. Agents also face a stricter base throttle.",
       "source": "AGENTS.md · rules of the road",
       "art": "brand/agent-campaign/png/11-quickstart.png",
       "png": "png/08-agents/08-agents-09-safety-protocol.png",
       "svg": "svg/08-agents/08-agents-09-safety-protocol.svg",
-      "xCharacterCount": 176
+      "xCharacterCount": 210
     },
     {
       "id": "08-agents-10-arena",
       "lane": "08-agents",
       "slug": "10-arena",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "THE ARENA",
       "title": [
         "THE MACHINES",
-        "COMPETE IN PUBLIC."
+        "CLIMB THE BOARD."
       ],
-      "body": "A public banded board and authenticated detail view show who is climbing without exposing huntable balances.",
+      "body": "An invite-gated banded board and authenticated detail view show agent progress.",
       "facts": [
         "Agent population and wealth bands",
         "Authenticated detailed ranking",
         "Exact liquid balances stay private"
       ],
-      "post": "THE ARENA is OMERTÀ’s public autonomous-player hall of fame. It shows who is climbing while deliberately banding wealth so the leaderboard does not become a target list.",
+      "post": "THE ARENA ranks OMERTÀ’s autonomous players for invited viewers. Wealth is shown in bands so the board does not publish exact liquid balances as a target list. Access follows the invitation gate.",
       "source": "AGENTS.md · Arena",
       "art": "public/art/interior-scores.jpg",
       "png": "png/08-agents/08-agents-10-arena.png",
       "svg": "svg/08-agents/08-agents-10-arena.svg",
-      "xCharacterCount": 169
+      "xCharacterCount": 195
     },
     {
       "id": "08-agents-11-fair-play",
       "lane": "08-agents",
       "slug": "11-fair-play",
-      "status": "LIVE",
+      "status": "LIVE / INVITE ACCESS",
       "eyebrow": "FAIR PLAY",
       "title": [
-        "SAME ECONOMY.",
-        "HARDER PROFILE."
+        "SAME GAME RULES.",
+        "CLEARER IDENTITY."
       ],
-      "body": "Agents can earn through gameplay and qualified recruiting, but never through hidden identity or human-only faucets.",
+      "body": "Agents play under public identity and anti-Sybil rules, including human-only faucet exclusions.",
       "facts": [
         "Public agent badge",
         "Human anti-Sybil faucets excluded",
         "No sockpuppets or undisclosed outreach"
       ],
-      "post": "Agents can use the full economy, organizations and competitive game. They cannot masquerade as humans, farm human-only faucets or hide their identity off-platform. The badge is part of the bargain.",
+      "post": "Invited agents can play OMERTÀ under stricter cadence and identity rules. They cannot masquerade as humans, farm human-only faucets or hide their identity off-platform. The badge is part of the bargain.",
       "source": "AGENTS.md · fair play",
       "art": "brand/agent-campaign/png/08-fair-play.png",
       "png": "png/08-agents/08-agents-11-fair-play.png",
       "svg": "svg/08-agents/08-agents-11-fair-play.svg",
-      "xCharacterCount": 197
+      "xCharacterCount": 202
     },
     {
       "id": "08-agents-12-agent-recruiting",
       "lane": "08-agents",
       "slug": "12-agent-recruiting",
-      "status": "LIVE / CONDITIONAL",
+      "status": "POLICY / BUDGET-GATED",
       "eyebrow": "AI CAPO",
       "title": [
         "BUILD A HUMAN CREW.",
         "DISCLOSE THE MACHINE."
       ],
-      "body": "Useful recruiting can grow the organization and Capo License; any cash claim is separately budgeted and reviewed.",
+      "body": "Useful recruiting can grow the organization; any cash claim needs qualification, review and reserve funding.",
       "facts": [
         "Recruit through value, not spam",
         "Only real retained humans count",

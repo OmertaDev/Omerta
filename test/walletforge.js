@@ -10,7 +10,7 @@
 //   • FAIL-CLOSED — no reader refuses; a throwing reader refuses; neither guesses a history.
 //   • §10.4 ZERO — the whole flow writes NOT ONE `transactions` row.
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { WALLET_FORGE, FORGE_FAMILIES, REGIMEN, walletBands, forgeShape, forgeArchetype, forgeBonus, forgeBudgetExtra, disciplineLvlOf, CONSTANTS } from '../src/rules.js';
 import { __setReader } from '../src/walletforge.js';

@@ -19,7 +19,7 @@ if (native) {
 }
 Object.assign(process.env,{ DEPOT_PILOT:'on',RATE_LIMIT:'off',SOCIAL_VERIFY_MODE:'off',JWT_SECRET:'commercial-premises-integration-isolated-secret',
   MARKET_SEED:'commercial-premises-integration-fixture-seed',MOD_KEY:'commercial-premises-integration-fixture-mod' });
-const { buildServer }=await import('../src/server.js'), G=await import('../src/game.js');
+const { buildServer }=await import('./server-fixture.js'), G=await import('../src/game.js');
 const { runEstate }=await import('../src/social/estate.js'), P=await import('../src/commercialpremises.js');
 const { runLedgerInvariants }=await import('../src/invariants.js');
 const app=await buildServer(); let serial=0, keySerial=0;

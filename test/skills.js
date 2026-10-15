@@ -12,7 +12,7 @@ process.env.SEARCH_MS = '10000';    // 10s search (TEST-ONLY knob)
 // safehouse) — pin the season so the precondition is guaranteed rather than left to the calendar.
 process.env.SEASON_MOD = 'dead_quiet';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { SKILLS, M4, COMMISSION } from '../src/rules.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { recordPlayerIntel } from '../src/playerintel.js';

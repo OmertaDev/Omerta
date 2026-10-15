@@ -1,0 +1,534 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Not",
+        "ms":  85,
+        "character":  125,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "every",
+        "ms":  290,
+        "character":  129,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "rival",
+        "ms":  575,
+        "character":  135,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  910,
+        "character":  141,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "at",
+        "ms":  1070,
+        "character":  144,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  1215,
+        "character":  147,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "keyboard",
+        "ms":  1265,
+        "character":  149,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U02",
+        "ms":  2400,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "A",
+        "ms":  2485,
+        "character":  208,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "player",
+        "ms":  2565,
+        "character":  210,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  2885,
+        "character":  217,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "operate",
+        "ms":  3070,
+        "character":  221,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "an",
+        "ms":  3480,
+        "character":  229,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "agent",
+        "ms":  3600,
+        "character":  232,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U03",
+        "ms":  4660,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Here",
+        "ms":  4745,
+        "character":  288,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  4950,
+        "character":  293,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "reads",
+        "ms":  5065,
+        "character":  296,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "its",
+        "ms":  5310,
+        "character":  302,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "available",
+        "ms":  5440,
+        "character":  306,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "actions",
+        "ms":  5860,
+        "character":  316,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  6220,
+        "character":  324,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "takes",
+        "ms":  6380,
+        "character":  328,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  6650,
+        "character":  334,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "street",
+        "ms":  6695,
+        "character":  336,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "job",
+        "ms":  7005,
+        "character":  343,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U04",
+        "ms":  8045,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nerve",
+        "ms":  8130,
+        "character":  397,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "falls",
+        "ms":  8360,
+        "character":  403,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "cash",
+        "ms":  9180,
+        "character":  410,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  9470,
+        "character":  415,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "respect",
+        "ms":  9630,
+        "character":  419,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "change",
+        "ms":  10015,
+        "character":  427,
+        "length":  6
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U05",
+        "ms":  11130,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  11215,
+        "character":  484,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "next",
+        "ms":  11310,
+        "character":  488,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "decision",
+        "ms":  11560,
+        "character":  493,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "starts",
+        "ms":  11945,
+        "character":  502,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "from",
+        "ms":  12300,
+        "character":  509,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "that",
+        "ms":  12490,
+        "character":  514,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "new",
+        "ms":  12665,
+        "character":  519,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "state",
+        "ms":  12805,
+        "character":  523,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U06",
+        "ms":  13875,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Permissions",
+        "ms":  13960,
+        "character":  579,
+        "length":  11
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  14490,
+        "character":  591,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "resources",
+        "ms":  14650,
+        "character":  595,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "still",
+        "ms":  15185,
+        "character":  605,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "limit",
+        "ms":  15425,
+        "character":  611,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  15680,
+        "character":  617,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  15840,
+        "character":  622,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "can",
+        "ms":  15945,
+        "character":  625,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "do",
+        "ms":  16130,
+        "character":  629,
+        "length":  2
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U07",
+        "ms":  17030,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "The",
+        "ms":  17115,
+        "character":  682,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "city\u0027s",
+        "ms":  17195,
+        "character":  686,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "N",
+        "ms":  17550,
+        "character":  693,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "P",
+        "ms":  17735,
+        "character":  695,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "Cs",
+        "ms":  17905,
+        "character":  697,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "are",
+        "ms":  18335,
+        "character":  700,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "separate",
+        "ms":  18470,
+        "character":  704,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U08",
+        "ms":  19630,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Whether",
+        "ms":  19715,
+        "character":  763,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "you",
+        "ms":  19975,
+        "character":  771,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "bring",
+        "ms":  20125,
+        "character":  775,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "friends",
+        "ms":  20365,
+        "character":  781,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "or",
+        "ms":  20710,
+        "character":  789,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "build",
+        "ms":  20865,
+        "character":  792,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "an",
+        "ms":  21100,
+        "character":  798,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "agent",
+        "ms":  21225,
+        "character":  801,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  21950,
+        "character":  808,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "choices",
+        "ms":  22045,
+        "character":  812,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "still",
+        "ms":  22460,
+        "character":  820,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "have",
+        "ms":  22690,
+        "character":  826,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "consequences",
+        "ms":  22870,
+        "character":  831,
+        "length":  12
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C08-U08-end",
+        "ms":  24410,
+        "character":  0,
+        "length":  0
+    }
+]

@@ -1,0 +1,1597 @@
+{
+  "version": 1,
+  "createdAt": "2026-10-15T01:02:33.410Z",
+  "scope": "Test-only closed historical fixtures for lifecycle applicability, checkpoint recovery and backlog review. Positive controls execute exact fe4 application/data sources with unchanged b12 tool guards. Current C2 sources remain explicitly rejected. No current runtime, native, financial, migration, deployment or onchain qualification is transferred.",
+  "headBeforeFixtureCommit": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "runtimeSourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "historicalPositiveRevision": "fe4a75a8b21fc41fd3d3bc75cf7720612c581463",
+  "unchangedToolRevision": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+  "sourceFiles": [
+    {
+      "path": "test/rc1-lifecycle-applicability.js",
+      "originalBeforeCorrection": {
+        "rawSha256": "82195b923664bce981489c10154efec1d5dd575467684a94cd38225c2e280286",
+        "unchangedDuringOriginalDiagnostic": true
+      },
+      "final": {
+        "path": "test/rc1-lifecycle-applicability.js",
+        "rawSha256": "2c2698471aeeb360f8eed62f381bae4c724a7eb9f870fa6488086444292e9ec6",
+        "gitBlob": "92540b433f45dfdf80e1cce679903f5002151665"
+      },
+      "unchangedDuringFullHarness": true
+    },
+    {
+      "path": "test/rc1-checkpoint-recovery-review.js",
+      "originalBeforeCorrection": {
+        "rawSha256": "ebec3bca2072db798aab6f7492b28b3addf55974af9255e6da0fd4459e3d7dcd",
+        "unchangedDuringOriginalDiagnostic": true
+      },
+      "final": {
+        "path": "test/rc1-checkpoint-recovery-review.js",
+        "rawSha256": "625b6ebac8f69e5d738eb1690c64bd13b983b937a853f3014c812c95c98c9a8b",
+        "gitBlob": "45759fead3c07cd93e97603c131ba449d45141fd"
+      },
+      "unchangedDuringFullHarness": true
+    },
+    {
+      "path": "test/rc1-world-backlog-review.js",
+      "originalBeforeCorrection": {
+        "rawSha256": "72edd107dc07742ab25f4b11ff70081b0e73054d28d99f7bf9bece6d6edfe9b2",
+        "unchangedDuringOriginalDiagnostic": true
+      },
+      "final": {
+        "path": "test/rc1-world-backlog-review.js",
+        "rawSha256": "3b5a6ec14f6f815829d4dc0d6679fab3be811255ece941e11e42d086cc987797",
+        "gitBlob": "9915c066e14d5b160509bea2d7cf2544bad83ff3"
+      },
+      "unchangedDuringFullHarness": true
+    }
+  ],
+  "fixtureIntegration": {
+    "helper": {
+      "path": "test/lib/rc1-historical-source-fixture.js",
+      "rawSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d",
+      "owner": "Separately reviewed shared test fixture launcher"
+    },
+    "originalPositiveAssertions": "Preserved; each complete existing body executes in a fresh checked cold child.",
+    "executingInputs": "Historical src/data module and guard-read bytes are served from the same strictly bound Git profile; imported changed values are not taken from current modules.",
+    "backlogSourceRevision": "Explicit historical fixture revision, replacing HEAD only in this test fixture; no Git interception.",
+    "currentRefusals": "Each parent verifies exact C2 revision→blob→canonical SHA before LF, CRLF and tampered-source rejection by its unchanged guard.",
+    "backlogReadControl": "Only the exact diplomacy URL read is replaced for each negative case; fs.readFileSync is restored in finally, and one actual guard read is required per case.",
+    "databaseAndNetwork": "Each of ten cold fixtures completed with zero database/network attempts; no native or retained fixture flags supplied."
+  },
+  "closedCurrentRejectionTargets": [
+    {
+      "file": "src/made.js",
+      "blob": "cea5ee787cbdb4c87397e967cb821de771f079bd",
+      "canonicalLfSha256": "89decd4437290888d81602171e6de006d26da6596985f150bc3caeebe2c210e5",
+      "guard": "tools/rc1-lifecycle-applicability.js:28"
+    },
+    {
+      "file": "src/routes/coordination.js",
+      "blob": "d803eb4dfd59a8377720e9a3f381915bd120a166",
+      "canonicalLfSha256": "14906ce7b480b8acd325c4967df6e6129d99c08e3f00bec798cacebe469895fd",
+      "guard": "tools/rc1-checkpoint-recovery-review.js:87"
+    },
+    {
+      "file": "src/diplomacy.js",
+      "blob": "df60c9425c0796d06c5b230f4fd84594a0a269e1",
+      "canonicalLfSha256": "b6fbd0add3615773ac05c11a488c769af9d3f2ea695d5b6a4c7da0a3b7e56f9d",
+      "guard": "tools/rc1-world-backlog-review.js:96"
+    }
+  ],
+  "originalTailDiagnostic": {
+    "scope": "Independent diagnostic commands41-90 only; not a full harness pass or lifecycle replacement",
+    "commandPositionsInclusive": {
+      "first": 41,
+      "last": 90
+    },
+    "maxConcurrentCommands": 2,
+    "passed": 41,
+    "failed": [
+      {
+        "position": 48,
+        "command": "node test/rc1-lifecycle-applicability.js",
+        "exitCode": 1
+      },
+      {
+        "position": 49,
+        "command": "node test/rc1-checkpoint-recovery-review.js",
+        "exitCode": 1
+      },
+      {
+        "position": 63,
+        "command": "node test/rc1-car-melt-provenance.js",
+        "exitCode": 1
+      },
+      {
+        "position": 65,
+        "command": "node test/rc1-world-car-melt-witness.js",
+        "exitCode": 1
+      },
+      {
+        "position": 68,
+        "command": "node test/rc1-npc-car-acquisition.js",
+        "exitCode": 1
+      },
+      {
+        "position": 72,
+        "command": "node test/rc1-npc-boat-journal.js",
+        "exitCode": 1
+      },
+      {
+        "position": 76,
+        "command": "node test/rc1-npc-market-order-journal.js",
+        "exitCode": 1
+      },
+      {
+        "position": 77,
+        "command": "node test/rc1-npc-provenance-composition.js",
+        "exitCode": 1
+      },
+      {
+        "position": 85,
+        "command": "node test/rc1-world-backlog-review.js",
+        "exitCode": 1
+      }
+    ],
+    "sourceChangedDuringCommand": [],
+    "aggregate": {
+      "path": "output/release-2026-10-14/rc1-harness-tail-diagnostics-41-90-attempt1/aggregate.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 35401,
+      "sha256": "ad99b92980820fea4ffac24bdd04089dc51b308ac31d381f7b23faa0dda55099"
+    },
+    "logsAndActualExitReceipts": "Per-command raw .log and .exit.json retained only alongside the ignored aggregate; never presented as a full harness pass."
+  },
+  "focusedIntermediateRuns": [
+    {
+      "attempt": 1,
+      "scope": "Focused historical source fixture controls only; not a full harness pass or current runtime qualification",
+      "aggregate": {
+        "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/aggregate.json",
+        "storage": "Original checkout ignored output only; raw diagnostics are not published",
+        "bytes": 2685,
+        "sha256": "aa397bcd6b57e7f65767c8fe648dc362b8bc25944b7c7a39d4fb12e76890d181"
+      },
+      "results": [
+        {
+          "command": "node test/rc1-lifecycle-applicability.js",
+          "file": "test/rc1-lifecycle-applicability.js",
+          "startAt": "2026-10-15T00:52:24.422Z",
+          "endAt": "2026-10-15T00:52:31.698Z",
+          "durationMs": 7276,
+          "exitCode": 1,
+          "signal": null,
+          "sourceSha256Before": "f4779f6234176f902ca42408d061ec92ca3cd683ddeae5637984d33c92e54159",
+          "sourceSha256After": "f4779f6234176f902ca42408d061ec92ca3cd683ddeae5637984d33c92e54159",
+          "helperSha256Before": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "helperSha256After": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-lifecycle-applicability.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 949,
+            "sha256": "f2a91fcce0561d42c98b5402d07ecab6be0c30a39fd0e2bcb07ee91e5681cc3f"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-lifecycle-applicability.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 774,
+            "sha256": "833bfaf7d04329ffda6c8f51a872e336d14eedc9d0daa3319ae2dc567b3a3a2f"
+          }
+        },
+        {
+          "command": "node test/rc1-checkpoint-recovery-review.js",
+          "file": "test/rc1-checkpoint-recovery-review.js",
+          "startAt": "2026-10-15T00:52:31.701Z",
+          "endAt": "2026-10-15T00:52:57.419Z",
+          "durationMs": 25718,
+          "exitCode": 1,
+          "signal": null,
+          "sourceSha256Before": "2f3063130ca4afa05cf981a486964dd4752a930c7c0adc360fad942fa31e1fbf",
+          "sourceSha256After": "2f3063130ca4afa05cf981a486964dd4752a930c7c0adc360fad942fa31e1fbf",
+          "helperSha256Before": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "helperSha256After": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-checkpoint-recovery-review.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 1248,
+            "sha256": "2fd952aac23b393f3e4c36b22dbc837b398bdd832a9cd2fc2842d1f1d5203cfa"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-checkpoint-recovery-review.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 785,
+            "sha256": "6f4b5c3baa090fa4e598d51064dfcc1239e1f0432dc9b683b4b1cea6ed6bd17c"
+          }
+        },
+        {
+          "command": "node test/rc1-world-backlog-review.js",
+          "file": "test/rc1-world-backlog-review.js",
+          "startAt": "2026-10-15T00:52:57.421Z",
+          "endAt": "2026-10-15T00:53:06.020Z",
+          "durationMs": 8599,
+          "exitCode": 1,
+          "signal": null,
+          "sourceSha256Before": "343fb1e85b2098fde012a9449187d77c4d8bdc3e2cb06e570d5b779e24abfe39",
+          "sourceSha256After": "343fb1e85b2098fde012a9449187d77c4d8bdc3e2cb06e570d5b779e24abfe39",
+          "helperSha256Before": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "helperSha256After": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-world-backlog-review.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 991,
+            "sha256": "a8debf10e6276453051dc59246e0aaef25ce6a855d93d54e0816ba7866268a18"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt1/rc1-world-backlog-review.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 765,
+            "sha256": "f9dfb623f7811e4de0648d4f0cdf923c3209f40c856fd78a39797d08281b1fe7"
+          }
+        }
+      ],
+      "qualification": "All historical bodies passed but parent wrapper failed on an incorrect return-value assertion, subsequently removed."
+    },
+    {
+      "attempt": 2,
+      "scope": "Focused historical source fixture controls only; not a full harness pass or current runtime qualification",
+      "aggregate": {
+        "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/aggregate.json",
+        "storage": "Original checkout ignored output only; raw diagnostics are not published",
+        "bytes": 2684,
+        "sha256": "e48e2ef3b95ae8b99c3f5f0451fb97364f88a3540157e574e1c565960c68d27d"
+      },
+      "results": [
+        {
+          "command": "node test/rc1-lifecycle-applicability.js",
+          "file": "test/rc1-lifecycle-applicability.js",
+          "startAt": "2026-10-15T00:53:25.932Z",
+          "endAt": "2026-10-15T00:53:32.615Z",
+          "durationMs": 6683,
+          "exitCode": 0,
+          "signal": null,
+          "sourceSha256Before": "2c2698471aeeb360f8eed62f381bae4c724a7eb9f870fa6488086444292e9ec6",
+          "sourceSha256After": "2c2698471aeeb360f8eed62f381bae4c724a7eb9f870fa6488086444292e9ec6",
+          "helperSha256Before": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "helperSha256After": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-lifecycle-applicability.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 462,
+            "sha256": "451378c34645be96cace34f8d3da26b21d6db63b699734f40a187bf6e8c227dc"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-lifecycle-applicability.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 774,
+            "sha256": "75d1679096d671ed44edf56ca94050fb1ef01e2c4f00a5d07e741215ba2b254d"
+          }
+        },
+        {
+          "command": "node test/rc1-checkpoint-recovery-review.js",
+          "file": "test/rc1-checkpoint-recovery-review.js",
+          "startAt": "2026-10-15T00:53:32.617Z",
+          "endAt": "2026-10-15T00:53:58.612Z",
+          "durationMs": 25995,
+          "exitCode": 0,
+          "signal": null,
+          "sourceSha256Before": "625b6ebac8f69e5d738eb1690c64bd13b983b937a853f3014c812c95c98c9a8b",
+          "sourceSha256After": "625b6ebac8f69e5d738eb1690c64bd13b983b937a853f3014c812c95c98c9a8b",
+          "helperSha256Before": "53c729bffd1bad0fbc1d3938c9c59ff741e2a9f493aa4ab9e231d3825f8a90f7",
+          "helperSha256After": "d1fcca40611549969488b46edb82cc6ba365dd6c56bacaa7c4984da3b104f839",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-checkpoint-recovery-review.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 758,
+            "sha256": "affc05fc7c3b4ae32fc34b4b5f24f37bda9ea943e393e3431ccf1d252f7bf5af"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-checkpoint-recovery-review.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 784,
+            "sha256": "d9d9f9231ae32932e6f0050499571c5ccecea80c965a87a2192b98bff700ccce"
+          }
+        },
+        {
+          "command": "node test/rc1-world-backlog-review.js",
+          "file": "test/rc1-world-backlog-review.js",
+          "startAt": "2026-10-15T00:53:58.614Z",
+          "endAt": "2026-10-15T00:54:07.666Z",
+          "durationMs": 9052,
+          "exitCode": 0,
+          "signal": null,
+          "sourceSha256Before": "3b5a6ec14f6f815829d4dc0d6679fab3be811255ece941e11e42d086cc987797",
+          "sourceSha256After": "3b5a6ec14f6f815829d4dc0d6679fab3be811255ece941e11e42d086cc987797",
+          "helperSha256Before": "d1fcca40611549969488b46edb82cc6ba365dd6c56bacaa7c4984da3b104f839",
+          "helperSha256After": "d1fcca40611549969488b46edb82cc6ba365dd6c56bacaa7c4984da3b104f839",
+          "log": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-world-backlog-review.log",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 534,
+            "sha256": "650218db2710b5bcb58798104037d14e5ae08bcc9b7dd444a90274dd64a3f8ef"
+          },
+          "actualExitReceipt": {
+            "path": "output/release-2026-10-14/rc1-recovery-fixture-focused-attempt2/rc1-world-backlog-review.log.exit.json",
+            "storage": "Original checkout ignored output only; raw diagnostics are not published",
+            "bytes": 765,
+            "sha256": "fc6190906cfe6b45f3c486faae4e3963b50b869c587c369e333899c44b6e3e84"
+          }
+        }
+      ],
+      "qualification": "All commands exited0; checkpoint helper bytes changed during the run, so final full-harness evidence supersedes this intermediate result."
+    }
+  ],
+  "finalFullHarness": {
+    "command": "npm run test:rc1:harness",
+    "startedAt": "2026-10-15T00:57:11.896Z",
+    "endAt": "2026-10-15T01:01:32.324Z",
+    "durationMs": 260428,
+    "actualExitCode": 0,
+    "signal": null,
+    "uninterrupted": true,
+    "all90Passed": true,
+    "commandOutcomeMethod": "Every command is joined with &&. Complete npm exit0 establishes each command exit0; individual durations are not measured.",
+    "commandOutcomes": [
+      {
+        "position": 1,
+        "command": "node test/rc1-native-proof.js",
+        "file": "test/rc1-native-proof.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 2,
+        "command": "node test/rc1-native-worker-schedule.js",
+        "file": "test/rc1-native-worker-schedule.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 3,
+        "command": "node test/rc1-native-query-tape.js",
+        "file": "test/rc1-native-query-tape.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 4,
+        "command": "node test/rc1-native-player-policy.js",
+        "file": "test/rc1-native-player-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 5,
+        "command": "node test/rc1-cohort-policy.js",
+        "file": "test/rc1-cohort-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 6,
+        "command": "node test/rc1-native-actor-replay.js",
+        "file": "test/rc1-native-actor-replay.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 7,
+        "command": "node test/rc1-world-diagnostics.js",
+        "file": "test/rc1-world-diagnostics.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 8,
+        "command": "node test/rc1-reachability-diagnostics.js",
+        "file": "test/rc1-reachability-diagnostics.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 9,
+        "command": "node test/rc1-native-commit-observer.js",
+        "file": "test/rc1-native-commit-observer.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 10,
+        "command": "node test/rc1-world-resource-observer.js",
+        "file": "test/rc1-world-resource-observer.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 11,
+        "command": "node test/rc1-browser-controls.js",
+        "file": "test/rc1-browser-controls.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 12,
+        "command": "node test/rc1-knowledge-diagnostics.js",
+        "file": "test/rc1-knowledge-diagnostics.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 13,
+        "command": "node test/rc1-mystery-policies.js",
+        "file": "test/rc1-mystery-policies.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 14,
+        "command": "node test/rc1-aggression-policy.js",
+        "file": "test/rc1-aggression-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 15,
+        "command": "node test/rc1-loan-lifecycle-journal.js",
+        "file": "test/rc1-loan-lifecycle-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 16,
+        "command": "node test/rc1-churn-policy.js",
+        "file": "test/rc1-churn-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 17,
+        "command": "node test/rc1-capital-lifecycle-journal.js",
+        "file": "test/rc1-capital-lifecycle-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 18,
+        "command": "node test/rc1-browser-receipt.js",
+        "file": "test/rc1-browser-receipt.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 19,
+        "command": "node test/rc1-season-journal.js",
+        "file": "test/rc1-season-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 20,
+        "command": "node test/rc1-market-policy.js",
+        "file": "test/rc1-market-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 21,
+        "command": "node test/rc1-market-world-adapter.js",
+        "file": "test/rc1-market-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 22,
+        "command": "node test/rc1-native-run-guardrails.js",
+        "file": "test/rc1-native-run-guardrails.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 23,
+        "command": "node test/rc1-law-policy.js",
+        "file": "test/rc1-law-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 24,
+        "command": "node test/rc1-law-world-adapter.js",
+        "file": "test/rc1-law-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 25,
+        "command": "node test/rc1-native-query-order.js",
+        "file": "test/rc1-native-query-order.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 26,
+        "command": "node test/rc1-browser-toast-controls.js",
+        "file": "test/rc1-browser-toast-controls.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 27,
+        "command": "node test/rc1-family-policy.js",
+        "file": "test/rc1-family-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 28,
+        "command": "node test/rc1-family-world-adapter.js",
+        "file": "test/rc1-family-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 29,
+        "command": "node test/rc1-war-world-adapter.js",
+        "file": "test/rc1-war-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 30,
+        "command": "node test/rc1-family-cash-ammo-journal.js",
+        "file": "test/rc1-family-cash-ammo-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 31,
+        "command": "node test/rc1-omr-journal.js",
+        "file": "test/rc1-omr-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 32,
+        "command": "node test/rc1-omr-exchange.js",
+        "file": "test/rc1-omr-exchange.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 33,
+        "command": "node test/rc1-alliance-policy.js",
+        "file": "test/rc1-alliance-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 34,
+        "command": "node test/rc1-known-command-blockers.js",
+        "file": "test/rc1-known-command-blockers.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 35,
+        "command": "node test/rc1-turf-policy.js",
+        "file": "test/rc1-turf-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 36,
+        "command": "node test/rc1-native-failure-reducer.js",
+        "file": "test/rc1-native-failure-reducer.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 37,
+        "command": "node test/rc1-native-proof-stream.js",
+        "file": "test/rc1-native-proof-stream.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 38,
+        "command": "node test/rc1-browser-board-refresh.js",
+        "file": "test/rc1-browser-board-refresh.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 39,
+        "command": "node test/rc1-car-journal.js",
+        "file": "test/rc1-car-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 40,
+        "command": "node test/rc1-npc-retirement-journal.js",
+        "file": "test/rc1-npc-retirement-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 41,
+        "command": "node test/rc1-alliance-world-adapter.js",
+        "file": "test/rc1-alliance-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 42,
+        "command": "node test/rc1-alliance-continuous.js",
+        "file": "test/rc1-alliance-continuous.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 43,
+        "command": "node test/rc1-resource-pressure-policy.js",
+        "file": "test/rc1-resource-pressure-policy.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 44,
+        "command": "node test/rc1-pressure-world-adapter.js",
+        "file": "test/rc1-pressure-world-adapter.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 45,
+        "command": "node test/rc1-world-economy-metrics.js",
+        "file": "test/rc1-world-economy-metrics.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 46,
+        "command": "node test/rc1-world-qualification.js",
+        "file": "test/rc1-world-qualification.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 47,
+        "command": "node test/rc1-world-duration-evidence.js",
+        "file": "test/rc1-world-duration-evidence.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 48,
+        "command": "node test/rc1-lifecycle-applicability.js",
+        "file": "test/rc1-lifecycle-applicability.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 49,
+        "command": "node test/rc1-checkpoint-recovery-review.js",
+        "file": "test/rc1-checkpoint-recovery-review.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 50,
+        "command": "node test/rc1-native-quiescent-group.js",
+        "file": "test/rc1-native-quiescent-group.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 51,
+        "command": "node test/rc1-world-ammo-escrow.js",
+        "file": "test/rc1-world-ammo-escrow.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 52,
+        "command": "node test/rc1-world-pressure-cash.js",
+        "file": "test/rc1-world-pressure-cash.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 53,
+        "command": "node test/rc1-alliance-continuation.js",
+        "file": "test/rc1-alliance-continuation.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 54,
+        "command": "node test/rc1-native-proof-gzip.js",
+        "file": "test/rc1-native-proof-gzip.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 55,
+        "command": "node test/rc1-world-family-entry.js",
+        "file": "test/rc1-world-family-entry.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 56,
+        "command": "node test/rc1-world-history-storage.js",
+        "file": "test/rc1-world-history-storage.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 57,
+        "command": "node test/rc1-world-observer-load-order.js",
+        "file": "test/rc1-world-observer-load-order.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 58,
+        "command": "node test/rc1-world-family-dissolution.js",
+        "file": "test/rc1-world-family-dissolution.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 59,
+        "command": "node test/rc1-world-turf-terminal.js",
+        "file": "test/rc1-world-turf-terminal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 60,
+        "command": "node test/rc1-world-family-npc.js",
+        "file": "test/rc1-world-family-npc.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 61,
+        "command": "node test/rc1-observer-serialization.js",
+        "file": "test/rc1-observer-serialization.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 62,
+        "command": "node test/rc1-city-lock-release.js",
+        "file": "test/rc1-city-lock-release.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 63,
+        "command": "node test/rc1-car-melt-provenance.js",
+        "file": "test/rc1-car-melt-provenance.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 64,
+        "command": "node test/rc1-player-car-provenance.js",
+        "file": "test/rc1-player-car-provenance.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 65,
+        "command": "node test/rc1-world-car-melt-witness.js",
+        "file": "test/rc1-world-car-melt-witness.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 66,
+        "command": "node test/rc1-history-error-preservation.js",
+        "file": "test/rc1-history-error-preservation.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 67,
+        "command": "node test/rc1-season-conversion-journal.js",
+        "file": "test/rc1-season-conversion-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 68,
+        "command": "node test/rc1-npc-car-acquisition.js",
+        "file": "test/rc1-npc-car-acquisition.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 69,
+        "command": "node test/rc1-world-npc-family-lineage.js",
+        "file": "test/rc1-world-npc-family-lineage.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 70,
+        "command": "node test/rc1-season-crown-journal.js",
+        "file": "test/rc1-season-crown-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 71,
+        "command": "node test/rc1-season-election-provenance.js",
+        "file": "test/rc1-season-election-provenance.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 72,
+        "command": "node test/rc1-npc-boat-journal.js",
+        "file": "test/rc1-npc-boat-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 73,
+        "command": "node test/rc1-npc-boat-fault.js",
+        "file": "test/rc1-npc-boat-fault.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 74,
+        "command": "node test/rc1-npc-cargo-journal.js",
+        "file": "test/rc1-npc-cargo-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 75,
+        "command": "node test/rc1-npc-family-recruitment.js",
+        "file": "test/rc1-npc-family-recruitment.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 76,
+        "command": "node test/rc1-npc-market-order-journal.js",
+        "file": "test/rc1-npc-market-order-journal.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 77,
+        "command": "node test/rc1-npc-provenance-composition.js",
+        "file": "test/rc1-npc-provenance-composition.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 78,
+        "command": "node test/rc1-world-worker-transitions.js",
+        "file": "test/rc1-world-worker-transitions.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 79,
+        "command": "node test/rc1-world-lifecycle-resources.js",
+        "file": "test/rc1-world-lifecycle-resources.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 80,
+        "command": "node test/rc1-world-order-resources.js",
+        "file": "test/rc1-world-order-resources.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 81,
+        "command": "node test/rc1-world-market-resources.js",
+        "file": "test/rc1-world-market-resources.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 82,
+        "command": "node test/rc1-intel-source-compatibility.js",
+        "file": "test/rc1-intel-source-compatibility.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 83,
+        "command": "node test/rc1-loan-source-compatibility.js",
+        "file": "test/rc1-loan-source-compatibility.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 84,
+        "command": "node test/rc1-invoice-source-compatibility.js",
+        "file": "test/rc1-invoice-source-compatibility.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 85,
+        "command": "node test/rc1-world-backlog-review.js",
+        "file": "test/rc1-world-backlog-review.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 86,
+        "command": "node test/rc1-world-checkpoint-series.js",
+        "file": "test/rc1-world-checkpoint-series.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 87,
+        "command": "node test/rc1-realtime-soak.js",
+        "file": "test/rc1-realtime-soak.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 88,
+        "command": "node test/rc1-world-metrics-review.js",
+        "file": "test/rc1-world-metrics-review.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 89,
+        "command": "node test/rc1-scarcity-initialization.js",
+        "file": "test/rc1-scarcity-initialization.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      },
+      {
+        "position": 90,
+        "command": "node test/rc1-world-cell-admission.js",
+        "file": "test/rc1-world-cell-admission.js",
+        "exitCode": 0,
+        "status": "PASS_FROM_COMPLETE_CONJUNCTIVE_SCRIPT"
+      }
+    ],
+    "historicalFixturePassMarkers": [
+      "PASS_HISTORICAL_FIXTURE: test/rc1-npc-retirement-journal.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-lifecycle-applicability.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-checkpoint-recovery-review.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-car-melt-provenance.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-world-car-melt-witness.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-npc-car-acquisition.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-npc-boat-journal.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-npc-market-order-journal.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-npc-provenance-composition.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification",
+      "PASS_HISTORICAL_FIXTURE: test/rc1-world-backlog-review.js; exact fe4 application inputs; b12 tools; database/network attempts=0/0; no current native or financial qualification"
+    ],
+    "headBefore": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "headAfter": "b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16",
+    "allCapturedSourceBytesUnchanged": true,
+    "frozenFileHashesBeforeAndAfter": [
+      {
+        "path": "test/rc1-native-proof.js",
+        "rawSha256": "46cec53853597d374998952a3aec0e54cd250d446c54ac546bddc5770e9838d9",
+        "gitBlob": "bd1a8a304aef7ec3cb1344c49c1ffb8abcb345db"
+      },
+      {
+        "path": "test/rc1-native-worker-schedule.js",
+        "rawSha256": "03b72cb7abdaa7dbc65af0fbf9c5c2437211993c9b72e2bbd0ef0b7a7127747c",
+        "gitBlob": "0f7e646584a3c78ad3539b5bfa3dbe820585abfa"
+      },
+      {
+        "path": "test/rc1-native-query-tape.js",
+        "rawSha256": "9dda4ef96565c25cc8c177cb6bbac4e3d5b5e89ba320937fa275158dd35f9af1",
+        "gitBlob": "0596d234ab4bf984b4d2c8b64216d073097c79bf"
+      },
+      {
+        "path": "test/rc1-native-player-policy.js",
+        "rawSha256": "2de787a6ac769b7f34440d3faff1f37f006722ff1ee8fbec25ccc9c67224ae0b",
+        "gitBlob": "6cd88aa12a143c7290c5d9eea6ea68c64a65ccfa"
+      },
+      {
+        "path": "test/rc1-cohort-policy.js",
+        "rawSha256": "a2dbfdb2957708f6f5b5e40cd448d1f6727f0fca46856a3d798b670ef80b37e2",
+        "gitBlob": "5a48523d9475578fc158fc93c7219bbee565e684"
+      },
+      {
+        "path": "test/rc1-native-actor-replay.js",
+        "rawSha256": "214994e157368a683b4407ec2b497973462b1a341def41f05b1e76d92b91f579",
+        "gitBlob": "d36f4f321549d12bdf96e2e7c2d22127eb39dc2d"
+      },
+      {
+        "path": "test/rc1-world-diagnostics.js",
+        "rawSha256": "84f28d08f5f461dfb0113686e671fbb6275a3157b218e0edd69ad8b7f231b23c",
+        "gitBlob": "4af8a29b81849c9ee0cf2dd44699d4b188d44ea1"
+      },
+      {
+        "path": "test/rc1-reachability-diagnostics.js",
+        "rawSha256": "5d8f02aded9d50a5fb707fdf95578155cac400aa57e21cd6cfa896abd4dab016",
+        "gitBlob": "e3a3284fe724c65682df81ee469f2e92950993b8"
+      },
+      {
+        "path": "test/rc1-native-commit-observer.js",
+        "rawSha256": "8b7225f3a78b925bedcb20054abb92548c5af80cf27001002937d93bc5435d68",
+        "gitBlob": "637391157b28a62ef37b7f9c0f39ec9adba7c0cb"
+      },
+      {
+        "path": "test/rc1-world-resource-observer.js",
+        "rawSha256": "a7b622db9e521d61fc4d3d9056cb846d08de4ac2139bf2f9a8d01566ab215bbe",
+        "gitBlob": "6d283627b386978095ed1a7b91d5eed7083ebae9"
+      },
+      {
+        "path": "test/rc1-browser-controls.js",
+        "rawSha256": "b3b088b5b0f857b0332911f81d8ecbfe985ba94cd8daaa6bd2543739483efa27",
+        "gitBlob": "43e71288413dfe5d73e025678f44ee3655291e3b"
+      },
+      {
+        "path": "test/rc1-knowledge-diagnostics.js",
+        "rawSha256": "e0dfc18ba500e007a4ac63452bf27b16ae7ddbba0ae3bc5512a77d8121e715f4",
+        "gitBlob": "4d4ad73f336c4ec00f250a79a5e09a4bc221962d"
+      },
+      {
+        "path": "test/rc1-mystery-policies.js",
+        "rawSha256": "cb4a06820f766c7d8db31791a3823cf74db4431a7d35e87c58fecfc7efada669",
+        "gitBlob": "983228290121c5a105b60facd00eb40fd9ba5f2c"
+      },
+      {
+        "path": "test/rc1-aggression-policy.js",
+        "rawSha256": "0f580a40d31f80c994314289768c26ac607977dc664c5b6bcdc0240a84d8a6b5",
+        "gitBlob": "3a880f9280de28cacdca419218c673e937aa41cc"
+      },
+      {
+        "path": "test/rc1-loan-lifecycle-journal.js",
+        "rawSha256": "572999ee8ffa8864e662e36b464826bd60f14a8c276f37ecfa8af684268488fe",
+        "gitBlob": "a45f7bf995fac1d9c447e199a7c506d58b4ec613"
+      },
+      {
+        "path": "test/rc1-churn-policy.js",
+        "rawSha256": "c807340b69d5e34fdca13526fef04ceba1217cd215492e63925df66cadacb876",
+        "gitBlob": "7c91ebc4b8bd33b57d290bc137a20995d5367b26"
+      },
+      {
+        "path": "test/rc1-capital-lifecycle-journal.js",
+        "rawSha256": "6c33b3339ed9e889b4fd9892d8753ddbe896f312311d4ee1744c43a18c4f6f93",
+        "gitBlob": "22c6b8c542e821a847bd9ac4097698baf9956755"
+      },
+      {
+        "path": "test/rc1-browser-receipt.js",
+        "rawSha256": "4178a0119fe7aaf2b43443aeb8a98cb411485523f33c6d5399a3546ff898564f",
+        "gitBlob": "eef6ed2cf770fbaf477dd0197e18bcc55e9100b3"
+      },
+      {
+        "path": "test/rc1-season-journal.js",
+        "rawSha256": "c0d5d55434cd78a369c5f3a7f3702011720e05fd0dc66a4f5f7f776a25abe53a",
+        "gitBlob": "473f3ef1b99bd3db4de57ec81e5c5989d3ebee27"
+      },
+      {
+        "path": "test/rc1-market-policy.js",
+        "rawSha256": "0b0e126e4eb238e0dc4f091f4025a50cc5a8cccf1459f96bb62bf692ad3ed1b0",
+        "gitBlob": "3dffa5263adfdbb1944218d04ab085b02f987e61"
+      },
+      {
+        "path": "test/rc1-market-world-adapter.js",
+        "rawSha256": "fdf61a16accac6a252b80daf8efa48d541c0a3ebe53c9e7d4d2eb62962a803a6",
+        "gitBlob": "a5df2d7e26337f4e787b1b96a8e24a002fb6c169"
+      },
+      {
+        "path": "test/rc1-native-run-guardrails.js",
+        "rawSha256": "399fe3f51d23e844353a397647303c9d708e44ba442cc0170de60c62b2eebbba",
+        "gitBlob": "c143ea166329ecc441fc34218f0d7748f9890fdf"
+      },
+      {
+        "path": "test/rc1-law-policy.js",
+        "rawSha256": "4df9fc616da9ff6bb9e91faa26feb1342faf6f1e571e5710d21ea17f45d1fc65",
+        "gitBlob": "65876ddd78916a8575cbce15b43b6c522c9f2751"
+      },
+      {
+        "path": "test/rc1-law-world-adapter.js",
+        "rawSha256": "df53e064e0b150cab4905a33dbebbb5f52ce265186a80f427afd972c3a0d2035",
+        "gitBlob": "c33de865e2761db79cc1eeb4807b2ec09a40804d"
+      },
+      {
+        "path": "test/rc1-native-query-order.js",
+        "rawSha256": "dba9f66b4007a873ebcddf9d9c73501b52a2e424d431ca6f358dda5974f9bcfb",
+        "gitBlob": "579952af3d5a8e49d6bbca693816833bc3329c97"
+      },
+      {
+        "path": "test/rc1-browser-toast-controls.js",
+        "rawSha256": "1a3df899e86ff80f8ae5bcb6a115c2b7bc3a12d643cc85133ce4417f6e7a2fd5",
+        "gitBlob": "a1ed5e5941235cf02a6e5b6f5909893b1738225b"
+      },
+      {
+        "path": "test/rc1-family-policy.js",
+        "rawSha256": "aeba1d5945c0185c468883c6354ad19cbac32601252c8e0349f3fed1862b944c",
+        "gitBlob": "e1f73cccfe0338ea8e6bc0badbe3b7b079429fcf"
+      },
+      {
+        "path": "test/rc1-family-world-adapter.js",
+        "rawSha256": "647de9f36d8947ec60472c33d67affe612cc8513185ed195ae732b8e66170566",
+        "gitBlob": "5241acb09ce0d2535986749c1ba582184e023cd7"
+      },
+      {
+        "path": "test/rc1-war-world-adapter.js",
+        "rawSha256": "feb87f2bd1883b6fe00c5566327838afd53aa28bf1ef15897160c267eb3fb0b2",
+        "gitBlob": "1326fc7372d79f695d981533950cd838acc3ba96"
+      },
+      {
+        "path": "test/rc1-family-cash-ammo-journal.js",
+        "rawSha256": "c3a51db8d0c5fc1ef650eb91cf8c5619e4afe63af3e143a694e66ce0fa077f8d",
+        "gitBlob": "22ae123bc4c94d1edae30901619e7e77e92e07b7"
+      },
+      {
+        "path": "test/rc1-omr-journal.js",
+        "rawSha256": "30b4587777a2f38c14ea61880d4421ecade078bd529cec1506c31b023e958de2",
+        "gitBlob": "57206c6ed098624b6e58aa34e91daa5a9b89c045"
+      },
+      {
+        "path": "test/rc1-omr-exchange.js",
+        "rawSha256": "a7cec18397c35b9fb32d00db72726529b379fd06b74c69732a88970da2036bac",
+        "gitBlob": "bc026ea85a5e248c86d1dffba8e18ec3aee19804"
+      },
+      {
+        "path": "test/rc1-alliance-policy.js",
+        "rawSha256": "6c215cf2425f49caae204fd87c0470b5e09ab96d8f9ee52be63b8899a4a6aa57",
+        "gitBlob": "8c2dcafce9c5ee44850f0ef1a8820347b9711c93"
+      },
+      {
+        "path": "test/rc1-known-command-blockers.js",
+        "rawSha256": "c92d7c70fecffb1b4ce7d12d3e444eebc29bd75eb51fdfd7622032e7b0e3532d",
+        "gitBlob": "91c9fe44944013a0b4a80b8f9f501e251d31d125"
+      },
+      {
+        "path": "test/rc1-turf-policy.js",
+        "rawSha256": "9f54fbea026354c0a44438fe2ebb1b3ee9ebca336c804c36d7151876038f007a",
+        "gitBlob": "6fb633aaa4be1de1fdf32a6a1f93331049eb06a9"
+      },
+      {
+        "path": "test/rc1-native-failure-reducer.js",
+        "rawSha256": "2b49af55ef5cecd74bdd718edd0126587ca9d9110287babad952e433fdef60a3",
+        "gitBlob": "56a640d21f81aee19ffda054b6416189f94d5aed"
+      },
+      {
+        "path": "test/rc1-native-proof-stream.js",
+        "rawSha256": "49816b906a0e0ea044c6cc6659170ab73615d890059377485724c6752afe4964",
+        "gitBlob": "954a234b17486049157fc38ebc7222e14666d6a0"
+      },
+      {
+        "path": "test/rc1-browser-board-refresh.js",
+        "rawSha256": "75d3a4de1ec0ff8faab3cb06eb70fff13982ad1276001a590dc413b6df514a1b",
+        "gitBlob": "be1bc6718e185a5b8a135153cf4828c75ac82b35"
+      },
+      {
+        "path": "test/rc1-car-journal.js",
+        "rawSha256": "3be2cc9f59bac74f846f0b70a8539ec6f9fbd479f1cbd50f5e9327d46e3fa633",
+        "gitBlob": "c8600d9e56e871689bd855f3643c9001177e23c8"
+      },
+      {
+        "path": "test/rc1-npc-retirement-journal.js",
+        "rawSha256": "e8254a244d31fb267102970d41b47c9e86c173f594c7216a7bb94efb178809e9",
+        "gitBlob": "b1fdd4c7861ceee9a6ca48f2eb3664c2a333541e"
+      },
+      {
+        "path": "test/rc1-alliance-world-adapter.js",
+        "rawSha256": "114b603fd82d984a5aeba64693f8f78c84c6c294fcdef8af03b60b2db19c9c88",
+        "gitBlob": "dc86310e8a52362e493c39c19e25f4c94555b3d8"
+      },
+      {
+        "path": "test/rc1-alliance-continuous.js",
+        "rawSha256": "adf58de38e771a22f9d797bc731a64ecd3527b74a383a9dc02d8b4f829bfab49",
+        "gitBlob": "4f3abf0a2039450cb74c6d136918ee18540c014d"
+      },
+      {
+        "path": "test/rc1-resource-pressure-policy.js",
+        "rawSha256": "0bfae55335e5eac9b4432f259c42647e12a1f275856d8c473bbe6289dd226851",
+        "gitBlob": "32ad982526e112c28198cb4c1e55553c0681d1f6"
+      },
+      {
+        "path": "test/rc1-pressure-world-adapter.js",
+        "rawSha256": "7f5df973e495f68748dce3dfa48a8d71722a45a944b61eda2aab05067dbef10e",
+        "gitBlob": "882a551203a8b45f801398d8817bba4764715d06"
+      },
+      {
+        "path": "test/rc1-world-economy-metrics.js",
+        "rawSha256": "1bced4cb660720ae0597ce87dde039168f72550e6f2ad623e012cfa1de7eb394",
+        "gitBlob": "3ef2b02c95580705573d397895930ceee65bfd18"
+      },
+      {
+        "path": "test/rc1-world-qualification.js",
+        "rawSha256": "35adf29e44cef18ed65b0d11e978bc577c7e04af023466d7bd52fee17f48cc3b",
+        "gitBlob": "524951e92fe3f6ff3c89168c7955a41426444ca7"
+      },
+      {
+        "path": "test/rc1-world-duration-evidence.js",
+        "rawSha256": "4709ff70be79f395d74319d545b7907a8821f7dcaa09b824270241e982c90bb4",
+        "gitBlob": "601f8ea3efb5021e1c86cc307031c4cf1c279241"
+      },
+      {
+        "path": "test/rc1-lifecycle-applicability.js",
+        "rawSha256": "2c2698471aeeb360f8eed62f381bae4c724a7eb9f870fa6488086444292e9ec6",
+        "gitBlob": "92540b433f45dfdf80e1cce679903f5002151665"
+      },
+      {
+        "path": "test/rc1-checkpoint-recovery-review.js",
+        "rawSha256": "625b6ebac8f69e5d738eb1690c64bd13b983b937a853f3014c812c95c98c9a8b",
+        "gitBlob": "45759fead3c07cd93e97603c131ba449d45141fd"
+      },
+      {
+        "path": "test/rc1-native-quiescent-group.js",
+        "rawSha256": "a1d954564e419d5cc6bd5cc897c0b1aaef49b8ac4d313bd01edbff9290ba43c8",
+        "gitBlob": "c137d487cf6d16a3373bd81bff96442731a14d9e"
+      },
+      {
+        "path": "test/rc1-world-ammo-escrow.js",
+        "rawSha256": "1b468b951df5aed11eb21ba3155b33b656d6534da0fe3067ab7e7dd895f0eb26",
+        "gitBlob": "17f8f9188984af885b504d20610bdf1c3f321381"
+      },
+      {
+        "path": "test/rc1-world-pressure-cash.js",
+        "rawSha256": "fa3e09bd0d3856619a2b7a13a167a39e910423009befb11cf5f000a60b67a0b8",
+        "gitBlob": "28edf61bcee101eb1ba62a66953370ff07df357d"
+      },
+      {
+        "path": "test/rc1-alliance-continuation.js",
+        "rawSha256": "7da0f45007ffce93808a18ebf9224fcbadbb83007a5340bb97973bd7e9fcafa2",
+        "gitBlob": "97e79b70cebe123edbecfef5c70599824aac20b8"
+      },
+      {
+        "path": "test/rc1-native-proof-gzip.js",
+        "rawSha256": "16932a78b28c7092ff3d181f573db49a5459f09028f2e10322c0a7856b33a906",
+        "gitBlob": "e968e1b0733f4fb955f29ec378eb20bc093fcdde"
+      },
+      {
+        "path": "test/rc1-world-family-entry.js",
+        "rawSha256": "3284e8b209f252a5216fec846a771884119387b0adbec72fc1493ba1c917bfaa",
+        "gitBlob": "dab8d6964b97393a81d25bf1c0eb0ed3a156418c"
+      },
+      {
+        "path": "test/rc1-world-history-storage.js",
+        "rawSha256": "e44f89f4707ad62227f1382dc6d4dccb5b7c2ee7d3d2db6ab83a305cdf33fcae",
+        "gitBlob": "b3d08c95a53ed15faf0c10b740039f131d791e9a"
+      },
+      {
+        "path": "test/rc1-world-observer-load-order.js",
+        "rawSha256": "4ba4d8a527de0a5433a7a26088c10b34e4dbfeaca70929d2e92257326ba7333d",
+        "gitBlob": "e17931eba1df5fa93da1088418b1e13aa8cf6813"
+      },
+      {
+        "path": "test/rc1-world-family-dissolution.js",
+        "rawSha256": "0fcc7614a3a38d70da9a7f10adee218e6bd6ea580cdfe9bbf16667b78ba0fa44",
+        "gitBlob": "0d71fd0fb860c18c9446c12c880737f5d9264d4a"
+      },
+      {
+        "path": "test/rc1-world-turf-terminal.js",
+        "rawSha256": "174a9f2115a5a2da4258a285bf5931192fc9542a2500885a680999589f068261",
+        "gitBlob": "b69cdef7368e36ca1b9d8facecb4de3969a276fc"
+      },
+      {
+        "path": "test/rc1-world-family-npc.js",
+        "rawSha256": "d502f3e8b0fe7047f22b26deb70134891fa45dedb1002a878175a76c3b068069",
+        "gitBlob": "079ca99ffa56757f8790dad9bcd05f192e61978d"
+      },
+      {
+        "path": "test/rc1-observer-serialization.js",
+        "rawSha256": "739ee9a7d6469070843ac08a70da98b59beb919f265786196d9bbf71d4defb86",
+        "gitBlob": "8196bef86b7070e6f8486cfdbc737a7f2e5c31a1"
+      },
+      {
+        "path": "test/rc1-city-lock-release.js",
+        "rawSha256": "2cbcddf82f2cbcd2226555ce80a2419eb3ffee78bd1ba50a3af85e3a895dd0bf",
+        "gitBlob": "90c55333566ff9374277ca4855e266a8ba315004"
+      },
+      {
+        "path": "test/rc1-car-melt-provenance.js",
+        "rawSha256": "2a78e226729095ba906a5fd9d55317c36fec4fac129d0ec42e735a8d365c23fb",
+        "gitBlob": "06973e10e4fb4ceed6965beec2c065ed9e85a1d6"
+      },
+      {
+        "path": "test/rc1-player-car-provenance.js",
+        "rawSha256": "9f32a848233aac35f3a325281bb6e50a4ffe60e067d9bcccf49fce319a5c1769",
+        "gitBlob": "91d048907d57c52661e673c816a814e6784297d4"
+      },
+      {
+        "path": "test/rc1-world-car-melt-witness.js",
+        "rawSha256": "b697bb6344a93444533f051a69f7e120c5fd02f172e6550daed3ae880e0414ec",
+        "gitBlob": "0844bb58c04b9e77bf2ec9a707c526d38a8eb511"
+      },
+      {
+        "path": "test/rc1-history-error-preservation.js",
+        "rawSha256": "be02f0259e8e70db7a6b0038f906568316ad53fdc1dbece7a5635be76a66fd79",
+        "gitBlob": "765fd0f90142219ce18061bcac24005c69cc5ab6"
+      },
+      {
+        "path": "test/rc1-season-conversion-journal.js",
+        "rawSha256": "d1d7cdeb0a0173a9f788266be7a91281c504949f7ccb268d7c989f7d0b9dbb71",
+        "gitBlob": "e7b8bc1095b8617d67e8866b51a9f5f6102dfd97"
+      },
+      {
+        "path": "test/rc1-npc-car-acquisition.js",
+        "rawSha256": "dbdd3492a96f4758adf1d682f61acf19aedfbe295c0d8ecee7aff01f305b21ca",
+        "gitBlob": "54ef37e13ff015e32be6bf3bc5f0936e50c3855a"
+      },
+      {
+        "path": "test/rc1-world-npc-family-lineage.js",
+        "rawSha256": "be0e851b24a33771a46becc8a58e1a2e17cf00fb706c7f7e5e8425d2f98e79a4",
+        "gitBlob": "dcf59fe07caa22e48b7b0769e7a2075e072f8ea7"
+      },
+      {
+        "path": "test/rc1-season-crown-journal.js",
+        "rawSha256": "a8bf2297581486314504e770a96e294310c597c84ef1129928d3942dd61bdadf",
+        "gitBlob": "b239ef18bbda2af03a4abb30a542798caee340c2"
+      },
+      {
+        "path": "test/rc1-season-election-provenance.js",
+        "rawSha256": "716e1d228b908fa1be057be63360c53d4248ad67058ef52aa0acad97333021c5",
+        "gitBlob": "f35c5961365a4f25876622159804e2854e06ffa0"
+      },
+      {
+        "path": "test/rc1-npc-boat-journal.js",
+        "rawSha256": "589994ac9963cb9eb59165a1ede640bc3c0d404dc833301c1f7e4c410209911d",
+        "gitBlob": "6ba6acc834f91956600eeae5f9edf7041f23c7c9"
+      },
+      {
+        "path": "test/rc1-npc-boat-fault.js",
+        "rawSha256": "86cd812585f6f2039a28ca43db8c9b5e83759f38edc1b959d25588febd9ffbe8",
+        "gitBlob": "913074276b775c47ceece681ccce341611e5aeec"
+      },
+      {
+        "path": "test/rc1-npc-cargo-journal.js",
+        "rawSha256": "0cb60a553b62ba7589a308275e5e570abca1c768504477e77204b55ead133c01",
+        "gitBlob": "c297d88e59196fd034653cb8614a616b3c0aeaa0"
+      },
+      {
+        "path": "test/rc1-npc-family-recruitment.js",
+        "rawSha256": "0bd60c601ec0661bbcc41885775e2687573ecbacd72fbc872efe40c1648a1ac8",
+        "gitBlob": "92088dee7fe17277783e45081aa3e4beb41e8308"
+      },
+      {
+        "path": "test/rc1-npc-market-order-journal.js",
+        "rawSha256": "b9360e349f56753863c0a64ac066352b1e4c09b2888aa229fa1eaf01f446afe4",
+        "gitBlob": "46894e6604a88e7729f8911bea05a8c691a05ecb"
+      },
+      {
+        "path": "test/rc1-npc-provenance-composition.js",
+        "rawSha256": "ecb92f65190863c89d4119d7098c4f91a453cbd33bf94694b133f47d90f4fcf9",
+        "gitBlob": "c4249215724d776bba9aebbbe58ce9e98788ecd5"
+      },
+      {
+        "path": "test/rc1-world-worker-transitions.js",
+        "rawSha256": "eceaa5f8f4f306a28eb31f4dd8f4e72eba2eeb56e230bda8d23b63d571181fd5",
+        "gitBlob": "f528c4199b0ae596d937669116f562ae1b902f5e"
+      },
+      {
+        "path": "test/rc1-world-lifecycle-resources.js",
+        "rawSha256": "61471a7247d29a110fd5597e732c2f5493324036af33ff2b967683b170be2688",
+        "gitBlob": "2a965334324f5238ba82cea51662692aaae2c6f1"
+      },
+      {
+        "path": "test/rc1-world-order-resources.js",
+        "rawSha256": "10caf4bde32af9f3e2f181efe4be8baf43403efb2b46294ebafe4eca323bdd39",
+        "gitBlob": "16c1f137fbb895719e5ff591195cbb188da91d79"
+      },
+      {
+        "path": "test/rc1-world-market-resources.js",
+        "rawSha256": "7199d5e3347777b822dd801cd054eb51ab69b615f1c80435b739f4c064d2e9b9",
+        "gitBlob": "49d27de7819eb4bcdbca26cd27d9f2eda568ef90"
+      },
+      {
+        "path": "test/rc1-intel-source-compatibility.js",
+        "rawSha256": "b45d8050b49ea38e7f4eb81d08d066b6f1866c1d2cfe10fd4d34d63b08afccf9",
+        "gitBlob": "22c2d466751035139f6b2766b517ee0a8e8f40c7"
+      },
+      {
+        "path": "test/rc1-loan-source-compatibility.js",
+        "rawSha256": "283c0475e64310e5fdb862db87a8920e0ba3886ac4d79d38c3b39cac2ac43b99",
+        "gitBlob": "4781a0277bfa53982af0cd9503a09da8fb61d140"
+      },
+      {
+        "path": "test/rc1-invoice-source-compatibility.js",
+        "rawSha256": "29c4186857cd186867a618fa5ce6274ce13487b1a7db5de706559db5a45d164f",
+        "gitBlob": "16d539c572922ac15759cf069c6745439acde5bb"
+      },
+      {
+        "path": "test/rc1-world-backlog-review.js",
+        "rawSha256": "3b5a6ec14f6f815829d4dc0d6679fab3be811255ece941e11e42d086cc987797",
+        "gitBlob": "9915c066e14d5b160509bea2d7cf2544bad83ff3"
+      },
+      {
+        "path": "test/rc1-world-checkpoint-series.js",
+        "rawSha256": "d8246882be04b1e96ab2b9baf9ea5558ccf006670dcea37b9f4b0d7663e8ff0c",
+        "gitBlob": "253cb735638058037e494f5ba8bda88d87ab9c5d"
+      },
+      {
+        "path": "test/rc1-realtime-soak.js",
+        "rawSha256": "1e085e3622776a0e4b1779d8e07fdd04cc97f0d238878d36b63c39111782b378",
+        "gitBlob": "ebf46aec6836877c743d5df33ad289696fb9af60"
+      },
+      {
+        "path": "test/rc1-world-metrics-review.js",
+        "rawSha256": "c8ef943573503db22bc7dea2203b6e869553dfc311c855950d7e16370b286997",
+        "gitBlob": "abc1490c81d06816313343c18ea0835a3a679bbd"
+      },
+      {
+        "path": "test/rc1-scarcity-initialization.js",
+        "rawSha256": "9601a04950591cf8cc486b70d8fef3fee00e86264ab6af6a8d19a619eb2a90e3",
+        "gitBlob": "14db40b39d35b77d878f15684512e1742789cc3b"
+      },
+      {
+        "path": "test/rc1-world-cell-admission.js",
+        "rawSha256": "c0a4a116a42fd7384458747c56a3ad21d0138525a2413c3cc06a3f979bbce919",
+        "gitBlob": "31153e738330e48ebc843805de2754373694c3e3"
+      },
+      {
+        "path": "test/lib/rc1-historical-source-fixture.js",
+        "rawSha256": "861f3f852fe597a86f5263fc5064530ce86bbab2a46cf21c001910c085ff689d",
+        "gitBlob": "cccf0ae0c45d0ee8ca056c633a2b2210f35e994f"
+      },
+      {
+        "path": "test/lib/rc1-historical-worker-source.js",
+        "rawSha256": "054c3b3a95f9bd7549ba9a8941bd404523d53f5a12918ec2c68da3f8cdc86b9a",
+        "gitBlob": "0c902ddb458354800c01448923b9254c31b12a0f"
+      },
+      {
+        "path": "package-lock.json",
+        "rawSha256": "b5f70104b109445d8fd0881c8e06863c04e6d1ed5b80ff5477780a8a783e2cf1",
+        "gitBlob": "0169ae98b978bafd90d760c47cf0ff4ba05fbc04"
+      },
+      {
+        "path": "package.json",
+        "rawSha256": "e897f74c0b77a407e7592d6804bad98b5b14306224021fdce60371fec2c78067",
+        "gitBlob": "db63d40d420dcea51cfffe0ef146ec9e6cbc6463"
+      },
+      {
+        "path": "schema.sql",
+        "rawSha256": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
+        "gitBlob": "1210ad5ecb4d2417ac1c195c2359177671839e33"
+      },
+      {
+        "path": "src/agentgateway.js",
+        "rawSha256": "4116c13545125570dfcc5513e6b71ae3e1df379ba039d82ac40f4bde358b26df",
+        "gitBlob": "34b013e86f9e6881f26a510b6c6abdb3f183066d"
+      },
+      {
+        "path": "src/crew.js",
+        "rawSha256": "bc13577b15244bafcad4b037cba5579f730ec7b20c913fc416f65da7761bfbdd",
+        "gitBlob": "7d52c88cc1f24a754376d5e68c539f48c97a370b"
+      },
+      {
+        "path": "src/db.js",
+        "rawSha256": "4379969147f4815842f557fad60c7b6bdf3ebfe2c7ac449a42d4d5b737f395a4",
+        "gitBlob": "ce9dd3d53b9c6e22b409b1ca7150a27dad16ea13"
+      },
+      {
+        "path": "src/deeds.js",
+        "rawSha256": "40ac691a9484227d0b12069509ddcf84523c269e4cfaed2a36f05d117b82c6c1",
+        "gitBlob": "ff8a0f0f3bc7dc38090eee29eece293b96dcdb54"
+      },
+      {
+        "path": "src/game.js",
+        "rawSha256": "6332ad6f3cf406c16168d58a486622fde791a53ad87954153870d77084af60cd",
+        "gitBlob": "c15e6f171c4be7240b7aea96121762c21f772163"
+      },
+      {
+        "path": "src/routes/worldgraph.js",
+        "rawSha256": "773007a00e986505524df1e4cd085a212f2e3bd406824d73f81797be2441e3f5",
+        "gitBlob": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e"
+      },
+      {
+        "path": "src/server.js",
+        "rawSha256": "83ae61c32a5a91a0ecb04f0f4669f175ab193d1d496015ff409761f34270cb39",
+        "gitBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f"
+      },
+      {
+        "path": "src/wire.js",
+        "rawSha256": "528a371378eb078633a4f294644322d2f0350ec55c7eb1f089da279283962b95",
+        "gitBlob": "f5d1028d85ed2a694b090a8955e097c7156069c1"
+      },
+      {
+        "path": "src/worker.js",
+        "rawSha256": "8e6368c9bbcc9f2cf9dee49f227039d2cefebecda89d73e323ccd8002a18e1b9",
+        "gitBlob": "77f7316057624ebf35ef2b6c555be85d02d816b2"
+      },
+      {
+        "path": "src/rules.generated.js",
+        "rawSha256": "0d07a6c18299dd137ba4e364070502d44ba0c04ea5ea26ddcaf90b406c989fd4",
+        "gitBlob": "79e59ce682e6ada70082b4f522611e68550f0392"
+      },
+      {
+        "path": "src/rules.tail.js",
+        "rawSha256": "ce08776af6d10e0895805faf18960870d62adf2563e422a7f52ff9682d3ce755",
+        "gitBlob": "33db41906771f1594b004e916cdbdb031bfaf170"
+      },
+      {
+        "path": "src/genesisauction.js",
+        "rawSha256": "632c67c95a581b9c7242a959632312cbd5aa44266fb309f37d9ddbb0eab00d7d",
+        "gitBlob": "1e6934fc1f9a546ed475905f2ac61b7f389715c0"
+      },
+      {
+        "path": "public/genesis-deploy-client.js",
+        "rawSha256": "33bfae481ab143bc462c12b99c9ca51706f7b49b89e3785c9097c1f57e3a4272",
+        "gitBlob": "0480de8ee58a3e83705f42d81c097f9b10d1a4d8"
+      },
+      {
+        "path": "tools/genesis-auction-preflight.js",
+        "rawSha256": "6e9b6ee51bd26bb5e4d4cce4deb7481c5994724d548ff49ee76390f0b1bd7bd7",
+        "gitBlob": "dd33b91629b545fd176cfba4cab673a9057bf7d6"
+      },
+      {
+        "path": "tools/rc1-native-worker.js",
+        "rawSha256": "8331e89be1f01226391abb43a781c80e97d7ef6faa9d3abc8d790c7ecf329d67",
+        "gitBlob": "93acdf3c2eb0192cb1ea4d5559ae47bfd339bd64"
+      },
+      {
+        "path": "tools/rc1-lifecycle-applicability.js",
+        "rawSha256": "9dbd049700dd78ee9b5f53acbfbd13790794292e701cb3ffb02b962613097b0f",
+        "gitBlob": "fc58ad04a50e501da1da11e08aceb7a47424793e"
+      },
+      {
+        "path": "tools/rc1-checkpoint-recovery-review.js",
+        "rawSha256": "236e9ae9e72f382719c0b3ff3c2c601f5b28b75b53ae5d9d71b3aa309e312778",
+        "gitBlob": "3040bb9a6959e026310a26a5c20bfa5b0bfc75f5"
+      },
+      {
+        "path": "tools/rc1-world-backlog-review.js",
+        "rawSha256": "58151885917fbc4018bd0487899c539569cd67e42d4f556994453ca0f07b36c8",
+        "gitBlob": "47aaf79b127f24fa15342fa8099190db01fc0399"
+      },
+      {
+        "path": "tools/rc1-npc-car-acquisition.js",
+        "rawSha256": "60660caac055d25e8d4b84443a3339cc53969e4d58baa32ed88be31ff4b9b51f",
+        "gitBlob": "2ce46ef5d4edb42a80c731ee28f4748a8853bd37"
+      },
+      {
+        "path": "tools/rc1-npc-boat-journal.js",
+        "rawSha256": "2857398fb28752a5ef54900d93968043c436df80decf2462746f3c8b5cbf1815",
+        "gitBlob": "435ee896d762f7033fc8d2745ad16a1b7d0f2a12"
+      },
+      {
+        "path": "tools/rc1-npc-market-order-journal.js",
+        "rawSha256": "d4faeb9579781588632ddde514cfc68c3815bc919019d0f3f547a0fc6e4a6fe1",
+        "gitBlob": "ebfdd5981292737ea47f85a0627a87b73ff6fc25"
+      },
+      {
+        "path": "tools/rc1-deed-source-compatibility.js",
+        "rawSha256": "340249625f71511214aca95341fd3c1505d68bca818ab3df860b317edbf5b3f5",
+        "gitBlob": "f44bb4a8ee4cb461ecc4a76ab0930edd30419bff"
+      }
+    ],
+    "protected17MatchC2": true,
+    "criticalHistoricalGuardsUnchanged": true,
+    "rawLog": {
+      "path": "output/release-2026-10-14/rc1-harness-final-frozen-attempt1/npm-run-test-rc1-harness.log",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 46229,
+      "sha256": "a0e9f4e7904dc67a3325e03b7132e0d79aeca66bd3b982a1d460182288332207"
+    },
+    "fullBeforeAndAfterResult": {
+      "path": "output/release-2026-10-14/rc1-harness-final-frozen-attempt1/result.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 71568,
+      "sha256": "ad8b9360d9f09fa1a5619330bf9ab2d41441df42c60c6939c597cc154f144dd7"
+    },
+    "beforeCapture": {
+      "path": "output/release-2026-10-14/rc1-harness-final-frozen-attempt1/before.json",
+      "storage": "Original checkout ignored output only; raw diagnostics are not published",
+      "bytes": 42416,
+      "sha256": "a5f7f8b04baaa538583e755f68febb04525aeb18c43bc8e226e8afcc15fa67ce"
+    }
+  },
+  "testEnvironment": {
+    "CI": "true",
+    "legalProfile": "Existing nine-field synthetic CI test profile; no actual operator profile or production configuration.",
+    "integrationEnvironmentPresent": []
+  },
+  "rawDiagnosticsPublished": false,
+  "commitOrPushPerformed": false
+}

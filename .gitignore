@@ -40,3 +40,14 @@ output/
 
 # Disposable, loopback-only Coordination review database. Durable evidence is in docs/coordination-engine/evidence/.
 /tmp/coordination-review/
+
+# Disposable loopback-only gateway regression database; evidence is retained under docs/agent-gateway-review/.
+/tmp/gateway-postgres/
+
+# Exact source audio is restored from deploy/media-chunks by the install lifecycle.
+/public/art/flagship-animation/audio/animated-mix.wav
+/public/art/flagship-animation/audio/audio-added-layer.wav
+/public/art/flagship-rebuild/audio/rebuild-dialogue.wav
+/public/art/flagship-rebuild/audio/rebuild-mix.wav
+/public/art/flagship-rebuild/audio/rebuild-music.wav
+/public/art/flagship-trust/audio/animatic-mix.wav

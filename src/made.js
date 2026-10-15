@@ -39,6 +39,7 @@
 import { GameError, bus } from './game.js';
 import { MADE, MADE_LADDER, ACCESS_STAKE, isMade, madeSeconds , jailed } from './rules.js';
 import { spendOmr } from './vanity.js';
+import { queuePaymentReceipt } from './payment-receipts.js';
 
 
 // Written by DIRECT SQL: `made_until` is absent from persistAccount's positional UPDATE, so this is
@@ -59,6 +60,7 @@ export async function payDues(ch, client, h) {
   const until = new Date(from + MADE.MS);
   await setMadeUntil(client, h, until);
   await h.track(client, ch.account_id, 'made_dues', { omr: MADE.OMR });
+  await queuePaymentReceipt(client, h.accountId, { kind: 'made', amount: MADE.OMR, durationSeconds: MADE.MS / 1000 });
   bus.emit('me', { account: h.accountId, type: 'made' });
   return { ok: true, omr: MADE.OMR, made: true, madeSeconds: madeSeconds(h.acct, now),
     until: until.toISOString(),

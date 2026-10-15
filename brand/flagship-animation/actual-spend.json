@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-01T22:34:06.007Z",
+  "scope": "Incremental production for the October 1 original animated rebuild",
+  "newExternalPaidRequests": 0,
+  "newExternalPaidSpendUsd": 0,
+  "builtInImageOutputs": 22,
+  "builtInImageBilling": "Used the built-in image tool available in this chat; no separate per-image charge was quoted or recorded by this production. Not represented as zero underlying platform usage.",
+  "localNarration": "Microsoft David Desktop; no external speech API calls",
+  "localEditingAndFoley": "Existing local tooling; no external generation calls",
+  "inheritedScore": "Reuses the existing SOUL-SCORE recording; historical costs and provenance are outside this incremental total and remain in the source records.",
+  "pendingProposal": {
+    "maximumUsd": 50,
+    "status": "Awaiting explicit authorization; no paid request or credit purchase made",
+    "plan": "generation-plan.md"
+  }
+}

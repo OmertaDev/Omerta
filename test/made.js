@@ -1,3 +1,4 @@
+import { adultAuthFixture } from './auth-fixture.js';
 // THE FLOAT (economy v3 step 5) — THE MADE MAN, the tiered loot rate and the access stake.
 // The 63rd suite. Design §5 (the holding problem), §11.1, §11.2, §11.5.
 //
@@ -18,7 +19,7 @@
 // the $OMR-conservation DRIFT stays exactly the grant — which is what proves `made:dues` reconciles.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { MADE, MADE_LADDER, madeRungIdx, ACCESS_STAKE, CASINO, DESK, recyclesToDesk, estateTierOf, SPEAKEASY,
   BUSINESSES, PACING, businessTierOf, isMade, MISSIONS, CONSTANTS, CARS, TRIMS, MINT_TRANCHES,
   mintTierOf } from '../src/rules.js';
@@ -29,7 +30,7 @@ const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
   const res = await app.inject({ method, url,
-    headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+    headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, body) });
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;

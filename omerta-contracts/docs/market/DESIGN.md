@@ -1,18 +1,20 @@
-# OMERTÀ market
+# OMERTÀ Market
 
-The canonical ETH/OMR market uses Uniswap v4 and companion contracts for stability, liquidity, funded bonds and family Turf. The implementation is available for release review; no live deployment, funded reserve, production signer, or game route is activated by these files.
+This is the restricted ETH/OMR market and its companion contracts. The replacement token binds to a reviewed settlement manager that charges mandatory revenue on every buy and sell, including swaps in alternative pools hosted by that manager. These files do not activate a live deployment, funded reserve, production signer, or game route.
 
-The architecture places immediate settlement and measurements in the hook. Position custody, reserve policy, inventory bonds, family entitlements, player commitments, and solver execution have separate contracts. Those boundaries let each subsystem enforce its own conservation rules and recover independently.
+`OmertaRestrictedOMRV2` seals separate runtime-pinned lists of settlement/custody operators and receiving-only contract holders. `OmertaPoolManagerV2` enforces the base trade fee in swap accounting. The hook retains market measurements and bounded opening/surge charges. Position custody, reserve policy, inventory bonds, family entitlements, player commitments, and solver execution have separate contracts.
 
 ```mermaid
 flowchart TD
-    T[Traders and routers] --> PM[Uniswap v4 PoolManager]
+    T[Traders] --> ROUTER[OmertaSwapRouterV2]
+    ROUTER --> PM[OmertaPoolManagerV2]
+    TOKEN[OmertaRestrictedOMRV2 sealed operators] --> PM
     PM <--> H[OmertaHookV2]
-    H --> DEV[2% developer]
-    H --> RWA[1.6% RWA recipient]
-    H --> COMMUNITY[2.4% community recipient]
-    H --> POL[3% POL funding adapter]
-    H --> SURGE[0–1% surge / reserve adapter]
+    PM --> DEV[2% founder / operations]
+    PM --> RWA[1% RWA recipient]
+    PM --> COMMUNITY[1% community recipient]
+    PM --> POL[1% POL funding adapter]
+    H --> SURGE[0–0.5% surge / reserve adapter]
     H --> O[Finalized market observations]
     O --> C[Stability controller]
     POL --> C
@@ -34,9 +36,12 @@ flowchart TD
 
 | Requested capability | Implementation | Exact meaning |
 | --- | --- | --- |
-| Current canonical tax | `OmertaHookV2` | 900 bps base: 200 developer, 160 RWA, 240 community, 300 POL. Rounding residual belongs to POL. |
-| Surge response | Hook pressure accumulator | Additional 0–100 bps on sells, paid exclusively to stability. Tick pressure decays over time. Buys cannot instantly erase accumulated pressure. |
-| Anti-snipe | Immutable opening policy | A bounded opening block window, bounded opening buy fee, and optional actual quote-size limit. The window cannot be extended by an administrator. |
+| Mandatory LP trade revenue | `OmertaPoolManagerV2` | 500 bps on buys and sells in every supported ETH/OMR pool: 200 founder/operations (`dev`), 100 RWA, 100 community, 100 POL. Rounding residual belongs to POL. |
+| Protocol charge ceiling | `OmertaPoolManagerV2` | Rejects a positive post-swap hook surcharge above 50 bps of the actual raw swap delta, enforcing at most 550 bps including the base across reviewed hooks. LP fees are additional. |
+| Enforced settlement boundary | `OmertaRestrictedOMRV2` | New fixed-supply token; one settlement manager and immutable reviewed operator/runtime policy. Ordinary wallet transfers and unapproved venue funding fail after sealing. |
+| Wallet swap entry point | `OmertaSwapRouterV2` | Direct payer-to-manager OMR settlement, actual fee-adjusted limits, exact input/output and partial-fill accounting. |
+| Surge response | Hook pressure accumulator | Additional 0–50 bps on sells, paid exclusively to stability. Tick pressure decays over time. Buys cannot instantly erase accumulated pressure. |
+| Anti-snipe | Immutable opening policy | A bounded opening block window, at most 50 bps additional buy fee, and optional actual quote-size limit. The window cannot be extended by an administrator. |
 | Market measurements | Hook epochs + `OmertaMarketStateV2` | Fixed-interval mean tick, tick dispersion, gross ETH turnover, volume imbalance, minimum active liquidity, and liquidity-time integration. |
 | Olympus-inspired RBS | `OmertaStabilityControllerV2` | Separate downside/upside range inventory, finite capacity, cooldown, stress hysteresis, spaced X-of-Y recovery observations, funded partial regeneration. |
 | POL | Controller Core | Actual PoolManager-owned two-sided positions and principal/fee separation. |
@@ -54,19 +59,25 @@ flowchart TD
 | Budgeted upkeep | `src/marketv2keeper.js` | Closed typed jobs, runtime pins, one-block reads, simulation, one new transaction per invocation, durable existing PostgreSQL transaction transport. |
 | Deployment and rewiring | `tools/market-v2-deployment-plan.js` | Offline constructor/binding/initialization/funding transaction plan with deterministic address calculation. |
 
-The contracts expose the market facts and bounded game settlement needed for the seasonal map and its presentation. Story authoring, combat adjudication, UI weather, broker-house interfaces, and off-chain family decisions remain server responsibilities. These contracts do not assert that those presentation or gameplay features have been installed in the production console. Leveraged family debt and transferable securitization of future family revenue are outside this implementation; the implemented bonds are funded inventory sales. DNR remains a separate denomination and system.
+The contracts expose the market facts and bounded game settlement needed for the seasonal map and its presentation. Story authoring, combat adjudication, UI weather, broker-house interfaces, and off-chain family decisions remain server responsibilities. These contracts do not assert that those presentation or gameplay features have been installed in the production console. Leveraged family debt and transferable securitization of future family revenue are outside the implemented market; the implemented bonds are funded inventory sales. DNR remains a separate denomination and system.
 
 ## Taxes and routing
 
-The base sell fee is preserved in aggregate, with independent buckets for both ETH and OMR. Uniswap's exact-input/exact-output and return-delta rules determine the fee currency: the hook charges against actual settled deltas, including partial fills. Never assume every tax receipt is ETH. Opening buys may carry their separately configured temporary charge; buys outside that window have no hook buy tax. Uniswap LP fees are additional to hook taxes and are explicitly selected in the PoolKey.
+The manager charges 500 bps on the actual unspecified-side swap delta for both buys and sells, including partial fills. For exact input it reduces output; for exact output it increases required input. Its accounting records independent founder/operations, RWA, community and POL buckets for both ETH and OMR, and requires the caller to settle the fee-adjusted debt before unlocking ends. The fixed base is 5%; the manager rejects any positive post-swap hook surcharge above 0.5% of the raw delta, enforcing a maximum 5.5% protocol charge per swap across reviewed hooks. The canonical hook uses that bounded addition for opening or sell surge. The founder/operations share remains 2%. A multihop or arbitrage cycle pays on each executed swap. Never assume every receipt is ETH. LP fees are additional and are explicitly selected in the PoolKey.
 
-Each bucket can be swept to its fixed recipient independently. A recipient may claim its own bucket to another destination. A failed recipient does not stop swaps or unrelated bucket claims. Recipient addresses, base rates, maximum surge, and opening policy are immutable.
+Each manager bucket can be swept to its fixed recipient independently. A recipient may claim its own bucket to another destination while the manager is locked. A failed recipient does not stop swaps or unrelated bucket claims. The canonical hook applies only its bounded sell surge or temporary opening buy charge, with separate accounting; it does not repeat the manager's base fee. Recipient addresses, base rates, maximum surge, and opening policy are immutable.
 
-These hook taxes apply to this canonical PoolKey. They do not impose a universal tax on OMR trades in other pools. In particular, an unhooked alternative v4 pool used by the solver has its own LP fee and no canonical hook tax. Market incentives and liquidity concentration determine where traders route; the hook cannot prohibit independent venues.
+Keeper manifests use `manager_claim` against the pinned `OmertaPoolManagerV2` runtime for base buckets 0–3, separately for ETH and OMR. `hook_claim` bucket 4 delivers canonical opening/surge revenue. A Core `funding_flush` job can forward the POL bucket only after the manager sweep delivers it to the funding adapter.
 
-Route the 3% POL bucket to a Core `OmertaReserveFundingV2` instance. Route surge, inventory-bond proceeds and the arbitrage reserve share to a War Chest funding instance. Non-Turf LP fee recipients may also be that reserve instance. `flush()` forwards actual received ETH/OMR into the fixed compartment. It grants no new deployment capacity. The RWA, developer and community recipients remain explicit deployment inputs; existing downstream source-specific revenue policies remain separate.
+The replacement token's sealed policy restricts direct OMR transfers to reviewed typed operators and its bound manager, with a separate receiving policy for the pinned genesis Safe, live operators, reviewed receiving-only contracts and self-enrolled undelegated EOAs. The manager supports native ETH/OMR pools, including unhooked alternatives; its 5% charge applies in every supported pool. JIT liquidity does not exempt a swap. Liquidity additions and withdrawals do not incur the base trade fee. Unsupported deployed or counterfactual contracts cannot directly receive native OMR. Independent managers, other token pairs, arbitrary routers and ordinary wallet transfers are outside the supported settlement path. Wrapper claims, custody IOUs, internal ledgers and EIP-7702 delegation after receiving tokens remain outside this guarantee.
 
-OMR's transfer-tax `ammPairs(PoolManager)` must remain false for this canonical market. Registering the singleton PoolManager for transfer taxation would tax liquidity funding and settlements and could overlap the hook tax. Test and verify this before any deployment funding. Existing fees, withdrawals, RWA budgets, voucher rails and non-market token transfers are not redefined here.
+Route the manager's 1% POL bucket to a Core `OmertaReserveFundingV2` instance. Route hook additions, inventory-bond proceeds and the arbitrage reserve share to a War Chest funding instance. Non-Turf LP fee recipients may also be that reserve instance. `flush()` forwards actual received ETH/OMR into the fixed compartment. It grants no new deployment capacity. The RWA, founder/operations (`dev`) and community recipients remain explicit deployment inputs; downstream source-specific revenue policies remain separate.
+
+This requires deploying `OmertaRestrictedOMRV2`, `OmertaPoolManagerV2` and a PositionManager paired to that manager. It cannot be retrofitted through `ammPairs(PoolManager)` on an existing ERC20. Every operator must exist with its reviewed actual runtime before the Safe binds the manager and irrevocably seals the policy; bootstrap and protocol funding follow sealing. Live checks must establish an empty operator registry before binding, then compare the complete `operatorCount()`/`operatorAt(index)` registry and each role/runtime pin with the manifest immediately before the seal. Enumeration includes revoked entries, which cannot hide earlier permissions. The offline plan emits these conditions and does not perform live verification. Manager ERC6909 claims cannot be transferred into a substitute trading asset. See [restricted market bootstrap](RESTRICTED-BOOTSTRAP.md) for the staged deployment and migration boundary.
+
+The receiving-only registry must likewise begin empty and match every `contractHolderAt(index)`/`contractHolderRuntimeHash` entry immediately before sealing. POL funding, reserve funding and the Turf fee bridge need receiving pins, with no transfer authority. Contract treasury recipients and public smart wallets require explicit frozen holder entries. Other configured fee/family recipients self-enroll as undelegated EOAs; the swap router enrolls direct EOA payers. Genesis Safe is pinned separately and receives no operator role.
+
+The entire fixed 100,000,000 OMR supply must remain with the Safe until sealing; the token rejects a seal while any inventory is outside its owner. This prevents a foreign manager from receiving genesis inventory and creating internally traded claims before restrictions begin. The planner requires the capital provider to be the Safe and moves LP/controller/bond inventory only after sealing through typed operators. It provides no independent-provider distribution path.
 
 ## Price coordinates and finite inventory
 
@@ -88,9 +99,9 @@ Market state consumes the completed interval outside swap settlement. It floors 
 
 The oracle is historical pool information. It is not an external fair-value oracle. Minimum raw liquidity is a participation gate, not a proof of executable depth through the full range. Controller and bond execution additionally check actual spot deviation and actual current liquidity. Sustained manipulation, market losses and adverse selection remain economic risks constrained by finite inventory and limits.
 
-Anti-snipe is per swap, not per human. A user can split trades or use several accounts. Commit/reveal binds a solver's plan to its address; it does not grant exclusive arbitrage, private order flow, or immunity to competing trades. On-chain minimum profit rejects a losing cycle; the solver can still pay gas for a failed transaction. Nothing in this version proves a market cannot surge or fall.
+Anti-snipe is per swap, not per human. A user can split trades or use several accounts. Commit/reveal binds a solver's plan to its address; it does not grant exclusive arbitrage, private order flow, or immunity to competing trades. On-chain minimum profit rejects a losing cycle; the solver can still pay gas for a failed transaction. These contracts do not prove a market cannot surge or fall.
 
-The hook uses a fixed LP fee policy. Its additional pressure charge is a hook fee. Supporting dynamically overridden LP fees would require a separately specified pool policy and fresh review; it is not silently conflated with the preserved tax.
+The canonical hook uses a fixed LP fee policy. Its additional pressure charge is a hook fee. Supporting dynamically overridden LP fees would require a separately specified pool policy and fresh review; it does not alter the manager's mandatory base revenue.
 
 ## Family fees, game authority and seasons
 
@@ -110,15 +121,15 @@ The commitment vault accepts only actual PositionManager NFTs for the canonical 
 
 Rewards require two distinct, fresh, qualifying observations. Useful depth is conservatively sampled on both sides of a bounded reference band; the smaller adjacent sample bounds credited depth-time. Invalid samples, gaps or pause transitions break accrual. This does not prove continuous range occupancy. Each campaign is prefunded and has fixed terms and limits. Rewards are first-come against available campaign funds at checkpoint time. NFT splitting and keeper timing are economic limitations to calibrate, not hidden guarantees of fairness.
 
-Inventory bonds accept ETH only when sufficient OMR is already funded. A purchase reserves its complete future entitlement immediately, with per-purchase, per-epoch and lifetime limits in both assets and an absolute rate bound. Nontransferable notes vest linearly. Pausing purchases, exhausting inventory or losing the oracle does not block a vested claim. The contract cannot mint tokens or buy them back from note holders. Selling vested OMR through the canonical pool still incurs the canonical sell fee.
+Inventory bonds accept ETH only when sufficient OMR is already funded. A purchase reserves its complete future entitlement immediately, with per-purchase, per-epoch and lifetime limits in both assets and an absolute rate bound. Nontransferable notes vest linearly. Pausing purchases, exhausting inventory or losing the oracle does not block a vested claim. The contract cannot mint tokens or buy them back from note holders. Selling vested OMR through a supported pool incurs the mandatory trade fee.
 
 ## Operational scope
 
-The keeper is a bounded command, suitable for an explicitly configured external scheduler. It does not schedule itself or run indefinitely. Its plan mode needs no signing key and performs read-only RPC simulation. Run mode uses the existing shared PostgreSQL nonce/transaction journal: signed bytes are retained before broadcast, ambiguous transactions reconcile before any new transaction, and daily gas is bounded. Market capital and fees are accounted on chain; this transport does not book them into the game cash or separate POL ledger.
+The keeper is a bounded command, suitable for an explicitly configured external scheduler. It does not schedule itself or run indefinitely. Its plan mode needs no signing key and performs read-only RPC simulation. Run mode uses the existing shared PostgreSQL nonce/transaction journal: signed bytes are retained before broadcast, ambiguous transactions reconcile before any new transaction, and daily gas is bounded. Market capital and fees are accounted on chain; this transport does not book them into the game cash ledger.
 
-The solver compares approved unhooked alternative pools, checks quotes including canonical taxes and all LP fees, requires a configured gas allowance plus minimum solver profit after reserve sharing, and persists an exact plan before commitment. Reveal must use that same plan within the on-chain window. A quote is an estimate at a pinned block; execution still revalidates actual realized profit.
+The solver compares approved alternative pools hosted by the same manager. Quotes must include mandatory revenue on both legs, canonical hook additions when applicable, all LP fees, a configured gas allowance and minimum solver profit after reserve sharing. It persists an exact plan before commitment. Reveal must use that same plan within the on-chain window. A quote is an estimate at a pinned block; execution still revalidates actual realized profit.
 
-Deployment parameters, real reserves, initial price, initial liquidity, recipient custody, epoch length, range width, campaign economics and solver profitability are not inferred from branding or invented by the implementation. The example manifest is a local-chain test fixture. Before a funded release, measure those parameters on the intended chain, reproduce the plan on a fork, and retain the exact runtime/configuration checks. See `RUNBOOK.md` and the scoped review package.
+Deployment parameters, real reserves, initial price, initial liquidity, recipient custody, epoch length, range width, campaign economics and solver profitability are not inferred from branding or invented by the implementation. The schema-2 example manifest is a local-chain test fixture with synthetic runtime hashes. Before a funded release, measure those parameters on the intended chain, reproduce the plan on a fork, and retain the exact actual-runtime/configuration checks. Follow [restricted market bootstrap](RESTRICTED-BOOTSTRAP.md), the applicable companion operations in `RUNBOOK.md`, and the scoped review package. Supplied public runtime hashes and an unsigned plan alone do not verify a live deployment or authorize activation.
 
 ## Primary references
 

@@ -1,0 +1,604 @@
+﻿[
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U01",
+        "ms":  0,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  100,
+        "character":  124,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "starts",
+        "ms":  460,
+        "character":  129,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "with",
+        "ms":  870,
+        "character":  136,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  1050,
+        "character":  141,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "name",
+        "ms":  1110,
+        "character":  143,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  1420,
+        "character":  148,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  1590,
+        "character":  152,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "little",
+        "ms":  1655,
+        "character":  154,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "cash",
+        "ms":  1940,
+        "character":  161,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U02",
+        "ms":  3175,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "He",
+        "ms":  3275,
+        "character":  216,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "takes",
+        "ms":  3415,
+        "character":  219,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  3745,
+        "character":  225,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "small",
+        "ms":  3800,
+        "character":  227,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "job",
+        "ms":  4205,
+        "character":  233,
+        "length":  3
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U03",
+        "ms":  5380,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nerve",
+        "ms":  5480,
+        "character":  287,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "goes",
+        "ms":  5750,
+        "character":  293,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "down",
+        "ms":  6055,
+        "character":  298,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U04",
+        "ms":  7215,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Cash",
+        "ms":  7315,
+        "character":  353,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "and",
+        "ms":  7640,
+        "character":  358,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "respect",
+        "ms":  7830,
+        "character":  362,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "go",
+        "ms":  8285,
+        "character":  370,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "up",
+        "ms":  8490,
+        "character":  373,
+        "length":  2
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U05",
+        "ms":  9540,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Now",
+        "ms":  9640,
+        "character":  426,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  9885,
+        "character":  430,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U06",
+        "ms":  10990,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Another",
+        "ms":  11090,
+        "character":  485,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "job",
+        "ms":  11465,
+        "character":  493,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "could",
+        "ms":  11795,
+        "character":  497,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "build",
+        "ms":  11975,
+        "character":  503,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "his",
+        "ms":  12245,
+        "character":  509,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "bankroll",
+        "ms":  12405,
+        "character":  513,
+        "length":  8
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U07",
+        "ms":  13820,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Training",
+        "ms":  13920,
+        "character":  572,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "spends",
+        "ms":  14325,
+        "character":  581,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "energy",
+        "ms":  14725,
+        "character":  588,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  15165,
+        "character":  595,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "improve",
+        "ms":  15320,
+        "character":  598,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "his",
+        "ms":  15720,
+        "character":  606,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "stats",
+        "ms":  15850,
+        "character":  610,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U08",
+        "ms":  17165,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Banking",
+        "ms":  17265,
+        "character":  666,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "protects",
+        "ms":  17700,
+        "character":  674,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "money",
+        "ms":  18155,
+        "character":  683,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "once",
+        "ms":  18460,
+        "character":  689,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  18745,
+        "character":  694,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "arrives",
+        "ms":  18850,
+        "character":  697,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "but",
+        "ms":  19800,
+        "character":  706,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "the",
+        "ms":  19985,
+        "character":  710,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "trip",
+        "ms":  20070,
+        "character":  714,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "leaves",
+        "ms":  20380,
+        "character":  719,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "it",
+        "ms":  20680,
+        "character":  726,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "exposed",
+        "ms":  20785,
+        "character":  729,
+        "length":  7
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U09",
+        "ms":  22210,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Three",
+        "ms":  22310,
+        "character":  787,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "choices",
+        "ms":  22600,
+        "character":  793,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "different",
+        "ms":  23600,
+        "character":  802,
+        "length":  9
+    },
+    {
+        "kind":  "word",
+        "text":  "risks",
+        "ms":  23995,
+        "character":  812,
+        "length":  5
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U10",
+        "ms":  25280,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "Nico",
+        "ms":  25380,
+        "character":  868,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "has",
+        "ms":  25745,
+        "character":  873,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "to",
+        "ms":  25985,
+        "character":  877,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "choose",
+        "ms":  26115,
+        "character":  880,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "what",
+        "ms":  26445,
+        "character":  887,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "matters",
+        "ms":  26650,
+        "character":  892,
+        "length":  7
+    },
+    {
+        "kind":  "word",
+        "text":  "next",
+        "ms":  27050,
+        "character":  900,
+        "length":  4
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U11",
+        "ms":  28325,
+        "character":  0,
+        "length":  0
+    },
+    {
+        "kind":  "word",
+        "text":  "That",
+        "ms":  28425,
+        "character":  955,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "is",
+        "ms":  28630,
+        "character":  960,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "how",
+        "ms":  28775,
+        "character":  963,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "a",
+        "ms":  28980,
+        "character":  967,
+        "length":  1
+    },
+    {
+        "kind":  "word",
+        "text":  "place",
+        "ms":  29050,
+        "character":  969,
+        "length":  5
+    },
+    {
+        "kind":  "word",
+        "text":  "in",
+        "ms":  29410,
+        "character":  975,
+        "length":  2
+    },
+    {
+        "kind":  "word",
+        "text":  "this",
+        "ms":  29535,
+        "character":  978,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "city",
+        "ms":  29690,
+        "character":  983,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "begins",
+        "ms":  29965,
+        "character":  988,
+        "length":  6
+    },
+    {
+        "kind":  "word",
+        "text":  "one",
+        "ms":  30945,
+        "character":  996,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "decision",
+        "ms":  31155,
+        "character":  1000,
+        "length":  8
+    },
+    {
+        "kind":  "word",
+        "text":  "then",
+        "ms":  32130,
+        "character":  1010,
+        "length":  4
+    },
+    {
+        "kind":  "word",
+        "text":  "its",
+        "ms":  32325,
+        "character":  1015,
+        "length":  3
+    },
+    {
+        "kind":  "word",
+        "text":  "consequence",
+        "ms":  32475,
+        "character":  1019,
+        "length":  11
+    },
+    {
+        "kind":  "bookmark",
+        "text":  "C02-U11-end",
+        "ms":  34160,
+        "character":  0,
+        "length":  0
+    }
+]

@@ -1,0 +1,49 @@
+{
+  "schema": "omerta.public-fee-copy-review.v1",
+  "phase": "Source/copy consistency only; no financial, genesis, native or deployment qualification transfers.",
+  "sourceRevision": "b90bd95dee6e0fda851247cc660288f4bbf8fdc0",
+  "sourceSha256": {
+    "omerta-contracts/src/market-v2/core/OmertaPoolManagerV2.sol": "551c86e193cc33c7fabd07433bb4b15286d5420332e52b86fa37dc34b05ebac0",
+    "omerta-contracts/src/market-v2/OmertaHookV2.sol": "ec6362e88daeb7f35bd8f95cbc6bf2344378cb29603b3bf31460a14eada0c903",
+    "tools/genesis-auction-deployment-plan.js": "99482795456732aba622e3715448edf39ae50a38066d79c33e38382558174ca2"
+  },
+  "policy": {
+    "baseTradeBps": 500,
+    "sellSurchargeMaxBps": 50,
+    "allocationBps": {
+      "developer": 200,
+      "rwa": 100,
+      "community": 100,
+      "pol": 100
+    },
+    "allocationRounding": "POL receives remainder",
+    "plannedGenesisLpFee": 3000,
+    "plannedGenesisOpening": "blocks=buyBps=maxBuyQuote=0"
+  },
+  "semantics": "Base applies on both directions to all admitted ETH/OMR pools, including unhooked pools. Exact-input fees use actual output; exact-output fees use actual input. Partial fills use settled deltas. Effective rates on the specified amount may differ. No fee-change queue; unrelated governance delays remain separate.",
+  "activation": "Public copy explicitly states the production token rail is inactive; source tests do not establish activation.",
+  "surfaceSha256": {
+    "public/index.html": "99595203381f27af4ae1bde9c5bb96e3c631657dc71bac5b50c2d401e4e6c86c",
+    "public/wiki.html": "7c432fe57883a509a9962fcc736750f8a856bc5c7e1976754b37b4e4d64fd696",
+    "public/defi.html": "26a2d48e515fb0f4db8700c2406a12c0da3224907bcb0049734a7f5df815807a",
+    "public/fee-flows.html": "f2eecafe177b5bbf0e97c4e650b36870751f31aaae6579ea82d624adb8be0498",
+    "docs/WIKI.md": "6cba91fd74a90726556ffb316d460257927dfcaf727c93a9c45494c76c4508b2"
+  },
+  "checks": [
+    {
+      "command": "node test/current-copy.js",
+      "result": "pass",
+      "scope": "Shared statuses, source-derived both-direction fee/surcharge, fixed policy, scoped genesis settings, inactive rail, existing anchors and inline scripts."
+    },
+    {
+      "method": "Execute actual fee-flow LIVE/load() in Node vm with fresh, current, prior-version and legacy-array storage",
+      "result": "pass",
+      "scope": "All flow totals, 4000/2000/2000/2000 base-fee shares; version7 preserves current edits and flags stale version6 or legacy scenarios."
+    },
+    {
+      "method": "Execute unchanged seven risk-register assertions from test/docs.js with manager-sourced current-market fee",
+      "result": "pass",
+      "scope": "Market sell fee, withdrawal age/surcharge/toll, unbonding, loot and death duty. Legacy game sell-tax lever and historical/native proof admission remain untouched."
+    }
+  ]
+}

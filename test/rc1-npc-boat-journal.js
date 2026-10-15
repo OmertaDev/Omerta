@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { NPC_BOAT_SOURCE_PINS, NPC_BOAT_INSERT, assertNpcBoatSources, verifyNpcBoatAcquisition, reconcileNpcBoats, createNpcBoatAcquisitionCommitObserver } from '../tools/rc1-npc-boat-journal.js';

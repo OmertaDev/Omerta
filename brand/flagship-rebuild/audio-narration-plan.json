@@ -1,0 +1,706 @@
+{
+  "voice": "Microsoft David Desktop",
+  "status": "LOCAL SCRATCH ONLY",
+  "chapters": [
+    {
+      "id": "C01",
+      "title": "An empty seat",
+      "start": 0,
+      "end": 15,
+      "text": "Nico has put up the stake. One seat is empty. Fill it with the wrong person, and everyone could go to jail. This is OMERTÀ, a multiplayer mafia strategy RPG in your browser.",
+      "rate": 103,
+      "groups": [
+        {
+          "text": "Nico has put up the stake.",
+          "sentenceFinal": true,
+          "id": "C01-U01"
+        },
+        {
+          "text": "One seat is empty.",
+          "sentenceFinal": true,
+          "id": "C01-U02"
+        },
+        {
+          "text": "Fill it with the wrong person, and everyone could go to jail.",
+          "sentenceFinal": true,
+          "id": "C01-U03"
+        },
+        {
+          "text": "This is OMERTÀ, a multiplayer mafia strategy RPG in your browser.",
+          "sentenceFinal": true,
+          "id": "C01-U04"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C01.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C01-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"103%\"><mark name=\"C01-U01\"/>Nico has put up the stake. <mark name=\"C01-U01-end\"/> <mark name=\"C01-U02\"/>One seat is empty. <mark name=\"C01-U02-end\"/> <mark name=\"C01-U03\"/>Fill it with the wrong person, and everyone could go to jail. <mark name=\"C01-U03-end\"/> <mark name=\"C01-U04\"/>This is oh mare tah, a multiplayer mafia strategy R P G in your browser. <mark name=\"C01-U04-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C02",
+      "title": "Your first decision",
+      "start": 15,
+      "end": 52,
+      "text": "Nico starts with a name and a little cash. He takes a small job. Nerve goes down. Cash and respect go up. Now what? Another job could build his bankroll. Training spends energy to improve his stats. Banking protects money once it arrives, but the trip leaves it exposed. Three choices, different risks. Nico has to choose what matters next. That is how a place in this city begins: one decision, then its consequence.",
+      "rate": 98,
+      "groups": [
+        {
+          "text": "Nico starts with a name and a little cash.",
+          "sentenceFinal": true,
+          "id": "C02-U01"
+        },
+        {
+          "text": "He takes a small job.",
+          "sentenceFinal": true,
+          "id": "C02-U02"
+        },
+        {
+          "text": "Nerve goes down.",
+          "sentenceFinal": true,
+          "id": "C02-U03"
+        },
+        {
+          "text": "Cash and respect go up.",
+          "sentenceFinal": true,
+          "id": "C02-U04"
+        },
+        {
+          "text": "Now what?",
+          "sentenceFinal": true,
+          "id": "C02-U05"
+        },
+        {
+          "text": "Another job could build his bankroll.",
+          "sentenceFinal": true,
+          "id": "C02-U06"
+        },
+        {
+          "text": "Training spends energy to improve his stats.",
+          "sentenceFinal": true,
+          "id": "C02-U07"
+        },
+        {
+          "text": "Banking protects money once it arrives, but the trip leaves it exposed.",
+          "sentenceFinal": true,
+          "id": "C02-U08"
+        },
+        {
+          "text": "Three choices, different risks.",
+          "sentenceFinal": true,
+          "id": "C02-U09"
+        },
+        {
+          "text": "Nico has to choose what matters next.",
+          "sentenceFinal": true,
+          "id": "C02-U10"
+        },
+        {
+          "text": "That is how a place in this city begins: one decision, then its consequence.",
+          "sentenceFinal": true,
+          "id": "C02-U11"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C02.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C02-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"98%\"><mark name=\"C02-U01\"/>Nico starts with a name and a little cash. <mark name=\"C02-U01-end\"/> <mark name=\"C02-U02\"/>He takes a small job. <mark name=\"C02-U02-end\"/> <mark name=\"C02-U03\"/>Nerve goes down. <mark name=\"C02-U03-end\"/> <mark name=\"C02-U04\"/>Cash and respect go up. <mark name=\"C02-U04-end\"/> <mark name=\"C02-U05\"/>Now what? <mark name=\"C02-U05-end\"/> <mark name=\"C02-U06\"/>Another job could build his bankroll. <mark name=\"C02-U06-end\"/> <mark name=\"C02-U07\"/>Training spends energy to improve his stats. <mark name=\"C02-U07-end\"/> <mark name=\"C02-U08\"/>Banking protects money once it arrives, but the trip leaves it exposed. <mark name=\"C02-U08-end\"/> <mark name=\"C02-U09\"/>Three choices, different risks. <mark name=\"C02-U09-end\"/> <mark name=\"C02-U10\"/>Nico has to choose what matters next. <mark name=\"C02-U10-end\"/> <mark name=\"C02-U11\"/>That is how a place in this city begins: one decision, then its consequence. <mark name=\"C02-U11-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C03",
+      "title": "Become useful",
+      "start": 52,
+      "end": 90,
+      "text": "As he progresses, six Paths open different ways forward. The Gun brings street combat. The Ledger, fronts and trade. The Kitchen, better cooking. The Wheel, faster convoys. The Shadow, quicker searches. The Ring, stronger duels and bouts. Every advantage costs something. Nico chooses the Wheel: faster convoys, slower cooking. Mara chooses the Gun. Their specialties are different; their preparation still matters. Nico starts thinking beyond his next payout. What can he do that makes someone else want him around?",
+      "rate": 118,
+      "groups": [
+        {
+          "text": "As he progresses, six Paths open different ways forward.",
+          "sentenceFinal": true,
+          "id": "C03-U01"
+        },
+        {
+          "text": "The Gun brings street combat.",
+          "sentenceFinal": true,
+          "id": "C03-U02"
+        },
+        {
+          "text": "The Ledger, fronts and trade.",
+          "sentenceFinal": true,
+          "id": "C03-U03"
+        },
+        {
+          "text": "The Kitchen, better cooking.",
+          "sentenceFinal": true,
+          "id": "C03-U04"
+        },
+        {
+          "text": "The Wheel, faster convoys.",
+          "sentenceFinal": true,
+          "id": "C03-U05"
+        },
+        {
+          "text": "The Shadow, quicker searches.",
+          "sentenceFinal": true,
+          "id": "C03-U06"
+        },
+        {
+          "text": "The Ring, stronger duels and bouts.",
+          "sentenceFinal": true,
+          "id": "C03-U07"
+        },
+        {
+          "text": "Every advantage costs something.",
+          "sentenceFinal": true,
+          "id": "C03-U08"
+        },
+        {
+          "text": "Nico chooses the Wheel: faster convoys, slower cooking.",
+          "sentenceFinal": true,
+          "id": "C03-U09"
+        },
+        {
+          "text": "Mara chooses the Gun.",
+          "sentenceFinal": true,
+          "id": "C03-U10"
+        },
+        {
+          "text": "Their specialties are different; their preparation still matters.",
+          "sentenceFinal": true,
+          "id": "C03-U11"
+        },
+        {
+          "text": "Nico starts thinking beyond his next payout.",
+          "sentenceFinal": true,
+          "id": "C03-U12"
+        },
+        {
+          "text": "What can he do that makes someone else want him around?",
+          "sentenceFinal": true,
+          "id": "C03-U13"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C03.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C03-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"118%\"><mark name=\"C03-U01\"/>As he progresses, six Paths open different ways forward. <mark name=\"C03-U01-end\"/> <mark name=\"C03-U02\"/>The Gun brings street combat. <mark name=\"C03-U02-end\"/> <mark name=\"C03-U03\"/>The Ledger, fronts and trade. <mark name=\"C03-U03-end\"/> <mark name=\"C03-U04\"/>The Kitchen, better cooking. <mark name=\"C03-U04-end\"/> <mark name=\"C03-U05\"/>The Wheel, faster convoys. <mark name=\"C03-U05-end\"/> <mark name=\"C03-U06\"/>The Shadow, quicker searches. <mark name=\"C03-U06-end\"/> <mark name=\"C03-U07\"/>The Ring, stronger duels and bouts. <mark name=\"C03-U07-end\"/> <mark name=\"C03-U08\"/>Every advantage costs something. <mark name=\"C03-U08-end\"/> <mark name=\"C03-U09\"/>Nico chooses the Wheel: faster convoys, slower cooking. <mark name=\"C03-U09-end\"/> <mark name=\"C03-U10\"/>Mara chooses the Gun. <mark name=\"C03-U10-end\"/> <mark name=\"C03-U11\"/>Their specialties are different; their preparation still matters. <mark name=\"C03-U11-end\"/> <mark name=\"C03-U12\"/>Nico starts thinking beyond his next payout. <mark name=\"C03-U12-end\"/> <mark name=\"C03-U13\"/>What can he do that makes someone else want him around? <mark name=\"C03-U13-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C04",
+      "title": "A route worth taking",
+      "start": 90,
+      "end": 125,
+      "text": "He buys a sack of coffee. There is the price, the debit, and the cargo in his trunk. Getting a bargain is only half the decision. Goods need moving. Cars need repairs. Boats open sea runs with risks of their own. A business has upkeep; a Kitchen batch takes time. Races, boxing, the Den and the Speakeasy give people other reasons to return. Loans, auctions and fixers create other opportunities. The city rewards paying attention.",
+      "rate": 100,
+      "groups": [
+        {
+          "text": "He buys a sack of coffee.",
+          "sentenceFinal": true,
+          "id": "C04-U01"
+        },
+        {
+          "text": "There is the price, the debit, and the cargo in his trunk.",
+          "sentenceFinal": true,
+          "id": "C04-U02"
+        },
+        {
+          "text": "Getting a bargain is only half the decision.",
+          "sentenceFinal": true,
+          "id": "C04-U03"
+        },
+        {
+          "text": "Goods need moving.",
+          "sentenceFinal": true,
+          "id": "C04-U04"
+        },
+        {
+          "text": "Cars need repairs.",
+          "sentenceFinal": true,
+          "id": "C04-U05"
+        },
+        {
+          "text": "Boats open sea runs with risks of their own.",
+          "sentenceFinal": true,
+          "id": "C04-U06"
+        },
+        {
+          "text": "A business has upkeep; a Kitchen batch takes time.",
+          "sentenceFinal": true,
+          "id": "C04-U07"
+        },
+        {
+          "text": "Races, boxing, the Den and the Speakeasy give people other reasons to return.",
+          "sentenceFinal": true,
+          "id": "C04-U08"
+        },
+        {
+          "text": "Loans, auctions and fixers create other opportunities.",
+          "sentenceFinal": true,
+          "id": "C04-U09"
+        },
+        {
+          "text": "The city rewards paying attention.",
+          "sentenceFinal": true,
+          "id": "C04-U10"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C04.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C04-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"100%\"><mark name=\"C04-U01\"/>He buys a sack of coffee. <mark name=\"C04-U01-end\"/> <mark name=\"C04-U02\"/>There is the price, the debit, and the cargo in his trunk. <mark name=\"C04-U02-end\"/> <mark name=\"C04-U03\"/>Getting a bargain is only half the decision. <mark name=\"C04-U03-end\"/> <mark name=\"C04-U04\"/>Goods need moving. <mark name=\"C04-U04-end\"/> <mark name=\"C04-U05\"/>Cars need repairs. <mark name=\"C04-U05-end\"/> <mark name=\"C04-U06\"/>Boats open sea runs with risks of their own. <mark name=\"C04-U06-end\"/> <mark name=\"C04-U07\"/>A business has upkeep; a Kitchen batch takes time. <mark name=\"C04-U07-end\"/> <mark name=\"C04-U08\"/>Races, boxing, the Den and the Speakeasy give people other reasons to return. <mark name=\"C04-U08-end\"/> <mark name=\"C04-U09\"/>Loans, auctions and fixers create other opportunities. <mark name=\"C04-U09-end\"/> <mark name=\"C04-U10\"/>The city rewards paying attention. <mark name=\"C04-U10-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C05",
+      "title": "Who gets the other seat?",
+      "start": 125,
+      "end": 178,
+      "text": "Nico forms a Crew, a small circle for mutual aid and chat. Then comes the Payroll Office job. This heist needs a wheelman and muscle. Nico takes the wheelman role and puts up the stake. The second seat is empty. Mara joins. Both names are there. Preparation improves their odds. It cannot tell Nico what somebody else will choose. He commits. The law was waiting. Somebody talked. Both players go to jail. The result names no informant. Nico can read exactly what happened. He still does not know whom to believe.",
+      "rate": 93,
+      "groups": [
+        {
+          "text": "Nico forms a Crew, a small circle for mutual aid and chat.",
+          "sentenceFinal": true,
+          "id": "C05-U01"
+        },
+        {
+          "text": "Then comes the Payroll Office job.",
+          "sentenceFinal": true,
+          "id": "C05-U02"
+        },
+        {
+          "text": "This heist needs a wheelman and muscle.",
+          "sentenceFinal": true,
+          "id": "C05-U03"
+        },
+        {
+          "text": "Nico takes the wheelman role and puts up the stake.",
+          "sentenceFinal": true,
+          "id": "C05-U04"
+        },
+        {
+          "text": "The second seat is empty.",
+          "sentenceFinal": true,
+          "id": "C05-U05"
+        },
+        {
+          "text": "Mara joins.",
+          "sentenceFinal": true,
+          "id": "C05-U06"
+        },
+        {
+          "text": "Both names are there.",
+          "sentenceFinal": true,
+          "id": "C05-U07"
+        },
+        {
+          "text": "Preparation improves their odds.",
+          "sentenceFinal": true,
+          "id": "C05-U08"
+        },
+        {
+          "text": "It cannot tell Nico what somebody else will choose.",
+          "sentenceFinal": true,
+          "id": "C05-U09"
+        },
+        {
+          "text": "He commits.",
+          "sentenceFinal": true,
+          "id": "C05-U10"
+        },
+        {
+          "text": "The law was waiting.",
+          "sentenceFinal": true,
+          "id": "C05-U11"
+        },
+        {
+          "text": "Somebody talked.",
+          "sentenceFinal": true,
+          "id": "C05-U12"
+        },
+        {
+          "text": "Both players go to jail.",
+          "sentenceFinal": true,
+          "id": "C05-U13"
+        },
+        {
+          "text": "The result names no informant.",
+          "sentenceFinal": true,
+          "id": "C05-U14"
+        },
+        {
+          "text": "Nico can read exactly what happened.",
+          "sentenceFinal": true,
+          "id": "C05-U15"
+        },
+        {
+          "text": "He still does not know whom to believe.",
+          "sentenceFinal": true,
+          "id": "C05-U16"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C05.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C05-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"93%\"><mark name=\"C05-U01\"/>Nico forms a Crew, a small circle for mutual aid and chat. <mark name=\"C05-U01-end\"/> <mark name=\"C05-U02\"/>Then comes the Payroll Office job. <mark name=\"C05-U02-end\"/> <mark name=\"C05-U03\"/>This heist needs a wheelman and muscle. <mark name=\"C05-U03-end\"/> <mark name=\"C05-U04\"/>Nico takes the wheelman role and puts up the stake. <mark name=\"C05-U04-end\"/> <mark name=\"C05-U05\"/>The second seat is empty. <mark name=\"C05-U05-end\"/> <mark name=\"C05-U06\"/>Mara joins. <mark name=\"C05-U06-end\"/> <mark name=\"C05-U07\"/>Both names are there. <mark name=\"C05-U07-end\"/> <mark name=\"C05-U08\"/>Preparation improves their odds. <mark name=\"C05-U08-end\"/> <mark name=\"C05-U09\"/>It cannot tell Nico what somebody else will choose. <mark name=\"C05-U09-end\"/> <mark name=\"C05-U10\"/>He commits. <mark name=\"C05-U10-end\"/> <break time=\"1400ms\"/><mark name=\"C05-U11\"/>The law was waiting. <mark name=\"C05-U11-end\"/> <mark name=\"C05-U12\"/>Somebody talked. <mark name=\"C05-U12-end\"/><break time=\"600ms\"/> <mark name=\"C05-U13\"/>Both players go to jail. <mark name=\"C05-U13-end\"/><break time=\"1400ms\"/> <mark name=\"C05-U14\"/>The result names no informant. <mark name=\"C05-U14-end\"/> <mark name=\"C05-U15\"/>Nico can read exactly what happened. <mark name=\"C05-U15-end\"/> <mark name=\"C05-U16\"/>He still does not know whom to believe. <mark name=\"C05-U16-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C06",
+      "title": "What survives a loss?",
+      "start": 178,
+      "end": 212,
+      "text": "Jail ends. The question remains. Would you invite the same person again? Bigger risks can cost more: a character can die. Your account continues, but an heir keeps only a limited legacy. Seasons have their own rules. Eligible gear and vehicles can leave the game, but extracted items stop working inside it. Combat cannot take unrelated assets from your external wallet. What do you keep in play? What are you prepared to lose?",
+      "rate": 101,
+      "groups": [
+        {
+          "text": "Jail ends.",
+          "sentenceFinal": true,
+          "id": "C06-U01"
+        },
+        {
+          "text": "The question remains.",
+          "sentenceFinal": true,
+          "id": "C06-U02"
+        },
+        {
+          "text": "Would you invite the same person again?",
+          "sentenceFinal": true,
+          "id": "C06-U03"
+        },
+        {
+          "text": "Bigger risks can cost more: a character can die.",
+          "sentenceFinal": true,
+          "id": "C06-U04"
+        },
+        {
+          "text": "Your account continues, but an heir keeps only a limited legacy.",
+          "sentenceFinal": true,
+          "id": "C06-U05"
+        },
+        {
+          "text": "Seasons have their own rules.",
+          "sentenceFinal": true,
+          "id": "C06-U06"
+        },
+        {
+          "text": "Eligible gear and vehicles can leave the game, but extracted items stop working inside it.",
+          "sentenceFinal": true,
+          "id": "C06-U07"
+        },
+        {
+          "text": "Combat cannot take unrelated assets from your external wallet.",
+          "sentenceFinal": true,
+          "id": "C06-U08"
+        },
+        {
+          "text": "What do you keep in play?",
+          "sentenceFinal": true,
+          "id": "C06-U09"
+        },
+        {
+          "text": "What are you prepared to lose?",
+          "sentenceFinal": true,
+          "id": "C06-U10"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C06.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C06-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"101%\"><mark name=\"C06-U01\"/>Jail ends. <mark name=\"C06-U01-end\"/> <mark name=\"C06-U02\"/>The question remains. <mark name=\"C06-U02-end\"/> <mark name=\"C06-U03\"/>Would you invite the same person again? <mark name=\"C06-U03-end\"/> <mark name=\"C06-U04\"/>Bigger risks can cost more: a character can die. <mark name=\"C06-U04-end\"/> <mark name=\"C06-U05\"/>Your account continues, but an heir keeps only a limited legacy. <mark name=\"C06-U05-end\"/> <mark name=\"C06-U06\"/>Seasons have their own rules. <mark name=\"C06-U06-end\"/> <mark name=\"C06-U07\"/>Eligible gear and vehicles can leave the game, but extracted items stop working inside it. <mark name=\"C06-U07-end\"/> <mark name=\"C06-U08\"/>Combat cannot take unrelated assets from your external wallet. <mark name=\"C06-U08-end\"/> <mark name=\"C06-U09\"/>What do you keep in play? <mark name=\"C06-U09-end\"/> <mark name=\"C06-U10\"/>What are you prepared to lose? <mark name=\"C06-U10-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C07",
+      "title": "What do you know?",
+      "start": 212,
+      "end": 252,
+      "text": "Elsewhere in the city, discoveries can be kept private or shared with permission. Two investigators may need evidence they found independently. Copying the same clue is not another witness. Objects tell stories too: salvage becomes material, and an eligible recipe makes an item with a traceable history. Beyond Nico's small Crew, Families pursue larger ambitions: treasury, territory, rivalries and wars. Shared operations need contributions and approval. Convoys can be ambushed. Commission seats give votes on specific city rules. Events and the Director's authored situations change the opportunities around you.",
+      "rate": 116,
+      "groups": [
+        {
+          "text": "Elsewhere in the city, discoveries can be kept private or shared with permission.",
+          "sentenceFinal": true,
+          "id": "C07-U01"
+        },
+        {
+          "text": "Two investigators may need evidence they found independently.",
+          "sentenceFinal": true,
+          "id": "C07-U02"
+        },
+        {
+          "text": "Copying the same clue is not another witness.",
+          "sentenceFinal": true,
+          "id": "C07-U03"
+        },
+        {
+          "text": "Objects tell stories too: salvage becomes material, and an eligible recipe makes an item",
+          "sentenceFinal": false,
+          "id": "C07-U04"
+        },
+        {
+          "text": "with a traceable history.",
+          "sentenceFinal": true,
+          "id": "C07-U05"
+        },
+        {
+          "text": "Beyond Nico's small Crew, Families pursue larger ambitions: treasury, territory, rivalries and wars.",
+          "sentenceFinal": true,
+          "id": "C07-U06"
+        },
+        {
+          "text": "Shared operations need contributions and approval.",
+          "sentenceFinal": true,
+          "id": "C07-U07"
+        },
+        {
+          "text": "Convoys can be ambushed.",
+          "sentenceFinal": true,
+          "id": "C07-U08"
+        },
+        {
+          "text": "Commission seats give votes on specific city rules.",
+          "sentenceFinal": true,
+          "id": "C07-U09"
+        },
+        {
+          "text": "Events and the Director's authored situations change the opportunities around you.",
+          "sentenceFinal": true,
+          "id": "C07-U10"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C07.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C07-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"116%\"><mark name=\"C07-U01\"/>Elsewhere in the city, discoveries can be kept private or shared with permission. <mark name=\"C07-U01-end\"/> <mark name=\"C07-U02\"/>Two investigators may need evidence they found independently. <mark name=\"C07-U02-end\"/> <mark name=\"C07-U03\"/>Copying the same clue is not another witness. <mark name=\"C07-U03-end\"/> <mark name=\"C07-U04\"/>Objects tell stories too: salvage becomes material, and an eligible recipe makes an item <mark name=\"C07-U04-end\"/> <mark name=\"C07-U05\"/>with a traceable history. <mark name=\"C07-U05-end\"/> <mark name=\"C07-U06\"/>Beyond Nico's small Crew, Families pursue larger ambitions: treasury, territory, rivalries and wars. <mark name=\"C07-U06-end\"/> <mark name=\"C07-U07\"/>Shared operations need contributions and approval. <mark name=\"C07-U07-end\"/> <mark name=\"C07-U08\"/>Convoys can be ambushed. <mark name=\"C07-U08-end\"/> <mark name=\"C07-U09\"/>Commission seats give votes on specific city rules. <mark name=\"C07-U09-end\"/> <mark name=\"C07-U10\"/>Events and the Director's authored situations change the opportunities around you. <mark name=\"C07-U10-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C08",
+      "title": "Who is across the street?",
+      "start": 252,
+      "end": 280,
+      "text": "Not every rival is at a keyboard. A player can operate an agent. Here it reads its available actions and takes a street job. Nerve falls; cash and respect change. The next decision starts from that new state. Permissions and resources still limit what it can do. The city's NPCs are separate. Whether you bring friends or build an agent, the choices still have consequences.",
+      "rate": 106,
+      "groups": [
+        {
+          "text": "Not every rival is at a keyboard.",
+          "sentenceFinal": true,
+          "id": "C08-U01"
+        },
+        {
+          "text": "A player can operate an agent.",
+          "sentenceFinal": true,
+          "id": "C08-U02"
+        },
+        {
+          "text": "Here it reads its available actions and takes a street job.",
+          "sentenceFinal": true,
+          "id": "C08-U03"
+        },
+        {
+          "text": "Nerve falls; cash and respect change.",
+          "sentenceFinal": true,
+          "id": "C08-U04"
+        },
+        {
+          "text": "The next decision starts from that new state.",
+          "sentenceFinal": true,
+          "id": "C08-U05"
+        },
+        {
+          "text": "Permissions and resources still limit what it can do.",
+          "sentenceFinal": true,
+          "id": "C08-U06"
+        },
+        {
+          "text": "The city's NPCs are separate.",
+          "sentenceFinal": true,
+          "id": "C08-U07"
+        },
+        {
+          "text": "Whether you bring friends or build an agent, the choices still have consequences.",
+          "sentenceFinal": true,
+          "id": "C08-U08"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C08.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C08-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"106%\"><mark name=\"C08-U01\"/>Not every rival is at a keyboard. <mark name=\"C08-U01-end\"/> <mark name=\"C08-U02\"/>A player can operate an agent. <mark name=\"C08-U02-end\"/> <mark name=\"C08-U03\"/>Here it reads its available actions and takes a street job. <mark name=\"C08-U03-end\"/> <mark name=\"C08-U04\"/>Nerve falls; cash and respect change. <mark name=\"C08-U04-end\"/> <mark name=\"C08-U05\"/>The next decision starts from that new state. <mark name=\"C08-U05-end\"/> <mark name=\"C08-U06\"/>Permissions and resources still limit what it can do. <mark name=\"C08-U06-end\"/> <mark name=\"C08-U07\"/>The city's N P Cs are separate. <mark name=\"C08-U07-end\"/> <mark name=\"C08-U08\"/>Whether you bring friends or build an agent, the choices still have consequences. <mark name=\"C08-U08-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C09",
+      "title": "What does power cost?",
+      "start": 280,
+      "end": 350,
+      "text": "Nico needs equipment, access and people. Money helps, but the balances have different jobs. Game cash pays for city life. In-game OMR buys selected gear and services; some privileges require holding or staking it. Most OMR spends recycle it. Wallet OMR is separate, onchain. The funded Window spends OMR for game cash. That conversion goes one way. Game rewards are not automatic wallet payouts.\n\nTrading fees fund developer, community, asset and liquidity budgets. Inventory bonds release existing OMR over time. Liquidity rewards need eligible positions and funded campaigns. Some realized arbitrage profit can support reserves. Families compete for designated trading-fee rights; they do not take the pool's principal.\n\nReal-world assets include Stock Tokens: exposure to assets outside the game. Commission choices, acquisition, custody and eligibility govern the process. Holding OMR does not promise everyone a payout. These systems shape what players can organize. They cannot decide whom Nico should trust.",
+      "rate": 117,
+      "groups": [
+        {
+          "text": "Nico needs equipment, access and people.",
+          "sentenceFinal": true,
+          "id": "C09-U01"
+        },
+        {
+          "text": "Money helps, but the balances have different jobs.",
+          "sentenceFinal": true,
+          "id": "C09-U02"
+        },
+        {
+          "text": "Game cash pays for city life.",
+          "sentenceFinal": true,
+          "id": "C09-U03"
+        },
+        {
+          "text": "In-game OMR buys selected gear and services; some privileges require holding or staking it.",
+          "sentenceFinal": true,
+          "id": "C09-U04"
+        },
+        {
+          "text": "Most OMR spends recycle it.",
+          "sentenceFinal": true,
+          "id": "C09-U05"
+        },
+        {
+          "text": "Wallet OMR is separate, onchain.",
+          "sentenceFinal": true,
+          "id": "C09-U06"
+        },
+        {
+          "text": "The funded Window spends OMR for game cash.",
+          "sentenceFinal": true,
+          "id": "C09-U07"
+        },
+        {
+          "text": "That conversion goes one way.",
+          "sentenceFinal": true,
+          "id": "C09-U08"
+        },
+        {
+          "text": "Game rewards are not automatic wallet payouts.",
+          "sentenceFinal": true,
+          "id": "C09-U09"
+        },
+        {
+          "text": "Trading fees fund developer, community, asset and liquidity budgets.",
+          "sentenceFinal": true,
+          "id": "C09-U10"
+        },
+        {
+          "text": "Inventory bonds release existing OMR over time.",
+          "sentenceFinal": true,
+          "id": "C09-U11"
+        },
+        {
+          "text": "Liquidity rewards need eligible positions and funded campaigns.",
+          "sentenceFinal": true,
+          "id": "C09-U12"
+        },
+        {
+          "text": "Some realized arbitrage profit can support reserves.",
+          "sentenceFinal": true,
+          "id": "C09-U13"
+        },
+        {
+          "text": "Families compete for designated trading-fee rights; they do not take the pool's principal.",
+          "sentenceFinal": true,
+          "id": "C09-U14"
+        },
+        {
+          "text": "Real-world assets include Stock Tokens: exposure to assets outside the game.",
+          "sentenceFinal": true,
+          "id": "C09-U15"
+        },
+        {
+          "text": "Commission choices, acquisition, custody and eligibility govern the process.",
+          "sentenceFinal": true,
+          "id": "C09-U16"
+        },
+        {
+          "text": "Holding OMR does not promise everyone a payout.",
+          "sentenceFinal": true,
+          "id": "C09-U17"
+        },
+        {
+          "text": "These systems shape what players can organize.",
+          "sentenceFinal": true,
+          "id": "C09-U18"
+        },
+        {
+          "text": "They cannot decide whom Nico should trust.",
+          "sentenceFinal": true,
+          "id": "C09-U19"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C09.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C09-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"117%\"><mark name=\"C09-U01\"/>Nico needs equipment, access and people. <mark name=\"C09-U01-end\"/> <mark name=\"C09-U02\"/>Money helps, but the balances have different jobs. <mark name=\"C09-U02-end\"/> <mark name=\"C09-U03\"/>Game cash pays for city life. <mark name=\"C09-U03-end\"/> <mark name=\"C09-U04\"/>In-game O M R buys selected gear and services; some privileges require holding or staking it. <mark name=\"C09-U04-end\"/> <mark name=\"C09-U05\"/>Most O M R spends recycle it. <mark name=\"C09-U05-end\"/> <mark name=\"C09-U06\"/>Wallet O M R is separate, onchain. <mark name=\"C09-U06-end\"/> <mark name=\"C09-U07\"/>The funded Window spends O M R for game cash. <mark name=\"C09-U07-end\"/> <mark name=\"C09-U08\"/>That conversion goes one way. <mark name=\"C09-U08-end\"/> <mark name=\"C09-U09\"/>Game rewards are not automatic wallet payouts. <mark name=\"C09-U09-end\"/> <mark name=\"C09-U10\"/>Trading fees fund developer, community, asset and liquidity budgets. <mark name=\"C09-U10-end\"/> <mark name=\"C09-U11\"/>Inventory bonds release existing O M R over time. <mark name=\"C09-U11-end\"/> <mark name=\"C09-U12\"/>Liquidity rewards need eligible positions and funded campaigns. <mark name=\"C09-U12-end\"/> <mark name=\"C09-U13\"/>Some realized arbitrage profit can support reserves. <mark name=\"C09-U13-end\"/> <mark name=\"C09-U14\"/>Families compete for designated trading-fee rights; they do not take the pool's principal. <mark name=\"C09-U14-end\"/> <mark name=\"C09-U15\"/>Real-world assets include Stock Tokens: exposure to assets outside the game. <mark name=\"C09-U15-end\"/> <mark name=\"C09-U16\"/>Commission choices, acquisition, custody and eligibility govern the process. <mark name=\"C09-U16-end\"/> <mark name=\"C09-U17\"/>Holding O M R does not promise everyone a payout. <mark name=\"C09-U17-end\"/> <mark name=\"C09-U18\"/>These systems shape what players can organize. <mark name=\"C09-U18-end\"/> <mark name=\"C09-U19\"/>They cannot decide whom Nico should trust. <mark name=\"C09-U19-end\"/></prosody></speak>"
+    },
+    {
+      "id": "C10",
+      "title": "The next invitation",
+      "start": 350,
+      "end": 390,
+      "text": "The next job comes round. Another stake. Another empty seat. Nico has learned how to earn, how to specialize, and how much another person's decision can cost him. The next invitation is a choice he has to make. You can buy equipment. You cannot buy trust. Choose your path. Find your people. Make your name. OMERTÀ. Who will you bring? Start playing at omerta.fun.",
+      "rate": 99,
+      "groups": [
+        {
+          "text": "The next job comes round.",
+          "sentenceFinal": true,
+          "id": "C10-U01"
+        },
+        {
+          "text": "Another stake.",
+          "sentenceFinal": true,
+          "id": "C10-U02"
+        },
+        {
+          "text": "Another empty seat.",
+          "sentenceFinal": true,
+          "id": "C10-U03"
+        },
+        {
+          "text": "Nico has learned how to earn, how to specialize, and how much another person's decision can cost him.",
+          "sentenceFinal": true,
+          "id": "C10-U04"
+        },
+        {
+          "text": "The next invitation is a choice he has to make.",
+          "sentenceFinal": true,
+          "id": "C10-U05"
+        },
+        {
+          "text": "You can buy equipment.",
+          "sentenceFinal": true,
+          "id": "C10-U06"
+        },
+        {
+          "text": "You cannot buy trust.",
+          "sentenceFinal": true,
+          "id": "C10-U07"
+        },
+        {
+          "text": "Choose your path.",
+          "sentenceFinal": true,
+          "id": "C10-U08"
+        },
+        {
+          "text": "Find your people.",
+          "sentenceFinal": true,
+          "id": "C10-U09"
+        },
+        {
+          "text": "Make your name.",
+          "sentenceFinal": true,
+          "id": "C10-U10"
+        },
+        {
+          "text": "OMERTÀ.",
+          "sentenceFinal": true,
+          "id": "C10-U11"
+        },
+        {
+          "text": "Who will you bring?",
+          "sentenceFinal": true,
+          "id": "C10-U12"
+        },
+        {
+          "text": "Start playing at omerta.fun.",
+          "sentenceFinal": true,
+          "id": "C10-U13"
+        }
+      ],
+      "file": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C10.wav",
+      "timingFile": "C:\\Users\\Jorge\\Documents\\Omerta\\public\\art\\flagship-rebuild\\audio\\chapters\\C10-events.json",
+      "ssml": "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><prosody rate=\"99%\"><mark name=\"C10-U01\"/>The next job comes round. <mark name=\"C10-U01-end\"/> <mark name=\"C10-U02\"/>Another stake. <mark name=\"C10-U02-end\"/> <mark name=\"C10-U03\"/>Another empty seat. <mark name=\"C10-U03-end\"/> <mark name=\"C10-U04\"/>Nico has learned how to earn, how to specialize, and how much another person's decision can cost him. <mark name=\"C10-U04-end\"/> <mark name=\"C10-U05\"/>The next invitation is a choice he has to make. <mark name=\"C10-U05-end\"/> <mark name=\"C10-U06\"/>You can buy equipment. <mark name=\"C10-U06-end\"/> <mark name=\"C10-U07\"/>You cannot buy trust. <mark name=\"C10-U07-end\"/> <mark name=\"C10-U08\"/>Choose your path. <mark name=\"C10-U08-end\"/> <mark name=\"C10-U09\"/>Find your people. <mark name=\"C10-U09-end\"/> <mark name=\"C10-U10\"/>Make your name. <mark name=\"C10-U10-end\"/> <mark name=\"C10-U11\"/>oh mare tah. <mark name=\"C10-U11-end\"/> <mark name=\"C10-U12\"/>Who will you bring? <mark name=\"C10-U12-end\"/> <mark name=\"C10-U13\"/>Start playing at oh mare tah dot fun. <mark name=\"C10-U13-end\"/></prosody></speak>"
+    }
+  ]
+}

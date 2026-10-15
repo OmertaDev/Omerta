@@ -24,8 +24,7 @@ const packetTemplate = {
     saleTokenAmountWei: '40000000000000000000000000', lpTokenAmountWei: '20000000000000000000000000',
     bondTokenAmountWei: '40000000000000000000000000', minimumRaiseWei: '10000000000000000000', lpProceedsBps: 5000,
     claimsAtAuctionEnd: true, familySafe: SAFE, liquidityOwner: SAFE, unsoldRecipient: SAFE, bondReserveCustodian: SAFE },
-    hookGovernance: { governanceSafe: SAFE, fixedFounderRecipient: '0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced',
-      fixedFounderBps: 200, delaySeconds: 172800, executionSafeOnly: true } },
+    hookPolicy: { baseTradeBps: 500, maxSurgeBps: 50, developerBps: 200, rwaBps: 100, communityBps: 100, polBps: 100, recipients: [] } },
   deployments: roles.map((role, i) => ({ role, chainId: 4663, from: DEPLOYER, nonce: String(i), value: '0x0',
     predicted: addr(100 + i), data: i === 3 ? '0x' + '00'.repeat(32) + '6000' : '0x6000', ...(i === 3 ? { to: FACTORY } : {}) })),
   runtimeChecks: Object.fromEntries(roles.map((role, i) => [role, { address: addr(100 + i), sha256: runtimeSha }])),
@@ -39,12 +38,14 @@ function makePacket(start=27n) {
   const p=structuredClone(packetTemplate);
   p.hookConfiguration={poolFee:3000,tickSpacing:60,opening:{blocks:0,buyBps:0,maxBuyQuote:'0'},surgeFullTicks:100,epochDuration:3600};
   p.deployments.forEach((d,i)=>{d.nonce=String(start+BigInt(i));if(i!==3)d.predicted=getContractAddress({from:DEPLOYER,nonce:start+BigInt(i)}).toLowerCase();});
+  p.finalManifest.hookPolicy.recipients = ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced', SAFE,
+    '0x785be68e426a382c52004e04340897f834f2fcaf', p.deployments[0].predicted, p.deployments[1].predicted];
   const args=encodeAbiParameters([{type:'address'},{type:'address'},{type:'address'},{type:'uint24'},{type:'int24'},
     {type:'address[5]'},{type:'tuple',components:[{type:'uint16'},{type:'uint16'},{type:'uint128'}]},
-    {type:'uint24'},{type:'uint32'},{type:'address'}],
+    {type:'uint24'},{type:'uint32'}],
     [dependencyAddresses.poolManager,dependencyAddresses.omr,p.deployments[2].predicted,3000,60,
       ['0xa87b7a7eecb6f4c771445f5cba5bb0d4b29e5ced',SAFE,'0x785be68e426a382c52004e04340897f834f2fcaf',p.deployments[0].predicted,p.deployments[1].predicted],
-      [0,0,0n],100,3600,SAFE]);
+      [0,0,0n],100,3600]);
   const init=TRUSTED_HOOK.creationBytecode+args.slice(2),initHash=keccak256(init);
   for(let n=0n;n<1000000n;n++){
     const salt='0x'+n.toString(16).padStart(64,'0');const candidate=getCreate2Address({from:FACTORY,salt,bytecodeHash:initHash}).toLowerCase();
@@ -99,7 +100,21 @@ function fixture({ storage = new Storage(), locks = new Locks(), clock = () => n
       if (state.hashUnsupported && params[1]?.blockHash) throw Error('Wallet provider does not support canonical hash reads');
       return state.codes.get(params[0].toLowerCase()) || '0x';
     }
-    if (method === 'eth_call') return '0x' + state.native.toString(16).padStart(64, '0');
+    if (method === 'eth_call') {
+      if (params[0].to.toLowerCase() === dependencyAddresses.poolManager) {
+        if (state.standardManager) throw Error('unknown selector');
+        const words = {
+          'revenuePolicyId()': state.badManagerPolicy ? hash(777) : keccak256(new TextEncoder().encode('OMERTA_RESTRICTED_LP_REVENUE_V2_500_BOTH_DIRECTIONS')),
+          'TRADE_FEE_BPS()': '0x' + BigInt(state.badManagerFee ? 501 : 500).toString(16).padStart(64, '0'),
+          'omr()': '0x' + (state.badManagerOmr ? addr(777) : dependencyAddresses.omr).slice(2).padStart(64, '0'),
+          ...Object.fromEntries(['developerRecipient()', 'rwaRecipient()', 'communityRecipient()', 'polRecipient()']
+            .map((signature, i) => [signature, '0x' + (state.badManagerRecipient ? addr(777) : packet.finalManifest.hookPolicy.recipients[i]).slice(2).padStart(64, '0')])),
+        };
+        const signature = Object.keys(words).find(signature => keccak256(new TextEncoder().encode(signature)).slice(0, 10) === params[0].data);
+        assert.ok(signature, 'manager calls use the reviewed immutable policy getters'); return words[signature];
+      }
+      return '0x' + state.native.toString(16).padStart(64, '0');
+    }
     if (method === 'eth_estimateGas') return '0x186a0';
     if (method === 'eth_gasPrice') return '0x3e8';
     if (method === 'eth_getBalance') return '0xde0b6b3a7640000';
@@ -151,9 +166,10 @@ for (const change of [p => { p.signingReady = false; }, p => { p.chainId = 1; },
   p => { p.auxiliaryRuntimeChecks.pop(); }, p => { p.auxiliaryRuntimeChecks[0].address = packet.deployments[0].predicted; },
   p => { p.auxiliaryRuntimeChecks[0].sha256 = undefined; },
   p => { p.internalValidatorApprovedSupply = '1'; }, p => { p.internalScheduleRuntime = '0x006001'; },
-  p => { delete p.finalManifest.hookGovernance; }, p => { p.finalManifest.hookGovernance.fixedFounderBps = 201; },
-  p => { p.finalManifest.hookGovernance.governanceSafe = addr(2); }, p => { p.finalManifest.hookGovernance.delaySeconds = 1; },
-  p => { p.finalManifest.hookGovernance.executionSafeOnly = false; },
+  p => { delete p.finalManifest.hookPolicy; }, p => { p.finalManifest.hookPolicy.developerBps = 201; },
+  p => { p.finalManifest.hookPolicy.baseTradeBps = 900; }, p => { p.finalManifest.hookPolicy.maxSurgeBps = 51; },
+  p => { p.finalManifest.hookPolicy.recipients[0] = addr(2); }, p => { p.finalManifest.hookPolicy.recipients[4] = addr(2); },
+  p => { p.finalManifest.hookPolicy.governanceSafe = SAFE; },
   p => { p.internalValidatorAddress = dependencyAddresses.omr; p.auxiliaryRuntimeChecks[0].address = dependencyAddresses.omr; },
   p => { p.validUntil = '2026-10-01T00:00:00Z'; }, p => { p.launchClock.claimBlock = '4000001'; }]) {
   const p = structuredClone(packet); change(p); const [r, d] = await encoded(p);
@@ -314,7 +330,7 @@ const replaceWord = (p, index, word) => {
 };
 for (const change of [
   p => { p.deployments[3].data = '0xdeadbeef'; },
-  p => replaceWord(p, 15, addr(777).slice(2)), p => replaceWord(p, 5, addr(777).slice(2)),
+  p => replaceWord(p, 2, addr(777).slice(2)), p => replaceWord(p, 5, addr(777).slice(2)),
   p => replaceWord(p, 6, addr(777).slice(2)), p => replaceWord(p, 7, addr(777).slice(2)),
   p => replaceWord(p, 3, '1f4'), p => replaceWord(p, 4, '1'), p => replaceWord(p, 10, '1'),
   p => replaceWord(p, 13, '1'), p => replaceWord(p, 14, '1'),
@@ -329,7 +345,7 @@ for (const change of [
   await assert.rejects(() => f.client.load(forgedRaw, forgedHash));
   assert.equal(f.state.requests.length, 0, 'self-hashed forged hook data is rejected before any wallet request');
 }
-console.log('Trusted local hook bytecode/16 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS');
+console.log('Trusted local hook bytecode/15 canonical constructor words/static LP policy/CREATE and CREATE2 bindings defeat self-hashed forged payloads before wallet access PASS');
 const replaceCreationWord = (p, roleIndex, contract, wordIndex, word) => {
   const offset = 2 + TRUSTED_CREATIONS[contract].creationBytecodeBytes * 2 + wordIndex * 64;
   p.deployments[roleIndex].data = p.deployments[roleIndex].data.slice(0, offset) + word.padStart(64, '0') + p.deployments[roleIndex].data.slice(offset + 64);
@@ -374,3 +390,10 @@ assert.equal(f.client.summary().stage, 0); assert.equal(f.client.state().pending
 assert.equal(f.state.requests.filter(r => r.method === 'eth_sendTransaction').length, 0);
 assert(f.state.requests.filter(r => r.method === 'eth_getCode').every(r => r.params[1]?.requireCanonical === true));
 console.log('Unsupported wallet hash reads fail closed before signing, without numeric/latest fallback PASS');
+
+for (const key of ['standardManager', 'badManagerPolicy', 'badManagerFee', 'badManagerOmr', 'badManagerRecipient']) {
+  f = fixture(); await load(f); f.state[key] = true;
+  await assert.rejects(() => f.client.sendNext(), /reviewed restricted manager/);
+  assert.equal(f.state.requests.filter(r => r.method === 'eth_sendTransaction').length, 0);
+}
+console.log('Deployment signing rejects standard managers and incorrect fixed revenue policy before transaction approval PASS');

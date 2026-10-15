@@ -1,0 +1,25 @@
+
+Detector: incorrect-equality
+StockTokenRegistry.resolveBallot(uint256) (src/StockTokenRegistry.sol#173-184) uses a dangerous strict equality:
+	- ballot.publishedAt == 0 (src/StockTokenRegistry.sol#179)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-strict-equalities
+
+Detector: missing-zero-check
+StockTokenRegistry.constructor(address,address).publisher_ (src/StockTokenRegistry.sol#75) lacks a zero-check on :
+		- publisher = publisher_ (src/StockTokenRegistry.sol#76)
+StockTokenRegistry.setPublisher(address).publisher_ (src/StockTokenRegistry.sol#138) lacks a zero-check on :
+		- publisher = publisher_ (src/StockTokenRegistry.sol#139)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+
+Detector: timestamp
+StockTokenRegistry.publishBallot(uint256,bytes32,bytes32) (src/StockTokenRegistry.sol#159-168) uses timestamp for comparisons
+	Dangerous comparisons:
+	- day >= block.timestamp / 86400 (src/StockTokenRegistry.sol#160)
+StockTokenRegistry.resolveBallot(uint256) (src/StockTokenRegistry.sol#173-184) uses timestamp for comparisons
+	Dangerous comparisons:
+	- ballot.publishedAt == 0 (src/StockTokenRegistry.sol#179)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#block-timestamp
+src\StockTokenRegistry.sol analyzed (4 contracts with 102 detectors), 5 result(s) found
+'forge config --json' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 --version' running
+'C:/Users/Jorge/.solc-select/artifacts/solc-0.8.26/solc-0.8.26 @openzeppelin/=lib/openzeppelin-contracts/ v4-core/=lib/v4-core/src/ @uniswap/v4-core/=lib/v4-core/ permit2/=lib/permit2/ solmate/=lib/v4-core/lib/solmate/ @ensdomains/=lib/v4-core/node_modules/@ensdomains/ ds-test/=lib/v4-core/lib/forge-std/lib/ds-test/src/ erc4626-tests/=lib/v4-core/lib/openzeppelin-contracts/lib/erc4626-tests/ forge-std/=lib/forge-std/src/ hardhat/=lib/v4-core/node_modules/hardhat/ openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/ v4-periphery/=lib/v4-periphery/src/ src\StockTokenRegistry.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --optimize --optimize-runs 800 --evm-version cancun --allow-paths .,C:\Users\Jorge\Documents\Omerta\omerta-contracts\src' running

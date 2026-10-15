@@ -1,0 +1,163 @@
+[
+  {
+    "id": "SOUL-CH01",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Everybody wants control of the city. But control costs. Core supplies liquidity on both sides. The other reserves have different jobs. Sell through active downside ranges, and Ether becomes O M R. Buy through the upside ranges, and O M R becomes Ether. But crossing isn't the finish line. Before withdrawal, inventory can still convert back. Finalization removes an eligible position, separating returned principal from fees. Deployment spends capacity. Moving funds won't reset those limits.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH02",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "The city takes readings before it moves: completed pool history, checked against current conditions. Stress thresholds, cooldowns and capacity decide whether reserves can deploy. Surge fees, bond proceeds and an arbitrage share fund the War Chest. Refill takes a full recovery window, with enough spaced, healthy observations. Even then, only actual idle assets move. Lifetime limits stay spent. A price bounce doesn't create Ether. There is no guaranteed floor.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH03",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Canonical sells pay nine percent, divided between four recipients. Three percent funds Core. Up to one extra percent funds stability as sell pressure rises. Fees settle in Ether or O M R, including partial fills. Opening buys have temporary limits and fees. Afterwards, there's no Hook buy tax. Other pools have their own rules. Pool liquidity fees are separate.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH04",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Bonds reserve existing O M R, paid for in Ether and released through linear vesting. No minting. No sellback. A purchasing pause doesn't erase vested claims. Solvers commit a plan, then fund a two-pool arbitrage cycle. Profit is checked after costs and the reserve share. Failed gas and competition are still yours. Players can lock canonical liquidity-position N F Tees. Rewards require fresh, qualifying depth samples. Rewards come from funded campaigns. A matured position can exit independently.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH05",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Families fight for seasonal Turf fee rights. The protocol keeps the liquidity principal. Syndicates split those rights. Territorial status doesn't multiply the money. Before control changes, a checkpoint assigns fees already earned. Old claims keep their recipients. Sieges freeze participant wallets and divide funded escrow under bounded outcomes. At season exit, fees settle and protocol principal returns for retirement.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH06",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "The Safe binds and funds the system. Keepers simulate within budgets; the game cannot withdraw principal. Game cash, O M R, Ether and R W A allocations stay on separate ledgers. Trades change inventory. Funded revenue supports reserves. Conditions decide the next move.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  },
+  {
+    "id": "SOUL-CH07",
+    "model": "fal-ai/minimax/speech-2.8-hd",
+    "folder": "audio",
+    "ext": "mp3",
+    "input": {
+      "prompt": "Oh-MAIR-tah. Control costs.",
+      "voice_setting": {
+        "voice_id": "ttv-voice-2026092513153126-73DRGCkR",
+        "speed": 1,
+        "pitch": 0,
+        "vol": 1,
+        "english_normalization": false
+      },
+      "audio_setting": {
+        "sample_rate": 44100,
+        "bitrate": 256000,
+        "format": "mp3",
+        "channel": 1
+      },
+      "output_format": "url"
+    }
+  }
+]

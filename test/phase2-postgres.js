@@ -14,6 +14,8 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
+import { createReleasePhase2MigrationCatalog, readReleasePhase2Metadata,
+  verifyReleasePhase2CausalNegatives } from '../tools/combined-release-phase2-migration-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -216,11 +218,15 @@ async function child(url) {
       const gameplayMetadata = await readCityGameplayMigrationMetadata(pool);
       gameplayCatalog.verifyMetadata(gameplayMetadata);
       const version = Number(settings.server_version_num);
-      const equipment = equipmentEconomyMigrationProjection(schema,gameplayMetadata);
+      assert.throws(() => equipmentEconomyMigrationProjection(schema,gameplayMetadata), error => error?.code === 'ERR_ASSERTION',
+        'The source-only C2 envelope does not confer historical native admission');
+      const release = await createReleasePhase2MigrationCatalog(pool,referenceUrl.toString(),schema,
+        { includeNotNull: true, legacyProfile: 'phase2' });
+      const equipment = equipmentEconomyMigrationProjection(release.predecessorSource,gameplayMetadata);
       const cityProjection = gameplayUpgradeProjection(gameplayCatalog,oldConstraints,version);
-      assert.throws(()=>cityProjection.normalize(upgradedConstraints),error=>error?.code==='ERR_ASSERTION',
+      assert.throws(()=>cityProjection.normalize(release.normalize(upgradedConstraints)),error=>error?.code==='ERR_ASSERTION',
         'The unchanged City oracle refuses the new equipment predicate without the closed equipment projection');
-      const projection = Object.freeze({ ...cityProjection, normalize: rows => cityProjection.normalize(equipment.normalize(rows)) });
+      const projection = Object.freeze({ ...cityProjection, normalize: rows => cityProjection.normalize(equipment.normalize(release.normalize(rows))) });
       const normalize = projection.normalize;
       const normalized = normalize(upgradedConstraints);
       verifyUpgradeConstraintCatalog(oldConstraints,normalized,version);
@@ -228,6 +234,9 @@ async function child(url) {
       verifyPlayerIntelUpgradeCausalNegatives(oldConstraints,normalized,version);
       verifyGameplayUpgradeCausalNegatives(gameplayCatalog,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
       verifyEquipmentEconomyUpgradeCausalNegatives(equipment,gameplayMetadata,oldConstraints,upgradedConstraints,version,projection);
+      await verifyReleasePhase2CausalNegatives(pool,release,upgradedConstraints,
+        rows => verifyUpgradeConstraintCatalog(oldConstraints,projection.normalize(rows),version));
+      release.verifyMetadata(await readReleasePhase2Metadata(pool));
       console.log('phase2-postgres: populated legacy hashes/pointer and complete constraint catalog match exact lot/IO and later architecture additions/replacements');
       console.log('phase2-postgres: seventeen upgrade catalog causal negatives reject unrelated/replacement/new/architecture/economy removal or alteration and unexpected additions');
       console.log('phase2-postgres: exact account-owned PlayerIntel identity and required columns pass with removal, alteration, renamed binding and unknown-addition negatives');

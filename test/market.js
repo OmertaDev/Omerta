@@ -6,7 +6,7 @@
 // burns), and the §10.4 `market escrow` check + vocabulary. pg-mem, zero infra.
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { BLACK_MARKET as MARKET, goodPriceOf } from '../src/rules.js';
 import { sweepMarket } from '../src/market.js';
 import { runLedgerInvariants } from '../src/invariants.js';

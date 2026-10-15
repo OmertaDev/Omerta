@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
-import { buildServer } from '../src/server.js';
+import { buildServer } from './server-fixture.js';
 import { readPlayerIntel } from '../src/playerintel.js';
 
 if (process.env.DATABASE_URL) throw new Error('Player intel browser test requires disposable pg-mem; clear DATABASE_URL.');

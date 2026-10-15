@@ -1,0 +1,94 @@
+{
+  "schema": "omerta.release-media.v1",
+  "compression": "gzip",
+  "maxChunkBytes": 94371840,
+  "entries": [
+    {
+      "path": "public/art/flagship-animation/audio/animated-mix.wav",
+      "bytes": 112320102,
+      "sha256": "a949914a1bd8fbe6d82a38774ea1552a01d3dd2b7694d537f0f9c379172a99fe",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-animation-animated-mix.wav.gz.001",
+          "bytes": 94371840,
+          "sha256": "bb21c01866d572c7dd27acb66732886110eeedb1b11599d75742851928a561a1"
+        },
+        {
+          "path": "deploy/media-chunks/flagship-animation-animated-mix.wav.gz.002",
+          "bytes": 11114413,
+          "sha256": "2cf47d71fe1467f3f21696a3b4e36de05528d2aaee9461d27b24d7460334b7ec"
+        }
+      ]
+    },
+    {
+      "path": "public/art/flagship-animation/audio/audio-added-layer.wav",
+      "bytes": 112320102,
+      "sha256": "8844ad3b274cd678159968c6e0bb5a67a624c512d6b4a1bb0cf3cdedcab6e217",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-animation-audio-added-layer.wav.gz.001",
+          "bytes": 16820855,
+          "sha256": "6eb73304e8224f33653642176f1978ada80a75b270bf012719b15abeb7535ae5"
+        }
+      ]
+    },
+    {
+      "path": "public/art/flagship-rebuild/audio/rebuild-dialogue.wav",
+      "bytes": 112320102,
+      "sha256": "afe711f6a39723f3aaa4777f020159bf77b61f4f40eac91c269b46260a9d03d7",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-rebuild-rebuild-dialogue.wav.gz.001",
+          "bytes": 46350458,
+          "sha256": "10950e7651662f723a4715f74c1e3097503b854db4f32a6d35a85b457693d9c5"
+        }
+      ]
+    },
+    {
+      "path": "public/art/flagship-rebuild/audio/rebuild-mix.wav",
+      "bytes": 112320102,
+      "sha256": "d6b7d480f8fbe7273512b8883396f52d0a1ef23593f24f1c7fc67adbc94ac854",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-rebuild-rebuild-mix.wav.gz.001",
+          "bytes": 94371840,
+          "sha256": "13168268db7a6437e89a5a5b3b0c731c06f8b5ef24b653d7a21196492fd3dabf"
+        },
+        {
+          "path": "deploy/media-chunks/flagship-rebuild-rebuild-mix.wav.gz.002",
+          "bytes": 11079128,
+          "sha256": "8931b4332ae7a24d6bce6b20c12b976f7c34be0f82fa77d2e05096e2bd31a224"
+        }
+      ]
+    },
+    {
+      "path": "public/art/flagship-rebuild/audio/rebuild-music.wav",
+      "bytes": 112320102,
+      "sha256": "178a792fd783615e952e0678ea7f2da2ee4132901c108880b42a213950be0df2",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-rebuild-rebuild-music.wav.gz.001",
+          "bytes": 94371840,
+          "sha256": "6cd2a2d15142723815716706e693536f5713b2004b383ab2a84a34ee93398690"
+        },
+        {
+          "path": "deploy/media-chunks/flagship-rebuild-rebuild-music.wav.gz.002",
+          "bytes": 1570748,
+          "sha256": "49eb290f072a79675cb537e9d6e75b1c839a0085f8152c2b401a876471d64c1f"
+        }
+      ]
+    },
+    {
+      "path": "public/art/flagship-trust/audio/animatic-mix.wav",
+      "bytes": 112320102,
+      "sha256": "ddaa4128e1768e98a1ba5536bd4562ff1aaf7ee0850d6b51eb44f84ea90b2594",
+      "chunks": [
+        {
+          "path": "deploy/media-chunks/flagship-trust-animatic-mix.wav.gz.001",
+          "bytes": 68018445,
+          "sha256": "2bbb0f168c14b2056d0834d747fe2e1619a19aa844d0f98a013935a1297a9e52"
+        }
+      ]
+    }
+  ]
+}

@@ -1,3 +1,9 @@
+import { isHistoricalSourceFixture, runHistoricalSourceFixture } from './lib/rc1-historical-source-fixture.js';
+if (!isHistoricalSourceFixture()) {
+  await runHistoricalSourceFixture(import.meta.url);
+  process.exit(0);
+}
+
 // Executes the exact runner observer block against a synthetic native driver.
 // This tests integration/retention, not gameplay; the real PG/world proofs do that.
 import assert from 'node:assert/strict';

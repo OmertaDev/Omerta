@@ -645,7 +645,7 @@ try {
   }
     if (httpEnabled) {
       await initializeApplication(async () => {
-        const { buildServer } = await import('../src/server.js'); app = await buildServer();
+        const { buildServer } = await import('./server-fixture.js'); app = await buildServer();
       });
       pool = app.pool;
       // inject can resolve at response delivery before original onResponse

@@ -14,7 +14,7 @@ if (postgres) {
   process.env.MOD_KEY = 'supply-disposable-test-moderator';
   process.env.INVITE_MODE = 'off';
 } else assert(!process.env.DATABASE_URL, 'Memory checks cannot use a configured database.');
-const { buildServer } = await import('../src/server.js');
+const { buildServer } = await import('./server-fixture.js');
 const { ledger } = await import('../src/game.js');
 const app = await buildServer();
 let sequence = 0;
