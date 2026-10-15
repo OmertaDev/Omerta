@@ -1,3 +1,6 @@
+import {register as registerCrossDocking} from './routes/crossdocking.js';
+import {register as registerProductionSlots} from './routes/productionslots.js';
+import {register as registerMerchantReturns} from './routes/merchantreturns.js';
 import { register as registerMultiHopCourier } from './routes/multihopcourier.js';
 import { register as registerCustomerVaults } from './routes/customervaults.js';
 import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
@@ -109,7 +112,7 @@ import { register as registerTerritoryEconomics } from './routes/territoryeconom
 import { withInfrastructureProductionScope } from './infrastructureconcessions.js';
 import { register as registerEquipmentRentals } from './routes/equipmentrentals.js';
 import { register as registerServiceSubscriptions } from './routes/servicesubscriptions.js';
-import { relayEscrowCustody } from './items.js';
+import { relayEscrowCustody,assertItemTransaction } from './items.js';
 import { register as registerCommercialNegotiation } from './routes/commercialnegotiation.js';
 import { register as registerContractAuctions } from './routes/contractauctions.js';
 import { register as registerWorkerTraining } from './routes/workertraining.js';
@@ -2484,10 +2487,11 @@ export async function buildServer() {
   registerMultiHopCourier(app, { pool, auth });
   // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
   registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
-  registerCommissionedCrafting(app, { pool, auth });
+  registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });
   registerFreightConsolidation(app, { pool, auth });
+  registerMerchantReturns(app,{pool,auth,assertLifecycle:assertItemTransaction});
   registerDecisionReplay(app, { pool, auth });
   registerEconomicDependencyMap(app, { pool, auth });
   registerInfrastructureConcessions(app, { pool, auth });

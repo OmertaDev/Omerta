@@ -1,7 +1,7 @@
+import {merchantReturnCounterparts} from './merchantreturns.js';
 import {multiHopCourierOriginals,multiHopCourierScopeSource,multiHopCourierDeathCounterparts} from './multihopcourier.js';
 import { customerVaultDeathCounterparts } from './customervaults.js';
 import { customerLayawayDeathCounterparts } from './customerlayaway.js';
-import { commissionedCraftingDeathCounterparts } from './commissionedcrafting.js';
 import crypto from 'node:crypto';
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
@@ -10,6 +10,13 @@ import { assertEquipmentUsable } from './itemdurability.js';
 import { consignmentDeathCounterparts } from './consignments.js';
 import { atomicBarterCounterparts } from './atomicbarter.js';
 import { pickingPackingCounterparts } from './pickingpacking.js';
+
+// Commission recovery depends on crafting, whose default graph is validated at module load.
+// Defer this reader inside the existing async death hooks to avoid an initialization cycle.
+async function commissionedCraftingDeathCounterparts(client, characterId) {
+  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');
+  return discover(client, characterId);
+}
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
 export const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (
@@ -226,11 +233,13 @@ async function prelockCourierAwareSubjects(client,characterIds) {
   for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);
-  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking + 4 accepted layaway + 4 vault + 4 courier originals = 54.
+  // Per subject: existing 54 originals plus at most 3 merchant-return counterparts = 57.
   for (const subject of subjects) for (const counterpart of await customerLayawayDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await customerVaultDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await multiHopCourierDeathCounterparts(client, subject)) ids.add(counterpart);
-  if (ids.size > subjects.length * 54) fail('death_limit');
+  for (const subject of subjects) for (const counterpart of await merchantReturnCounterparts(client, subject)) ids.add(counterpart);
+  // N07 and N09 reuse existing courier/commission originals; N10 adds at most 3 combined return counterparts.
+  if (ids.size > subjects.length * 57) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -272,6 +281,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await multiHopCourierDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Courier counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await merchantReturnCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Merchant-return counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }
@@ -405,4 +417,4 @@ export async function borrowedPrecisionTool(client, { accountId, characterId, lo
 // Only exact source-resolved enrolled courier originals enter the private three-subject path.
 const courierScopes=new WeakMap();
 export async function assertMultiHopCourierScope(client,networkId,accountId,scope,action){assertItemTransaction(client);try{const state=courierScopes.get(scope);if(!state?.active||state.client!==client||state.transaction!==itemTransactionIdentity(client)||state.networkId!==networkId||state.accountId!==accountId||state.action!==action)fail('courier_scope');const source=await multiHopCourierScopeSource(client,networkId,accountId);if(source.sourceHash!==state.sourceHash||source.originals.join('|')!==state.originals.join('|'))fail('courier_source_changed');for(const original of source.originals){await assertEquipmentRentalDeathScope(client,original,state.prelockScope);const row=(await client.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[original])).rows[0];if(!row?.alive||row.is_npc||((!['cancel','expire'].includes(state.action)||row.account_id===accountId)&&(await client.query('SELECT status FROM accounts WHERE id=$1',[row.account_id])).rows[0]?.status!=='active'))fail('courier_original');const current=(await client.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[row.account_id])).rows;if(current.length!==1||current[0].id!==original)fail('courier_original');}return state;}catch(e){poisonItemTransaction(client,e);throw e;}}
-export async function withMultiHopCourierActors(client,{networkId,accountId,action},execute){assertItemTransaction(client);try{if(typeof execute!=='function'||!['dispatch','travel','handoff','arrive','cancel','expire'].includes(action))fail('courier_scope');const source=await multiHopCourierOriginals(client,networkId,accountId);if(source.originals.length!==3||new Set(source.originals).size!==3)fail('courier_scope');const prelock=await prelockCourierAwareSubjects(client,source.originals),scope=Object.freeze({}),state={active:true,client,transaction:itemTransactionIdentity(client),networkId,accountId,action,sourceHash:source.sourceHash,originals:source.originals,prelockScope:prelock.scope};courierScopes.set(scope,state);try{await assertMultiHopCourierScope(client,networkId,accountId,scope,action);const result=await execute(scope);await assertMultiHopCourierScope(client,networkId,accountId,scope,action);return result;}finally{state.active=false;}}catch(e){poisonItemTransaction(client,e);throw e;}}
+export async function withMultiHopCourierActors(client,{networkId,accountId,action},execute){assertItemTransaction(client);try{if(typeof execute!=='function'||!['dispatch','travel','handoff','arrive','cancel','expire','cross_dock_offer','cross_dock_consent'].includes(action))fail('courier_scope');const source=await multiHopCourierOriginals(client,networkId,accountId);if(source.originals.length!==3||new Set(source.originals).size!==3)fail('courier_scope');const prelock=await prelockCourierAwareSubjects(client,source.originals),scope=Object.freeze({}),state={active:true,client,transaction:itemTransactionIdentity(client),networkId,accountId,action,sourceHash:source.sourceHash,originals:source.originals,prelockScope:prelock.scope};courierScopes.set(scope,state);try{await assertMultiHopCourierScope(client,networkId,accountId,scope,action);const result=await execute(scope);await assertMultiHopCourierScope(client,networkId,accountId,scope,action);return result;}finally{state.active=false;}}catch(e){poisonItemTransaction(client,e);throw e;}}

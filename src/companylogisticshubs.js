@@ -194,3 +194,5 @@ export async function voidLogisticsHubsAtDeath(client,victim) {
   for(const row of rows) await client.query("UPDATE company_logistics_hubs SET state='closed',revision=revision+1 WHERE id=$1",[row.id]);
   return { closedHubs:rows.length,newCash:0 };
 }
+
+export async function crossDockHubSource(ch,landlord,hubId,client){const ctx=await locked(ch,landlord,hubId,client);if(ctx.hub.state!=='active'||!ctx.sources.length)fail('active_hub_required');for(const entry of ctx.sources)funded(entry,ctx.now,ctx.depot.district);if(ctx.sources.reduce((n,e)=>n+e.item.quantity,0)>Number(ctx.warehouse.held_qty))fail('unbacked_capacity');const end=Math.min(+new Date(ctx.hub.expires_at),+new Date(ctx.warehouse.expires_at),+new Date(ctx.premises.expires_at));return {hubId:ctx.hub.id,revision:ctx.hub.revision,supplierOriginal:ch.id,landlordOriginal:landlord.id,depotId:ctx.depot.id,district:ctx.depot.district,premisesLeaseId:ctx.hub.premises_lease_id,warehouseLeaseId:ctx.hub.warehouse_lease_id,expiresAt:new Date(end).toISOString()};}
