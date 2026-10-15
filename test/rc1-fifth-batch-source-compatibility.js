@@ -60,7 +60,7 @@ assert.equal(hunks-packageHunks,16);assert.equal(negatives-packageNegatives,124,
 const packageCurrent=git('show',O.FIFTH_BATCH_SOURCE_REVISION+':package.json'),packagePrior=git('show',O.FIFTH_BATCH_SOURCE_PREDECESSOR+':package.json'),scripts=JSON.parse(packageCurrent).scripts;
 assert.equal(scripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
 assert.equal(scripts['test:company-autonomy'].split(' && ').filter(command=>!command.includes('rc1-fifth-batch-source-compatibility')).length,14);
-assert(scripts['build:funded-work-artifact'].includes('v5.6.1.tar.gz'));assert(scripts['build:funded-work-artifact'].endsWith('forge build --root omerta-contracts omerta-contracts/src/market-v2/OmertaWorkEscrowV2.sol'));
+assert(scripts['build:funded-work-artifact'].includes('v5.6.1.tar.gz'));assert(scripts['build:funded-work-artifact'].endsWith('forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol'));
 const packageMutations=[
  packageCurrent.replace('node test/rc1-fourth-batch-source-compatibility.js','node test/unknown-command.js'),
  packageCurrent.replace('node test/rc1-fifth-batch-source-compatibility.js && ',''),
