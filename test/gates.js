@@ -3569,7 +3569,7 @@ scopedSocialContext = async function(db) {
 // ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
 // The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
 // HANG bound cannot contain the expanded property coverage. Browser and real-Postgres checks have
-// separate 20-minute browser and 75-minute THIRD native bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
+// separate 25-minute browser and 75-minute THIRD native bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
 // places, or let an untracked job inherit one, while still finding both numbers somewhere.
 {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -3610,8 +3610,8 @@ scopedSocialContext = async function(db) {
     .map((m) => Number(m[1]));
   assert.deepEqual(timeouts(suites), [75],
     'the `suites` job must have exactly one 75-minute HANG bound for the measured full lifecycle');
-  assert.deepEqual(timeouts(browser), [20],
-    'the `browser` job must have exactly one 20-minute HANG bound');
+  assert.deepEqual(timeouts(browser), [25],
+    'the `browser` job must have exactly one 25-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [75],
     'the THIRD `pgcheck` job must retain exactly one finite 75-minute HANG bound for the measured baseline plus workforce chain');
   for (const invalid of ['0', '45', '60', '90', '${{ inputs.native_timeout }}', 'unbounded']) {
@@ -3641,7 +3641,7 @@ scopedSocialContext = async function(db) {
     '    name: City + mobile browser journeys',
     '    needs: suites',
     '    runs-on: ubuntu-latest',
-    '    timeout-minutes: 20',
+    '    timeout-minutes: 25',
     '    steps:',
     '      - uses: actions/checkout@v7',
     '        with:',
@@ -3879,7 +3879,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at 75m, browser at 20m and THIRD pgcheck at 75m, with every lane intact');
+  console.log('  ✓ CI keeps suites at 75m, browser at 25m and THIRD pgcheck at 75m, with every lane intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════

@@ -35,6 +35,7 @@
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
 import path from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import { buildServer } from '../src/server.js';
 import { compileContentPack } from '../src/content/compiler.js';
 
@@ -223,7 +224,13 @@ for (const vp of VIEWPORTS) {
   // A 4xx from the API is normal here (/v1/me before a character exists); a JS error is not.
   page.on('console', (m) => { if (m.type() === 'error' && !/status of 4\d\d/.test(m.text())) pageErrors.push(m.text()); });
 
-  const walked = [];   // check G: what the screen-reach beacon should have recorded
+  const walked = [];   // check G: real navigation must not restore retired screen tracking
+  const screenRequests = [];
+  const observeScreens = (request) => {
+    if (new URL(request.url()).pathname === '/v1/screens') screenRequests.push(request.method());
+  };
+  page.on('request', observeScreens);
+  const screenRowsBefore = (await app.pool.query("SELECT * FROM telemetry WHERE event='screen_open' ORDER BY id")).rows;
 
   console.log(`\n── ${vp.w}x${vp.h}  (${vp.name})`);
 
@@ -502,33 +509,36 @@ for (const vp of VIEWPORTS) {
   await page.click('#glossary-close'); await page.waitForTimeout(200);
   await page.click('#btn-phone'); await check(page, 'cellphone', vp);
 
-  // ── G — THE SCREEN-REACH BEACON ACTUALLY SENDS ────────────────────────────────────────────────
-  // Not layout, and it earns its place here anyway: this is the only harness with a real browser
-  // walking real screens as a logged-in player, which is exactly what the beacon measures. It
-  // shipped with its auth guard reading `session?.token` — `session` is the /v1/session PROBE body
-  // and has never carried a token — so every batch was dropped and reach measured NOTHING, while
-  // the route, the funnel and the /admin panel all tested green. Optional chaining made it silent,
-  // and an analytics number that is quietly always zero is worse than no number, because a founder
-  // reads it as "nobody opens the Kitchen" and restructures a nav on it.
-  //
-  // Uses the client's OWN flush path (the tab going to the background), so it proves the wiring a
-  // player actually exercises rather than a hand-rolled fetch.
+  // ── G — REAL SCREEN NAVIGATION DOES NOT RESTORE OPTIONAL TRACKING ────────────────────────────
+  // Screen analytics are retired. Exercise the former flush trigger after the real screen walk,
+  // observing browser requests and actual database rows independently of the historical funnel.
   await page.evaluate(() => {
     Object.defineProperty(document, 'hidden', { value: true, configurable: true });
     document.dispatchEvent(new Event('visibilitychange'));
   });
   await page.waitForTimeout(1200);
-  const reach = await page.evaluate(async (k) => {
-    const r = await fetch('/v1/mod/funnel', { headers: { 'x-mod-key': k } });
-    return (await r.json())?.screens || null;
-  }, MOD_KEY);
-  if (!reach || !reach.reporters) {
-    fail('(screen reach)', vp, `the beacon recorded nothing after walking ${walked.length} screens `
-      + `— ${JSON.stringify(reach)} (a silent analytics zero reads as "nobody goes there")`);
-  } else {
-    const missed = walked.filter((id) => !reach.opens?.[id]);
-    if (missed.length) fail('(screen reach)', vp, `${missed.length} walked screen(s) were never reported: ${missed.join(', ')}`);
-  }
+  page.off('request', observeScreens);
+  if (!walked.length) fail('(screen privacy)', vp, 'the privacy check walked no screens');
+  if (screenRequests.length) fail('(screen privacy)', vp,
+    `the real UI sent ${screenRequests.length} retired screen request(s): ${screenRequests.join(', ')}`);
+  const screenRowsAfterWalk = (await app.pool.query("SELECT * FROM telemetry WHERE event='screen_open' ORDER BY id")).rows;
+  if (!isDeepStrictEqual(screenRowsAfterWalk, screenRowsBefore)) fail('(screen privacy)', vp,
+    'real navigation or the visibility flush changed screen_open telemetry');
+
+  // An intentional old-client request is outside the UI observation window. It must retain the
+  // authenticated compatibility response without writing tracking data, even with real screen IDs.
+  const screenCompatibility = await page.evaluate(async (screens) => {
+    const r = await fetch('/v1/screens', { method: 'POST',
+      headers: { authorization: 'Bearer ' + localStorage.omerta_token, 'content-type': 'application/json' },
+      body: JSON.stringify({ screens }) });
+    return { status: r.status, body: await r.json() };
+  }, walked);
+  if (screenCompatibility.status !== 200
+    || !isDeepStrictEqual(screenCompatibility.body, { ok: true, counted: 0 })) fail('(screen privacy)', vp,
+    `the legacy screen request did not remain a no-op: ${JSON.stringify(screenCompatibility)}`);
+  const screenRowsAfterCompatibility = (await app.pool.query("SELECT * FROM telemetry WHERE event='screen_open' ORDER BY id")).rows;
+  if (!isDeepStrictEqual(screenRowsAfterCompatibility, screenRowsAfterWalk)) fail('(screen privacy)', vp,
+    'the legacy compatibility request changed screen_open telemetry');
   screensChecked++;
 
   // ── I — THE SHEET'S CHROME BUTTONS STATE THEIR TERMS ──────────────────────────────────────────

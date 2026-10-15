@@ -105,8 +105,8 @@
     border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;
     background: color-mix(in srgb, var(--panel) 82%, transparent);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
-  /* Let the header scroll away when a phone keyboard leaves little vertical space. */
-  @media (max-width: 760px) and (max-height: 500px) {
+  /* Let the dashboard header scroll away on phones so it cannot cover gameplay controls. */
+  @media (max-width: 760px) {
     #top { position: static; }
   }
   #top h1 { font-family: var(--display); font-size: 22px; margin: 0; letter-spacing: 8px; color: var(--neon); font-weight: 600;
@@ -816,13 +816,13 @@
     border-top: 1px solid var(--line); align-items: baseline; }
   .operation-approach dt { color: var(--neon); font: 600 13px/1.4 var(--mono); }
   .operation-approach dd { margin: 0; color: var(--dim); font-size: var(--om-type-public); }
-  .operation-receipt { padding: 24px 26px; border-left: 1px solid var(--line); background: var(--panel2);
+  .landing .operation-receipt { padding: 24px 26px; border-left: 1px solid var(--line); background: var(--panel2);
     font-family: var(--mono); }
-  .operation-receipt strong { display: block; margin-bottom: 13px; color: var(--neon); font-size: 13px; letter-spacing: .08em; }
-  .operation-receipt span { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0;
+  .landing .operation-receipt strong { display: block; margin-bottom: 13px; color: var(--neon); font-size: 13px; letter-spacing: .08em; }
+  .landing .operation-receipt span { display: flex; justify-content: space-between; gap: 16px; padding: 7px 0;
     border-bottom: 1px dashed var(--line2); color: var(--dim); font-size: var(--om-type-body); }
-  .operation-receipt span b { color: var(--ink); font-weight: normal; text-align: right; }
-  .operation-receipt small { display: block; margin-top: 13px; color: var(--faint); font-size: var(--om-type-body); line-height: 1.5; }
+  .landing .operation-receipt span b { color: var(--ink); font-weight: normal; text-align: right; }
+  .landing .operation-receipt small { display: block; margin-top: 13px; color: var(--faint); font-size: var(--om-type-body); line-height: 1.5; }
   .landing .pill { background: linear-gradient(180deg, var(--panel2), var(--panel)); border: 1px solid var(--line);
     border-radius: var(--r-md); padding: 17px 16px 15px; transition: border-color .2s, transform .2s var(--ease), box-shadow .2s; }
   .landing .pill:hover { border-color: color-mix(in srgb, var(--neon) 40%, var(--line)); transform: translateY(-2px); box-shadow: var(--shadow); }
@@ -937,6 +937,7 @@
        select and the identity line, all before a single pixel of the game. Trim it to one compact row. */
     #top { flex-wrap: wrap; gap: 6px; padding: calc(6px + var(--sat)) 8px 6px; }  /* + iOS status-bar inset (PWA) */
     #top h1 { font-size: 16px; letter-spacing: 3px; }
+    #operation-desk #coach { padding: 5px 8px; }
     #top .sub { display: none; }                        /* decorative on a phone */
     #top .act { padding: 7px 9px; min-height: 34px; font-size: 12px; }
     #top .langglobe { display: none; }                  /* the select itself carries the affordance */
@@ -979,8 +980,8 @@
     #screen-auth { font-size: var(--om-type-public); }
     .wire-ticker { font-size: var(--om-type-body); }
     .operation-proof { grid-template-columns: 1fr; }
-    .operation-proof__choice, .operation-receipt { padding: 20px 18px; }
-    .operation-receipt { border-left: 0; border-top: 1px solid var(--line); }
+    .operation-proof__choice, .landing .operation-receipt { padding: 20px 18px; }
+    .landing .operation-receipt { border-left: 0; border-top: 1px solid var(--line); }
     .omr-pillars, .omr-tech-grid, .omr-sheet-links { grid-template-columns: 1fr; }
     .omr-flow-head { align-items: stretch; flex-direction: column; }
     .omr-flow-head .act { align-self: flex-start; }

@@ -1,12 +1,16 @@
 // Optional browser regression against the real mounted Gateway and disposable pg-mem.
-// Set CHROMIUM_PATH to an installed Chromium/Chrome executable before running.
+// Use CHROMIUM_PATH, Playwright Chromium, or an installed local Chromium/Chrome.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'Consigliere recovery browser checks require disposable pg-mem.');
-assert(process.env.CHROMIUM_PATH, 'Set CHROMIUM_PATH to a Chromium executable.');
+const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),
+  'C:/Program Files/Google/Chrome/Application/chrome.exe', '/usr/bin/chromium', '/usr/bin/google-chrome']
+  .find(file => file && fs.existsSync(file));
+assert(executablePath, 'Use an installed Chromium/Chrome executable.');
 process.env.COORDINATION_ENGINE = 'on';
 process.env.RATE_LIMIT = 'off';
 const app = await buildServer();
@@ -36,7 +40,7 @@ try {
   const committedId = await prepare(), untouchedId = await prepare(), retryableId = await prepare();
   await app.listen({ host: '127.0.0.1', port: 0 });
   const base = 'http://127.0.0.1:' + app.server.address().port;
-  browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH, headless: true });
+  browser = await chromium.launch({ executablePath, headless: true });
   const context = await browser.newContext();
   await context.addInitScript(token => localStorage.setItem('omerta_token', token), playerToken);
   const page = await context.newPage();
@@ -61,7 +65,7 @@ try {
     'Unexpired pending attempt names the possible action retry explicitly.');
   assert.equal(await page.getByRole('button', { name: 'Check action result', exact: true }).count(), 0,
     'A pending action retry is not presented as only a result check.');
-  assert.match(await page.locator('#approval-result').textContent(), /Retrying may execute the action you approved/);
+  assert.equal(await page.locator('#approval-result').textContent(), 'Completion has not been confirmed. Retrying may carry out the action you approved.');
   assert.equal(confirmRequests, 1, 'Displaying the retry control does not submit the action.');
   const expired = new Date(Date.now() - 60000).toISOString();
   // Simulate a delayed concurrent refusal overwriting metadata after a durable game commit.

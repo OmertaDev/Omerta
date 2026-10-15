@@ -149,11 +149,12 @@ jobs:
     name: City + mobile browser journeys
     needs: suites
     runs-on: ubuntu-latest
-    # Candidate748 completed all five City scripts in 6m04s, then the serial job's
-    # 60m limit cut off mobile after its first phone size. Require the complete client
-    # checks on this same checkout after the full suite/sim job passes, with a finite
-    # 20m hang bound. Neither a prefix result nor a partial phone run qualifies it.
-    timeout-minutes: 20
+    # Hosted a03 completed setup/early controls in 149s and the full City chain in 770s.
+    # Adding the measured local mobile run (229s) and gateway (8s) projects 19m16s,
+    # leaving only 44s under 20m before hosted runtime variance. Require every client
+    # check on this checkout within a finite 25m hang bound. Neither a prefix result
+    # nor a partial phone run qualifies it; native and fuzz budgets are unchanged.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v7
         with:
