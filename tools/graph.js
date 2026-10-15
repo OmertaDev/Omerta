@@ -334,7 +334,7 @@ export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
       "t.character_id!==row.maker_character:t.character_id!==row.customer_character",
       "Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)"
     ],
-    "sha256": "42ec4cfa9e3ba75417dd674e430381772bc7cd40528ec373f78c84d81d962899",
+    "sha256": "37df979150ed5085ac9c91ec46c23b4449c34f68d125acaf4d787d8183f32985",
     "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
     "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
     "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",

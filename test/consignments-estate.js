@@ -24,9 +24,9 @@ try {
   }, 'estate-rental-accept'));
   await books();
 
-  const beforeForged = await state();
+  let beforeForged;
   await assert.rejects(G.withTwoCharacters(pool, 'buyer', 'host-actor', (_actor, victim, c, h) =>
-    C.recoverConsignmentsInEstate(c, victim.id, h.rentalDeathScope, {}), { meet: false }),
+    C.recoverConsignmentsInEstate(c, victim.id, h.rentalDeathScope, {}), { meet: false, withActionScope: async (_c, _a, execute) => { beforeForged = await state(); return execute(); } }),
   error => error.code === 'estate_scope');
   assert.deepEqual(await state(), beforeForged, 'An ordinary sorted pair is not an estate capability');
 
@@ -36,17 +36,22 @@ try {
     await runEstate(c, h, victim, 'consignment canonical estate fixture');
   };
   if (native) {
-    const original = await canonicalDatabaseSnapshot(pool);
-    let attemptedEvents;
+    const beforeSettlement = await canonicalDatabaseSnapshot(pool);
+    await new Promise(resolve => setTimeout(resolve, 1100)); // exercise genuine separately committed phase-one accrual
+    let original, attemptedEvents;
     await assert.rejects(G.withTwoCharacters(pool, 'buyer', 'host-actor', async (...args) => {
       await resolve(...args);
       attemptedEvents = Number((await args[2].query('SELECT COUNT(*) AS n FROM item_events')).rows[0].n)
         - original.tables.item_events.length;
       assert.equal(attemptedEvents, 2, 'Rental and consignment recovery each append one canonical event');
       throw Error('after-canonical-estate');
-    }, { meet: false }), /after-canonical-estate/);
+    }, { meet: false, withActionScope: async (_c, _a, execute) => {
+      original = await canonicalDatabaseSnapshot(pool);
+      assert.notDeepEqual(original.tables.characters, beforeSettlement.tables.characters, 'Canonical clock settlement commits before the phase-two rollback baseline');
+      return execute();
+    } }), /after-canonical-estate/);
     const restored = await canonicalDatabaseSnapshot(pool);
-    assert.deepEqual(restored.tables, original.tables, 'Late estate failure restores every canonical row');
+    assert.deepEqual(restored.tables, original.tables, 'Late phase-two estate failure restores every canonical row');
     assert.deepEqual(restored.sequences.map(row => row.sequencename), original.sequences.map(row => row.sequencename));
     for (const [index, before] of original.sequences.entries()) {
       const after = restored.sequences[index];
