@@ -412,13 +412,13 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
 // when the signal lands — a race would depend on two events overlapping in a milliseconds-wide
 // window, and timing luck reads exactly like a proof (the pgcheck §9b argument).
 {
-  const port = 20000 + Math.floor(Math.random() * 20000);
   const child = spawn('node', ['src/server.js'],
-    { env: { ...process.env, PORT: String(port), DRAIN_MS: '8000' }, stdio: ['ignore', 'pipe', 'pipe'] });
+    { env: { ...process.env, PORT: '0', DRAIN_MS: '8000' }, stdio: ['ignore', 'pipe', 'pipe'] });
   const childOut = [];
   child.stdout.on('data', (d) => childOut.push(String(d)));
   child.stderr.on('data', (d) => childOut.push(String(d)));
-  const cbase = `http://127.0.0.1:${port}`;
+  // The OS chooses a port atomically; a random number can collide with an outgoing DB socket.
+  let cbase = null;
   // A WALL-CLOCK deadline, not an iteration count. The first cut polled 100 times with a 150ms
   // sleep on refusal — ~15s — and a cold boot applies ~2,400 ADD COLUMN IF NOT EXISTS statements
   // plus the CREATEs before it listens: ~10s on a fast box, and past 15s on a loaded 2-core CI
@@ -429,6 +429,13 @@ console.log('\n6. SIGTERM MID-REQUEST — the deploy drain');
   const bootT0 = Date.now();
   let up = false;
   while (!up && Date.now() - bootT0 < BOOT_DEADLINE_MS) {
+    const listening = childOut.join('').match(/OMERTÀ backend \(M1–M5\) listening on :([1-9][0-9]*)/);
+    if (listening) {
+      const boundPort = Number(listening[1]);
+      if (!Number.isInteger(boundPort) || boundPort > 65535) throw new Error('Invalid child listener port');
+      cbase = `http://127.0.0.1:${boundPort}`;
+    }
+    if (!cbase) { await sleep(150); continue; }
     try { up = (await fetch(cbase + '/health')).status > 0; } catch { await sleep(150); }
   }
   check(up, `the child server booted and answers /health (${Math.round((Date.now() - bootT0) / 1000)}s)`,
