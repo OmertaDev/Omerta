@@ -1,6 +1,3 @@
-import {collectCommissionedCraftingIssues} from './commissionedcrafting.js';
-import {collectPickingPackingIssues} from './pickingpackinginvariants.js';
-import {customerVaultAccounting} from './customervaults.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 import crypto from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -27,12 +24,22 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
+ const slots=(await c.query('SELECT * FROM production_slot_reservations WHERE (business_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
+ if(slots.length){const {collectProductionSlotIssues}=await import('./productionslots.js');if((await collectProductionSlotIssues(c)).length)fail('slot_history_changed');}
+ for(const row of slots){
+  if(!['offered','active','consumed','released','expired','void'].includes(row.status))fail('slot_history_changed');
+  if(['offered','active'].includes(row.status)){
+   const consent=(await c.query('SELECT receipt FROM production_slot_requests WHERE reservation_id=$1 AND account_id=$2 AND original_character=$3 ORDER BY request_key',[row.id,row.maker_account,row.maker_character])).rows;
+   if(!consent.some(q=>q.receipt?.reservationId===row.id&&q.receipt?.status==='offered'&&q.receipt?.sourceHash===row.source_hash))fail('slot_history_changed');
+   fail('production_slot_obligation');
+  }
+ }
  const commissions=(await c.query('SELECT * FROM commissioned_crafting_contracts WHERE business_id=$1 ORDER BY id',[depotId])).rows;
- if(commissions.length&&(await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');
+ if(commissions.length){const {collectCommissionedCraftingIssues}=await import('./commissionedcrafting.js');if((await collectCommissionedCraftingIssues(c)).length)fail('commission_history_changed');}
  for(const row of commissions){
   if(!['funded','accepted','completed','refunded'].includes(row.status))fail('commission_history_changed');
   if(row.status==='accepted'){
@@ -43,7 +50,7 @@ export async function assertDepotFeatureObligations(c,depotId){assertItemTransac
   if(['completed','refunded'].includes(row.status)&&Number(row.fee_remaining)!==0)fail('commission_history_changed');
  }
  const jobs=(await c.query('SELECT * FROM picking_packing_jobs WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
- if(jobs.length&&(await collectPickingPackingIssues(c)).length)fail('picking_history_changed');
+ if(jobs.length){const {collectPickingPackingIssues}=await import('./pickingpackinginvariants.js');if((await collectPickingPackingIssues(c)).length)fail('picking_history_changed');}
  for(const row of jobs){
   if(!['requested','accepted','fulfilled','cancelled','party_dead'].includes(row.state))fail('picking_history_changed');
   if(row.state==='accepted'){
@@ -53,7 +60,7 @@ export async function assertDepotFeatureObligations(c,depotId){assertItemTransac
   }
  }
  const services=(await c.query('SELECT * FROM customer_vault_services WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
- if(services.length&&(await customerVaultAccounting(c)).issues.length)fail('vault_history_changed');
+ if(services.length){const {customerVaultAccounting}=await import('./customervaults.js');if((await customerVaultAccounting(c)).issues.length)fail('vault_history_changed');}
  for(const row of services){
   const expected=crypto.createHash('sha256').update(JSON.stringify(['customer-vault-service-v1',row.id,row.depot_id,row.operator_account,row.operator_character,Number(row.fee_cash),row.policy_hash,+new Date(row.created_at),+new Date(row.expires_at)])).digest('hex');
   if(!['open','draining','closed'].includes(row.state)||row.source_hash!==expected)fail('vault_history_changed');
