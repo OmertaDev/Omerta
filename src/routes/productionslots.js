@@ -1,0 +1,4 @@
+import {GameError} from '../game.js';
+import {withItemTransaction} from '../items.js';
+import {productionSlotAction,productionSlotBoard} from '../productionslots.js';
+export function register(app,{pool,auth}){if(typeof pool?.connect!=='function'||typeof auth!=='function')throw Error('Production reservations require canonical authenticated transactions.');const noQuery=async req=>{if(Object.keys(req.query||{}).length)throw new GameError('production_slot','terms');};const base='/v1/company/production-slots';app.get(base,{preHandler:[auth,noQuery]},req=>productionSlotBoard(pool,req.user.sub));for(const action of ['offer','confirm','release','expire'])app.post(base+'/'+action,{preHandler:[auth,noQuery]},req=>withItemTransaction(pool,c=>productionSlotAction(c,req.user.sub,action,req.body,req.headers['idempotency-key'])));}

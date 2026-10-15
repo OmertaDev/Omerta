@@ -1,0 +1,3 @@
+import {crossDockAction,crossDockBoard} from '../crossdocking.js';
+import {GameError} from '../game.js';
+export function register(app,{pool,auth}){if(typeof auth!=='function'||typeof pool?.connect!=='function')throw Error('Cross docking requires canonical authenticated transactions.');const noQuery=async req=>{if(Object.keys(req.query||{}).length)throw new GameError('cross_docking','terms');};const base='/v1/company/cross-docking';app.get(base,{preHandler:[auth,noQuery]},req=>crossDockBoard(pool,req.user.sub));for(const action of ['offer','consent','release','expire'])app.post(base+'/'+action,{preHandler:[auth,noQuery]},req=>crossDockAction(pool,req.user.sub,action,req.body,req.headers['idempotency-key']));}
