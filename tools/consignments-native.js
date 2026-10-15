@@ -10,6 +10,7 @@ export const CONSIGNMENT_NATIVE_PROOFS=Object.freeze([
  ['consignments','CONSIGNMENT_TEST_DATABASE_URL','consignment_test_'],
  ['consignments-api','CONSIGNMENT_API_TEST_DATABASE_URL','consignment_api_test_'],
  ['consignments-estate','CONSIGNMENT_TEST_DATABASE_URL','consignment_test_'],
+ ['consignments-integration-gaps','CONSIGNMENT_API_TEST_DATABASE_URL','consignment_api_test_'],
 ].map(row=>Object.freeze(row)));
 import { equipmentNativeEndpoint } from './equipment-economy-native.js';
 
@@ -35,7 +36,7 @@ async function run(){
    if(status.code!==0||status.signal){console.error(stderr);throw new Error(file+' native qualification failed');}
    console.log(JSON.stringify({file,state:'passed'}));
   }
-  console.log('Consignments native: all3 fresh proofs passed; no partial qualification.');
+  console.log('Consignments native: all4 fresh proofs passed; no partial qualification.');
  }finally{await admin.end();}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))await run();

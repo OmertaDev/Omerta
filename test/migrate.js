@@ -633,6 +633,8 @@ const DISPOSITION = {
   company_specialization_runs: 'metadata', // original producer cadence and spending history remain bound to the retired character and business
   consignments: 'escrow', // canonical estate returns exact original account title; terminal history grants no heir sale authority
   consignment_requests: 'ledger', // original actor/account/body/key receipts survive as historical ACK only
+  atomic_barter_offers: 'special', // real estate voids pending original consent; no title moves and terminal history remains
+  atomic_barter_requests: 'ledger', // original two-item request identities and completed ACKs grant no heir authority
   equipment_rental_requests: 'metadata', // original-account receipts retain the original actor and grant no fresh heir lease authority
   equipment_rental_offers: 'special', // original landlord death cancels publication consent while preserving account-title tools and historical receipts
   equipment_rental_leases: 'escrow', // actual estate returns physical title and burns dead borrower deposits or refunds only the surviving original borrower
@@ -958,10 +960,84 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
   // call starting at runEstate. This includes helpers such as recordDeath, refundPot, removeMember,
   // and checkScandal rather than trusting an `*AtDeath` naming convention. Ambiguous names include
   // every definition, which is the fail-closed choice for a source guard.
+  // A concise arrow can shadow an unrelated same-name helper in another module.
+  // Index only complete, top-level, semicolon-terminated expressions; unsupported
+  // syntax retains the conservative global fallback below.
+  const conciseEntries = (file, source) => {
+    const code = lexicalMask(source), entries = [];
+    const depths = new Uint32Array(code.length + 1);
+    for (let i = 0; i < code.length; i++) depths[i + 1] = depths[i] + (code[i] === '{' ? 1 : code[i] === '}' ? -1 : 0);
+    const head = /^(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*/gm;
+    for (const match of code.matchAll(head)) {
+      const start = match.index + match[0].length;
+      if (depths[match.index] !== 0 || code[start] === '{') continue;
+      const stack = [];
+      let end = start;
+      for (; end < code.length; end++) {
+        const char = code[end];
+        if ('([{'.includes(char)) stack.push(char);
+        else if (')]}'.includes(char)) {
+          if (stack.pop() !== { ')': '(', ']': '[', '}': '{' }[char]) break;
+        } else if (char === ';' && stack.length === 0) break;
+      }
+      if (code[end] === ';' && stack.length === 0)
+        entries.push({ name: match[1], file, source, open: start, expression: source.slice(start, end) });
+    }
+    return entries;
+  };
+  const crawlDeathSources = (index) => {
+    const sources = [], names = new Set(), visited = new Set();
+    const queue = [...(index.get('runEstate') || [])];
+    while (queue.length) {
+      const entry = queue.shift(), identity = `${entry.file}:${entry.open}`;
+      if (visited.has(identity)) continue;
+      visited.add(identity); names.add(entry.name);
+      const body = entry.expression ?? functionBlock(entry.source, entry.open, `${entry.file}:${entry.name}`);
+      sources.push({ name: entry.name, file: entry.file, body });
+      for (const call of lexicalMask(body).matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
+        const candidates = index.get(call[1]) || [];
+        const localConcise = candidates.filter(candidate => candidate.file === entry.file && candidate.expression !== undefined);
+        // A proven module binding wins; unresolved/ambiguous legacy names still
+        // traverse every definition, never a handler/table exemption.
+        queue.push(...(localConcise.length ? localConcise : candidates));
+      }
+    }
+    return { sources, names };
+  };
+
+  // Regression: a real local concise binding is not an unrelated nested helper.
+  // Its expression still participates in the crawl; a real mutation/callee cannot hide.
+  for (const newline of ['\n', '\r\n']) {
+    const fixture = (name, file, body) => {
+      const source = `async function ${name}() {${newline}${body}${newline}}`;
+      return { name, file, source, open: source.indexOf('{') };
+    };
+    const makeIndex = localBody => {
+      const entries = [fixture('runEstate', 'estate.js', 'checkScandal();'),
+        fixture('checkScandal', 'dynasty.js', 'pair();'),
+        fixture('pair', 'unrelated-route.js', 'startMystery();'),
+        fixture('startMystery', 'mysteries.js', "client.query('INSERT INTO mystery_instances DEFAULT VALUES');")];
+      if (localBody !== null) entries.push(...conciseEntries('dynasty.js', `const pair = (a, b) => ${localBody};${newline}`));
+      const index = new Map();
+      for (const entry of entries) (index.get(entry.name) || index.set(entry.name, []).get(entry.name)).push(entry);
+      return index;
+    };
+    assert(!crawlDeathSources(makeIndex('[a, b].sort()')).names.has('startMystery'), 'A bound local concise pair must not reach an unrelated route pair');
+    assert(crawlDeathSources(makeIndex('startMystery()')).names.has('startMystery'), 'A real concise-body call must remain reachable');
+    assert(crawlDeathSources(makeIndex(null)).names.has('startMystery'), 'Unresolved legacy binding must retain conservative global traversal');
+    assert(crawlDeathSources(makeIndex("client.query('INSERT INTO mystery_instances DEFAULT VALUES')")).sources.some(entry => entry.name === 'pair' && /INSERT INTO mystery_instances/.test(entry.body)), 'A concise-body mutation must remain visible to the original SQL scanner');
+    const ambiguous = makeIndex(null);
+    ambiguous.get('pair').push(fixture('pair', 'second-route.js', 'secondMutation();'));
+    ambiguous.set('secondMutation', [fixture('secondMutation', 'second-route.js', "client.query('MERGE INTO item_stacks');")]);
+    assert(crawlDeathSources(ambiguous).names.has('secondMutation'), 'Ambiguous global bindings must not drop any definition');
+  }
+
   const functionIndex = new Map();
   for (const file of walkSrc()) {
     const source = fs.readFileSync(file, 'utf8');
     const code = lexicalMask(source);
+    for (const entry of conciseEntries(file, source))
+      (functionIndex.get(entry.name) || functionIndex.set(entry.name, []).get(entry.name)).push(entry);
     const heads = [
       /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/g,
       /(?:export\s+)?const\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*\{/g,
@@ -975,22 +1051,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     }
   }
   assert(functionIndex.has('runEstate'), 'runEstate must remain a statically crawlable named function');
-  const deathSources = [];
-  const reachableNames = new Set();
-  const queue = ['runEstate'];
-  while (queue.length) {
-    const name = queue.shift();
-    if (reachableNames.has(name)) continue;
-    reachableNames.add(name);
-    for (const entry of functionIndex.get(name) || []) {
-      const body = functionBlock(entry.source, entry.open, `${entry.file}:${entry.name}`);
-      deathSources.push({ name: entry.name, file: entry.file, body });
-      const executable = lexicalMask(body);
-      for (const call of executable.matchAll(/(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(/g)) {
-        if (functionIndex.has(call[1]) && !reachableNames.has(call[1])) queue.push(call[1]);
-      }
-    }
-  }
+  const { sources: deathSources, names: reachableNames } = crawlDeathSources(functionIndex);
   for (const helper of [
     'clearInboundPointers', 'recordDeath', 'recordDeedEvent', 'checkScandal', 'refundPot',
     'removeMember', 'rememberedSkills', 'abandonRaidsAtDeath', 'voidListingsAtDeath',

@@ -23,6 +23,7 @@ import { collectWorkerTrainingIssues } from './workertraining.js';
 import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
 import { collectConsignmentIssues } from './consignments.js';
+import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -734,6 +735,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance premium transfers', 0, await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:premium_pay','equipment_insurance:premium_receive')"), 0);
   const equipmentInsuranceIssues = await collectEquipmentInsuranceIssues(pool);
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
+  const barterIssues = await collectAtomicBarterIssues(pool);
+  push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
   const consignmentIssues = await collectConsignmentIssues(pool);
   const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
   push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });

@@ -93,6 +93,7 @@ import { register as registerCommercialDisputes } from './routes/commercialdispu
 import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 import { register as registerEquipmentInsurance } from './routes/equipmentinsurance.js';
 import { register as registerConsignments } from './routes/consignments.js';
+import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerInfrastructureConcessions } from './routes/infrastructureconcessions.js';
 import { register as registerTerritoryEconomics } from './routes/territoryeconomics.js';
 import { withInfrastructureProductionScope } from './infrastructureconcessions.js';
@@ -2465,6 +2466,7 @@ export async function buildServer() {
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
+  registerAtomicBarter(app, { pool, auth });
   registerInfrastructureConcessions(app, { pool, auth });
   registerTerritoryEconomics(app, { pool, auth });
   registerEquipmentRentals(app, { pool, auth, relayEscrowCustody });

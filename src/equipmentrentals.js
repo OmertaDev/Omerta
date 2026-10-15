@@ -4,6 +4,7 @@ import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
 import { consignmentDeathCounterparts } from './consignments.js';
+import { atomicBarterCounterparts } from './atomicbarter.js';
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
 export const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (
@@ -214,6 +215,9 @@ export async function prelockEquipmentRentalDeathActors(client, characterIds) {
   const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);
   for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
+  // Per subject: self + 3 rental + 24 consignment + 3 barter originals.
+  if (ids.size > subjects.length * 31) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -237,6 +241,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await atomicBarterCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

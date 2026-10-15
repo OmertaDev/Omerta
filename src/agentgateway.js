@@ -1,5 +1,6 @@
 import { COMPANY_COMMERCIAL_CONTRACTS, COMPANY_COMMERCIAL_SCHEMAS } from './company-commercial-contracts.js';
 import { CONSIGNMENT_CONTRACTS, CONSIGNMENT_SCHEMAS } from './consignment-contracts.js';
+import { ATOMIC_BARTER_CONTRACTS, ATOMIC_BARTER_SCHEMAS } from './atomic-barter-contracts.js';
 import { COMPANY_AUTONOMY_CONTRACTS, COMPANY_AUTONOMY_SCHEMAS } from './company-autonomy-contracts.js';
 // THE AGENT GATEWAY — the machine-discovery layer. Agents are first-class players (see AGENTS.md),
 // so the game publishes a standard OpenAPI 3.1 contract + an llms.txt index, both auto-derived from
@@ -299,6 +300,7 @@ const OPERATION_CONTRACTS = {
   ...COMPANY_WORKFORCE_CONTRACTS,
   ...COMPANY_COMMERCIAL_CONTRACTS,
   ...CONSIGNMENT_CONTRACTS,
+  ...ATOMIC_BARTER_CONTRACTS,
   ...COMPANY_AUTONOMY_CONTRACTS,
   ...CITY_SOCIAL_CONTRACTS,
   ...CITY_ENCOUNTER_CONTRACTS,
@@ -935,6 +937,7 @@ const AGENT_SCHEMAS = {
   ...COMPANY_WORKFORCE_SCHEMAS,
   ...COMPANY_COMMERCIAL_SCHEMAS,
   ...CONSIGNMENT_SCHEMAS,
+  ...ATOMIC_BARTER_SCHEMAS,
   ...COMPANY_AUTONOMY_SCHEMAS,
   ...CITY_SOCIAL_SCHEMAS,
   ...CITY_ENCOUNTER_SCHEMAS,

@@ -38,6 +38,7 @@ import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';
 import { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';
 import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
 import { recoverConsignmentsInEstate } from '../consignments.js';
+import { recoverAtomicBartersInEstate } from '../atomicbarter.js';
 import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
 import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -490,6 +491,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   }
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
+  await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
   for (const receipt of rentalRecovery) {
     // The canonical refund already updated SQL. G subsequently persists its
     // original actor object, which may also hold unpersisted loot: merge DELTA.
