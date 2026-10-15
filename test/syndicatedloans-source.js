@@ -9,5 +9,3 @@ try{
  await f.I.withItemTransaction(f.pool,async c=>{await assert.rejects(f.S.executeSyndicatedLoanAction(c,'borrower','take',f.current(p),'forged',{}),/./);});
  assert.deepEqual(await f.S.collectSyndicatedLoanIssues(f.pool),[]);const after=await f.state();for(const table of Object.keys(state).filter(x=>x!=='characters'))assert.deepEqual(after[table],state[table],'Refused mutations preserve '+table);assert.deepEqual(after.characters.map(x=>({id:x.id,cash:x.cash,bank:x.bank})),state.characters.map(x=>({id:x.id,cash:x.cash,bank:x.bank})),'Normal settleIfDue may accrue passive time before refusal; actual cash/bank are unchanged');console.log('N22 original proposal/funding consent, true canonical journal/receipt/loan source tamper, private incoming board/no unsolicited membership, foreign/forged-scope/action/key refusals and readonly source stability PASS.');
 }finally{await f.close();}
-
-
