@@ -2,7 +2,7 @@
 // Historical pins remain immutable. This is source evidence, never native migration clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const COMPOSITION_REVISION = '48a41680943da630291a87d1de1b6099dfee57a4';
+export const COMPOSITION_REVISION = 'c7b37442649bfda7ff9e91bef7cbd97eb4380d73';
 export const COMPOSITION_PHASE = 'exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const COMPOSITION_PROFILES = {
   "commercial": {
@@ -98,8 +98,8 @@ export const COMPOSITION_PROFILES = {
       ]
     },
     "src/server.js": {
-      "currentSha256": "5eeccef3896eb7c120649b8d091887181c4ed85fb0eb176ee1e77c42843d2b3d",
-      "currentBlob": "26d8ef8e99acf3cd0277615a1352fcda84bc3d65",
+      "currentSha256": "c9272ea06f8fa139cc453eea9aab5bc56ba29de5590d60ca28976d38b44ab21b",
+      "currentBlob": "25de4132640ca4f3b2f0260c708c6eec3bcc8786",
       "baselineSha256": "fd2286039f1941fb8fcff31743045a99222c9eb68b13297199cca1ba14ff4d8f",
       "baselineBlob": "d08f5e8ded37055ed98baaaecac65f5b8b8241f3",
       "contextLines": 3,
@@ -187,6 +187,10 @@ export const COMPOSITION_PROFILES = {
         {
           "current": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). The current identity\n  // is soulbound; its account entitlement and evolving portrait remain with the originating account.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n",
           "baseline": "    // attest is read STRICTLY (=== true): the eligibility self-attestation must be an explicit act\n    Chain.requestDeedWithdraw(pool, req.user.sub, req.body?.address, { attest: req.body?.attest === true }));\n  // THE IDENTITY NFT — take your bloodline's portrait on-chain as a DynastyNFT (red team #9 F2: the\n  // contract self-mints against a signed MintVoucher and nothing signed one). A transferable trophy:\n  // the `minted` entitlement stays account-bound and never travels with the token.\n  app.post('/v1/identity/mint', { preHandler: auth }, async (req) =>\n    Chain.requestDynastyMint(pool, req.user.sub, req.body?.address));\n  app.post('/v1/identity/checkout', { preHandler: auth }, async (req) => characterCheckout(pool, req.user.sub, undefined, req.body?.purpose ?? 'creation'));\n"
+        },
+        {
+          "current": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n",
+          "baseline": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n"
         }
       ]
     },
@@ -265,8 +269,8 @@ export const COMPOSITION_PROFILES = {
       ]
     },
     "src/server.js": {
-      "currentSha256": "5eeccef3896eb7c120649b8d091887181c4ed85fb0eb176ee1e77c42843d2b3d",
-      "currentBlob": "26d8ef8e99acf3cd0277615a1352fcda84bc3d65",
+      "currentSha256": "c9272ea06f8fa139cc453eea9aab5bc56ba29de5590d60ca28976d38b44ab21b",
+      "currentBlob": "25de4132640ca4f3b2f0260c708c6eec3bcc8786",
       "baselineSha256": "102815c7c5defbdd77044e802ee93e5bdcbfe7de9deac1235cf2f38d761947f4",
       "baselineBlob": "9263d8f566bdc6d165b79a12c6c09227d041471f",
       "contextLines": 3,
@@ -286,6 +290,10 @@ export const COMPOSITION_PROFILES = {
         {
           "current": "  registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });\n  registerBusinessPartnerships(app, { pool, auth });\n  registerCompanyGovernance(app, { pool, auth });\n  registerCompanyRestructuring(app, { pool, auth });\n  registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n",
           "baseline": "  registerEmploymentOrganizations(app, { pool, auth, withCrewTwoCharacters });\n  registerBusinessPartnerships(app, { pool, auth });\n  registerCompanyGovernance(app, { pool, auth });\n  registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });\n  registerGameEmployment(app, { pool, auth });\n  registerCompanyWorkflows(app, { pool, auth });\n"
+        },
+        {
+          "current": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${app.server.address().port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n",
+          "baseline": "  await Chain.assertChainId();\n  const port = Number(process.env.PORT || 8787);\n  await app.listen({ port, host: '0.0.0.0' });\n  console.log(`OMERTÀ backend (M1–M5) listening on :${port}`);\n\n  // GRACEFUL SHUTDOWN (bulletproof pass, 2026-08-21). Render sends SIGTERM on every deploy, and\n  // Node's default handler is immediate exit — every in-flight request dies with a connection reset\n"
         }
       ]
     },
