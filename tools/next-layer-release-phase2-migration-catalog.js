@@ -673,7 +673,7 @@ export async function verifyNextLayerNativeBranches(pool, endpoint) {
   same(only(main, mainNames, 'indexes').map(key), ADDED_INDEX_KEYS, 'All fifteen main index additions include two existing-table cursors');
   assert.equal(only(main, mainNames, 'columns').length,60);
   assert.equal(only(main, mainNames, 'columns').filter(row=>row.not_null).length,48);
-  const historicalCatalog = JSON.parse(sourcePin(pins.catalog));
+  const historicalCatalog = JSON.parse(sourcePin(COMBINED_BRANCH_PINS.catalog));
   assert.equal(historicalCatalog.added.length,1153);
   const priorCatalog={...historicalCatalog,added:[...historicalCatalog.added,...NEXT_FIVE_NATIVE_ADDITIONS.added],notNullColumns:{...historicalCatalog.notNullColumns,...NEXT_FIVE_NATIVE_ADDITIONS.notNullColumns}};
   const ancestorCatalog=JSON.parse(sourcePin(NEXT_LAYER_CATALOG_ANCESTOR));
