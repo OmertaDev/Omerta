@@ -151,11 +151,11 @@ export const FOURTH_BATCH_ADDITIVE_PAIR = Object.freeze({
 // Separate main-branch composition; all four historical profiles remain unchanged.
 export const COMMERCIAL_MAIN_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "5c18acaaf47c84851729b82354340c4d56734dd9",
-  "reviewedCandidate": "190a5b7805b5cf8e7031e1db8fb0c2b69d994310",
+  "reviewedCandidate": "abc36fc30ac38c0d3b51ff7dd666525063f6a3aa",
   "predecessorTree": "c85dedb8f78e6e8c919bf779b9b011b73c6b3f52773312b97143364520f2de0f",
   "predecessorSchema": "29b33ee417443a32b5c3a8b73dc5d7f27b518ed66f746e343da530c1768b9d42",
   "predecessorCatalog": "2f3eea769c954f038c6b0b77120f6d371a6449b6f7a3fb90ca7854add514eaaa",
-  "candidateTree": "c4461ab9ac208e9c904f5036e50f3b28745f84c896c99ecce58999454ecf87d3",
+  "candidateTree": "f4678fc75addccb4452c39eeec76fb7a7c6d4d1447017279b0ede9cedee6e818",
   "candidateSchema": "03aecb8a4a997b22732e2a5190fec2dcef3acda8a2744e4369b59cd4228f85db",
   "candidateCatalog": "15183087db6e3b3436e63da45cc60f2a24740bd22f9ca8f122cf9b497aa9dff3",
   "candidateTableCatalog": "1a12c38682fcff48a077fc226b8c44ddce5e0fc987a45759c1ce8dbd2c04342b",
