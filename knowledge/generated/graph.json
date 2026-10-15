@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "fa3e83b901c38e187f222f0f22f529a42292a72d",
+  "sourceRevision": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15365,
-    "edges": 60656,
+    "nodes": 15370,
+    "edges": 60671,
     "byNodeType": {
       "Artifact": 6565,
       "Command": 284,
-      "Commit": 3949,
+      "Commit": 3954,
       "Contract": 134,
       "Document": 924,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5174,
-      "CHANGED": 23435,
+      "CHANGED": 23445,
       "CONTAINS": 6586,
       "DECLARES": 284,
       "DEFINED_IN": 1697,
       "DEPENDS_ON": 69,
       "EXECUTES": 1022,
       "HANDLED_BY": 917,
-      "HAS_COMMIT": 3949,
+      "HAS_COMMIT": 3954,
       "IMPLEMENTS": 124,
       "IMPORTS": 6427,
       "INHERITS": 45,
@@ -39861,18 +39861,18 @@
       "extension": ".md",
       "bytes": 52775,
       "lines": 178,
-      "version": "4689e84d1faf02fd",
+      "version": "693875b2726867ea",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "4689e84d1faf02fd"
+          "version": "693875b2726867ea"
         }
       ],
-      "lastChangedAt": "2026-10-15T17:02:49.000Z",
+      "lastChangedAt": "2026-10-15T17:55:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fa3e83b901c38e187f222f0f22f529a42292a72d"
+      "lastChangedCommit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -117066,18 +117066,18 @@
       "extension": ".md",
       "bytes": 57050,
       "lines": 760,
-      "version": "633ac1141d0c2b82",
+      "version": "0b4da33f7db9abae",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "633ac1141d0c2b82"
+          "version": "0b4da33f7db9abae"
         }
       ],
-      "lastChangedAt": "2026-10-15T17:02:48.000Z",
+      "lastChangedAt": "2026-10-15T17:55:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a237ad07301a0e6f70736bb5a0e999d2eac9d88"
+      "lastChangedCommit": "f05c396248a9336a9b6707ba2ffb3efa32adcc71"
     },
     {
       "key": "Artifact:src/access.js",
@@ -121641,20 +121641,20 @@
       "path": "src/equipmentrentals.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 38686,
-      "lines": 386,
-      "version": "041fca76249cbe7c",
+      "bytes": 39013,
+      "lines": 392,
+      "version": "bb146289be66666e",
       "text": true,
       "provenance": [
         {
           "file": "src/equipmentrentals.js",
           "line": 1,
-          "version": "041fca76249cbe7c"
+          "version": "bb146289be66666e"
         }
       ],
-      "lastChangedAt": "2026-10-15T13:59:11.000Z",
+      "lastChangedAt": "2026-10-15T17:39:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a13408e6bc9e2886cd11a5e17b418e338bd8eead"
+      "lastChangedCommit": "0a11b2f03173f9d238a4e9826f03c02a2334d649"
     },
     {
       "key": "Artifact:src/estate.js",
@@ -127506,20 +127506,20 @@
       "path": "src/social/estate.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 54725,
-      "lines": 675,
-      "version": "10b381e317fd0f97",
+      "bytes": 54830,
+      "lines": 676,
+      "version": "06210f75f1cd20be",
       "text": true,
       "provenance": [
         {
           "file": "src/social/estate.js",
           "line": 1,
-          "version": "10b381e317fd0f97"
+          "version": "06210f75f1cd20be"
         }
       ],
-      "lastChangedAt": "2026-10-15T14:12:32.000Z",
+      "lastChangedAt": "2026-10-15T17:39:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f6a7e41ae8547281491b4e95d86cf6f2f1fe4ac6"
+      "lastChangedCommit": "0a11b2f03173f9d238a4e9826f03c02a2334d649"
     },
     {
       "key": "Artifact:src/social/exchange.js",
@@ -147079,20 +147079,20 @@
       "path": "tools/next-five-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 73535,
+      "bytes": 73641,
       "lines": 167,
-      "version": "06adfb39e159ec56",
+      "version": "8963db1bb9d837ae",
       "text": true,
       "provenance": [
         {
           "file": "tools/next-five-source-compatibility.js",
           "line": 1,
-          "version": "06adfb39e159ec56"
+          "version": "8963db1bb9d837ae"
         }
       ],
-      "lastChangedAt": "2026-10-15T14:37:28.000Z",
+      "lastChangedAt": "2026-10-15T17:40:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "268fb377e1d55f9bc9b23b7dff026647961849bb"
+      "lastChangedCommit": "75f5ecda6657482625227c4e610aa563de34783a"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -149930,18 +149930,18 @@
       "extension": ".js",
       "bytes": 79878,
       "lines": 1043,
-      "version": "3604464e3f8d7675",
+      "version": "c936c9768bcfc12f",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "3604464e3f8d7675"
+          "version": "c936c9768bcfc12f"
         }
       ],
-      "lastChangedAt": "2026-10-15T17:02:49.000Z",
+      "lastChangedAt": "2026-10-15T17:55:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fa3e83b901c38e187f222f0f22f529a42292a72d"
+      "lastChangedCommit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -157095,6 +157095,22 @@
         {
           "commit": "09fb155e701950e68b15914c905b8009ccf06bb6",
           "url": "https://github.com/OmertaDev/Omerta/commit/09fb155e701950e68b15914c905b8009ccf06bb6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "type": "Commit",
+      "id": "0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "label": "Defer commission recovery imports to avoid crafting initialization cycle",
+      "title": "Defer commission recovery imports to avoid crafting initialization cycle",
+      "date": "2026-10-15T17:39:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "provenance": [
+        {
+          "commit": "0a11b2f03173f9d238a4e9826f03c02a2334d649",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0a11b2f03173f9d238a4e9826f03c02a2334d649"
         }
       ]
     },
@@ -184055,6 +184071,22 @@
         {
           "commit": "75e712807775da240e10e81821a298f98217aa89",
           "url": "https://github.com/OmertaDev/Omerta/commit/75e712807775da240e10e81821a298f98217aa89"
+        }
+      ]
+    },
+    {
+      "key": "Commit:75f5ecda6657482625227c4e610aa563de34783a",
+      "type": "Commit",
+      "id": "75f5ecda6657482625227c4e610aa563de34783a",
+      "label": "Repin strict first-five source envelope for deferred recovery imports",
+      "title": "Repin strict first-five source envelope for deferred recovery imports",
+      "date": "2026-10-15T17:40:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/75f5ecda6657482625227c4e610aa563de34783a",
+      "provenance": [
+        {
+          "commit": "75f5ecda6657482625227c4e610aa563de34783a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/75f5ecda6657482625227c4e610aa563de34783a"
         }
       ]
     },
@@ -213419,6 +213451,22 @@
       ]
     },
     {
+      "key": "Commit:ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "type": "Commit",
+      "id": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "label": "Freeze repaired first-five source identity for exact upgrade rehearsal",
+      "title": "Freeze repaired first-five source identity for exact upgrade rehearsal",
+      "date": "2026-10-15T17:55:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "provenance": [
+        {
+          "commit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
+        }
+      ]
+    },
+    {
       "key": "Commit:ee6d119f0c860554b9f6e5e81b418adc91fd9136",
       "type": "Commit",
       "id": "ee6d119f0c860554b9f6e5e81b418adc91fd9136",
@@ -213879,6 +213927,22 @@
         {
           "commit": "f0545f315f12f5d8312190e8c45912855d81e116",
           "url": "https://github.com/OmertaDev/Omerta/commit/f0545f315f12f5d8312190e8c45912855d81e116"
+        }
+      ]
+    },
+    {
+      "key": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+      "type": "Commit",
+      "id": "f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+      "label": "Refresh source census after deferred commission imports",
+      "title": "Refresh source census after deferred commission imports",
+      "date": "2026-10-15T17:55:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+      "provenance": [
+        {
+          "commit": "f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f05c396248a9336a9b6707ba2ffb3efa32adcc71"
         }
       ]
     },
@@ -216567,6 +216631,22 @@
         {
           "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37",
           "url": "https://github.com/OmertaDev/Omerta/commit/fa2b3a9972991f9312e849a4c19021adc8d04a37"
+        }
+      ]
+    },
+    {
+      "key": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "type": "Commit",
+      "id": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "label": "Generate first-five knowledge last after CI compatibility repairs",
+      "title": "Generate first-five knowledge last after CI compatibility repairs",
+      "date": "2026-10-15T17:06:19.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "provenance": [
+        {
+          "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
         }
       ]
     },
@@ -229847,12 +229927,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 178,
-      "version": "4689e84d1faf02fd",
+      "version": "693875b2726867ea",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "4689e84d1faf02fd"
+          "version": "693875b2726867ea"
         }
       ]
     },
@@ -234919,12 +234999,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "633ac1141d0c2b82",
+      "version": "0b4da33f7db9abae",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "633ac1141d0c2b82"
+          "version": "0b4da33f7db9abae"
         }
       ]
     },
@@ -245573,6 +245653,9 @@
           "commit": "f94db667b68281271145641c3298b9bd655d3327"
         },
         {
+          "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
+        },
+        {
           "commit": "fa7c6f49e1132e7f9b94947f8b8ca81b0d43646e"
         },
         {
@@ -247553,6 +247636,9 @@
           "commit": "f94db667b68281271145641c3298b9bd655d3327"
         },
         {
+          "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
+        },
+        {
           "commit": "fa7c6f49e1132e7f9b94947f8b8ca81b0d43646e"
         },
         {
@@ -249531,6 +249617,9 @@
         },
         {
           "commit": "f94db667b68281271145641c3298b9bd655d3327"
+        },
+        {
+          "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
         },
         {
           "commit": "fa7c6f49e1132e7f9b94947f8b8ca81b0d43646e"
@@ -252060,6 +252149,9 @@
         },
         {
           "commit": "f94db667b68281271145641c3298b9bd655d3327"
+        },
+        {
+          "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
         },
         {
           "commit": "fa7c6f49e1132e7f9b94947f8b8ca81b0d43646e"
@@ -257201,13 +257293,13 @@
       "type": "Module",
       "id": "src/equipmentrentals.js",
       "label": "src/equipmentrentals.js",
-      "lines": 386,
-      "version": "041fca76249cbe7c",
+      "lines": 392,
+      "version": "bb146289be66666e",
       "provenance": [
         {
           "file": "src/equipmentrentals.js",
           "line": 1,
-          "version": "041fca76249cbe7c"
+          "version": "bb146289be66666e"
         }
       ]
     },
@@ -261011,13 +261103,13 @@
       "type": "Module",
       "id": "src/social/estate.js",
       "label": "src/social/estate.js",
-      "lines": 675,
-      "version": "10b381e317fd0f97",
+      "lines": 676,
+      "version": "06210f75f1cd20be",
       "provenance": [
         {
           "file": "src/social/estate.js",
           "line": 1,
-          "version": "10b381e317fd0f97"
+          "version": "06210f75f1cd20be"
         }
       ]
     },
@@ -264971,7 +265063,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "fa3e83b901c38e187f222f0f22f529a42292a72d",
+      "revision": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
       "currentBranch": "codex/consignments-integration-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -363142,6 +363234,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "to": "Artifact:src/equipmentrentals.js",
+      "provenance": {
+        "commit": "0a11b2f03173f9d238a4e9826f03c02a2334d649"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "commit": "0a11b2f03173f9d238a4e9826f03c02a2334d649"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0a40fee53661b8787a0bdeb1dca6d00a19e3760f",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -437562,6 +437670,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "75e712807775da240e10e81821a298f98217aa89"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:75f5ecda6657482625227c4e610aa563de34783a",
+      "to": "Artifact:tools/next-five-source-compatibility.js",
+      "provenance": {
+        "commit": "75f5ecda6657482625227c4e610aa563de34783a"
       }
     },
     {
@@ -531910,6 +532026,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ee6d119f0c860554b9f6e5e81b418adc91fd9136",
       "to": "Artifact:docs/superpowers/plans/2026-08-27-acquisition-vault-operator-base.md",
       "provenance": {
@@ -532514,6 +532646,14 @@
       "to": "Artifact:package.json",
       "provenance": {
         "commit": "f0545f315f12f5d8312190e8c45912855d81e116"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "f05c396248a9336a9b6707ba2ffb3efa32adcc71"
       }
     },
     {
@@ -542074,6 +542214,38 @@
       "to": "Artifact:tools/rc1-world-resource-observer.js",
       "provenance": {
         "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
       }
     },
     {
@@ -642872,6 +643044,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0a11b2f03173f9d238a4e9826f03c02a2334d649",
+      "provenance": {
+        "commit": "0a11b2f03173f9d238a4e9826f03c02a2334d649"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0a40fee53661b8787a0bdeb1dca6d00a19e3760f",
       "provenance": {
         "commit": "0a40fee53661b8787a0bdeb1dca6d00a19e3760f"
@@ -656347,6 +656527,14 @@
       "to": "Commit:75e712807775da240e10e81821a298f98217aa89",
       "provenance": {
         "commit": "75e712807775da240e10e81821a298f98217aa89"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:75f5ecda6657482625227c4e610aa563de34783a",
+      "provenance": {
+        "commit": "75f5ecda6657482625227c4e610aa563de34783a"
       }
     },
     {
@@ -671032,6 +671220,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ee6ab26424a7f30aec4091fe58e76114c3b77fe4",
+      "provenance": {
+        "commit": "ee6ab26424a7f30aec4091fe58e76114c3b77fe4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ee6d119f0c860554b9f6e5e81b418adc91fd9136",
       "provenance": {
         "commit": "ee6d119f0c860554b9f6e5e81b418adc91fd9136"
@@ -671259,6 +671455,14 @@
       "to": "Commit:f0545f315f12f5d8312190e8c45912855d81e116",
       "provenance": {
         "commit": "f0545f315f12f5d8312190e8c45912855d81e116"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f05c396248a9336a9b6707ba2ffb3efa32adcc71",
+      "provenance": {
+        "commit": "f05c396248a9336a9b6707ba2ffb3efa32adcc71"
       }
     },
     {
@@ -672603,6 +672807,14 @@
       "to": "Commit:fa2b3a9972991f9312e849a4c19021adc8d04a37",
       "provenance": {
         "commit": "fa2b3a9972991f9312e849a4c19021adc8d04a37"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9",
+      "provenance": {
+        "commit": "fa2f87e8115383ce5e736d4ea0ba497a6a3ca6c9"
       }
     },
     {
@@ -680636,7 +680848,7 @@
       "to": "Artifact:src/atomicbarter.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 8
+        "line": 7
       }
     },
     {
@@ -680645,7 +680857,7 @@
       "to": "Artifact:src/commissionedcrafting.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 1
+        "line": 13
       }
     },
     {
@@ -680654,7 +680866,7 @@
       "to": "Artifact:src/consignments.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 7
+        "line": 6
       }
     },
     {
@@ -680663,7 +680875,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 3
+        "line": 2
       }
     },
     {
@@ -680672,7 +680884,7 @@
       "to": "Artifact:src/itemdurability.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 6
+        "line": 5
       }
     },
     {
@@ -680681,7 +680893,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 5
+        "line": 4
       }
     },
     {
@@ -680690,7 +680902,7 @@
       "to": "Artifact:src/pickingpacking.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 9
+        "line": 8
       }
     },
     {
@@ -680699,7 +680911,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 4
+        "line": 3
       }
     },
     {
@@ -690149,7 +690361,7 @@
       "to": "Artifact:src/atomicbarter.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 43
+        "line": 42
       }
     },
     {
@@ -690158,7 +690370,7 @@
       "to": "Artifact:src/bloodline.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 50
+        "line": 49
       }
     },
     {
@@ -690167,7 +690379,7 @@
       "to": "Artifact:src/boxing.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 49
+        "line": 48
       }
     },
     {
@@ -690176,7 +690388,7 @@
       "to": "Artifact:src/businesspartnerships.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 29
+        "line": 28
       }
     },
     {
@@ -690185,7 +690397,7 @@
       "to": "Artifact:src/buyercooperativecustody.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 36
+        "line": 35
       }
     },
     {
@@ -690194,7 +690406,7 @@
       "to": "Artifact:src/commercialdisputes.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 40
+        "line": 39
       }
     },
     {
@@ -690203,7 +690415,7 @@
       "to": "Artifact:src/commercialpremises.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 33
+        "line": 32
       }
     },
     {
@@ -690212,7 +690424,7 @@
       "to": "Artifact:src/commissionedcrafting.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 1
+        "line": 187
       }
     },
     {
@@ -690221,7 +690433,7 @@
       "to": "Artifact:src/companyacquisitions.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 31
+        "line": 30
       }
     },
     {
@@ -690230,7 +690442,7 @@
       "to": "Artifact:src/companybankportfolios.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 34
+        "line": 33
       }
     },
     {
@@ -690239,7 +690451,7 @@
       "to": "Artifact:src/companygovernance.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 30
+        "line": 29
       }
     },
     {
@@ -690248,7 +690460,7 @@
       "to": "Artifact:src/companylogisticshubs.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 35
+        "line": 34
       }
     },
     {
@@ -690257,7 +690469,7 @@
       "to": "Artifact:src/companyrestructuring.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 39
+        "line": 38
       }
     },
     {
@@ -690266,7 +690478,7 @@
       "to": "Artifact:src/companyworkflows.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 32
+        "line": 31
       }
     },
     {
@@ -690275,7 +690487,7 @@
       "to": "Artifact:src/consignments.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 42
+        "line": 41
       }
     },
     {
@@ -690284,7 +690496,7 @@
       "to": "Artifact:src/deeds.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 51
+        "line": 50
       }
     },
     {
@@ -690293,7 +690505,7 @@
       "to": "Artifact:src/dynasty.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 52
+        "line": 51
       }
     },
     {
@@ -690302,7 +690514,7 @@
       "to": "Artifact:src/economicintelligence.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 3
+        "line": 2
       }
     },
     {
@@ -690311,7 +690523,7 @@
       "to": "Artifact:src/employmentorganizations.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 28
+        "line": 27
       }
     },
     {
@@ -690320,7 +690532,7 @@
       "to": "Artifact:src/equipmentinsurance.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 41
+        "line": 40
       }
     },
     {
@@ -690329,7 +690541,7 @@
       "to": "Artifact:src/equipmentrentals.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 38
+        "line": 37
       }
     },
     {
@@ -690338,7 +690550,7 @@
       "to": "Artifact:src/favors.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 23
+        "line": 22
       }
     },
     {
@@ -690347,7 +690559,7 @@
       "to": "Artifact:src/freightconsolidation.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 2
+        "line": 1
       }
     },
     {
@@ -690356,7 +690568,7 @@
       "to": "Artifact:src/fundedexternalwork.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 6
+        "line": 5
       }
     },
     {
@@ -690365,7 +690577,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 16
+        "line": 15
       }
     },
     {
@@ -690374,7 +690586,7 @@
       "to": "Artifact:src/gameemployment.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 25
+        "line": 24
       }
     },
     {
@@ -690383,7 +690595,7 @@
       "to": "Artifact:src/infrastructureconcessions.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 45
+        "line": 44
       }
     },
     {
@@ -690392,7 +690604,7 @@
       "to": "Artifact:src/intelforecastjobs.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 24
+        "line": 23
       }
     },
     {
@@ -690401,7 +690613,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 37
+        "line": 36
       }
     },
     {
@@ -690410,7 +690622,7 @@
       "to": "Artifact:src/loans.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 22
+        "line": 21
       }
     },
     {
@@ -690419,7 +690631,7 @@
       "to": "Artifact:src/managementteams.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 4
+        "line": 3
       }
     },
     {
@@ -690428,7 +690640,7 @@
       "to": "Artifact:src/market.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 20
+        "line": 19
       }
     },
     {
@@ -690437,7 +690649,7 @@
       "to": "Artifact:src/pickingpacking.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 44
+        "line": 43
       }
     },
     {
@@ -690446,7 +690658,7 @@
       "to": "Artifact:src/ring.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 48
+        "line": 47
       }
     },
     {
@@ -690455,7 +690667,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 18
+        "line": 17
       }
     },
     {
@@ -690464,7 +690676,7 @@
       "to": "Artifact:src/servicesubscriptions.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 26
+        "line": 25
       }
     },
     {
@@ -690473,7 +690685,7 @@
       "to": "Artifact:src/skills.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 17
+        "line": 16
       }
     },
     {
@@ -690482,7 +690694,7 @@
       "to": "Artifact:src/social/combat.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 53
+        "line": 52
       }
     },
     {
@@ -690491,7 +690703,7 @@
       "to": "Artifact:src/social/contracts.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 71
+        "line": 70
       }
     },
     {
@@ -690500,7 +690712,7 @@
       "to": "Artifact:src/social/defense.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 72
+        "line": 71
       }
     },
     {
@@ -690509,7 +690721,7 @@
       "to": "Artifact:src/social/gangs.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 73
+        "line": 72
       }
     },
     {
@@ -690518,7 +690730,7 @@
       "to": "Artifact:src/social/shared.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 74
+        "line": 73
       }
     },
     {
@@ -690527,7 +690739,7 @@
       "to": "Artifact:src/speakeasy.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 47
+        "line": 46
       }
     },
     {
@@ -690536,7 +690748,7 @@
       "to": "Artifact:src/strategylaboratories.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 5
+        "line": 4
       }
     },
     {
@@ -690545,7 +690757,7 @@
       "to": "Artifact:src/territoryeconomics.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 46
+        "line": 45
       }
     },
     {
@@ -690554,7 +690766,7 @@
       "to": "Artifact:src/warehouseleases.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 21
+        "line": 20
       }
     },
     {
@@ -690563,7 +690775,7 @@
       "to": "Artifact:src/workertraining.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 27
+        "line": 26
       }
     },
     {
@@ -690572,7 +690784,7 @@
       "to": "Artifact:src/world.js",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 19
+        "line": 18
       }
     },
     {
@@ -815069,7 +815281,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 14
+        "line": 20
       }
     },
     {
@@ -815078,7 +815290,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 15
+        "line": 21
       }
     },
     {
@@ -815087,7 +815299,7 @@
       "to": "Table:consignments",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 7
+        "line": 6
       }
     },
     {
@@ -815096,7 +815308,7 @@
       "to": "Table:equipment_rental_leases",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 24
+        "line": 30
       }
     },
     {
@@ -815105,7 +815317,7 @@
       "to": "Table:equipment_rental_offers",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 18
+        "line": 24
       }
     },
     {
@@ -815114,7 +815326,7 @@
       "to": "Table:equipment_rental_requests",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 12
+        "line": 18
       }
     },
     {
@@ -815123,7 +815335,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 157
+        "line": 163
       }
     },
     {
@@ -815132,7 +815344,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 19
+        "line": 25
       }
     },
     {
@@ -815141,7 +815353,7 @@
       "to": "Table:item_mutation_guards",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 157
+        "line": 163
       }
     },
     {
@@ -815150,7 +815362,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 153
+        "line": 159
       }
     },
     {
@@ -815159,7 +815371,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 195
+        "line": 201
       }
     },
     {
@@ -815168,7 +815380,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/equipmentrentals.js",
-        "line": 74
+        "line": 80
       }
     },
     {
@@ -826688,7 +826900,7 @@
       "to": "Table:auctions",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 450
+        "line": 451
       }
     },
     {
@@ -826697,7 +826909,7 @@
       "to": "Table:batches",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826706,7 +826918,7 @@
       "to": "Table:blackjack_hands",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826715,7 +826927,7 @@
       "to": "Table:bloodline",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 11
+        "line": 10
       }
     },
     {
@@ -826724,7 +826936,7 @@
       "to": "Table:boats",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 303
+        "line": 304
       }
     },
     {
@@ -826733,7 +826945,7 @@
       "to": "Table:bounties",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 415
+        "line": 416
       }
     },
     {
@@ -826742,7 +826954,7 @@
       "to": "Table:bounty_contributors",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 429
+        "line": 430
       }
     },
     {
@@ -826751,7 +826963,7 @@
       "to": "Table:bounty_gang_roster",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 430
+        "line": 431
       }
     },
     {
@@ -826760,7 +826972,7 @@
       "to": "Table:businesses",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826769,7 +826981,7 @@
       "to": "Table:campaign_progress",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826778,7 +826990,7 @@
       "to": "Table:cars",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 236
+        "line": 237
       }
     },
     {
@@ -826787,7 +826999,7 @@
       "to": "Table:character_assets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826796,7 +827008,7 @@
       "to": "Table:character_cargo",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826805,7 +827017,7 @@
       "to": "Table:character_disciplines",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826814,7 +827026,7 @@
       "to": "Table:character_guns",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826823,7 +827035,7 @@
       "to": "Table:character_items",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826832,7 +827044,7 @@
       "to": "Table:character_rackets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826841,7 +827053,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 286
+        "line": 287
       }
     },
     {
@@ -826850,7 +827062,7 @@
       "to": "Table:character_traits",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 296
+        "line": 297
       }
     },
     {
@@ -826859,7 +827071,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 62
+        "line": 61
       }
     },
     {
@@ -826868,7 +827080,7 @@
       "to": "Table:city_encounters",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 132
+        "line": 131
       }
     },
     {
@@ -826877,7 +827089,7 @@
       "to": "Table:city_home_activities",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 133
+        "line": 132
       }
     },
     {
@@ -826886,7 +827098,7 @@
       "to": "Table:city_home_activity_members",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 135
+        "line": 134
       }
     },
     {
@@ -826895,7 +827107,7 @@
       "to": "Table:city_home_visitors",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 128
+        "line": 127
       }
     },
     {
@@ -826904,7 +827116,7 @@
       "to": "Table:city_intel_progress",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 124
+        "line": 123
       }
     },
     {
@@ -826913,7 +827125,7 @@
       "to": "Table:city_npc_favors",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 131
+        "line": 130
       }
     },
     {
@@ -826922,7 +827134,7 @@
       "to": "Table:city_social_preferences",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 126
+        "line": 125
       }
     },
     {
@@ -826931,7 +827143,7 @@
       "to": "Table:clue_scrolls",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826940,7 +827152,7 @@
       "to": "Table:consignments",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 42
+        "line": 41
       }
     },
     {
@@ -826949,7 +827161,7 @@
       "to": "Table:contact_calls",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826958,7 +827170,7 @@
       "to": "Table:convoy_ambushes",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826967,7 +827179,7 @@
       "to": "Table:convoy_cargo",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 371
+        "line": 372
       }
     },
     {
@@ -826976,7 +827188,7 @@
       "to": "Table:convoys",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 371
+        "line": 372
       }
     },
     {
@@ -826985,7 +827197,7 @@
       "to": "Table:corner_chains",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -826994,7 +827206,7 @@
       "to": "Table:corner_jobs",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827003,7 +827215,7 @@
       "to": "Table:crew_heist_members",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827012,7 +827224,7 @@
       "to": "Table:crew_heists",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 329
+        "line": 330
       }
     },
     {
@@ -827021,7 +827233,7 @@
       "to": "Table:daily_progress",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827030,7 +827242,7 @@
       "to": "Table:digs",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 166
+        "line": 165
       }
     },
     {
@@ -827039,7 +827251,7 @@
       "to": "Table:family_aggro",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 148
+        "line": 147
       }
     },
     {
@@ -827048,7 +827260,7 @@
       "to": "Table:favors",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 23
+        "line": 22
       }
     },
     {
@@ -827057,7 +827269,7 @@
       "to": "Table:feud_peace_offers",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 584
+        "line": 585
       }
     },
     {
@@ -827066,7 +827278,7 @@
       "to": "Table:fight_bets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827075,7 +827287,7 @@
       "to": "Table:fighters",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 367
+        "line": 368
       }
     },
     {
@@ -827084,7 +827296,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 73
+        "line": 72
       }
     },
     {
@@ -827093,7 +827305,7 @@
       "to": "Table:hustles",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827102,7 +827314,7 @@
       "to": "Table:informants",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 356
+        "line": 357
       }
     },
     {
@@ -827111,7 +827323,7 @@
       "to": "Table:kill_log",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 242
+        "line": 243
       }
     },
     {
@@ -827120,7 +827332,7 @@
       "to": "Table:listings",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 440
+        "line": 441
       }
     },
     {
@@ -827129,7 +827341,7 @@
       "to": "Table:loans",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 22
+        "line": 21
       }
     },
     {
@@ -827138,7 +827350,7 @@
       "to": "Table:makings",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827147,7 +827359,7 @@
       "to": "Table:masteries",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 293
+        "line": 294
       }
     },
     {
@@ -827156,7 +827368,7 @@
       "to": "Table:mastery_legend",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 294
+        "line": 295
       }
     },
     {
@@ -827165,7 +827377,7 @@
       "to": "Table:missions_done",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827174,7 +827386,7 @@
       "to": "Table:npc_drills",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827183,7 +827395,7 @@
       "to": "Table:npc_errands",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827192,7 +827404,7 @@
       "to": "Table:npc_favors",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827201,7 +827413,7 @@
       "to": "Table:npc_gain",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827210,7 +827422,7 @@
       "to": "Table:npc_grudges",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 79
+        "line": 78
       }
     },
     {
@@ -827219,7 +827431,7 @@
       "to": "Table:npc_hits",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 170
+        "line": 169
       }
     },
     {
@@ -827228,7 +827440,7 @@
       "to": "Table:npc_leads",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827237,7 +827449,7 @@
       "to": "Table:npc_standing",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827246,7 +827458,7 @@
       "to": "Table:numbers_tickets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827255,7 +827467,7 @@
       "to": "Table:pen_break_members",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827264,7 +827476,7 @@
       "to": "Table:pen_breaks",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 348
+        "line": 349
       }
     },
     {
@@ -827273,7 +827485,7 @@
       "to": "Table:pen_contraband",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827282,7 +827494,7 @@
       "to": "Table:pen_talks",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827291,7 +827503,7 @@
       "to": "Table:port_intercepts",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 302
+        "line": 303
       }
     },
     {
@@ -827300,7 +827512,7 @@
       "to": "Table:primetime_happy",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827309,7 +827521,7 @@
       "to": "Table:primetime_rally",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827318,7 +827530,7 @@
       "to": "Table:racers",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827327,7 +827539,7 @@
       "to": "Table:rigs",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827336,7 +827548,7 @@
       "to": "Table:route_notoriety",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827345,7 +827557,7 @@
       "to": "Table:searches",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 149
+        "line": 148
       }
     },
     {
@@ -827354,7 +827566,7 @@
       "to": "Table:secrets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 166
+        "line": 165
       }
     },
     {
@@ -827363,7 +827575,7 @@
       "to": "Table:shipment_takes",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827372,7 +827584,7 @@
       "to": "Table:soldiers",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827381,7 +827593,7 @@
       "to": "Table:stash",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827390,7 +827602,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 590
+        "line": 591
       }
     },
     {
@@ -827399,7 +827611,7 @@
       "to": "Table:territory_rackets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 310
+        "line": 311
       }
     },
     {
@@ -827408,7 +827620,7 @@
       "to": "Table:track_bets",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827417,7 +827629,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 574
+        "line": 575
       }
     },
     {
@@ -827426,7 +827638,7 @@
       "to": "Table:wage_snapshots",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827435,7 +827647,7 @@
       "to": "Table:wire_informants",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 146
+        "line": 145
       }
     },
     {
@@ -827444,7 +827656,7 @@
       "to": "Table:wire_watches",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 145
+        "line": 144
       }
     },
     {
@@ -827453,7 +827665,7 @@
       "to": "Table:wiretaps",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 144
+        "line": 143
       }
     },
     {
@@ -827462,7 +827674,7 @@
       "to": "Table:world_raid_members",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 320
+        "line": 321
       }
     },
     {
@@ -827471,7 +827683,7 @@
       "to": "Table:world_raids",
       "provenance": {
         "file": "src/social/estate.js",
-        "line": 333
+        "line": 334
       }
     },
     {

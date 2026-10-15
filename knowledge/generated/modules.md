@@ -200,7 +200,7 @@
 | [src/equipment-economy-contracts.js](../../src/equipment-economy-contracts.js) | 107 | platform-core | 0 / 2 | 0 | 2 | 1 |
 | [src/equipmentinsurance.js](../../src/equipmentinsurance.js) | 54 | platform-core | 4 / 6 | 0 | 13 | 3 |
 | [src/equipmentmaintenance.js](../../src/equipmentmaintenance.js) | 49 | platform-core | 4 / 5 | 0 | 9 | 3 |
-| [src/equipmentrentals.js](../../src/equipmentrentals.js) | 386 | platform-core | 8 / 27 | 1 | 12 | 12 |
+| [src/equipmentrentals.js](../../src/equipmentrentals.js) | 392 | platform-core | 8 / 27 | 1 | 12 | 12 |
 | [src/estate.js](../../src/estate.js) | 395 | enterprise-logistics | 3 / 7 | 11 | 8 | 2 |
 | [src/events.js](../../src/events.js) | 103 | world-progression | 2 / 8 | 1 | 9 | 1 |
 | [src/exchange.js](../../src/exchange.js) | 416 | economy-ledger | 4 / 13 | 4 | 11 | 9 |
@@ -454,7 +454,7 @@
 | [src/social/combat.js](../../src/social/combat.js) | 1091 | platform-core | 16 / 5 | 0 | 21 | 1 |
 | [src/social/contracts.js](../../src/social/contracts.js) | 604 | platform-core | 5 / 5 | 0 | 14 | 0 |
 | [src/social/defense.js](../../src/social/defense.js) | 177 | platform-core | 7 / 3 | 0 | 2 | 0 |
-| [src/social/estate.js](../../src/social/estate.js) | 675 | enterprise-logistics | 48 / 61 | 0 | 88 | 48 |
+| [src/social/estate.js](../../src/social/estate.js) | 676 | enterprise-logistics | 48 / 61 | 0 | 88 | 48 |
 | [src/social/exchange.js](../../src/social/exchange.js) | 128 | economy-ledger | 3 / 1 | 0 | 2 | 0 |
 | [src/social/gangs.js](../../src/social/gangs.js) | 810 | platform-core | 12 / 12 | 0 | 15 | 5 |
 | [src/social/shared.js](../../src/social/shared.js) | 44 | platform-core | 2 / 9 | 0 | 2 | 0 |
