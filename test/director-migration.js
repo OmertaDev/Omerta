@@ -6,8 +6,8 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createReleasePhase2MigrationCatalog, readReleasePhase2Metadata,
-  verifyReleasePhase2CausalNegatives } from '../tools/next-five-release-phase2-migration-catalog.js';
+import { createNextLayerReleasePhase2MigrationCatalog, readNextLayerReleasePhase2Metadata,
+  verifyNextLayerReleasePhase2CausalNegatives } from '../tools/next-layer-release-phase2-migration-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -323,12 +323,12 @@ try {
   const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
   assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata), error => error?.code === 'ERR_ASSERTION',
     'The source-only C2 envelope does not confer historical native admission');
-  const releaseCatalog = await createReleasePhase2MigrationCatalog(pool, address, equipmentSchema,
+  const releaseCatalog = await createNextLayerReleasePhase2MigrationCatalog(pool, address, equipmentSchema,
     { includeNotNull: false, legacyProfile: 'director' });
   const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);
   const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(releaseCatalog.normalize(rows)), oldConstraints));
   verifyCompletePreservedConstraints(upgradedConstraints);
-  await verifyReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);
+  await verifyNextLayerReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);
   gameplayCatalog.verifyMetadata(gameplayMetadata);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
   assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');
@@ -706,7 +706,7 @@ try {
   const reappliedMetadata = await readCityGameplayMigrationMetadata(pool);
   gameplayCatalog.verifyMetadata(reappliedMetadata);
   equipmentCatalog.verifyMetadata(reappliedMetadata);
-  releaseCatalog.verifyMetadata(await readReleasePhase2Metadata(pool));
+  releaseCatalog.verifyMetadata(await readNextLayerReleasePhase2Metadata(pool));
   assert.equal((await director.tick()).replayed, true);
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });

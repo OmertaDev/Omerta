@@ -6215,6 +6215,451 @@
       "table_name": "picking_packing_requests",
       "name": "picking_packing_requests_request_key_check",
       "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_amount_cash_check",
+      "definition": "CHECK (amount_cash >= 1 AND amount_cash <= 1000000)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_layaway_id_fkey",
+      "definition": "FOREIGN KEY (layaway_id) REFERENCES customer_layaways(id)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_ordinal_check",
+      "definition": "CHECK (ordinal >= 1 AND ordinal <= 8)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_pkey",
+      "definition": "PRIMARY KEY (layaway_id, ordinal)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "customer_layaway_installments",
+      "name": "customer_layaway_installments_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "customer_layaway_requests",
+      "name": "customer_layaway_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_check",
+      "definition": "CHECK (seller_account <> buyer_account AND seller_character <> buyer_character)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_check1",
+      "definition": "CHECK (total_paid <= price_cash AND total_paid = (escrow_cash + paid_to_seller + refunded_cash))"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_check2",
+      "definition": "CHECK (total_paid = 0 AND installment_count = 0 AND deposit_guard IS NULL OR total_paid > 0 AND installment_count > 0 AND deposit_guard IS NOT NULL)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_check3",
+      "definition": "CHECK (status = 'offered'::text AND total_paid = 0 AND settlement IS NULL OR status = 'active'::text AND escrow_cash = total_paid AND total_paid > 0 AND total_paid < price_cash AND settlement IS NULL OR status = 'completed'::text AND total_paid = price_cash AND paid_to_seller = price_cash AND settlement IS NOT NULL OR (status = ANY (ARRAY['cancelled'::text, 'expired'::text, 'party_dead'::text])) AND refunded_cash = total_paid AND settlement IS NOT NULL)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_deposit_guard_fkey",
+      "definition": "FOREIGN KEY (deposit_guard) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_installment_count_check",
+      "definition": "CHECK (installment_count >= 0 AND installment_count <= 8)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_paid_to_seller_check",
+      "definition": "CHECK (paid_to_seller >= 0)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_price_cash_check",
+      "definition": "CHECK (price_cash >= 1 AND price_cash <= 1000000)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "customer_layaways",
+      "name": "customer_layaways_total_paid_check",
+      "definition": "CHECK (total_paid >= 0)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_check",
+      "definition": "CHECK (remaining >= 0 AND remaining <= principal)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_check1",
+      "definition": "CHECK (operator_account <> customer_account)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_check2",
+      "definition": "CHECK (state = 'funded'::text AND remaining = principal AND released_at IS NULL AND release_credit IS NULL OR state <> 'funded'::text AND remaining = 0 AND released_at IS NOT NULL AND release_credit IS NOT NULL)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_check3",
+      "definition": "CHECK (fee_cash = 0 AND fee_debit IS NULL AND fee_credit IS NULL OR fee_cash > 0 AND fee_debit IS NOT NULL AND fee_credit IS NOT NULL)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_customer_account_fkey",
+      "definition": "FOREIGN KEY (customer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_customer_character_fkey",
+      "definition": "FOREIGN KEY (customer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 0 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_fee_credit_fkey",
+      "definition": "FOREIGN KEY (fee_credit) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_fee_credit_key",
+      "definition": "UNIQUE (fee_credit)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_fee_debit_fkey",
+      "definition": "FOREIGN KEY (fee_debit) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_fee_debit_key",
+      "definition": "UNIQUE (fee_debit)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_operator_account_fkey",
+      "definition": "FOREIGN KEY (operator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_operator_character_fkey",
+      "definition": "FOREIGN KEY (operator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_principal_check",
+      "definition": "CHECK (principal >= 1 AND principal <= 100000)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_release_credit_fkey",
+      "definition": "FOREIGN KEY (release_credit) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_release_credit_key",
+      "definition": "UNIQUE (release_credit)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_reserve_debit_fkey",
+      "definition": "FOREIGN KEY (reserve_debit) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_reserve_debit_key",
+      "definition": "UNIQUE (reserve_debit)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_service_id_fkey",
+      "definition": "FOREIGN KEY (service_id) REFERENCES customer_vault_services(id)"
+    },
+    {
+      "table_name": "customer_vault_positions",
+      "name": "customer_vault_positions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['funded'::text, 'withdrawn'::text, 'estate_refunded'::text]))"
+    },
+    {
+      "table_name": "customer_vault_requests",
+      "name": "customer_vault_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_vault_requests",
+      "name": "customer_vault_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_check",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 0 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_operator_account_fkey",
+      "definition": "FOREIGN KEY (operator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_operator_character_fkey",
+      "definition": "FOREIGN KEY (operator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "customer_vault_services",
+      "name": "customer_vault_services_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'draining'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_network_id_fkey",
+      "definition": "FOREIGN KEY (network_id) REFERENCES multi_hop_couriers(id)"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "multi_hop_courier_requests",
+      "name": "multi_hop_courier_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check",
+      "definition": "CHECK (owner_account <> first_account AND owner_account <> second_account AND first_account <> second_account)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check1",
+      "definition": "CHECK (owner_character <> first_character AND owner_character <> second_character AND first_character <> second_character)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check2",
+      "definition": "CHECK (origin <> handoff AND origin <> destination AND handoff <> destination)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check3",
+      "definition": "CHECK ((earned_first = 0 OR earned_first = first_fee) AND (earned_second = 0 OR earned_second = second_fee))"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check4",
+      "definition": "CHECK ((status = ANY (ARRAY['offered'::text, 'ready'::text])) AND reserved_cash = 0 AND earned_first = 0 AND earned_second = 0 AND refunded_cash = 0 AND deposit_guard IS NULL OR (status <> ALL (ARRAY['offered'::text, 'ready'::text])) AND (deposit_guard IS NOT NULL AND (reserved_cash + earned_first + earned_second + refunded_cash) = (first_fee + second_fee) OR (status = ANY (ARRAY['cancelled'::text, 'expired'::text, 'party_dead'::text])) AND deposit_guard IS NULL AND reserved_cash = 0 AND earned_first = 0 AND earned_second = 0 AND refunded_cash = 0))"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check5",
+      "definition": "CHECK (status <> 'ready'::text OR first_consent AND second_consent)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check6",
+      "definition": "CHECK (status <> 'completed'::text OR earned_first = first_fee AND earned_second = second_fee AND reserved_cash = 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_check7",
+      "definition": "CHECK ((status <> ALL (ARRAY['cancelled'::text, 'expired'::text, 'party_dead'::text])) OR reserved_cash = 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_deposit_guard_fkey",
+      "definition": "FOREIGN KEY (deposit_guard) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_earned_first_check",
+      "definition": "CHECK (earned_first >= 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_earned_second_check",
+      "definition": "CHECK (earned_second >= 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_first_fee_check",
+      "definition": "CHECK (first_fee >= 1 AND first_fee <= 1000)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_reserved_cash_check",
+      "definition": "CHECK (reserved_cash >= 0)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_second_fee_check",
+      "definition": "CHECK (second_fee >= 1 AND second_fee <= 1000)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "multi_hop_couriers",
+      "name": "multi_hop_couriers_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'ready'::text, 'first_leg'::text, 'second_leg'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
     }
   ],
   "removed": [
@@ -8081,6 +8526,100 @@
       "account_id",
       "request_key",
       "identity",
+      "receipt"
+    ],
+    "customer_layaways": [
+      "id",
+      "item_id",
+      "seller_account",
+      "seller_character",
+      "buyer_account",
+      "buyer_character",
+      "price_cash",
+      "source_hash",
+      "expires_at",
+      "status",
+      "total_paid",
+      "escrow_cash",
+      "paid_to_seller",
+      "refunded_cash",
+      "installment_count"
+    ],
+    "customer_layaway_installments": [
+      "layaway_id",
+      "ordinal",
+      "amount_cash",
+      "reserve_transaction"
+    ],
+    "customer_layaway_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "customer_vault_services": [
+      "id",
+      "depot_id",
+      "operator_account",
+      "operator_character",
+      "fee_cash",
+      "source_hash",
+      "policy_hash",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "customer_vault_positions": [
+      "id",
+      "service_id",
+      "operator_account",
+      "operator_character",
+      "customer_account",
+      "customer_character",
+      "source_hash",
+      "principal",
+      "remaining",
+      "fee_cash",
+      "reserve_debit",
+      "state",
+      "created_at"
+    ],
+    "customer_vault_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "receipt"
+    ],
+    "multi_hop_couriers": [
+      "id",
+      "item_id",
+      "owner_account",
+      "owner_character",
+      "first_account",
+      "first_character",
+      "second_account",
+      "second_character",
+      "origin",
+      "handoff",
+      "destination",
+      "first_fee",
+      "second_fee",
+      "first_consent",
+      "second_consent",
+      "source_hash",
+      "expires_at",
+      "status",
+      "reserved_cash",
+      "earned_first",
+      "earned_second",
+      "refunded_cash"
+    ],
+    "multi_hop_courier_requests": [
+      "account_id",
+      "request_key",
+      "body_hash",
+      "original_character",
+      "network_id",
       "receipt"
     ]
   }
