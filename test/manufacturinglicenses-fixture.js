@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';
+export async function manufacturingLicenseFixtureBackend(){
+ assert(!process.env.DATABASE_URL,'Reject ambient database URL');
+ if(!process.argv.includes('--postgres'))return{native:false,version:'pg-mem'};
+ assert.deepEqual(process.argv.slice(2),['--postgres']);assert(!process.env.NODE_OPTIONS&&!process.env.PGHOST&&!process.env.PGPORT&&!process.env.PGUSER&&!process.env.PGDATABASE&&!process.env.PGSERVICE,'Reject ambient/preload overrides');
+ const u=new URL(process.env.MANUFACTURING_LICENSE_TEST_DATABASE_URL);assert(['postgres:','postgresql:'].includes(u.protocol));assert.equal(u.hostname,'127.0.0.1');assert(!u.search&&!u.hash);assert.match(u.pathname,/^\/manufacturing_license_test_[a-z0-9_]+$/);
+ const local=(u.port==='35439'||u.port==='35449')&&u.username==='pilot_runner'&&!u.password,ci=u.port==='5432'&&u.username==='postgres'&&u.password==='pgcheck';assert(local||ci,'Closed exact owned local or CI only');
+ const{default:pg}=await import('pg'),c=new pg.Client({connectionString:u.href});let version;await c.connect();try{await c.query('BEGIN READ ONLY');version=(await c.query('SHOW server_version')).rows[0].server_version;assert.match(version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);if(local)assert.equal((await c.query('SHOW data_directory')).rows[0].data_directory.replaceAll('\\','/').toLowerCase(),u.port==='35439'?'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184':'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof');const owner=(await c.query('SELECT current_user AS role,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname=current_database()')).rows[0];assert.equal(owner.role,u.username);assert.equal(owner.owner,u.username);assert.equal((await c.query("SELECT tablename FROM pg_tables WHERE schemaname='public'")).rows.length,0);await c.query('ROLLBACK');}finally{await c.end();}process.env.DATABASE_URL=u.href;return{native:true,version};
+}

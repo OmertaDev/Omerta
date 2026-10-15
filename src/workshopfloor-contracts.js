@@ -1,0 +1,8 @@
+const id={type:'string',pattern:'^[!-~]{1,128}$'},digest={type:'string',pattern:'^[a-f0-9]{64}$'},object=p=>({type:'object',properties:p,required:Object.keys(p),additionalProperties:false});
+const slot={type:'integer',minimum:1,maximum:2},allocation={oneOf:[object({slot,use:{const:'tool_bench'},toolItemId:id}),object({slot,use:{enum:['storage','service']},toolItemId:{type:'null'}})]},allocations={type:'array',maxItems:2,uniqueItems:true,items:allocation};
+const plan={businessId:id,revision:{type:'integer',minimum:1,maximum:2147483647},sourceHash:digest,allocations,premisesKind:{enum:['estate','street']},capacity:{const:2},productionBonus:{const:0},storageCapacityBonus:{const:0}};
+export const WORKSHOP_FLOOR_SCHEMAS={WorkshopFloorPlan:object(plan),WorkshopFloorReceipt:object({ok:{const:true},...plan}),WorkshopFloorBoard:object({plans:{type:'array',maxItems:20,items:object(plan)},supportedUses:{type:'array',minItems:3,maxItems:3,items:{enum:['tool_bench','storage','service']},uniqueItems:true},capacity:{const:2},tenantAuthoredPlans:{const:false}})};
+export const WORKSHOP_FLOOR_CONTRACTS={
+  'GET /v1/company/workshop-floor':{operationId:'readOwnWorkshopFloors',responseSchema:{$ref:'#/components/schemas/WorkshopFloorBoard'}},
+  'POST /v1/company/workshop-floor/configure':{operationId:'configureOwnerWorkshopFloor',requestSchema:object({businessId:id,expectedRevision:{type:'integer',minimum:0,maximum:2147483646},allocations,consent:{const:true}}),requestParameters:[{name:'Idempotency-Key',in:'header',required:true,schema:id}],responseSchema:{$ref:'#/components/schemas/WorkshopFloorReceipt'}},
+};

@@ -1,0 +1,293 @@
+{
+  "source": "95a68272445eb8164664a172690d81b7288731de",
+  "phase": "Proposed classifications; canonical controls/native proof pending",
+  "references": [
+    {
+      "table": "agent_operating_memory_facts",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Private historical facts confer no fresh permission; current issued actions remain canonical."
+    },
+    {
+      "table": "business_depot_journal",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Immutable journal history remains; asset sums and exact new withdrawal/return witnesses are checked."
+    },
+    {
+      "table": "business_external_costs",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Historical expense declarations are not cash custody or a relocation permission."
+    },
+    {
+      "table": "business_operating_policies",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Same original business/owner; current policy, budget and spent values stay byte-equivalent. Existing delegated-control guard still applies."
+    },
+    {
+      "table": "business_partnerships",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state IN ('funding','active')",
+      "basis": "Real funded or accepted shared capital/profit rights block; invited proposals and closed/retired history do not."
+    },
+    {
+      "table": "business_season_entries",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND final_result IS NULL",
+      "basis": "Unfinished prospective observation remains unsupported; finalized history is retained."
+    },
+    {
+      "table": "business_supply_contracts",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Owner cadence configuration has no geographical promise; current source is pinned and cadence/spent is not reset."
+    },
+    {
+      "table": "business_warehouse_leases",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND (held_qty<>0 OR (status='active' AND expires_at>clock_timestamp()))",
+      "basis": "Actual paid live capacity or held original tenant goods block; terminal/empty elapsed metadata does not."
+    },
+    {
+      "table": "commercial_disputes",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='agreed'",
+      "basis": "Mutually agreed unresolved unwind blocks; one-sided proposed and terminal history do not independently pledge capacity. Canonical backing guards also apply."
+    },
+    {
+      "table": "commercial_negotiations",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL",
+      "blockingPredicate": null,
+      "basis": "No independent escrow: actual original market backing/delivery commitment is checked; unaccepted proposals and accepted terminal delivery history confer no extra rights."
+    },
+    {
+      "table": "commercial_premises_leases",
+      "column": "depot_id",
+      "definition": "depot_id TEXT REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='active' AND expires_at>clock_timestamp()",
+      "basis": "Actual paid occupancy blocks; ended or elapsed occupancy does not become transportable authority."
+    },
+    {
+      "table": "commercial_premises_offers",
+      "column": "depot_id",
+      "definition": "depot_id TEXT REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='offered' AND expires_at>clock_timestamp()",
+      "basis": "Original landlord currently published capacity promise must be closed first; elapsed/cancelled history is retained."
+    },
+    {
+      "table": "commissioned_crafting_contracts",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "business_id=$1 AND status='accepted'",
+      "basis": "Only real maker-accepted live obligations block. Unaccepted funded original-customer custody/refund survives unchanged; terminal history is not a lock."
+    },
+    {
+      "table": "company_acquisitions",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='accepted'",
+      "basis": "Mutually accepted pending title transfer blocks; original seller offer and terminal ownership history do not transfer any authority here."
+    },
+    {
+      "table": "company_logistics_hubs",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='active'",
+      "basis": "Actual enrolled canonical bundle authority blocks; draft/no-use proposals and terminal history do not."
+    },
+    {
+      "table": "company_operator_receipts",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Immutable original execution receipts, not current permission."
+    },
+    {
+      "table": "company_operators",
+      "column": "depot_id",
+      "definition": "depot_id TEXT PRIMARY KEY REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Same original operator policy/revision/next-run values stay unchanged; no new grant or spent reset."
+    },
+    {
+      "table": "company_production_receipts",
+      "column": "business_id",
+      "definition": "business_id TEXT REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Historical canonical manufacturing witnesses, not promises of a new output. Current production serializes on original actor/business."
+    },
+    {
+      "table": "company_restructuring_plans",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='ready' AND expires_at>clock_timestamp()",
+      "basis": "Original owner pending funded/source-bound turnaround must be cancelled/finished first; terminal/elapsed metadata is retained."
+    },
+    {
+      "table": "company_specialization_runs",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Immutable original cadence/usage history remains."
+    },
+    {
+      "table": "company_specializations",
+      "column": "business_id",
+      "definition": "business_id TEXT PRIMARY KEY REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Retained original profile is portable only where canonical recipe/context/tool checks remain satisfiable. Its source/budget/cadence is pinned, never rewritten."
+    },
+    {
+      "table": "company_succession_receipts",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL UNIQUE REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Immutable original estate history, not heir operating authority."
+    },
+    {
+      "table": "company_workflows",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND status='active'",
+      "basis": "Unsettled active canonical workflow blocks until canonical resolution; cancelled/expired/failed/completed history remains."
+    },
+    {
+      "table": "contract_auctions",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "No extra escrow: actual funded original order and actual accepted commitment guards are authoritative, not bid metadata."
+    },
+    {
+      "table": "customer_vault_services",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state IN ('open','draining')",
+      "basis": "Actual operator-controlled vault service must finish/close; independent funded position guard also applies."
+    },
+    {
+      "table": "delivery_commitments",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL",
+      "blockingPredicate": "depot_id=$1 AND status NOT IN ('delivered','expired')",
+      "basis": "Actual reserved supplier commitment blocks; canonical expired/delivered history remains unchanged."
+    },
+    {
+      "table": "depot_brand_licenses",
+      "column": "operator_depot_id",
+      "definition": "operator_depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "(operator_depot_id=$1 OR recipient_depot_id=$1) AND status='active'",
+      "basis": "Accepted active licensed royalty obligation blocks until canonical end; offered and ended metadata is not authority."
+    },
+    {
+      "table": "depot_brand_licenses",
+      "column": "recipient_depot_id",
+      "definition": "recipient_depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "(operator_depot_id=$1 OR recipient_depot_id=$1) AND status='active'",
+      "basis": "Accepted active licensed royalty obligation blocks until canonical end; offered and ended metadata is not authority."
+    },
+    {
+      "table": "economic_intelligence_publications",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Historical publication/source evidence is retained; existing canonical fresh-source sale guard still governs any paid access."
+    },
+    {
+      "table": "employment_organizations",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Crew-roster-linked access is portable and has no district term; actual paid work/course budgets are independently blocked. No roster or guard changes."
+    },
+    {
+      "table": "funded_external_work_jobs",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state<>'recovered'",
+      "basis": "Unresolved explicitly created work/recovery source remains unsupported; no provider/backing activation. Recovered history remains."
+    },
+    {
+      "table": "game_employment_jobs",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND (state='open' OR escrow_cash<>0)",
+      "basis": "Actual open funded employment or remaining wages block; closed settled history remains."
+    },
+    {
+      "table": "infrastructure_concessions",
+      "column": "business_id",
+      "definition": "business_id TEXT REFERENCES business_depots(id)",
+      "blockingPredicate": "business_id=$1 AND state='accepted'",
+      "basis": "Actual accepted paid premise/tool source is not transported or rebound; unaccepted offers and terminal history remain."
+    },
+    {
+      "table": "logistics_coverage_policies",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL",
+      "blockingPredicate": "depot_id=$1 AND (escrow_cash<>0 OR state IN ('active','claimable'))",
+      "basis": "Actual backing/claim obligation must resolve first; zero-backed offered/terminal history remains."
+    },
+    {
+      "table": "market_listings",
+      "column": "depot_id",
+      "definition": "depot_id TEXT",
+      "blockingPredicate": "depot_id=$1 AND (kind<>'order' OR status NOT IN ('sold','cancelled','expired') OR qty<>0 OR filled_qty<>0)",
+      "basis": "Actual funded/reserved or unreceived inventory blocks; settled empty order history remains."
+    },
+    {
+      "table": "picking_packing_jobs",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND state='accepted'",
+      "basis": "Actual provider-consented pending work blocks; requested fee-less proposals and terminal history do not reserve provider capacity. Actual warehouse custody remains independently blocked."
+    },
+    {
+      "table": "production_slot_reservations",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "business_id=$1 AND status='active'",
+      "basis": "Actual maker-consented reservation blocks until canonical release/consumption; offers/terminal metadata do not reserve business capacity."
+    },
+    {
+      "table": "strategy_laboratories",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "business_id=$1 AND state='active'",
+      "basis": "Unfinalized actual prospective trial must resolve; completed/retired/party-dead history remains."
+    },
+    {
+      "table": "supply_tenders",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": null,
+      "basis": "Underlying original funded order and actual delivery commitment block when live; losing/unaccepted bids and terminal tender history are not custody."
+    },
+    {
+      "table": "territory_economics_profiles",
+      "column": "business_id",
+      "definition": "business_id TEXT NOT NULL UNIQUE REFERENCES business_depots(id)",
+      "blockingPredicate": "business_id=$1 AND enabled=true AND state='active'",
+      "basis": "Accepted geographical economic source must be canonically closed; lifetime paid history remains."
+    },
+    {
+      "table": "worker_training_courses",
+      "column": "depot_id",
+      "definition": "depot_id TEXT NOT NULL REFERENCES business_depots(id)",
+      "blockingPredicate": "depot_id=$1 AND (escrow_cash<>0 OR state='active')",
+      "basis": "Real prepaid remaining wages or active training commitments block; completed/closed settled history remains."
+    }
+  ]
+}

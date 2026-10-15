@@ -1,0 +1,56 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+assert(!process.env.DATABASE_URL,'No ambient database endpoint');
+assert(!process.argv.includes('--postgres'),'Native execution is pending coordinator lease and exact shared overlay.');
+const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),S=await import('../src/mobileshops.js');
+const {MOBILE_SHOP_BOARD}=await import('../src/mobileshops-contracts.js');
+const pool=await makeDb();
+try {
+  await pool.query(fs.readFileSync(new URL('../docs/mobile-shops-proposal.sql',import.meta.url),'utf8'));
+  const good={quantity:2,unitPrice:50,lifetimeSeconds:60,consent:true};
+  assert.deepEqual(S.mobileShopTerms('open',good),{action:'open',...good});
+  for(const body of [{...good,quantity:0},{...good,quantity:11},{...good,unitPrice:0},{...good,unitPrice:500001},{...good,lifetimeSeconds:59},{...good,lifetimeSeconds:3601},{...good,consent:false},{...good,foreignAccount:'private'},{...good,quantity:'2'}])assert.throws(()=>S.mobileShopTerms('open',body),/terms/);
+  assert.throws(()=>S.mobileShopTerms('relocate',{}),/terms/);
+  await pool.query("INSERT INTO accounts(id,auth_provider,auth_subject) VALUES('shop-owner','mobile-shop-boundary','shop-owner')");
+  await pool.query("INSERT INTO characters(id,account_id,name,season,loc,cash) VALUES('shop-owner-actor','shop-owner','Shop Owner',1,'foundry',10000)");
+  const state=async()=>({characters:(await pool.query('SELECT id,cash,loc FROM characters ORDER BY id')).rows,cargo:(await pool.query('SELECT * FROM character_cargo ORDER BY character_id,good_id')).rows,listings:(await pool.query('SELECT * FROM market_listings ORDER BY id')).rows,transactions:(await pool.query('SELECT * FROM transactions ORDER BY id')).rows,shops:(await pool.query('SELECT * FROM mobile_shops ORDER BY id')).rows,requests:(await pool.query('SELECT * FROM mobile_shop_requests ORDER BY account_id,key_hash')).rows});
+  const before=await state();
+  await assert.rejects(S.runMobileShop(pool,'shop-owner','open',good,'new'),/transactional_backend_required/);
+  assert.deepEqual(await state(),before);
+  const empty=await I.withItemRead(pool,c=>S.mobileShopBoard(c));assert.deepEqual(empty,{shops:[],next:null});
+  const expires=new Date(Date.now()+60000),listingExpires=new Date(Date.now()+3600000),id='boundary-shop',listing='boundary-listing';
+  const hash=v=>crypto.createHash('sha256').update(JSON.stringify(v)).digest('hex');
+  const sourceHash=hash([id,'shop-owner-actor','shop-owner',listing,'foundry','gin',2,50,expires.toISOString(),listingExpires.toISOString()]);
+  // Explicit administrative read/negative fixture, NOT a manufactured sale/cargo proof.
+  await pool.query("INSERT INTO mobile_shops(id,seller_account,seller_character,listing_id,district,initial_quantity,remaining_quantity,unit_price,source_hash,expires_at,listing_expires_at,status) VALUES($1,'shop-owner','shop-owner-actor',$2,'foundry',2,2,50,$3,$4,$5,'active')",[id,listing,sourceHash,expires,listingExpires]);
+  await pool.query("INSERT INTO market_listings(id,seller_character,kind,good_id,qty,district,price,expires_at) VALUES($1,'shop-owner-actor','good','gin',2,'foundry',50,$2)",[listing,listingExpires]);
+  await assert.rejects(I.withItemTransaction(pool,c=>S.assertMobileShopMarketAdmission(c,{action:'buy_good',listingId:listing})),/canonical_scope/);
+  await assert.rejects(I.withItemTransaction(pool,c=>S.assertMobileShopMarketAdmission(c,{action:'cancel_good',listingId:listing})),/canonical_scope/);
+  await I.withItemTransaction(pool,c=>S.assertMobileShopMarketAdmission(c,{action:'buy_good',listingId:'unrelated'}));
+  await S.assertMobileShopMarketAdmission(pool,{action:'buy_good',listingId:'unrelated'});
+  await S.retireMobileShopSource(pool,'unrelated','cancelled');
+  const ajv=new Ajv({strict:false});addFormats(ajv);const validate=ajv.compile(MOBILE_SHOP_BOARD);
+  let board=await I.withItemRead(pool,c=>S.mobileShopBoard(c));assert(validate(board),JSON.stringify(validate.errors));assert.equal(board.shops[0].available,true);assert(!JSON.stringify(board).includes('seller_account'));
+  await pool.query("UPDATE characters SET loc='docks' WHERE id='shop-owner-actor'");
+  board=await I.withItemRead(pool,c=>S.mobileShopBoard(c));assert.equal(board.shops[0].available,false);
+  await pool.query("UPDATE characters SET loc='foundry' WHERE id='shop-owner-actor'");
+  await pool.query('UPDATE market_listings SET qty=1 WHERE id=$1',[listing]);
+  board=await I.withItemRead(pool,c=>S.mobileShopBoard(c));assert.equal(board.shops[0].available,false);
+  await assert.rejects(I.withItemTransaction(pool,c=>S.retireMobileShopSource(c,listing,'sold')),/terminal_source/);
+  await assert.rejects(I.withItemTransaction(pool,c=>S.retireMobileShopSource(c,listing,'estate_scattered')),/estate|terminal_source/);
+  await pool.query("UPDATE market_listings SET status='cancelled' WHERE id=$1",[listing]);
+  await I.withItemTransaction(pool,c=>S.retireMobileShopSource(c,listing,'cancelled'));
+  await I.withItemTransaction(pool,c=>S.retireMobileShopSource(c,listing,'cancelled'));
+  assert.equal((await pool.query('SELECT status FROM mobile_shops WHERE id=$1',[id])).rows[0].status,'cancelled');
+  // Historical receipt replay is account/body-bound before current-life/backend admission.
+  const receipt={ok:true,action:'open',shop:{historical:true}},terms=S.mobileShopTerms('open',good),keyHash=hash(['shop-owner','historical']);
+  await pool.query('INSERT INTO mobile_shop_requests(account_id,key_hash,body_hash,original_character,shop_id,receipt,journal_ids) VALUES($1,$2,$3,$4,$5,$6,$7)',['shop-owner',keyHash,hash(terms),'shop-owner-actor',id,receipt,'[]']);
+  await pool.query("UPDATE characters SET alive=false WHERE id='shop-owner-actor'");
+  assert.deepEqual(await S.runMobileShop(pool,'shop-owner','open',good,'historical'),receipt);
+  await assert.rejects(S.runMobileShop(pool,'shop-owner','open',{...good,quantity:1},'historical'),e=>e.code==='mobile_shop_request_conflict');
+  await assert.rejects(S.runMobileShop(pool,'foreign','open',good,'historical'),/transactional_backend_required/);
+  console.log('PASS N11 memory boundaries/read projection/replay; fresh gameplay and native unqualified.');
+} finally {await pool.end();}
