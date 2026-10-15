@@ -423,6 +423,7 @@
 | [docs/company-workflows-security-review.md](../../docs/company-workflows-security-review.md) | documentation | 121 | 2026-10-12 |
 | [docs/company-workforce-contracts-review.md](../../docs/company-workforce-contracts-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/compute-value-experiments.md](../../docs/compute-value-experiments.md) | documentation | 85 | 2026-10-10 |
+| [docs/consignments-security-review.md](../../docs/consignments-security-review.md) | documentation | 55 | 2026-10-15 |
 | [docs/contract-auction-receipt-repair-review.md](../../docs/contract-auction-receipt-repair-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/contract-auctions-security-review.md](../../docs/contract-auctions-security-review.md) | documentation | 42 | 2026-10-13 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
@@ -536,7 +537,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 176 | 2026-10-15 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 178 | 2026-10-15 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
