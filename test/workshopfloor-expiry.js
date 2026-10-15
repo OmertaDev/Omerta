@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {fixture} from './workshopfloor-fixture.js';
+const f=await fixture();try{
+  await f.configure('maker',[f.service()],0,'expiry-owner');const offer=(await f.G.withCharacter(f.pool,'maker',(ch,c)=>f.Prem.offerPremises(ch,{expectedRevision:0,expectedCompanyRevision:1,depotId:f.businesses.maker,slots:2,rentCash:300,durationSeconds:60,offerExpiresAt:new Date(Date.now()+3600000).toISOString(),published:false},'expiry-offer',c))).offer;
+  const lease=(await f.G.withTwoCharacters(f.pool,'customer','maker-actor',(ch,landlord,c,h)=>f.Prem.leasePremises(ch,landlord,offer.id,{expectedRevision:offer.revision,slot:2,maxRentCash:300,consent:true},'expiry-paid-lease',c,h),{meet:false})).lease;
+  const before=await f.state();await assert.rejects(f.configure('maker',[f.service(),f.storage()],1,'before-real-expiry'),/paid_occupancy/);assert.deepEqual(await f.state(),before);const observed=Date.now(),deadline=+new Date(lease.expiresAt);assert(deadline>observed);
+  while(Date.now()<=deadline+100)await new Promise(resolve=>setTimeout(resolve,Math.min(1000,Math.max(1,deadline+101-Date.now()))));
+  const plan=await f.configure('maker',[f.service(),f.storage()],1,'after-real-expiry');assert.equal(plan.allocations.length,2);const after=await f.state();for(const t of ['characters','transactions','item_instances','item_events','market_listings','business_depots','business_warehouse_leases','commercial_premises_leases'])assert.deepEqual(after[t],before[t],'Expiry allocation has no '+t+' effect');
+  assert.deepEqual(await f.W.collectWorkshopFloorIssues(f.pool),[]);fs.mkdirSync('output',{recursive:true});fs.writeFileSync('output/workshop-floor-real-expiry.json',JSON.stringify({observedAt:new Date(observed).toISOString(),immutableLeaseDeadline:lease.expiresAt,allocatedAt:new Date().toISOString(),elapsedMs:Date.now()-observed,clockOrSourceMutations:0},null,2));console.log('Workshop floor '+(f.native?'native18.4':'memory')+' actual elapsed60s paid occupancy expiration PASS: no early owner allocation, expired historical lease no permanent blocking authority, no rent refund/bonus/cash/inventory mutation. No clock/source/TTL edits.');
+}finally{await f.pool.end();}
