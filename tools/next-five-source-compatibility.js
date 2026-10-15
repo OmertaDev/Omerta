@@ -2,7 +2,7 @@ import {nextLayerSourceBaseline} from './next-layer-source-compatibility.js';
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_FIVE_SOURCE_REVISION="31ff3ecbb215d0e359649d89f1075bab60ac116b";
+export const NEXT_FIVE_SOURCE_REVISION="0a11b2f03173f9d238a4e9826f03c02a2334d649";
 export const NEXT_FIVE_SOURCE_PREDECESSOR="301e3f79c53525fbfacb3affe76415b8dcd6cbab";
 export const NEXT_FIVE_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_FIVE_SOURCE_DOMAINS={
@@ -104,14 +104,14 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
     ]
   },
   "src/social/estate.js": {
-    "currentSha256": "10b381e317fd0f97aae749fbe65344ce03813e12eec7074a9397f0ab5674f2c5",
-    "currentBlob": "d3142d63395f89911119677ddcfd6d7e9fcc8d1e",
+    "currentSha256": "06210f75f1cd20be147dbcd682f358e49e36b9f79c6a0a4db504350a7e30790d",
+    "currentBlob": "d3f146af5a0f1bccf7db04505e99adc08d7764fd",
     "baselineSha256": "8201033b665a9ff191a8328f230ed125a893c3abd6168f1e8568b231ebe2b4cd",
     "baselineBlob": "5aaee0dc1a9f2a0dc7c802930fafbe9492e3fa5e",
     "contextLines": 3,
     "inverses": [
       {
-        "current": "import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';\nimport { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n",
+        "current": "import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';\nimport { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n",
         "baseline": "import { retireIntelligenceAtDeath } from '../economicintelligence.js';\nimport { retireManagementTeamsAtDeath } from '../managementteams.js';\nimport { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';\n"
       },
       {
@@ -119,7 +119,7 @@ export const NEXT_FIVE_SOURCE_DOMAINS={
         "baseline": "import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';\nimport { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';\nimport { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';\nimport { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';\nimport { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';\nimport { wipeSpeakeasyAtDeath } from '../speakeasy.js';\n"
       },
       {
-        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n    const before = Number(victim.cash);\n    registerItemTransactionUndo(client, () => { victim.cash = before; });\n    victim.cash = before + receipt.refundedFee;\n  }\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n",
+        "current": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  // Commission recovery loads after module initialization, using the existing estate scope.\n  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');\n  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);\n  for (const receipt of commissionStart) {\n    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');\n    const before = Number(victim.cash);\n    registerItemTransactionUndo(client, () => { victim.cash = before; });\n    victim.cash = before + receipt.refundedFee;\n  }\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n",
         "baseline": "  try {\n  // Lock the sorted union before any existing depot/order lock, including\n  // mutual rentals. A landlord's death never consumes surviving tenant goods.\n  await closeWarehouseClaimsAtDeath(client, victim.id);\n  const acct = h.victimAcct;\n  const lvl = levelOf(Number(victim.respect));\n"
       },
       {

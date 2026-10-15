@@ -1,7 +1,6 @@
 import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';
 import { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';
 import { recoverCustomerLayawayAtEstateStart, recoverCustomerLayawayInEstate } from '../customerlayaway.js';
-import { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } from '../commissionedcrafting.js';
 import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
 import { retireIntelligenceAtDeath } from '../economicintelligence.js';
 import { retireManagementTeamsAtDeath } from '../managementteams.js';
@@ -193,6 +192,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await recoverCustomerVaultsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });
   const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
+  // Commission recovery loads after module initialization, using the existing estate scope.
+  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
   for (const receipt of commissionStart) {
     if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');
