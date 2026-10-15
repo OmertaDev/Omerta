@@ -112,10 +112,15 @@ try {
     assert.deepEqual((await state(fixture)).position, position);
     assert(await fixture.page.evaluate(entry => window.__panelHandles.at(-1) === entry && !entry.destroyed, entry));
   };
+  const choosePanel = async (fixture, kind) => {
+    const selector = fixture.page.locator('[data-city-panel-select]');
+    if (await selector.isVisible()) await selector.selectOption(kind);
+    else await activate(fixture, fixture.page.locator(`[data-city-world-panel="${kind}"]`));
+  };
   const panel = async (fixture, kind) => {
     if (await fixture.page.locator('.city-world__dock').isVisible()) await activate(fixture, fixture.page.locator('[data-city-world-close]'));
     await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
-    await activate(fixture, fixture.page.locator(`[data-city-world-panel="${kind}"]`)); await settled(fixture);
+    await choosePanel(fixture, kind); await settled(fixture);
   };
   const adventureRevisionJourney = async viewport => {
     const actor = await create('Panel Revision Player ' + viewport.width), fixture = await newPage(actor, viewport);
@@ -147,7 +152,7 @@ try {
       await activate(fixture, fixture.page.locator('[data-city-world-close]'));
       await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
       const reopened = fixture.page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/v1/city/encounters');
-      await activate(fixture, fixture.page.locator('[data-city-world-panel="adventures"]'));
+      await choosePanel(fixture, 'adventures');
       // Authenticated reads queue behind the POST. Deliver its real ACK only after the
       // reopen reads are queued, then hold the action's real player-refresh response.
       gate.resolve();
@@ -565,7 +570,7 @@ try {
       await bounded(craftCommitted.promise, 'the real canonical A workbench commit');
       await activate(fixture, fixture.page.locator('[data-city-world-close]'));
       await activate(fixture, fixture.page.locator('[data-city-world-tools]'));
-      await activate(fixture, fixture.page.locator('[data-city-world-panel="room"]'));
+      await choosePanel(fixture, 'room');
       await activate(fixture, visitControl(homeB));
       craftGate.resolve(); await bounded(lateObserved.promise, 'the actual late A refresh after a B opening');
       await fixture.page.getByRole('heading', { name: homeB.street + ' · Visiting', exact: true }).waitFor();
