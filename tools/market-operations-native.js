@@ -693,6 +693,7 @@ export const MARKET_OPERATIONS_NATIVE_FILES=Object.freeze([
  "test/lib/rc1-npc-family-controls.js",
  "test/lib/srcfiles.js",
  "test/managementteams-fixture.js",
+ "test/market-operations-director-catalog.js",
  "test/market-operations-native-guard.js",
  "test/market-operations-release-phase2-migration-catalog.js",
  "test/merchantreturns-api.js",

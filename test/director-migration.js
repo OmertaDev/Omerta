@@ -336,8 +336,12 @@ try {
     { includeNotNull: false, legacyProfile: 'director' });
   const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);
   const normalizeMarketOperationsConstraints = rows => {
-    assert.deepEqual(rows.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name)),
-      marketOperationsInventory.added.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name)),
+    const ordered = list => [...list].sort((a, b) => {
+      for (const key of ['table_name', 'name']) { if (a[key] < b[key]) return -1; if (a[key] > b[key]) return 1; }
+      return 0;
+    });
+    assert.deepEqual(ordered(rows.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name))),
+      ordered(marketOperationsInventory.added.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name))),
       'All 159 pinned market-operations structural definitions remain exact before the historical Director oracle');
     return rows.filter(row => !MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name));
   };
