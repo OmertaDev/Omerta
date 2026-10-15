@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import { economyReleaseSource } from './economy-release-composition.js';
 const lf=t=>t.replaceAll('\r\n','\n'),hash=t=>crypto.createHash('sha256').update(t).digest('hex'),blob=t=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(t)+'\0').update(t).digest('hex');
 export const FIFTH_BATCH_SOURCE_REVISION='ce717fa30b35395eb38bbca9ea5dc06dd4aeb8a4';
 export const FIFTH_BATCH_SOURCE_PREDECESSOR='bc7a40f3fe56d980724f695a52ef3b559911e4a4';
@@ -143,5 +144,5 @@ export function assertFifthBatchSourceTransfer(file,input){
  return{file,baselineText,sourceRevision:FIFTH_BATCH_SOURCE_REVISION,predecessorRevision:FIFTH_BATCH_SOURCE_PREDECESSOR,inverseChunks:d.inverses.length,phase:FIFTH_BATCH_SOURCE_PHASE};
 }
 // Unknown representations remain byte-exact for the original rejecting guard.
-export function fifthBatchSourceBaseline(file,input){assert.equal(typeof input,'string');const text=lf(input),d=FIFTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFifthBatchSourceTransfer(file,input).baselineText:input;}
+export function fifthBatchSourceBaseline(file,input){input=economyReleaseSource('autonomy',file,input);assert.equal(typeof input,'string');const text=lf(input),d=FIFTH_BATCH_SOURCE_DOMAINS[file];return d&&hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFifthBatchSourceTransfer(file,input).baselineText:input;}
 export function fifthBatchMigrationSchema(input){assert.equal(typeof input,'string');const text=lf(input),d=FIFTH_BATCH_SOURCE_DOMAINS['schema.sql'];return hash(text)===d.currentSha256&&(input===text||input===text.replaceAll('\n','\r\n'))?assertFifthBatchSourceTransfer('schema.sql',input).baselineText:input;}
