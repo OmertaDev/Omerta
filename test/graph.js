@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import {
   build,
+  extractCommercialHelperReconciliations,
   checkGraph,
   QUERIES,
   census,
@@ -242,6 +243,100 @@ for (const reason of ['deposit', 'refund', 'spend', 'forfeit']) {
 assert(g.unparsed.some((entry) => entry.file === 'src/coordination/capital.js'
   && entry.kind === 'interpolated-reason' && entry.text === 'coordination:capital:${reason}'),
 'dynamic Family capital ledger reasons must remain visible as an extractor limitation');
+
+// Imported commercial checks reconcile money as well as original-source provenance.
+const commercialHelpers = Object.fromEntries(['src/company-commercial-invariants.js','src/equipmentinsurance.js','src/territoryeconomics.js']
+  .map(file => [file, fs.readFileSync(new URL('../' + file, import.meta.url), 'utf8')]));
+const commercialExpected = [
+ ['company restructuring canonical receipt books','market:refund'],['company restructuring canonical receipt books','depot:withdraw'],
+ ['commercial original source histories','market:refund'],
+ ...['equipment_insurance:reserve','equipment_insurance:premium_pay','equipment_insurance:premium_receive','equipment_insurance:claim','equipment_insurance:refund','equipment_insurance:burn','death:equipment_insurance'].map(reason => ['equipment insurance original loss bindings',reason]),
+ ['territory economics source and tribute bindings','depot:withdraw'],['territory economics source and tribute bindings','gang:tribute'],
+];
+const commercialTerms = extractCommercialHelperReconciliations(invariantSource, commercialHelpers);
+assert.deepEqual(commercialTerms.map(term => [term.check,term.reason]), commercialExpected);
+assert.deepEqual(extractCommercialHelperReconciliations(normalizeText(invariantSource).replaceAll('\n','\r\n'),
+ Object.fromEntries(Object.entries(commercialHelpers).map(([file,text])=>[file,normalizeText(text).replaceAll('\n','\r\n')]))),commercialTerms);
+for (const term of commercialTerms) {
+ const edge=g.edges.find(edge=>edge.type==='RECONCILES'&&edge.from==='Check:'+term.check&&edge.to==='Reason:'+term.reason);
+ assert(edge,'Actual commercial helper money must have a real graph edge');assert.equal(edge.prov.file,term.file);
+ assert(edge.prov.hash&&edge.prov.binding.hash);assert.equal(edge.prov.binding.file,'src/invariants.js');
+}
+const commercialControls = [
+  {
+    "check": "company restructuring canonical receipt books",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCompanyRestructuringIssues",
+    "variable": "restructuringIssues",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "anchors": [
+      "const issues=[],rows=",
+      "Number(j.amount)!==amount",
+      "j.character_id!==(cancel?null:p.original_character)",
+      "Number(returned[0].cash_delta)!==refund"
+    ],
+    "reason": "market:refund"
+  },
+  {
+    "check": "commercial original source histories",
+    "file": "src/company-commercial-invariants.js",
+    "fn": "collectCommercialHistoryIssues",
+    "variable": "commercialHistoryIssues",
+    "import": "import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';",
+    "anchors": [
+      "tx.reason!=='market:refund'",
+      "tx.counterparty!==p.depot_id",
+      "Number(tx.amount)!==amount",
+      "Number(backing.cash_delta)!==-Number(q.quantity)*Number(q.unitPrice)"
+    ],
+    "reason": "market:refund"
+  },
+  {
+    "check": "equipment insurance original loss bindings",
+    "file": "src/equipmentinsurance.js",
+    "fn": "collectEquipmentInsuranceIssues",
+    "variable": "equipmentInsuranceIssues",
+    "import": "import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';",
+    "anchors": [
+      "Number(p.maximum_cash)!==Number(p.escrow_cash)+Number(p.paid_cash)+Number(p.refunded_cash)+Number(p.burned_cash)",
+      "t.currency==='cash'&&Number(t.amount)===amount",
+      "t?.character_id===ch&&t.account_id===account",
+      "Math.min(fee,Number(p.maximum_cash))"
+    ],
+    "reason": "equipment_insurance:reserve"
+  },
+  {
+    "check": "territory economics source and tribute bindings",
+    "file": "src/territoryeconomics.js",
+    "fn": "collectTerritoryEconomicsIssues",
+    "variable": "territoryIssues",
+    "import": "import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';",
+    "anchors": [
+      "a.character_id!==p.original_character",
+      "Number(a.amount)!==Number(pay.amount_cash)",
+      "Number(b.amount)!==-Number(pay.amount_cash)",
+      "observed+=Number(j.cash_delta)+Number(j.cost_delta)",
+      "observed-=Number(j.expense)"
+    ],
+    "reason": "depot:withdraw"
+  }
+];
+let commercialNegativeControls=0;
+const alter=(text,literal)=>{assert(text.includes(literal),'Mutation target must exist: '+literal);const changed=text.replace(literal,literal+'__changed');assert.notEqual(changed,text);return changed;};
+for (const spec of commercialControls) {
+ const absent=(inv,helpers)=>{assert.equal(extractCommercialHelperReconciliations(inv,helpers).some(term=>term.check===spec.check),false);commercialNegativeControls++;};
+ absent(alter(invariantSource,spec.import),commercialHelpers);
+ absent(alter(invariantSource,'await '+spec.fn+'(pool)'),commercialHelpers);
+ absent(alter(invariantSource,spec.variable+'.length'),commercialHelpers);
+ absent(alter(invariantSource,"push('"+spec.check+"'"),commercialHelpers);
+ const call='const '+spec.variable+' = await '+spec.fn+'(pool);';
+ absent(invariantSource.replace(call,call+'\n'+call),commercialHelpers);
+ for(const literal of ["'"+spec.reason+"'",...spec.anchors]) absent(invariantSource,{...commercialHelpers,[spec.file]:alter(commercialHelpers[spec.file],literal)});
+ absent(invariantSource,{...commercialHelpers,[spec.file]:commercialHelpers[spec.file]+'\n// unknown helper shape'});
+ absent(invariantSource,{...commercialHelpers,[spec.file]:undefined});
+}
+console.log('✓ imported commercial accounting:12 actual monetary reason edges, LF/CRLF, '+commercialNegativeControls+' causal unknown/import/call/result/amount/reason/party controls');
+
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 
 // ── extraction really found the things we know are in the tree ───────────────────────────────────

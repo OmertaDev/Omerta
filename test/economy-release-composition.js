@@ -1,0 +1,54 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { COMPOSITION_REVISION, COMPOSITION_PHASE, COMPOSITION_PROFILES,
+  assertEconomyReleaseComposition, economyReleaseSource } from '../tools/economy-release-composition.js';
+
+const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+const lf = text => text.replaceAll('\r\n', '\n');
+assert.match(COMPOSITION_REVISION, /^[a-f0-9]{40}$/);
+assert.equal(COMPOSITION_PHASE, 'exact-source-transfer-only; no native, migration, financial or deployment clearance');
+assert.deepEqual(Object.keys(COMPOSITION_PROFILES), ['commercial', 'main']);
+let domains = 0, negatives = 0;
+for (const [profile, files] of Object.entries(COMPOSITION_PROFILES)) {
+  for (const [file, pin] of Object.entries(files)) {
+    const current = git('show', COMPOSITION_REVISION + ':' + file);
+    const prior = git('cat-file', 'blob', pin.baselineBlob);
+    assert.equal(lf(fs.readFileSync(file, 'utf8')), current, 'Complete actual source retains its reviewed composition');
+    const actual = []; let hunk;
+    for (const line of git('diff', '--no-ext-diff', '--unified=' + pin.contextLines, pin.baselineBlob, pin.currentBlob).split('\n')) {
+      if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }
+      else if (hunk && /^[ +\-]/.test(line)) {
+        if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
+        if (line[0] !== '+') hunk.baseline += line.slice(1) + '\n';
+      }
+    }
+    assert.deepEqual(pin.inverses, actual, 'Only actual immutable Git inverse hunks are admitted');
+    for (const text of [current, current.replaceAll('\n', '\r\n')]) {
+      assert.equal(assertEconomyReleaseComposition(profile, file, text).baselineText, prior);
+      assert.equal(economyReleaseSource(profile, file, text), prior);
+    }
+    const reject = text => {
+      assert.notEqual(text, current);
+      assert.throws(() => assertEconomyReleaseComposition(profile, file, text));
+      assert.equal(economyReleaseSource(profile, file, text), text, 'Unknown source remains unchanged for the original rejecting guard');
+      negatives++;
+    };
+    for (const text of [current + '\n// drift\n', current.slice(1), '\ufeff' + current,
+      current.replace(/\S/, '?'), current.replace('\n', '\r\n')]) reject(text);
+    for (const inverse of pin.inverses) {
+      reject(current.replace(inverse.current, ''));
+      reject(current.replace(inverse.current, () => inverse.current + inverse.current));
+      reject(current.replace(inverse.current, () => inverse.baseline));
+      reject(current.replace(inverse.current, () => inverse.current.replace(/\S/, '?')));
+    }
+    domains++;
+  }
+}
+for (const [profile, file] of [['unknown', 'schema.sql'], ['main', 'src/unknown.js'], ['commercial', '__proto__']]) {
+  const text = 'unknown\r\nbytes\n';
+  assert.throws(() => assertEconomyReleaseComposition(profile, file, text));
+  assert.equal(economyReleaseSource(profile, file, text), text);
+  negatives++;
+}
+console.log(`economy release composition: ${domains} complete source domains, ${negatives} rejecting controls; source only`);

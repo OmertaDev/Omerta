@@ -19,7 +19,7 @@ if (native) {
 }
 Object.assign(process.env, { RATE_LIMIT: 'off', SOCIAL_VERIFY_MODE: 'off', DEPOT_PILOT: 'on', INVITE_MODE: 'off',
   JWT_SECRET: 'production-combined-native-fixture-secret', MARKET_SEED: 'production-combined-fixture-market-seed-long', MOD_KEY: 'production-combined-fixture-moderator' });
-const { buildServer } = await import('../src/server.js'), G = await import('../src/game.js');
+const { buildServer } = await import('./server-fixture.js'), G = await import('../src/game.js');
 const I = await import('../src/items.js'), { runEstate } = await import('../src/social/estate.js');
 const { runLedgerInvariants } = await import('../src/invariants.js');
 const app=await buildServer(),{default:Fastify}=await import('fastify'),Concessions=await import('../src/infrastructureconcessions.js'),ConcessionRoutes=await import('../src/routes/infrastructureconcessions.js'),S=await import('../src/companyspecialization.js'),Rentals=await import('../src/equipmentrentals.js');const component=Fastify();component.setErrorHandler((e,_r,p)=>p.code(e.statusCode||400).send({error:e.code,message:e.message}));ConcessionRoutes.register(component,{pool:app.pool,auth:async req=>{try{req.user=app.jwt.verify(String(req.headers.authorization||'').replace(/^Bearer /,''));}catch{throw Object.assign(Error('Authentication required'),{statusCode:401});}}});let sequence=0;

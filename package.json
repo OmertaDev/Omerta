@@ -280,7 +280,7 @@
     "test:legal-security": "node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js",
     "release:media": "node tools/release-media.mjs unpack",
     "postinstall": "node tools/release-media.mjs unpack",
-    "test:release-source-transfer": "node test/release-source-transfer.js"
+    "test:release-source-transfer": "node test/economy-release-composition.js && node test/release-source-transfer.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",
