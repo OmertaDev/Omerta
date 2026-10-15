@@ -3,6 +3,8 @@ import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, releaseEscrow, transferItem, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
+import { assertEquipmentRentalDeathScope } from './equipmentrentals.js';
+import { assertEstateResolutionScope } from './social/estate.js';
 
 export const CONSIGNMENTS = Object.freeze({ templateId: 'item:precision_lock_tool', ownerLimit: 8, hostLimit: 16, maximumPrice: 1000000, maximumFeeBps: 2000 });
 const fail = reason => { throw new GameError('consignment', reason); };
@@ -122,13 +124,29 @@ export const expireConsignment=(c,account,body,key)=>action(c,account,'expire',b
 export async function consignmentBoard(c,account,after=''){
   id(account);if(after!=='')id(after);
   const rows=(await c.query("SELECT * FROM consignments WHERE id>$1 AND (status='active' OR owner_account=$2 OR host_account=$2) ORDER BY id LIMIT 25",[after,account])).rows;
-  const observed=await clock(c);return {observedAt:observed.toISOString(),rows:rows.map(row=>({...dto(row),available:row.status==='active'&&+new Date(row.expires_at)>+observed,...([row.owner_account,row.host_account].includes(account)?{itemId:row.item_id,originalOwner:row.owner_character,originalHost:row.host_character}: {})})),next:rows.length===25?rows.at(-1).id:null};
+  // Accepting a public sale advertises its pickup district without publishing
+  // the host's identity. This observation never authorizes a later purchase.
+  const pickup = new Map();
+  for (const row of rows) if (row.status === 'active' && !pickup.has(row.host_character)) {
+    const host = (await c.query('SELECT loc,alive FROM characters WHERE id=$1', [row.host_character])).rows[0];
+    pickup.set(row.host_character, host?.alive ? host.loc : null);
+  }
+  const observed=await clock(c);return {observedAt:observed.toISOString(),rows:rows.map(row=>({...dto(row),available:row.status==='active'&&+new Date(row.expires_at)>+observed,pickupDistrict:row.status==='active'?pickup.get(row.host_character)??null:null,...([row.owner_account,row.host_account].includes(account)?{itemId:row.item_id,originalOwner:row.owner_character,originalHost:row.host_character}: {})})),next:rows.length===25?rows.at(-1).id:null};
 }
 // Root estate integration must compose this discovery with ALL other pre-actor unions.
 export async function consignmentDeathCounterparts(c,characterId){
   assertItemTransaction(c);const rows=(await c.query("SELECT owner_character,host_character FROM consignments WHERE status='active' AND (owner_character=$1 OR host_character=$1) ORDER BY id LIMIT 25",[id(characterId)])).rows;if(rows.length>24)fail('death_limit');return [...new Set(rows.flatMap(r=>[r.owner_character,r.host_character]))].sort();
 }
 const deathScopes=new WeakMap();
+// Only the canonical estate can adopt its already locked complete actor union.
+// The witness is verified privately; callers cannot supply an ids array or flag.
+export async function recoverConsignmentsInEstate(c, characterId, rentalScope, estateScope) {
+  await assertEstateResolutionScope(c, characterId, estateScope);
+  const locked = await assertEquipmentRentalDeathScope(c, characterId, rentalScope);
+  const scope = Object.freeze({});
+  deathScopes.set(scope, { c, transaction: itemTransactionIdentity(c), characterId, ids: [...locked.ids] });
+  return recoverConsignmentsAtDeath(c, characterId, scope);
+}
 export async function prelockConsignmentDeath(c,characterId){
   const ids=[...new Set([id(characterId),...await consignmentDeathCounterparts(c,characterId)])].sort(),rows=[];
   for(const key of ids){const row=(await c.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE',[key])).rows[0];if(!row)fail('death_actor');rows.push(row);}

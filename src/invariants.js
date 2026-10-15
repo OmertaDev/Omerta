@@ -22,6 +22,7 @@ import { collectServiceSubscriptionIssues } from './servicesubscriptions.js';
 import { collectWorkerTrainingIssues } from './workertraining.js';
 import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
+import { collectConsignmentIssues } from './consignments.js';
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -63,6 +64,7 @@ const KNOWN_REASONS = {
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
+    'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
@@ -732,6 +734,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance premium transfers', 0, await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:premium_pay','equipment_insurance:premium_receive')"), 0);
   const equipmentInsuranceIssues = await collectEquipmentInsuranceIssues(pool);
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
+  const consignmentIssues = await collectConsignmentIssues(pool);
+  const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
+  push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });
   const territoryIssues = await collectTerritoryEconomicsIssues(pool);
   push('territory economics source and tribute bindings', territoryIssues.length, 0, 0, { issues: territoryIssues });
   const subscriptionEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM service_subscriptions');

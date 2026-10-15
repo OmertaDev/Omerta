@@ -631,6 +631,8 @@ const DISPOSITION = {
   company_production_receipts: 'metadata', // original producer receipts retain identity; exact historical replay grants no fresh heir production
   company_specializations: 'metadata', // policy stays bound to the original character and Depot; canonical estate closes that Depot and an heir cannot reuse the grant
   company_specialization_runs: 'metadata', // original producer cadence and spending history remain bound to the retired character and business
+  consignments: 'escrow', // canonical estate returns exact original account title; terminal history grants no heir sale authority
+  consignment_requests: 'ledger', // original actor/account/body/key receipts survive as historical ACK only
   equipment_rental_requests: 'metadata', // original-account receipts retain the original actor and grant no fresh heir lease authority
   equipment_rental_offers: 'special', // original landlord death cancels publication consent while preserving account-title tools and historical receipts
   equipment_rental_leases: 'escrow', // actual estate returns physical title and burns dead borrower deposits or refunds only the surviving original borrower

@@ -3,6 +3,7 @@ import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
+import { consignmentDeathCounterparts } from './consignments.js';
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
 export const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (
@@ -212,6 +213,7 @@ export async function prelockEquipmentRentalDeathActors(client, characterIds) {
   if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');
   const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);
   for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -232,6 +234,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   if (!state || state.client !== client || state.transaction !== itemTransactionIdentity(client) || !state.subjects.includes(characterId)) fail('death_scope');
   for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

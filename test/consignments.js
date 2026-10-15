@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { fixture } from './consignments-fixture.js';
+import { fixture } from './lib/consignments-fixture.js';
 const f=await fixture(),{pool,tx,I,C,native,tool,terms,ref,invoke,state}=f;
 try{
 const item=await tool(),offer=await invoke('createConsignment','owner',terms(item),'offer');
