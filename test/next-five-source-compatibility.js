@@ -43,4 +43,4 @@ assert.equal(added.length,11);assert.equal(added.reduce((n,name)=>n+currentCatal
 const schema=fs.readFileSync('schema.sql','utf8');
 assert.equal(fifthBatchMigrationSchema(schema),schema,'Source-only reconstruction never admits raw new source to historical native entry');
 assert.throws(()=>equipmentEconomyMigrationProjection(schema,{constraints:[]}),'Actual new native adapter must prove all eleven new tables first');
-console.log(`First-five exact source-only envelope PASS: 7 full domains, ${hunks} immutable inverse hunks, ${negatives} rejecting controls; historical1153 retained plus90/90 literal catalog bindings; no native/release/activation clearance`);
+console.log(`First-five exact source-only envelope PASS: ${Object.keys(NEXT_FIVE_SOURCE_DOMAINS).length} full domains, ${hunks} immutable inverse hunks, ${negatives} rejecting controls; historical1153 retained plus90/90 literal catalog bindings; no native/release/activation clearance`);
