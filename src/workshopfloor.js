@@ -1,3 +1,4 @@
+import * as FloorAdmission from './workshopfloor-admission.js';
 import crypto from 'node:crypto';
 import { GameError } from './game.js';
 import * as I from './items.js';
@@ -21,7 +22,7 @@ function allocations(value){
 }
 function terms(body){if(!exact(body,['businessId','expectedRevision','allocations','consent'])||body.consent!==true||!Number.isSafeInteger(body.expectedRevision)||body.expectedRevision<0||body.expectedRevision>2147483646)fail('terms');return{businessId:id(body.businessId),expectedRevision:body.expectedRevision,allocations:allocations(body.allocations),consent:true};}
 function hooks(){
-  if(P.workshopFloorAdmission!==assertWorkshopFloorBeforeCraft||D.workshopFloorStorageAdmission!==assertWorkshopFloorStorage||H.workshopFloorStorageAdmission!==assertWorkshopFloorStorage||Premises.workshopFloorLeaseAdmission!==assertWorkshopFloorLease||C.workshopFloorServiceAdmission!==assertWorkshopFloorService)fail('integration_required');
+  if(P.workshopFloorAdmission!==FloorAdmission.assertWorkshopFloorBeforeCraft||D.workshopFloorStorageAdmission!==FloorAdmission.assertWorkshopFloorStorage||H.workshopFloorStorageAdmission!==FloorAdmission.assertWorkshopFloorStorage||Premises.workshopFloorLeaseAdmission!==FloorAdmission.assertWorkshopFloorLease||C.workshopFloorServiceAdmission!==FloorAdmission.assertWorkshopFloorService)fail('integration_required');
   for(const [m,n]of [[P,'assertWorkshopFloorProductionScope'],[D,'assertWorkshopFloorStorageScope'],[H,'assertWorkshopFloorStorageScope'],[Premises,'assertWorkshopFloorLeaseScope'],[C,'assertWorkshopFloorServiceScope']])if(typeof m[n]!=='function')fail('integration_required');
 }
 async function current(c,a){const rows=(await c.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[a])).rows;if(rows.length!==1)fail('original_actor');return rows[0].id;}

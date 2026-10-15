@@ -1,5 +1,5 @@
 import {assertItemTransaction,itemTransactionIdentity} from './items.js';
-async function workshopFloorStorageAdmission(c,ctx,token){return (await import('./workshopfloor.js')).assertWorkshopFloorStorage(c,ctx,token);}
+import {assertWorkshopFloorStorage as workshopFloorStorageAdmission} from './workshopfloor-admission.js';
 export {workshopFloorStorageAdmission};
 import crypto from 'node:crypto';
 import { BLACK_MARKET, jailed, safeHoused } from './rules.js';
