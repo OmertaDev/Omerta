@@ -1,28 +1,28 @@
 # Generated repository inventory
 
-> Source: worktree at `df9f640426ec`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `387c9b0bb067`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
 | Measure | Count |
 |---|---:|
-| Current artifacts | 6,411 |
+| Current artifacts | 6,420 |
 | Text lines | 5,930,874 |
-| Repository bytes inventoried | 3,041,362,971 |
+| Repository bytes inventoried | 3,042,783,474 |
 | Backend/route modules | 459 |
 | HTTP route registrations / unique routes | 1,019 / 1,019 |
 | Database tables | 487 |
 | Solidity declarations | 133 |
-| Git commits | 3,636 |
+| Git commits | 3,638 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 14,701 / 57,823 |
+| Graph nodes / edges | 14,712 / 57,863 |
 
 ## Artifact kinds
 
 | Kind | Files |
 |---|---:|
-| media-asset | 2,149 |
+| media-asset | 2,158 |
 | contract-project | 995 |
 | artifact | 863 |
 | test-suite | 647 |
@@ -82,7 +82,7 @@
 | Extension | Files | Bytes |
 |---|---:|---:|
 | .wav | 168 | 1,218,737,842 |
-| .png | 400 | 549,067,203 |
+| .png | 409 | 550,487,711 |
 | .mp4 | 235 | 380,054,233 |
 | .jpg | 339 | 65,056,612 |
 | .mp3 | 256 | 52,633,677 |

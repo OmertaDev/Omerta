@@ -75,9 +75,9 @@ for (const current of [{ id: 'current', generation: 2, loc: 'docks' }, { id: 're
 }
 
 const CITY_ART = [
-  { file: '/art/city-neighborhood-v1.png', width: 960, height: 640, alpha: false },
+  { file: '/art/city-neighborhood-v2.png', width: 960, height: 640, alpha: false },
   ...['player-down', 'player-up', 'player-left', 'player-right', 'player-step', 'fixer', 'worker', 'neighbor']
-    .map(name => ({ file: '/art/city-' + name + '-v1.png', width: 38, height: 60, alpha: true })),
+    .map(name => ({ file: '/art/city-' + name + '-v2.png', width: 38, height: 60, alpha: true })),
 ];
 
 function resolveBrowser() {
