@@ -74,14 +74,15 @@ execFileSync(process.execPath, ['--input-type=module', '-e', `
 `], { stdio: 'pipe' });
 console.log('PASS: cached uninstrumented database refuses before creating any pool');
 for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknown-prior',
-  'release-c2', 'release-c2-crlf', 'unknown-release-c2', 'raw-current', 'raw-current-crlf', 'unknown-raw-current']) {
+  'release-c2', 'release-c2-crlf', 'unknown-release-c2',
+  'live-release', 'live-release-crlf', 'unknown-live-release']) {
   execFileSync(process.execPath, ['--input-type=module', '-e', `
     import assert from 'node:assert/strict';
     import fs from 'node:fs';
-    import {assertDeedQuestSourceTransfer} from './tools/deed-quest-source-transfer.js';
     import { registerHooks } from 'node:module';
     import { COVERAGE_SOURCE_CURRENT_PINS } from './tools/rc1-logistics-coverage-source-compatibility.js';
     import { historicalWorkerDatabaseSource } from './test/lib/rc1-historical-worker-source.js';
+    import { assertDeedQuestSourceTransfer } from './tools/deed-quest-source-transfer.js';
     import { createWorkerSchedule, installWorkerInstrumentation, WORKER_SOURCE_PINS } from './tools/rc1-native-worker.js';
     import { sha256 } from './tools/rc1-native-proof.js';
     const sourceCase = ${JSON.stringify(sourceCase)};
@@ -89,21 +90,24 @@ for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknow
     const current = historicalWorkerDatabaseSource('current');
     const prior = historicalWorkerDatabaseSource('prior');
     const release = historicalWorkerDatabaseSource('release-c2');
-    const actual = fs.readFileSync('./src/db.js', 'utf8');
-    assert.equal(assertDeedQuestSourceTransfer('src/db.js', actual).baselineText, release,
-      'Exact current Deed source reconstructs the pinned unsupported C2 fixture');
+    const actualRelease = fs.readFileSync('./src/db.js', 'utf8');
+    assert.equal(assertDeedQuestSourceTransfer('src/db.js', actualRelease).baselineText, release,
+      'Exact property quest source reconstructs the independently pinned C2 fixture only as a provenance witness');
+    const liveRelease = actualRelease.replaceAll('\\r\\n', '\\n');
     assert.throws(() => historicalWorkerDatabaseSource('unknown'), /Unknown historical worker source fixture/);
-    let supplied = sourceCase.includes('raw-current') ? actual : sourceCase.includes('release-c2') ? release : sourceCase.includes('prior') ? prior : current;
-    if (sourceCase === 'raw-current-crlf') supplied = supplied.replaceAll('\\r\\n', '\\n');
+    let supplied = sourceCase.includes('live-release') ? liveRelease
+      : sourceCase.includes('release-c2') ? release : sourceCase.includes('prior') ? prior : current;
     if (sourceCase === 'crlf' || sourceCase.endsWith('-crlf')) supplied = supplied.replaceAll('\\n', '\\r\\n');
     if (sourceCase.startsWith('unknown')) supplied += '\\n// unsupported database source change\\n';
+    if (sourceCase === 'unknown-live-release')
+      assert.throws(() => assertDeedQuestSourceTransfer('src/db.js', supplied), /Complete property quest current source drift/);
     const fixture = registerHooks({ load(url, context, nextLoad) {
       const result = nextLoad(url, context); return url === target ? { ...result, source: supplied } : result;
     } });
     const controller = createWorkerSchedule({ start: 0, setClock() {} });
     const seam = installWorkerInstrumentation(controller, { namespace: 'rc1_source_guard' });
     try {
-      if (sourceCase.startsWith('unknown') || sourceCase.includes('release-c2') || sourceCase.includes('raw-current')) {
+      if (sourceCase.startsWith('unknown') || sourceCase.includes('release')) {
         await assert.rejects(import(target), /Pinned production source changed: src\\/db.js/);
         assert.equal(controller.transformations.length, 0);
       } else {
@@ -119,8 +123,7 @@ for (const sourceCase of ['current', 'prior', 'crlf', 'unknown-current', 'unknow
     } finally { seam.restore(); fixture.deregister(); await controller.close(); }
   `], { stdio: 'pipe' });
 }
-console.log('PASS: historical loader current/prior/CRLF fixtures preserve raw source; unknown edits and release C2/CRLF/tampering reject without pools or transformations');
-console.log('PASS: actual current Deed raw, whole-CRLF and tampered sources refuse historical worker admission with zero pools or transformations');
+console.log('PASS: historical loader current/prior/CRLF fixtures preserve raw source; unknown edits, release C2 and raw property quest LF/CRLF/tampering reject without pools or transformations');
 
 // A non-UTC boot phase must survive preparation. Alignment neither invents an
 // hourly tick at boot nor skips five-minute work or same-time seasonal callbacks.

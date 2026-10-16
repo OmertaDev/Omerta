@@ -13,7 +13,8 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
-import { deedQuestSourceBaseline } from '../../tools/deed-quest-source-transfer.js';
+import { assertDeedQuestSourceTransfer, DEED_QUEST_SOURCE_DOMAINS } from '../../tools/deed-quest-source-transfer.js';
+import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -58,37 +59,6 @@ let hook, active = false, history, release;
 const attempts = { database: 0, network: 0 };
 const content = new Map(), checked = new Set();
 
-function composedHistoricalToolSource(file, input) {
-  // Exactly one newer tool is an existing whole-source Deed domain. The old pin remains authority.
-  return file === 'tools/release-source-transfer.js' ? deedQuestSourceBaseline(file, input) : input;
-}
-
-function rejectCurrentComposedTool() {
-  const file = 'tools/release-source-transfer.js', pin = composedHistoricalHelperPins[file];
-  const actual = String(originalRead(path.join(root, file))), frozen = String(blob(file, release));
-  let positives = 0, refusals = 0;
-  for (const supplied of [actual, canonical(actual).replaceAll('\n', '\r\n')]) {
-    const reviewed = canonical(composedHistoricalToolSource(file, supplied));
-    assert.equal(sha256(reviewed), pin.sha256, 'Complete reviewed Deed tool must reconstruct the original composed pin');
-    assert.equal(blobHash(Buffer.from(reviewed)), pin.blob, 'Complete reviewed Deed tool must reconstruct the original composed blob');
-    positives++;
-  }
-  const prior = String(git(['cat-file', 'blob', pin.blob]));
-  assert.equal(composedHistoricalToolSource(file, prior), prior, 'Previously reviewed composed tool remains exact'); positives++;
-  assert.equal(composedHistoricalToolSource(file, frozen), frozen, 'Immutable b12 tool remains exact'); positives++;
-  const lf = canonical(actual), mixed = lf.replace('\n', '\r\n');
-  for (const supplied of [lf + '\n// unreviewed tool source\n', mixed, lf.replace('deedQuestSourceBaseline(file, input)', 'deedQuestSourceBaseline(file, unknownInput)')]) {
-    assert.notEqual(supplied, actual, 'Tool refusal must change the actual supplied bytes');
-    const reviewed = canonical(composedHistoricalToolSource(file, supplied));
-    assert.notEqual(sha256(reviewed), pin.sha256, 'Unknown or mixed Deed tool must not reach the composed source branch');
-    assert.notEqual(sha256(canonical(supplied)), sha256(frozen), 'Unknown Deed tool must not reach the immutable tool branch');
-    refusals++;
-  }
-  assert.equal(composedHistoricalToolSource('tools/unknown-source-transfer.js', actual), actual, 'Unknown tool path never projects'); refusals++;
-  assert.equal(composedHistoricalToolSource('tools/rc1-first-batch-source-compatibility.js', actual), actual, 'Other reviewed tool paths never receive the Deed projection'); refusals++;
-  console.log(`PASS_HISTORICAL_COMPOSED_TOOL: ${positives} exact old/current tool controls; ${refusals} drift/mixed/unknown refusals; immutable b12 execution only`);
-}
-
 function inventory(revision, pins) {
   for (const [name, pin] of Object.entries(pins))
     assert.equal(String(git(['rev-parse', `${revision}:${name}`])).trim(), pin, 'Historical fixture tree binding changed');
@@ -116,16 +86,52 @@ function blob(file, sources) {
   }
   return content.get(id);
 }
+function uniformHistoricalInput(file, input) {
+  const raw = String(input);
+  assert(!/\r(?!\n)/.test(raw) && (!raw.includes('\r\n') || !/(?<!\r)\n/.test(raw)),
+    'Reviewed tool source must have uniform line endings: ' + file);
+  return raw;
+}
+function composedHistoricalHelperSource(file, input) {
+  const raw = uniformHistoricalInput(file, input), pin = composedHistoricalHelperPins[file];
+  const current = canonical(raw);
+  if (!pin) return null;
+  let reviewed = current;
+  if (file === 'tools/release-source-transfer.js' && sha256(current) !== pin.sha256
+    && sha256(current) !== sha256(blob(file, release))) {
+    // This exact current wrapper is provenance only. Neither it nor its witness executes.
+    reviewed = assertDeedQuestSourceTransfer(file, raw).baselineText;
+  }
+  if (sha256(reviewed) === pin.sha256) {
+    assert.equal(blobHash(Buffer.from(reviewed)), pin.blob, 'Reviewed composed helper blob changed');
+    return blob(file, release);
+  }
+  assert.equal(sha256(current), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
+  return null;
+}
+function historicalApplicationSource(file, input) {
+  assert(file.startsWith('src/') || file.startsWith('data/') || file === 'schema.sql',
+    'Historical application provenance excludes tool and test domains');
+  const expected = blob(file, release), domain = DEED_QUEST_SOURCE_DOMAINS[file];
+  let witness = marketOverDeedSourceBaseline(file, String(input));
+  if (domain) {
+    const raw = uniformHistoricalInput(file, witness);
+    if (sha256(canonical(raw)) === domain.currentSha256)
+      witness = assertDeedQuestSourceTransfer(file, raw).baselineText;
+  }
+  // Exact outer provenance comes first; only independently pinned historical bodies execute.
+  let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, witness));
+  if (sha256(canonical(reviewed)) !== sha256(expected)) reviewed = fourthBatchSourceBaseline(file, reviewed);
+  assert.equal(sha256(canonical(reviewed)), sha256(expected), 'Current release input changed outside historical fixture: ' + file);
+  assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);
+  return blob(file, history);
+}
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const actual = originalRead(path.join(root, file)), expected = blob(file, release);
-    // Reconstruct only recognized current bytes; the frozen b12 tool graph stays separate.
-    let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, String(actual)));
-    if (sha256(canonical(reviewed)) !== sha256(expected)) reviewed = fourthBatchSourceBaseline(file, reviewed);
-    assert.equal(sha256(canonical(reviewed)), sha256(expected), 'Current release input changed outside historical fixture: ' + file);
-    assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);
+    const selected = historicalApplicationSource(file, originalRead(path.join(root, file)));
     checked.add(file);
+    return selected;
   }
   return blob(file, history);
 }
@@ -221,7 +227,8 @@ export async function executeHistoricalSourceFixture() {
 
 async function rejectCurrentNpcRules() {
   loadInventories();
-  rejectCurrentComposedTool();
+  rejectComposedHistoricalHelperSources();
+  rejectHistoricalApplicationSources();
   const { assertNpcCarSources } = await import('../../tools/rc1-npc-car-acquisition.js');
   const { assertNpcBoatSources } = await import('../../tools/rc1-npc-boat-journal.js');
   const { assertNpcMarketSources } = await import('../../tools/rc1-npc-market-order-journal.js');
@@ -256,6 +263,85 @@ async function rejectCurrentNpcRules() {
   console.log(`PASS_HISTORICAL_RULE_GUARDS: ${refusals} independent C2 LF/CRLF/tamper refusals across both files; native/argument rejection`);
 }
 
+function rejectComposedHistoricalHelperSources() {
+  let positives = 0, refusals = 0;
+  for (const [file, pin] of Object.entries(composedHistoricalHelperPins)) {
+    const frozen = blob(file, release), composed = git(['cat-file', 'blob', pin.blob]);
+    assert.equal(blobHash(composed), pin.blob);
+    assert.equal(sha256(composed), pin.sha256);
+    const current = canonical(originalRead(path.join(root, file)));
+    for (const text of new Set([current, String(composed)])) {
+      for (const raw of [text, text.replaceAll('\n', '\r\n')]) {
+        const selected = composedHistoricalHelperSource(file, raw);
+        assert(Buffer.isBuffer(selected), 'Reviewed composition must select the frozen tool body');
+        assert.equal(sha256(selected), sha256(frozen));
+        assert.equal(blobHash(selected), release.get(file));
+        positives++;
+      }
+    }
+    for (const raw of [String(frozen), String(frozen).replaceAll('\n', '\r\n')]) {
+      assert.equal(composedHistoricalHelperSource(file, raw), null, 'Frozen fallback remains unchanged');
+      positives++;
+    }
+  }
+  const file = 'tools/release-source-transfer.js', pin = composedHistoricalHelperPins[file];
+  const current = canonical(originalRead(path.join(root, file)));
+  const witness = assertDeedQuestSourceTransfer(file, String(originalRead(path.join(root, file)))).baselineText;
+  assert.equal(sha256(witness), pin.sha256);
+  assert.equal(blobHash(Buffer.from(witness)), pin.blob);
+  const reject = raw => { assert.throws(() => composedHistoricalHelperSource(file, raw)); refusals++; };
+  for (const source of [current, witness, String(blob(file, release))]) {
+    for (const raw of ['\n// unreviewed prefix\n' + source, source + '\n// unreviewed suffix\n',
+      source.replace(/\S/, '?'), '\ufeff' + source, source.replace('\n', '\r\n'), source.replace('\n', '\r')]) reject(raw);
+  }
+  for (const inverse of DEED_QUEST_SOURCE_DOMAINS[file].inverses) {
+    assert(current.includes(inverse.current));
+    reject(current.replace(inverse.current, ''));
+    reject(current.replace(inverse.current, () => inverse.current + inverse.current));
+  }
+  assert.throws(() => composedHistoricalHelperSource('tools/rc1-first-batch-source-compatibility.js', current));
+  refusals++;
+  console.log(`PASS_HISTORICAL_HELPER_GUARDS: ${positives} frozen-body LF/CRLF controls; ${refusals} raw tamper/domain refusals; no current helper execution`);
+}
+
+function rejectHistoricalApplicationSources() {
+  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
+    'src/db.js', 'src/deeds.js', 'src/explore.js'];
+  let positives = 0, refusals = 0;
+  for (const file of files) {
+    const raw = String(originalRead(path.join(root, file))), current = canonical(raw);
+    const deedRaw = marketOverDeedSourceBaseline(file, raw), deedCurrent = canonical(deedRaw);
+    const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;
+    const expected = blob(file, history), frozen = String(blob(file, release));
+    const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
+    for (const source of new Set([current, deedCurrent, witness, frozen])) {
+      for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
+        const selected = historicalApplicationSource(file, supplied);
+        assert.equal(sha256(selected), sha256(expected));
+        assert.equal(blobHash(selected), history.get(file));
+        positives++;
+      }
+      for (const supplied of ['\n// unreviewed prefix\n' + source, source + '\n// unreviewed suffix\n',
+        source.replace(/\S/, '?'), '\ufeff' + source, source.replace('\n', '\r\n'), source.replace('\n', '\r')]) reject(supplied);
+    }
+    for (const inverse of DEED_QUEST_SOURCE_DOMAINS[file].inverses) {
+      assert(deedCurrent.includes(inverse.current));
+      reject(deedCurrent.replace(inverse.current, ''));
+      reject(deedCurrent.replace(inverse.current, () => inverse.current + inverse.current));
+    }
+  }
+  const phase1 = String(originalRead(path.join(root, 'src/content/phase1.js')));
+  const unsupported = 'src/content/city-quest-presentation.js';
+  const unsupportedRaw = canonical(originalRead(path.join(root, unsupported)));
+  const denied = [
+    [unsupported, unsupportedRaw], [unsupported, unsupportedRaw.replaceAll('\n', '\r\n')],
+    ['src/db.js', phase1], ['tools/release-source-transfer.js', phase1],
+    ['src/deeddiscovery.js', String(originalRead(path.join(root, 'src/deeddiscovery.js')))],
+  ];
+  for (const [file, raw] of denied) { assert.throws(() => historicalApplicationSource(file, raw)); refusals++; }
+  console.log(`PASS_HISTORICAL_APPLICATION_GUARDS: ${positives} exact fe4-body controls; ${refusals} raw/inverse/domain refusals; no current runtime execution`);
+}
+
 if (cold) {
   assert(entries.has(target), 'Unsupported historical fixture entry');
   assert.equal(process.argv.length, 3, 'Historical fixture forbids native, retained or other arguments');
@@ -282,14 +368,9 @@ if (cold) {
       return { ...result, source: historical(file) };
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
-      const pin = composedHistoricalHelperPins[file];
-      const actual = String(originalRead(path.join(root, file)));
-      const reviewed = composedHistoricalToolSource(file, actual);
-      if (pin && sha256(canonical(reviewed)) === pin.sha256) {
-        assert.equal(blobHash(Buffer.from(canonical(reviewed))), pin.blob, 'Reviewed composed helper blob changed');
-        return { ...nextLoad(url, context), source: blob(file, release) };
-      }
-      assert.equal(sha256(canonical(originalRead(path.join(root, file)))), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
+      const raw = originalRead(path.join(root, file)), selected = composedHistoricalHelperSource(file, raw);
+      if (selected) return { ...nextLoad(url, context), source: selected };
+      assert.equal(sha256(canonical(raw)), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
     }
     return nextLoad(url, context);
   } });
