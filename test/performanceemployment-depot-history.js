@@ -74,7 +74,7 @@ try{
  // source assertions cover only the new typed relation and oracle guard; the
  // real memory facade still refuses, with no compatibility/backend alias.
  const relocation=fs.readFileSync(new URL('../src/depotrelocationruntime.js',import.meta.url),'utf8');
- assert.equal(R.DEPOT_ACQUISITION_REFERENCES.length,49);assert.equal(R.DEPOT_ACQUISITION_REFERENCES.filter(x=>x==='performance_employment_contracts:depot_id').length,1);
+ assert.equal(R.DEPOT_ACQUISITION_REFERENCES.length,51);assert.equal(R.DEPOT_ACQUISITION_REFERENCES.filter(x=>x==='performance_employment_contracts:depot_id').length,1);
  assert.equal(relocation.match(/"performance_employment_contracts:depot_id"/g)?.length,1);assert(relocation.includes('inspectPerformanceEmploymentDepotHistory(c,d.id)'));assert(relocation.includes("if(performance.activeContracts.length)fail('performance_employment_obligation')"));
  await assert.rejects(B.quoteBusinessRelocation(f.pool,buyer,{businessId:f.depot.id,destination:'docks'},{agent:false}),e=>e.code==='business_relocation'&&e.message==='transactional_backend_required');
  assert.equal((await f.P.performanceEmploymentInvariant(f.pool)).ok,true);
