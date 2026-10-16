@@ -1285,7 +1285,7 @@
   @media (max-width: 760px) { .world-columns { grid-template-columns: 1fr; } .world-heading { flex-wrap: wrap; } .world-card { padding: 16px; } }
 </style>
 <link rel="stylesheet" href="/omerta-ui.css?v=20260829-content-desk">
-<link rel="stylesheet" href="/city-scene.css?v=20261016-refinements-1">
+<link rel="stylesheet" href="/city-scene.css?v=20261016-gossip-1">
 <link rel="stylesheet" href="/city-world-ui.css?v=20261016-refinements-1">
 <link rel="stylesheet" href="/world-fieldwork.css?v=20261016-refinements-1">
 <style id="district-refresh-style">
@@ -8919,6 +8919,7 @@
       objectives: _cityIntel?.key === key ? _cityIntel.objectives : [],
       encounterRecovery: receipt?.state === 'error' && receipt.recovery?.sameKey === true && typeof receipt.recovery?.run === 'function',
       encounterReceipt: receipt ? { state: receipt.state, label: receipt.label, summary: receipt.summary, delta: receipt.delta,
+        intel: receipt.state === 'success' ? _cityEncounterReceipt.intel || null : null,
         recoveryLabel: receipt.recovery?.sameKey === true ? receipt.recovery.label : '', recoveryText: receipt.recovery?.text || '' } : null };
   }
   function publishCityPeople() {
@@ -8963,12 +8964,15 @@
     const ownerCurrent = () => projections.current(stamp) && key === cityIdentity();
     const beforeDispatch = () => ownerCurrent() && scene === _cityScene && currentTab === 'map' && _mapMode === 'walk'
       && scene?.getState?.().selectedActor === actorId && scene.getState().actorOpening === opening;
+    let confirmedIntel = null;
     _cityEncounterPending = true;
     try {
-      const result = await act(action.method, action.path, action.body, { label: 'Collect intel from ' + (actor.name || (actor.kind === 'agent' ? 'an unknown agent' : actor.kind === 'npc' ? 'a resident' : 'an unknown player')),
+      const result = await act(action.method, action.path, action.body, { label: action.label || 'Review a neighborhood lead',
         beforeDispatch, retryBeforeDispatch: ownerCurrent, isCurrent: ownerCurrent,
+        onResult: result => { if (ownerCurrent()) confirmedIntel = result.code < 400 && cityBoardCurrent(result.body)
+          && result.body.intel?.source?.id === actorId && typeof result.body.intel.id === 'string' ? result.body.intel : null; },
         onReceipt: receipt => { if (ownerCurrent()) {
-          _cityEncounterReceipt = { key, current: ownerCurrent, receipt }; publishCityPeople();
+          _cityEncounterReceipt = { key, current: ownerCurrent, receipt, intel: receipt.state === 'success' ? confirmedIntel : null }; publishCityPeople();
         } } });
       if (ownerCurrent() && result.code < 400 && cityBoardCurrent(result.body)) {
         if (acceptCityIntel(result.body)) _cityPeopleRevision++;
@@ -9706,7 +9710,7 @@
   function loadCityAssets() {
     if (!_citySceneAssets) {
       _citySceneAssets = Promise.allSettled([
-        loadCityScript('/city-scene.js?v=20261016-refinements-1', () => !!window.OmertaCityScene),
+        loadCityScript('/city-scene.js?v=20261016-gossip-1', () => !!window.OmertaCityScene),
         loadCityScript('/vendor/phaser.js?v=3.90.0', () => !!window.Phaser),
         loadCityScript('/city-world-ui.js?v=20261016-refinements-1', () => !!window.OmertaCityWorldUI),
         loadCityScript('/city-home-ui.js?v=20261013-ui-1', () => !!window.CityHomeUi),

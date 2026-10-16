@@ -779,6 +779,39 @@
         marker.ring.setPosition(position.x, position.y).setDepth(position.y - 1);
       }
     }
+    function intelLead(entry) {
+      const venue = VENUES.find(venue => venue.id === entry.lead?.venueId);
+      const districtId = entry.lead?.districtId || entry.source?.district;
+      if (!venue || typeof districtId !== 'string' || !Object.hasOwn(REGIONS, districtId)) return null;
+      const districts = [...(options.worldAtlas?.districts || []), ...(options.rules?.districts || [])];
+      const name = districtId === district.id ? district.name : districts.find(place => place.id === districtId)?.name;
+      return { venue, districtId, districtName: name || districtId.charAt(0).toUpperCase() + districtId.slice(1) };
+    }
+    function intelCard(entry, confirmed = false) {
+      const item = element('article', 'omerta-city__intel');
+      if (confirmed) { item.dataset.cityEncounterIntel = String(entry.id || ''); item.tabIndex = -1; }
+      else item.dataset.cityIntel = String(entry.id || '');
+      if (entry.category === 'rumor') item.append(element('small', 'omerta-city__rumor-label', 'Street rumor · unverified'));
+      item.append(element('strong', '', String(entry.title || 'Neighborhood lead')), element('p', '', String(entry.description || '')));
+      if (entry.sourceContext) item.append(element('p', 'omerta-city__intel-context', String(entry.sourceContext)));
+      if (entry.source) {
+        const attribution = entry.attribution === 'resident' && entry.source.kind === 'npc' ? 'Heard from ' : 'Recorded after meeting ';
+        item.append(element('small', '', attribution + actorName(entry.source) + ' · ' + String(entry.source.district || district.id)));
+      }
+      const collectedAt = new Date(entry.collectedAt || '').getTime();
+      if (Number.isFinite(collectedAt)) {
+        const time = element('time', '', 'Recorded ' + new Date(collectedAt).toLocaleString());
+        time.dateTime = new Date(collectedAt).toISOString(); item.append(time);
+      }
+      const destination = intelLead(entry);
+      if (destination && typeof entry.id === 'string') {
+        const lead = element('button', '', destination.districtId === district.id
+          ? String(entry.lead.label || 'Follow this lead at ' + destination.venue.name) : 'Travel to ' + destination.districtName + ' to follow up');
+        lead.type = 'button'; lead.dataset.cityIntelLead = entry.id; item.append(lead);
+        item.append(element('small', '', 'Visit ' + destination.venue.name + ' in ' + destination.districtName + ' to follow up.'));
+      }
+      return item;
+    }
     function renderActorDock() {
       if (actorDock.hidden) return;
       const actor = findActor(selectedActor);
@@ -788,7 +821,8 @@
       const signature = JSON.stringify([actorView, actor, home, exit, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
       if (signature === actorRenderSignature) return;
       actorRenderSignature = signature;
-      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || '' : null;
+      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || document.activeElement.dataset.cityIntelLead || '' : null;
+      const focusedIntel = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounterIntel : null;
       const scroll = actorDock.scrollTop;
       actorBody.replaceChildren();
       if (actorView === 'person') {
@@ -804,9 +838,9 @@
               + (Number.isFinite(observation) ? ' · observed ' + new Date(observation).toLocaleString() : '')
               + '. These are recorded facts, not live tracking.' : 'Meet this person or hear about them to learn their name and other facts.'));
           }
-          actorBody.append(element('p', '', 'Collect a neighborhood clue and advance your intel objectives.'));
           for (const action of actorActions(actor)) {
-            const button = element('button', '', String(action.label || 'Collect intel'));
+            if (action.topic?.teaser) actorBody.append(element('p', 'omerta-city__intel-teaser', String(action.topic.teaser)));
+            const button = element('button', '', String(action.label || 'Review a neighborhood lead'));
             button.type = 'button'; button.dataset.cityEncounter = action.id;
             button.disabled = action.available !== true || encounterPending || options.encounterRecovery === true || typeof options.onEncounter !== 'function';
             appendActionPreview(button, action);
@@ -846,7 +880,7 @@
         const map = element('button', '', 'Travel: choose a district'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else {
         actorBody.append(element('h4', '', 'Street intel & objectives'));
-        actorBody.append(element('p', '', 'Public world tips collected through confirmed encounters. Objectives advance through later encounters, not by reading this journal.'));
+        actorBody.append(element('p', '', 'Rumors and leads recorded around the neighborhood. Compare sources, then visit the people and places named in your notes.'));
         for (const objective of objectives.filter(Boolean)) {
           const item = element('article', 'omerta-city__objective'); item.dataset.cityObjective = String(objective.id || '');
           item.append(element('strong', '', String(objective.title || 'Objective')), element('span', '', String(objective.status || '')),
@@ -859,13 +893,9 @@
           }
           actorBody.append(item);
         }
-        if (!journalEntries.length) actorBody.append(element('p', '', 'No intel collected yet. Inspect a reported person, then explicitly record the encounter.'));
+        if (!journalEntries.length) actorBody.append(element('p', '', 'Your notebook is empty. Inspect someone in the neighborhood and choose a topic to hear about.'));
         for (const entry of Array.isArray(journalEntries) ? journalEntries.filter(Boolean) : []) {
-          const item = element('article', 'omerta-city__intel'); item.dataset.cityIntel = String(entry.id || '');
-          item.append(element('strong', '', String(entry.title || 'World tip')), element('p', '', String(entry.description || '')));
-          if (Number.isInteger(entry.sequence)) item.append(element('small', '', 'Intel #' + entry.sequence));
-          if (entry.source) item.append(element('small', '', 'Source: ' + String(entry.source.name || 'Unnamed person') + ' · ' + String(entry.source.kind || '') + ' · ' + String(entry.source.district || '')));
-          actorBody.append(item);
+          actorBody.append(intelCard(entry));
         }
       }
       const receipt = ['person', 'journal'].includes(actorView) ? options.encounterReceipt : null;
@@ -873,6 +903,7 @@
         const region = element('section', 'omerta-city__encounter-receipt');
         region.setAttribute('data-city-encounter-receipt', ''); region.setAttribute('aria-label', 'Encounter receipt');
         region.append(element('strong', '', String(receipt.label || 'Encounter result')), element('p', '', String(receipt.summary || '')));
+        if (receipt.state === 'success' && receipt.intel && typeof receipt.intel === 'object') region.append(intelCard(receipt.intel, true));
         if (typeof receipt.delta === 'string' && receipt.delta) region.append(element('p', '', receipt.delta));
         else if (Array.isArray(receipt.delta) && receipt.delta.length) region.append(element('p', '', receipt.delta.map(String).join(' · ')));
         if (receipt.recoveryText) region.append(element('p', '', String(receipt.recoveryText)));
@@ -884,7 +915,8 @@
       }
       if (actorNotice) { const notice = element('p', 'omerta-city__actor-notice', actorNotice); notice.setAttribute('role', 'status'); actorBody.append(notice); }
       actorDock.scrollTop = scroll;
-      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus)) || actorBody).focus({ preventScroll: true });
+      if (focusedIntel) (Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === focusedIntel) || actorBody).focus({ preventScroll: true });
+      else if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus || button.dataset.cityIntelLead === oldFocus)) || actorBody).focus({ preventScroll: true });
     }
     function showActor(id, trigger) {
       if (destroyed || !findActor(id)) return;
@@ -921,6 +953,17 @@
     listen(intelOpen, 'click', showIntel);
     listen(actorDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideActor(true); } });
     listen(actorBody, 'click', event => {
+      const button = event.target.closest('[data-city-intel-lead]'); if (!button || !actorBody.contains(button)) return;
+      const entries = Array.isArray(options.intel) ? options.intel : options.intel?.journal || [];
+      const confirmed = options.encounterReceipt?.state === 'success' ? options.encounterReceipt.intel : null;
+      const entry = [confirmed, ...entries].find(entry => entry && entry.id === button.dataset.cityIntelLead);
+      const destination = entry && intelLead(entry);
+      if (destination) {
+        if (destination.districtId === district.id) walkToVenue(destination.venue.id);
+        else openWorldMap(destination.districtId);
+      }
+    });
+    listen(actorBody, 'click', event => {
       const button = event.target.closest('[data-city-home-action]'); if (!button || !actorBody.contains(button)) return;
       if (button.dataset.cityHomeAction === 'map') openWorldMap(selectedExit || district.id);
       else if (homes.some(home => home.key === selectedHome && home.mine)) {
@@ -947,18 +990,23 @@
       if (button.dataset.cityIntelAction && typeof options.onIntelAction !== 'function') return;
       const retrying = button.hasAttribute('data-city-encounter-retry');
       if (retrying && (options.encounterRecovery !== true || typeof options.onEncounterRetry !== 'function')) return;
-      const identity = sceneIdentity(), opening = actorOpening; encounterPending = true;
+      const identity = sceneIdentity(), opening = actorOpening; let confirmedIntelId = ''; encounterPending = true;
       actorNotice = retrying ? 'Recovering the previous encounter…' : 'Recording the encounter…'; renderActorDock();
       try {
         const result = retrying ? await options.onEncounterRetry() : button.dataset.cityEncounter
           ? await options.onEncounter(actor.id, action.id) : await options.onIntelAction(button.dataset.cityIntelAction);
+        if (result?.code < 400 && typeof result.body?.intel?.id === 'string') confirmedIntelId = result.body.intel.id;
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = options.encounterRecovery === true
           ? 'This encounter is not confirmed. Recover the previous encounter before recording another.' : result?.code >= 400
           ? String(result.body?.message || 'The encounter could not be recorded. Check the current requirements and retry.')
           : result?.body?.intel ? 'Intel recorded: ' + String(result.body.intel.title || 'World tip') : 'Review your journal for the encounter result.';
       } catch {
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = 'The encounter result is unavailable. Use the game receipt to recover it safely.';
-      } finally { if (!destroyed && identity === sceneIdentity()) { encounterPending = false; renderActorDock(); fitWorldFrame(); } }
+      } finally { if (!destroyed && identity === sceneIdentity()) {
+        encounterPending = false; renderActorDock(); fitWorldFrame();
+        const revealed = opening === actorOpening && Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === confirmedIntelId);
+        if (revealed) { revealed.focus({ preventScroll: true }); actorDock.scrollTop += revealed.getBoundingClientRect().top - actorDock.getBoundingClientRect().top - 8; }
+      } }
     });
 
     function listen(target, event, callback, config) {

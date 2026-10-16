@@ -279,6 +279,14 @@ body.city-player-view .omerta-city__viewport .omerta-city__canvas {
 .omerta-city__intel strong, .omerta-city__objective strong { color: #e8d5a8; }
 .omerta-city__objective>span { margin-left: 8px; color: #bdc9b7; font-size: 12px; }
 .omerta-city__intel small { display: block; color: #b7bdaf; }
+.omerta-city__intel { overflow-wrap: anywhere; }
+.omerta-city__intel p, .omerta-city__intel-teaser { font-size: 13px; }
+.omerta-city__intel > strong { display: block; margin-block: 5px; font-size: 14px; }
+.omerta-city__intel .omerta-city__rumor-label { color: #e8c78c; font-size: 12px; }
+.omerta-city__intel time { display: block; color: #b7bdaf; font-size: 12px; margin-top: 3px; }
+.omerta-city__intel-context { color: #d2c7af; font-style: italic; }
+.omerta-city__intel [data-city-intel-lead] { width: 100%; min-height: 44px; margin-block: 10px 5px; padding: 8px; border: 1px solid #9c8255; border-radius: 4px; background: #323b2d; color: #ead3a3; text-align: left; font: 13px/1.45 var(--mono, monospace); white-space: normal; }
+.omerta-city__intel:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
 .omerta-city__nearby { font: 12px/1.4 var(--mono, monospace); color: #c6c2ac; }
 .omerta-city__actor-body:focus-visible, .omerta-city__presence button:focus-visible, .omerta-city__actor-dock button:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
 @media (max-width: 680px) {
