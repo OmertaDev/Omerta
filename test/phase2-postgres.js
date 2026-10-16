@@ -14,7 +14,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createMarketOperationsReleasePhase2MigrationCatalog, readMarketOperationsReleasePhase2Metadata,
+import { createMarketOperationsReleasePhase2MigrationCatalog, readMarketOperationsReleasePhase2Metadata, createCurrentMarketDeedNativeCatalog,
   verifyMarketOperationsReleasePhase2CausalNegatives, verifyMarketOperationsNativeBranches } from '../tools/market-operations-release-phase2-migration-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
@@ -186,7 +186,12 @@ async function child(url) {
       const layerReferenceUrl = new URL(url.toString()); layerReferenceUrl.searchParams.delete('options');
       cityGameplayMigrationEndpoint(layerReferenceUrl.toString());
       const layerNative = await verifyMarketOperationsNativeBranches(pool, layerReferenceUrl.toString());
-      layerNative.verify(await readMarketOperationsReleasePhase2Metadata(pool));
+      const deedNative = await createCurrentMarketDeedNativeCatalog(pool, layerReferenceUrl.toString(), schema,
+        {profile:'fresh', includeNotNull:true});
+      const currentMetadata = await readMarketOperationsReleasePhase2Metadata(pool);
+      assert.throws(() => layerNative.verify(currentMetadata), error => error?.code === 'ERR_ASSERTION',
+        'Current546 Deed metadata has no historical542 market native admission');
+      layerNative.verify(deedNative.projectMetadata(currentMetadata));
       const { runLots } = await import('./phase2-lots.js');
       const fixtureFactory = lotFixtureFactory(pool, url);
       let fixtureCount = 0, completedFixtures = 0;

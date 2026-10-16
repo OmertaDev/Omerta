@@ -12,6 +12,10 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import pg from 'pg';
+import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';
+import {isDeedOverMarketSource} from './deed-market-source-compatibility.js';
+import {createDeedDiscoveryMigrationCatalog} from './deed-discovery-migration-catalog.js';
+import {migrateCityHomeStorage} from '../src/city-home-migration.js';
 
 export const RELEASE_PHASE2_SOURCE = Object.freeze({"revision":"95a68272445eb8164664a172690d81b7288731de","file":"schema.sql","blob":"55334bf58f0cda71146114db46734d01d93b17c1","sha256":"d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9","bytes":586431});
 export const RELEASE_PHASE2_PREDECESSOR = Object.freeze({"variant":"market-operations-premain-535","file":"schema.sql (whole source-derived variant; no invented Git revision)","sha256":"bf677d757e3d9273f6d5406e4c3cb137e4e7ba87988661c271e67fd7232224d7","bytes":582512,"ancestor":{"variant":"next-layer-premain-529","file":"schema.sql (whole source-derived variant; no invented Git revision)","sha256":"72c2d67adf16d089a980b65f58a03aabf331d96bc5eed988add56cb11cfe2ce1","bytes":576395,"ancestor":{"revision":"f6a7e41ae8547281491b4e95d86cf6f2f1fe4ac6","file":"schema.sql","blob":"758afabc37801bdfe418b0d2210a2c0e2e064fe9","sha256":"b6505e7266891839d745976fe30786c3fb3a6f8aa1ed058589e96018cbceaefa"},"appendFrom":{"revision":"d764463f99e6e0896c656c2590165acc65c5b051","file":"schema.sql","blob":"ac1706ff10758f52aa873dd5de38f2b8b748e1d4","sha256":"d5ce9edf144b3bef438a5a086e3b6ea445de20fc82f0e3aaa636c099f62ea2b7"},"appendBaseline":{"revision":"7d8ba414b3d76badd0889c0df28ae35ac699985d","file":"schema.sql","blob":"ff216a1da1e4155c342247cbf090072c2c7e17a5","sha256":"e334badfba6c0b08bb13288fc702c6cd661546d47f460afbf38087a43ca52861"},"appendSha256":"da68f2af21a78286e9db98c415c846d5adbd62728aeb924468dae37ffa767abb","appendBytes":8331},"appendFrom":{"revision":"95a68272445eb8164664a172690d81b7288731de","file":"schema.sql","blob":"55334bf58f0cda71146114db46734d01d93b17c1","sha256":"d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9","bytes":586431},"appendBaseline":{"revision":"d764463f99e6e0896c656c2590165acc65c5b051","file":"schema.sql","blob":"ac1706ff10758f52aa873dd5de38f2b8b748e1d4","sha256":"d5ce9edf144b3bef438a5a086e3b6ea445de20fc82f0e3aaa636c099f62ea2b7"},"appendSha256":"e96c16a3d195e0506d08ac6e50111c76e15a5c814a73aa7083a476d0062290b6","appendBytes":6117});
@@ -347,7 +351,10 @@ export function marketOperationsLegacySchema(profile, input) {
 }
 function resetTableDdl(input) {
   const reviewed = sourcePin(RESET_SOURCE);
-  const actual = fs.readFileSync(new URL('../src/db.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n');
+  const actualRaw = fs.readFileSync(new URL('../src/db.js', import.meta.url), 'utf8');
+  const lf = actualRaw.replaceAll('\r\n', '\n');
+  assert(actualRaw === lf || actualRaw === lf.replaceAll('\n', '\r\n'), 'Runtime reset source has uniform line endings');
+  const actual = deedQuestSourceBaseline('src/db.js', actualRaw).replaceAll('\r\n', '\n');
   assert.equal(actual, reviewed, 'Actual runtime db source retains complete canonical C2 pin');
   input ??= reviewed;
   assert.equal(input, reviewed, 'Only complete frozen C2 runtime source binds reset-table DDL');
@@ -413,7 +420,7 @@ export async function readMarketOperationsReleasePhase2Metadata(pool) {
   return { relations, constraints, columns, indexes };
 }
 
-async function compileReference(admin, endpoint, source, { runtimeReset = true, upgradeDdl = false } = {}) {
+async function compileReference(admin, endpoint, source, { runtimeReset = true, upgradeDdl = false, currentDeedHomeMigration = false } = {}) {
   const name = owned('release_phase2_ref_' + crypto.randomBytes(8).toString('hex'));
   let created = false, client;
   try {
@@ -429,6 +436,7 @@ async function compileReference(admin, endpoint, source, { runtimeReset = true, 
     assert.equal(settings.timeout, '30s'); assert.equal(settings.lock_timeout, '5s');
     await client.query(source);
     if (upgradeDdl) await client.query(marketOperationsMigrationSources().current);
+    if (currentDeedHomeMigration) await migrateCityHomeStorage(client, {compatibility:'postgres'});
     if (runtimeReset) await client.query(resetTableDdl());
     return await readMarketOperationsReleasePhase2Metadata(client);
   } finally {
@@ -438,6 +446,12 @@ async function compileReference(admin, endpoint, source, { runtimeReset = true, 
       await admin.query(`DROP SCHEMA ${owned(name)} CASCADE`);
     }
   }
+}
+
+export async function createCurrentMarketDeedNativeCatalog(pool, endpoint, source, {profile, includeNotNull}) {
+  assert(isDeedOverMarketSource('schema.sql', source), 'Only the complete combined Deed/market source enters this adapter');
+  return createDeedDiscoveryMigrationCatalog(pool, endpoint, source,
+    {profile, includeNotNull, compileReference, readMetadata:readMarketOperationsReleasePhase2Metadata, legacySchema:marketOperationsLegacySchema});
 }
 
 export async function createMarketOperationsReleasePhase2MigrationCatalog(pool, endpoint, source, { includeNotNull, legacyProfile } = {}) {
@@ -456,7 +470,9 @@ export async function createMarketOperationsReleasePhase2MigrationCatalog(pool, 
   const address = new URL(endpoint);
   assert(['postgres:', 'postgresql:'].includes(address.protocol) && ['127.0.0.1','localhost','[::1]'].includes(address.hostname));
   assert(['/omerta_check','/omerta_query'].includes(address.pathname) && !address.search && !address.hash);
-  const premainSource = marketOperationsMigrationPredecessor(source), predecessorSource=marketOperationsNativeHistoricalPredecessor(premainSource), sources = marketOperationsMigrationSources();
+  const deedNative = isDeedOverMarketSource('schema.sql', source)
+    ? await createCurrentMarketDeedNativeCatalog(pool, endpoint, source, {profile:legacyProfile, includeNotNull}) : null;
+  const premainSource = marketOperationsMigrationPredecessor(deedNative ? deedNative.predecessorSource : source), predecessorSource=marketOperationsNativeHistoricalPredecessor(premainSource), sources = marketOperationsMigrationSources();
   await verifyMarketOperationsNativeBranches(pool, address);
   const freshCurrent = await compileReference(pool, address, sources.current);
   const predecessor = await compileReference(pool, address, sources.predecessor);
@@ -495,6 +511,7 @@ export async function createMarketOperationsReleasePhase2MigrationCatalog(pool, 
   assert.equal(addedConstraints.filter(row => row.type === 'n').length, version >= 180000 ? 48 : 0);
   const canonical = Object.fromEntries(['relations','constraints','columns','indexes'].map(field => [field, sorted(current[field])]));
   const verifyMetadata = actual => {
+    if (deedNative) actual = deedNative.projectMetadata(actual);
     for (const field of ['relations','constraints','columns','indexes']) if (actual[field] !== current[field])
       assert(isDeepStrictEqual(sorted(actual[field]), canonical[field]), `Complete actual C2 ${field}: no unknown, missing, altered or duplicate objects`);
   };
@@ -526,12 +543,13 @@ export async function createMarketOperationsReleasePhase2MigrationCatalog(pool, 
   const removed = new Set(expectedRows.map(key));
   const layerExpectedRows=current.constraints.filter(row=>layerTables.has(row.table_name)&&(includeNotNull||row.type!=='n')).map(({table_name,name,definition})=>({table_name,name,definition}));
   const normalize = rows => {
+    if (deedNative) rows = deedNative.projectConstraints(rows);
     same(rows.filter(row=>layerTables.has(row.table_name)),layerExpectedRows,'Every normalization retains/rechecks complete new-layer native constraints; no new table projection');
     same(rows.filter(row => tables.has(row.table_name)), expectedRows,
       'Every native projection rechecks the complete exact release constraint multiset');
     return rows.filter(row => !removed.has(key(row)));
   };
-  return { predecessorSource, premainSource, normalize, verifyMetadata, reference: current, addedColumns, addedConstraints, addedIndexes,
+  return { predecessorSource, premainSource, normalize, verifyMetadata, reference: deedNative ? deedNative.reference : current, addedColumns, addedConstraints, addedIndexes, deedNative,
     source: RELEASE_PHASE2_SOURCE, predecessor: RELEASE_PHASE2_PREDECESSOR, includeNotNull, legacyProfile, ordinalBindings, endpoint: address.href };
 }
 
