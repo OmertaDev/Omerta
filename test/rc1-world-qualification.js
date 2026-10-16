@@ -15,6 +15,10 @@ import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-co
 import { CITY_ACTIVITY_SOURCE_TRANSFER, CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER,
   CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES, cityActivitySourceBaseline,
   qualifyCityActivitySource, qualifyCityActivityPackageSource } from '../tools/rc1-city-activity-source-compatibility.js';
+import { CITY_ACTIVITY_MARKET_SOURCE_REVISION, CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR,
+  CITY_ACTIVITY_MARKET_SOURCE_PHASE, CITY_ACTIVITY_MARKET_SOURCE_DOMAINS,
+  CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_MARKET_PACKAGE_INVERSES,
+  qualifyCityActivityMarketSource, cityActivityMarketSourceBaseline } from '../tools/rc1-city-activity-market-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
@@ -63,7 +67,93 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const activityPackageRaw = await fs.readFile('package.json', 'utf8');
+const readActivityBlob = spec => execFileSync('git', ['cat-file', 'blob', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_REVISION, '3217dd945b5c5641ab0414630c58c1f97ef40ec1');
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR, 'b6be98c7e0233c4b35a74467828e24080b16b0eb');
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_PHASE, 'exact-two-file-source-comparison-only; no runtime, native, migration, financial, economic, deployment or onchain qualification');
+assert.deepEqual(Object.keys(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS), ['package.json', 'src/server.js']);
+assert.deepEqual(CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_SOURCE_INVERSES);
+assert.deepEqual(CITY_ACTIVITY_MARKET_PACKAGE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES);
+let jointPositives = 0, jointRefusals = 0;
+for (const [file, pin] of Object.entries(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS)) {
+  const raw = await fs.readFile(file, 'utf8'), current = raw.replaceAll('\r\n', '\n');
+  const expected = readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR + ':' + file);
+  assert.equal(current, readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_REVISION + ':' + file));
+  assert.equal(current, readActivityBlob(pin.currentBlob));
+  assert.equal(expected, readActivityBlob(pin.baselineBlob));
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.currentRawSha256));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const proof = qualifyCityActivityMarketSource(file, input);
+    assert.equal(proof.actualSha256, pin.currentSha256);
+    assert.equal(proof.rawSha256, sha256(input));
+    assert.equal(proof.rawSha256, pin.currentRawSha256[input.includes('\r\n') ? 'crlf' : 'lf']);
+    assert.equal(proof.sourceBlob, pin.currentBlob);
+    assert.equal(proof.baselineSha256, pin.baselineSha256);
+    assert.equal(proof.predecessorBlob, pin.baselineBlob);
+    assert.equal(proof.sourceRevision, CITY_ACTIVITY_MARKET_SOURCE_REVISION);
+    assert.equal(proof.predecessorRevision, CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR);
+    assert.equal(proof.phase, CITY_ACTIVITY_MARKET_SOURCE_PHASE);
+    assert.equal(proof.sourceOnly, true);
+    assert.equal(proof.inverseChunks, file === 'package.json' ? 3 : 5);
+    assert.equal(proof.baselineText, expected);
+    assert.equal(cityActivityMarketSourceBaseline(file, input), expected);
+    assert.equal(cityActivitySourceBaseline(file, input), expected);
+    jointPositives++;
+  }
+  const reject = input => {
+    assert.notEqual(input, current);
+    assert.throws(() => qualifyCityActivityMarketSource(file, input));
+    assert.equal(cityActivityMarketSourceBaseline(file, input), input);
+    assert.equal(cityActivitySourceBaseline(file, input), input);
+    jointRefusals++;
+  };
+  for (const input of [current + '\n// unreviewed drift\n', current.slice(1), '\ufeff' + current, current.replace(/\S/, '?')]) reject(input);
+  for (const input of [current.replace('\n', '\r\n'), current.replace('\n', '\r')]) {
+    assert.throws(() => qualifyCityActivityMarketSource(file, input));
+    assert.throws(() => cityActivityMarketSourceBaseline(file, input));
+    assert.throws(() => cityActivitySourceBaseline(file, input));
+    jointRefusals++;
+  }
+  const chunks = file === 'src/server.js' ? CITY_ACTIVITY_MARKET_SERVER_INVERSES.map(pair => pair[0])
+    : CITY_ACTIVITY_MARKET_PACKAGE_INVERSES.map(spec => current.split('\n').find(line => line.startsWith('    ' + JSON.stringify(spec.key) + ': ')));
+  for (const chunk of chunks) {
+    assert.equal(current.split(chunk).length, 2);
+    reject(current.replace(chunk, ''));
+    reject(current.replace(chunk, () => chunk + chunk));
+    reject(current.replace(chunk, () => chunk.replace(/\S/, '?')));
+  }
+  const [a, b] = chunks;
+  reject(current.replace(a, '@@activity-market-reorder@@').replace(b, () => a).replace('@@activity-market-reorder@@', () => b));
+  const mutations = file === 'src/server.js' ? [
+    ['ownerOnly: true', 'ownerOnly: false'],
+    ['JSON.parse(body)?.replayed === true', 'JSON.parse(body)?.replayed === false'],
+    ["reply.getHeader('x-idempotent-replay') || reply[cityActivityReplay]", 'false'],
+    ['registerCrossDocking(app,{pool,auth})', 'registerCrossDocking(app,{pool,auth:null})'],
+    ['registerProductionSlots(app,{pool,auth})', 'registerProductionSlots(app,{pool,auth:null})'],
+    ['registerMerchantReturns(app,{pool,auth,assertLifecycle:assertItemTransaction})', 'registerMerchantReturns(app,{pool,auth})'],
+  ] : [
+    ['node test/city-activity.js', 'node test/city-presence.js'],
+    ['node test/deed-market-source-compatibility.js', 'node test/unknown.js'],
+    ['npm run test:agent-economy-market-operations', 'npm run test:unknown'],
+    ['"start": "node src/server.js"', '"start": "node src/worker.js"'],
+  ];
+  for (const [before, after] of mutations) {
+    assert(current.includes(before), 'Joint semantic control must change current merged source');
+    reject(current.replace(before, after));
+  }
+  assert.throws(() => qualifyCityActivityMarketSource(file, expected));
+  assert.equal(cityActivityMarketSourceBaseline(file, expected), expected);
+}
+for (const file of ['__proto__', 'src/city-activity.js', 'src/crossdocking.js', 'src/productionslots-contracts.js', 'schema.sql', 'package-lock.json']) {
+  const input = 'unknown\r\nbytes\n';
+  assert.throws(() => qualifyCityActivityMarketSource(file, input));
+  assert.equal(cityActivityMarketSourceBaseline(file, input), input);
+  assert.equal(cityActivitySourceBaseline(file, input), input);
+  jointRefusals++;
+}
+console.log(`City activity market source inspection PASS: ${jointPositives} exact current LF/CRLF positives, ${jointRefusals} refusing controls; two files, source text only`);
+// Retain the prior activity profile's exact immutable controls independently of the new junction.
+const activityPackageRaw = readActivityBlob(CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualBlob);
 const activityPackageText = activityPackageRaw.replaceAll('\r\n', '\n');
 const activityPackageProof = qualifyCityActivityPackageSource(activityPackageRaw);
 assert.equal(activityPackageProof.actualSha256, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualSha256);
@@ -109,7 +199,7 @@ for (const changed of [activityPackageText.replace('\n', '\r\n'), activityPackag
   assert.throws(() => qualifyCityActivityPackageSource(changed), /source changed/);
 assert.equal(cityActivitySourceBaseline('package.json', activityPackageProof.baselineText), activityPackageProof.baselineText);
 assert.equal(cityActivitySourceBaseline('package-lock.json', activityPackageRaw), activityPackageRaw);
-const activityServerRaw = await fs.readFile('src/server.js', 'utf8');
+const activityServerRaw = readActivityBlob(CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob);
 const activityServerText = activityServerRaw.replaceAll('\r\n', '\n');
 const activityProof = qualifyCityActivitySource(activityServerRaw);
 assert.equal(activityProof.actualSha256, CITY_ACTIVITY_SOURCE_TRANSFER.actualServerSha256);

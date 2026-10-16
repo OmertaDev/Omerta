@@ -1,10 +1,10 @@
 # Dashboard game parity: final security and regression review
 
-Final review date: 2026-10-16. Phase: implementation review before release, merge or deployment. Base commit `3aaeaa97a102babf7f56dece03860964814fe313`, branch `codex/dashboard-game-parity-20261016`; reviewed working tree is dirty. The final source manifest below, rather than the base commit alone, identifies the reviewed bytes.
+Final review date: 2026-10-16. Phase: combined implementation review before release, merge or deployment. Current integration anchor `3217dd945b5c5641ab0414630c58c1f97ef40ec1`, branch `codex/dashboard-game-parity-20261016`; reviewed working tree is dirty. The latest combined source manifest below identifies the reviewed bytes. Earlier bases and evidence remain historical.
 
-**Current conclusion:** all four confirmed findings (DGP-01 through DGP-04) are resolved in the final source and independently retested. No critical/high finding or unresolved confirmed finding remains in this bounded activity/presence/client/scene review. **The full local release harness has not completed successfully.** Its retained failures and the focused source-envelope repairs are recorded below; targeted passes do not establish a complete release-harness pass. The full hosted CI on the final committed source is a hard merge/deployment gate. The first hosted candidate failed a source-verification fixture; its focused repairs and retests are recorded in the latest addendum, and a full passing successor run remains required. This is neither production acceptance nor blanket security clearance for OMERTA. No contract, signer, financial accounting, deployment, or production state was changed by this review.
+**Current conclusion:** the four original findings (DGP-01 through DGP-04), two hosted-CI source-consumer failures, and the new combined-domain replay finding below are resolved for their pinned scopes and retested. No critical/high or unresolved confirmed finding remains in this bounded review. The combined replay, source-profile and fixture review is complete; its exact source and evidence are in the latest addendum. **The full local release harness has not completed successfully, and final combined hosted CI has not yet passed.** Targeted checks, the 22-command market memory suite, and the 32 source-consumer passes do not establish a complete release-harness or native pass. Full hosted CI on the final committed combined source remains a hard merge/deployment gate. Earlier e321 native results apply only to that earlier source; running, skipped, superseded or cancelled lanes are incomplete. This is neither production acceptance nor blanket security clearance for OMERTA. No production, signer, deployment or onchain action was performed by this review.
 
-Final scope includes the registry and server publication hooks; authenticated presence projection; browser API/action bridges and canonical-state refresh; dashboard panel lifecycle; scene activity acceptance, rendering, expiry and identity retirement; and the associated focused tests. Existing gameplay handlers, receipt middleware, player projections, public activity wire, and player-intel reads were traced as dependencies. Existing gameplay economics, authentication implementation beyond changed call sites, all dashboard feature implementations, encounter locking, and unrelated backend/contract surfaces were not re-audited. Package scripts and the concise presence documentation were checked for consistency.
+Final scope includes the registry and server publication hooks; authenticated presence projection; browser API/action bridges and canonical-state refresh; dashboard panel lifecycle; scene activity acceptance, rendering, expiry and identity retirement; and associated focused tests. The latest addendum reopens only the combined source-comparison/fixture boundaries and the new cross-docking, production-slot and merchant-return durable replay return values and receipt DTOs. Existing gameplay handlers, receipt middleware, player projections, public activity wire, and player-intel reads were traced as dependencies. Existing gameplay economics, authentication implementation beyond changed call sites, all dashboard feature implementations, encounter locking, and unrelated backend/contract surfaces were not re-audited. Package scripts and concise presence documentation were checked for consistency.
 
 Methods and limitations are retained in the historical review below and extended in the final addendum. The initial report SHA-256 was `84dd365b03f5e509353cbfef67ed3758b46157f35f4fec3a897aa2dfa6282e98`. Its finding text, original source hashes and open dispositions are preserved as historical evidence; **the final dispositions in the addendum supersede those historical statuses**. This report's final hash is provided separately to the release coordinator to avoid a self-referential hash.
 
@@ -465,3 +465,103 @@ The sealed 30-test packet includes all individual final and prior-failure log ha
 | `output/security/dashboard-game-parity-ci-fourth-mutations-independent.json` | `267a4d71f22c811ba97ef19493d971ff94ceaf68238c9f06a167e96840b7bd18` |
 
 **Latest disposition:** the four original gameplay findings and both CI compatibility failures above are resolved for their pinned scopes. The independent review of the nine test-only repairs is complete. The failed first hosted full-suite run remains in the record; a passing full successor CI run remains a hard merge/deployment condition.
+
+
+## Combined candidate replay and source-profile review — 2026-10-16
+
+### Revision, scope and preserved evidence
+
+This addendum supersedes current-scope status only and preserves every previous finding, failed attempt and source hash. Its preceding report was SHA-256 `cc77584788c711e2013abfb9e3557240010ceca607f9b3513df9e81d65268643`. Integration anchor `3217dd945b5c5641ab0414630c58c1f97ef40ec1` merges parity `fdcfc052` with the queued market source `b6be98c7e0233c4b35a74467828e24080b16b0eb`. The three conflict resolutions were independently compared against both parents. All incoming assertions remain; parity assertions are retained with explicit historical Deed reads, the correct Deed-normalized inverse probe, and the composed current source reader. Historical executable bodies and database/network/native exclusions remain unchanged.
+
+This is a bounded integration review of six replay runtime/DTO files, seven associated tests, six source-profile/tool/fixture files, and the anchored server/package/next-layer reader boundaries. It is not a new audit or native qualification of all incoming economics. Thirteen of the original 16 final-manifest files remain raw-byte identical. The expected differences are the merged `src/server.js`, merged `package.json`, and expanded `test/city-activity.js`; the current hashes are below.
+
+### DGP-COMBINED-01 — Durable domain replay could publish a new owner cue (resolved)
+
+The newly composed cross-docking, production-slot and merchant-return domains returned an original stored receipt after the transport idempotency row expired, without the trusted `replayed:true` marker. The response had no transport replay header, so the actual server could replace a newer owner Banking cue with a fresh Action completed cue even though the old domain receipt caused no new canonical action. This is a medium presentation-integrity/regression finding within the activity boundary, not evidence of a repeated payment or item transfer.
+
+The repair changes exactly four return sites across three runtime files to return a fresh shallow clone with `replayed:true`. Fresh success keeps the original shape, and stored receipt values are not rewritten. Independent mechanical reversal of only those four expressions reproduces every other byte of the anchor runtime, including all receipt writes, identity/body conflict checks, lifecycle gates and economic operations. The three DTO modules add an optional `const:true` marker to exactly six mutation receipt schemas. Independent schema comparison confirms all prior required lists, closed property rules, board schemas and existing properties are preserved. No request schema or new mutation authority is introduced.
+
+The expanded existing City activity test uses actual loopback HTTP through all three real server registrars. Nine genuine funded mutations cover human and agent identities and all six receipt schemas. It establishes a fresh cue, replaces it with Banking, expires/deletes only the completed transport row according to the existing 24-hour policy, and repeats the original account/key/body. It then asserts no replay header, the durable marker, the exact original payload, the unchanged newer cue, identical canonical economic state and domain rows, identical stored receipt bytes, observer privacy, and no public activity event. A subsequent cached replay also preserves state/cues. Generation turnover separately proves an old receipt cannot animate a later generation. All six schemas reject false/string markers and unknown properties. Small market DTOs remain below the real compression threshold; the existing genuine compressed command-response test still exercises gzip replay inspection. The fixtures' synthetic IDs use the canonical private intel helper, with known-name verification, so redaction cannot mask an accidental observer cue.
+
+The reviewer independently reran `node test/city-activity.js`: all earlier lifecycle/redaction/allowlist/replay/travel tests and all nine new HTTP cases passed. A retained negative-control loader restores only the four old return expressions in module-loading memory. That control fails at the exact real cross-dock offer replay: the newer Banking cue becomes Action completed with a new timestamp. Repository bytes are unchanged by this control. Its loader and failed trace are retained.
+
+The first full market memory attempt exposed an additional stale exact receipt comparison in `test/crossdocking-estate.js`. That failure is retained. The approved repair asserts `replayed === true`, fresh receipt marker absence, and complete equality of every remaining original receipt field. Independent whole-file comparison proves every surrounding estate/economic/identity assertion is byte-for-byte retained. The exact 22-command script and native race branches were inspected; remaining exact HTTP-cache replay and unrelated-domain comparisons stay unchanged. Native merchant same-key race expectations retain exactly one fresh result, one marked replay, and complete canonical payload equality; this local run does not claim native race execution.
+
+The six direct focused commands, focused estate retest, and repaired unfiltered `npm run test:agent-economy-market-operations` all passed. The latter executed all 22 declared commands and reached final world-graph validation with exit 0. Memory-only limitations printed by native-gated tests remain applicable. No full local release harness was rerun or represented as passed.
+
+### Exact combined source comparison and retained fixture guards
+
+The new test/tool-only `tools/rc1-city-activity-market-source-compatibility.js` admits exactly two files: `package.json` and `src/server.js`. It binds complete current text, LF/CRLF raw hashes, normalized SHA-256 and Git blobs to immutable anchor `3217dd945b5c5641ab0414630c58c1f97ef40ec1`. Exactly three package script inverses and five server inverses reconstruct complete immutable predecessor `b6be98c7e0233c4b35a74467828e24080b16b0eb`. The inverse definitions are asserted equal to the unchanged earlier activity inverses. Script keys, complete entry hashes and inverse occurrences are unique; full predecessor text/SHA/blob must match. Unknown domains and altered bytes cannot acquire qualification; mixed/bare-CR inputs are rejected. Reconstructed source is compared, never executed.
+
+The old activity helper adds only the new exact-profile dispatch; independent removal of this import/dispatch restores its complete old source and pins. Current package/server are checked separately from the retained original activity controls, which now read their unchanged immutable blobs. Independent reversal of the new test block and those two input selections restores the full previous world-qualification test. The actual current joint controls pass four LF/CRLF positives and 54 raw, omission, duplication, reordering, semantic, line-ending and domain refusals. All previous controls and the ten closed Coverage guards remain and pass.
+
+The Deed metatest separately pins the complete anchor next-layer test (normalized SHA `93680640a6e868c89f14421d63b55b74dcd5a3442c1e22eccb165f7d63887463`, blob `8878ffb12bde51589a0683761f714e50002bbc81`) and exactly three Git-derived inverse hunks to e321 (SHA `71fbdfe52b0c1c1e4815d919e74bb86811595e61e0eaf36dcd432de2cb2aaa1d`, blob `840ae51c78eeed77a461c537cae6b86a3a48af21`). Only then does the unchanged e321-to-f89 inspector execute its original comparisons. The new joint reader has two LF/CRLF positives and 21 refusals; the prior two positives/14 refusals and all original 13-domain, 47-inverse, 316-negative Deed controls pass. The market source consumer adds only the outer activity reader and a corrected assertion label; all old assertions remain.
+
+The historical fixture adds the exact combined proof alongside retained activity/frozen inputs. Independent rejection-mode execution passed: helper guards 18 positives/23 refusals; activity helper 4/26; application 40/177; activity 10/51; independent C2 rule refusals 18. The final loader's admitted entry/dependency set, frozen execution bodies, raw native refusal and database/network exclusions are unchanged. This does not inherit an old source-pair qualification: the six runtime/DTO files are included in the source-pair reviewed-tree identity, so their changed bytes require the actual new candidate's evidence.
+
+Independent traversal of the actual npm graph found 15 scripts, 610 unique Node files and 32 source-comparison consumers, with no unparsed Node commands. All 32 focused consumers passed. The sealed packet is SHA-256 `ed852910ac321f117db35418a1044e073f2761e5666532753c90099563128ad0`; the reviewer verified its exact consumer set, all 32 current source/pass-log hashes, all six profile hashes and all 12 retained evidence hashes. Earlier combined failures remain in that packet. Syntax and whitespace checks pass across all 19 changed implementation/test/profile files.
+
+### Earlier CI remains separately scoped
+
+The original e321 full workflow `38975885236` failed its full-suite source fixture; the browser lane was skipped. Both original native economy jobs completed 17/17 steps successfully (18.4 job `117225103024`, 16 job `117225103107`), and liquidity run `38975885263` passed. Their full economy logs and a pre-successor snapshot are retained. In that snapshot, core 18.4 had 41 successful steps with buyer cooperatives running; core 16 had 43 with commercial reputation running. Forge run `38975885151` had completed compilation and was still in unit/fuzz. Those running lanes are incomplete at this report freeze. Any later auto-cancellation/supersession remains incomplete, never a pass. No old e321 result grants combined runtime/native release acceptance. A fresh full hosted run on the final combined commit is the required merge/deployment gate.
+
+### Combined source and evidence freeze
+
+All values below are raw working-tree SHA-256. The machine-readable combined source manifest also preserves normalized LF hashes and Git blobs for later line-ending-aware commit mapping. The anchor alone does not identify these uncommitted repairs.
+
+| File | Raw SHA-256 |
+| --- | --- |
+| `src/crossdocking.js` | `9ecb0396c7ccf0bcaf2fea63c6de6e8189afbcee495c4d367e6793b898ba5dd2` |
+| `src/crossdocking-contracts.js` | `4307955053c2de199373898759009da9535321216bcfb746cafd859d8b37bfc1` |
+| `src/productionslots.js` | `ca4ee0c3083e6d8bc697227e8669fca409b76ea79513635a2137f930ff83cf30` |
+| `src/productionslots-contracts.js` | `978a9b6ed59a5b488539278124639d5fecde4b1fa6e714787e16e257ad81edd1` |
+| `src/merchantreturns.js` | `0960bf84cffec76e1cfbebef7793ec7e78f905a24a4dfab3ad2b0d67f3ffd767` |
+| `src/merchantreturns-contracts.js` | `f088fd22a8ff00d6e04609a515a5bd00694c388b836b535b6117bafdc328d227` |
+| `test/crossdocking.js` | `86b6885503111605e546268c2ffeb528756c2d1ea506022ce5327cac8845445d` |
+| `test/productionslots-recovery.js` | `624e64493227de897c9b956f58eae6183fb0ef65f9d778015416cc75fdecc189` |
+| `test/merchantreturns.js` | `07eba6d3f45f2d4032468104e663c57bfdf4479750aba91a9b637e5c93498bc1` |
+| `test/merchantreturns-api.js` | `8c01ceb916d1dec13583bddada148bc5557cc2074dc8630c482182b07a254001` |
+| `test/merchantreturns-fixture.js` | `e35015d50cb65f321fb8a5c8d1be167fe39f425deb33b59e846684ebc9b0fc24` |
+| `test/city-activity.js` | `5a97cb06a1d907d47a633ddde9cabd9851ef2d157b73624dff846dc3f5070adb` |
+| `tools/rc1-city-activity-market-source-compatibility.js` | `af060a1c044e8b3e7d4ce0d9c2cf952597e835972fd95fcfbfede00e0aec2caa` |
+| `tools/rc1-city-activity-source-compatibility.js` | `27752c326c43b94e3b8112d819cc62350f147e23e22966115932e5ac7025b00e` |
+| `test/rc1-world-qualification.js` | `56c577548a6db66b342f4feee31aae7329c8c5165176d12c0e24aa40607b2bb5` |
+| `test/deed-quest-source-compatibility.js` | `e0426a2ff6041b4efcedd755774d1a71ad4df530c5fe65b497d1d3ecb7ef8c3a` |
+| `test/lib/rc1-historical-source-fixture.js` | `cf568ef9eea86e61bfa7a8777258b2a92069a9c8218924af6a7a5eb93d804165` |
+| `test/market-operations-source-compatibility.js` | `e0b5757cf38b42cf91f848cbb05159eed7a6d7c54e738a1cdf9138951723a85b` |
+| `package.json` | `7fe1b97dbb21bf1c1a38cd1462ce4981cf309dae9109f7b8d504110c5f1441bf` |
+| `src/server.js` | `1d62fc2332e9a3973073d01c3e6eade107e3a86db9162d370be5ccc2255734f7` |
+| `test/next-layer-source-compatibility.js` | `58258a0f5a34b18dc4812ff34004a87313f0fdee34a10df79fa214500a5e3fdb` |
+| `test/crossdocking-estate.js` | `1ea2972225975ebc9bb8a40daec12013df741950215edc3cb3a191b96de8f824` |
+
+The evidence index is `output/security/dashboard-game-parity-combined-evidence-independent.json`. It records the following retained files without rewriting earlier evidence.
+
+| Evidence | Raw SHA-256 |
+| --- | --- |
+| `output/security/dashboard-game-parity-combined-sources-independent.json` | `6e13469c676f69543eb392de11a0da3e5075ea6f3c6f7b24d03bd3add416fada` |
+| `output/security/dashboard-market-replay-owned-hashes.json` | `28c7b27045b4dd974938a8272aa75bb23e33982a1bd3a5bf9afbf7e0c808aca7` |
+| `output/security/dashboard-game-parity-combined-runtime-independent.log` | `7ddbcbc646ed3cd9c2bf5114edde6b1f53f734666bae68c50436242b3214265c` |
+| `output/security/dashboard-market-replay-direct.log` | `d5074a707711b13afd43b84f80c92d81052733a528c2f65661885751124e7392` |
+| `output/security/dashboard-market-replay-city-activity.log` | `bc10865207b23ceb086da2af06c1d4db93e333e62691d3420c380b5bcd38d422` |
+| `output/security/dashboard-game-parity-combined-activity-independent.log` | `ff551192c4cb4bc76c497918c962919439aff1852617eaac618cccb2eb109437` |
+| `output/security/dashboard-market-replay-negative-loader.mjs` | `db5da490fbb5c98903776ea18cee3e159af183bfa44c410cbcd3f7dcf3b5c97e` |
+| `output/security/dashboard-market-replay-negative-control.log` | `f3a67e7c645431bd1eec6c532c27301fe46f7d6f906c2f66e10765c678e99788` |
+| `output/security/dashboard-market-replay-full-memory-attempt1-failed.log` | `dfa0f5cbcc4635b6d4ebec4298fdd8030ba966cd1741578b87b8f125179df147` |
+| `output/security/dashboard-market-replay-estate.log` | `90210868835216ca7274fcdf5bc23017eb2fda315611798952f7f0b7b4bdab35` |
+| `output/security/dashboard-market-replay-full-memory.log` | `e7b680872a6b731c9eea17e075c45aa78cd2b19489b488ccbbd0e0e599b3f3fc` |
+| `output/security/dashboard-game-parity-combined-estate-independent.log` | `2701a30257ae2a2c8c09b167db97fdbf0388a44525e7028ed249671c250eddec` |
+| `output/security/dashboard-game-parity-combined-static-independent.log` | `7d4fbd8f4aae3a56985f0c3a3a6f34f9eba9e1435c70fe46204eb3f5f635e0e2` |
+| `output/security/dashboard-game-parity-combined-estate-static-independent.log` | `afcc6cb40dcfb2ef8281f7ac628fa804a620986be4d23b7ae6cb948ce4a318f8` |
+| `output/security/dashboard-game-parity-merged-source-profile-snapshot.json` | `9f768f9909d56dabf8075e2ec4b72424fbd7f771ce16f5466d888c883b83ee61` |
+| `output/security/dashboard-game-parity-merged-ci-source-consumers-final.json` | `ed852910ac321f117db35418a1044e073f2761e5666532753c90099563128ad0` |
+| `output/security/dashboard-game-parity-combined-final-packet-independent.json` | `1ad83b2ac566e87e39ae6e0eeb1a570cf49a1f82cb1dcc1b1c5c9672285f0e50` |
+| `output/security/dashboard-game-parity-combined-inventory-independent.json` | `bbca2d0dcc867d73a2295fa284cc9a27f93e7e94ea34cd07644c6b5b224b3430` |
+| `output/security/dashboard-game-parity-combined-preservation-independent.log` | `8642670fa461707eae45124c895de0222d9eed62ae7c968dfd71a4ec3b9a909d` |
+| `output/security/dashboard-game-parity-combined-world-independent.log` | `79d28f37142154750bf2326d8325ae5bf7a2cbefe1493c85b2ee8a751868c5a6` |
+| `output/security/dashboard-game-parity-combined-deed-independent.log` | `6e685e33d0e49525bcb96ebadc42cded07a9d975b1040c4efdf9e27f0330a8cc` |
+| `output/security/dashboard-game-parity-combined-fixture-independent.log` | `6293af7db1440d7d24911ac6929a656e25b9ab794f19c8ac504ee5c61b89296c` |
+| `output/security/dashboard-game-parity-e321-pre-successor-snapshot.json` | `e785138fe5cf377efb9df3979aa5e48678e9be571f80928401e0daff089bc032` |
+| `output/security/dashboard-game-parity-e321-native-economy-18.4.log` | `6ac6b2ccb86f6bfe80aaf04c4eb14e2f212449da2b2511fb68b1ffe0ba94fddf` |
+| `output/security/dashboard-game-parity-e321-native-economy-16.log` | `0c91e819907bef7df0330f2f8a2d8e515f5dba2fdbdbd6702a99dc6c690a6173` |
+
+**Latest disposition:** the bounded combined runtime/DTO, actual HTTP replay, fixture and source-comparison review is complete with the confirmed findings resolved. The repaired 22-command market memory suite and 32 focused source consumers pass; historical failures remain preserved. Final combined full hosted CI and its required native/browser lanes remain pending hard merge/deployment gates. No production acceptance, onchain acceptance or inherited economic/native/source-pair qualification is asserted.

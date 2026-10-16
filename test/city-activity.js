@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { gunzipSync } from 'node:zlib';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 import { createCityActivityRegistry, cityOwnerActivityCategory } from '../src/city-activity.js';
+import { CROSS_DOCK_SCHEMAS } from '../src/crossdocking-contracts.js';
+import { PRODUCTION_SLOT_SCHEMAS } from '../src/productionslots-contracts.js';
+import { MERCHANT_RETURN_SCHEMAS } from '../src/merchantreturns-contracts.js';
+import { recordPlayerIntel } from '../src/playerintel.js';
 import { buildServer } from './server-fixture.js';
 import { bus } from '../src/game.js';
 import { FURNACE_IDS } from '../src/content/furnace-ledger.js';
@@ -110,14 +116,22 @@ app.addHook('onSend', async (req, _reply, payload) => {
   return payload;
 });
 app.addHook('onResponse', async req => completed.get(req.headers['x-city-test-request'])?.());
-async function call(options) {
+async function call(options, server = app, origin = null) {
   const id = crypto.randomUUID();
   let finish;
   const done = new Promise(resolve => { finish = resolve; });
   completed.set(id, finish);
   const timer = setTimeout(() => finish(new Error('City activity response hook timed out.')), 10000);
   try {
-    const response = await app.inject({ ...options, headers: { ...options.headers, 'x-city-test-request': id } });
+    const headers = { ...options.headers, 'x-city-test-request': id };
+    let response;
+    if (origin) {
+      if (options.payload !== undefined) headers['content-type'] = 'application/json';
+      const fetched = await fetch(new URL(options.url, origin), { method: options.method || 'GET', headers,
+        body: options.payload === undefined ? undefined : JSON.stringify(options.payload), signal: AbortSignal.timeout(10000) });
+      const body = await fetched.text();
+      response = { statusCode: fetched.status, headers: Object.fromEntries(fetched.headers), body, json: () => JSON.parse(body) };
+    } else response = await server.inject({ ...options, headers });
     const error = await done;
     if (error) throw error;
     return response;
@@ -133,16 +147,16 @@ async function actor(name, loc = 'neon') {
   await app.pool.query('UPDATE characters SET loc=$2,cash=100000,nerve=100,energy=200 WHERE id=$1', [character.id, loc]);
   return { ...character, headers };
 }
-async function presence(person) {
-  const response = await call({ url: '/v1/city/presence?limit=40', headers: person.headers });
+async function presence(person, server = app, origin = null) {
+  const response = await call({ url: '/v1/city/presence?limit=40', headers: person.headers }, server, origin);
   assert.equal(response.statusCode, 200, response.body);
   assert.equal(response.headers['cache-control'], 'private, no-store');
   return response.json();
 }
-async function meet(observer, person) {
-  const action = (await presence(observer)).actors.find(a => a.id === person.id).actions[0];
+async function meet(observer, person, server = app, origin = null) {
+  const action = (await presence(observer, server, origin)).actors.find(a => a.id === person.id).actions[0];
   const response = await call({ method: action.method, url: action.path,
-    headers: { ...observer.headers, 'idempotency-key': crypto.randomUUID() }, payload: action.body });
+    headers: { ...observer.headers, 'idempotency-key': crypto.randomUUID() }, payload: action.body }, server, origin);
   assert.equal(response.statusCode, 200, response.body);
 }
 const dice = (person, headers = {}, amount = 500) => call({ method: 'POST', url: '/v1/casino/dice',
@@ -309,3 +323,156 @@ try {
     if (value === undefined) delete process.env[flag]; else process.env[flag] = value;
   }
 }
+
+// Exercise the merged registrars over an actual loopback HTTP listener. Durable
+// request rows survive the same completed-HTTP-receipt expiry used by the worker.
+const ajv = new Ajv({ strict: false, allErrors: true });
+addFormats(ajv);
+for (const [name, schema] of Object.entries({ ...CROSS_DOCK_SCHEMAS, ...PRODUCTION_SLOT_SCHEMAS, ...MERCHANT_RETURN_SCHEMAS })) {
+  ajv.addSchema(schema, '#/components/schemas/' + name);
+}
+const checkedReceiptSchemas = new Set();
+function checkReceiptSchema(name, receipt) {
+  const valid = ajv.getSchema('#/components/schemas/' + name);
+  assert(valid(receipt), name + ': ' + JSON.stringify(valid.errors));
+  assert(valid({ ...receipt, replayed: true }), name + ' accepts the trusted replay marker.');
+  assert(!valid({ ...receipt, replayed: false }), name + ' rejects a false replay marker.');
+  assert(!valid({ ...receipt, replayed: 'true' }), name + ' rejects an untyped replay marker.');
+  assert(!valid({ ...receipt, extra: true }), name + ' remains closed.');
+  checkedReceiptSchemas.add(name);
+}
+async function marketActivityHarness(f) {
+  const server = f.app, known = new Set(), publicEvents = [];
+  server.addHook('onResponse', async req => completed.get(req.headers['x-city-test-request'])?.());
+  const origin = await server.listen({ host: '127.0.0.1', port: 0 });
+  const request = options => call(options, server, origin);
+  const read = person => presence(person, server, origin);
+  const observer = { id: 'other-actor', headers: { authorization: 'Bearer ' + server.jwt.sign({ sub: 'other', tv: 0 }) } };
+  const onPublic = event => publicEvents.push(event);
+  bus.on('activity', onPublic);
+  async function mutate({ account, agent = false, path, body, schema, table, successor = false }) {
+    assert(['cross_dock_requests', 'production_slot_requests', 'merchant_return_requests'].includes(table));
+    const person = (await f.pool.query('SELECT id,account_id,generation,loc,name,respect FROM characters WHERE account_id=$1 AND alive', [account])).rows[0];
+    person.headers = { authorization: 'Bearer ' + server.jwt.sign({ sub: account, tv: 0, ...(agent ? { agent: true } : {}) }) };
+    if (agent) await f.pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [account]);
+    await f.pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [observer.id, person.loc]);
+    // The economy fixtures use readable synthetic IDs, outside the encounter
+    // route's UUID contract. Seed its ordinary private intel through the same
+    // canonical helper so redaction cannot hide an accidental public cue.
+    if (!known.has(person.id)) { await recordPlayerIntel(f.pool, 'other', person, { source: 'city_encounter' }); known.add(person.id); }
+    const observed = (await read(observer)).actors.find(actor => actor.id === person.id);
+    assert.equal(observed.name, person.name);
+    const observedBefore = observed.activity;
+    const wireCount = publicEvents.length, before = await f.state(), key = crypto.randomUUID();
+    const options = { method: 'POST', url: path, headers: { ...person.headers, 'idempotency-key': key }, payload: body };
+    const firstResponse = await request(options);
+    assert.equal(firstResponse.statusCode, 200, firstResponse.body);
+    const firstReceipt = firstResponse.json();
+    assert.equal(firstReceipt.replayed, undefined, 'First execution keeps its original receipt shape.');
+    checkReceiptSchema(schema, firstReceipt);
+    assert.notDeepEqual(await f.state(), before, path + ' performs a genuine canonical mutation.');
+    const firstActivity = (await read(person)).viewer.activity;
+    assert.equal(firstActivity.id, 'owner:' + key); assert.equal(firstActivity.kind, 'work');
+    assert.equal(firstActivity.label, 'Action completed');
+    const requestColumn = table === 'merchant_return_requests' ? 'key_hash' : 'request_key';
+    const requestKey = requestColumn === 'key_hash' ? crypto.createHash('sha256').update(JSON.stringify([account, key])).digest('hex') : key;
+    const durableRow = async () => (await f.pool.query('SELECT * FROM ' + table + ' WHERE account_id=$1 AND ' + requestColumn + '=$2', [account, requestKey])).rows[0];
+    const stored = await durableRow(), storedBytes = JSON.stringify(stored.receipt);
+    assert.deepEqual(stored.receipt, firstReceipt, 'Only the original unmarked receipt is persisted.');
+    const bankKey = crypto.randomUUID();
+    const banked = await request({ method: 'POST', url: '/v1/bank/deposit', headers: { ...person.headers, 'idempotency-key': bankKey }, payload: { amount: 1 } });
+    assert.equal(banked.statusCode, 200, banked.body);
+    const newerActivity = (await read(person)).viewer.activity;
+    assert.equal(newerActivity.id, 'owner:' + bankKey);
+    assert.equal(newerActivity.label, 'Banking');
+    async function expireHttpReceipt() {
+      assert.equal((await f.pool.query('UPDATE idempotency SET created_at=$3 WHERE account_id=$1 AND key=$2 AND status<>0',
+        [account, key, new Date(Date.now() - 25 * 60 * 60 * 1000)])).rowCount, 1);
+      assert.equal((await f.pool.query("DELETE FROM idempotency WHERE account_id=$1 AND key=$2 AND status<>0 AND created_at < now() - interval '24 hours'",
+        [account, key])).rowCount, 1, 'The completed transport receipt expires under the worker policy.');
+      assert.equal((await f.pool.query('SELECT * FROM idempotency WHERE account_id=$1 AND key=$2', [account, key])).rows.length, 0);
+      assert.deepEqual(await durableRow(), stored, 'HTTP expiry preserves the durable key and every stored receipt field.');
+    }
+    await expireHttpReceipt();
+    const economicBeforeReplay = await f.state();
+    // Fetch negotiates gzip; these small DTOs may remain below the real server's
+    // compression threshold. The large command receipt above proves the actual
+    // gzip onSend path, without padding or changing these closed receipt DTOs.
+    const replayResponse = await request({ ...options, headers: { ...options.headers, 'accept-encoding': 'gzip' } });
+    assert.equal(replayResponse.statusCode, 200, replayResponse.body);
+    assert.equal(replayResponse.headers['x-idempotent-replay'], undefined, 'This response came from durable domain recovery, not HTTP cache.');
+    assert.match(replayResponse.headers.vary, /Accept-Encoding/i);
+    assert.deepEqual((await read(person)).viewer.activity, newerActivity, 'Durable replay cannot replace a newer owner cue: ' + path);
+    assert.deepEqual(replayResponse.json(), { ...firstReceipt, replayed: true });
+    assert(ajv.getSchema('#/components/schemas/' + schema)(replayResponse.json()));
+    assert.deepEqual(await f.state(), economicBeforeReplay, 'Durable replay changes no cash, items, journal entries, domain rows or counts.');
+    assert.equal(JSON.stringify((await durableRow()).receipt), storedBytes, 'Stored receipt bytes remain unchanged.');
+    assert.deepEqual(await durableRow(), stored);
+    assert.deepEqual((await read(observer)).actors.find(actor => actor.id === person.id).activity, observedBefore, 'Private mutations never create observer activity.');
+    assert.equal(publicEvents.length, wireCount);
+    const cached = await request(options);
+    assert.equal(cached.statusCode, 200, cached.body);
+    assert.equal(cached.headers['x-idempotent-replay'], 'true');
+    assert.deepEqual(cached.json(), replayResponse.json());
+    assert.deepEqual(await f.state(), economicBeforeReplay);
+    assert.deepEqual((await read(person)).viewer.activity, newerActivity);
+    if (successor) {
+      // Use the same generation-turnover seam as the existing city lifecycle
+      // tests; no fabricated estate settlement or new heir authority is needed.
+      await f.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1', [person.id]);
+      assert.equal((await read(person)).viewer.activity, undefined);
+      await expireHttpReceipt();
+      const afterTurnover = await f.state();
+      const recovered = await request(options);
+      assert.equal(recovered.statusCode, 200, recovered.body);
+      assert.equal(recovered.headers['x-idempotent-replay'], undefined);
+      assert.deepEqual(recovered.json(), { ...firstReceipt, replayed: true });
+      assert.equal((await read(person)).viewer.activity, undefined, 'An old durable receipt cannot cue a later generation.');
+      assert.deepEqual(await f.state(), afterTurnover);
+      assert.deepEqual(await durableRow(), stored);
+    }
+    console.log('city-activity: real HTTP durable-expiry ' + path + ' ' + (agent ? 'agent' : 'human') + ' PASS');
+    return firstReceipt;
+  }
+  return { mutate, close: async () => { bus.off('activity', onPublic); await server.close(); } };
+}
+const crossFixtures = await import('./crossdocking-fixture.js');
+const cross = await crossFixtures.fixture(true), crossActivity = await marketActivityHarness(cross);
+try {
+  const hub = await crossFixtures.eligibleHub(cross), network = await cross.invoke('owner', 'publish', cross.terms(await cross.tool()));
+  await cross.invoke('first', 'consent', cross.ref(network)); await cross.invoke('second', 'consent', cross.ref(network));
+  await cross.invoke('owner', 'dispatch', cross.ref(network));
+  const dock = { schema: 'CrossDockResult', table: 'cross_dock_requests' };
+  const offered = await crossActivity.mutate({ ...dock, account: 'owner', path: '/v1/company/cross-docking/offer',
+    body: { networkId: network.networkId, networkSourceHash: network.sourceHash, hubId: hub.hub.id, expectedHubRevision: 2, consent: true } });
+  await crossActivity.mutate({ ...dock, account: 'first', agent: true, path: '/v1/company/cross-docking/consent',
+    body: { linkId: offered.linkId, sourceHash: offered.sourceHash, consent: true } });
+  await cross.books();
+} finally { await crossActivity.close(); }
+const slots = await (await import('./productionslots-fixture.js')).fixture(true), slotActivity = await marketActivityHarness(slots);
+try {
+  await slots.specialize();
+  const commission = await slots.funded(), slot = { schema: 'ProductionSlotResult', table: 'production_slot_requests' };
+  const offered = await slotActivity.mutate({ ...slot, account: 'maker', agent: true, path: '/v1/company/production-slots/offer', body: slots.offerTerms(commission) });
+  await slotActivity.mutate({ ...slot, account: 'customer', path: '/v1/company/production-slots/confirm', body: slots.ref(offered) });
+  await slots.books();
+} finally { await slotActivity.close(); }
+const merchant = await (await import('./merchantreturns-fixture.js')).fixture(true), merchantActivity = await marketActivityHarness(merchant);
+try {
+  const sale = await merchant.sell(), marketReturn = { table: 'merchant_return_requests' };
+  const offered = await merchantActivity.mutate({ ...marketReturn, account: 'seller', path: '/v1/items/merchant-returns/offer',
+    body: sale.offerBody, schema: 'MerchantReturnOfferReceipt' });
+  await merchantActivity.mutate({ ...marketReturn, account: 'buyer', agent: true, path: '/v1/items/merchant-returns/accept',
+    body: merchant.ref(offered), schema: 'MerchantReturnAcceptanceReceipt' });
+  await merchantActivity.mutate({ ...marketReturn, account: 'buyer', agent: true, path: '/v1/items/merchant-returns/return',
+    body: merchant.ref(offered), schema: 'MerchantReturnPaidReceipt' });
+  const secondSale = await merchant.sell();
+  const cancelled = await merchantActivity.mutate({ ...marketReturn, account: 'seller', path: '/v1/items/merchant-returns/offer',
+    body: secondSale.offerBody, schema: 'MerchantReturnOfferReceipt' });
+  await merchantActivity.mutate({ ...marketReturn, account: 'seller', path: '/v1/items/merchant-returns/cancel',
+    body: merchant.ref(cancelled), schema: 'MerchantReturnRefundReceipt', successor: true });
+  await merchant.books();
+} finally { await merchantActivity.close(); }
+assert.deepEqual([...checkedReceiptSchemas].sort(), ['CrossDockResult', 'ProductionSlotResult', 'MerchantReturnOfferReceipt',
+  'MerchantReturnAcceptanceReceipt', 'MerchantReturnPaidReceipt', 'MerchantReturnRefundReceipt'].sort());
+console.log('city-activity: three actual market registrars, all six closed receipt schemas, durable expiry, human/agent cues and generation replay passed');

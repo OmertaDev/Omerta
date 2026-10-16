@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { cityActivityMarketSourceBaseline } from './rc1-city-activity-market-source-compatibility.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
@@ -113,6 +114,8 @@ export function qualifyCityActivitySource(input) {
 }
 
 export function cityActivitySourceBaseline(file, input) {
+  const combined = cityActivityMarketSourceBaseline(file, input);
+  if (combined !== input) return combined;
   if (file === CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.file) {
     const text = normalize(input);
     return hash(text) === CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualSha256

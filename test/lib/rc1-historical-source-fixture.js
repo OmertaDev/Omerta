@@ -14,8 +14,9 @@ import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
 import { assertDeedQuestSourceTransfer, DEED_QUEST_SOURCE_DOMAINS } from '../../tools/deed-quest-source-transfer.js';
-import { CITY_ACTIVITY_SOURCE_INVERSES, cityActivitySourceBaseline,
+import { CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_SOURCE_TRANSFER, cityActivitySourceBaseline,
   qualifyCityActivitySource } from '../../tools/rc1-city-activity-source-compatibility.js';
+import { qualifyCityActivityMarketSource } from '../../tools/rc1-city-activity-market-source-compatibility.js';
 import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-compatibility.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
@@ -436,10 +437,12 @@ function rejectHistoricalApplicationSources() {
 
 function rejectCityActivityHistoricalSources() {
   const file = 'src/server.js', raw = String(originalRead(path.join(root, file))), current = canonical(raw);
-  const proof = qualifyCityActivitySource(raw), frozen = String(blob(file, release)), expected = blob(file, history);
+  const combinedProof = qualifyCityActivityMarketSource(file, raw);
+  const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));
+  const proof = qualifyCityActivitySource(retained), frozen = String(blob(file, release)), expected = blob(file, history);
   let positives = 0, refusals = 0;
   const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
-  for (const source of [current, proof.baselineText, frozen]) {
+  for (const source of [current, combinedProof.baselineText, retained, proof.baselineText, frozen]) {
     for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
       const selected = historicalApplicationSource(file, supplied);
       assert.equal(sha256(selected), sha256(expected));

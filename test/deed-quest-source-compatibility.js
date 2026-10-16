@@ -157,7 +157,88 @@ for (const [current] of nextLayerActivityInverses)
     nextLayerActivityCurrent.replace(current, () => current.replace(/\S/, '?')));
 for (const raw of nextLayerActivityRefusals) assert.throws(() => inspectNextLayerActivityReader(raw));
 console.log(`Next-layer activity reader inspection PASS: 2 line-ending positives, ${nextLayerActivityRefusals.length} refusing controls; source text only`);
-const nextLayerTest = inspectNextLayerActivityReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))
+// The merged reader is inspected separately before the retained activity reader proof.
+// These exact source bytes are compared only; reconstructed test text is never executed.
+const nextLayerJointPin = Object.freeze({
+  "revision": "3217dd945b5c5641ab0414630c58c1f97ef40ec1",
+  "sha256": "93680640a6e868c89f14421d63b55b74dcd5a3442c1e22eccb165f7d63887463",
+  "blob": "8878ffb12bde51589a0683761f714e50002bbc81",
+  "rawSha256": {
+    "lf": "93680640a6e868c89f14421d63b55b74dcd5a3442c1e22eccb165f7d63887463",
+    "crlf": "58258a0f5a34b18dc4812ff34004a87313f0fdee34a10df79fa214500a5e3fdb"
+  },
+  "predecessorRevision": "e3211c2619b43a51b943626b35174cad3ab38e23",
+  "predecessorSha256": "71fbdfe52b0c1c1e4815d919e74bb86811595e61e0eaf36dcd432de2cb2aaa1d",
+  "predecessorBlob": "840ae51c78eeed77a461c537cae6b86a3a48af21"
+});
+const nextLayerJointInverses = Object.freeze([
+  {
+    "current": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';\nimport {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';\n// Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n",
+    "baseline": "import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n"
+  },
+  {
+    "current": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n",
+    "baseline": "let negatives=0,hunks=0;\nfor(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){\n  const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);\n  assert.equal(deedQuestSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))).replaceAll('\\r\\n','\\n'),current,'Complete actual source is independently pinned');\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);\n  assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);\n  const actual=[];let chunk;\n"
+  },
+  {
+    "current": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n",
+    "baseline": "for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){\n  const text='unknown\\r\\nbytes\\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;\n}\nconst file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(fs.readFileSync(file,'utf8'));\nconst prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));\nassert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);\nassert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);\n"
+  }
+].map(inverse => Object.freeze(inverse)));
+const nextLayerJointCurrent = git('show', nextLayerJointPin.revision + ':test/next-layer-source-compatibility.js');
+const nextLayerJointPredecessor = git('show', nextLayerJointPin.predecessorRevision + ':test/next-layer-source-compatibility.js');
+for (const [text, sha256, object] of [
+  [nextLayerJointCurrent, nextLayerJointPin.sha256, nextLayerJointPin.blob],
+  [nextLayerJointPredecessor, nextLayerJointPin.predecessorSha256, nextLayerJointPin.predecessorBlob],
+]) {
+  assert.equal(hash(text), sha256);
+  assert.equal(blob(text), object);
+  assert.equal(text, git('cat-file', 'blob', object));
+}
+assert.equal(nextLayerJointPredecessor, nextLayerActivityCurrent);
+const actualNextLayerJointInverses = []; let jointHunk;
+for (const line of git('diff', '--no-ext-diff', '--unified=3', nextLayerJointPin.predecessorBlob, nextLayerJointPin.blob).split('\n')) {
+  if (line.startsWith('@@')) { jointHunk = { current: '', baseline: '' }; actualNextLayerJointInverses.push(jointHunk); }
+  else if (jointHunk && /^[ +\-]/.test(line)) {
+    if (line[0] !== '-') jointHunk.current += line.slice(1) + '\n';
+    if (line[0] !== '+') jointHunk.baseline += line.slice(1) + '\n';
+  }
+}
+assert.deepEqual(nextLayerJointInverses, actualNextLayerJointInverses);
+const inspectNextLayerJointReader = raw => {
+  let text = lf(raw);
+  assert(raw === text || raw === text.replaceAll('\n', '\r\n'), 'Joint reader inspection requires uniform line endings');
+  assert.equal(hash(text), nextLayerJointPin.sha256);
+  assert.equal(blob(text), nextLayerJointPin.blob);
+  assert.equal(hash(raw), nextLayerJointPin.rawSha256[raw.includes('\r\n') ? 'crlf' : 'lf']);
+  assert.equal(text, nextLayerJointCurrent);
+  for (const { current, baseline } of nextLayerJointInverses) {
+    assert.equal(text.split(current).length - 1, 1, 'Exact joint reader inverse occurs once');
+    text = text.replace(current, () => baseline);
+  }
+  assert.equal(hash(text), nextLayerJointPin.predecessorSha256);
+  assert.equal(blob(text), nextLayerJointPin.predecessorBlob);
+  assert.equal(text, nextLayerJointPredecessor);
+  return text;
+};
+for (const raw of [nextLayerJointCurrent, nextLayerJointCurrent.replaceAll('\n', '\r\n')])
+  assert.equal(inspectNextLayerJointReader(raw), nextLayerJointPredecessor);
+const nextLayerJointRefusals = [nextLayerJointCurrent + '\n// unknown reader drift\n',
+  nextLayerJointCurrent.slice(1), '\ufeff' + nextLayerJointCurrent,
+  nextLayerJointCurrent.replace(/\S/, '?'), nextLayerJointCurrent.replace('\n', '\r\n'),
+  nextLayerJointCurrent.replace('\n', '\r'), nextLayerJointPredecessor,
+  nextLayerJointCurrent.replace('assert.equal(NEXT_LAYER_SOURCE_REVISION', 'assert.notEqual(NEXT_LAYER_SOURCE_REVISION')];
+for (const { current, baseline } of nextLayerJointInverses)
+  nextLayerJointRefusals.push(nextLayerJointCurrent.replace(current, ''),
+    nextLayerJointCurrent.replace(current, () => current + current),
+    nextLayerJointCurrent.replace(current, () => baseline),
+    nextLayerJointCurrent.replace(current, () => current.replace(/\S/, '?')));
+const [jointA, jointB] = nextLayerJointInverses;
+nextLayerJointRefusals.push(nextLayerJointCurrent.replace(jointA.current, '@@joint-reader-reorder@@')
+  .replace(jointB.current, () => jointA.current).replace('@@joint-reader-reorder@@', () => jointB.current));
+for (const raw of nextLayerJointRefusals) assert.throws(() => inspectNextLayerJointReader(raw));
+console.log('Next-layer joint reader inspection PASS: 2 line-ending positives, ' + nextLayerJointRefusals.length + ' refusing controls; source text only');
+const nextLayerTest = inspectNextLayerActivityReader(inspectNextLayerJointReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8')))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),
