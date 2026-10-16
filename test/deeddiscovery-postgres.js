@@ -49,6 +49,9 @@ try {
     assert(ddl, `actual ${table} DDL is retained`);
     await first.query(ddl);
   }
+  const definitionHashMigration = definition.match(/ALTER TABLE mystery_instances ADD COLUMN IF NOT EXISTS definition_hash TEXT;[\s\S]*?ALTER TABLE mystery_instances ADD CONSTRAINT mystery_instance_definition_hash[\s\S]*?;/)?.[0];
+  assert(definitionHashMigration, 'the quest definition binding uses its actual additive column and constraint migration');
+  await first.query(definitionHashMigration);
   await first.query("INSERT INTO street_deed_supply VALUES (1,2)");
   await first.query(`INSERT INTO street_deeds(account_id,name,name_lc,district,extracted_by_account)
     VALUES ('legacy','Legacy House','legacy house','docks',NULL),
