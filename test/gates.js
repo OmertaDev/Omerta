@@ -3746,7 +3746,7 @@ scopedSocialContext = async function(db) {
 // ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
 // The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
 // HANG bound cannot contain the expanded property coverage. Browser and real-Postgres checks have
-// separate 25-minute browser and 90-minute FOURTH native bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
+// separate 25-minute browser, 120-minute native core and 90-minute native economy bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
 // places, or let an untracked job inherit one, while still finding both numbers somewhere.
 {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -4110,7 +4110,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at finite120m, browser at25m, both native cohorts at90m and a closed5m required aggregate, with every proof intact');
+  console.log('  ✓ CI keeps suites at finite120m, browser at25m, native core at120m and native economy at90m and a closed5m required aggregate, with every proof intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
