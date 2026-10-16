@@ -1,8 +1,8 @@
 // Exact market-operations source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const MARKET_OPERATIONS_SOURCE_REVISION="b5f7513e9e9f4ad5ebde4db49b9503ae289239da";
-export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="de4208622a8b30de90a709c5f531c9619f6d4dd4";
+export const MARKET_OPERATIONS_SOURCE_REVISION="15e64222d381d77671bfb67d57bca82441ba3bfe";
+export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="03730e511786dfce1808676adeb405ca80f9f9cc";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
   "package.json": {
@@ -360,10 +360,10 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
     ]
   },
   "tools/next-layer-graph-helpers.js": {
-    "currentSha256": "c394bb745f38ac61a2a9826992e79f7db96d98c4ee7eb6a3c736568874085ef8",
-    "currentBlob": "d69ad33d0209b136525429393856ffff1bedf320",
-    "baselineSha256": "df3f01fb2ae2fb0dc3a1881840bbb40e65f44d2c64d359458f7d2459e6d24861",
-    "baselineBlob": "1d2f815f3aac6b99e7fa3cb9bc214c36a2d7de4b",
+    "currentSha256": "0054079a1f9c8d63708023d21e7de1a0e7d2b5514121ff1a64e9053e3db5241b",
+    "currentBlob": "627226eb5b54f0fd60f6a0ef9006ddbf85c90b59",
+    "baselineSha256": "79bd5cb2eb3e27b98c0cf80f6cd9be40e442125504004d7d824d046f5c488175",
+    "baselineBlob": "b89cf99dee4bd304b7b5e1ca051d88cff997cabc",
     "contextLines": 3,
     "inverses": [
       {
