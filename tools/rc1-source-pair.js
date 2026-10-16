@@ -229,12 +229,12 @@ export const ROOT_MARKET_COMBINED_ADDITIVE_PAIR = Object.freeze({
 });
 
 export const MARKET_OPERATIONS_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "f89df180aa54e71cb17431d5324d3d9344ca7de0",
-  "reviewedCandidate": "3ad80066b672496f1c0823d5e54f482999e487cd",
-  "predecessorTree": "d0f90ca436b4a1c6fbb6a3c0ee0b205291d9736af403963eeeb70603ec95c7ad",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "reviewedCandidate": "f318f36ba459a2f29bc88927f39cba4ba8e0a4ca",
+  "predecessorTree": "dfbf7b9de5b71641b1f975bba74046552a7434034ccda892fa2da8f1d6da12ed",
   "predecessorSchema": "1fbe97d1f971d908623d5cd7cbd7aab4e2411844c1d8be2688cdbaaba558f137",
   "predecessorCatalog": "24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522",
-  "candidateTree": "b448703df39220e6190632c6944c9d66eb197a2b71ef8ea69731666ad6cd2f63",
+  "candidateTree": "dea80ada4bb4748eca84204b3ce7dda0bc7cbed71e6d6b90ccfeadf5c726baa6",
   "candidateSchema": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
   "candidateCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
   "constraints": 70,
