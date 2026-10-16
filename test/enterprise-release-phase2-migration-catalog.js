@@ -29,9 +29,11 @@ const uniform=text=>{const normalized=lf(text);return !normalized.includes('\r')
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
 const frozenText=(relative,expected)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
 frozenText('../tools/enterprise-release-phase2-migration-catalog.js','fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570');
-frozenText('../tools/market-operations-release-phase2-migration-catalog.js','1998dfc3fa3f3f2584abd51b64106693b22d963039e7c9302bea7b582cd7aab7');
+frozenText('../tools/market-operations-release-phase2-migration-catalog.js','689d63b4273296c247fb130566a96d9c1beb049c8b0bde3169b988f66074acf1');
+frozenText('../tools/enterprise-deed-release-phase2-migration-catalog.js','8ed9ee0e08e9bbbc25bc921ea5ec96e4de495121454b0e21857a7d318f31a49e');
 // All endpoint/environment/preload admission above precedes these helper imports, including their pg dependency.
-const enterprise=await import('../tools/enterprise-release-phase2-migration-catalog.js');
+const historicalEnterprise=await import('../tools/enterprise-release-phase2-migration-catalog.js');
+const enterprise=await import('../tools/enterprise-deed-release-phase2-migration-catalog.js');
 const prior=await import('../tools/market-operations-release-phase2-migration-catalog.js');
 const nextLayer=await import('../tools/next-layer-release-phase2-migration-catalog.js');
 const nextFive=await import('../tools/next-five-release-phase2-migration-catalog.js');
@@ -49,7 +51,8 @@ assert.equal(Buffer.byteLength(append),6522);assert.equal(append.split('\n').len
 assert.equal(sources.predecessor,old.predecessor+append);
 for(const input of[sources.current,sources.current.replaceAll('\n','\r\n')])assert.equal(enterpriseMigrationPredecessor(input),sources.predecessor);
 for(const input of[sources.predecessor,sources.predecessor.replaceAll('\n','\r\n')])assert.equal(enterpriseNativeHistoricalPredecessor(input),prior.marketOperationsNativeHistoricalPredecessor(old.predecessor));
-const actualSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(actualSchema));assert.equal(lf(actualSchema),sources.current);
+const actualSchema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(actualSchema));const currentDeed=enterprise.enterpriseCurrentDeedSources(actualSchema);assert.equal(currentDeed.predecessor,sources.current);assert.throws(()=>historicalEnterprise.enterpriseMigrationPredecessor(actualSchema),error=>error?.code==='ERR_ASSERTION','Raw555 never gains historical551 admission');
+const currentDeedBranches=enterprise.enterpriseCurrentDeedNativeSources();assert.equal(lf(actualSchema),currentDeedBranches.current);assert.equal(hash(currentDeedBranches.premain),'5cba5f46e5b29c9a4e46e8172ef4d025db388f468f0d3789a0ae359c4812b480');
 assert.deepEqual(ENTERPRISE_TABLES,['workshop_floorplans','workshop_floor_requests','manufacturing_licenses','manufacturing_license_requests','mobile_shops','mobile_shop_requests','business_relocation_plans','business_relocation_requests','equipment_recovery_requests']);
 assert.deepEqual(ENTERPRISE_NATIVE_TABLES,[...prior.MARKET_OPERATIONS_NATIVE_TABLES,...ENTERPRISE_TABLES]);assert.equal(ENTERPRISE_NATIVE_TABLES.length,23);
 assert.equal(ENTERPRISE_ADDITIONS.added.length,73);assert.equal(Object.keys(ENTERPRISE_ADDITIONS.notNullColumns).length,9);assert.equal(Object.values(ENTERPRISE_ADDITIONS.notNullColumns).flat().length,73);
@@ -96,6 +99,9 @@ if(native){
     const result=await verifyEnterpriseNativeBranches(pool,endpoint.href);
     const frozen=value=>{if(value&&typeof value==='object'){assert(Object.isFrozen(value),'Every exposed expected metadata object/array is frozen');Object.values(value).forEach(frozen);}};
     for(const name of['current','iv','main','common'])frozen(result[name]);
+    for(const catalog of[result.deedCurrent,result.deedPremain]){frozen(catalog.reference);frozen(catalog.baselineReference);catalog.verifyMetadata(catalog.reference);for(const field of['relations','columns','constraints','indexes']){const tableOf=row=>field==='relations'?row.name:row.table_name;assert.deepEqual(catalog.reference[field].filter(row=>ENTERPRISE_TABLES.includes(tableOf(row))),catalog.baselineReference[field].filter(row=>ENTERPRISE_TABLES.includes(tableOf(row))),'All9 Enterprise complete '+field+' retained through actual Deed delta');}}
+    result.verify(result.deedCurrent.reference);
+
     const main=new Set(ENTERPRISE_RELEASE_PHASE2_TABLES),retained=new Set(ENTERPRISE_NATIVE_TABLES),sorted=rows=>rows.map(row=>JSON.stringify(row)).sort(),same=(a,b,message)=>assert.deepEqual(sorted(a),sorted(b),message);
     for(const table of ENTERPRISE_NATIVE_TABLES)same(result.current.columns.filter(row=>row.table_name===table&&row.not_null).map(row=>row.column_name),ENTERPRISE_NATIVE_ADDITIONS.notNullColumns[table],'All217 original/new required columns remain exact before projection');
     for(const includeNotNull of[true,false]){

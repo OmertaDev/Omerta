@@ -1,5 +1,5 @@
 // Closed pure-control fixtures. Historical source execution never admits the current release.
-import { enterpriseSourceBaseline } from '../../tools/enterprise-source-compatibility.js';
+import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
 import { fourthBatchSourceBaseline } from '../../tools/rc1-fourth-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -127,10 +127,18 @@ function historicalApplicationSource(file, input) {
   assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);
   return blob(file, history);
 }
+
+function currentHistoricalApplicationSource(file,input){
+  const p=Object.hasOwn(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,file)?ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS[file]:Object.hasOwn(ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES,file)?ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES[file]:null;
+  // Only exact declared current bytes take the new layer; every other input still faces the unchanged full Root historical-body guards.
+  if(p&&typeof input==='string'&&sha256(canonical(input))===p.currentSha256)return historicalApplicationSource(file,enterpriseOverRootSourceBaseline(file,input));
+  return historicalApplicationSource(file,input);
+}
+
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const selected = historicalApplicationSource(file, enterpriseSourceBaseline(file, originalRead(path.join(root, file))));
+    const selected = currentHistoricalApplicationSource(file, originalRead(path.join(root, file)));
     checked.add(file);
     return selected;
   }
@@ -311,13 +319,14 @@ function rejectHistoricalApplicationSources() {
   let positives = 0, refusals = 0;
   for (const file of files) {
     const raw = String(originalRead(path.join(root, file))), current = canonical(raw);
-    const deedRaw = marketOverDeedSourceBaseline(file, raw), deedCurrent = canonical(deedRaw);
+    const rootRaw = enterpriseOverRootSourceBaseline(file,raw), rootCurrent = canonical(rootRaw);
+    const deedRaw = marketOverDeedSourceBaseline(file, rootRaw), deedCurrent = canonical(deedRaw);
     const witness = assertDeedQuestSourceTransfer(file, deedRaw).baselineText;
     const expected = blob(file, history), frozen = String(blob(file, release));
-    const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
-    for (const source of new Set([current, deedCurrent, witness, frozen])) {
+    const reject = supplied => { assert.throws(() => currentHistoricalApplicationSource(file, supplied)); refusals++; };
+    for (const source of new Set([current, rootCurrent, deedCurrent, witness, frozen])) {
       for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
-        const selected = historicalApplicationSource(file, supplied);
+        const selected = currentHistoricalApplicationSource(file, supplied);
         assert.equal(sha256(selected), sha256(expected));
         assert.equal(blobHash(selected), history.get(file));
         positives++;
@@ -339,7 +348,7 @@ function rejectHistoricalApplicationSources() {
     ['src/db.js', phase1], ['tools/release-source-transfer.js', phase1],
     ['src/deeddiscovery.js', String(originalRead(path.join(root, 'src/deeddiscovery.js')))],
   ];
-  for (const [file, raw] of denied) { assert.throws(() => historicalApplicationSource(file, raw)); refusals++; }
+  for (const [file, raw] of denied) { assert.throws(() => currentHistoricalApplicationSource(file, raw)); refusals++; }
   console.log(`PASS_HISTORICAL_APPLICATION_GUARDS: ${positives} exact fe4-body controls; ${refusals} raw/inverse/domain refusals; no current runtime execution`);
 }
 

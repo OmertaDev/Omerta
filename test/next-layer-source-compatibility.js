@@ -1,3 +1,4 @@
+import {enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';
 import {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 // Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.
@@ -16,7 +17,7 @@ assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
   const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
+  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8'))))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;
@@ -40,7 +41,7 @@ for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
 for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){
   const text='unknown\r\nbytes\n';assert.throws(()=>assertNextLayerSourceTransfer(file,text));assert.equal(nextLayerSourceBaseline(file,text),text);negatives++;
 }
-const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')));
+const file='test/lib/phase2-architecture-upgrade-catalog.json',current=JSON.parse(marketOperationsSourceBaseline(file,enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8'))));
 const prior=JSON.parse(git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file));
 assert.equal(prior.added.length,1243);assert.equal(current.added.length,1332);
 assert.deepEqual(current.added.slice(0,1243),prior.added);assert.deepEqual(current.removed,prior.removed);
