@@ -90,7 +90,7 @@ export async function cityIntel(pool, accountId) {
   });
 }
 
-export async function cityPresence(pool, accountId, onlineIds = [], query = {}) {
+export async function cityPresence(pool, accountId, onlineIds = [], query = {}, activityRegistry = null, ownerActivityRegistry = null) {
   if (Object.keys(query).some(k => !['cursor', 'limit'].includes(k))) fail('bad_city_presence', 'Unknown presence filter.');
   const limit = query.limit === undefined ? 24 : Number(query.limit);
   if (!Number.isInteger(limit) || limit < 1 || limit > 40) fail('bad_city_presence', 'Presence limit must be between 1 and 40.');
@@ -120,7 +120,11 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
     const online = new Set(onlineIds), more = rows.length > limit;
     const actors = rows.slice(0, limit).map(row => {
       const rumor = rumorOf(row);
-      return { ...actorOf(row, online, known.get(row.id)), actions: [{
+      const actor = actorOf(row, online, known.get(row.id));
+      // An unknown face's timing must not link it to the named public wire.
+      const activity = row.is_npc || (actor.name && actor.observedAt && actor.source)
+        ? activityRegistry?.read(row, viewer) : null;
+      return { ...actor, ...(activity ? { activity } : {}), actions: [{
         id: 'encounter:' + row.id, label: (row.is_npc ? 'Ask about ' : 'Compare rumors about ') + rumor.subject, method: 'POST',
         topic: { id: rumor.id, title: rumor.title, teaser: rumor.teaser },
         path: '/v1/city/encounters/' + encodeURIComponent(row.id),
@@ -128,7 +132,9 @@ export async function cityPresence(pool, accountId, onlineIds = [], query = {}) 
         consequence: 'Adds this unverified rumor and an observation of this person to your private journal.',
       }] };
     });
-    return { viewer, district: { id: viewer.district, name: districtName(viewer.district) }, actors,
+    const ownerActivity = ownerActivityRegistry?.read(owner, viewer);
+    return { viewer: ownerActivity ? { ...viewer, activity: ownerActivity } : viewer,
+      district: { id: viewer.district, name: districtName(viewer.district) }, actors,
       nextCursor: more ? Buffer.from(JSON.stringify({ ...viewer, after: actors.at(-1).id })).toString('base64url') : null,
       hasMore: more, placement: 'approximate_district', generatedAt: new Date().toISOString() };
   });

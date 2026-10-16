@@ -83,6 +83,76 @@ import { mintLimitedRun } from '../src/economy.js';
 const decomment = (s) => s.replace(/^[ \t]*\/\/.*$/gm, '');
 const html = decomment(readFileSync(new URL('../public/index.html', import.meta.url), 'utf8'));
 
+// Command retries can return a fresh projection with a domain replay flag and
+// no HTTP replay header. Neither replay form may start a new avatar cue.
+{
+  const apiStart = html.indexOf('  async function apiNow('), apiEnd = html.indexOf('  let worldProjection', apiStart);
+  const activityStart = html.indexOf('  function recordCityAction('), activityEnd = html.indexOf('  function clearScopedOperations(', activityStart);
+  assert(apiStart >= 0 && apiEnd > apiStart && activityStart >= 0 && activityEnd > activityStart);
+  for (const [status, headerReplay, body, expected] of [
+    [200, false, { replayed: false }, true],
+    [200, true, {}, false],
+    [200, false, { replayed: true }, false],
+    [503, false, {}, false],
+  ]) {
+    const observed = await vm.runInNewContext(`(async () => {
+      let _cityActivityReceipt = null;
+      const me = { id: 'current-owner', generation: 1, loc: 'docks' }, publishCityWorld = () => {};
+      ${html.slice(apiStart, apiEnd)}
+      ${html.slice(activityStart, activityEnd)}
+      const result = await apiNow('POST', '/v1/commands/execute', {}, { idempotencyKey: 'one-command' });
+      recordCityAction('POST', '/v1/commands/execute', result, 'one-command', 'Command completed', () => true);
+      return !!_cityActivityReceipt;
+    })()`, { fetch: async () => ({ status, headers: { get: () => headerReplay ? 'true' : null }, json: async () => body }) });
+    assert.equal(observed, expected, 'Only fresh successful commands create an owner cue.');
+  }
+}
+
+// Run the actual action bridge: a successful mutation is not enough to stamp a
+// city cue when the canonical refresh failed or was ignored. A same-scope success
+// still confirms, while successful travel retires the old district's feedback.
+{
+  const actStart = html.indexOf('  async function act('), actEnd = html.indexOf('  const wallets = new Map();', actStart);
+  const cueStart = html.indexOf('  function recordCityAction('), cueEnd = html.indexOf('  function clearScopedOperations(', cueStart);
+  assert(actStart >= 0 && actEnd > actStart && cueStart >= 0 && cueEnd > cueStart);
+  for (const [refreshCode, ignored, path, expectedKind] of [
+    [503, false, '/v1/travel/neon', null],
+    [200, true, '/v1/travel/neon', null],
+    [200, false, '/v1/travel/neon', null],
+    [200, false, '/v1/train/muscle', 'train'],
+  ]) {
+    const observed = await vm.runInNewContext(`(async () => {
+      let acting = false, activatedControl = null, operationPending = null, _operationResponseCurrent = null;
+      let _cityActivityReceipt = null, _cityAuthorityRevision = 1;
+      let me = { id: 'owner', generation: 1, loc: 'docks' };
+      const noop = () => {}, node = { textContent: '' };
+      const operationName = () => 'Confirmed action', uuid = () => 'one-action', operationSnapshot = value => ({ ...value });
+      const cityIdentity = () => [me.id, me.generation, me.loc].join(':');
+      const projections = { snapshot: () => 1, current: () => true };
+      const publishCityWorld = noop, renderOperationPending = noop, toast = noop, renderActive = noop;
+      const describe = () => 'Completed', cineFor = () => null, revealFor = noop, sfx = noop, bragText = () => null;
+      const busy = { setAttribute: noop, removeAttribute: noop, classList: { add: noop, remove: noop } };
+      const document = { body: { style: {} } }, $ = () => node;
+      const api = async () => ({ code: 200, body: {}, replayed: false });
+      const refresh = async () => {
+        if (${refreshCode} === 200 && !${ignored} && ${JSON.stringify(path)}.includes('/travel/')) {
+          me = { ...me, loc: 'neon' }; _cityAuthorityRevision++;
+        }
+        return { code: ${refreshCode}, ignored: ${ignored}, body: {} };
+      };
+      let operationReceipt = null;
+      const recordOperation = value => (operationReceipt = value);
+      ${html.slice(cueStart, cueEnd)}
+      ${html.slice(actStart, actEnd)}
+      const result = await act('POST', ${JSON.stringify(path)}, {});
+      return { code: result.code, receiptRecorded: !!operationReceipt, kind: _cityActivityReceipt?.receipt.kind || null };
+    })()`);
+    assert.equal(observed.code, 200, 'A failed refresh must not relabel the confirmed action result.');
+    assert.equal(observed.receiptRecorded, true, 'The ordinary operation receipt remains available for recovery.');
+    assert.equal(observed.kind, expectedKind, 'Only a current, successful canonical refresh permits a city cue.');
+  }
+}
+
 // Resource feedback uses a confirmed action's before/after balances. Missing fields,
 // changed actors and failed refreshes must never become an invented reward or cost.
 {
@@ -94,7 +164,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
   assert(start >= 0 && end > start && receiptEnd > receiptStart);
   const feedback = vm.runInNewContext(`(() => {
     const fmt = value => String(value), describe = () => 'confirmed', renderOperationFeed = () => {};
-    const operationRecovery = () => null, operationReceipts = []; let operationSeq = 0, _operationResponseCurrent = null;
+    const operationRecovery = () => null, operationReceipts = []; let operationSeq = 0, _operationResponseCurrent = null, _cityActivityReceipt = null;
     ${html.slice(clearStart, start)}
     ${html.slice(start, end)}
     ${html.slice(receiptStart, receiptEnd)}

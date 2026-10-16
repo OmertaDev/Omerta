@@ -12,6 +12,13 @@ import { STRATEGY_LEAGUE_SOURCE_CURRENT_PINS } from '../tools/rc1-strategy-leagu
 import { playerIntelSourceBaseline } from '../tools/player-intel-source-compatibility.js';
 import { cityHomesLeagueSourceBaseline } from '../tools/rc1-deed-source-compatibility.js';
 import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
+import { CITY_ACTIVITY_SOURCE_TRANSFER, CITY_ACTIVITY_SOURCE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER,
+  CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES, cityActivitySourceBaseline,
+  qualifyCityActivitySource, qualifyCityActivityPackageSource } from '../tools/rc1-city-activity-source-compatibility.js';
+import { CITY_ACTIVITY_MARKET_SOURCE_REVISION, CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR,
+  CITY_ACTIVITY_MARKET_SOURCE_PHASE, CITY_ACTIVITY_MARKET_SOURCE_DOMAINS,
+  CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_MARKET_PACKAGE_INVERSES,
+  qualifyCityActivityMarketSource, cityActivityMarketSourceBaseline } from '../tools/rc1-city-activity-market-source-compatibility.js';
 import { MARKET_FEED_SOURCE_CURRENT_PINS } from '../tools/rc1-market-feed-source-compatibility.js';
 import { COMPANY_SUCCESSION_SOURCE_CURRENT_PINS, COMPANY_SUCCESSION_SOURCE_TRANSFER } from '../tools/rc1-company-succession-source-compatibility.js';
 import { STRATEGY_SOURCE_TRANSFER } from '../tools/rc1-strategy-source-compatibility.js';
@@ -60,7 +67,181 @@ import { verifyWorldRecoverySources, canonicalRecoveryWitnesses, joinWorldCheckp
   evaluateWorldDuration, WORLD_RECOVERY_REVIEW, WORLD_DURATION_CANDIDATES } from '../tools/rc1-world-qualification.js';
 
 const hash = value => sha256(canonicalJson(value)), clone = value => structuredClone(value), DAY = 86400000;
-const homesServerText = companyOperatorSourceBaseline('src/server.js',cityGameplaySourceBaseline('src/server.js',await fs.readFile('src/server.js','utf8')));
+const readActivityBlob = spec => execFileSync('git', ['cat-file', 'blob', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_REVISION, '3217dd945b5c5641ab0414630c58c1f97ef40ec1');
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR, 'b6be98c7e0233c4b35a74467828e24080b16b0eb');
+assert.equal(CITY_ACTIVITY_MARKET_SOURCE_PHASE, 'exact-two-file-source-comparison-only; no runtime, native, migration, financial, economic, deployment or onchain qualification');
+assert.deepEqual(Object.keys(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS), ['package.json', 'src/server.js']);
+assert.deepEqual(CITY_ACTIVITY_MARKET_SERVER_INVERSES, CITY_ACTIVITY_SOURCE_INVERSES);
+assert.deepEqual(CITY_ACTIVITY_MARKET_PACKAGE_INVERSES, CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES);
+let jointPositives = 0, jointRefusals = 0;
+for (const [file, pin] of Object.entries(CITY_ACTIVITY_MARKET_SOURCE_DOMAINS)) {
+  const raw = await fs.readFile(file, 'utf8'), current = raw.replaceAll('\r\n', '\n');
+  const expected = readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR + ':' + file);
+  assert.equal(current, readActivityBlob(CITY_ACTIVITY_MARKET_SOURCE_REVISION + ':' + file));
+  assert.equal(current, readActivityBlob(pin.currentBlob));
+  assert.equal(expected, readActivityBlob(pin.baselineBlob));
+  assert(Object.isFrozen(pin) && Object.isFrozen(pin.currentRawSha256));
+  for (const input of [current, current.replaceAll('\n', '\r\n')]) {
+    const proof = qualifyCityActivityMarketSource(file, input);
+    assert.equal(proof.actualSha256, pin.currentSha256);
+    assert.equal(proof.rawSha256, sha256(input));
+    assert.equal(proof.rawSha256, pin.currentRawSha256[input.includes('\r\n') ? 'crlf' : 'lf']);
+    assert.equal(proof.sourceBlob, pin.currentBlob);
+    assert.equal(proof.baselineSha256, pin.baselineSha256);
+    assert.equal(proof.predecessorBlob, pin.baselineBlob);
+    assert.equal(proof.sourceRevision, CITY_ACTIVITY_MARKET_SOURCE_REVISION);
+    assert.equal(proof.predecessorRevision, CITY_ACTIVITY_MARKET_SOURCE_PREDECESSOR);
+    assert.equal(proof.phase, CITY_ACTIVITY_MARKET_SOURCE_PHASE);
+    assert.equal(proof.sourceOnly, true);
+    assert.equal(proof.inverseChunks, file === 'package.json' ? 3 : 5);
+    assert.equal(proof.baselineText, expected);
+    assert.equal(cityActivityMarketSourceBaseline(file, input), expected);
+    assert.equal(cityActivitySourceBaseline(file, input), expected);
+    jointPositives++;
+  }
+  const reject = input => {
+    assert.notEqual(input, current);
+    assert.throws(() => qualifyCityActivityMarketSource(file, input));
+    assert.equal(cityActivityMarketSourceBaseline(file, input), input);
+    assert.equal(cityActivitySourceBaseline(file, input), input);
+    jointRefusals++;
+  };
+  for (const input of [current + '\n// unreviewed drift\n', current.slice(1), '\ufeff' + current, current.replace(/\S/, '?')]) reject(input);
+  for (const input of [current.replace('\n', '\r\n'), current.replace('\n', '\r')]) {
+    assert.throws(() => qualifyCityActivityMarketSource(file, input));
+    assert.throws(() => cityActivityMarketSourceBaseline(file, input));
+    assert.throws(() => cityActivitySourceBaseline(file, input));
+    jointRefusals++;
+  }
+  const chunks = file === 'src/server.js' ? CITY_ACTIVITY_MARKET_SERVER_INVERSES.map(pair => pair[0])
+    : CITY_ACTIVITY_MARKET_PACKAGE_INVERSES.map(spec => current.split('\n').find(line => line.startsWith('    ' + JSON.stringify(spec.key) + ': ')));
+  for (const chunk of chunks) {
+    assert.equal(current.split(chunk).length, 2);
+    reject(current.replace(chunk, ''));
+    reject(current.replace(chunk, () => chunk + chunk));
+    reject(current.replace(chunk, () => chunk.replace(/\S/, '?')));
+  }
+  const [a, b] = chunks;
+  reject(current.replace(a, '@@activity-market-reorder@@').replace(b, () => a).replace('@@activity-market-reorder@@', () => b));
+  const mutations = file === 'src/server.js' ? [
+    ['ownerOnly: true', 'ownerOnly: false'],
+    ['JSON.parse(body)?.replayed === true', 'JSON.parse(body)?.replayed === false'],
+    ["reply.getHeader('x-idempotent-replay') || reply[cityActivityReplay]", 'false'],
+    ['registerCrossDocking(app,{pool,auth})', 'registerCrossDocking(app,{pool,auth:null})'],
+    ['registerProductionSlots(app,{pool,auth})', 'registerProductionSlots(app,{pool,auth:null})'],
+    ['registerMerchantReturns(app,{pool,auth,assertLifecycle:assertItemTransaction})', 'registerMerchantReturns(app,{pool,auth})'],
+  ] : [
+    ['node test/city-activity.js', 'node test/city-presence.js'],
+    ['node test/deed-market-source-compatibility.js', 'node test/unknown.js'],
+    ['npm run test:agent-economy-market-operations', 'npm run test:unknown'],
+    ['"start": "node src/server.js"', '"start": "node src/worker.js"'],
+  ];
+  for (const [before, after] of mutations) {
+    assert(current.includes(before), 'Joint semantic control must change current merged source');
+    reject(current.replace(before, after));
+  }
+  assert.throws(() => qualifyCityActivityMarketSource(file, expected));
+  assert.equal(cityActivityMarketSourceBaseline(file, expected), expected);
+}
+for (const file of ['__proto__', 'src/city-activity.js', 'src/crossdocking.js', 'src/productionslots-contracts.js', 'schema.sql', 'package-lock.json']) {
+  const input = 'unknown\r\nbytes\n';
+  assert.throws(() => qualifyCityActivityMarketSource(file, input));
+  assert.equal(cityActivityMarketSourceBaseline(file, input), input);
+  assert.equal(cityActivitySourceBaseline(file, input), input);
+  jointRefusals++;
+}
+console.log(`City activity market source inspection PASS: ${jointPositives} exact current LF/CRLF positives, ${jointRefusals} refusing controls; two files, source text only`);
+// Retain the prior activity profile's exact immutable controls independently of the new junction.
+const activityPackageRaw = readActivityBlob(CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualBlob);
+const activityPackageText = activityPackageRaw.replaceAll('\r\n', '\n');
+const activityPackageProof = qualifyCityActivityPackageSource(activityPackageRaw);
+assert.equal(activityPackageProof.actualSha256, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualSha256);
+assert.equal(activityPackageProof.rawSha256, sha256(activityPackageRaw));
+assert.equal(activityPackageProof.sourceBlob, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualBlob);
+assert.equal(activityPackageProof.baselineSha256, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.predecessorSha256);
+assert.equal(activityPackageProof.predecessorBlob, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.predecessorBlob);
+assert.equal(activityPackageProof.inverseChunks, 3);
+assert.deepEqual(CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES.map(spec => spec.key), ['test', 'test:city', 'test:city:browser']);
+for (const spec of [activityPackageProof.predecessorRevision + ':package.json', activityPackageProof.predecessorBlob])
+  assert.equal(activityPackageProof.baselineText, execFileSync('git', ['cat-file', 'blob', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }));
+for (const ending of ['\n', '\r\n']) {
+  const input = activityPackageText.replaceAll('\n', ending), proof = qualifyCityActivityPackageSource(input);
+  assert.equal(proof.rawSha256, CITY_ACTIVITY_PACKAGE_SOURCE_TRANSFER.actualRawSha256[ending === '\n' ? 'lf' : 'crlf']);
+  assert.equal(proof.baselineText, activityPackageProof.baselineText);
+  assert.equal(cityActivitySourceBaseline('package.json', input), activityPackageProof.baselineText);
+}
+const rejectActivityPackage = changed => {
+  assert.notEqual(changed, activityPackageText);
+  assert.throws(() => qualifyCityActivityPackageSource(changed), /source changed/);
+  assert.equal(cityActivitySourceBaseline('package.json', changed), changed, 'Unknown package bytes must not be rewritten');
+};
+for (const spec of CITY_ACTIVITY_PACKAGE_SOURCE_INVERSES) {
+  const lines = activityPackageText.split('\n').filter(line => line.startsWith('    ' + JSON.stringify(spec.key) + ': '));
+  assert.equal(lines.length, 1);
+  const line = lines[0];
+  assert.equal(sha256(line), spec.currentLineSha256);
+  assert.equal(line.split(spec.current).length, 2);
+  for (const changed of [activityPackageText.replace(line + '\n', ''), activityPackageText.replace(line, line + '\n' + line),
+    activityPackageText.replace(line, line.replace(spec.current, spec.prior)),
+    activityPackageText.replace(line, line.replace(spec.current, spec.current + ' && node test/unreviewed.js'))]) rejectActivityPackage(changed);
+}
+for (const [before, after] of [
+  ['node test/city-activity.js', 'node test/city-presence.js'],
+  ['node test/city-dashboard-host-browser.js', 'node test/city-scene-browser.js'],
+  ['"start": "node src/server.js"', '"start": "node src/worker.js"'],
+]) {
+  assert(activityPackageText.includes(before));
+  rejectActivityPackage(activityPackageText.replace(before, after));
+}
+for (const changed of [activityPackageText + '\n', '\ufeff' + activityPackageText]) rejectActivityPackage(changed);
+for (const changed of [activityPackageText.replace('\n', '\r\n'), activityPackageText.replace('\n', '\r')])
+  assert.throws(() => qualifyCityActivityPackageSource(changed), /source changed/);
+assert.equal(cityActivitySourceBaseline('package.json', activityPackageProof.baselineText), activityPackageProof.baselineText);
+assert.equal(cityActivitySourceBaseline('package-lock.json', activityPackageRaw), activityPackageRaw);
+const activityServerRaw = readActivityBlob(CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob);
+const activityServerText = activityServerRaw.replaceAll('\r\n', '\n');
+const activityProof = qualifyCityActivitySource(activityServerRaw);
+assert.equal(activityProof.actualSha256, CITY_ACTIVITY_SOURCE_TRANSFER.actualServerSha256);
+assert.equal(activityProof.rawSha256, sha256(activityServerRaw));
+assert.equal(activityProof.sourceBlob, CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob);
+assert.equal(activityProof.baselineSha256, CITY_ACTIVITY_SOURCE_TRANSFER.predecessorServerSha256);
+assert.equal(activityProof.predecessorServerBlob, CITY_ACTIVITY_SOURCE_TRANSFER.predecessorServerBlob);
+assert.equal(activityProof.predecessorRevision, CITY_ACTIVITY_SOURCE_TRANSFER.predecessorRevision);
+assert.equal(activityProof.inverseChunks, 5);
+for (const spec of [activityProof.predecessorRevision + ':src/server.js', activityProof.predecessorServerBlob])
+  assert.equal(activityProof.baselineText, execFileSync('git', ['cat-file', 'blob', spec], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }));
+for (const ending of ['\n', '\r\n']) {
+  const input = activityServerText.replaceAll('\n', ending), proof = qualifyCityActivitySource(input);
+  assert.equal(proof.rawSha256, CITY_ACTIVITY_SOURCE_TRANSFER.actualRawServerSha256[ending === '\n' ? 'lf' : 'crlf']);
+  assert.equal(proof.baselineText, activityProof.baselineText);
+}
+for (const [chunk] of CITY_ACTIVITY_SOURCE_INVERSES) {
+  assert.equal(activityServerText.split(chunk).length, 2);
+  for (const changed of [activityServerText.replace(chunk, ''), activityServerText.replace(chunk, chunk + chunk)]) {
+    assert.throws(() => qualifyCityActivitySource(changed), /source changed/);
+    assert.equal(cityActivitySourceBaseline('src/server.js', changed), changed, 'Unknown source must not be rewritten');
+  }
+}
+for (const [before, after] of [
+  ['ownerOnly: true', 'ownerOnly: false'],
+  ["Symbol('cityActivityRequest')", "Symbol('otherRequest')"],
+  ['activityHit || cityOwnerActivityCategory(activityKey)', 'activityHit'],
+  ['JSON.parse(body)?.replayed === true', 'JSON.parse(body)?.replayed === false'],
+  ["reply.getHeader('x-idempotent-replay') || reply[cityActivityReplay]", 'false'],
+  ['reply.statusCode >= 300', 'reply.statusCode >= 400'],
+  ["app.post('/v1/deeds/upgrade', { preHandler: auth }", "app.post('/v1/deeds/upgrade', { preHandler: null }"],
+]) {
+  assert(activityServerText.includes(before), 'Semantic control must change actual current source');
+  const changed = activityServerText.replace(before, after);
+  assert.throws(() => qualifyCityActivitySource(changed), /source changed/);
+  assert.equal(cityActivitySourceBaseline('src/server.js', changed), changed);
+}
+for (const changed of [activityServerText + '\n// unknown suffix\n', activityServerText.replace('\n', '\r\n'), activityServerText.replace('\n', '\r')])
+  assert.throws(() => qualifyCityActivitySource(changed), /source changed/);
+assert.equal(cityActivitySourceBaseline('src/server.js', activityProof.baselineText), activityProof.baselineText);
+assert.equal(cityActivitySourceBaseline('src/unrelated.js', activityServerRaw), activityServerRaw);
+const homesServerText = companyOperatorSourceBaseline('src/server.js',cityGameplaySourceBaseline('src/server.js',cityActivitySourceBaseline('src/server.js',activityServerRaw)));
 const homesProof = assertCityHomesLeagueServerTransfer(homesServerText);
 assert.equal(homesProof.actualSha256, CITY_HOMES_LEAGUE_SERVER_PIN);
 assert.equal(homesProof.baselineSha256, STRATEGY_LEAGUE_SOURCE_CURRENT_PINS['src/server.js']);
@@ -453,7 +634,7 @@ for (const changed of [
   assert.throws(() => assertCitySourceTransfer('src/operations.js', changed), /source changed/);
 }
 for (const file of ['src/server.js', 'src/economy.js']) {
- const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,await fs.readFile(file, 'utf8'))).replaceAll('\r\n', '\n'));
+ const text = playerIntelSourceBaseline(file, cityGameplaySourceBaseline(file,firstBatchSourceBaseline(file,cityActivitySourceBaseline(file,await fs.readFile(file, 'utf8')))).replaceAll('\r\n', '\n'));
  const proof = assertEconomySourceTransfer(file, text);
  assert(proof.inverseChunks > 0);
  assert.equal(sha256(proof.baselineText), proof.baselineSha256);
@@ -508,7 +689,7 @@ assert.match(WORLD_RECOVERY_REVIEW.cityHomesSourceReviewTransfer.scope, /separat
 // sources back to its unchanged pins, never by trusting a supplied transfer tag.
 let coverageSourceControls = 0;
 for (const file of Object.keys(COVERAGE_SOURCE_CURRENT_PINS).filter(file => Object.hasOwn(source.sourceFiles, file))) {
-  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, (await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))))));
+  const current = strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, cityHomesLeagueSourceBaseline(file, cityActivitySourceBaseline(file, await fs.readFile(file, 'utf8')).replaceAll('\r\n', '\n'))))));
   assert.equal(sha256(current), COVERAGE_SOURCE_CURRENT_PINS[file]);
   const prior = execFileSync('git', ['show', COVERAGE_SOURCE_BASELINE_BLOBS[file]], { encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 }).replaceAll('\r\n', '\n');
   for (const bytes of [current, prior, current.replaceAll('\n', '\r\n'), prior.replaceAll('\n', '\r\n')])
@@ -571,7 +752,10 @@ assert.match(WORLD_RECOVERY_REVIEW.citySocialBusinessSourceReviewTransfer.scope,
 assert.equal(source.sourceFiles['src/economy.js'], GOODS_SOURCE_CURRENT_PINS['src/economy.js']);
 assert.equal(source.sourceFiles['src/operations.js'], CITY_SOURCE_CURRENT_PINS['src/operations.js']);
 assert.equal(source.sourceFiles['src/http-idempotency.js'], HTTP_RECEIPT_HELPER_PIN);
-assert.equal(WORLD_RECOVERY_REVIEW.version, 33);
+assert.equal(WORLD_RECOVERY_REVIEW.version, 34);
+assert.deepEqual(WORLD_RECOVERY_REVIEW.cityActivitySourceReviewTransfer, CITY_ACTIVITY_SOURCE_TRANSFER);
+assert.match(WORLD_RECOVERY_REVIEW.cityActivitySourceReviewTransfer.scope, /require separate current-source proofs/);
+assert.match(WORLD_RECOVERY_REVIEW.cityActivitySourceReviewTransfer.scope, /no historical execution, world-soak, native, financial, economic, deployment or onchain qualification/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer, COMPANY_WORKFLOW_SOURCE_TRANSFER);
 assert.match(WORLD_RECOVERY_REVIEW.companyWorkflowSourceReviewTransfer.scope, /require separate current-source workflow proofs/);
 assert.deepEqual(WORLD_RECOVERY_REVIEW.gameEmploymentSourceReviewTransfer, GAME_EMPLOYMENT_SOURCE_TRANSFER);

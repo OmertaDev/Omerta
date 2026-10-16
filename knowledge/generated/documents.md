@@ -372,10 +372,11 @@
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
 | [docs/character-deed-policy-2026-10-14.md](../../docs/character-deed-policy-2026-10-14.md) | documentation | 31 | 2026-10-14 |
+| [docs/city-dashboard-security-review.md](../../docs/city-dashboard-security-review.md) | documentation | 568 | 2026-10-16 |
 | [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 164 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
-| [docs/city-presence.md](../../docs/city-presence.md) | documentation | 14 | 2026-10-10 |
+| [docs/city-presence.md](../../docs/city-presence.md) | documentation | 18 | 2026-10-16 |
 | [docs/city-social-security-review.md](../../docs/city-social-security-review.md) | documentation | 74 | 2026-10-10 |
 | [docs/city-successor-fixture-review.md](../../docs/city-successor-fixture-review.md) | documentation | 63 | 2026-10-11 |
 | [docs/commercial-disputes-security-review.md](../../docs/commercial-disputes-security-review.md) | documentation | 52 | 2026-10-13 |

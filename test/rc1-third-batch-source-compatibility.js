@@ -1,3 +1,4 @@
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { fourthBatchSourceBaseline } from '../tools/rc1-fourth-batch-source-compatibility.js';
 import { releaseSourceBaseline } from '../tools/release-source-transfer.js';
 import assert from 'node:assert/strict';
@@ -15,7 +16,7 @@ let texts=0,hashes=0,blobs=0,hunks=0,negatives=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 const reject=(f,t)=>{assert.throws(()=>O.assertThirdBatchSourceTransfer(f,t));negatives++;entire(O.thirdBatchSourceBaseline(f,t),lf(t));};
 for(const [file,d] of Object.entries(O.THIRD_BATCH_SOURCE_DOMAINS)){
- const current=fourthBatchSourceBaseline(file,releaseSourceBaseline(file,lf(fs.readFileSync(file,'utf8')))),prior=git('show',O.THIRD_BATCH_SOURCE_PREDECESSOR+':'+file);
+ const current=fourthBatchSourceBaseline(file,releaseSourceBaseline(file,lf(cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))))),prior=git('show',O.THIRD_BATCH_SOURCE_PREDECESSOR+':'+file);
  entire(current,git('show',O.THIRD_BATCH_SOURCE_REVISION+':'+file));entire(current,git('cat-file','blob',d.currentBlob));
  assert.equal(hash(current),d.currentSha256);hashes++;assert.equal(blob(current),d.currentBlob);blobs++;
  entire(prior,git('cat-file','blob',d.baselineBlob));assert.equal(hash(prior),d.baselineSha256);hashes++;assert.equal(blob(prior),d.baselineBlob);blobs++;

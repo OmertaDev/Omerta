@@ -56,6 +56,20 @@ if (sha(coordinator) === currentCoordinatorSha) {
 }
 const predecessorApiQueueSha = '61ffdfc08a79dca5491f95abf333f1fc9c9d125f344206a5233063ecaddeeba7';
 const currentApiQueueSha = '0a1714c6aa971e3d16365f390eb03005a820dc19312c8f904c87a7471e2e22fd';
+const cityActivityApiQueueSha = '490beb898976f6e3d94b2adea953b916fa5e9ac0ee1c35fd5fc0cebae9dbcf73';
+const cityActivityKey = `    if (method !== 'GET') options = { ...options, idempotencyKey: options.idempotencyKey || uuid() };
+`;
+const cityActivityPresence = `      // Direct API controls (chat, for example) do not refresh the player through
+      // act(). Read the server's scoped owner receipt instead of animating cached me.
+      if (valid() && method !== 'GET' && !options.activityHandled && result.code >= 200 && result.code < 300 && !result.replayed) scheduleCityPresence();
+`;
+function removeCityActivity(text) {
+  for (const chunk of [cityActivityKey, cityActivityPresence]) {
+    assert.equal(text.split(chunk).length, 2, 'Each reviewed City activity addition has one exact inverse');
+    text = text.replace(chunk, '');
+  }
+  return text;
+}
 const beforeDispatchGuard = `      if (options.beforeDispatch && !options.beforeDispatch()) return { ignored: true, code: 499, body: {} };
 `;
 function removeBeforeDispatchGuard(text) {
@@ -65,12 +79,46 @@ function removeBeforeDispatchGuard(text) {
 function reviewedApiQueue(text) {
   const digest = sha(text);
   if (digest === predecessorApiQueueSha) return digest;
+  if (digest === cityActivityApiQueueSha) {
+    const previous = removeCityActivity(text);
+    assert.equal(sha(previous), currentApiQueueSha, 'The complete pre-activity queue must reconstruct exactly');
+    assert.equal(sha(removeBeforeDispatchGuard(previous)), predecessorApiQueueSha, 'The original queue must reconstruct exactly');
+    return digest;
+  }
   assert.equal(digest, currentApiQueueSha, 'Only the exact reviewed API queue successor is accepted');
   assert.equal(sha(removeBeforeDispatchGuard(text)), predecessorApiQueueSha, 'The complete predecessor API queue must reconstruct exactly');
   return digest;
 }
 const apiQueueSource = source.slice(source.indexOf('  async function api(method,'), source.indexOf('  async function apiNow('));
-const apiQueue = extract('  async function api(method,', '  async function apiNow(', reviewedApiQueue(apiQueueSource));
+const extractedApiQueue = extract('  async function api(method,', '  async function apiNow(', reviewedApiQueue(apiQueueSource));
+const apiQueue = sha(extractedApiQueue) === cityActivityApiQueueSha ? removeCityActivity(extractedApiQueue) : extractedApiQueue;
+// The inverse below is only for historical guard and tamper controls. Current
+// queue probes and the browser board execute the actual extracted source with
+// presentation dependencies stubbed; City/economic qualification is not inherited.
+if (sha(extractedApiQueue) === cityActivityApiQueueSha) {
+  assert.equal(reviewedApiQueue(apiQueue), currentApiQueueSha);
+  for (const chunk of [cityActivityKey, cityActivityPresence]) {
+    const duplicate = extractedApiQueue.replace(chunk, chunk.repeat(2));
+    assert.notEqual(duplicate, extractedApiQueue);
+    assert.throws(() => removeCityActivity(duplicate), /one exact inverse/);
+    assert.throws(() => reviewedApiQueue(duplicate), /exact reviewed API queue successor/);
+    assert.throws(() => reviewedApiQueue(extractedApiQueue.replace(chunk, '')), /exact reviewed API queue successor/);
+  }
+  for (const [before, after] of [
+    ['options.idempotencyKey || uuid()', 'uuid()'],
+    ['!result.replayed', 'result.replayed'],
+    ['!options.activityHandled', 'options.activityHandled'],
+    ['result.code < 300', 'result.code < 400'],
+    ['scheduleCityPresence();', 'scheduleCityPresence(true);'],
+    ['token === authToken', 'token !== authToken'],
+    ['return valid() ? result : neutral;', 'return result;'],
+  ]) {
+    const tampered = extractedApiQueue.replace(before, after);
+    assert.notEqual(tampered, extractedApiQueue);
+    assert.throws(() => reviewedApiQueue(tampered), /exact reviewed API queue successor/);
+  }
+  assert.throws(() => reviewedApiQueue(extractedApiQueue + '\n'), /exact reviewed API queue successor/);
+}
 // The only successor addition is an opt-in check before apiNow. The world-board
 // reads below do not opt in and keep the exact predecessor queue/token behavior.
 // These bounded transport probes qualify the hook's timing, not City gameplay.
@@ -78,7 +126,8 @@ async function probeApiQueue(text, phase) {
   let release, entered;
   const held = new Promise(resolve => { release = resolve; }), started = new Promise(resolve => { entered = resolve; });
   const calls = [], view = { open: true, current: true };
-  const scope = { token: 'first', projections: { invalidate() {} }, apiNow: async (method, path) => {
+  const scope = { token: 'first', uuid: () => 'controlled-receipt', scheduleCityPresence() {},
+    projections: { invalidate() {} }, apiNow: async (method, path) => {
     calls.push({ method, path }); entered(); await held; return { code: 200, body: { ok: true } };
   } };
   vm.runInNewContext('let _authQueue = Promise.resolve();\n' + text + '\nthis.call = api;', scope);
@@ -121,6 +170,13 @@ if (sha(apiQueue) === currentApiQueueSha) {
   assert.equal(lateQueued.posts, 1, 'Moving the hook after apiNow cannot cancel a queued dispatch');
   assert.equal(lateQueued.reply.code, 499);
 }
+if (sha(extractedApiQueue) === cityActivityApiQueueSha) {
+  for (const phase of ['queued', 'dispatched', 'revoked', 'owner-revoked', 'default']) {
+    const { reply, posts } = await probeApiQueue(extractedApiQueue, phase);
+    assert.equal(reply.code, ['queued', 'revoked', 'owner-revoked'].includes(phase) ? 499 : 200, 'Current queue: ' + phase);
+    assert.equal(posts, phase === 'queued' ? 0 : 1, 'Current queue transport count: ' + phase);
+  }
+}
 const command = executionId => ({ commandId: 'craft', commandType: 'recipe.craft', label: 'Craft key', parameters: {},
   availability: 'AVAILABLE', confirmation: { required: false }, executionIdentity: { executionId } });
 const html = `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -140,7 +196,9 @@ function paint(board){
 }
 ${coordinator}
 let token='controlled-session', _authQueue=Promise.resolve();
-${apiQueue}
+const uuid=()=>crypto.randomUUID();
+function scheduleCityPresence(){}
+${extractedApiQueue}
 async function apiNow(method,path){const response=await fetch(path,{method});return {code:response.status,body:await response.json()};}
 const projections=createProjectionRefresh({worldPath:'/v1/commands',request:(path,ticket)=>api('GET',path,undefined,{isCurrent:ticket.isCurrent}),
   clear:()=>{target.innerHTML='<div class="world-card" role="status">Refreshing your street…</div>';},
