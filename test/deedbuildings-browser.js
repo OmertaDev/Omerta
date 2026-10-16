@@ -6,12 +6,22 @@ import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'Property atlas browser proof requires disposable pg-mem');
-const browserRoot = process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'ms-playwright');
-const candidates = process.env.CHROMIUM_PATH ? [process.env.CHROMIUM_PATH] : browserRoot && fs.existsSync(browserRoot)
-  ? fs.readdirSync(browserRoot).filter(name => name.startsWith('chromium')).sort().reverse()
-    .flatMap(name => ['chrome-win64/chrome.exe', 'chrome-win/chrome.exe', 'chrome-linux/chrome']
-      .map(relative => path.join(browserRoot, name, relative))) : [];
-const executablePath = candidates.find(candidate => fs.existsSync(candidate));
+const browserRoots = [process.env.PLAYWRIGHT_BROWSERS_PATH,
+  process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'ms-playwright'),
+  process.env.HOME && path.join(process.env.HOME, '.cache', 'ms-playwright')].filter(Boolean);
+const candidates = process.env.CHROMIUM_PATH ? [process.env.CHROMIUM_PATH] : [chromium.executablePath()];
+if (!process.env.CHROMIUM_PATH) {
+  for (const browserRoot of browserRoots) {
+    if (!fs.existsSync(browserRoot)) continue;
+    for (const name of fs.readdirSync(browserRoot).filter(name => name.startsWith('chromium')).sort().reverse())
+      for (const relative of ['chrome-win64/chrome.exe', 'chrome-win/chrome.exe', 'chrome-linux/chrome',
+        'chrome-linux64/chrome', 'chrome-headless-shell-win64/headless_shell.exe',
+        'chrome-linux/headless_shell', 'chrome-headless-shell-linux64/headless_shell'])
+        candidates.push(path.join(browserRoot, name, relative));
+  }
+  candidates.push('/usr/bin/chromium', '/usr/bin/google-chrome');
+}
+const executablePath = candidates.find(candidate => candidate && fs.existsSync(candidate));
 assert(executablePath, 'Set CHROMIUM_PATH to a Chromium executable');
 process.env.INVITE_MODE = 'off';
 process.env.RATE_LIMIT = 'off';
