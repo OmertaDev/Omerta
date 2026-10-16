@@ -1,5 +1,6 @@
 import { adultAuthFixture } from './auth-fixture.js';
 import { recordPlayerIntel } from '../src/playerintel.js';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 async function seedKnownPlayer(q, ownerCharacterId, targetId) {
   const owner = (await q.query('SELECT account_id FROM characters WHERE id=$1', [ownerCharacterId])).rows[0];
   const target = (await q.query('SELECT * FROM characters WHERE id=$1', [targetId])).rows[0];
@@ -3325,10 +3326,12 @@ for (const [m, url0, payload] of ACTIONS) {
     // shape a RENAME answers with — so it told the player they had just named the place; the marker
     // that fixed it then had to name the SYSTEM rather than the state, because a bare `listed:false`
     // is what a duel DE-listing sends ("off the ladder"). Two collisions, one verb.
-    [dd.t, 'POST', '/v1/deeds/claim', { district: 'docks', name: 'Ledger Row ' + Math.random().toString(36).slice(2, 6) }],
+    [dd.t, 'POST', '/v1/deeds/claim', { buildingId: 'docks-0417', name: 'Ledger Row ' + Math.random().toString(36).slice(2, 6) }],
     [dd.t, 'POST', '/v1/deeds/list', { price: 400000 }],
     [dd.t, 'POST', '/v1/deeds/unlist', null],
   ];
+  await app.pool.query("UPDATE characters SET loc='docks' WHERE id=$1", [dd.id]);
+  await earnBuildingClaim(app, dd.t, 'docks-0417');
   await app.pool.query('UPDATE characters SET heat_exposure=800, heat=70 WHERE id=$1', [club.id]);
   for (const [t, m, url, payload] of w10) {
     const r = await inject(m, url, t, payload);
@@ -8983,7 +8986,8 @@ await app.close();
   // ── F1: the deed receipt names the price the server sent.
   const sellerW = await mk10('W76s'), buyerW = await mk10('W76b');
   const streetW = 'Wave76 Row ' + Math.random().toString(36).slice(2, 6);
-  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { district: 'docks', name: streetW });
+  await earnBuildingClaim(app10, sellerW.token, 'docks-0417');
+  const clm = await inj10('POST', '/v1/deeds/claim', sellerW.token, { buildingId: 'docks-0417', name: streetW });
   assert.equal(clm.code, 200, `WAVE 76 fixture: the seller must hold a street (${JSON.stringify(clm.body)})`);
   const askW = 4321000;
   assert.equal((await inj10('POST', '/v1/deeds/list', sellerW.token, { price: askW })).code, 200,

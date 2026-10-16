@@ -4,13 +4,23 @@
 // changes; test/routes.js asserts the mounted surface is identical.
 import * as Deeds from '../deeds.js';
 import * as G from '../game.js';
+import { buildingAtlas } from '../deedbuildings.js';
+import { discoveryBoard, investigateDeed } from '../deeddiscovery.js';
 
 export function register(app, { pool, auth }) {
+  app.get('/v1/deeds/buildings', { preHandler: auth }, async (req) =>
+    buildingAtlas(pool, { district: req.query?.district }));
+  app.get('/v1/deeds/discovery', { preHandler: auth }, async (req) =>
+    G.readCharacter(pool, req.user.sub, (ch, client) =>
+      discoveryBoard(client, ch, { district: req.query?.district })));
+  app.post('/v1/deeds/investigate', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client, h) =>
+      investigateDeed(ch, { buildingId: req.body?.buildingId, actionId: req.body?.actionId }, client, h)));
   app.get('/v1/deeds', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client, h) => Deeds.deedBoard(ch, client, h)));
   app.post('/v1/deeds/claim', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) =>
-      Deeds.claimDeed(ch, { name: req.body?.name, district: req.body?.district }, client, h)));
+      Deeds.claimDeed(ch, { name: req.body?.name, district: req.body?.district, buildingId: req.body?.buildingId }, client, h)));
   // Phase 2 — CONTROL: collect the corner take off every deed you control; muscle in on a rival's corner.
   app.post('/v1/deeds/corner', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Deeds.collectCorner(ch, client, h)));

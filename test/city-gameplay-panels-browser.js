@@ -8,6 +8,7 @@ import { ledger } from '../src/game.js';
 import { grantStack, withItemTransaction } from '../src/items.js';
 import { STAGED_CREW_MISSIONS_PACKAGE as mission } from '../src/content/staged-crew-missions.js';
 import { CITY_WORLD_OPPORTUNITIES } from '../src/content/city-world-opportunities.js';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'Gameplay panel browser fixtures require disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off'; process.env.POPULATION_OFF = 'on';
@@ -311,7 +312,9 @@ try {
     await adventureRevisionJourney(viewport);
     await npcJourney(viewport);
     const actor = await create('Panel Browser ' + viewport.width), street = 'Panel Home ' + viewport.width;
-    const claim = await post(actor, '/v1/deeds/claim', { name: street, district: 'docks' }); assert.equal(claim.statusCode, 200, claim.body);
+    const buildingId = viewport.width <= 680 ? 'docks-0417' : 'docks-0416';
+    await earnBuildingClaim(app, actor.token, buildingId);
+    const claim = await post(actor, '/v1/deeds/claim', { name: street, buildingId }); assert.equal(claim.statusCode, 200, claim.body);
     const directory = await get(actor, '/v1/city/homes?district=docks'); assert(directory.myHome);
     const homeKey = directory.myHome.key;
     const fixture = await newPage(actor, viewport);
@@ -530,7 +533,9 @@ try {
     const homeEntry = await fixture.page.evaluateHandle(() => window.__panelHandles.at(-1)), homePose = (await state(fixture)).position;
     const guestHomes = [];
     for (const [index, host] of members.slice(1).entries()) {
-      await success(post(host, '/v1/deeds/claim', { name: 'Panel Visit ' + index + ' ' + viewport.width, district: 'foundry' }));
+      const buildingId = 'foundry-' + String(417 - index - (viewport.width <= 680 ? 0 : 20)).padStart(4, '0');
+      await earnBuildingClaim(app, host.token, buildingId);
+      await success(post(host, '/v1/deeds/claim', { name: 'Panel Visit ' + index + ' ' + viewport.width, buildingId }));
       const home = (await get(host, '/v1/city/homes?district=foundry')).myHome; assert(home);
       let interior = await get(host, '/v1/city/home/interior?homeKey=' + encodeURIComponent(home.key));
       const activation = interior.actions.find(action => action.id === 'activate');

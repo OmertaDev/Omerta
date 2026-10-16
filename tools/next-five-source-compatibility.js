@@ -1,3 +1,4 @@
+import { deedQuestSourceBaseline } from './deed-quest-source-transfer.js';
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -212,6 +213,7 @@ export function assertNextFiveSourceTransfer(file,input){
  assert.equal(hash(baselineText),pin.baselineSha256);assert.equal(blob(baselineText),pin.baselineBlob);return{baselineText,sourceRevision:NEXT_FIVE_SOURCE_REVISION,predecessorRevision:NEXT_FIVE_SOURCE_PREDECESSOR,phase:NEXT_FIVE_SOURCE_PHASE};
 }
 export function nextFiveSourceBaseline(file,input){
+ input=deedQuestSourceBaseline(file,input);
  if(typeof input!=='string'||!Object.hasOwn(NEXT_FIVE_SOURCE_DOMAINS,file)||!uniform(input))return input;
  return hash(lf(input))===NEXT_FIVE_SOURCE_DOMAINS[file].currentSha256?assertNextFiveSourceTransfer(file,input).baselineText:input;
 }
