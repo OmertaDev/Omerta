@@ -4247,6 +4247,7 @@ scopedSocialContext = async function(db) {
     'equipmentrentals.js:deathScopes': 'cache: opaque proof bound to exact active client/transaction identity and prelocked original actor union; canonical SQL locks and fresh original sources provide cross-process authority, not this local marker',
     'social/estate.js:estateResolutionScopes': 'cache: private proof bound to the active actual estate invocation, exact client, transaction and victim; fresh SQL actor locks and death facts remain authoritative, and the proof is deleted at scope exit',
     'items.js:TRANSACTION_IDENTITIES': 'cache: opaque equality identity keyed by one active item transaction object; grants no mutation authority and fresh transactions cannot reuse prior scope identities',
+    'mobileshops.js:scopes': 'cache: opaque active item-transaction scope bound to one SQL client, canonical Market action and immutable listing source; scopes are deleted on exit, while PostgreSQL actor/listing locks and unique request/journal records retain durable authority',
     'operations.js:CONTEXTS': 'cache: per-context-object authenticity marker; every box recognizes only contexts it creates',
     'worldgraph.js:WORLD_GRAPH_REGISTRIES': 'cache: per-registry-object authenticity marker; every box recognizes its own immutable registries',
     'coordination/graph.js:REGISTRIES': 'cache: per-registry-object authenticity marker for locally compiled immutable graph registries; persistent definition hashes bind database state',
