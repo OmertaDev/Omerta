@@ -24,7 +24,7 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','manufacturing_licenses:licensor_business','manufacturing_licenses:licensee_business','workshop_floorplans:business_id','workshop_floor_requests:business_ref','business_relocation_plans:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','manufacturing_licenses:licensor_business','manufacturing_licenses:licensee_business','equipment_recovery_requests:business_id','workshop_floorplans:business_id','workshop_floor_requests:business_ref','business_relocation_plans:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
@@ -36,6 +36,8 @@ export async function assertDepotFeatureObligations(c,depotId){assertItemTransac
  const floor=(await c.query('SELECT business_id FROM workshop_floorplans WHERE business_id=$1 LIMIT 1',[depotId])).rows;
  const floorHistory=(await c.query('SELECT run_id FROM workshop_floor_requests WHERE business_ref=$1 LIMIT 1',[depotId])).rows;
  if(floor.length||floorHistory.length){const {collectWorkshopFloorIssues}=await import('./workshopfloor.js');if((await collectWorkshopFloorIssues(c)).length)fail('floor_history_changed');}
+ const recovery=(await c.query('SELECT item_id FROM equipment_recovery_requests WHERE business_id=$1 LIMIT 1',[depotId])).rows;
+ if(recovery.length){const {collectEquipmentRecoveryIssues}=await import('./equipmentrecoveryhistory.js');if((await collectEquipmentRecoveryIssues(c)).length)fail('equipment_recovery_history_changed');}
  const manufacturing=(await c.query('SELECT * FROM manufacturing_licenses WHERE licensor_business=$1 OR licensee_business=$1 ORDER BY id',[depotId])).rows;
  if(manufacturing.length){const {collectManufacturingLicenseIssues}=await import('./manufacturinglicensesinvariants.js');if((await collectManufacturingLicenseIssues(c)).length)fail('manufacturing_license_history_changed');}
  const manufacturingNow=+new Date((await c.query('SELECT clock_timestamp() AS now')).rows[0].now);

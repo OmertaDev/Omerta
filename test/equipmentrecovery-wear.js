@@ -8,7 +8,6 @@ const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),C=
 const {loadGraphPackages}=await import('../src/worldgraph.js'),{PHASE1_WORLD_GRAPH_PACKAGES}=await import('../src/content/phase1.js');
 const registry=loadGraphPackages(PHASE1_WORLD_GRAPH_PACKAGES),pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn);
 try{
-  await pool.query(fs.readFileSync(new URL('../docs/equipment-recovery-proposal.sql',import.meta.url),'utf8'));
   for(let n=0;n<8;n++){
     const account='recovery-wear-'+n,actor=account+'-actor';
     await pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,$2,$1)',[account,'equipment-recovery-wear-component']);
@@ -42,8 +41,8 @@ try{
   assert.deepEqual(await tx(c=>R.lockEquipmentRecoverySource(c,accountOwner.id,terms)),preview);
   assert.equal((await pool.query('SELECT * FROM item_durability_uses WHERE item_id=$1',[itemId])).rows.length,8);
   assert.deepEqual(await Q.collectItemConditionIssues(pool),[]);
-  await assert.rejects(tx(c=>R.recoverEquipment(c,accountOwner.id,terms,'actual-worn-closed')),e=>e.code==='equipment_recovery_canonical_integration_required');
+  await assert.rejects(tx(c=>C.craftWorldGraphRecipe(c,{accountId:accountOwner.id},R.EQUIPMENT_RECOVERY.recipeId,'actual-worn-generic-refusal')),e=>e.code==='recovery_required');
   assert.equal((await pool.query('SELECT state FROM item_instances WHERE id=$1',[itemId])).rows[0].state,'active');
   assert.equal((await pool.query('SELECT * FROM equipment_recovery_requests')).rows.length,0);
-  console.log('PASS N14 real8 Belladonna completions/escrows/releases/100to20/condition oracle/verified transferred title eligible; actual recovery unavailable.');
+  console.log('PASS N14 real8 Belladonna completions/escrows/releases/100to20/condition oracle/verified transferred title eligible; exact generic recovery path refuses without destroying the selected tool.');
 }finally{await pool.end();}

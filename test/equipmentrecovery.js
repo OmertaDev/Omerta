@@ -9,7 +9,7 @@ const {EQUIPMENT_RECOVERY_INSPECTION}=await import('../src/equipmentrecovery-con
 const {EQUIPMENT_RECOVERY_PACKAGE}=await import('../docs/equipment-recovery-authored-proposal.mjs');
 const pool=await makeDb(),tx=fn=>I.withItemTransaction(pool,fn),read=fn=>I.withItemRead(pool,fn),owner={scope:'account',id:'recover-maker'},customer={scope:'account',id:'recover-customer'};
 try{
-  await pool.query(fs.readFileSync(new URL('../docs/equipment-recovery-proposal.sql',import.meta.url),'utf8'));
+  assert((await pool.query("SELECT table_name FROM information_schema.tables WHERE table_name='equipment_recovery_requests'")).rows.length, 'Canonical schema installs recovery metadata');
   const actors={};
   for(const account of ['recover-maker','recover-customer']){
     const actor=account+'-actor';actors[account]=actor;
@@ -40,7 +40,7 @@ try{
   await assert.rejects(inspect(customer.id),e=>e.code==='equipment_recovery_business');
   await pool.query("UPDATE characters SET loc='foundry' WHERE id=$1",[actors[customer.id]]);
   const before=await pool.query('SELECT * FROM item_events ORDER BY sequence');
-  await assert.rejects(tx(c=>R.recoverEquipment(c,customer.id,{businessId:preview.businessId,itemId,originalCharacterId:preview.originalCharacterId,sourceHash:preview.sourceHash,consent:true},'closed-adapter')),e=>e.code==='equipment_recovery_canonical_integration_required');
+  await assert.rejects(tx(c=>R.recoverEquipment(c,customer.id,{businessId:preview.businessId,itemId,originalCharacterId:preview.originalCharacterId,sourceHash:preview.sourceHash,consent:true},'healthy-refusal')),e=>e.code==='equipment_recovery_healthy');
   assert.deepEqual((await pool.query('SELECT * FROM item_events ORDER BY sequence')).rows,before.rows);
   assert.equal((await pool.query('SELECT * FROM equipment_recovery_requests')).rows.length,0);
   const awarded=await tx(c=>I.createItem(c,customer,'item:precision_lock_tool','awarded','recovery-awarded'));
@@ -49,7 +49,8 @@ try{
   await assert.rejects(read(c=>R.inspectEquipmentRecovery(c,owner.id,businesses[owner.id],tempered.outputs[0].id)),e=>e.code==='equipment_recovery_unsupported_grade');
   const recipe=EQUIPMENT_RECOVERY_PACKAGE.nodes[0];assert.equal(recipe.consumes.length,1);assert.equal(recipe.consumes[0].quantity,1);assert.deepEqual(recipe.produces,[{templateId:'mat:salvage_parts',quantity:1,quality:'standard'}]);
   assert.equal(C.canonicalCraftAuthority('recipe:precision_lock_tool').consumes.find(e=>e.templateId==='mat:salvage_parts').quantity-recipe.produces[0].quantity,1);
-  assert.throws(()=>C.canonicalCraftAuthority(recipe.id));
+  assert.equal(C.canonicalCraftAuthority(recipe.id).recipe.recipeId,recipe.id);
+  await assert.rejects(tx(c=>C.craftWorldGraphRecipe(c,{accountId:customer.id},recipe.id,'generic-recovery-refusal')),e=>e.code==='recovery_required');
   for(const invalid of [{...terms,consent:false},{...terms,itemId:''},{...terms,sourceHash:'unknown'},{...terms,quantity:2}])assert.throws(()=>R.equipmentRecoveryTerms(invalid));
-  console.log('PASS N14 actual standard craft provenance/current transferred title/healthy+award+tempered refusal/closed adapter/ratio; no recovery effect or native qualification.');
+  console.log('PASS N14 actual standard craft provenance/current transferred title/healthy+award+tempered refusal/closed generic path/material ratio.');
 }finally{await pool.end();}

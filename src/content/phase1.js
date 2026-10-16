@@ -1,5 +1,6 @@
 // Canonical production manifest for the Phase 1 world-graph runtime and release validator.
 // Adding a package is incomplete until this manifest, its validator census, and documentation agree.
+import { EQUIPMENT_RECOVERY_PACKAGE } from './equipment-recovery.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from './automotive-salvage.js';
 import { BELLADONNA_PACKAGE } from './belladonna.js';
 import { CORE_MATERIALS_PACKAGE } from './core-materials.js';
@@ -20,4 +21,5 @@ export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   STAGED_CREW_MISSIONS_PACKAGE,
   ...CITY_WORLD_OPPORTUNITY_PACKAGES,
   NEIGHBORHOOD_BROADCAST_PACKAGE,
+  EQUIPMENT_RECOVERY_PACKAGE,
 ]);

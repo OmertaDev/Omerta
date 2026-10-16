@@ -775,6 +775,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('merchant return escrow', merchantReturnReserve, -merchantReturnNet, 0);
   const merchantReturnIssues = await collectMerchantReturnIssues(pool);
   push('merchant return canonical books', merchantReturnIssues.length, 0, 0, {issues:merchantReturnIssues});
+  const recoveryIssues=await (await import('./equipmentrecoveryhistory.js')).collectEquipmentRecoveryIssues(pool);
+  push('equipment recovery consumed UID and material history',recoveryIssues.length,0,0,{issues:recoveryIssues});
   const {manufacturingLicenseAccounting}=await import('./manufacturinglicensesinvariants.js');
   const manufacturingLicenseBooks=await manufacturingLicenseAccounting(pool);
   push('manufacturing license canonical royalty history',manufacturingLicenseBooks.issues.length+Math.abs(manufacturingLicenseBooks.royaltyNet),0,0,{issues:manufacturingLicenseBooks.issues});

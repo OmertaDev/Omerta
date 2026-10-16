@@ -1,3 +1,4 @@
+import {register as registerEquipmentRecovery} from './routes/equipmentrecovery.js';
 import {register as registerManufacturingLicenses} from './manufacturinglicensesroutes.js';
 import {register as registerCrossDocking} from './routes/crossdocking.js';
 import {register as registerProductionSlots} from './routes/productionslots.js';
@@ -2486,6 +2487,7 @@ export async function buildServer() {
   registerStrategyLeagues(app, { pool, auth });
   registerCompanyOperators(app, { pool, auth });
   registerCompanyProduction(app, { pool, auth, beforeCraft: assertCompanySpecializationBeforeCraft, sourceScope: withInfrastructureProductionScope });
+  registerEquipmentRecovery(app,{pool,auth});
   registerManufacturingLicenses(app,{pool,auth});
   registerWorkshopFloor(app,{pool,auth});
   registerCompanyDemand(app, { pool, auth });
