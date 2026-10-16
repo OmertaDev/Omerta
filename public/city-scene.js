@@ -1508,16 +1508,20 @@
       const shortFrame = phone && bottom - top < 500;
       root.classList.toggle('is-short-frame', shortFrame);
       controls.style.setProperty('--city-controls-bottom', Math.max(0, window.innerHeight - bottom) + 'px');
+      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
+        ? nextMove.getBoundingClientRect().height : 0;
       if (phone && (inspecting || shortFrame)) {
         // Reserve the real map and dock floors before measuring the HUD. Long
         // warnings and confirmed feedback remain available by keyboard scroll.
-        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height)) + 'px');
+        let hudHeight = Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height));
+        // Keep the issued objective with the map when the resource row still
+        // fits. More severe chrome pressure retains the existing scroll budget.
+        if (guidanceHeight && hudHeight - guidanceHeight >= worldHead.getBoundingClientRect().height) hudHeight -= guidanceHeight;
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
-      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
-        ? nextMove.getBoundingClientRect().height : 0;
       const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - controls.getBoundingClientRect().height - 16;
       const available = frameAvailable - (guidanceHeight + 96 <= frameAvailable ? guidanceHeight : 0);
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');

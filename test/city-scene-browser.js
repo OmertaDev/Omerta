@@ -602,6 +602,22 @@ try {
       'The complete avatar and name remain inside the smallest active map: ' + JSON.stringify(avatar));
   };
 
+  // A fresh short phone keeps its issued objective above the playable map,
+  // including when optional resize observation is unavailable.
+  const shortEntry = await newPage({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
+  await shortEntry.context().addInitScript(() => { window.ResizeObserver = undefined; });
+  await openCity(shortEntry);
+  await shortEntry.locator('#intro-walk').click();
+  await assertEntered(shortEntry); await assertWorldHud(shortEntry);
+  const shortGuidance = await shortEntry.evaluate(() => ({
+    guidance: document.querySelector('.omerta-city__next-move').getBoundingClientRect().toJSON(),
+    header: document.querySelector('#top').getBoundingClientRect().toJSON(),
+    canvas: document.querySelector('.omerta-city__canvas').getBoundingClientRect().toJSON()
+  }));
+  assert(shortGuidance.guidance.top >= shortGuidance.header.bottom - 1 && shortGuidance.guidance.bottom <= shortGuidance.canvas.top,
+    'Fresh short-phone entry keeps its issued objective visible above the map: ' + JSON.stringify(shortGuidance));
+  await shortEntry.context().close();
+
   // A first phone visit retains its help, then explicitly enters the existing local scene.
   const entry = await newPage({ viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, reducedMotion: 'reduce' });
   // The scene's live layout must remain correct without optional resize observation.

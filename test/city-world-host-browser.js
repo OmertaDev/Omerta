@@ -851,8 +851,9 @@ try {
   assert.equal(await page.evaluate(() => window.__toastActions), 1); assert(await page.locator('#toast').evaluate(node => node.inert && node.tabIndex === -1));
   const tiny = await newPage({ width: 320, height: 568 }, { noResizeObserver: true });
   const tinyStart = tiny.requests.length, tinyInitial = await assertFrame(tiny.page);
+  if (process.env.CITY_WORLD_SHOTS) await tiny.page.screenshot({ path: path.join(process.env.CITY_WORLD_SHOTS, 'city-world-host-entry-320.png') });
   assert(tinyInitial.guidance.top >= tinyInitial.header.bottom - 1 && tinyInitial.guidance.bottom <= tinyInitial.canvas.top,
-    'The first short-phone Player entry shows its issued objective with the map.');
+    'The first short-phone Player entry shows its issued objective with the map: ' + JSON.stringify(tinyInitial));
   const tinyControls = await tiny.page.locator('.omerta-city__controls').evaluate(node => ({ bounds: node.getBoundingClientRect().toJSON(),
     usable: [...node.querySelectorAll('button')].filter(button => button.getBoundingClientRect().height).every(button => {
       const box = button.getBoundingClientRect();
