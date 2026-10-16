@@ -760,17 +760,23 @@ try {
           return warning.top >= hud.top && warning.bottom <= hud.bottom;
         };
         const warningScrolls = [];
-        for (let step = 0; step < 12 && !await page.evaluate(warningVisible); step++) {
-          const previous = await hud.evaluate(node => node.scrollTop);
-          if (previous <= 0) break;
-          await hud.evaluate(node => {
-            node.__arrowSettled = new Promise(resolve => node.addEventListener('scrollend', resolve, { once: true }));
-          });
-          await page.keyboard.press('ArrowUp');
-          await bounded(hud.evaluate(node => node.__arrowSettled), 'native HUD ArrowUp scroll settlement');
-          const current = await hud.evaluate(node => node.scrollTop);
-          warningScrolls.push({ previous, current });
-          assert(current < previous, 'ArrowUp scrolls the focused HUD toward the readiness warning.');
+        // Native arrow steps can skip the narrow interval where a wrapped warning
+        // fits in this 51px HUD. PageUp supplies the browser's other reading path.
+        for (const key of ['ArrowUp', 'PageUp']) {
+          if (await page.evaluate(warningVisible)) break;
+          if (key === 'PageUp') await readHudEnd();
+          for (let step = 0; step < 12 && !await page.evaluate(warningVisible); step++) {
+            const previous = await hud.evaluate(node => node.scrollTop);
+            if (previous <= 0) break;
+            await hud.evaluate(node => {
+              node.__readingSettled = new Promise(resolve => node.addEventListener('scrollend', resolve, { once: true }));
+            });
+            await page.keyboard.press(key);
+            await bounded(hud.evaluate(node => node.__readingSettled), 'native HUD ' + key + ' scroll settlement');
+            const current = await hud.evaluate(node => node.scrollTop);
+            warningScrolls.push({ key, previous, current });
+            assert(current < previous, key + ' scrolls the focused HUD toward the readiness warning.');
+          }
         }
         assert(await page.evaluate(warningVisible), 'Native keyboard scrolling reveals the complete readiness warning after wrapped feedback: ' + JSON.stringify({
           steps: warningScrolls, layout: await hud.evaluate(node => ({ scroll: node.scrollTop, client: node.clientHeight, height: node.scrollHeight,
