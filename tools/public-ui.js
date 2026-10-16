@@ -5,6 +5,7 @@ import { chromium } from 'playwright-core';
 import fs from 'node:fs';
 import path from 'node:path';
 import { buildServer } from '../src/server.js';
+import { earnBuildingClaim } from '../test/deed-discovery-fixture.js';
 
 function resolveBrowser() {
   if (process.env.CHROMIUM_PATH) return fs.existsSync(process.env.CHROMIUM_PATH) ? process.env.CHROMIUM_PATH : null;
@@ -592,7 +593,9 @@ try {
   const deedToken = await mobile.evaluate(() => localStorage.omerta_token);
   const deedMe = (await app.inject({ method: 'GET', url: '/v1/me', headers: { authorization: 'Bearer ' + deedToken } })).json();
   const deedAccount = (await app.pool.query('SELECT account_id FROM characters WHERE id=$1', [deedMe.character.id])).rows[0].account_id;
-  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', district: 'docks' } });
+  await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE id=$1', [deedMe.character.id]);
+  await earnBuildingClaim(app, deedToken, 'docks-0417');
+  const claim = await app.inject({ method: 'POST', url: '/v1/deeds/claim', headers: { authorization: 'Bearer ' + deedToken }, payload: { name: 'Browser Vault Proof', buildingId: 'docks-0417' } });
   check(claim.statusCode === 200, 'Browser deed fixture could not claim a street');
   await mobile.evaluate(() => document.querySelector('#tabs [data-tab="deeds"]').click());
   await mobile.waitForSelector('#deed-upgrade', { state: 'visible' });

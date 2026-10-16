@@ -199,6 +199,9 @@ jobs:
       - name: City Mode and RPG desktop/mobile journeys
         run: npm run test:city:browser
 
+      - name: Earned Street Deed investigation and claim in the browser
+        run: npm run test:deed-discovery:browser
+
       - name: Consigliere gateway recovery in the browser
         run: npm run test:gateway:browser
 
@@ -302,6 +305,11 @@ jobs:
             })().catch((e) => { console.error(e); process.exit(1); });
           "
           npm run test:goods-market:postgres
+
+      - name: Earned Street Deed migrations and concurrent claims
+        env:
+          COORDINATION_TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/postgres
+        run: npm run test:deed-discovery:postgres
 
       - name: deed upgrades (real PostgreSQL concurrency)
         env:

@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
 import { PACING } from '../src/rules.js';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 
 assert(!process.env.DATABASE_URL, 'World host browser fixtures require disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';
@@ -1425,16 +1426,22 @@ try {
   await cityHandle.dispose();
   console.log('world host: six-district atlas, confirmed one-fare travel, refused/queued cancellation, winning visits and exact-key lost-reply recovery pass');
 
-  // A canonical claim on another district reveals the deed without a ride.
+  // A completed title investigation reveals the deed without an additional ride at claim.
   // The current real successor is the seller; no additional account is created.
+  await app.pool.query('UPDATE characters SET respect=500000,energy=100,cash=cash+2000 WHERE account_id=$1 AND alive',
+    [viewer.character.account_id]);
+  await earnBuildingClaim(app, viewer.token, 'brick-0417');
   const seller = await currentActor(viewer); assert(seller && seller.id !== viewer.character.id);
   const sellerPage = await newPage({ width: 1440, height: 1000 }, { actor: viewer });
-  await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-name').waitFor();
+  await enterDeeds(sellerPage.page); await sellerPage.page.locator('#deed-atlas-open').click();
+  await sellerPage.page.locator('[data-property="brick-0417"]').focus();
+  await sellerPage.page.keyboard.press('Enter');
+  await sellerPage.page.locator('#deed-property-name').waitFor();
   const street = 'Connected World Street', key = street.toLowerCase(), propertyDistrict = 'brick';
   const sellerFares = await fares(viewer), sellerLocation = seller.loc, sellerAt = sellerPage.requests.length;
-  await sellerPage.page.locator('#deed-name').fill(street);
+  await sellerPage.page.locator('#deed-property-name').fill(street);
   const claimed = sellerPage.page.waitForResponse(reply => reply.request().method() === 'POST' && new URL(reply.url()).pathname === '/v1/deeds/claim');
-  await sellerPage.page.locator('[data-claimdist="brick"]').click();
+  await sellerPage.page.locator('#deed-property-claim').click();
   const claimReply = await claimed; assert.equal(claimReply.status(), 200); assert.equal((await claimReply.json()).name, street);
   await sellerPage.page.waitForFunction(({ key, district }) => window.__worldHandles.at(-1)?.handle.getState().worldUI?.mapView === 'world'
     && window.__worldHandles.at(-1).handle.getState().worldUI.districtId === district

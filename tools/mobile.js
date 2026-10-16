@@ -413,10 +413,31 @@ for (const vp of VIEWPORTS) {
       } else {
         await replayOpener.click();
         await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });
-        await page.click('#tour-skip');
-        await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
-        await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
-          || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
+        // The replay returns to Start Here while its real Home read is still pending.
+        // Replace the old controls before asserting focus, so a detached fallback cannot pass.
+        const previousContent = await page.locator('#tab-start > :first-child').elementHandle();
+        let releaseHome;
+        const released = new Promise(resolve => { releaseHome = resolve; });
+        const homeRead = page.waitForRequest(request => request.method() === 'GET'
+          && new URL(request.url()).pathname === '/v1/home', { timeout: 5000 });
+        const holdHome = async route => {
+          const response = await route.fetch();
+          await released;
+          await route.fulfill({ response });
+        };
+        await page.route('**/v1/home', holdHome);
+        try {
+          await page.click('#tour-skip');
+          await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
+          await homeRead;
+          releaseHome();
+          await page.waitForFunction(element => !element.isConnected, previousContent, { timeout: 5000 });
+          await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
+            || document.activeElement === document.querySelector('#tab-control-start'), null, { timeout: 5000 });
+        } finally {
+          releaseHome(); await page.unroute('**/v1/home', holdHome);
+          await previousContent?.dispose();
+        }
       }
     }
   }
