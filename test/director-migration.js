@@ -6,8 +6,8 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createMarketOperationsReleasePhase2MigrationCatalog, readMarketOperationsReleasePhase2Metadata,
-  verifyMarketOperationsReleasePhase2CausalNegatives, MARKET_OPERATIONS_NATIVE_TABLES } from '../tools/market-operations-release-phase2-migration-catalog.js';
+import { createEnterpriseReleasePhase2MigrationCatalog, readEnterpriseReleasePhase2Metadata,
+  verifyEnterpriseReleasePhase2CausalNegatives, ENTERPRISE_NATIVE_TABLES } from '../tools/enterprise-release-phase2-migration-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
@@ -31,15 +31,15 @@ const namespace = `director_migration_${crypto.randomBytes(8).toString('hex')}`;
 const admin = new pg.Pool({ connectionString: endpoint.toString() });
 let pool, created = false;
 const marketOperationsInventory = JSON.parse(fs.readFileSync(new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
-const marketOperationsCatalogBlob = execFileSync('git', ['show', '5768f64814f46690d59e8c2b758d23bd8f92b0ad:test/lib/phase2-architecture-upgrade-catalog.json']);
-assert.equal(crypto.createHash('sha256').update(marketOperationsCatalogBlob).digest('hex'), 'e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9', 'Reviewed market-operations full catalog bytes changed');
-assert.deepEqual(marketOperationsInventory, JSON.parse(marketOperationsCatalogBlob), 'Current complete market-operations catalog source is frozen');
+const marketOperationsCatalogBlob = execFileSync('git', ['show', '2dbc872e795442b56a66200f86395ff654d55edd:test/lib/phase2-architecture-upgrade-catalog.json']);
+assert.equal(crypto.createHash('sha256').update(marketOperationsCatalogBlob).digest('hex'), 'f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65', 'Reviewed complete enterprise catalog bytes changed');
+assert.deepEqual(marketOperationsInventory, JSON.parse(marketOperationsCatalogBlob), 'Current complete enterprise catalog source is frozen');
 const inventory = { ...marketOperationsInventory,
-  added: marketOperationsInventory.added.filter(row => !MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name)),
-  notNullColumns: Object.fromEntries(Object.entries(marketOperationsInventory.notNullColumns).filter(([table]) => !MARKET_OPERATIONS_NATIVE_TABLES.includes(table))) };
-assert.equal(MARKET_OPERATIONS_NATIVE_TABLES.length, 14);
-assert.equal(marketOperationsInventory.added.length - inventory.added.length, 159);
-assert.equal(MARKET_OPERATIONS_NATIVE_TABLES.reduce((n, table) => n + marketOperationsInventory.notNullColumns[table].length, 0), 144);
+  added: marketOperationsInventory.added.filter(row => !ENTERPRISE_NATIVE_TABLES.includes(row.table_name)),
+  notNullColumns: Object.fromEntries(Object.entries(marketOperationsInventory.notNullColumns).filter(([table]) => !ENTERPRISE_NATIVE_TABLES.includes(table))) };
+assert.equal(ENTERPRISE_NATIVE_TABLES.length, 23);
+assert.equal(marketOperationsInventory.added.length - inventory.added.length, 232);
+assert.equal(ENTERPRISE_NATIVE_TABLES.reduce((n, table) => n + marketOperationsInventory.notNullColumns[table].length, 0), 217);
 const directorTables = Object.keys(inventory.notNullColumns).filter((name) => name.startsWith('director_')).sort();
 const economyTables = ['business_depots', 'business_depot_journal', 'business_operating_policies', 'business_external_costs', 'delivery_commitments', 'business_supply_contracts'];
 // Optional stacked features are recognized only by explicit identity and frozen
@@ -332,7 +332,7 @@ try {
   const equipmentSchema = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
   assert.throws(() => equipmentEconomyMigrationProjection(equipmentSchema, gameplayMetadata), error => error?.code === 'ERR_ASSERTION',
     'The source-only C2 envelope does not confer historical native admission');
-  const releaseCatalog = await createMarketOperationsReleasePhase2MigrationCatalog(pool, address, equipmentSchema,
+  const releaseCatalog = await createEnterpriseReleasePhase2MigrationCatalog(pool, address, equipmentSchema,
     { includeNotNull: false, legacyProfile: 'director' });
   const equipmentCatalog = equipmentEconomyMigrationProjection(releaseCatalog.predecessorSource, gameplayMetadata);
   const normalizeMarketOperationsConstraints = rows => {
@@ -340,14 +340,14 @@ try {
       for (const key of ['table_name', 'name']) { if (a[key] < b[key]) return -1; if (a[key] > b[key]) return 1; }
       return 0;
     });
-    assert.deepEqual(ordered(rows.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name))),
-      ordered(marketOperationsInventory.added.filter(row => MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name))),
-      'All 159 pinned market-operations structural definitions remain exact before the historical Director oracle');
-    return rows.filter(row => !MARKET_OPERATIONS_NATIVE_TABLES.includes(row.table_name));
+    assert.deepEqual(ordered(rows.filter(row => ENTERPRISE_NATIVE_TABLES.includes(row.table_name))),
+      ordered(marketOperationsInventory.added.filter(row => ENTERPRISE_NATIVE_TABLES.includes(row.table_name))),
+      'All 232 pinned enterprise structural definitions remain exact before the historical Director oracle');
+    return rows.filter(row => !ENTERPRISE_NATIVE_TABLES.includes(row.table_name));
   };
   const verifyCompletePreservedConstraints = rows => verifyPreservedConstraints(gameplayCatalog.normalize(equipmentCatalog.normalize(normalizeMarketOperationsConstraints(releaseCatalog.normalize(rows))), oldConstraints));
   verifyCompletePreservedConstraints(upgradedConstraints);
-  await verifyMarketOperationsReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);
+  await verifyEnterpriseReleasePhase2CausalNegatives(pool, releaseCatalog, upgradedConstraints, verifyCompletePreservedConstraints);
   gameplayCatalog.verifyMetadata(gameplayMetadata);
   const cityConstraints = inventory.added.filter((row) => row.table_name === 'city_intel_progress');
   assert.equal(cityConstraints.length, 4, 'All four native-reviewed City PK/FK/CHECK constraints must be catalogued');
@@ -725,7 +725,7 @@ try {
   const reappliedMetadata = await readCityGameplayMigrationMetadata(pool);
   gameplayCatalog.verifyMetadata(reappliedMetadata);
   equipmentCatalog.verifyMetadata(reappliedMetadata);
-  releaseCatalog.verifyMetadata(await readMarketOperationsReleasePhase2Metadata(pool));
+  releaseCatalog.verifyMetadata(await readEnterpriseReleasePhase2Metadata(pool));
   assert.equal((await director.tick()).replayed, true);
   await assert.rejects(pool.query('UPDATE director_situations SET revision=0 WHERE id=$1', [tick.selected[0].situationId]), { code: '23514' });
   await assert.rejects(pool.query("UPDATE director_situations SET campaign_id='missing-campaign' WHERE id=$1", [tick.selected[0].situationId]), { code: '23503' });
