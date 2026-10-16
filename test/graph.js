@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import {ENTERPRISE_STRUCTURAL_CHECKS,ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from '../tools/enterprise-graph-helpers.js';
+import {COMMERCE_STRUCTURAL_CHECKS} from '../tools/commerce-graph-helpers.js';
 import {
   build,
   extractCommercialHelperReconciliations,
@@ -90,11 +91,15 @@ assert.deepEqual(inv.mute.sort(), [
   'franchise royalty provenance',
   'freight metadata history bindings',
   'logistics coverage bindings',
+  'merchant loyalty original purchase bindings',
   'mobile shop canonical source/history',
   'physical equipment condition provenance',
+  'player funded event history',
   'production slot canonical reservation history',
   'reason vocabulary',
+  'sale attribution completed sale and consent bindings',
   'service subscription repair bindings',
+  'shopping basket canonical sale bindings',
   'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
@@ -113,6 +118,7 @@ for (const [check, reasons] of [
 ]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ...ENTERPRISE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
+  ...COMMERCE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
   ['cross docking canonical source and handoff history', 'original courier/hub/item/handoff receipt bindings; canonical courier fees reconcile separately'],
   ['production slot canonical reservation history', 'original commission/profile/window/production receipt bindings; canonical commission fees reconcile separately'],
@@ -176,6 +182,20 @@ for(const bad of[enterpriseMoney+' ',enterpriseMoney.replace('royaltyNet=receive
 for(const literal of[enterpriseMoneyProfile.import,enterpriseMoneyProfile.call,enterpriseMoneyProfile.push])for(const bad of[enterpriseInvariant.replace(literal,''),enterpriseInvariant+'\n'+literal])assert.deepEqual(extractEnterpriseHelperReconciliations(bad,{[enterpriseMoneyProfile.file]:enterpriseMoney}),[]);
 assert.deepEqual(extractEnterpriseHelperReconciliations(enterpriseInvariant,{[enterpriseMoneyProfile.file]:enterpriseMoney,'src/unknown.js':enterpriseMoney}),[]);
 assert(!inv.mute.includes(enterpriseMoneyProfile.check),'Actual royalty accounting must never be classified as mute provenance');
+// Original Commerce histories are source-bound; their real cash reserves and
+// delegated consignment payments may not disappear behind a mute classification.
+assert.equal(COMMERCE_STRUCTURAL_CHECKS.length,4);
+for(const p of COMMERCE_STRUCTURAL_CHECKS){
+  const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+  assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed Commerce history changed: '+p.file);
+  assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Unknown Commerce history arithmetic/binding');
+}
+for(const [check,prefix,suffixes]of[
+ ['sale attribution merchant cash reserve','sale_attribution',['reserve','commission','refund']],
+ ['player funded event reserves','event_market',['reserve','reward','refund']],
+ ['consignment sale books','consignment',['purchase','proceeds','host_fee']],
+])for(const suffix of suffixes)assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Commerce cash coverage lost: '+check+'/'+suffix);
+for(const[check,prefix]of[['multi-hop courier custody and fee source','multi_hop_courier'],['commissioned crafting canonical sources','commissioned_crafting']])for(const suffix of['reserve','fee','refund'])assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Reviewed canonical cash/source helper lost: '+check+'/'+suffix);
 // Ownership checks structural journal references; warehouse cash still needs its
 // separate literal ledger reconciliation, which must not join the mute list.
 const warehouseAudit = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');

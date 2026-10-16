@@ -341,7 +341,7 @@ export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
     "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
     "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
     "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",
-    "sql": "SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id",
+    "sql": "const transactions=(await c.query(\"SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id\"",
     "extraBindings": []
   },
   {
