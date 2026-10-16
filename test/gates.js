@@ -298,6 +298,11 @@ for(const bad of [
   {...laboratorySources,'invariants.js':laboratorySources['invariants.js'].replace('labIssues.length, 0, 0','labIssues.length, 1, 0')},
 ])assert(!laboratoryOracleAdmission(bad),'Mutation, raw/private DTO exposure, routed alias or monetary-credit drift must reject');
 const COLLECT_EXEMPT = {
+  collectBusinessRelocationIssues: "read-only original relocation source, receipt, travel and paired stock-journal history oracle; no player collection, income or mutation authority",
+  collectEquipmentRecoveryIssues: "read-only original craft birth, consumed UID, recovery receipt and material-event provenance oracle; no player collection, item grant or mutation authority",
+  collectManufacturingLicenseIssues: "read-only original production, license consent, run and paired royalty-journal accounting oracle; no player collection, royalty payment or mutation authority",
+  collectMobileShopIssues: "read-only original listing, quantity, receipt, cash-journal and estate history oracle; no player collection, sale, refund or mutation authority",
+  collectWorkshopFloorIssues: "read-only authored floor-plan, allocation, original request and receipt binding oracle; no player collection, production admission or mutation authority",
   collectCrossDockIssues: 'read-only original courier, paid hub and same-item handoff provenance oracle; no player collection or mutation authority',
   collectProductionSlotIssues: 'read-only accepted commission, production window and canonical completion oracle; no player collection or mutation authority',
   collectMerchantReturnIssues: 'read-only real seller reserve, original buyer title and return/refund witness oracle; no player collection or mutation authority',
