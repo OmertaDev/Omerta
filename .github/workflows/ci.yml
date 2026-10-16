@@ -1205,10 +1205,70 @@ jobs:
         run: npm run test:company-autonomy:postgres
 
 
+  pgcheck_enterprise:
+    if: ${{ !inputs.tail_only }}
+    name: native enterprise (${{ matrix.postgres }})
+    runs-on: ubuntu-latest
+    # Isolate the complete enterprise cohort from both original native cohorts.
+    # Its fifteen 5m child ceilings plus one 10m catalog ceiling total85m.
+    # The new finite120m job bound leaves35m for capture/setup/cleanup; it is not a measured duration.
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['16', '18.4']
+    services:
+      postgres:
+        # Retain the existing compatibility lane and test the Render version observed
+        # for RC1 (2026-09-21). A PostgreSQL 16 pass alone does not attest PostgreSQL 18.4.
+        # The 16 image is the same verified official digest used by the native pass;
+        # use its canonical registry when the ECR mirror exhausts its data quota.
+        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}
+        env:
+          POSTGRES_PASSWORD: pgcheck
+          POSTGRES_DB: omerta_check
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      # pgcheck §7b applies the OLDEST schema.sql in history and §7c the NEWEST one that still
+      # declares an account column UUID, then boots the current build on top — what a deploy does.
+      # A shallow checkout has ONE commit, so §7c finds nothing to migrate from (its anti-vacuity
+      # throw is what turned this job red on 2026-09-05) and §7b's "oldest" schema is HEAD, i.e. it
+      # compares a database to itself and passes over nothing. Both need the full lineage.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+
+      # Genuine artifact prerequisite; full contract tests remain in forge.yml.
+      - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.7.1
+      - name: Compile original funded-work escrow artifact
+        run: npm run build:funded-work-artifact
+
+      - name: Install PostgreSQL client tools matching the server major
+        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'
+
+      - name: Estate workshops, licensed manufacturing, mobile shops, relocation and equipment recovery (real PostgreSQL)
+        if: '!cancelled()'
+        env:
+          CHAIN_ENABLED: 'off'
+          RESOURCE_ECONOMY: 'off'
+          ENTERPRISE_NATIVE_PROFILE: ci
+          ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
+        run: npm run test:agent-economy-enterprise:postgres
+
   pgcheck:
     if: ${{ always() && !inputs.tail_only }}
     name: real Postgres (${{ matrix.postgres }})
-    needs: [pgcheck_core, pgcheck_economy]
+    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     strategy:
@@ -1216,10 +1276,12 @@ jobs:
       matrix:
         postgres: ['16', '18.4']
     steps:
-      - name: Require both complete native cohorts
+      - name: Require all three complete native cohorts
         env:
           CORE_RESULT: ${{ needs.pgcheck_core.result }}
           ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}
+          ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}
         run: |
           test "$CORE_RESULT" = success
           test "$ECONOMY_RESULT" = success
+          test "$ENTERPRISE_RESULT" = success
