@@ -41,6 +41,10 @@ import { collectConsignmentIssues } from './consignments.js';
 const collectMobileShopIssues = async (...args) => (await import('./mobileshops.js')).collectMobileShopIssues(...args);
 import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
 import { collectPickingPackingIssues } from './pickingpackinginvariants.js';
+import { collectCollateralLendingIssues } from './collaterallending-invariants.js';
+import { collectCollateralAuctionIssues } from './collateralauction-invariants.js';
+export const getCollateralAuctionBookCollector = () => collectCollateralAuctionIssues;
+export const getCollateralLendingBookCollector = () => collectCollateralLendingIssues;
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -91,6 +95,7 @@ const KNOWN_REASONS = {
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
+    'collateral-auction:bid', 'collateral-auction:proceeds', 'collateral-auction:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
@@ -776,6 +781,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const collateralAuctionIssues = await collectCollateralAuctionIssues(pool);
+  push('collateral auction original consents and custody', collateralAuctionIssues.length, 0, 0, { issues: collateralAuctionIssues });
+  const collateralIssues = await collectCollateralLendingIssues(pool);
+  push('equipment collateral canonical loan and custody history', collateralIssues.length, 0, 0, { issues: collateralIssues });
   const relocationIssues=await collectBusinessRelocationIssues(pool);
   push('business relocation history',relocationIssues.length,0,0,{issues:relocationIssues});
   const crossDockIssues = await collectCrossDockIssues(pool);

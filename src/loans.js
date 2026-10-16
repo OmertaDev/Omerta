@@ -3,6 +3,46 @@
 // default is enforced (seize pocket + in-transit, a beating, the welsher mark). Every value movement
 // is a §10.4-ledgered transfer; only the house vig leaves the economy (a sink → the buyback pool).
 import crypto from 'node:crypto';
+import { assertItemTransaction, assertItemTransactionHealthy, itemTransactionIdentity } from './items.js';
+import { recordCollateralLendingTerminal } from './collaterallending.js';
+import { recoverCollateralAuctionFromLoan } from './collateralauction.js';
+const collateralAuctionRecoveryProofs = new WeakMap();
+export const getCollateralAuctionRecoveryVerifier = () => assertCollateralAuctionRecoveryProof;
+export function assertCollateralAuctionRecoveryProof(client, token) {
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const state = token && collateralAuctionRecoveryProofs.get(token);
+  if (!state?.active || state.used || state.client !== client || state.transaction !== itemTransactionIdentity(client)) throw new GameError('collateral_auction', 'loan_recovery_proof');
+  state.used = true; return state.payload;
+}
+async function recoverActualCollateralAuction(client, payload) {
+  if (!(await client.query('SELECT a.id FROM collateral_auctions a JOIN collateral_auction_agreements g ON g.id=a.agreement_id WHERE g.loan_id=$1', [payload.loanId])).rows.length) return;
+  const token = Object.freeze({}), state = { active: true, used: false, client, transaction: itemTransactionIdentity(client), payload };
+  collateralAuctionRecoveryProofs.set(token, state);
+  try { await recoverCollateralAuctionFromLoan(client, token); if (!state.used) throw new GameError('collateral_auction', 'loan_recovery_proof'); }
+  finally { state.active = false; collateralAuctionRecoveryProofs.delete(token); }
+}
+
+// Only the actual repay/collect leaves below mint this private, consume-once receipt.
+const collateralTerminalProofs = new WeakMap();
+export const getCollateralLendingTerminalVerifier = () => assertCollateralLendingTerminalProof;
+export function assertCollateralLendingTerminalProof(client, token) {
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const proof = token && collateralTerminalProofs.get(token);
+  if (!proof || !proof.active || proof.used || proof.client !== client || proof.transaction !== itemTransactionIdentity(client)) {
+    throw new GameError('collateral_lending', 'terminal_proof');
+  }
+  proof.used = true; return proof.payload;
+}
+async function recordActualCollateralTerminal(client, payload) {
+  // Preserve every ordinary unassociated loan path without manufacturing metadata or authority.
+  if (!(await client.query('SELECT id FROM collateral_lending_pledges WHERE loan_id=$1', [payload.loan.id])).rows.length) return;
+  assertItemTransaction(client); assertItemTransactionHealthy(client);
+  const token = Object.freeze({}), scope = { client, transaction: itemTransactionIdentity(client), payload, active: true, used: false };
+  collateralTerminalProofs.set(token, scope);
+  try { await recordCollateralLendingTerminal(client, token); if (!scope.used) throw new GameError('collateral_lending', 'terminal_proof'); }
+  finally { scope.active = false; collateralTerminalProofs.delete(token); }
+}
+
 import {assertSyndicatedLoanMutation as syndicatedLoanGuard,permitsSyndicatedLoanTake,prepareSyndicatedLoanOffer,finishSyndicatedLoanMutation} from './syndicatedloans.js';
 export {syndicatedLoanGuard};
 import { GameError, ledger, notify, bus, track } from './game.js';
@@ -375,12 +415,15 @@ export async function repayLoan(ch, lender, loanId, client, h) {
     h.acct.omr = Number(h.acct.omr) + pledgeBack;
     await h.ledger(client, { accountId: ch.account_id, currency: 'omr', amount: pledgeBack, reason: 'loan:pledge:return', counterparty: lender.id });
   }
-  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'loan:repay', counterparty: lender.id });
-  await h.ledger(client, { characterId: lender.id, currency: 'cash', amount: toLender, reason: 'loan:repay', counterparty: ch.id });
+  const collateralPayJournal = await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -owed, reason: 'loan:repay', counterparty: lender.id });
+  const collateralReceiveJournal = await h.ledger(client, { characterId: lender.id, currency: 'cash', amount: toLender, reason: 'loan:repay', counterparty: ch.id });
   await payVig(client, h.ledger, vig); // step 5: the vig splits — half → the buyback pool, half → the house window
   await h.notify(client, lender.id, 'loan_repaid', { by: ch.name, amount: toLender });
   await h.track(client, ch.account_id, 'loan_repay', { paid: owed, vig });
-  return { ok: true, paid: owed, toLender, vig, pledgeReturned: pledgeBack };
+  const receipt = { ok: true, paid: owed, toLender, vig, pledgeReturned: pledgeBack };
+  await recordActualCollateralTerminal(client, { loan, borrower: ch, holder: lender, kind: 'repaid', paid: owed, received: toLender, vig, payJournal: collateralPayJournal, receiveJournal: collateralReceiveJournal, receipt });
+  await recoverActualCollateralAuction(client, { kind: 'terminal', loanId, actor: ch, other: lender, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/:id/collect — two-party: ch=lender (actor), victim=borrower. After due, seize the
@@ -417,6 +460,7 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   await bumpHonor(client, borrower, HONOR.WELSH); // #1: a broken word stains the name (direct SQL — honor isn't positional)
   borrower.wanted_until = new Date(Date.now() + LOAN.WANTED_MS);     // WANTED: omertà stripped + hunted
   await postWantedBounty(client, borrower.id, h);                   // the underworld puts a price on their head
+  let collateralPayJournal = null, collateralReceiveJournal = null;
   if (collected > 0) {
     borrower.cash = Number(borrower.cash) - fromPocket;
     borrower.bank = Number(borrower.bank) - fromTransit;
@@ -425,8 +469,8 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
     borrower.bank_intransit = Math.min(Number(borrower.bank_intransit || 0) - fromTransit, Number(borrower.bank));
     ch.cash = Number(ch.cash) + toLender;
     // one row spans the borrower's cash+bank (check (a) is on cash+bank — the whack:loot precedent)
-    await h.ledger(client, { characterId: borrower.id, currency: 'cash', amount: -collected, reason: 'loan:collect', counterparty: ch.id });
-    await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: toLender, reason: 'loan:collect', counterparty: borrower.id });
+    collateralPayJournal = await h.ledger(client, { characterId: borrower.id, currency: 'cash', amount: -collected, reason: 'loan:collect', counterparty: ch.id });
+    collateralReceiveJournal = await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: toLender, reason: 'loan:collect', counterparty: borrower.id });
     await payVig(client, h.ledger, vig); // step 5: the vig splits — half → the buyback pool, half → the house window
   }
   // step 2: a SECURED default forfeits the collateral — the car changes hands to the lender (a pure
@@ -463,8 +507,11 @@ export async function collectLoan(ch, borrower, loanId, client, h) {
   // from here rather than being restated client-side (the crewNextCost/hunterSearchMs discipline —
   // a restated lever is wrong for everybody the day it moves).
   await finishSyndicatedLoanMutation(client,loanId,'collect');
-  return { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
+  const receipt = { ok: true, seized: collected, toLender, vig, shortfall: owed - collected, carSeized, omrSeized,
     wanted: true, wantedSeconds: Math.round(LOAN.WANTED_MS / 1000), hospSeconds: Math.round(LOAN.COLLECT_HOSP_MS / 1000) };
+  await recordActualCollateralTerminal(client, { loan, borrower, holder: ch, kind: 'collected', paid: collected, received: toLender, vig, payJournal: collateralPayJournal, receiveJournal: collateralReceiveJournal, receipt });
+  await recoverActualCollateralAuction(client, { kind: 'terminal', loanId, actor: ch, other: borrower, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/:id/sell — step 3 (the paper market): the current lender puts this ACTIVE loan's
@@ -532,7 +579,9 @@ export async function buyPaper(ch, seller, loanId, client, h) {
   await h.track(client, ch.account_id, 'loan_paper_buy', { price, take });
   // `toSeller` alone read as the SPEAKEASY buyout ("took over the club — $undefined paid"): the marker
   // names this system, and `owed` is what the buyer actually acquired.
-  return { ok: true, paper: 'bought', price, toSeller, take, owed: loanOwed(loan.principal, loan.rate) };
+  const receipt = { ok: true, paper: 'bought', price, toSeller, take, owed: loanOwed(loan.principal, loan.rate) };
+  await recoverActualCollateralAuction(client, { kind: 'paper', loanId, actor: ch, other: seller, rentalScope: h.rentalDeathScope, receipt });
+  return receipt;
 }
 
 // POST /v1/loans/square — pay to square your name: clears WANTED (calls off the NPC hunters + the pool

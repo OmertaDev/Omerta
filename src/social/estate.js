@@ -47,6 +47,10 @@ import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
 import { recoverConsignmentsInEstate } from '../consignments.js';
 import { recoverAtomicBartersInEstate } from '../atomicbarter.js';
 import { recoverPickingPackingInEstate } from '../pickingpacking.js';
+import { recoverCollateralLendingInEstate } from '../collaterallending.js';
+import { recoverCollateralAuctionsAtEstateStart } from '../collateralauction.js';
+export const getCollateralAuctionEstateStart = () => recoverCollateralAuctionsAtEstateStart;
+export const getCollateralLendingEstateRecovery = () => recoverCollateralLendingInEstate;
 import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
 import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -189,6 +193,12 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  const auctionStart = await recoverCollateralAuctionsAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of auctionStart) for (const actor of new Set([victim, h.actorCh, opts.killerCh].filter(Boolean))) {
+    if (actor.id !== receipt.originalCharacter || !actor.alive) continue;
+    const before = Number(actor.cash); registerItemTransactionUndo(client, () => { actor.cash = before; });
+    actor.cash = before + receipt.refundedCash;
+  }
   await (await import('../commercialcampaigns.js')).recoverCommercialCampaignAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
@@ -525,6 +535,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
   await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);
+  await recoverCollateralLendingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
   const layawayRecovery=await recoverCustomerLayawayInEstate(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of layawayRecovery)for(const actor of new Set([h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.buyerCharacter||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   const merchantReturnRecovery=await recoverMerchantReturnsInEstate(client,victim.id,h.rentalDeathScope,estateScope);

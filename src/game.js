@@ -2,6 +2,10 @@ export const eventMarketCompletionRevision='event_market_v1';
 export const commercialCampaignCompletionRevision = 'commercial_campaign_v1';
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
+import { finalizeCollateralLendingAction } from './collaterallending.js';
+import { finalizeCollateralAuction } from './collateralauction.js';
+export const getCollateralAuctionFinalizer = () => finalizeCollateralAuction;
+export const getCollateralLendingFinalizer = () => finalizeCollateralLendingAction;
 import { recordMeeting } from './contacts.js';
 import { recordPlayerIntel, requireKnownPlayer } from './playerintel.js';
 import { claimQualifiedAgentReferral } from './agentreferrals.js';
@@ -1208,6 +1212,8 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     await persistAccount(client, accountId, action.acct);
     await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,action.result);
     await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, action.result);
+    await finalizeCollateralLendingAction(client, action.result);
+    await finalizeCollateralAuction(client, action.result);
     return action;
     } catch (error) { throw deadlockToRetry(error); }
     });
@@ -1501,6 +1507,8 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     await(await import('./mobileshops.js')).finalizeEventVisitPair(client,result);
     await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,result);
     await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, result);
+    await finalizeCollateralLendingAction(client, result);
+    await finalizeCollateralAuction(client, result);
     return { ch, acct, owned, result };
     } catch (error) { throw deadlockToRetry(error); }
     });

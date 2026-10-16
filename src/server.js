@@ -115,6 +115,8 @@ import { register as registerMobileShops } from './routes/mobileshops.js';
 import { mobileShopListingReference, runMobileShop } from './mobileshops.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerPickingPacking } from './routes/pickingpacking.js';
+import { register as registerCollateralLending } from './routes/collaterallending.js';
+import { register as registerCollateralAuction } from './routes/collateralauction.js';
 import { register as registerDecisionReplay } from './routes/decisionreplay.js';
 import { register as registerEconomicDependencyMap } from './routes/economicdependencymap.js';
 import { register as registerFreightConsolidation } from './routes/freightconsolidation.js';
@@ -2519,6 +2521,8 @@ export async function buildServer() {
   registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });
+  registerCollateralLending(app, { pool, auth });
+  registerCollateralAuction(app, { pool, auth });
   registerFreightConsolidation(app, { pool, auth });
   registerMerchantReturns(app,{pool,auth,assertLifecycle:assertItemTransaction});
   registerDecisionReplay(app, { pool, auth });

@@ -6,6 +6,8 @@ import {multiHopCourierOriginals,multiHopCourierScopeSource,multiHopCourierDeath
 import { customerVaultDeathCounterparts } from './customervaults.js';
 import { customerLayawayDeathCounterparts } from './customerlayaway.js';
 import crypto from 'node:crypto';
+import { collateralAuctionCounterparts } from './collateralauction.js';
+export const getCollateralAuctionCounterparts = () => collateralAuctionCounterparts;
 import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
@@ -242,7 +244,9 @@ async function prelockCourierAwareSubjects(client,characterIds) {
   for (const subject of subjects) for (const counterpart of await multiHopCourierDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await merchantReturnCounterparts(client, subject)) ids.add(counterpart);
   // N07 and N09 reuse existing courier/commission originals; N10 adds at most 3 combined return counterparts.
-  if (ids.size > subjects.length * 57) fail('death_limit');
+  // N24 adds at most three signed, funded auction counterparts per original subject.
+  for (const subject of subjects) for (const counterpart of await collateralAuctionCounterparts(client, subject)) ids.add(counterpart);
+  if (ids.size > subjects.length * 60) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -287,6 +291,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await merchantReturnCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Merchant-return counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await collateralAuctionCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Collateral auction counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

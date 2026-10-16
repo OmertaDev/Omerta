@@ -9620,6 +9620,81 @@ CREATE TABLE IF NOT EXISTS performance_employment_requests (
  employment_id TEXT NOT NULL UNIQUE REFERENCES performance_employment_contracts(employment_id),
  PRIMARY KEY(account_id,request_key));
 
+-- N23 bounded equipment collateral; original ordinary cash-loan effects remain canonical.
+CREATE TABLE IF NOT EXISTS collateral_lending_pledges (
+ id TEXT PRIMARY KEY,loan_id TEXT NOT NULL UNIQUE,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ original_lender_account TEXT NOT NULL REFERENCES accounts(id),original_lender_character TEXT NOT NULL REFERENCES characters(id),
+ principal INT NOT NULL CHECK(principal BETWEEN 5000 AND 1000000),rate NUMERIC NOT NULL CHECK(rate>0 AND rate<=0.5),
+ hours INT NOT NULL CHECK(hours BETWEEN 1 AND 72),offered_at TIMESTAMPTZ NOT NULL,due_at TIMESTAMPTZ NOT NULL,
+ birth_event TEXT NOT NULL REFERENCES item_events(id),birth_mutation TEXT NOT NULL,
+ initial_condition INT NOT NULL CHECK(initial_condition BETWEEN 10 AND 100),initial_condition_revision INT NOT NULL CHECK(initial_condition_revision>=0),
+ take_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),escrow_event TEXT NOT NULL UNIQUE REFERENCES item_events(id),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),created_at TIMESTAMPTZ NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('held','released','estate_released')),released_at TIMESTAMPTZ,
+ release_event TEXT UNIQUE REFERENCES item_events(id),release_kind TEXT CHECK(release_kind IN ('repaid','collected','borrower_estate')),
+ CHECK(borrower_account<>original_lender_account AND borrower_character<>original_lender_character),
+ CHECK(due_at>offered_at),CHECK((state='held' AND released_at IS NULL AND release_event IS NULL AND release_kind IS NULL)
+ OR (state='released' AND released_at IS NOT NULL AND release_event IS NOT NULL AND release_kind IN ('repaid','collected'))
+ OR (state='estate_released' AND released_at IS NOT NULL AND release_event IS NOT NULL AND release_kind='borrower_estate')));
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_lending_one_held_uid ON collateral_lending_pledges(item_id) WHERE state='held';
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_lending_one_held_original ON collateral_lending_pledges(borrower_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS collateral_lending_requests (
+ account_id TEXT NOT NULL,request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),
+ run_id TEXT NOT NULL UNIQUE,action TEXT NOT NULL CHECK(action IN ('pledge','repay','release')),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),request_json JSONB NOT NULL,receipt JSONB,
+ account_ref TEXT REFERENCES accounts(id),original_character TEXT REFERENCES characters(id),pledge_id TEXT REFERENCES collateral_lending_pledges(id),
+ PRIMARY KEY(account_id,request_key),CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND pledge_id IS NULL)
+ OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND pledge_id IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_lending_terminals (
+ pledge_id TEXT PRIMARY KEY REFERENCES collateral_lending_pledges(id),loan_id TEXT NOT NULL UNIQUE,
+ borrower_character TEXT NOT NULL REFERENCES characters(id),holder_character TEXT NOT NULL REFERENCES characters(id),
+ holder_account TEXT NOT NULL REFERENCES accounts(id),kind TEXT NOT NULL CHECK(kind IN ('repaid','collected')),
+ paid_cash INT NOT NULL CHECK(paid_cash>=0),received_cash INT NOT NULL CHECK(received_cash>=0),vig_cash INT NOT NULL CHECK(vig_cash>=0),
+ pay_journal TEXT UNIQUE REFERENCES transactions(id),receive_journal TEXT UNIQUE REFERENCES transactions(id),receipt JSONB NOT NULL,
+ mutation_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ created_at TIMESTAMPTZ NOT NULL,CHECK(paid_cash=received_cash+vig_cash),CHECK(borrower_character<>holder_character),
+ CHECK((paid_cash=0 AND pay_journal IS NULL AND receive_journal IS NULL) OR
+ (paid_cash>0 AND pay_journal IS NOT NULL AND receive_journal IS NOT NULL AND pay_journal<>receive_journal)));
+
+CREATE TABLE IF NOT EXISTS collateral_auction_agreements (
+ id TEXT PRIMARY KEY,loan_id TEXT NOT NULL UNIQUE,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ quote_hash TEXT NOT NULL,borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ lender_account TEXT NOT NULL REFERENCES accounts(id),lender_character TEXT NOT NULL REFERENCES characters(id),
+ principal INT NOT NULL CHECK(principal BETWEEN 5000 AND 1000000),owed INT NOT NULL CHECK(owed>=principal),
+ reserve_cash INT NOT NULL CHECK(reserve_cash>=owed AND reserve_cash<=2000000),auction_seconds INT NOT NULL CHECK(auction_seconds BETWEEN 60 AND 3600),
+ offered_at TIMESTAMPTZ NOT NULL,prepared_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,
+ prepare_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ approved_at TIMESTAMPTZ,approve_key TEXT UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ CHECK(borrower_account<>lender_account AND borrower_character<>lender_character),
+ CHECK((approved_at IS NULL AND approve_key IS NULL) OR (approved_at>=prepared_at AND approve_key IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_auctions (
+ id TEXT PRIMARY KEY,agreement_id TEXT NOT NULL UNIQUE REFERENCES collateral_auction_agreements(id),
+ pledge_id TEXT NOT NULL UNIQUE REFERENCES collateral_lending_pledges(id),pledge_hash TEXT NOT NULL,
+ opened_at TIMESTAMPTZ NOT NULL,closes_at TIMESTAMPTZ NOT NULL,settle_until TIMESTAMPTZ NOT NULL,opened_by TEXT NOT NULL REFERENCES characters(id),
+ open_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ state TEXT NOT NULL CHECK(state IN ('open','settled','cancelled')),winning_bid TEXT,
+ proceeds_journal TEXT UNIQUE REFERENCES transactions(id),sale_event TEXT UNIQUE REFERENCES item_events(id),
+ release_request TEXT,settled_at TIMESTAMPTZ,closed_at TIMESTAMPTZ,close_reason TEXT,
+ CHECK(closes_at>opened_at AND settle_until>closes_at),CHECK((state='open' AND closed_at IS NULL AND settled_at IS NULL AND winning_bid IS NULL)
+ OR (state='cancelled' AND closed_at IS NOT NULL AND settled_at IS NULL AND winning_bid IS NULL)
+ OR (state='settled' AND closed_at IS NOT NULL AND settled_at IS NOT NULL AND winning_bid IS NOT NULL AND proceeds_journal IS NOT NULL AND sale_event IS NOT NULL AND release_request IS NOT NULL)));
+CREATE TABLE IF NOT EXISTS collateral_auction_bids (
+ id TEXT PRIMARY KEY,auction_id TEXT NOT NULL REFERENCES collateral_auctions(id),agreement_hash TEXT NOT NULL,
+ bidder_account TEXT NOT NULL REFERENCES accounts(id),bidder_character TEXT NOT NULL REFERENCES characters(id),
+ amount INT NOT NULL CHECK(amount BETWEEN 5000 AND 2000000),debit_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ created_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,mutation_key TEXT NOT NULL UNIQUE REFERENCES item_mutation_guards(idempotency_key),
+ state TEXT NOT NULL CHECK(state IN ('held','spent','refunded')),refund_journal TEXT UNIQUE REFERENCES transactions(id),resolved_at TIMESTAMPTZ,
+ UNIQUE(auction_id,bidder_account),CHECK((state='held' AND refund_journal IS NULL AND resolved_at IS NULL)
+ OR (state='spent' AND refund_journal IS NULL AND resolved_at IS NOT NULL)
+ OR (state='refunded' AND refund_journal IS NOT NULL AND resolved_at IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS collateral_auction_one_original_held_bid ON collateral_auction_bids(bidder_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS collateral_auction_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL,action TEXT NOT NULL,
+ body_hash TEXT NOT NULL,body_json JSONB NOT NULL,run_id TEXT NOT NULL UNIQUE,original_character TEXT NOT NULL REFERENCES characters(id),
+ agreement_id TEXT REFERENCES collateral_auction_agreements(id),auction_id TEXT REFERENCES collateral_auctions(id),receipt JSONB,
+ PRIMARY KEY(account_id,request_key));
+
 
 CREATE TABLE IF NOT EXISTS syndicated_loan_facilities (
  id TEXT PRIMARY KEY,borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
