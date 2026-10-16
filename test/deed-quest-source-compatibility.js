@@ -17,7 +17,7 @@ const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(
 assert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2a057d375cb8f8d94ec30c8e4559832b5be63011');
 assert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');
 assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',
-  'src/content/phase1.js', 'src/content/phase1-policy.js', 'src/content/city-quest-presentation.js', 'src/db.js', 'src/deeds.js', 'tools/release-source-transfer.js']);
+  'src/content/phase1.js', 'src/content/phase1-policy.js', 'src/content/city-quest-presentation.js', 'src/db.js', 'src/deeds.js', 'src/explore.js', 'tools/release-source-transfer.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
   const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);

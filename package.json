@@ -292,7 +292,7 @@
     "test:agent-economy-next-five:postgres": "node tools/next-five-native.js",
     "test:deed-discovery": "node test/deedquesteligibility.js && node test/deeddiscovery.js && node test/deeddiscovery-api.js && node test/deedbuildings.js",
     "test:deed-discovery:postgres": "node test/deeddiscovery-postgres.js && node test/deeds-supply-postgres.js",
-    "test:deed-discovery:browser": "node test/deed-discovery-ui.js && node test/deedbuildings-browser.js"
+    "test:deed-discovery:browser": "node test/deed-discovery-ui.js && node test/deedbuildings-browser.js && node test/property-quest-city-browser.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

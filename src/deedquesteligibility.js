@@ -35,10 +35,9 @@ export function isApprovedDeedQuestSource(packages) {
 // to serialize eligibility with death; its caller owns the account lifetime and building reservations.
 // Neither an arbitrary reward node nor a client-supplied quest identifier grants this authority.
 export async function verifiedQuestDeedEligibility(client, { accountId, characterId, lock = false } = {}) {
-  const actor = (await client.query(
-    `SELECT id FROM characters WHERE id=$1 AND account_id=$2 AND alive${lock ? ' FOR UPDATE' : ''}`,
-    [characterId, accountId],
-  )).rows[0];
+  const actor = (lock
+    ? await client.query('SELECT id FROM characters WHERE id=$1 AND account_id=$2 AND alive FOR UPDATE', [characterId, accountId])
+    : await client.query('SELECT id FROM characters WHERE id=$1 AND account_id=$2 AND alive', [characterId, accountId])).rows[0];
   if (!actor) throw new GameError('no_character', 'A living character owned by this account is required.');
   if (!isApprovedDeedQuestSource(PHASE1_WORLD_GRAPH_PACKAGES)) return null;
   const source = QUEST_DEED_SOURCE;
