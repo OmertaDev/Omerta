@@ -1,3 +1,5 @@
+import { register as registerMultiHopCourier } from './routes/multihopcourier.js';
+import { register as registerCustomerVaults } from './routes/customervaults.js';
 import { register as registerCommissionedCrafting } from './routes/commissionedcrafting.js';
 import * as DeedUpgrades from './deed-upgrades.js';
 import Fastify from 'fastify';
@@ -95,9 +97,12 @@ import { register as registerEquipmentMaintenance } from './routes/equipmentmain
 import { register as registerCommercialDisputes } from './routes/commercialdisputes.js';
 import { assertCommercialDisputeAccess } from './commercialdisputes.js';
 import { register as registerEquipmentInsurance } from './routes/equipmentinsurance.js';
+import { register as registerCustomerLayaway } from './routes/customerlayaway.js';
 import { register as registerConsignments } from './routes/consignments.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
 import { register as registerPickingPacking } from './routes/pickingpacking.js';
+import { register as registerDecisionReplay } from './routes/decisionreplay.js';
+import { register as registerEconomicDependencyMap } from './routes/economicdependencymap.js';
 import { register as registerFreightConsolidation } from './routes/freightconsolidation.js';
 import { register as registerInfrastructureConcessions } from './routes/infrastructureconcessions.js';
 import { register as registerTerritoryEconomics } from './routes/territoryeconomics.js';
@@ -2475,10 +2480,16 @@ export async function buildServer() {
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
   registerConsignments(app, { pool, auth });
+  registerCustomerLayaway(app, { pool, auth });
+  registerMultiHopCourier(app, { pool, auth });
+  // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
+  registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
   registerCommissionedCrafting(app, { pool, auth });
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });
   registerFreightConsolidation(app, { pool, auth });
+  registerDecisionReplay(app, { pool, auth });
+  registerEconomicDependencyMap(app, { pool, auth });
   registerInfrastructureConcessions(app, { pool, auth });
   registerTerritoryEconomics(app, { pool, auth });
   registerEquipmentRentals(app, { pool, auth, relayEscrowCustody });

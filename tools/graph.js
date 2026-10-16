@@ -38,6 +38,7 @@
 //   node tools/graph.js check                 the graph's own invariants (CI gate)
 //   node tools/graph.js query <name> [arg]    see QUERIES below
 import fs from 'node:fs';
+import {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -658,6 +659,12 @@ export function build() {
     const prov = {file:term.file,line:term.line,hash:sha(autonomyHelpers[term.file]),binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);
     edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const nextLayerHelpers=Object.fromEntries(NEXT_LAYER_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractNextLayerHelperReconciliations(inv,nextLayerHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(nextLayerHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 
   const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));

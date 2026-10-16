@@ -24,7 +24,7 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
@@ -48,6 +48,14 @@ export async function assertDepotFeatureObligations(c,depotId){assertItemTransac
    if(!consent.some(q=>q.receipt?.jobId===row.id&&q.receipt?.state==='accepted'&&q.receipt?.sourceHash===row.source_hash))fail('picking_history_changed');
    fail('picking_accepted');
   }
+ }
+ const services=(await c.query('SELECT * FROM customer_vault_services WHERE depot_id=$1 ORDER BY id',[depotId])).rows;
+ if(services.length){const {customerVaultAccounting}=await import('./customervaults.js');if((await customerVaultAccounting(c)).issues.length)fail('vault_history_changed');}
+ for(const row of services){
+  const expected=crypto.createHash('sha256').update(JSON.stringify(['customer-vault-service-v1',row.id,row.depot_id,row.operator_account,row.operator_character,Number(row.fee_cash),row.policy_hash,+new Date(row.created_at),+new Date(row.expires_at)])).digest('hex');
+  if(!['open','draining','closed'].includes(row.state)||row.source_hash!==expected)fail('vault_history_changed');
+  const positions=(await c.query('SELECT * FROM customer_vault_positions WHERE service_id=$1 ORDER BY id',[row.id])).rows;
+  if(row.state!=='closed'||positions.some(p=>p.state==='funded'||Number(p.remaining)!==0))fail('customer_vault_obligation');
  }
 
 }

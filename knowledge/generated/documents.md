@@ -466,6 +466,7 @@
 | [docs/core-architecture/review-phase5.md](../../docs/core-architecture/review-phase5.md) | documentation | 31 | 2026-09-18 |
 | [docs/courier-continuation-security-review.md](../../docs/courier-continuation-security-review.md) | documentation | 67 | 2026-10-11 |
 | [docs/crew-logistics-security-review.md](../../docs/crew-logistics-security-review.md) | documentation | 76 | 2026-10-11 |
+| [docs/customer-bank-vaults-security-review.md](../../docs/customer-bank-vaults-security-review.md) | documentation | 38 | 2026-10-15 |
 | [docs/decision-execution-security-review.md](../../docs/decision-execution-security-review.md) | documentation | 92 | 2026-10-11 |
 | [docs/delivery-commitments.md](../../docs/delivery-commitments.md) | documentation | 75 | 2026-10-11 |
 | [docs/delivery-finance-security-review.md](../../docs/delivery-finance-security-review.md) | documentation | 41 | 2026-10-11 |
@@ -518,6 +519,9 @@
 | [docs/logistics-hub-migration-review.md](../../docs/logistics-hub-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/management-teams-design.md](../../docs/management-teams-design.md) | design | 26 | 2026-10-13 |
 | [docs/management-teams-security-review.md](../../docs/management-teams-security-review.md) | documentation | 18 | 2026-10-13 |
+| [docs/multi-hop-courier-security-review.md](../../docs/multi-hop-courier-security-review.md) | documentation | 45 | 2026-10-15 |
+| [docs/multihop-courier-owner-estate-review.md](../../docs/multihop-courier-owner-estate-review.md) | documentation | 16 | 2026-10-15 |
+| [docs/multihop-courier-recovery-review.md](../../docs/multihop-courier-recovery-review.md) | documentation | 16 | 2026-10-15 |
 | [docs/OMR-MACHINE-CAMPAIGN.md](../../docs/OMR-MACHINE-CAMPAIGN.md) | documentation | 96 | 2026-09-25 |
 | [docs/OMR-MARKETING-PACK.md](../../docs/OMR-MARKETING-PACK.md) | documentation | 178 | 2026-10-06 |
 | [docs/PLAYER-FIRST-LAUNCH-STRATEGY.md](../../docs/PLAYER-FIRST-LAUNCH-STRATEGY.md) | documentation | 178 | 2026-10-14 |
@@ -537,7 +541,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 178 | 2026-10-16 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 180 | 2026-10-16 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |

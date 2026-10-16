@@ -9180,3 +9180,70 @@ CREATE TABLE IF NOT EXISTS payment_receipts (
   sent_at TIMESTAMPTZ
 );
 CREATE INDEX IF NOT EXISTS payment_receipts_due_idx ON payment_receipts(next_attempt_at) WHERE sent_at IS NULL;
+
+-- Customer layaway reserves actual game cash and the original seller's existing item.
+CREATE TABLE IF NOT EXISTS customer_layaways (
+ id TEXT PRIMARY KEY,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ seller_account TEXT NOT NULL REFERENCES accounts(id),seller_character TEXT NOT NULL REFERENCES characters(id),
+ buyer_account TEXT NOT NULL REFERENCES accounts(id),buyer_character TEXT NOT NULL REFERENCES characters(id),
+ price_cash INT NOT NULL CHECK(price_cash BETWEEN 1 AND 1000000),source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),expires_at TIMESTAMPTZ NOT NULL,
+ status TEXT NOT NULL CHECK(status IN('offered','active','completed','cancelled','expired','party_dead')),
+ total_paid INT NOT NULL DEFAULT 0 CHECK(total_paid>=0),escrow_cash INT NOT NULL DEFAULT 0 CHECK(escrow_cash>=0),
+ paid_to_seller INT NOT NULL DEFAULT 0 CHECK(paid_to_seller>=0),refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ installment_count INT NOT NULL DEFAULT 0 CHECK(installment_count BETWEEN 0 AND 8),deposit_guard TEXT REFERENCES item_mutation_guards(idempotency_key),settlement JSONB,
+ CHECK(seller_account<>buyer_account AND seller_character<>buyer_character),CHECK(total_paid<=price_cash AND total_paid=escrow_cash+paid_to_seller+refunded_cash),
+ CHECK((total_paid=0 AND installment_count=0 AND deposit_guard IS NULL) OR (total_paid>0 AND installment_count>0 AND deposit_guard IS NOT NULL)),
+ CHECK((status='offered' AND total_paid=0 AND settlement IS NULL) OR (status='active' AND escrow_cash=total_paid AND total_paid>0 AND total_paid<price_cash AND settlement IS NULL) OR (status='completed' AND total_paid=price_cash AND paid_to_seller=price_cash AND settlement IS NOT NULL) OR (status IN('cancelled','expired','party_dead') AND refunded_cash=total_paid AND settlement IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS customer_layaway_active_item ON customer_layaways(item_id) WHERE status='active';
+CREATE UNIQUE INDEX IF NOT EXISTS customer_layaway_seller_offer ON customer_layaways(seller_account,item_id) WHERE status IN('offered','active');
+CREATE TABLE IF NOT EXISTS customer_layaway_installments (
+ layaway_id TEXT NOT NULL REFERENCES customer_layaways(id),ordinal INT NOT NULL CHECK(ordinal BETWEEN 1 AND 8),amount_cash INT NOT NULL CHECK(amount_cash BETWEEN 1 AND 1000000),
+ reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),PRIMARY KEY(layaway_id,ordinal));
+CREATE TABLE IF NOT EXISTS customer_layaway_requests (
+ account_id TEXT NOT NULL,key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),run_id TEXT NOT NULL UNIQUE,
+ receipt JSONB,account_ref TEXT REFERENCES accounts(id),original_character TEXT REFERENCES characters(id),PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL) OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)));
+
+-- Fully reserved customer game-cash vaults.
+CREATE TABLE IF NOT EXISTS customer_vault_services (
+ id TEXT PRIMARY KEY,depot_id TEXT NOT NULL REFERENCES business_depots(id),operator_account TEXT NOT NULL REFERENCES accounts(id),
+ operator_character TEXT NOT NULL REFERENCES characters(id),fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 0 AND 1000),
+ source_hash TEXT NOT NULL,policy_hash TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('open','draining','closed')),created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+ expires_at TIMESTAMPTZ NOT NULL,closed_at TIMESTAMPTZ,CHECK(expires_at>created_at));
+CREATE UNIQUE INDEX IF NOT EXISTS customer_vault_one_service ON customer_vault_services(operator_account) WHERE state IN ('open','draining');
+CREATE TABLE IF NOT EXISTS customer_vault_positions (
+ id TEXT PRIMARY KEY,service_id TEXT NOT NULL REFERENCES customer_vault_services(id),operator_account TEXT NOT NULL REFERENCES accounts(id),
+ operator_character TEXT NOT NULL REFERENCES characters(id),customer_account TEXT NOT NULL REFERENCES accounts(id),customer_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL,principal INT NOT NULL CHECK(principal BETWEEN 1 AND 100000),remaining INT NOT NULL CHECK(remaining BETWEEN 0 AND principal),
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 0 AND 1000),reserve_debit TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ fee_debit TEXT UNIQUE REFERENCES transactions(id),fee_credit TEXT UNIQUE REFERENCES transactions(id),release_credit TEXT UNIQUE REFERENCES transactions(id),
+ state TEXT NOT NULL CHECK(state IN ('funded','withdrawn','estate_refunded')),created_at TIMESTAMPTZ NOT NULL DEFAULT now(),released_at TIMESTAMPTZ,
+ CHECK(operator_account<>customer_account),CHECK((state='funded' AND remaining=principal AND released_at IS NULL AND release_credit IS NULL) OR (state<>'funded' AND remaining=0 AND released_at IS NOT NULL AND release_credit IS NOT NULL)),
+ CHECK((fee_cash=0 AND fee_debit IS NULL AND fee_credit IS NULL) OR (fee_cash>0 AND fee_debit IS NOT NULL AND fee_credit IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS customer_vault_one_position ON customer_vault_positions(customer_account) WHERE state='funded';
+CREATE TABLE IF NOT EXISTS customer_vault_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
+
+-- Consented two-leg movement of one existing precision-tool UID.
+CREATE TABLE IF NOT EXISTS multi_hop_couriers (
+ id TEXT PRIMARY KEY,item_id TEXT NOT NULL REFERENCES item_instances(id),
+ owner_account TEXT NOT NULL REFERENCES accounts(id),owner_character TEXT NOT NULL REFERENCES characters(id),
+ first_account TEXT NOT NULL,first_character TEXT NOT NULL,
+ second_account TEXT NOT NULL,second_character TEXT NOT NULL,
+ origin TEXT NOT NULL,handoff TEXT NOT NULL,destination TEXT NOT NULL,
+ first_fee INT NOT NULL CHECK(first_fee BETWEEN 1 AND 1000),second_fee INT NOT NULL CHECK(second_fee BETWEEN 1 AND 1000),
+ first_consent BOOLEAN NOT NULL DEFAULT false,second_consent BOOLEAN NOT NULL DEFAULT false,
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),expires_at TIMESTAMPTZ NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('offered','ready','first_leg','second_leg','completed','cancelled','expired','party_dead')),
+ reserved_cash INT NOT NULL DEFAULT 0 CHECK(reserved_cash>=0),earned_first INT NOT NULL DEFAULT 0 CHECK(earned_first>=0),earned_second INT NOT NULL DEFAULT 0 CHECK(earned_second>=0),refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ deposit_guard TEXT REFERENCES item_mutation_guards(idempotency_key),first_travel JSONB,second_travel JSONB,receipt JSONB,
+ CHECK(owner_account<>first_account AND owner_account<>second_account AND first_account<>second_account),
+ CHECK(owner_character<>first_character AND owner_character<>second_character AND first_character<>second_character),
+ CHECK(origin<>handoff AND origin<>destination AND handoff<>destination),
+ CHECK(earned_first IN (0,first_fee) AND earned_second IN (0,second_fee)),
+ CHECK((status IN ('offered','ready') AND reserved_cash=0 AND earned_first=0 AND earned_second=0 AND refunded_cash=0 AND deposit_guard IS NULL) OR
+ (status NOT IN ('offered','ready') AND ((deposit_guard IS NOT NULL AND reserved_cash+earned_first+earned_second+refunded_cash=first_fee+second_fee) OR (status IN ('cancelled','expired','party_dead') AND deposit_guard IS NULL AND reserved_cash=0 AND earned_first=0 AND earned_second=0 AND refunded_cash=0)))),
+ CHECK(status<>'ready' OR (first_consent AND second_consent)),CHECK(status<>'completed' OR (earned_first=first_fee AND earned_second=second_fee AND reserved_cash=0)),CHECK(status NOT IN ('cancelled','expired','party_dead') OR reserved_cash=0));
+CREATE UNIQUE INDEX IF NOT EXISTS multi_hop_courier_live_item ON multi_hop_couriers(item_id) WHERE status IN ('offered','ready','first_leg','second_leg');
+CREATE TABLE IF NOT EXISTS multi_hop_courier_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),request_key TEXT NOT NULL CHECK(char_length(request_key) BETWEEN 1 AND 128),body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),original_character TEXT NOT NULL REFERENCES characters(id),network_id TEXT NOT NULL REFERENCES multi_hop_couriers(id),receipt JSONB NOT NULL,PRIMARY KEY(account_id,request_key));

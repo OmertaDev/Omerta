@@ -1,0 +1,502 @@
+{
+  "componentOnly": true,
+  "base": "3d375c187b8b1c0f3c5732acb60deedd3e30cec7",
+  "schemaDDL": null,
+  "estateHooks": null,
+  "registrar": {
+    "module": "./routes/decisionreplay.js",
+    "dependencies": [
+      "pool",
+      "auth"
+    ]
+  },
+  "contracts": {
+    "GET /v1/agent/decision-replay": {
+      "operationId": "listDecisionReplayCandidates",
+      "requestParameters": [
+        {
+          "name": "kind",
+          "in": "query",
+          "required": true,
+          "schema": {
+            "enum": [
+              "intelligence_purchase",
+              "forecast_memory"
+            ]
+          }
+        },
+        {
+          "name": "after",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "pattern": "^[!-~]{1,128}$"
+          }
+        }
+      ],
+      "responseSchema": {
+        "$ref": "#/components/schemas/DecisionReplayBoard"
+      }
+    },
+    "GET /v1/agent/decision-replay/:kind/:id": {
+      "operationId": "readVerifiedDecisionReplay",
+      "pathSchemas": {
+        "kind": {
+          "enum": [
+            "intelligence_purchase",
+            "forecast_memory"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[!-~]{1,128}$"
+        }
+      },
+      "responseSchema": {
+        "$ref": "#/components/schemas/DecisionReplay"
+      }
+    }
+  },
+  "schemas": {
+    "DecisionReplay": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "intelligence_purchase"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[!-~]{1,128}$"
+            },
+            "occurredAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "originalCharacter": {
+              "type": "string",
+              "pattern": "^[!-~]{1,128}$"
+            },
+            "readOnly": {
+              "const": true
+            },
+            "historicalAccountOnly": {
+              "const": true
+            },
+            "executionAuthority": {
+              "const": false
+            },
+            "causality": {
+              "const": "not_established"
+            },
+            "performanceClaim": {
+              "const": "none"
+            },
+            "action": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "purchase_economic_intelligence"
+                },
+                "publicationId": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                },
+                "requestBody": {
+                  "const": "not_retained"
+                }
+              },
+              "required": [
+                "kind",
+                "publicationId",
+                "requestBody"
+              ],
+              "additionalProperties": false
+            },
+            "cost": {
+              "type": "object",
+              "properties": {
+                "gameCashDebited": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "basis": {
+                  "const": "exact_canonical_paired_journals"
+                }
+              },
+              "required": [
+                "gameCashDebited",
+                "basis"
+              ],
+              "additionalProperties": false
+            },
+            "receipt": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                },
+                "reportHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "payJournal": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                },
+                "receiveJournal": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                }
+              },
+              "required": [
+                "id",
+                "reportHash",
+                "payJournal",
+                "receiveJournal"
+              ],
+              "additionalProperties": false
+            },
+            "outcome": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "report_delivered"
+                },
+                "evaluatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "samples": {
+                  "type": "integer",
+                  "minimum": 5
+                },
+                "observedUnits": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "projectedUnits": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "projectionIsNotOutcome": {
+                  "const": true
+                }
+              },
+              "required": [
+                "status",
+                "evaluatedAt",
+                "samples",
+                "observedUnits",
+                "projectedUnits",
+                "projectionIsNotOutcome"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "occurredAt",
+            "originalCharacter",
+            "readOnly",
+            "historicalAccountOnly",
+            "executionAuthority",
+            "causality",
+            "performanceClaim",
+            "action",
+            "cost",
+            "receipt",
+            "outcome"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "const": "forecast_memory"
+            },
+            "id": {
+              "type": "string",
+              "pattern": "^[!-~]{1,128}$"
+            },
+            "occurredAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "originalCharacter": {
+              "type": "string",
+              "pattern": "^[!-~]{1,128}$"
+            },
+            "readOnly": {
+              "const": true
+            },
+            "historicalAccountOnly": {
+              "const": true
+            },
+            "executionAuthority": {
+              "const": false
+            },
+            "causality": {
+              "const": "not_established"
+            },
+            "performanceClaim": {
+              "const": "none"
+            },
+            "action": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "const": "apply_observed_inventory_forecast"
+                },
+                "businessId": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                },
+                "applied": {
+                  "type": "object",
+                  "properties": {
+                    "salePrice": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "bidPrice": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "targetStock": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "reorderAt": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "restockBudget": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "salePrice",
+                    "bidPrice",
+                    "targetStock",
+                    "reorderAt",
+                    "restockBudget"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "kind",
+                "businessId",
+                "applied"
+              ],
+              "additionalProperties": false
+            },
+            "cost": {
+              "type": "object",
+              "properties": {
+                "gameCashDebited": {
+                  "const": 0
+                },
+                "basis": {
+                  "const": "canonical_apply_receipt"
+                }
+              },
+              "required": [
+                "gameCashDebited",
+                "basis"
+              ],
+              "additionalProperties": false
+            },
+            "receipt": {
+              "type": "object",
+              "properties": {
+                "factId": {
+                  "type": "string",
+                  "pattern": "^[!-~]{1,128}$"
+                },
+                "sourceProofHash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              },
+              "required": [
+                "factId",
+                "sourceProofHash"
+              ],
+              "additionalProperties": false
+            },
+            "outcome": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "unknown"
+                    },
+                    "reason": {
+                      "const": "no_recorded_observation"
+                    },
+                    "attribution": {
+                      "const": "not_established"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "reason",
+                    "attribution"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "const": "observed"
+                    },
+                    "observedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "samples": {
+                      "type": "integer",
+                      "minimum": 5
+                    },
+                    "operatingResult": {
+                      "type": "integer"
+                    },
+                    "unitsSold": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "expenses": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "attribution": {
+                      "const": "not_established"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "observedAt",
+                    "samples",
+                    "operatingResult",
+                    "unitsSold",
+                    "expenses",
+                    "attribution"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "required": [
+            "kind",
+            "id",
+            "occurredAt",
+            "originalCharacter",
+            "readOnly",
+            "historicalAccountOnly",
+            "executionAuthority",
+            "causality",
+            "performanceClaim",
+            "action",
+            "cost",
+            "receipt",
+            "outcome"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "DecisionReplayBoard": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "intelligence_purchase",
+            "forecast_memory"
+          ]
+        },
+        "kindName": {
+          "enum": [
+            "Intelligence purchases",
+            "Forecast memory"
+          ]
+        },
+        "candidates": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[!-~]{1,128}$"
+              },
+              "occurredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "verification": {
+                "const": "detail_required"
+              }
+            },
+            "required": [
+              "id",
+              "occurredAt",
+              "verification"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[!-~]{1,128}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "windowDays": {
+          "const": 30
+        },
+        "readOnly": {
+          "const": true
+        },
+        "unsupportedKinds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "const": "production"
+          }
+        },
+        "performanceClaim": {
+          "const": "none"
+        }
+      },
+      "required": [
+        "kind",
+        "kindName",
+        "candidates",
+        "next",
+        "windowDays",
+        "readOnly",
+        "unsupportedKinds",
+        "performanceClaim"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
