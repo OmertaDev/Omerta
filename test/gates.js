@@ -3607,7 +3607,7 @@ scopedSocialContext = async function(db) {
   }
   if([...visited].some(name=>/node tools\/market-operations-native\.js(?:\s|$)/.test(scripts[name]||''))) {
     const {MARKET_OPERATIONS_NATIVE_PROOFS,assertMarketOperationsInventory}=await import('../tools/market-operations-native.js');
-    assertMarketOperationsInventory(MARKET_OPERATIONS_NATIVE_PROOFS);assert.equal(MARKET_OPERATIONS_NATIVE_PROOFS.length,14);
+    assertMarketOperationsInventory(MARKET_OPERATIONS_NATIVE_PROOFS);assert.equal(MARKET_OPERATIONS_NATIVE_PROOFS.length,15);
     for(const[file]of MARKET_OPERATIONS_NATIVE_PROOFS){assert(fs.existsSync(path.join(ROOT,'test/'+file+'.js')));covered.add('test/'+file+'.js');}
   }
   for (const f of workflows.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
