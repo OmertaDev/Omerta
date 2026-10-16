@@ -3602,12 +3602,12 @@ scopedSocialContext = async function(db) {
   }
   if([...visited].some(name=>/node tools\/next-layer-native\.js(?:\s|$)/.test(scripts[name]||''))) {
     const {NEXT_LAYER_NATIVE_PROOFS,assertNextLayerInventory}=await import('../tools/next-layer-native.js');
-    assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);assert.equal(NEXT_LAYER_NATIVE_PROOFS.length,17);
+    assertNextLayerInventory(NEXT_LAYER_NATIVE_PROOFS);assert.equal(NEXT_LAYER_NATIVE_PROOFS.length,18);
     for(const[file]of NEXT_LAYER_NATIVE_PROOFS){assert(fs.existsSync(path.join(ROOT,'test/'+file+'.js')));covered.add('test/'+file+'.js');}
   }
   if([...visited].some(name=>/node tools\/market-operations-native\.js(?:\s|$)/.test(scripts[name]||''))) {
     const {MARKET_OPERATIONS_NATIVE_PROOFS,assertMarketOperationsInventory}=await import('../tools/market-operations-native.js');
-    assertMarketOperationsInventory(MARKET_OPERATIONS_NATIVE_PROOFS);assert.equal(MARKET_OPERATIONS_NATIVE_PROOFS.length,14);
+    assertMarketOperationsInventory(MARKET_OPERATIONS_NATIVE_PROOFS);assert.equal(MARKET_OPERATIONS_NATIVE_PROOFS.length,15);
     for(const[file]of MARKET_OPERATIONS_NATIVE_PROOFS){assert(fs.existsSync(path.join(ROOT,'test/'+file+'.js')));covered.add('test/'+file+'.js');}
   }
   for (const f of workflows.matchAll(/test\/[A-Za-z0-9._-]+\.js/g)) covered.add(f[0]);
@@ -3771,13 +3771,43 @@ scopedSocialContext = async function(db) {
   }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck'],
-    '.github/workflows/ci.yml must retain exactly `suites`, dependent `browser`, and `pgcheck` jobs');
+  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck'],
+    '.github/workflows/ci.yml must retain exactly suites, browser, both isolated native cohorts and their required aggregate');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
   const suites = jobs.get('suites');
   const browser = jobs.get('browser');
-  const pgcheck = jobs.get('pgcheck');
+  const coreNative = jobs.get('pgcheck_core');
+  const economyNative = jobs.get('pgcheck_economy');
+  const nativeGate = jobs.get('pgcheck');
+  const nativeShape = block => block.replaceAll('\r\n', '\n').split('\n')
+    .filter(line => line.trim() && !/^\s*#/.test(line)).map(line => line.trimEnd()).join('\n');
+  assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require both complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
+  const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
+  const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative);
+  assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
+  assert.equal(nativeShape(economyParts.header), "  pgcheck_economy:\n    if: ${{ !inputs.tail_only }}\n    name: native economy (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native economy service, matrix and finite bound are closed');
+  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
+  assert.deepEqual(economyParts.steps.map(nativeShape), expectedEconomyParts, 'Every native economy setup, command, environment and condition remains exact');
+  const expectedNextFiveStep = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-five:postgres";
+  const nextFiveParts = coreParts.steps.filter(part => part.includes('      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)'));
+  assert.equal(nextFiveParts.length, 1, 'Exactly one complete first-five strict-fresh native step is required');
+  assert.equal(nativeShape(nextFiveParts[0]), nativeShape(expectedNextFiveStep), 'First-five native condition, financial OFF, owned admin endpoint and unfiltered runner remain exact');
+  const expectedNextLayerStep = "      - name: Courier networks, layaway, reserved vaults and observed decision intelligence (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          NEXT_LAYER_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-layer:postgres";
+  const nextLayerParts = coreParts.steps.filter(part => part.includes('      - name: Courier networks, layaway, reserved vaults and observed decision intelligence (real PostgreSQL)'));
+  assert.equal(nextLayerParts.length, 1, 'Exactly one complete next-layer strict-fresh native step is required');
+  assert.equal(nativeShape(nextLayerParts[0]), nativeShape(expectedNextLayerStep), 'Next-layer native condition, financial OFF, owned admin endpoint and unfiltered runner remain exact');
+  const coreAsOriginal = coreNative.replace('  pgcheck_core:', '  pgcheck:').replace('name: native core (', 'name: real Postgres (').replaceAll('\r\n','\n');
+  const artifactParts = ["      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
+  const economyProofParts = ["      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres\n\n","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres\n\n","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres\n\n","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres\n\n"];
+  const buildBoundary = '      - name: Install PostgreSQL client tools matching the server major';
+  const tailBoundary = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)";
+  assert.equal(coreAsOriginal.split(buildBoundary).length, 2);
+  assert.equal(coreAsOriginal.split(tailBoundary).length, 2);
+  const pgcheck = coreAsOriginal.replace(buildBoundary, artifactParts.join('') + buildBoundary)
+    .replace(tailBoundary, economyProofParts.join('') + tailBoundary);
+  // Reconstructed order is only an inventory view. Actual job blocks above
+  // retain independent finite services and the required aggregate is closed.
 
   assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
     'the `suites` job identity changed');
@@ -4091,7 +4121,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at finite120m, browser at 25m and FOURTH pgcheck at 90m, with every lane intact');
+  console.log('  ✓ CI keeps suites at finite120m, browser at25m, both native cohorts at90m and a closed5m required aggregate, with every proof intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════

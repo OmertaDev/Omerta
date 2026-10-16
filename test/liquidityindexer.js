@@ -143,7 +143,13 @@ if (process.argv.includes('--concurrency-worker')) {
     assert.equal(await count('worker_training_courses'), 0);
     assert.equal(await count('worker_training_sessions'), 0);
     assert.equal(await count('employment_organization_courses'), 0);
-    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,economic_intelligence_purchases,funded_external_work_jobs,funded_external_work_events,commissioned_crafting_contracts,commissioned_crafting_requests,equipment_insurance_claims,equipment_insurance_policies,territory_economics_payments,territory_economics_sources,equipment_maintenance_repairs,service_subscription_cycles,worker_training_courses,worker_training_sessions,employment_organization_courses,transactions');
+    assert.equal(await count('customer_layaway_installments'), 0);
+    assert.equal(await count('customer_vault_positions'), 0);
+    assert.equal(await count('merchant_return_rights'), 0);
+    assert.equal(await count('merchant_return_requests'), 0);
+    assert.equal(await count('production_slot_reservations'), 0);
+    assert.equal(await count('production_slot_requests'), 0);
+    await pool.query('TRUNCATE liquidity_sync_cursors,liquidity_flow_receipts,liquidity_settlements,keeper_transactions,vig_revenue,vig_buyback,dex_swaps,pol_fees,desk_buys,family_buybacks,community_revenue,rwa_revenue,sell_tax_events,commercial_reputation_settlements,economic_intelligence_purchases,funded_external_work_jobs,funded_external_work_events,commissioned_crafting_contracts,commissioned_crafting_requests,equipment_insurance_claims,equipment_insurance_policies,territory_economics_payments,territory_economics_sources,equipment_maintenance_repairs,service_subscription_cycles,worker_training_courses,worker_training_sessions,employment_organization_courses,customer_layaway_installments,customer_vault_positions,merchant_return_rights,merchant_return_requests,production_slot_reservations,production_slot_requests,transactions');
     await pool.query('UPDATE chain_reserve SET funded_omr=0 WHERE id=1');
     await pool.query('UPDATE vig_prize_pool SET balance=0 WHERE id=1');
     await pool.query('UPDATE desk_inventory SET balance=0,lifetime_bought=0 WHERE id=1');
