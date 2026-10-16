@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1b432b5ed4be`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `707a2a22cf2e`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4166 |
+| Commits in clone | 4168 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — Let native atlas activation handle scroll and redraw retries |
+| Latest commit | 2026-10-16 — Keep mobile operation content above the fold after receipts |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3206 |
+| OmertaDev | 3208 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,26 +30,26 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 693 | historical |
-| knowledge/generated/graph-summary.md | 693 | historical |
-| knowledge/generated/graph.json | 693 | historical |
-| knowledge/generated/inventory.md | 693 | historical |
+| knowledge/generated/github-history.md | 694 | historical |
+| knowledge/generated/graph-summary.md | 694 | historical |
+| knowledge/generated/graph.json | 694 | historical |
+| knowledge/generated/inventory.md | 694 | historical |
 | [SPEC.md](../../SPEC.md) | 554 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 469 | yes |
+| [public/index.html](../../public/index.html) | 470 | yes |
 | [src/server.js](../../src/server.js) | 434 | yes |
 | [schema.sql](../../schema.sql) | 364 | yes |
 | knowledge/generated/documents.md | 337 | historical |
 | [package.json](../../package.json) | 321 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/modules.md | 244 | historical |
-| knowledge/generated/graph.mmd | 190 | historical |
+| knowledge/generated/modules.md | 245 | historical |
+| knowledge/generated/graph.mmd | 191 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | [test/gates.js](../../test/gates.js) | 174 | yes |
 | [src/invariants.js](../../src/invariants.js) | 160 | yes |
 | [src/worker.js](../../src/worker.js) | 140 | yes |
-| knowledge/generated/schema.md | 137 | historical |
+| knowledge/generated/schema.md | 138 | historical |
 | [test/client.js](../../test/client.js) | 133 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | knowledge/generated/routes.md | 121 | historical |
