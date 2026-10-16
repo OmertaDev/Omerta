@@ -1,8 +1,8 @@
 // Exact integrated enterprise source transfer only. Not native, release or deployment clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const ENTERPRISE_SOURCE_REVISION="75edcd9c3d37382adf32754c1443c91f7903083f";
-export const ENTERPRISE_SOURCE_PREDECESSOR="4ca724fcf9a45632ed8df3016b0b6d96aaa3e111";
+export const ENTERPRISE_SOURCE_REVISION="bbacb93b43f846213a33201b62fe372d8d19ed53";
+export const ENTERPRISE_SOURCE_PREDECESSOR="6b864d5dbc5ae657966b7b8af0bdf746070d862d";
 export const ENTERPRISE_SOURCE_PHASE='exact enterprise source compatibility only; no native, migration, financial, release or deployment clearance';
 export const ENTERPRISE_SOURCE_DOMAINS={
   "schema.sql": {
