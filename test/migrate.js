@@ -747,6 +747,9 @@ const DISPOSITION = {
   performance_employment_contracts: 'special', // canonical F12 estate resolves the original prefunded bonus reserve
   performance_employment_assignments: 'metadata', // original worker/commitment source and paid delivery evidence remain historical
   performance_employment_requests: 'ledger', // original employer/key/funding ACK survives title changes and estate resolution
+  production_booking_offers: 'metadata', // original unfunded offer/consent source remains historical without locking cash, UID or successor production authority
+  production_booking_runs: 'escrow', // actual original bonus reserve is paid or refunded only through canonical commission/estate recovery before death cash
+  production_booking_positions: 'ledger', // original maker/customer held-to-released position and funded booking recovery history survives without inherited authority
   collateral_lending_pledges: 'special', // original item custody resolves only through genuine loan terminal or original estate scope
   collateral_lending_requests: 'ledger', // immutable original pledge request acknowledgements
   collateral_lending_terminals: 'ledger', // original canonical repayment/collection journal provenance
@@ -806,6 +809,10 @@ const unclassified = [...charTables].filter((t) => !DISPOSITION[t]);
 assert.equal(unclassified.length, 0, `unclassified character_id table(s) — a dead street would ORPHAN them: ${unclassified.join(', ')}. Wipe in runEstate (add to DISPOSITION 'wiped'/'special') or document as 'escrow'/'ledger'.`);
 const stale = Object.keys(DISPOSITION).filter((t) => !charTables.has(t));
 assert.equal(stale.length, 0, `stale DISPOSITION entr(y/ies) no longer a character_id table: ${stale.join(', ')}`);
+// Booking request ACKs are account-only immutable history, never a character disposition.
+const bookingRequestBody=SCHEMA.match(/CREATE TABLE IF NOT EXISTS production_booking_requests\s*\(([\s\S]*?)\);/i)?.[1];
+assert(bookingRequestBody&&/account_id TEXT NOT NULL REFERENCES accounts\s*\(id\)/i.test(bookingRequestBody),'Booking requests retain the actual original account FK');
+assert(!charTables.has('production_booking_requests'),'Booking ACK history has no character FK or inherited execution authority');
 // Account-scoped ledger disposition: immutable coverage_mutual_requests action/key/identity ACKs
 // survive original-member estate closure without creating a new character or spending authority.
 const mutualRequestBody = SCHEMA.match(/CREATE TABLE IF NOT EXISTS coverage_mutual_requests\s*\(([\s\S]*?)\);/i)?.[1];

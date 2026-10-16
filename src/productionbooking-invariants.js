@@ -4,15 +4,20 @@ import {productionBookingTerms,productionBookingOfferView,productionBookingRunVi
 
 // Read-only, historical accounting. No current owner, live profile or source
 // upgrade can grant execution authority or rewrite an original receipt here.
-export async function productionBookingAccounting(c) {
-  const issues=[], offers=(await c.query('SELECT * FROM production_booking_offers ORDER BY id')).rows;
-  const runs=(await c.query('SELECT * FROM production_booking_runs ORDER BY id')).rows;
-  const requests=(await c.query('SELECT * FROM production_booking_requests ORDER BY account_id,request_key')).rows;
-  const positions=(await c.query('SELECT * FROM production_booking_positions ORDER BY booking_id,original_character')).rows;
-  const journals=(await c.query("SELECT id,character_id,account_id,currency,amount,reason,counterparty FROM transactions WHERE reason LIKE 'production_booking:%' ORDER BY id")).rows;
+export async function productionBookingAccounting(c, businessId = null) {
+  // A closed read-only scope; callers cannot supply data, validators or authority.
+  const scoped=businessId!==null;
+  if(scoped&&(typeof businessId!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(businessId)))throw new TypeError('production_booking_history_business');
+  const issues=[], offers=(await c.query(scoped?'SELECT * FROM production_booking_offers WHERE business_id=$1 OR id IN (SELECT id FROM production_booking_runs WHERE business_id=$1) ORDER BY id LIMIT 1001':'SELECT * FROM production_booking_offers ORDER BY id',scoped?[businessId]:[])).rows;
+  const runs=(await c.query(scoped?'SELECT * FROM production_booking_runs WHERE business_id=$1 OR id IN (SELECT id FROM production_booking_offers WHERE business_id=$1) ORDER BY id LIMIT 1001':'SELECT * FROM production_booking_runs ORDER BY id',scoped?[businessId]:[])).rows;
+  const requests=(await c.query(scoped?"SELECT * FROM production_booking_requests WHERE identity->>'businessId'=$1 OR identity->>'bookingId' IN (SELECT id FROM production_booking_offers WHERE business_id=$1 UNION SELECT id FROM production_booking_runs WHERE business_id=$1) OR receipt->'offer'->>'bookingId' IN (SELECT id FROM production_booking_offers WHERE business_id=$1 UNION SELECT id FROM production_booking_runs WHERE business_id=$1) OR receipt->'booking'->>'bookingId' IN (SELECT id FROM production_booking_offers WHERE business_id=$1 UNION SELECT id FROM production_booking_runs WHERE business_id=$1) ORDER BY account_id,request_key LIMIT 5001":'SELECT * FROM production_booking_requests ORDER BY account_id,request_key',scoped?[businessId]:[])).rows;
+  const positions=(await c.query(scoped?'SELECT * FROM production_booking_positions WHERE booking_id IN (SELECT id FROM production_booking_offers WHERE business_id=$1 UNION SELECT id FROM production_booking_runs WHERE business_id=$1) ORDER BY booking_id,original_character LIMIT 2001':'SELECT * FROM production_booking_positions ORDER BY booking_id,original_character',scoped?[businessId]:[])).rows;
+  const journals=(await c.query(scoped?"SELECT id,character_id,account_id,currency,amount,reason,counterparty FROM transactions WHERE reason LIKE 'production_booking:%' AND counterparty IN (SELECT id FROM production_booking_offers WHERE business_id=$1 UNION SELECT id FROM production_booking_runs WHERE business_id=$1) ORDER BY id LIMIT 3001":"SELECT id,character_id,account_id,currency,amount,reason,counterparty FROM transactions WHERE reason LIKE 'production_booking:%' ORDER BY id",scoped?[businessId]:[])).rows;
+  if(scoped&&(offers.length>1000||runs.length>1000||requests.length>5000||positions.length>2000||journals.length>3000))return{issues:[{id:businessId,reason:'check_limit'}],reservedCash:0,paidCash:0,refundedCash:0,history:{offers:[],runs:[],activeRuns:[]}};
   const bad=(id,reason)=>issues.push({id,reason});
   const byOffer=new Map(offers.map(o=>[o.id,o])), byRun=new Map(runs.map(r=>[r.id,r]));
   for(const o of offers){
+    if(scoped&&!['offered','accepted','cancelled','expired'].includes(o.state))bad(o.id,'offer_state');
     const s=o.source_json;
     if(!s||hash(s)!==o.source_hash||s.kind!=='production-booking-offer-v1'||s.nonce!==o.id||s.consent!==true
       ||s.makerAccount!==o.maker_account||s.customerAccount!==o.customer_account||s.makerCharacter!==o.maker_character
@@ -86,8 +91,21 @@ export async function productionBookingAccounting(c) {
   for(const j of journals)if(!byRun.has(j.counterparty)||!['production_booking:bonus_reserve','production_booking:bonus','production_booking:bonus_refund'].includes(j.reason)||j.currency!=='cash')bad(j.id,'journal_source');
   for(const p of positions)if(!byRun.has(p.booking_id))bad(p.booking_id,'position_source');
   const C=await import('./commissionedcrafting.js'),R=await import('./productionslots.js');
-  for(const x of await C.collectCommissionedCraftingIssues(c))bad(x.id,'commission:'+x.reason);
-  for(const x of await R.collectProductionSlotIssues(c))bad(x.id,'slot:'+x.reason);
-  return{issues,reservedCash:runs.reduce((n,r)=>n+Number(r.remaining_cash),0),paidCash:runs.reduce((n,r)=>n+Number(r.paid_cash),0),refundedCash:runs.reduce((n,r)=>n+Number(r.refunded_cash),0)};
+  const commissionIds=new Set(runs.map(r=>r.commission_id)),slotIds=new Set(runs.map(r=>r.reservation_id));
+  // Reuse the real unchanged historical validators. Their global scans remain
+  // global; only exact linked IDs contribute to this business's scoped result.
+  for(const x of await C.collectCommissionedCraftingIssues(c))if(!scoped||commissionIds.has(x.id))bad(x.id,'commission:'+x.reason);
+  for(const x of await R.collectProductionSlotIssues(c))if(!scoped||slotIds.has(x.id))bad(x.id,'slot:'+x.reason);
+  const result={issues,reservedCash:runs.reduce((n,r)=>n+Number(r.remaining_cash),0),paidCash:runs.reduce((n,r)=>n+Number(r.paid_cash),0),refundedCash:runs.reduce((n,r)=>n+Number(r.refunded_cash),0)};
+  if(scoped)result.history={offers:offers.map(o=>({bookingId:o.id,sourceHash:o.source_hash,state:o.state})),runs:runs.map(r=>({bookingId:r.id,state:r.state,reservedBonusCash:Number(r.remaining_cash),paidBonusCash:Number(r.paid_cash),refundedBonusCash:Number(r.refunded_cash)})),activeRuns:issues.length?[]:runs.filter(r=>r.state==='active').map(r=>r.id)};
+  return result;
 }
 export async function collectProductionBookingIssues(c){return(await productionBookingAccounting(c)).issues;}
+
+// Historical original-source evidence only; no current owner, position or cash
+// authority is created for a buyer, mover or successor.
+export async function inspectProductionBookingBusinessHistory(c,businessId){
+  if(typeof businessId!=='string'||!/^[A-Za-z0-9_-]{1,128}$/.test(businessId))throw new TypeError('production_booking_history_business');
+  const checked=await productionBookingAccounting(c,businessId);
+  return{issues:checked.issues,activeRuns:checked.history.activeRuns,offers:checked.history.offers,runs:checked.history.runs,reservedBonusCash:checked.reservedCash,paidBonusCash:checked.paidCash,refundedBonusCash:checked.refundedCash,historyVersion:'production_booking_v1',executionAuthority:false};
+}
