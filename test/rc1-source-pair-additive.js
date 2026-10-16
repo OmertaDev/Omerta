@@ -232,7 +232,7 @@ console.log('rc1-source-pair-additive FIFTH COMPLETE FINAL PASS: '+fifthNegative
 {
   const { AUTONOMY_MAIN_ADDITIVE_PAIR: pin, qualifyAutonomyMainAdditiveBootstrap: qualify } = await import('../tools/rc1-source-pair.js');
   const git = (...args) => gitProof('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
-  assert.equal(pin.predecessor, '9b3b5eae18b60c8097c22ef38cf817dff8ce5f75');
+  assert.equal(pin.predecessor, 'f976dd8722085fa3d2746cf0e60dd943cab571ba');
   assert.deepEqual(pin.tables, fifthPin.tables);
   const p = structuredClone(fifthPredecessor), c = structuredClone(fifthCandidate);
   p.source = pin.predecessor; c.source = pin.reviewedCandidate;
