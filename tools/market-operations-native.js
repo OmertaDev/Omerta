@@ -769,7 +769,8 @@ export const MARKET_OPERATIONS_NATIVE_FILES=Object.freeze([
  "tools/rc1-strategy-league-source-compatibility.js",
  "tools/rc1-strategy-source-compatibility.js",
  "tools/rc1-third-batch-source-compatibility.js",
- "tools/release-phase2-migration-catalog.js"
+ "tools/release-phase2-migration-catalog.js",
+ "test/coldstart.js"
 ]);
 export function assertMarketOperationsInventory(rows){assert.equal(JSON.stringify(rows),INVENTORY,'Only the exact ordered15 reviewed proofs are permitted');}
 export function marketOperationsNativeEndpoint(value){const u=new URL(value);assert(['postgres:','postgresql:'].includes(u.protocol));assert.equal(u.hostname,'127.0.0.1');assert.equal(u.pathname,'/postgres');assert(!u.search&&!u.hash);const local=u.port==='35439'&&u.username==='pilot_runner'&&!u.password,ci=u.port==='5432'&&u.username==='postgres'&&u.password==='pgcheck';assert(local||ci,'Only owned35439 PG18.4 or closedCI5432 postgres/pgcheck');u.protocol='postgresql:';return{u,local};}
