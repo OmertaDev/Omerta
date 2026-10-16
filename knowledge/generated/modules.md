@@ -50,7 +50,7 @@
 | [src/city-home-contract.js](../../src/city-home-contract.js) | 134 | platform-core | 3 / 2 | 0 | 0 | 1 |
 | [src/city-home-interiors.js](../../src/city-home-interiors.js) | 504 | platform-core | 5 / 0 | 1 | 11 | 0 |
 | [src/city-home-migration.js](../../src/city-home-migration.js) | 81 | platform-core | 0 / 5 | 0 | 1 | 3 |
-| [src/city-presence.js](../../src/city-presence.js) | 196 | platform-core | 4 / 2 | 3 | 8 | 1 |
+| [src/city-presence.js](../../src/city-presence.js) | 205 | platform-core | 5 / 2 | 3 | 8 | 1 |
 | [src/city-social-contract.js](../../src/city-social-contract.js) | 107 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/city-social.js](../../src/city-social.js) | 247 | platform-core | 4 / 4 | 0 | 7 | 1 |
 | [src/city-world-opportunities-contract.js](../../src/city-world-opportunities-contract.js) | 103 | platform-core | 4 / 1 | 0 | 1 | 1 |
@@ -115,6 +115,7 @@
 | [src/content/campaign-network.js](../../src/content/campaign-network.js) | 200 | platform-core | 7 / 8 | 0 | 0 | 2 |
 | [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 41 | 0 | 0 | 9 |
 | [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 39 | platform-core | 3 / 3 | 0 | 0 | 2 |
+| [src/content/city-rumors.js](../../src/content/city-rumors.js) | 77 | platform-core | 0 / 2 | 0 | 3 | 1 |
 | [src/content/city-world-opportunities.js](../../src/content/city-world-opportunities.js) | 139 | platform-core | 0 / 5 | 0 | 1 | 2 |
 | [src/content/company-production-quality.js](../../src/content/company-production-quality.js) | 22 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 15 | 0 | 0 | 10 |
@@ -126,7 +127,7 @@
 | [src/content/definition-invariants.js](../../src/content/definition-invariants.js) | 138 | platform-core | 4 / 1 | 0 | 7 | 0 |
 | [src/content/diagnostics.js](../../src/content/diagnostics.js) | 65 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/content/discovery.js](../../src/content/discovery.js) | 482 | world-progression | 1 / 7 | 0 | 1 | 4 |
-| [src/content/district-story-arcs.js](../../src/content/district-story-arcs.js) | 164 | platform-core | 0 / 5 | 0 | 1 | 3 |
+| [src/content/district-story-arcs.js](../../src/content/district-story-arcs.js) | 164 | platform-core | 0 / 6 | 0 | 1 | 4 |
 | [src/content/dock-war.js](../../src/content/dock-war.js) | 156 | platform-core | 7 / 11 | 0 | 0 | 6 |
 | [src/content/economy-profile.js](../../src/content/economy-profile.js) | 1264 | platform-core | 1 / 3 | 0 | 0 | 1 |
 | [src/content/exchange.js](../../src/content/exchange.js) | 412 | economy-ledger | 1 / 1 | 0 | 6 | 1 |
