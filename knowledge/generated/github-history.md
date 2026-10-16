@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6219aacaf0c9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `719240b118da`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4224 |
+| Commits in clone | 4232 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — test: pin market source after provenance graph repair |
+| Latest commit | 2026-10-16 — test: pin genuine combined economy census source |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3264 |
+| OmertaDev | 3272 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 699 | historical |
-| knowledge/generated/graph-summary.md | 699 | historical |
-| knowledge/generated/graph.json | 699 | historical |
-| knowledge/generated/inventory.md | 699 | historical |
-| [SPEC.md](../../SPEC.md) | 560 | yes |
+| knowledge/generated/github-history.md | 700 | historical |
+| knowledge/generated/graph-summary.md | 700 | historical |
+| knowledge/generated/graph.json | 700 | historical |
+| knowledge/generated/inventory.md | 700 | historical |
+| [SPEC.md](../../SPEC.md) | 561 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 467 | yes |
+| [public/index.html](../../public/index.html) | 468 | yes |
 | [src/server.js](../../src/server.js) | 435 | yes |
 | [schema.sql](../../schema.sql) | 365 | yes |
 | knowledge/generated/documents.md | 340 | historical |
@@ -57,9 +57,9 @@
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 117 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 96 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 93 | yes |
 | [public/wiki.html](../../public/wiki.html) | 93 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 91 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 89 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 91 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 89 | yes |
 | [test/migrate.js](../../test/migrate.js) | 88 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
