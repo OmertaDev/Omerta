@@ -49,7 +49,7 @@
 | [src/city-encounters.js](../../src/city-encounters.js) | 190 | platform-core | 3 / 1 | 3 | 5 | 0 |
 | [src/city-home-contract.js](../../src/city-home-contract.js) | 134 | platform-core | 3 / 2 | 0 | 0 | 1 |
 | [src/city-home-interiors.js](../../src/city-home-interiors.js) | 504 | platform-core | 5 / 0 | 1 | 11 | 0 |
-| [src/city-home-migration.js](../../src/city-home-migration.js) | 81 | platform-core | 0 / 2 | 0 | 1 | 1 |
+| [src/city-home-migration.js](../../src/city-home-migration.js) | 81 | platform-core | 0 / 5 | 0 | 1 | 3 |
 | [src/city-presence.js](../../src/city-presence.js) | 196 | platform-core | 4 / 2 | 3 | 8 | 1 |
 | [src/city-social-contract.js](../../src/city-social-contract.js) | 107 | platform-core | 0 / 4 | 0 | 2 | 1 |
 | [src/city-social.js](../../src/city-social.js) | 247 | platform-core | 4 / 4 | 0 | 7 | 1 |
