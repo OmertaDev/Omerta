@@ -82,6 +82,57 @@ import { mintLimitedRun } from '../src/economy.js';
 const decomment = (s) => s.replace(/^[ \t]*\/\/.*$/gm, '');
 const html = decomment(readFileSync(new URL('../public/index.html', import.meta.url), 'utf8'));
 
+// Resource feedback uses a confirmed action's before/after balances. Missing fields,
+// changed actors and failed refreshes must never become an invented reward or cost.
+{
+  const start = html.indexOf('  const operationResources = [');
+  const end = html.indexOf('  function operationName(', start);
+  const receiptStart = html.indexOf('  function recordOperation(');
+  const receiptEnd = html.indexOf('  let acting = false;', receiptStart);
+  const clearStart = html.indexOf('  function clearScopedOperations(');
+  assert(start >= 0 && end > start && receiptEnd > receiptStart);
+  const feedback = vm.runInNewContext(`(() => {
+    const fmt = value => String(value), describe = () => 'confirmed', renderOperationFeed = () => {};
+    const operationRecovery = () => null, operationReceipts = []; let operationSeq = 0, _operationResponseCurrent = null;
+    ${html.slice(clearStart, start)}
+    ${html.slice(start, end)}
+    ${html.slice(receiptStart, receiptEnd)}
+    return { snapshot: operationSnapshot, changes: operationChanges, delta: operationDelta, receipt: recordOperation, retire: clearScopedOperations };
+  })()`);
+  const before = feedback.snapshot({ id: 'one', generation: 1, cash: 100, nerve: 20, stats: { muscle: 4 } });
+  const after = feedback.snapshot({ id: 'one', generation: 1, cash: 125, nerve: 12, energy: 100, stats: { muscle: 5 } });
+  const changes = JSON.parse(JSON.stringify(feedback.changes(before, after)));
+  assert.deepEqual(changes, [
+    { key: 'cash', label: 'cash', value: 25, before: 100, after: 125 },
+    { key: 'nerve', label: 'nerve', value: -8, before: 20, after: 12 },
+    { key: 'muscle', label: 'muscle', value: 1, before: 4, after: 5 },
+  ]);
+  assert.equal(feedback.changes(before, feedback.snapshot({ id: 'two', generation: 1, cash: 999 })), null);
+  assert.equal(feedback.changes(before, feedback.snapshot({ id: 'one', generation: 2, cash: 999 })), null);
+  assert.equal(feedback.snapshot({ cash: 999 }), null);
+  assert.equal(feedback.snapshot({ id: 'one', generation: 1, cash: NaN, nerve: null }).cash, null);
+  assert.match(feedback.delta(before, after), /cash \+\$25.*nerve −8.*muscle \+1/);
+  assert.match(feedback.delta(before, null), /could not be refreshed/);
+  const args = { label: 'Follow a lead', before, after, method: 'POST',
+    path: '/v1/worldgraph/mysteries/neighborhood-initiation/nodes/lead/complete', idempotencyKey: 'one-move' };
+  const active = feedback.receipt({ ...args, result: { code: 200, body: { instanceId: 'quest-one', node: { status: 'completed' } } } });
+  assert.equal(active.questCompletion, undefined);
+  const completed = feedback.receipt({ ...args, result: { code: 200, body: { instanceId: 'quest-one', status: 'completed' } } });
+  assert.equal(completed.questCompletion.id, 'quest-one');
+  assert.equal(completed.feedbackId, active.feedbackId, 'A replay keeps the feedback identity.');
+  assert.notEqual(completed.id, active.id, 'Operation history keeps its own ordering.');
+  const failed = feedback.receipt({ ...args, result: { code: 503, body: { instanceId: 'quest-one', status: 'completed' } } });
+  assert.equal(failed.changes.length, 0); assert.equal(failed.questCompletion, undefined);
+  const unknown = feedback.receipt({ ...args, after: null, result: { code: 200, body: {} } });
+  assert.equal(unknown.changes.length, 0); assert.equal(unknown.feedbackState, 'unknown');
+  const unrelated = feedback.receipt({ ...args, path: '/v1/train/muscle', result: { code: 200, body: { instanceId: 'quest-one', status: 'completed' } } });
+  assert.equal(unrelated.questCompletion, undefined);
+  let current = true;
+  const scoped = feedback.receipt({ ...args, resourceCurrent: () => current, result: { code: 200, body: {} } });
+  current = false; feedback.retire(); current = true;
+  assert.equal(scoped.resourceCurrent, null, 'Returning to a district cannot revive an expired generic action receipt.');
+}
+
 // ── 0b. DEEP CITY IS ONE SAFE, ACTIONABLE RECOMMENDATION ───────────────────────────────────────
 // Run the browser's real markup and click-binding functions in isolation. That makes these checks
 // fail on observable output/behavior: a resurrected grid reads the throwing legacy getter, unsafe
@@ -455,6 +506,7 @@ const CATALOGS = {
 // somebody added a catalog-backed literal and it would otherwise be skipped in silence, which is
 // exactly how `{path:'earner'}` survived. Catalog it, or declare it here as not-an-API-value.
 const NOT_API = new Set([
+  'state', // Local resource-receipt feedback state; never an executable API body.
   'venueId', // City scene navigation/breadcrumb context; never an executable mutation body.
   'block',      // scrollIntoView({block:'nearest'})
   'behavior',   // scrollIntoView({behavior:'instant'}), a browser option, never an API body.
