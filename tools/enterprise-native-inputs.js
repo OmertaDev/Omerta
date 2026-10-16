@@ -1,5 +1,5 @@
 // Genuine authored-base input data; no source aliases, metadata substitutes or embedded self hashes.
-export const ENTERPRISE_NATIVE_BASE_REVISION="60fae3c97e7ac9f37bc512f127f370bf0f9288df";
+export const ENTERPRISE_NATIVE_BASE_REVISION="5cff225155593150be1bfac6ea699e34b9de994a";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -2670,7 +2670,7 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   Object.freeze({"file":"public/icon-192.png","blob":"d3c8ea50178cb848c9c33390a776ae997546b34f","sha256":"e0e294fa058fad5ed8cdd691c9da2caeb1f2e5029c7c4b3acbae0f5744d7f2bc"}),
   Object.freeze({"file":"public/icon-512.png","blob":"286bcf11c2041839075a286d3938105ec2191052","sha256":"934737d2fe792274730f437a18f34e8dcf6578ee1c6839af50b5c2084a2d6132"}),
   Object.freeze({"file":"public/icon-maskable-512.png","blob":"2d5c609df610e146fd40b81b18ed287718bcea91","sha256":"f61468dcf88d08562542c0d368dcbc803b5aafa8fdec85fe31186c8740249ddf"}),
-  Object.freeze({"file":"public/index.html","blob":"909a58c4d556fe8c95bdb2260bc87d4bf34e8015","sha256":"1b513fdc4b196f1fa5904aed067ff039d0717d4dad318addf32a63d1258f8666"}),
+  Object.freeze({"file":"public/index.html","blob":"c472c9751b7aec2f49e1f36b539e2379285fd705","sha256":"388e8167e0c96bb6617508536e4fdb89131b947b63fec92845367b5ba479c528"}),
   Object.freeze({"file":"public/invite.html","blob":"b07f1e538492b6968da759e893d45570173878bc","sha256":"55b49c18eaeb928b0ce914b3d2e0617c2fcd7fd3dcfe853dbf78b801ea4247a3"}),
   Object.freeze({"file":"public/manifest.json","blob":"be0b67a274ef9d05f838af7e46ca0597c3afe50b","sha256":"848c3a00c7f1f197f03b374447d60c7939cf39d8897b32fc94af73ece2a07c45"}),
   Object.freeze({"file":"public/omerta-ui.css","blob":"a6f3f6ca2c6fc0de7cbf23fec694f9643c7cdd2f","sha256":"f707521d5fe5258867a881fbd3f3ae59bef00eb07ede60c59f7567067b799178"}),
@@ -3284,7 +3284,7 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   Object.freeze({"file":"test/economicdependencymap-integration.js","blob":"f6febd216cbb1618fb48e052dbebecfafd682b32","sha256":"cae65189da54853d7f14d7a3acf337ebe3ec527d1668c0c73ba6a0e40e0d22e3"}),
   Object.freeze({"file":"test/economicintelligence-fixture.js","blob":"867227a37a38faba92fdd5bc0bacec2401dc8959","sha256":"929509fb801a4aac65c3593af6e6d7a51b605ff8abc07c00bc121269f18e085e"}),
   Object.freeze({"file":"test/enterprise-release-phase2-migration-catalog.js","blob":"637fafd78f0f4bb5d9105fc9a77460ea981354a6","sha256":"e23d33df7964440667b2896521d2a2ae0d521f97116062379a9ab42db1ad62a3"}),
-  Object.freeze({"file":"test/enterprise-source-compatibility.js","blob":"92589a69da1defb1afce35e949684bccf12d63a2","sha256":"f5c9a6d6547464a6382f2ca7da7a158dd080dd89f33cef8b346d5c80a3463129"}),
+  Object.freeze({"file":"test/enterprise-source-compatibility.js","blob":"e4bc3abbca238deb71e28ba1717dc50068c548d3","sha256":"891e3ffbd14dee8447e1d12592db1d3f1a883a5a7d6a3d7e216a04296299eaaf"}),
   Object.freeze({"file":"test/equipmentinsurance-fixture.js","blob":"fdbf53137cde2849adcec75c31485c4a9f4746d5","sha256":"0d9dd32d56996fdb38ae417982bd83a3c9135f547ef9291b17b353efd93bed91"}),
   Object.freeze({"file":"test/equipmentrecovery-api.js","blob":"2bddd33035b59d3a945ab7e0dc7812abc6b30e3a","sha256":"7480557be496b009bd1d19d056fde1c90fc16afa3bda73757f25ce5e259b6578"}),
   Object.freeze({"file":"test/equipmentrecovery-integration-fixture.js","blob":"03381c80e41d440bcdb758ea44adee34a28d45e7","sha256":"d7036c9adc416eb6ba31bf2facee820fbc5771de4f43fda7c54a95d5fcb43f08"}),
@@ -3400,7 +3400,7 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   Object.freeze({"file":"tools/economy-release-composition.js","blob":"932d98999b8b3886b05b8d04b80e5230d34a0d97","sha256":"677958ff8ac5113526d0b658a50959f38edeeae12b837bfaf0a8b43ee738ed4f"}),
   Object.freeze({"file":"tools/enterprise-graph-helpers.js","blob":"a711d98c821ddac964511f5b87a85304d198b7a1","sha256":"26e6c15734ae2dc28a73a8db9d0252fe539dc9e87b6d6936d97bc73ddfdb4258"}),
   Object.freeze({"file":"tools/enterprise-release-phase2-migration-catalog.js","blob":"e6afd0b17111b56e8d0eb18a28e2dbbda99f6ae6","sha256":"fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570"}),
-  Object.freeze({"file":"tools/enterprise-source-compatibility.js","blob":"17af9b72bb0c11718cb60e31ca6207e54ee5b222","sha256":"c182e81d14fdb31e4206e34cbad9ce5172c726ff0fbbdc07999006b3179d36ae"}),
+  Object.freeze({"file":"tools/enterprise-source-compatibility.js","blob":"07e85591bbf2d6a95694130f4d0dab385fccc1cc","sha256":"2997b6af404da8284ac1025512e666d59f56defac7645e72fb24f9c81d5dcf48"}),
   Object.freeze({"file":"tools/graph.js","blob":"4c6e61ca17df42a3549411726521b122a94a4180","sha256":"29e2271d83d8cbd5d8c71f0339d06b5c76d7ae7e658b2f417b05f4c382fa2376"}),
   Object.freeze({"file":"tools/market-operations-graph-helpers.js","blob":"470bf28bb8bccc65de76d7929043c3cb13750753","sha256":"a899abd980dab2e9dedcf7656476c7718d3b807cbb73be5c4458da10500230e9"}),
   Object.freeze({"file":"tools/market-operations-native.js","blob":"1eef74b50f34c3919e3a3a461e364ab6f6f6a1d7","sha256":"f23c51818dc5ce0a0a3d4d79362af359ffa4fe539974bbb8805b9a77a34caf48"}),
