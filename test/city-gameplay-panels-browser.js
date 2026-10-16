@@ -352,12 +352,26 @@ try {
       held.resolve(); await gate.promise; await route.fulfill({ response });
     };
     await fixture.page.route('**/v1/projections/player*', holdPlayer);
+    let generationChanges = 0;
+    const changeGenerationAtLayout = async route => {
+      const request = route.request(), body = request.postDataJSON();
+      assert.equal(request.method(), 'POST');
+      assert.equal(body.characterId, actor.id); assert.equal(Number(body.generation), Number(actor.generation));
+      assert.equal(generationChanges, 0, 'The genuine native layout request changes the fixture generation exactly once.');
+      const changed = await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1 AND generation=$2 RETURNING generation',
+        [actor.id, Number(actor.generation)]);
+      assert.equal(changed.rows.length, 1); assert.equal(Number(changed.rows[0].generation), Number(actor.generation) + 1);
+      generationChanges++; await route.continue();
+    };
+    await fixture.page.route(base + '/v1/city/home/layout', changeGenerationAtLayout);
     const refusal = fixture.page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/v1/city/home/layout');
     refusal.catch(() => {});
     try {
-      await app.pool.query('UPDATE characters SET generation=generation+1 WHERE id=$1', [actor.id]);
+      // Change identity only once the genuine native request is dispatched. A legitimate
+      // background player refresh before the click must still see the original identity.
       await activate(fixture, fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }));
       const rejected = await refusal; assert.equal(rejected.status(), 409); assert.equal((await rejected.json()).error, 'home_identity_changed');
+      assert.equal(generationChanges, 1);
       await bounded(held.promise, 'the actual next-generation player GET held before publication');
       assert.equal(await fixture.page.locator('[data-city-deed-room]').count(), 0, 'Known POST mismatch removes the old private floor before the player GET wins.');
       assert.equal(await fixture.page.getByRole('button', { name: 'Save furnishing', exact: true }).count(), 0);
@@ -368,7 +382,7 @@ try {
       await same(fixture, entry, position);
       assert.deepEqual((await get(actor, '/v1/city/home/interior?homeKey=' + encodeURIComponent(homeKey))).room.furniture,
         privateBefore.room.furniture, 'The rejected original-generation action never changes the actual room.');
-    } finally { gate.resolve(); }
+    } finally { gate.resolve(); await fixture.page.unroute(base + '/v1/city/home/layout', changeGenerationAtLayout); }
     await fixture.page.unroute('**/v1/projections/player*', holdPlayer); fixture.page.off('request', markPost);
     await fixture.page.waitForFunction(generation => window.__panelProbe().viewer?.generation === generation, Number(actor.generation) + 1);
     await fixture.page.waitForFunction(() => window.__panelHandles.at(-1)?.handle.getState().ready);
