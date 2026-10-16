@@ -8,7 +8,7 @@
 | [src/accrual.js](../../src/accrual.js) | 204 | platform-core | 0 / 4 | 0 | 3 | 5 |
 | [src/age.js](../../src/age.js) | 38 | platform-core | 1 / 2 | 0 | 0 | 1 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 14 | 3 | 5 | 12 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 2313 | platform-core | 23 / 7 | 0 | 23 | 6 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 2364 | platform-core | 23 / 8 | 0 | 23 | 7 |
 | [src/agentoperatingmemory.js](../../src/agentoperatingmemory.js) | 70 | platform-core | 3 / 5 | 0 | 11 | 2 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 113 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 726 | platform-core | 19 / 3 | 0 | 5 | 1 |
@@ -114,7 +114,7 @@
 | [src/content/belladonna.js](../../src/content/belladonna.js) | 241 | world-graph | 0 / 3 | 0 | 0 | 1 |
 | [src/content/campaign-network.js](../../src/content/campaign-network.js) | 200 | platform-core | 7 / 8 | 0 | 0 | 2 |
 | [src/content/canonical.js](../../src/content/canonical.js) | 214 | platform-core | 0 / 41 | 0 | 0 | 9 |
-| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 34 | platform-core | 2 / 2 | 0 | 0 | 1 |
+| [src/content/city-quest-presentation.js](../../src/content/city-quest-presentation.js) | 39 | platform-core | 3 / 3 | 0 | 0 | 2 |
 | [src/content/city-world-opportunities.js](../../src/content/city-world-opportunities.js) | 139 | platform-core | 0 / 5 | 0 | 1 | 2 |
 | [src/content/company-production-quality.js](../../src/content/company-production-quality.js) | 22 | platform-core | 0 / 1 | 0 | 0 | 0 |
 | [src/content/compiler.js](../../src/content/compiler.js) | 1222 | platform-core | 1 / 15 | 0 | 0 | 10 |
@@ -135,10 +135,11 @@
 | [src/content/neighborhood-broadcast.js](../../src/content/neighborhood-broadcast.js) | 83 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/content/neighborhood-initiation.js](../../src/content/neighborhood-initiation.js) | 38 | platform-core | 0 / 4 | 0 | 0 | 2 |
 | [src/content/phase1-policy.js](../../src/content/phase1-policy.js) | 168 | world-graph | 0 / 3 | 0 | 1 | 1 |
-| [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 5 | 0 | 0 | 1 |
-| [src/content/phase1.js](../../src/content/phase1.js) | 24 | world-graph | 9 / 13 | 0 | 0 | 8 |
+| [src/content/phase1-validation.js](../../src/content/phase1-validation.js) | 54 | world-graph | 5 / 6 | 0 | 0 | 2 |
+| [src/content/phase1.js](../../src/content/phase1.js) | 26 | world-graph | 10 / 15 | 0 | 0 | 9 |
 | [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 138 | platform-core | 2 / 15 | 0 | 0 | 6 |
 | [src/content/progression-admission.js](../../src/content/progression-admission.js) | 274 | platform-core | 9 / 3 | 0 | 1 | 1 |
+| [src/content/property-investigation.js](../../src/content/property-investigation.js) | 143 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 3 | 9 | 12 | 1 |
 | [src/content/staged-crew-missions.js](../../src/content/staged-crew-missions.js) | 104 | platform-core | 0 / 4 | 0 | 0 | 3 |
 | [src/content/world-kernel-pilot.js](../../src/content/world-kernel-pilot.js) | 34 | platform-core | 6 / 18 | 0 | 1 | 12 |
@@ -165,13 +166,16 @@
 | [src/dailyreminder.js](../../src/dailyreminder.js) | 23 | platform-core | 2 / 3 | 0 | 3 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
 | [src/db-rls.js](../../src/db-rls.js) | 46 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/db.js](../../src/db.js) | 1000 | platform-core | 2 / 157 | 0 | 16 | 109 |
+| [src/db.js](../../src/db.js) | 1007 | platform-core | 3 / 158 | 0 | 16 | 110 |
 | [src/dbhealth.js](../../src/dbhealth.js) | 148 | platform-core | 0 / 11 | 0 | 0 | 2 |
 | [src/decision-dependency-contracts.js](../../src/decision-dependency-contracts.js) | 966 | platform-core | 0 / 2 | 0 | 0 | 1 |
 | [src/decisionproofs.js](../../src/decisionproofs.js) | 65 | platform-core | 1 / 2 | 0 | 1 | 1 |
 | [src/decisionreplay.js](../../src/decisionreplay.js) | 70 | platform-core | 3 / 3 | 2 | 8 | 2 |
 | [src/deed-upgrades.js](../../src/deed-upgrades.js) | 65 | platform-core | 3 / 5 | 1 | 5 | 2 |
-| [src/deeds.js](../../src/deeds.js) | 615 | enterprise-logistics | 4 / 10 | 11 | 12 | 4 |
+| [src/deedbuildings.js](../../src/deedbuildings.js) | 124 | platform-core | 0 / 8 | 1 | 4 | 5 |
+| [src/deeddiscovery.js](../../src/deeddiscovery.js) | 221 | platform-core | 4 / 8 | 0 | 8 | 5 |
+| [src/deedquesteligibility.js](../../src/deedquesteligibility.js) | 56 | platform-core | 2 / 2 | 0 | 3 | 1 |
+| [src/deeds.js](../../src/deeds.js) | 633 | enterprise-logistics | 6 / 13 | 11 | 12 | 7 |
 | [src/defi.js](../../src/defi.js) | 599 | platform-core | 0 / 1 | 0 | 1 | 1 |
 | [src/delivery.js](../../src/delivery.js) | 129 | platform-core | 10 / 25 | 4 | 2 | 14 |
 | [src/deliverybook.js](../../src/deliverybook.js) | 21 | platform-core | 1 / 6 | 0 | 2 | 1 |
@@ -212,7 +216,7 @@
 | [src/estate.js](../../src/estate.js) | 395 | enterprise-logistics | 3 / 7 | 11 | 8 | 2 |
 | [src/events.js](../../src/events.js) | 103 | world-progression | 2 / 8 | 1 | 9 | 1 |
 | [src/exchange.js](../../src/exchange.js) | 416 | economy-ledger | 4 / 13 | 4 | 11 | 9 |
-| [src/explore.js](../../src/explore.js) | 830 | world-progression | 24 / 4 | 1 | 27 | 1 |
+| [src/explore.js](../../src/explore.js) | 841 | world-progression | 25 / 4 | 1 | 27 | 1 |
 | [src/fairness.js](../../src/fairness.js) | 92 | economy-ledger | 1 / 5 | 1 | 1 | 1 |
 | [src/favors.js](../../src/favors.js) | 331 | engagement-growth | 2 / 8 | 4 | 9 | 3 |
 | [src/fees.js](../../src/fees.js) | 227 | economy-ledger | 4 / 13 | 4 | 10 | 5 |
@@ -227,7 +231,7 @@
 | [src/fundedworkchainobservations.js](../../src/fundedworkchainobservations.js) | 74 | platform-core | 0 / 3 | 0 | 0 | 2 |
 | [src/fundedworkescrowadapter.js](../../src/fundedworkescrowadapter.js) | 85 | platform-core | 3 / 1 | 0 | 5 | 1 |
 | [src/fundedworkescrowartifact.js](../../src/fundedworkescrowartifact.js) | 472 | platform-core | 0 / 2 | 0 | 0 | 1 |
-| [src/game.js](../../src/game.js) | 2797 | platform-core | 13 / 457 | 40 | 62 | 153 |
+| [src/game.js](../../src/game.js) | 2797 | platform-core | 13 / 461 | 42 | 62 | 155 |
 | [src/gameemployment.js](../../src/gameemployment.js) | 185 | platform-core | 2 / 7 | 0 | 8 | 3 |
 | [src/gameemploymentinvariants.js](../../src/gameemploymentinvariants.js) | 15 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/gateway/actions.js](../../src/gateway/actions.js) | 42 | platform-core | 1 / 1 | 0 | 0 | 0 |
@@ -268,7 +272,7 @@
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 13 | 0 | 6 | 9 |
 | [src/itemdurability.js](../../src/itemdurability.js) | 227 | platform-core | 4 / 27 | 0 | 13 | 13 |
 | [src/itemlots.js](../../src/itemlots.js) | 707 | platform-core | 5 / 5 | 0 | 7 | 11 |
-| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 160 | 12 | 11 | 87 |
+| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 161 | 12 | 11 | 88 |
 | [src/keepertransactions.js](../../src/keepertransactions.js) | 421 | platform-core | 0 / 5 | 0 | 1 | 1 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
@@ -298,7 +302,7 @@
 | [src/mentor.js](../../src/mentor.js) | 233 | social-combat | 2 / 5 | 7 | 7 | 1 |
 | [src/multihopcourier-contracts.js](../../src/multihopcourier-contracts.js) | 7 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/multihopcourier.js](../../src/multihopcourier.js) | 47 | platform-core | 6 / 5 | 0 | 9 | 1 |
-| [src/mysteries.js](../../src/mysteries.js) | 2174 | world-graph | 10 / 26 | 0 | 13 | 16 |
+| [src/mysteries.js](../../src/mysteries.js) | 2174 | world-graph | 10 / 27 | 0 | 13 | 17 |
 | [src/nft-art.js](../../src/nft-art.js) | 152 | platform-core | 1 / 4 | 0 | 2 | 1 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
@@ -392,7 +396,7 @@
 | [src/routes/customerlayaway.js](../../src/routes/customerlayaway.js) | 5 | platform-core | 3 / 1 | 1 | 2 | 0 |
 | [src/routes/customervaults.js](../../src/routes/customervaults.js) | 13 | platform-core | 2 / 2 | 3 | 1 | 1 |
 | [src/routes/decisionreplay.js](../../src/routes/decisionreplay.js) | 9 | platform-core | 2 / 2 | 2 | 0 | 1 |
-| [src/routes/deeds.js](../../src/routes/deeds.js) | 39 | enterprise-logistics | 2 / 1 | 8 | 0 | 0 |
+| [src/routes/deeds.js](../../src/routes/deeds.js) | 49 | enterprise-logistics | 4 / 1 | 11 | 0 | 0 |
 | [src/routes/defi.js](../../src/routes/defi.js) | 103 | platform-core | 0 / 0 | 4 | 0 | 0 |
 | [src/routes/delivery.js](../../src/routes/delivery.js) | 24 | platform-core | 4 / 1 | 5 | 1 | 0 |
 | [src/routes/deliveryfinance.js](../../src/routes/deliveryfinance.js) | 69 | platform-core | 4 / 2 | 7 | 3 | 0 |
@@ -447,7 +451,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 7 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 374 | 0 | 0 | 201 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 376 | 0 | 0 | 202 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6154 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
