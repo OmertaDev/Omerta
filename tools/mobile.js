@@ -425,16 +425,20 @@ for (const vp of VIEWPORTS) {
         await page.route('**/v1/home', holdReplayHome);
         const replayHomeRequest = page.waitForRequest((request) => new URL(request.url()).pathname === '/v1/home');
         const replayHomeResponse = page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/home');
+        let replayHomeContent;
         try {
           await page.click('#tour-skip');
           await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
           await replayHomeRequest;
+          replayHomeContent = await page.locator('#tab-start').evaluateHandle((panel) => panel.firstElementChild);
           releaseReplayHome();
           await replayHomeResponse;
+          await page.waitForFunction((content) => content && !content.isConnected, replayHomeContent, { timeout: 5000 });
           await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
             || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
         } finally {
           releaseReplayHome();
+          await replayHomeContent?.dispose();
           await page.unroute('**/v1/home', holdReplayHome);
         }
       }
