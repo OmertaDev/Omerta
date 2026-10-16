@@ -9,3 +9,8 @@ function reverse(file,input,pin){const text=uniform(input);assert.equal(hash(tex
 export function hasEnterpriseOverRootSource(file){return Object.hasOwn(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,file)||Object.hasOwn(ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES,file);}
 export function enterpriseOverRootSourceBaseline(file,input){assert(hasEnterpriseOverRootSource(file),'Unknown current Enterprise-to-Root source');const p=Object.hasOwn(ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,file)?ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS[file]:ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES[file],text=uniform(input);if(hash(text)===p.baselineSha256){assert.equal(blob(text),p.baselineBlob);return text;}return reverse(file,input,p);}
 export function enterpriseCurrentHistorical6bSourceBaseline(file,input){assert(Object.hasOwn(ENTERPRISE_CURRENT_LEGACY6B_DOMAINS,file),'Unknown current Enterprise-to-historical source');const p=ENTERPRISE_CURRENT_LEGACY6B_DOMAINS[file],text=uniform(input);if(hash(text)===p.baselineSha256){assert.equal(blob(text),p.baselineBlob);return text;}return reverse(file,enterpriseOverRootSourceBaseline(file,input),p);}
+
+// This branch accepts only the exact authored union bytes, not a GUI baseline identity.
+import {ENTERPRISE_GUI_SOURCE_REVISION,ENTERPRISE_GUI_PREDECESSOR,ENTERPRISE_OVER_GUI_SOURCE_DOMAINS} from './enterprise-current-source-data.js';
+export {ENTERPRISE_GUI_SOURCE_REVISION,ENTERPRISE_GUI_PREDECESSOR,ENTERPRISE_OVER_GUI_SOURCE_DOMAINS};
+export function enterpriseOverGuiSourceBaseline(file,input){assert(Object.hasOwn(ENTERPRISE_OVER_GUI_SOURCE_DOMAINS,file),'Unknown current Enterprise-to-GUI source');return reverse(file,input,ENTERPRISE_OVER_GUI_SOURCE_DOMAINS[file]);}

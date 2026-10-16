@@ -1,3 +1,4 @@
+import {enterpriseOverGuiSourceBaseline} from '../../tools/enterprise-current-source-compatibility.js';
 // Closed pure-control fixtures. Historical source execution never admits the current release.
 import {enterpriseOverRootSourceBaseline,ENTERPRISE_OVER_ROOT_SOURCE_DOMAINS,ENTERPRISE_OVER_ROOT_IDENTITY_SOURCES} from '../../tools/enterprise-current-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
@@ -446,11 +447,25 @@ function rejectHistoricalApplicationSources() {
 }
 
 function rejectCityActivityHistoricalSources() {
-  const file = 'src/server.js', raw = String(originalRead(path.join(root, file))), current = canonical(raw);
+  const file = 'src/server.js', unionRaw = String(originalRead(path.join(root, file)));
+  const raw = enterpriseOverGuiSourceBaseline(file, unionRaw), current = canonical(raw);
   const combinedProof = qualifyCityActivityMarketSource(file, raw);
   const retained = String(git(['cat-file', 'blob', CITY_ACTIVITY_SOURCE_TRANSFER.actualServerBlob]));
   const proof = qualifyCityActivitySource(retained), frozen = String(blob(file, release)), expected = blob(file, history);
   let positives = 0, refusals = 0;
+  // Retain the original GUI controls below, and independently reject mutations of the physical union.
+  for (const supplied of [unionRaw, canonical(unionRaw).replaceAll('\n', '\r\n')]) {
+    const selected = historicalApplicationSource(file, enterpriseOverGuiSourceBaseline(file, supplied));
+    assert.equal(sha256(selected), sha256(expected));
+    assert.equal(blobHash(selected), history.get(file));
+    positives++;
+  }
+  for (const supplied of ['\n// unreviewed union prefix\n' + unionRaw, unionRaw + '\n// unreviewed union suffix\n',
+    unionRaw.replace(/\S/, '?'), '\ufeff' + unionRaw, unionRaw + '\0', unionRaw.replace('\n', '\r\n'), unionRaw.replace('\n', '\r')]) {
+    assert.throws(() => enterpriseOverGuiSourceBaseline(file, supplied));
+    refusals++;
+  }
+
   const reject = supplied => { assert.throws(() => historicalApplicationSource(file, supplied)); refusals++; };
   for (const source of [current, combinedProof.baselineText, retained, proof.baselineText, frozen]) {
     for (const supplied of [source, source.replaceAll('\n', '\r\n')]) {
