@@ -4,7 +4,7 @@ import { buildServer } from './server-fixture.js';
 import { withCharacter } from '../src/game.js';
 import { claimDeed } from '../src/deeds.js';
 import { DEED_BUILDINGS } from '../src/deedbuildings.js';
-import { DEED_DISCOVERY, discoveryBoard, investigateDeed, deedInvestigationRoute } from '../src/deeddiscovery.js';
+import { DEED_DISCOVERY, deedDiscoveryBoard, investigateDeed, deedInvestigationRoute } from '../src/deeddiscovery.js';
 import { PACING } from '../src/rules.js';
 
 const app = await buildServer();
@@ -23,7 +23,7 @@ const investigate = (actor, buildingId, extra = {}) => act(actor,
   (ch, client, h) => investigateDeed(ch, { buildingId, actionId: 'inspect-site', ...extra }, client, h));
 const claim = (actor, buildingId, name) => act(actor,
   (ch, client, h) => claimDeed(ch, { buildingId, name }, client, h));
-const read = async actor => discoveryBoard(pool,
+const read = async actor => deedDiscoveryBoard(pool,
   (await pool.query('SELECT * FROM characters WHERE account_id=$1 AND alive', [actor.account_id])).rows[0]);
 const travel = async (actor, district) => {
   const response = await app.inject({ method: 'POST', url: `/v1/travel/${district}`,
@@ -43,7 +43,7 @@ try {
     assert.equal(route.at(-1).requiredDistrict, property.district);
   }
   const fresh = await read(a);
-  await assert.rejects(discoveryBoard(pool, a, { district: 'nowhere' }), error => error.code === 'district');
+  await assert.rejects(deedDiscoveryBoard(pool, a, { district: 'nowhere' }), error => error.code === 'district');
   assert.equal(fresh.reason, 'level');
   assert.equal(fresh.primaryClaimed, false);
   assert(fresh.buildings.every(lot => !lot.canClaim && !lot.canInvestigate));

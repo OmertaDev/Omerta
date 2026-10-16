@@ -8,6 +8,7 @@ import { DEED_QUEST_SOURCE_PREDECESSOR, DEED_QUEST_SOURCE_PHASE, DEED_QUEST_SOUR
 import { nextFiveSourceBaseline } from '../tools/next-five-source-compatibility.js';
 import { fourthBatchMigrationSchema } from '../tools/rc1-fourth-batch-source-compatibility.js';
 import { fifthBatchMigrationSchema } from '../tools/rc1-fifth-batch-source-compatibility.js';
+import { nextLayerMigrationPredecessor } from '../tools/next-layer-release-phase2-migration-catalog.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
@@ -18,7 +19,7 @@ assert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2c8eaacf104e8555d5140136b5ed19027ec
 assert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');
 assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',
   'src/content/phase1.js', 'src/content/phase1-policy.js', 'src/content/city-quest-presentation.js', 'src/db.js', 'src/deeds.js', 'src/explore.js', 'tools/release-source-transfer.js',
-  'test/gates.js', '.github/workflows/ci.yml']);
+  'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
   const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
@@ -104,4 +105,45 @@ const nextLayerTest = lf(fs.readFileSync('test/next-layer-source-compatibility.j
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),
   'Next-layer actual-source adapter preserves all original pins and rejecting controls');
+let nativeTool = lf(fs.readFileSync('tools/next-layer-release-phase2-migration-catalog.js','utf8'));
+const nativeInverses = [
+  ["import { deedQuestSourceBaseline } from './deed-quest-source-transfer.js';\n", ''],
+  ["import {createDeedDiscoveryMigrationCatalog, isDeedDiscoveryMigrationSource} from './deed-discovery-migration-catalog.js';\n", ''],
+  ["import {migrateCityHomeStorage} from '../src/city-home-migration.js';\n", ''],
+  ['async function compileReference(admin, endpoint, source, { runtimeReset = true, upgradeDdl = false, currentDeedHomeMigration = false } = {}) {',
+    'async function compileReference(admin, endpoint, source, { runtimeReset = true, upgradeDdl = false } = {}) {'],
+  ["    if (currentDeedHomeMigration) await migrateCityHomeStorage(client, {compatibility:'postgres'});\n", ''],
+  ["  const actualRaw = fs.readFileSync(new URL('../src/db.js', import.meta.url), 'utf8');\n"
+    + "  assert(actualRaw === actualRaw.replaceAll('\\r\\n', '\\n') || actualRaw === actualRaw.replaceAll('\\r\\n', '\\n').replaceAll('\\n', '\\r\\n'), 'Runtime reset source has uniform line endings');\n"
+    + "  const actual = deedQuestSourceBaseline('src/db.js', actualRaw).replaceAll('\\r\\n', '\\n');\n",
+    "  const actual = fs.readFileSync(new URL('../src/db.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n');\n"],
+  ["export async function createCurrentDeedNativeCatalog(pool, endpoint, source, {profile, includeNotNull}) {\n"
+    + "  return createDeedDiscoveryMigrationCatalog(pool, endpoint, source,\n"
+    + "    {profile, includeNotNull, compileReference, readMetadata:readNextLayerReleasePhase2Metadata, legacySchema:nextLayerLegacySchema});\n}\n", ''],
+  ["  const deedNative = isDeedDiscoveryMigrationSource(source)\n"
+    + "    ? await createCurrentDeedNativeCatalog(pool, endpoint, source, {profile:legacyProfile, includeNotNull}) : null;\n"
+    + "  const premainSource = nextLayerMigrationPredecessor(deedNative ? deedNative.predecessorSource : source), predecessorSource=nextLayerNativeHistoricalPredecessor(premainSource), sources = nextLayerMigrationSources();\n",
+    "  const premainSource = nextLayerMigrationPredecessor(source), predecessorSource=nextLayerNativeHistoricalPredecessor(premainSource), sources = nextLayerMigrationSources();\n"],
+  ['    if (deedNative) actual = deedNative.projectMetadata(actual);\n', ''],
+  ['    if (deedNative) rows = deedNative.projectConstraints(rows);\n', ''],
+  ['reference: deedNative ? deedNative.reference : current, addedColumns, addedConstraints, addedIndexes, deedNative,',
+    'reference: current, addedColumns, addedConstraints, addedIndexes,'],
+];
+for (const [current, previous] of nativeInverses) {
+  assert.equal(nativeTool.split(current).length-1,1,'Exact scoped native adapter occurs once');
+  nativeTool=nativeTool.replace(current,()=>previous);
+}
+assert.equal(nativeTool,git('show',`${DEED_QUEST_SOURCE_PREDECESSOR}:tools/next-layer-release-phase2-migration-catalog.js`),
+  'Removing only the two scoped current-Deed bridges restores every historical native byte and refusal');
+const resetRuntime = git('show', 'b90bd95dee6e0fda851247cc660288f4bbf8fdc0:src/db.js');
+const currentRuntime = lf(fs.readFileSync('src/db.js', 'utf8'));
+const resetDdl = 'CREATE TABLE IF NOT EXISTS player_reset_migrations (\n    id TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now()\n  )';
+for (const raw of [currentRuntime, currentRuntime.replaceAll('\n', '\r\n')])
+  assert.equal(deedQuestSourceBaseline('src/db.js', raw), resetRuntime,
+    'Only the complete reviewed Deed runtime reconstructs the unchanged reset-DDL reference');
+for (const source of [currentRuntime, resetRuntime])
+  assert.equal(source.split('await q.query(`' + resetDdl + '`);').length - 1, 1,
+    'The exact frozen runtime reset DDL remains unique');
+assert.throws(() => nextLayerMigrationPredecessor(schema), error => error?.code === 'ERR_ASSERTION',
+  'Current Deed schema still has no historical native admission');
 console.log(`Property quest source envelope PASS: ${Object.keys(DEED_QUEST_SOURCE_DOMAINS).length} closed domains, ${hunks} exact inverse hunks, ${negatives} rejecting controls; source only`);

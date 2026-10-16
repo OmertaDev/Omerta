@@ -6665,6 +6665,7 @@
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
+        $(`#tab-${tourReturnTab}`),
         ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
         $(`#tab-control-${tourReturnTab}`),
       ];

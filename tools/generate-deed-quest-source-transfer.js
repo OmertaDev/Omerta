@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 const predecessor = '2c8eaacf104e8555d5140136b5ed19027ecd4766';
 const files = ['package.json', 'schema.sql', 'src/agentgateway.js', 'src/content/phase1.js',
   'src/content/phase1-policy.js', 'src/content/city-quest-presentation.js', 'src/db.js', 'src/deeds.js', 'src/explore.js', 'tools/release-source-transfer.js',
-  'test/gates.js', '.github/workflows/ci.yml'];
+  'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js'];
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
   stdio: ['ignore', 'pipe', 'pipe'] }));

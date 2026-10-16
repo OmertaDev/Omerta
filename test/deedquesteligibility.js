@@ -6,7 +6,7 @@ import { loadAndValidatePhase1WorldGraph } from '../src/content/phase1-validatio
 import { commitChoice, completeNode, createMysteryContext, discoverNode, startMystery } from '../src/mysteries.js';
 import { isApprovedDeedQuestSource, QUEST_DEED_SOURCE, verifiedQuestDeedEligibility } from '../src/deedquesteligibility.js';
 import { claimDeed } from '../src/deeds.js';
-import { discoveryBoard, investigateDeed } from '../src/deeddiscovery.js';
+import { deedDiscoveryBoard, investigateDeed } from '../src/deeddiscovery.js';
 import { cityQuestNodePresentation, cityQuestPresentation } from '../src/content/city-quest-presentation.js';
 
 const source = QUEST_DEED_SOURCE;
@@ -130,7 +130,7 @@ try {
   assert.deepEqual(await verifiedQuestDeedEligibility(readOnly, { accountId, characterId }), expected,
     'completed quest eligibility is available through the read-only board client');
   const currentActor = (await pool.query('SELECT * FROM characters WHERE id=$1', [characterId])).rows[0];
-  const property = (await discoveryBoard(readOnly, currentActor)).buildings.find((building) => building.id === 'docks-0001');
+  const property = (await deedDiscoveryBoard(readOnly, currentActor)).buildings.find((building) => building.id === 'docks-0001');
   assert.equal(property.qualified, true);
   assert.equal(property.source, 'quest', 'quest completion labels a partially investigated property with the actual qualification source');
   assert.deepEqual(await act(completeNode, source.nodeId,

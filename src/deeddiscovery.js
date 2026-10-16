@@ -85,7 +85,7 @@ async function availableBuilding(client, ch, id, { atProperty = true } = {}) {
   return building;
 }
 
-export async function discoveryBoard(client, ch, { district = ch.loc } = {}) {
+export async function deedDiscoveryBoard(client, ch, { district = ch.loc } = {}) {
   if (!DISTRICTS.some(item => item.id === district))
     throw new GameError('district', 'Choose a district from the property atlas.');
   // withCharacter owns one physical transaction client; never overlap queries on that client.
@@ -140,7 +140,7 @@ export async function discoveryBoard(client, ch, { district = ch.loc } = {}) {
 }
 
 export async function discoveryAvailability(ch, client) {
-  const board = await discoveryBoard(client, ch);
+  const board = await deedDiscoveryBoard(client, ch);
   const choices = [...board.activeInvestigations, ...board.buildings];
   const claim = choices.find((building) => building.canClaim);
   const investigate = choices.find((building) => building.canInvestigate);

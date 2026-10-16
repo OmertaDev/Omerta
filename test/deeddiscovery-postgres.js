@@ -5,7 +5,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import pg from 'pg';
 import { claimDeed } from '../src/deeds.js';
-import { investigateDeed, discoveryBoard, deedInvestigationRoute } from '../src/deeddiscovery.js';
+import { investigateDeed, deedDiscoveryBoard, deedInvestigationRoute } from '../src/deeddiscovery.js';
 
 assert(process.env.COORDINATION_TEST_DATABASE_URL, 'Set a disposable COORDINATION_TEST_DATABASE_URL');
 const endpoint = new URL(process.env.COORDINATION_TEST_DATABASE_URL);
@@ -91,7 +91,7 @@ try {
     assert(/^\s*SELECT\b/i.test(sql) && !/FOR\s+(UPDATE|SHARE)/i.test(sql), 'discovery boards are genuinely read-only');
     return pool.query(sql, values);
   } };
-  assert((await discoveryBoard(readOnly, a)).buildings.find(row => row.id === target).canClaim);
+  assert((await deedDiscoveryBoard(readOnly, a)).buildings.find(row => row.id === target).canClaim);
   assert.equal((await pool.query('SELECT COUNT(*)::int n FROM street_deed_discoveries')).rows[0].n, beforeRead);
 
   await qualify(b.account_id);
