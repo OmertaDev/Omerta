@@ -95,7 +95,7 @@ export async function recordEquipmentMaintenance(client,ctx) {
     if(!repair||repair.item_id!==ctx.itemId||repair.request_key!==ctx.requestKey||repair.material_key!==ctx.materialKey||repair.payer_character!==ctx.payerCharacter||repair.provider_character!==ctx.providerCharacter||Number(repair.fee_cash)!==ctx.feeCash)fail('maintenance_source');
     if(!await ownsItemMutationReservation(client,ctx.materialKey))fail('maintenance_fresh_required');
     await maintenanceWitness(client,repair);
-    const value=await physical(client,ctx.itemId,ctx.owner);
+    const value=await physical(client,ctx.itemId,ctx.owner);await(await import('./productionbooking-guards.js')).assertProductionBookingItemMutable(client,ctx.itemId);
     if(!value.state||value.remaining>=value.maximum||repair.condition_before!==value.remaining||Number(repair.condition_after)!==Math.min(value.maximum,value.remaining+10))fail('maintenance_condition');
     if(!((ctx.owner.scope==='account'&&ctx.owner.id===repair.payer_account)||(ctx.owner.scope==='character'&&ctx.owner.id===repair.payer_character)))fail('maintenance_custody');
     registerItemTransactionUndo(client,()=>client.query('UPDATE item_durability_states SET remaining=$2,revision=$3 WHERE item_id=$1',[ctx.itemId,value.remaining,value.revision]));
@@ -123,7 +123,7 @@ async function recordEquipmentUseImpl(client,{instanceId,nodeId,itemId,eventId,m
       if(borrowed.authority.leaseId!==event.from_owner_id||borrowed.authority.operationId!==instance.id)fail('use_event');}
   }
   if(prior) { if(prior.item_id!==itemId||prior.instance_id!==instanceId||prior.node_id!==nodeId) fail('replay');return {itemId,replayed:true,remaining:Number(prior.after_condition)}; }
-  const equipment=await physical(client,itemId);
+  const equipment=await physical(client,itemId);await(await import('./productionbooking-guards.js')).assertProductionBookingItemMutable(client,itemId);
   if(equipment.item.owner_scope!=='operation'||equipment.item.owner_id!==instanceId||equipment.item.state!=='escrowed') fail('custody');
   if(equipment.remaining<10) fail('broken');
   if(!equipment.state) {

@@ -846,11 +846,12 @@ async function lockedItem(client, itemId) {
   // Exact attachments (including migration observations) mutate only through the exact plan/leaf.
   // The attachment CHECK makes a null definition hash the all-null legacy branch. Filtering here
   // preserves each legacy caller's absent-subject error and completed-receipt replay before lookup.
-  return (await client.query(
+  const row = (await client.query(
     `SELECT id, template_id, owner_scope, owner_id, state, created_at, updated_at, consumed_at
        FROM item_instances WHERE id=$1 AND definition_hash IS NULL FOR UPDATE`,
     [itemId],
   )).rows[0];
+  await(await import('./productionbooking-guards.js')).assertProductionBookingItemMutable(client,itemId);return row;
 }
 
 function registerItemRestore(client, row, custody = null, homeStorage = null) {

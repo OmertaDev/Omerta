@@ -97,6 +97,7 @@ const KNOWN_REASONS = {
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
+    'production_booking:bonus_reserve', 'production_booking:bonus', 'production_booking:bonus_refund',
     'collateral-auction:bid', 'collateral-auction:proceeds', 'collateral-auction:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
@@ -830,6 +831,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('customer layaway reserved cash', layawayReserve, -layawayNet, 0);
   const layawayIssues = await collectCustomerLayawayIssues(pool);
   push('customer layaway source history', layawayIssues.length, 0, 0);
+  const bookingBooks=await(await import('./productionbooking-invariants.js')).productionBookingAccounting(pool);
+  const bookingNet=await sum(pool,"currency='cash' AND reason IN ('production_booking:bonus_reserve','production_booking:bonus','production_booking:bonus_refund')");
+  push('production booking reserved bonus',bookingBooks.reservedCash,-bookingNet,0);
+  push('production booking canonical history',bookingBooks.issues.length,0,0,{issues:bookingBooks.issues});
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);

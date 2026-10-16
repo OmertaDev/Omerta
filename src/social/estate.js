@@ -213,6 +213,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const merchantReturnStart = await recoverMerchantReturnsAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of merchantReturnStart){if(receipt.sellerCharacter!==victim.id)throw new Error('Merchant return original seller mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
+  await(await import('../productionbooking-estate.js')).recoverProductionBookingsAtEstateStart(client,victim,h,{killerCh:opts.killerCh});
   // Commission recovery loads after module initialization, using the existing estate scope.
   const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');
   const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);

@@ -3,6 +3,7 @@ import {register as registerEquipmentRecovery} from './routes/equipmentrecovery.
 import {register as registerManufacturingLicenses} from './manufacturinglicensesroutes.js';
 import {register as registerCrossDocking} from './routes/crossdocking.js';
 import {register as registerProductionSlots} from './routes/productionslots.js';
+import {register as registerProductionBookings} from './routes/productionbooking.js';
 import {register as registerMerchantReturns} from './routes/merchantreturns.js';
 import { register as registerMultiHopCourier } from './routes/multihopcourier.js';
 import { register as registerCustomerVaults } from './routes/customervaults.js';
@@ -2520,7 +2521,7 @@ export async function buildServer() {
   // Enabled with the actual estate-start/preactor and reserve-book integration in this release.
   registerCustomerVaults(app, { pool, auth, assertEstateBridgeReady: async () => true });
   registerBusinessRelocations(app,{pool,auth});
-  registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});
+  registerCommissionedCrafting(app, { pool, auth }); registerCrossDocking(app,{pool,auth}); registerProductionSlots(app,{pool,auth});registerProductionBookings(app,{pool,auth});
   registerAtomicBarter(app, { pool, auth });
   registerPickingPacking(app, { pool, auth });
   registerCollateralLending(app, { pool, auth });

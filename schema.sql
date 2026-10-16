@@ -9713,6 +9713,46 @@ CREATE TABLE IF NOT EXISTS syndicated_loan_requests (
  action TEXT NOT NULL CHECK(action IN ('propose','fund','take','repay','cancel')),request_json JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
 
 
+CREATE TABLE IF NOT EXISTS production_booking_offers (
+ id TEXT PRIMARY KEY, maker_account TEXT NOT NULL REFERENCES accounts(id), maker_character TEXT NOT NULL REFERENCES characters(id),
+ customer_account TEXT NOT NULL REFERENCES accounts(id), customer_character TEXT NOT NULL REFERENCES characters(id),
+ business_id TEXT NOT NULL REFERENCES business_depots(id), tool_item TEXT NOT NULL REFERENCES item_instances(id),
+ source_json JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), created_at TIMESTAMPTZ NOT NULL,
+ offer_expires_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL,
+ fee_cash INT NOT NULL CHECK(fee_cash BETWEEN 1 AND 1000), bonus_cash INT NOT NULL CHECK(bonus_cash BETWEEN 1 AND 1000),
+ lifetime_seconds INT NOT NULL CHECK(lifetime_seconds BETWEEN 60 AND 1200),
+ state TEXT NOT NULL CHECK(state IN ('offered','accepted','cancelled','expired')), closed_at TIMESTAMPTZ,
+ CHECK(maker_account<>customer_account AND maker_character<>customer_character));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_offer ON production_booking_offers(maker_character) WHERE state='offered';
+CREATE TABLE IF NOT EXISTS production_booking_runs (
+ id TEXT PRIMARY KEY REFERENCES production_booking_offers(id), business_id TEXT NOT NULL REFERENCES business_depots(id),
+ maker_account TEXT NOT NULL REFERENCES accounts(id), maker_character TEXT NOT NULL REFERENCES characters(id),
+ customer_account TEXT NOT NULL REFERENCES accounts(id), customer_character TEXT NOT NULL REFERENCES characters(id),
+ tool_item TEXT NOT NULL REFERENCES item_instances(id),
+ commission_id TEXT NOT NULL UNIQUE REFERENCES commissioned_crafting_contracts(id),
+ commission_source_hash TEXT NOT NULL CHECK(char_length(commission_source_hash)=64),
+ reservation_id TEXT NOT NULL UNIQUE REFERENCES production_slot_reservations(id), reservation_source_hash TEXT NOT NULL CHECK(char_length(reservation_source_hash)=64),
+ state TEXT NOT NULL CHECK(state IN ('active','completed','refunded')),
+ bonus_cash INT NOT NULL CHECK(bonus_cash BETWEEN 1 AND 1000), remaining_cash INT NOT NULL CHECK(remaining_cash BETWEEN 0 AND 1000),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash BETWEEN 0 AND 1000), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND 1000),
+ reserve_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id), release_transaction TEXT UNIQUE REFERENCES transactions(id),
+ accepted_at TIMESTAMPTZ NOT NULL, deadline TIMESTAMPTZ NOT NULL, closed_at TIMESTAMPTZ, outcome JSONB,
+ CHECK(bonus_cash=remaining_cash+paid_cash+refunded_cash),
+ CHECK((state='active' AND remaining_cash=bonus_cash AND release_transaction IS NULL AND closed_at IS NULL AND outcome IS NULL) OR
+       (state<>'active' AND remaining_cash=0 AND release_transaction IS NOT NULL AND closed_at IS NOT NULL AND outcome IS NOT NULL)));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_business ON production_booking_runs(business_id) WHERE state='active';
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_tool ON production_booking_runs(tool_item) WHERE state='active';
+CREATE TABLE IF NOT EXISTS production_booking_positions (
+ booking_id TEXT NOT NULL REFERENCES production_booking_runs(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), role TEXT NOT NULL CHECK(role IN ('maker','customer')),
+ state TEXT NOT NULL CHECK(state IN ('held','released')), PRIMARY KEY(booking_id,original_character), UNIQUE(booking_id,role));
+CREATE UNIQUE INDEX IF NOT EXISTS production_booking_one_original ON production_booking_positions(original_character) WHERE state='held';
+CREATE TABLE IF NOT EXISTS production_booking_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('offer','accept','complete','cancel','expire')),
+ identity JSONB NOT NULL, request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));
+
+
 -- N25: explicit original-member equipment underwriting mutual reserves.
 
 CREATE TABLE IF NOT EXISTS coverage_mutual_pools (

@@ -47,6 +47,7 @@ export async function setAgentCompany(pool, account, input) {
       if (!deed || deed.onchain_token_id !== null) throw resourceError('premises', 'An owned active street deed is required.');
       key = deed.name_lc; district = deed.district;
     }
+    await(await import('./productionbooking-guards.js')).assertProductionBookingPremisesMutable(client,account,old,{premises_kind:body.premises,premises_key:key,premises_district:district});
     await client.query('INSERT INTO agent_company_profiles(account_id,revision,name,published,premises_kind,premises_key,premises_district) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(account_id) DO UPDATE SET revision=EXCLUDED.revision,name=EXCLUDED.name,published=EXCLUDED.published,premises_kind=EXCLUDED.premises_kind,premises_key=EXCLUDED.premises_key,premises_district=EXCLUDED.premises_district,updated_at=now()',
       [account, body.expectedRevision + 1, body.name, body.published, body.premises, key, district]);
     return { company: await projection(client, await profile(client, account)) };
