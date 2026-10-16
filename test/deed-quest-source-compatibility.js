@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { DEED_QUEST_SOURCE_PREDECESSOR, DEED_QUEST_SOURCE_PHASE, DEED_QUEST_SOURCE_DOMAINS,
   assertDeedQuestSourceTransfer, deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { nextFiveSourceBaseline } from '../tools/next-five-source-compatibility.js';
@@ -22,17 +23,18 @@ assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schem
   'test/gates.js', '.github/workflows/ci.yml', 'test/phase2-postgres.js']);
 let hunks = 0, negatives = 0;
 for (const [file, pin] of Object.entries(DEED_QUEST_SOURCE_DOMAINS)) {
-  const raw = fs.readFileSync(file, 'utf8'), current = lf(raw);
+  const raw = cityActivitySourceBaseline(file, fs.readFileSync(file, 'utf8')), current = lf(raw);
   assert(raw === current || raw === current.replaceAll('\n', '\r\n'), 'Working candidate has uniform line endings');
   const predecessor = git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`);
   assert.equal(hash(current), pin.currentSha256);
   assert.equal(blob(current), pin.currentBlob);
+  assert.equal(current, git('cat-file', 'blob', pin.currentBlob));
   assert.equal(hash(predecessor), pin.baselineSha256);
   assert.equal(blob(predecessor), pin.baselineBlob);
   assert.equal(predecessor, git('cat-file', 'blob', pin.baselineBlob));
   assert(Object.isFrozen(pin) && Object.isFrozen(pin.inverses));
   const actual = []; let hunk = null;
-  for (const line of git('diff', '--no-ext-diff', '--unified=3', DEED_QUEST_SOURCE_PREDECESSOR, '--', file).split('\n')) {
+  for (const line of git('diff', '--no-ext-diff', '--unified=3', pin.baselineBlob, pin.currentBlob).split('\n')) {
     if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }
     else if (hunk && /^[ +\-]/.test(line)) {
       if (line[0] !== '-') hunk.current += line.slice(1) + '\n';
@@ -100,7 +102,58 @@ for (const file of ['tools/economy-release-composition.js', 'tools/next-layer-so
   'tools/rc1-fifth-batch-source-compatibility.js'])
   assert.equal(lf(fs.readFileSync(file, 'utf8')), git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:${file}`),
     'Historical source assertions and pins remain byte-for-byte unchanged');
-const nextLayerTest = lf(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))
+// Inspect only the exact activity reader adapter; reconstructed test text is never executed.
+const nextLayerActivityPin = Object.freeze({
+  revision: 'e3211c2619b43a51b943626b35174cad3ab38e23',
+  sha256: '71fbdfe52b0c1c1e4815d919e74bb86811595e61e0eaf36dcd432de2cb2aaa1d',
+  blob: '840ae51c78eeed77a461c537cae6b86a3a48af21',
+  predecessorRevision: 'f89df180aa54e71cb17431d5324d3d9344ca7de0',
+  predecessorSha256: '6fb23142f7dae80c8e51c214e7e75dbe62b9a506837eab52e14c564a16b69a98',
+  predecessorBlob: '8733aa2ed7a90a640474eedeaa179714af5bec78',
+});
+const nextLayerActivityCurrent = git('show', `${nextLayerActivityPin.revision}:test/next-layer-source-compatibility.js`);
+const nextLayerActivityPredecessor = git('show', `${nextLayerActivityPin.predecessorRevision}:test/next-layer-source-compatibility.js`);
+for (const [text, sha256, object] of [
+  [nextLayerActivityCurrent, nextLayerActivityPin.sha256, nextLayerActivityPin.blob],
+  [nextLayerActivityPredecessor, nextLayerActivityPin.predecessorSha256, nextLayerActivityPin.predecessorBlob],
+]) {
+  assert.equal(hash(text), sha256);
+  assert.equal(blob(text), object);
+  assert.equal(text, git('cat-file', 'blob', object));
+}
+const nextLayerActivityInverses = Object.freeze([
+  Object.freeze(["import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';\n", '']),
+  Object.freeze(["cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')"]),
+]);
+const inspectNextLayerActivityReader = raw => {
+  let text = lf(raw);
+  assert(raw === text || raw === text.replaceAll('\n', '\r\n'), 'Activity reader inspection requires uniform line endings');
+  assert.equal(hash(text), nextLayerActivityPin.sha256);
+  assert.equal(blob(text), nextLayerActivityPin.blob);
+  assert.equal(text, nextLayerActivityCurrent);
+  for (const [current, previous] of nextLayerActivityInverses) {
+    assert.equal(text.split(current).length - 1, 1, 'Exact activity reader inverse occurs once');
+    text = text.replace(current, () => previous);
+  }
+  assert.equal(hash(text), nextLayerActivityPin.predecessorSha256);
+  assert.equal(blob(text), nextLayerActivityPin.predecessorBlob);
+  assert.equal(text, nextLayerActivityPredecessor);
+  return text;
+};
+for (const raw of [nextLayerActivityCurrent, nextLayerActivityCurrent.replaceAll('\n', '\r\n')])
+  assert.equal(inspectNextLayerActivityReader(raw), nextLayerActivityPredecessor);
+const nextLayerActivityRefusals = [nextLayerActivityCurrent + '\n// unknown reader drift\n',
+  nextLayerActivityCurrent.slice(1), '\ufeff' + nextLayerActivityCurrent,
+  nextLayerActivityCurrent.replace(/\S/, '?'), nextLayerActivityCurrent.replace('\n', '\r\n'),
+  nextLayerActivityCurrent.replace('\n', '\r'), nextLayerActivityPredecessor,
+  nextLayerActivityCurrent.replace('assert.equal(NEXT_LAYER_SOURCE_REVISION', 'assert.notEqual(NEXT_LAYER_SOURCE_REVISION')];
+for (const [current] of nextLayerActivityInverses)
+  nextLayerActivityRefusals.push(nextLayerActivityCurrent.replace(current, ''),
+    nextLayerActivityCurrent.replace(current, () => current + current),
+    nextLayerActivityCurrent.replace(current, () => current.replace(/\S/, '?')));
+for (const raw of nextLayerActivityRefusals) assert.throws(() => inspectNextLayerActivityReader(raw));
+console.log(`Next-layer activity reader inspection PASS: 2 line-ending positives, ${nextLayerActivityRefusals.length} refusing controls; source text only`);
+const nextLayerTest = inspectNextLayerActivityReader(fs.readFileSync('test/next-layer-source-compatibility.js', 'utf8'))
   .replace("import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n", '')
   .replace("deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8'))", "fs.readFileSync(file,'utf8')");
 assert.equal(nextLayerTest, git('show', `${DEED_QUEST_SOURCE_PREDECESSOR}:test/next-layer-source-compatibility.js`),

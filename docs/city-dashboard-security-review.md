@@ -2,7 +2,7 @@
 
 Final review date: 2026-10-16. Phase: implementation review before release, merge or deployment. Base commit `3aaeaa97a102babf7f56dece03860964814fe313`, branch `codex/dashboard-game-parity-20261016`; reviewed working tree is dirty. The final source manifest below, rather than the base commit alone, identifies the reviewed bytes.
 
-**Current conclusion:** all four confirmed findings (DGP-01 through DGP-04) are resolved in the final source and independently retested. No critical/high finding or unresolved confirmed finding remains in this bounded activity/presence/client/scene review. **The full local release harness has not completed successfully.** Its retained failures and the focused source-envelope repairs are recorded below; targeted passes do not establish a complete release-harness pass. The unchanged full hosted CI on the final committed source is a hard merge/deployment gate and remains pending in this review. This is neither production acceptance nor blanket security clearance for OMERTA. No contract, signer, financial accounting, deployment, or production state was changed by this review.
+**Current conclusion:** all four confirmed findings (DGP-01 through DGP-04) are resolved in the final source and independently retested. No critical/high finding or unresolved confirmed finding remains in this bounded activity/presence/client/scene review. **The full local release harness has not completed successfully.** Its retained failures and the focused source-envelope repairs are recorded below; targeted passes do not establish a complete release-harness pass. The full hosted CI on the final committed source is a hard merge/deployment gate. The first hosted candidate failed a source-verification fixture; its focused repairs and retests are recorded in the latest addendum, and a full passing successor run remains required. This is neither production acceptance nor blanket security clearance for OMERTA. No contract, signer, financial accounting, deployment, or production state was changed by this review.
 
 Final scope includes the registry and server publication hooks; authenticated presence projection; browser API/action bridges and canonical-state refresh; dashboard panel lifecycle; scene activity acceptance, rendering, expiry and identity retirement; and the associated focused tests. Existing gameplay handlers, receipt middleware, player projections, public activity wire, and player-intel reads were traced as dependencies. Existing gameplay economics, authentication implementation beyond changed call sites, all dashboard feature implementations, encounter locking, and unrelated backend/contract surfaces were not re-audited. Package scripts and the concise presence documentation were checked for consistency.
 
@@ -407,3 +407,61 @@ The final evidence packet indexes all 20 focused test/log hashes. The probe inde
 | `output/security/dashboard-game-parity-gates-sealed.log` | `aae07b2180cfa7e76005c70f644fd71d2b25ba26f74776c5eaa9fc0b93dc72ab` |
 
 **Final disposition:** the bounded implementation and source-envelope review is complete with DGP-01 through DGP-04 resolved and no remaining confirmed finding in this scope. Release acceptance remains conditional on the unchanged full hosted CI passing on the final committed revision. No merge, deployment or production acceptance is established by this report.
+
+
+## Hosted CI failure and source-consumer repair addendum — 2026-10-16
+
+This addendum applies to candidate `e3211c2619b43a51b943626b35174cad3ab38e23` (authored implementation `554257d4`) plus the nine dirty test files pinned below. It preserves the earlier report hash `5f41d371ee7812e246cc9365df31108e8a3ffb2b95e2652f384e9ac92640e319` as a historical point-in-time review. Independent Git comparison confirms no delta from this candidate under `src/`, `tools/`, `public/`, `package.json`, `package-lock.json` or `schema.sql`. All 16 original final-manifest hashes also still match. These changes extend only the source-verification test scope.
+
+### DGP-CI-01 — Deed source and metatest boundaries (resolved)
+
+[Standard CI run 38975885236](https://github.com/OmertaDev/Omerta/actions/runs/38975885236), job `suites + sim (pg-mem)` (117225102826), failed the step `npm test (the full suite, on pg-mem)` at 2026-10-16T22:30:19Z. Node 22.23.3 reported `test/deed-quest-source-compatibility.js:28`: actual normalized package SHA `3d4005905e2ebb374e02be9f6ce70026110c4bfb2ec5f385a6c864b9844b508a` versus pinned predecessor `267a95d8f4178a850e61000f91349f71c93e3ea503b4d759dee61e361174b08a`. The dependent City/mobile browser job was skipped. The full hosted test suite did not pass.
+
+The existing exact activity qualifier now wraps that fixture's raw source read. After this, two existing checks correctly exposed further mismatched comparison boundaries: the Git hunk collector still compared the actual working tree, and the next-layer preservation metatest retained the newly reviewed activity reader wrapper. Both intermediate failures are retained. The approved repair derives hunks from the unchanged immutable baseline/current blobs after the current SHA/blob assertions and an added complete-current-text equality to `git cat-file`. The original inverse-array equality and all old rejecting controls remain.
+
+A test-local inspector admits only the exact next-layer test at e321: normalized SHA `71fbdfe52b0c1c1e4815d919e74bb86811595e61e0eaf36dcd432de2cb2aaa1d`, blob `840ae51c78eeed77a461c537cae6b86a3a48af21`, complete text equal to the immutable revision and blob. Exactly two unique inverses remove the activity import and raw-reader call. The entire inverse must equal f89 text, SHA `6fb23142f7dae80c8e51c214e7e75dbe62b9a506837eab52e14c564a16b69a98`, blob `8733aa2ed7a90a640474eedeaa179714af5bec78`. Only then does the unchanged older Deed inspector and complete-predecessor equality run. Reconstructed test text is never executed. The reviewer independently retested the final fixture: 13 closed domains, 47 inverse hunks and all 316 original negatives pass, plus two LF/CRLF positives and 14 current/predecessor/omission/duplication/raw/semantic refusals.
+
+### DGP-CI-02 — Remaining direct source consumers (resolved)
+
+The earlier symbol-filtered pretest scan missed the direct Deed qualifier and did not establish complete coverage of scripts invoked through the full test/harness graph. Independent and implementation-agent command expansion now agree on roots `pretest`, `test` and `test:rc1:harness`, recursively expanding npm scripts and applicable hooks: 14 scripts, 588 unique Node entry points, and 30 source compatibility/transfer/composition tests. The independent filename inventory contains 29; the separately inspected `test/economy-release-composition.js` is the 30th. No Node invocation in these scripts was left unparsed. This defines the focused consumer scope; it does not claim all 588 tests were executed.
+
+The initial 29 probes passed 21 and failed eight, including the already diagnosed Deed check. Separate composition probing also failed. Seven additional readers were confirmed in company succession, logistics coverage, market feed, strategy league, strategy, third batch and fourth batch. Each repair, plus economy composition, only imports the unchanged activity qualifier and applies it before existing raw-source composition. Independent mechanical comparison strips exactly these additions from all eight files and reproduces each complete e321 test byte-for-byte after LF normalization. All original source pins, assertions, bodies, negative controls and target counts remain unchanged.
+
+The fourth-batch failure came from applying historical inverse substitutions to unqualified current text, so some substitutions made no change and the existing rejection assertion failed. The corrected actual `worldRead` qualifies the text first. An independent witness extracts that actual reader expression and verifies every retained inverse is present and every unchanged mutation recipe changes the qualified bytes: 15 server cases and nine worker cases. The reviewer also ran the real fourth-batch test; all 24 mutations are rejected, alongside its original 195 negatives and retained package/Delivery/Depot controls. The economy composition independent rerun passes 19 domains and 566 refusing controls.
+
+### Current evidence and release limit
+
+The sealed implementation-agent packet records **30/30 focused tests passing** on this candidate plus the nine-file test delta. The reviewer independently compared the recursive inventories and verified every listed current source hash, final log hash, exit status and retained prior failure hash. Deed, economy composition and fourth batch were independently rerun; the other focused passes are reused evidence. All nine changed tests pass syntax and scoped whitespace checks. The runtime, helper, schema and package boundary hashes remain unchanged. Local reruns used Node 24.19.0. No full local harness rerun or full hosted success is asserted.
+
+At this addendum's monitoring snapshot, liquidity recovery run [38975885263](https://github.com/OmertaDev/Omerta/actions/runs/38975885263) had succeeded; the four PostgreSQL jobs of the failed standard-CI candidate and Forge run [38975885151](https://github.com/OmertaDev/Omerta/actions/runs/38975885151) were still running. This is a point-in-time status, not a later result. Even successful unaffected jobs cannot satisfy the failed full-suite gate. The unchanged complete hosted checks must pass on the final successor commit before merge or deployment. This source-only review adds no native, migration, financial, economic, chain or production qualification.
+
+| Final additional reviewed test source | Raw SHA-256 |
+| --- | --- |
+| `test/deed-quest-source-compatibility.js` | `58f605054b44cba05846ee03b1e017d2db25fbae6daa6267ebe0f0d822e2306a` |
+| `test/economy-release-composition.js` | `6be4c9cb563e0796db0502779c807cf57b1ef46e1eaca5019dbb9c27d918ac30` |
+| `test/rc1-company-succession-source-compatibility.js` | `a14b003e28793d60bb014be8132690223e0df914925907d95282e03d53c1572c` |
+| `test/rc1-fourth-batch-source-compatibility.js` | `7181fafdc2807760cd5cfb17342b7a4d2e30b30f150fe9309659091693a7c885` |
+| `test/rc1-logistics-coverage-source-compatibility.js` | `aa20724af4cb68a8769a8301f8aadf12501876bb789e62793006f6e7a456feec` |
+| `test/rc1-market-feed-source-compatibility.js` | `195272ec289df95ce2ade93d851656362015c76be244ed6fa29aa9a9476e7e4e` |
+| `test/rc1-strategy-league-source-compatibility.js` | `693002d41a16b883ada423650f7d96881aec2cd3c556bbb9fd8b6852d3618926` |
+| `test/rc1-strategy-source-compatibility.js` | `88a8ce89f004a423e8c59dd2f5ec48949a6b0cbe567bccbd67003ff2af385070` |
+| `test/rc1-third-batch-source-compatibility.js` | `d64b42e3cc31b9e0c21f2a8fb3f283fd3c8a270d1ac44d56959bcb9931a4af18` |
+
+The sealed 30-test packet includes all individual final and prior-failure log hashes, candidate/baseline identities, and the implementer mutation-effect witness; the independent artifacts below are retained with it.
+
+| Additional evidence | Raw SHA-256 |
+| --- | --- |
+| `output/security/dashboard-game-parity-ci-38975885236-failed-job.log` | `bcf71d36823b274840c1291c5898f2f0624d7109bb88cc27e804aab75831e856` |
+| `output/security/dashboard-game-parity-ci-source-consumers-final.json` | `81f46a621c537b7850b65e1b50248c832de462fe35056a421d61feb0e17cc3d2` |
+| `output/security/dashboard-game-parity-ci-consumer-inventory.json` | `2bff196ed3bb5d78596437db84eb51f17a7c65834619f7f99698bf7763bd91b8` |
+| `output/security/dashboard-game-parity-ci-consumer-inventory-independent.json` | `bc5b0095d86c5f3659b21ebd82f2c6296e937927799bfed166551cc36d36d33d` |
+| `output/security/dashboard-game-parity-ci-review-independent.json` | `3051b87a4e125e40cb9369a2b394b525b17fd25f08d0fd7c7810c22769596255` |
+| `output/security/dashboard-game-parity-ci-review-static-independent.log` | `775707c218116fd8d349e42ecc0cc31a765fdbecd4a4ac294d614d08ec05ec59` |
+| `output/security/dashboard-game-parity-ci-deed-independent.log` | `996feb79d82bbde11361bc429254fb4f10b76eb9db7cbee4bbcfa96b1f7b262c` |
+| `output/security/dashboard-game-parity-ci-deed-final-independent.log` | `eb50d9e87fb3e79e565c304f50f97e3da1dfb09df680f20f3ea31a3a36fb6fbe` |
+| `output/security/dashboard-game-parity-ci-deed-qualified-independent.log` | `6e8a867cd6a27516cdd77110b7bdb35522a472795468e2f146ad0d8c235b9401` |
+| `output/security/dashboard-game-parity-ci-composition-independent.log` | `25929c437f9761b49e80ec7839c959da36d792eae04937b05dadf2f9b6333bc5` |
+| `output/security/dashboard-game-parity-ci-fourth-independent.log` | `b72b0447c75a96ff5b51148ba140a5bf1ac2379473bb2db85ea88fcb74c2734f` |
+| `output/security/dashboard-game-parity-ci-fourth-mutations-independent.json` | `267a4d71f22c811ba97ef19493d971ff94ceaf68238c9f06a167e96840b7bd18` |
+
+**Latest disposition:** the four original gameplay findings and both CI compatibility failures above are resolved for their pinned scopes. The independent review of the nine test-only repairs is complete. The failed first hosted full-suite run remains in the record; a passing full successor CI run remains a hard merge/deployment condition.
