@@ -1287,7 +1287,7 @@ jobs:
           RESOURCE_ECONOMY: 'off'
           ENTERPRISE_NATIVE_PROFILE: ci
           ENTERPRISE_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres
-        run: npm run test:agent-economy-enterprise:postgres
+        run: env -u RC1_PG_BIN npm run test:agent-economy-enterprise:postgres
 
   pgcheck:
     if: ${{ always() && !inputs.tail_only }}

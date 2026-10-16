@@ -40,6 +40,7 @@
 import fs from 'node:fs';
 import {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';
 import {MARKET_OPERATIONS_HELPER_PROFILES,extractMarketOperationsHelperReconciliations} from './market-operations-graph-helpers.js';
+import {ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from './enterprise-graph-helpers.js';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -677,6 +678,12 @@ export function build() {
   const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
   for(const term of extractNextFiveHelperReconciliations(inv,nextFiveHelpers)){
     const prov={file:term.file,line:term.line,hash:sha(nextFiveHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const enterpriseHelpers=Object.fromEntries(ENTERPRISE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractEnterpriseHelperReconciliations(inv,enterpriseHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(enterpriseHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
     node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 

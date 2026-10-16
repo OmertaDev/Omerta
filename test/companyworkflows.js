@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import * as Workflow from '../src/companyworkflows.js';
 import * as G from '../src/game.js';
+import { withItemTransaction } from '../src/items.js';
 import * as Delivery from '../src/delivery.js';
 import * as W from '../src/warehouseleases.js';
 import * as F from '../src/deliveryfinance.js';
@@ -60,9 +61,10 @@ async function fixture() {
   return { prefix, owner, merchant, buyer, lender, h, deadline, terms: { depotId: `${prefix}_own`, procurementDepotId: `${prefix}_sale`, leaseId: actualLease, commitmentId: commitment, financeRequestId: finance, qty: 2, deadlineSeconds: 3600 } };
 }
 async function transaction(actor, fn) {
-  const client = await pool.connect();
-  try { await client.query('BEGIN'); await client.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [actor.id]); const result = await fn(client); await client.query('COMMIT'); return result; }
-  catch (error) { await client.query('ROLLBACK'); throw error; } finally { client.release(); }
+  return withItemTransaction(pool, async client => {
+    await client.query('SELECT id FROM characters WHERE id=$1 FOR UPDATE', [actor.id]);
+    return fn(client);
+  });
 }
 const create = f => transaction(f.owner, client => Workflow.createCompanyWorkflow(f.owner, f.terms, 'create', client));
 const advance = (f, wf, body, key) => transaction(f.owner, client => Workflow.advanceCompanyWorkflow(f.owner, wf, body, key, client, f.h));
