@@ -168,7 +168,7 @@
 | [src/deed-upgrades.js](../../src/deed-upgrades.js) | 65 | platform-core | 3 / 5 | 1 | 5 | 2 |
 | [src/deedbuildings.js](../../src/deedbuildings.js) | 124 | platform-core | 0 / 8 | 1 | 4 | 5 |
 | [src/deeddiscovery.js](../../src/deeddiscovery.js) | 221 | platform-core | 4 / 8 | 0 | 8 | 5 |
-| [src/deedquesteligibility.js](../../src/deedquesteligibility.js) | 57 | platform-core | 2 / 2 | 0 | 3 | 1 |
+| [src/deedquesteligibility.js](../../src/deedquesteligibility.js) | 56 | platform-core | 2 / 2 | 0 | 3 | 1 |
 | [src/deeds.js](../../src/deeds.js) | 633 | enterprise-logistics | 6 / 13 | 11 | 12 | 7 |
 | [src/defi.js](../../src/defi.js) | 599 | platform-core | 0 / 1 | 0 | 1 | 1 |
 | [src/delivery.js](../../src/delivery.js) | 129 | platform-core | 10 / 24 | 4 | 2 | 13 |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "384b4bf68d51b62d164960bee01a7dd9969f4ba5",
+  "sourceRevision": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15506,
-    "edges": 61263,
+    "nodes": 15508,
+    "edges": 61283,
     "byNodeType": {
       "Artifact": 6585,
       "Command": 287,
-      "Commit": 4043,
+      "Commit": 4045,
       "Contract": 134,
       "Document": 924,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5197,
-      "CHANGED": 23716,
+      "CHANGED": 23733,
       "CONTAINS": 6606,
       "DECLARES": 287,
       "DEFINED_IN": 1704,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1034,
+      "EXECUTES": 1035,
       "HANDLED_BY": 920,
-      "HAS_COMMIT": 4043,
+      "HAS_COMMIT": 4045,
       "IMPLEMENTS": 124,
       "IMPORTS": 6517,
       "INHERITS": 45,
@@ -86727,20 +86727,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 52827,
+      "bytes": 52871,
       "lines": 318,
-      "version": "b55245a05ae887e1",
+      "version": "374bd212fdead496",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "b55245a05ae887e1"
+          "version": "374bd212fdead496"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:Procfile",
@@ -120905,20 +120905,20 @@
       "path": "src/deedquesteligibility.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 3150,
-      "lines": 57,
-      "version": "cbc7916c71effe0c",
+      "bytes": 3251,
+      "lines": 56,
+      "version": "2c62353fe712a9f7",
       "text": true,
       "provenance": [
         {
           "file": "src/deedquesteligibility.js",
           "line": 1,
-          "version": "cbc7916c71effe0c"
+          "version": "2c62353fe712a9f7"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:src/deeds.js",
@@ -130061,18 +130061,18 @@
       "extension": ".js",
       "bytes": 17775,
       "lines": 270,
-      "version": "5f6c9fb29236cbff",
+      "version": "0e3ad647581b9921",
       "text": true,
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "5f6c9fb29236cbff"
+          "version": "0e3ad647581b9921"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:38:28.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d789b5b1d320d4768d3a97f51ee9256da95c590c"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:test/city-scene-browser.js",
@@ -132727,20 +132727,20 @@
       "path": "test/deed-quest-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7008,
+      "bytes": 7026,
       "lines": 102,
-      "version": "052d40d8072df5b8",
+      "version": "f78b2797e684a922",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-quest-source-compatibility.js",
           "line": 1,
-          "version": "052d40d8072df5b8"
+          "version": "f78b2797e684a922"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:test/deed-upgrade-ownership.js",
@@ -132796,20 +132796,20 @@
       "path": "test/deedbuildings-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6658,
-      "lines": 100,
-      "version": "55b0f2027d568df7",
+      "bytes": 6608,
+      "lines": 99,
+      "version": "bb38159fe7ade085",
       "text": true,
       "provenance": [
         {
           "file": "test/deedbuildings-browser.js",
           "line": 1,
-          "version": "55b0f2027d568df7"
+          "version": "bb38159fe7ade085"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:55:44.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "384b4bf68d51b62d164960bee01a7dd9969f4ba5"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:test/deedbuildings.js",
@@ -135050,20 +135050,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 343165,
-      "lines": 4758,
-      "version": "627d9af55522e616",
+      "bytes": 347918,
+      "lines": 4820,
+      "version": "699f50e127a84c6d",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "627d9af55522e616"
+          "version": "699f50e127a84c6d"
         }
       ],
-      "lastChangedAt": "2026-10-16T01:44:09.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1a4a19b5295b3877303a6a717c0c4a4ee77d1843"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -146550,20 +146550,20 @@
       "path": "tools/deed-quest-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 58372,
-      "lines": 225,
-      "version": "d31f9270bf6401f4",
+      "bytes": 64464,
+      "lines": 258,
+      "version": "6e767febcad8ab33",
       "text": true,
       "provenance": [
         {
           "file": "tools/deed-quest-source-transfer.js",
           "line": 1,
-          "version": "d31f9270bf6401f4"
+          "version": "6e767febcad8ab33"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:tools/dexbot-e2e.js",
@@ -146803,20 +146803,20 @@
       "path": "tools/generate-deed-quest-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 5608,
+      "bytes": 5626,
       "lines": 82,
-      "version": "9f46a87d476071d7",
+      "version": "1986337f3c91974a",
       "text": true,
       "provenance": [
         {
           "file": "tools/generate-deed-quest-source-transfer.js",
           "line": 1,
-          "version": "9f46a87d476071d7"
+          "version": "1986337f3c91974a"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:18:55.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
     },
     {
       "key": "Artifact:tools/genesis-auction-deployment-plan.js",
@@ -153277,7 +153277,7 @@
       "type": "Command",
       "id": "npm:test:deed-discovery:browser",
       "label": "npm run test:deed-discovery:browser",
-      "command": "node test/deed-discovery-ui.js && node test/deedbuildings-browser.js",
+      "command": "node test/deed-discovery-ui.js && node test/deedbuildings-browser.js && node test/property-quest-city-browser.js",
       "provenance": [
         {
           "file": "package.json",
@@ -164042,6 +164042,22 @@
         {
           "commit": "22019d33f56b0350fc27b3036a8badf9dd944331",
           "url": "https://github.com/OmertaDev/Omerta/commit/22019d33f56b0350fc27b3036a8badf9dd944331"
+        }
+      ]
+    },
+    {
+      "key": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "type": "Commit",
+      "id": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "label": "fix(deeds): satisfy native query and release gate checks",
+      "title": "fix(deeds): satisfy native query and release gate checks",
+      "date": "2026-10-16T16:18:55.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "provenance": [
+        {
+          "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/220a4e75cc339a606a1d50385f3676f3b5e68d7f"
         }
       ]
     },
@@ -178250,6 +178266,22 @@
         {
           "commit": "5aadb5267bba9060716ddd82660e59f6aec89ea3",
           "url": "https://github.com/OmertaDev/Omerta/commit/5aadb5267bba9060716ddd82660e59f6aec89ea3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "type": "Commit",
+      "id": "5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "label": "chore(knowledge): refresh deed quest release artifacts",
+      "title": "chore(knowledge): refresh deed quest release artifacts",
+      "date": "2026-10-16T15:59:37.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "provenance": [
+        {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5ab68a72e553b0c98875cd6643038fe18c2fb120"
         }
       ]
     },
@@ -245055,6 +245087,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5b08f57fbdb35cc8b7ac74b42813f89d9675768a"
         },
         {
@@ -246442,6 +246477,9 @@
         },
         {
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
+        },
+        {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
         },
         {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
@@ -248490,6 +248528,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
         },
         {
@@ -250536,6 +250577,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
         },
         {
@@ -252003,6 +252047,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5bc3d64ff13cfb17bcece5b7d5040557522a91aa"
         },
         {
@@ -253144,6 +253191,9 @@
         },
         {
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
+        },
+        {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
         },
         {
           "commit": "5afd99aef81375a41702b2694fa39e4cb5b746ea"
@@ -254679,6 +254729,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5bc3d64ff13cfb17bcece5b7d5040557522a91aa"
         },
         {
@@ -255303,6 +255356,9 @@
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
         },
         {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+        },
+        {
           "commit": "5bc3d64ff13cfb17bcece5b7d5040557522a91aa"
         },
         {
@@ -255673,6 +255729,9 @@
         },
         {
           "commit": "59a95f5fec8f055beebaa2f1249a47dc8253ce81"
+        },
+        {
+          "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
         },
         {
           "commit": "5bc3d64ff13cfb17bcece5b7d5040557522a91aa"
@@ -259089,13 +259148,13 @@
       "type": "Module",
       "id": "src/deedquesteligibility.js",
       "label": "src/deedquesteligibility.js",
-      "lines": 57,
-      "version": "cbc7916c71effe0c",
+      "lines": 56,
+      "version": "2c62353fe712a9f7",
       "provenance": [
         {
           "file": "src/deedquesteligibility.js",
           "line": 1,
-          "version": "cbc7916c71effe0c"
+          "version": "2c62353fe712a9f7"
         }
       ]
     },
@@ -267414,7 +267473,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "384b4bf68d51b62d164960bee01a7dd9969f4ba5",
+      "revision": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
       "currentBranch": "codex/complex-deed-quests",
       "defaultBranch": "main",
       "visibility": "public",
@@ -304590,12 +304649,12 @@
       "id": "test/city-rpg.js",
       "label": "test/city-rpg.js",
       "lines": 270,
-      "version": "5f6c9fb29236cbff",
+      "version": "0e3ad647581b9921",
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "5f6c9fb29236cbff"
+          "version": "0e3ad647581b9921"
         }
       ]
     },
@@ -306330,12 +306389,12 @@
       "id": "test/deed-quest-source-compatibility.js",
       "label": "test/deed-quest-source-compatibility.js",
       "lines": 102,
-      "version": "052d40d8072df5b8",
+      "version": "f78b2797e684a922",
       "provenance": [
         {
           "file": "test/deed-quest-source-compatibility.js",
           "line": 1,
-          "version": "052d40d8072df5b8"
+          "version": "f78b2797e684a922"
         }
       ]
     },
@@ -306374,13 +306433,13 @@
       "type": "TestSuite",
       "id": "test/deedbuildings-browser.js",
       "label": "test/deedbuildings-browser.js",
-      "lines": 100,
-      "version": "55b0f2027d568df7",
+      "lines": 99,
+      "version": "bb38159fe7ade085",
       "provenance": [
         {
           "file": "test/deedbuildings-browser.js",
           "line": 1,
-          "version": "55b0f2027d568df7"
+          "version": "bb38159fe7ade085"
         }
       ]
     },
@@ -307694,13 +307753,13 @@
       "type": "TestSuite",
       "id": "test/gates.js",
       "label": "test/gates.js",
-      "lines": 4758,
-      "version": "627d9af55522e616",
+      "lines": 4820,
+      "version": "699f50e127a84c6d",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "627d9af55522e616"
+          "version": "699f50e127a84c6d"
         }
       ]
     },
@@ -381996,6 +382055,70 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:src/deedquesteligibility.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:test/city-rpg.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:test/deed-quest-source-compatibility.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:test/deedbuildings-browser.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:tools/deed-quest-source-transfer.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "to": "Artifact:tools/generate-deed-quest-source-transfer.js",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:220ca4f1d36dbc6dedbb199a34187dd1ad550ac7",
       "to": "Artifact:public/city-scene.css",
       "provenance": {
@@ -420424,6 +420547,78 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "commit": "5aadb5267bba9060716ddd82660e59f6aec89ea3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
       }
     },
     {
@@ -634623,6 +634818,15 @@
     },
     {
       "type": "EXECUTES",
+      "from": "Command:npm:test:deed-discovery:browser",
+      "to": "Artifact:test/property-quest-city-browser.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
       "from": "Command:npm:test:deed-discovery:postgres",
       "to": "Artifact:test/deeddiscovery-postgres.js",
       "provenance": {
@@ -651726,6 +651930,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "provenance": {
+        "commit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:220ca4f1d36dbc6dedbb199a34187dd1ad550ac7",
       "provenance": {
         "commit": "220ca4f1d36dbc6dedbb199a34187dd1ad550ac7"
@@ -658825,6 +659037,14 @@
       "to": "Commit:5aadb5267bba9060716ddd82660e59f6aec89ea3",
       "provenance": {
         "commit": "5aadb5267bba9060716ddd82660e59f6aec89ea3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5ab68a72e553b0c98875cd6643038fe18c2fb120",
+      "provenance": {
+        "commit": "5ab68a72e553b0c98875cd6643038fe18c2fb120"
       }
     },
     {
@@ -707157,15 +707377,6 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/deedbuildings-browser.js",
-      "to": "Artifact:test/property-quest-city-browser.js",
-      "provenance": {
-        "file": "test/deedbuildings-browser.js",
-        "line": 99
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/deedbuildings-browser.js",
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/deedbuildings-browser.js",
@@ -711822,7 +712033,7 @@
       "to": "Artifact:src/defi.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 1194
+        "line": 1208
       }
     },
     {
@@ -711831,7 +712042,7 @@
       "to": "Artifact:test/strategylaboratories.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 286
+        "line": 292
       }
     },
     {
@@ -711840,7 +712051,7 @@
       "to": "Artifact:tools/city-gameplay-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3590
+        "line": 3611
       }
     },
     {
@@ -711849,7 +712060,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3661
+        "line": 3721
       }
     },
     {
@@ -711858,7 +712069,16 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 4077
+        "line": 4139
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/gates.js",
+      "to": "Artifact:tools/deed-quest-source-transfer.js",
+      "provenance": {
+        "file": "test/gates.js",
+        "line": 32
       }
     },
     {
@@ -711867,7 +712087,7 @@
       "to": "Artifact:tools/sqlscan.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 3502
+        "line": 3523
       }
     },
     {
@@ -733611,7 +733831,7 @@
       "to": "Artifact:tools/deed-quest-source-transfer.js",
       "provenance": {
         "file": "tools/deed-quest-source-transfer.js",
-        "line": 184
+        "line": 217
       }
     },
     {
@@ -733620,7 +733840,7 @@
       "to": "Artifact:tools/economy-release-composition.js",
       "provenance": {
         "file": "tools/deed-quest-source-transfer.js",
-        "line": 185
+        "line": 218
       }
     },
     {
@@ -802218,7 +802438,7 @@
       "to": "Artifact:src/defi.js",
       "provenance": {
         "file": "test/gates.js",
-        "line": 1194
+        "line": 1208
       }
     },
     {
@@ -820632,7 +820852,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/deedquesteligibility.js",
-        "line": 46
+        "line": 45
       }
     },
     {
@@ -820641,7 +820861,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/deedquesteligibility.js",
-        "line": 47
+        "line": 46
       }
     },
     {
