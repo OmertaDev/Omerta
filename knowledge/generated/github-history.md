@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `707a2a22cf2e`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `feba5eb42d10`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4168 |
+| Commits in clone | 4170 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — Keep mobile operation content above the fold after receipts |
+| Latest commit | 2026-10-16 — Merge pull request #281 from OmertaDev/codex/city-gossip-quest-leads-20261016 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3208 |
+| OmertaDev | 3210 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 694 | historical |
-| knowledge/generated/graph-summary.md | 694 | historical |
-| knowledge/generated/graph.json | 694 | historical |
-| knowledge/generated/inventory.md | 694 | historical |
+| knowledge/generated/github-history.md | 695 | historical |
+| knowledge/generated/graph-summary.md | 695 | historical |
+| knowledge/generated/graph.json | 695 | historical |
+| knowledge/generated/inventory.md | 695 | historical |
 | [SPEC.md](../../SPEC.md) | 554 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 470 | yes |

@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "707a2a22cf2e9e9157ec9df03d752a584cffa439",
+  "sourceRevision": "feba5eb42d10014a79c7253b4ef43def7d7f0985",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15718,
-    "edges": 62012,
+    "nodes": 15720,
+    "edges": 62018,
     "byNodeType": {
       "Artifact": 6628,
       "Command": 286,
-      "Commit": 4168,
+      "Commit": 4170,
       "Contract": 134,
       "Document": 928,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5236,
-      "CHANGED": 23988,
+      "CHANGED": 23992,
       "CONTAINS": 6649,
       "DECLARES": 286,
       "DEFINED_IN": 1712,
       "DEPENDS_ON": 69,
       "EXECUTES": 1052,
       "HANDLED_BY": 923,
-      "HAS_COMMIT": 4168,
+      "HAS_COMMIT": 4170,
       "IMPLEMENTS": 124,
       "IMPORTS": 6639,
       "INHERITS": 45,
@@ -210462,6 +210462,22 @@
       ]
     },
     {
+      "key": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "type": "Commit",
+      "id": "cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "label": "Refresh generated knowledge for mobile receipt layout fix",
+      "title": "Refresh generated knowledge for mobile receipt layout fix",
+      "date": "2026-10-16T19:15:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "provenance": [
+        {
+          "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cdf533f684e7902be56fb29eafb3a760feb5d535"
+        }
+      ]
+    },
+    {
       "key": "Commit:cdf8d542b02036e4c852644fa0baf9b23f387165",
       "type": "Commit",
       "id": "cdf8d542b02036e4c852644fa0baf9b23f387165",
@@ -222634,6 +222650,22 @@
         {
           "commit": "feb03f23ec4eee116404d10c0a045b4a959ae876",
           "url": "https://github.com/OmertaDev/Omerta/commit/feb03f23ec4eee116404d10c0a045b4a959ae876"
+        }
+      ]
+    },
+    {
+      "key": "Commit:feba5eb42d10014a79c7253b4ef43def7d7f0985",
+      "type": "Commit",
+      "id": "feba5eb42d10014a79c7253b4ef43def7d7f0985",
+      "label": "Merge pull request #281 from OmertaDev/codex/city-gossip-quest-leads-20261016",
+      "title": "Merge pull request #281 from OmertaDev/codex/city-gossip-quest-leads-20261016",
+      "date": "2026-10-16T19:25:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/feba5eb42d10014a79c7253b4ef43def7d7f0985",
+      "provenance": [
+        {
+          "commit": "feba5eb42d10014a79c7253b4ef43def7d7f0985",
+          "url": "https://github.com/OmertaDev/Omerta/commit/feba5eb42d10014a79c7253b4ef43def7d7f0985"
         }
       ]
     },
@@ -250537,6 +250569,9 @@
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
+          "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+        },
+        {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
         },
         {
@@ -252628,6 +252663,9 @@
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
         },
         {
+          "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+        },
+        {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
         },
         {
@@ -254717,6 +254755,9 @@
         },
         {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+        },
+        {
+          "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
         },
         {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
@@ -257390,6 +257431,9 @@
         },
         {
           "commit": "cce43ee0afccc10f34ab09d96c2cf8f44f8474f4"
+        },
+        {
+          "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
         },
         {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
@@ -270931,8 +270975,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "707a2a22cf2e9e9157ec9df03d752a584cffa439",
-      "currentBranch": "codex/city-gossip-quest-leads-20261016",
+      "revision": "feba5eb42d10014a79c7253b4ef43def7d7f0985",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -519090,6 +519134,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:cdf8d542b02036e4c852644fa0baf9b23f387165",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -681630,6 +681706,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:cdf533f684e7902be56fb29eafb3a760feb5d535",
+      "provenance": {
+        "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:cdf8d542b02036e4c852644fa0baf9b23f387165",
       "provenance": {
         "commit": "cdf8d542b02036e4c852644fa0baf9b23f387165"
@@ -687713,6 +687797,14 @@
       "to": "Commit:feb03f23ec4eee116404d10c0a045b4a959ae876",
       "provenance": {
         "commit": "feb03f23ec4eee116404d10c0a045b4a959ae876"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:feba5eb42d10014a79c7253b4ef43def7d7f0985",
+      "provenance": {
+        "commit": "feba5eb42d10014a79c7253b4ef43def7d7f0985"
       }
     },
     {
