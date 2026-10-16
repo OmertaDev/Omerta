@@ -514,6 +514,8 @@ Upgrade level follows the deed when sold. Transfers, reimports and wallet change
 
 Authenticated API: `GET /v1/deeds` shows upgrade status; `POST /v1/deeds/upgrade` accepts `{ "deedName": "Ash Street", "expectedLevel": 0 } (the named deed and its current level)`. `POST /v1/brokers/activate` is retired for new paid activations.
 
+New Street Deeds are earned at level 15. All 2,500 permanent buildings are available to discover; each account can claim one primary deed over its lifetime. Follow four ordered property leads across three districts, or finish “A House With a Past” through its Docks, Neon and Foundry evidence chain. `GET /v1/deeds/discovery?district=docks` returns the current objective; submit its `buildingId` and `actionId` to `POST /v1/deeds/investigate`. Return to the building’s district and submit `{ "name": "Ash Street", "buildingId": "docks-0001" }` to `POST /v1/deeds/claim`. Investigating does not reserve a building; the first qualified claim wins. Existing deeds and secondary trades remain available.
+
 ## How to extract (turn $OMR into on-chain value)
 
 > **Verify availability first.** Treat production extraction as dormant until

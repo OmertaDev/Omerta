@@ -6681,7 +6681,6 @@
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
-        // The panel survives the async refresh started by setTab; its old controls do not.
         $(`#tab-${tourReturnTab}`),
         ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
         $(`#tab-control-${tourReturnTab}`),
@@ -9635,7 +9634,8 @@
     const entries = (Array.isArray(reply.body?.mysteries) ? reply.body.mysteries : []).filter(entry =>
       (entry.cityQuest === true || entry.graphId === 'neighborhood-initiation')
       && typeof entry.graphId === 'string' && /^[a-z0-9][a-z0-9:_-]{0,127}$/.test(entry.graphId)
-      && (!entry.districtId || entry.districtId === me.loc));
+      && (!entry.districtId || entry.districtId === me.loc
+        || entry.graphId === 'property-investigation' && entry.started === true && entry.status === 'active'));
     function add(graphId, venueId, title, dialogue, entries, started, questOrder) {
       const prefix = '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId) + '/';
       const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
@@ -10003,10 +10003,26 @@
   // and build a legend on it. Phase 1 is pure status: the deed is yours forever (survives death, the heir
   // inherits it), and its value is the RECORD of what happened on it. Rent + turf CONTROL are earned
   // in-game (a later phase); this screen is the deed + its legend + the map's build-up. ──
-  async function renderDeeds() {
+  let deedPropertyFocus = null;
+  let deedPropertyRender = 0;
+  let deedPropertyActor = null;
+  const deedPropertyNames = new Map();
+  async function renderDeeds(propertyFocus = deedPropertyFocus) {
+    const actor = me?.id || null;
+    if (actor !== deedPropertyActor) {
+      deedPropertyActor = actor;
+      deedPropertyFocus = propertyFocus = null;
+      deedPropertyNames.clear();
+    }
+    const render = ++deedPropertyRender;
+    if (!actor) return;
+    if (propertyFocus?.district) deedPropertyFocus = propertyFocus;
     const t = $('#tab-deeds');
+    t.querySelectorAll('#deed-investigate, #deed-objective-travel, #deed-property-claim, #deed-property-refresh')
+      .forEach(control => { control.disabled = true; });
     const navigation = navigationRevision, current = cityActorScope();
-    const valid = () => current() && currentTab === 'deeds' && navigation === navigationRevision;
+    const valid = () => current() && currentTab === 'deeds' && navigation === navigationRevision
+      && render === deedPropertyRender && actor === me?.id;
     const reply = await api('GET', '/v1/deeds', undefined, { isCurrent: valid });
     if (!valid() || reply.ignored) return;
     const b = reply.body || {};
@@ -10086,7 +10102,7 @@
             ${vaultChip(s.vault)}
             <button class="act" data-buydeed="${s.sellerId}" data-price="${s.price}">buy it</button></div>`).join(''));
       } else if (m.canBuy) {
-        rows.push(`<div class="d" style="color:var(--dim)">No streets are for sale right now — claim a fresh one below, or wait for a seller.</div>`);
+        rows.push(`<div class="d" style="color:var(--dim)">No streets are for sale right now. Explore a property and earn its deed, or wait for a seller.</div>`);
       }
       if (!rows.length) return '';
       return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">The Market</span>
@@ -10129,8 +10145,14 @@
         <span class="t">${esc(d.name)}</span> <span class="chip">${d.deeds} deed${d.deeds === 1 ? '' : 's'}</span>${deed && deed.district === d.id ? ' <span class="chip good">your street</span>' : ''}
         <div class="d" style="font-size:11px;color:var(--dim);margin-top:2px">${esc(d.perk || '')}</div>
         <div class="d" style="font-size:11px;margin-top:2px">Open: ${(n.open || []).map((x) => esc(x)).join(' · ') || '—'}${(n.coming || []).length ? ` <span style="color:var(--dim)">· opening: ${n.coming.map((x) => esc(x)).join(' · ')}</span>` : ''}</div>
-        ${b.canClaim ? `<button class="act" data-claimdist="${d.id}">claim a street here</button>` : ''}</div>`; }).join('')}</div>`;
+        <button class="act" data-deed-district="${esc(d.id)}">explore properties here</button></div>`; }).join('')}</div>`;
     t.innerHTML = `
+      <div class="card"><span class="t">City properties</span>
+        <div class="d">All 2,500 permanent houses and buildings are discoverable now. Earn a building's deed through a qualifying quest or by following its leads across the city. Each account can claim one new deed in its lifetime. Existing deeds and secondary trades remain available.</div>
+        ${deed?.building ? `<div class="d">Your property: ${esc(deed.building.id)} · ${esc(deed.building.kind.replaceAll('_', ' '))}</div>` : ''}
+        <button class="act" id="deed-atlas-open">explore the property map</button>
+        <button class="act" id="deed-quests-open">quests and inventory</button>
+        <div id="deed-atlas" aria-live="polite"></div></div>
       ${chainCard()}
       ${rewardCard}
       ${upgradeCard}
@@ -10143,9 +10165,9 @@
         <div class="card">${history.length
           ? history.map((h) => `<div class="d" style="margin-top:2px">${evLabel(h.kind)}${h.detail ? ' — ' + esc(h.detail) : ''}</div>`).join('')
           : '<div class="d" style="color:var(--dim)">nothing has happened here yet — play, and the street remembers.</div>'}</div>`
-        : `<div class="card"><span class="t">Own your street</span>
-          <div class="d">Claim a named plot of the world — a Street on the map that's yours. It survives death (the heir inherits it), and everything that happens on it becomes its story. Pick a district below and name it.</div>
-          <div style="margin-top:6px"><input id="deed-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"></div></div>`}
+        : `<div class="card"><span class="t">Earn your property</span>
+          <div class="d">Explore the property map, complete its investigation or a qualifying quest, then name and claim that exact building. Discovering a property does not reserve it: another qualified player can claim it first. Opening the map alone earns no progress.</div>
+          </div>`}
       ${cornerCard(b.corner)}
       ${marketCard(b.market)}
       ${cityBanner}
@@ -10155,12 +10177,108 @@
     // the ranks ladder (a legend of what renown buys) — element reads on `ranks`, always non-empty
     const rankLine = ranks.map((r) => `${esc(r.name)} (${r.min})`).join(' · ');
     t.insertAdjacentHTML('beforeend', `<div class="d" style="font-size:10.5px;color:var(--dim);margin-top:6px">renown ranks: ${rankLine}</div>`);
-    let deedDist = null;
-    t.querySelectorAll('[data-claimdist]').forEach((btn) => btn.onclick = () => {
-      const name = ($('#deed-name') && $('#deed-name').value || '').trim();
-      if (!name) { toast('Name your street first.'); return; }
-      acquireCityDeed('POST', '/v1/deeds/claim', { name, district: btn.dataset.claimdist });
-    });
+    let propertyRead = 0;
+    const openPropertyDistrict = async (district, buildingId = null) => {
+      if (!valid()) return;
+      deedPropertyFocus = { district, buildingId };
+      const host = $('#deed-atlas');
+      const read = ++propertyRead;
+      host.innerHTML = '<p class="d">Reading district properties…</p>';
+      const suffix = '?district=' + encodeURIComponent(district);
+      let atlasResponse, discoveryResponse;
+      try {
+        [atlasResponse, discoveryResponse] = await Promise.all([
+          api('GET', '/v1/deeds/buildings' + suffix), api('GET', '/v1/deeds/discovery' + suffix),
+        ]);
+      } catch {
+        if (host.isConnected && read === propertyRead && valid())
+          host.innerHTML = '<p class="d">Properties could not be loaded. Use explore properties to retry.</p>';
+        return;
+      }
+      if (!host.isConnected || read !== propertyRead || !valid()) return;
+      const failed = [atlasResponse, discoveryResponse].find(r => r.code !== 200);
+      if (failed) { host.textContent = describe(failed.body, failed.code); return; }
+      const atlas = atlasResponse.body, discovery = discoveryResponse.body;
+      const config = discovery.config || discovery, progress = new Map((discovery.buildings || []).map(p => [p.id, p]));
+      const bounds = atlas.districts[0] || { x: 0, y: 0, width: atlas.width, height: atlas.height };
+      host.innerHTML = `<p class="d">${esc(atlas.districts[0]?.name || district)} · ${atlas.buildings.length} permanent properties. Select a building to inspect its claim requirements.</p>
+        <div class="d">Build a property case: inspect the site, trace its registry record, question the witness, then return to secure its title. ${config.stepsRequired} objectives · ${config.energyPerStep} energy each · level ${config.minimumLevel}. Each lead names its required district; map coordinates do not establish your location.</div>
+        ${discovery.primaryClaimed ? `<p class="d">Your account has already used its lifetime discovery claim${discovery.claimedName ? ' for ' + esc(discovery.claimedName) : ''}. Buying or winning existing deeds remains available.</p>` : discovery.questEligible ? '<p class="d">Your completed quest qualifies you to claim an available building in your current district. Select the exact property first.</p>' : ''}
+        ${(discovery.activeInvestigations || []).some(p => p.district !== district && !p.claimed) ? `<p class="d">Cases you are following elsewhere:</p>${discovery.activeInvestigations.filter(p => p.district !== district && !p.claimed).slice(0, 12).map(p => `<button class="act" data-deed-resume="${esc(p.id)}" data-deed-resume-district="${esc(p.district)}">resume ${esc(p.id)} · ${Number(p.steps || 0)}/${config.stepsRequired}</button>`).join('')}` : ''}
+        <div style="overflow:auto"><svg viewBox="${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}" style="max-width:720px;width:100%;background:#111820" role="group" aria-label="${esc(district)} deed properties">
+        ${atlas.districts.map(d => `<rect x="${d.x + 4}" y="${d.y + 4}" width="${d.width - 8}" height="${d.height - 8}" fill="#1c2935" stroke="#597184"/><text x="${d.x + 24}" y="${d.y + 30}" fill="#e5d6aa" font-size="18">${esc(d.name)}</text>`).join('')}
+        ${atlas.buildings.map(p => `<g data-property="${esc(p.id)}" role="button" tabindex="0" aria-label="${esc(p.id + ', ' + p.kind.replaceAll('_', ' ') + (p.street ? ', ' + p.street : ', unclaimed'))}" style="cursor:pointer"><title>${esc(p.id)} · ${esc(p.street || 'unclaimed')}</title><rect x="${p.x}" y="${p.y}" width="${p.width}" height="${p.height}" fill="${p.claimed ? '#dfb976' : progress.get(p.id)?.qualified ? '#81b68c' : '#688493'}" stroke="#111820"/>${p.kind.includes('house') ? `<path d="M${p.x - 1},${p.y} l${p.width / 2 + 1},-4 l${p.width / 2 + 1},4" fill="${p.claimed ? '#b77e4a' : '#495e70'}"/>` : ''}</g>`).join('')}</svg></div><div class="card" id="deed-property-detail" aria-live="polite">Choose a property on this district's map.</div>`;
+      const showProperty = p => {
+        if (actor !== me?.id || render !== deedPropertyRender) return;
+        deedPropertyFocus = { district, buildingId: p.id };
+        const entry = progress.get(p.id), detail = $('#deed-property-detail');
+        if (!entry) { detail.textContent = 'Claim eligibility is unavailable. Reopen this district to retry.'; return; }
+        const objective = entry.objective;
+        const requiredDistrict = entry.qualified ? p.district : objective?.requiredDistrict;
+        const districtName = id => districts.find(d => d.id === id)?.name || id;
+        const away = requiredDistrict && discovery.currentDistrict !== requiredDistrict;
+        const fareKnown = rules?.travelCost != null && Number.isFinite(Number(rules.travelCost));
+        const canTravel = away && fareKnown && districts.some(d => d.id === requiredDistrict);
+        detail.innerHTML = `<span class="t">${esc(p.id)} · ${esc(p.kind.replaceAll('_', ' '))}</span>
+          <div class="d">${p.claimed || entry.claimed ? `Already claimed: ${esc(entry.street || p.street || 'this permanent property')}${p.tokenId ? ' · deed ' + esc(p.tokenId) : ''}.` : `Investigation ${Number(entry.steps || 0)}/${config.stepsRequired}${entry.qualified ? ' · claim earned' : ''}.`}</div>
+          ${!(p.claimed || entry.claimed) && !discovery.primaryClaimed ? `
+            ${entry.legacyReset ? '<p class="d">This property now requires a complete investigation; earlier visits do not replace its evidence.</p>' : ''}
+            ${!entry.qualified && objective ? `<div class="d"><b>${esc(objective.title)}</b> · ${esc(districtName(objective.requiredDistrict))}</div><p class="d">${esc(objective.description)}</p>` : ''}
+            <div class="d">${!discovery.actorEligible ? 'Your current character cannot act right now. Check level, health and lockup status.' : entry.qualified && deed ? 'You already hold a deed; you cannot claim another while holding it.' : away ? 'Travel to ' + esc(districtName(requiredDistrict)) + (entry.qualified ? ' to claim this property.' : ' to follow this lead.') : entry.qualified ? 'Name this property below, then claim its deed.' : objective?.blockedReason === 'energy' ? 'You need ' + config.energyPerStep + ' energy to complete this objective.' : objective?.canAct ? 'Complete the current objective to record its evidence.' : 'This lead is unavailable. Recheck the property for current requirements.'}</div>
+            ${canTravel ? `<button class="act" id="deed-objective-travel">travel to ${esc(districtName(requiredDistrict))} — $${Number(rules.travelCost).toLocaleString()}</button>` : ''}` : ''}
+          ${entry.canInvestigate && objective?.canAct && objective.actionId && !p.claimed && !entry.claimed && !discovery.primaryClaimed ? `<button class="act" id="deed-investigate">${esc(objective.title)}</button>` : ''}
+          ${entry.canClaim && !p.claimed && !entry.claimed && !discovery.primaryClaimed && !deed ? `<label class="d" for="deed-property-name">Property name</label><input id="deed-property-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"><button class="act" id="deed-property-claim">claim this building's deed</button>` : ''}
+          <button class="act" id="deed-property-refresh">recheck property</button>`;
+        const nameInput = $('#deed-property-name');
+        if (nameInput) {
+          nameInput.value = deedPropertyNames.get(p.id) || '';
+          nameInput.oninput = nameInput.onchange = () => {
+            if (actor === me?.id) deedPropertyNames.set(p.id, nameInput.value);
+          };
+        }
+        const investigate = $('#deed-investigate');
+        if (investigate) investigate.onclick = async () => {
+          if (!valid()) return;
+          investigate.disabled = true;
+          try { await act('POST', '/v1/deeds/investigate', { buildingId: p.id, actionId: objective.actionId }, { label: objective.title, beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        const travel = $('#deed-objective-travel');
+        if (travel) travel.onclick = async () => {
+          if (!valid()) return;
+          travel.disabled = true;
+          try { await travelTo(requiredDistrict, { beforeDispatch: valid, retryBeforeDispatch: current, isCurrent: current }); }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        const claim = $('#deed-property-claim');
+        if (claim) claim.onclick = async () => {
+          if (!valid()) return;
+          const name = $('#deed-property-name').value.trim();
+          if (!name) { toast('Name this property first.'); return; }
+          claim.disabled = true;
+          try {
+            const result = await acquireCityDeed('POST', '/v1/deeds/claim', { name, buildingId: p.id });
+            if (result.code < 400 && actor === me?.id) deedPropertyNames.delete(p.id);
+          }
+          finally { if (current() && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id }); }
+        };
+        $('#deed-property-refresh').onclick = () => openPropertyDistrict(district, p.id);
+      };
+      const inspect = el => {
+        const p = atlas.buildings.find(x => x.id === el?.dataset.property);
+        if (p) showProperty(p);
+      };
+      host.onclick = ev => inspect(ev.target.closest('[data-property]'));
+      host.querySelectorAll('[data-deed-resume]').forEach(button => button.onclick = () =>
+        openPropertyDistrict(button.dataset.deedResumeDistrict, button.dataset.deedResume));
+      host.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { const el = ev.target.closest('[data-property]'); if (el) { ev.preventDefault(); inspect(el); } } };
+      if (buildingId) { const p = atlas.buildings.find(x => x.id === buildingId); if (p) showProperty(p); }
+    };
+    $('#deed-atlas-open').onclick = () => openPropertyDistrict(me.loc);
+    $('#deed-quests-open').onclick = () => navigateFromCity('fieldwork', { venueId: 'directory', initialView: 'mysteries' });
+    t.querySelectorAll('[data-deed-district]').forEach(el => el.onclick = () => openPropertyDistrict(el.dataset.deedDistrict));
+    if (deedPropertyFocus?.district) await openPropertyDistrict(deedPropertyFocus.district, deedPropertyFocus.buildingId);
+    if (!valid()) return;
     { const el = $('#deed-collect'); if (el) el.onclick = () => act('POST', '/v1/deeds/corner').then(() => renderDeeds()); }
     t.querySelectorAll('[data-shake]').forEach((btn) => btn.onclick = () =>
       act('POST', '/v1/deeds/shakedown/' + btn.dataset.shake).then(() => renderDeeds()));
@@ -10205,7 +10323,7 @@
     if (entry?.current() && entry.navigation === navigationRevision && valid()) {
       _cityDeedEntry = null;
       if (!entry.key || deed && String(deed.name).toLowerCase() === entry.key) {
-        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-name');
+        const destination = t.querySelector(deed ? '#city-owned-deed' : '#deed-atlas-open');
         destination?.scrollIntoView({ block: 'center', behavior: REDUCED ? 'auto' : 'smooth' });
         destination?.focus({ preventScroll: true });
       }

@@ -1621,6 +1621,14 @@ CREATE TABLE IF NOT EXISTS street_deeds (
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ix_street_deeds_name ON street_deeds (name_lc);
 CREATE INDEX IF NOT EXISTS ix_street_deeds_district ON street_deeds (district);
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS building_id TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS ix_street_deeds_building ON street_deeds (building_id);
+CREATE TABLE IF NOT EXISTS street_deed_building_assignments (
+  building_id TEXT PRIMARY KEY,
+  street_name TEXT NOT NULL UNIQUE,
+  assigned_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 -- Lifetime unique-street issuance. The singleton locks cross-account claims; burns, extraction,
 -- resale and death never decrement it. Seed upgrades from every existing identity, on-chain or not.
 CREATE TABLE IF NOT EXISTS street_deed_supply (
@@ -1683,6 +1691,58 @@ CREATE TABLE IF NOT EXISTS street_deed_history (
   at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_deed_history_acct ON street_deed_history (account_id, at DESC);
+-- Deed discovery issuance.
+-- Progress is account-level: death never refreshes the primary property reward. Investigation
+-- does not reserve a building; only the final atomic claim consumes its permanent identity.
+CREATE TABLE IF NOT EXISTS street_deed_discoveries (
+  account_id TEXT NOT NULL,
+  building_id TEXT NOT NULL,
+  steps INT NOT NULL DEFAULT 0 CHECK (steps >= 0 AND steps <= 4),
+  last_step_at TIMESTAMPTZ,
+  qualified_at TIMESTAMPTZ,
+  source TEXT NOT NULL DEFAULT 'exploration' CHECK (source IN ('exploration','quest')),
+  source_ref TEXT,
+  policy_version INT NOT NULL DEFAULT 1,
+  objective_evidence TEXT NOT NULL DEFAULT '[]',
+  PRIMARY KEY (account_id, building_id)
+);
+-- Existing unclaimed three-click progress stays at version 1 and grants no title under the
+-- investigation route. New actions explicitly write version 2 and verified objective evidence.
+ALTER TABLE street_deed_discoveries ADD COLUMN IF NOT EXISTS policy_version INT NOT NULL DEFAULT 1;
+ALTER TABLE street_deed_discoveries ADD COLUMN IF NOT EXISTS objective_evidence TEXT NOT NULL DEFAULT '[]';
+ALTER TABLE street_deed_discoveries DROP CONSTRAINT IF EXISTS street_deed_discoveries_steps_check;
+ALTER TABLE street_deed_discoveries ADD CONSTRAINT street_deed_discoveries_steps_check CHECK (steps >= 0 AND steps <= 4);
+CREATE TABLE IF NOT EXISTS street_deed_primary_claims (
+  account_id TEXT PRIMARY KEY,
+  street_name TEXT NOT NULL,
+  building_id TEXT,
+  source TEXT NOT NULL,
+  claimed_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+-- The stamp prevents later secondary buyers from being mistaken for legacy primary claimants
+-- on a subsequent boot. Existing owners and original extractors retain their existing property.
+CREATE TABLE IF NOT EXISTS street_deed_discovery_migrations (
+  id INT PRIMARY KEY CHECK (id = 1)
+);
+INSERT INTO street_deed_primary_claims (account_id,street_name,source)
+  SELECT account_id,MIN(name),'legacy' FROM street_deeds
+    WHERE account_id NOT LIKE 'onchain:%'
+      AND NOT EXISTS (SELECT 1 FROM street_deed_discovery_migrations WHERE id=1)
+    GROUP BY account_id ON CONFLICT (account_id) DO NOTHING;
+INSERT INTO street_deed_primary_claims (account_id,street_name,source)
+  SELECT extracted_by_account,MIN(name),'legacy' FROM street_deeds
+    WHERE extracted_by_account IS NOT NULL AND extracted_by_account NOT LIKE 'onchain:%'
+      AND NOT EXISTS (SELECT 1 FROM street_deed_discovery_migrations WHERE id=1)
+    GROUP BY extracted_by_account ON CONFLICT (account_id) DO NOTHING;
+-- An explicit claim event is proof even if its deed has subsequently changed ownership. Other
+-- history events do not imply primary issuance. The immutable receipt records this legacy proof.
+INSERT INTO street_deed_primary_claims (account_id,street_name,source)
+  SELECT account_id,'Legacy deed claim','legacy-history' FROM street_deed_history
+    WHERE kind='claim' AND account_id NOT LIKE 'onchain:%'
+      AND NOT EXISTS (SELECT 1 FROM street_deed_discovery_migrations WHERE id=1)
+    GROUP BY account_id ON CONFLICT (account_id) DO NOTHING;
+INSERT INTO street_deed_discovery_migrations (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+-- End deed discovery issuance.
 -- Deed RE-IMPORT: a StreetDeed NFT burned back into the game (chain.js reimportDeed). The pending store
 -- + idempotency guard (the nft_reimports twin): the burner's wallet is resolved to a deedless account
 -- and the on-chain deed re-keyed to them; if they have no linked account (or already hold a street) the

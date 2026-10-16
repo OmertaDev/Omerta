@@ -413,33 +413,30 @@ for (const vp of VIEWPORTS) {
       } else {
         await replayOpener.click();
         await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });
-        // Closing replay starts a genuine Home render. Let that response replace the old controls
-        // after focus returns, so a fast response cannot conceal focus lost with a removed button.
-        let releaseReplayHome;
-        const replayHomeGate = new Promise((resolve) => { releaseReplayHome = resolve; });
-        const holdReplayHome = async (route) => {
+        // The replay returns to Start Here while its real Home read is still pending.
+        // Replace the old controls before asserting focus, so a detached fallback cannot pass.
+        const previousContent = await page.locator('#tab-start > :first-child').elementHandle();
+        let releaseHome;
+        const released = new Promise(resolve => { releaseHome = resolve; });
+        const homeRead = page.waitForRequest(request => request.method() === 'GET'
+          && new URL(request.url()).pathname === '/v1/home', { timeout: 5000 });
+        const holdHome = async route => {
           const response = await route.fetch();
-          await replayHomeGate;
+          await released;
           await route.fulfill({ response });
         };
-        await page.route('**/v1/home', holdReplayHome);
-        const replayHomeRequest = page.waitForRequest((request) => new URL(request.url()).pathname === '/v1/home');
-        const replayHomeResponse = page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/home');
-        let replayHomeContent;
+        await page.route('**/v1/home', holdHome);
         try {
           await page.click('#tour-skip');
           await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
-          await replayHomeRequest;
-          replayHomeContent = await page.locator('#tab-start').evaluateHandle((panel) => panel.firstElementChild);
-          releaseReplayHome();
-          await replayHomeResponse;
-          await page.waitForFunction((content) => content && !content.isConnected, replayHomeContent, { timeout: 5000 });
+          await homeRead;
+          releaseHome();
+          await page.waitForFunction(element => !element.isConnected, previousContent, { timeout: 5000 });
           await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
-            || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
+            || document.activeElement === document.querySelector('#tab-control-start'), null, { timeout: 5000 });
         } finally {
-          releaseReplayHome();
-          await replayHomeContent?.dispose();
-          await page.unroute('**/v1/home', holdReplayHome);
+          releaseHome(); await page.unroute('**/v1/home', holdHome);
+          await previousContent?.dispose();
         }
       }
     }
