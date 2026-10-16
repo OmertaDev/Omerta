@@ -99,7 +99,7 @@ try {
       await route.fulfill({ response: reply, body: html.replace(anchor,
         '  window.__worldReadScope = () => ({ key: cityIdentity(), epoch: projections.snapshot().epoch, scene: _citySceneEpoch,\n'
         + '    current: !!_cityWorldData && _cityWorldData.key === cityIdentity() && projections.current(_cityWorldData.stamp), tickets: { ..._cityWorldData?.tickets },\n'
-        + '    consent: _cityWorldData?.social?.preferences?.chatEnabled });\n' + anchor) });
+        + '    consent: _cityWorldData?.social?.preferences?.chatEnabled, resourceReceipt: cityWorldOptions().resourceReceipt });\n' + anchor) });
     });
     page.on('pageerror', error => errors.push(error.message));
     const requests = []; page.on('request', request => requests.push({ method: request.method(), path: new URL(request.url()).pathname }));
@@ -245,6 +245,7 @@ try {
       }).reduce((limit, node) => Math.min(limit, node.getBoundingClientRect().top), innerHeight);
       return { canvas: box, engine: { width: canvas.width, height: canvas.height }, avatar,
         header: rect(document.querySelector('#top')), tools: rect(tools), toolsHit: hit(tools), guidance: rect(guidance),
+        viewport: rect(document.querySelector('.omerta-city__viewport')), controls: rect(document.querySelector('.omerta-city__controls')),
         close: close && !close.closest('[hidden]') ? { bounds: rect(close), hit: hit(close) } : null, dock: dock && !dock.hidden ? rect(dock) : null, width: innerWidth, height: innerHeight,
         overflow: document.documentElement.scrollWidth, tint: sprite.tintTopLeft, bottom,
         hud: rect(document.querySelector('.omerta-city__world-hud')), readiness: document.querySelector('.omerta-city__readiness').textContent,
@@ -339,9 +340,9 @@ try {
           bag.release(); await bag.finished; await settled(bagRead); await clear('Bag'); await assertFrame(page);
         } else {
           await activate(page, scenario === 'map' ? '[data-city-world-panel="map"]' : '[data-city-world-close]');
-          await clear(scenario === 'map' ? 'Map' : 'World tools');
+          await clear(scenario === 'map' ? 'Maps & travel' : 'World tools');
           assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
-          first.release(); await first.finished; await settled(firstRead); await clear(scenario === 'map' ? 'Map' : 'World tools');
+          first.release(); await first.finished; await settled(firstRead); await clear(scenario === 'map' ? 'Maps & travel' : 'World tools');
           assert.equal((await state(page)).worldUI.panel, scenario === 'map' ? 'map' : '', 'A retired read cannot reopen or retitle the current panel.');
           assert.equal(await page.locator('.city-world__dock').isVisible(), scenario === 'map');
         }
@@ -455,6 +456,8 @@ try {
   const muscleAfter = (await app.pool.query('SELECT muscle FROM characters WHERE id=$1', [viewer.character.id])).rows[0].muscle;
   assert.equal(Number(muscleAfter), Number(muscleBefore) + trained.body.gain);
   await page.waitForFunction(gain => document.querySelector('.city-world__gains').textContent.includes('muscle +' + gain), trained.body.gain);
+  assert((await page.evaluate(() => window.__worldReadScope().resourceReceipt)).changes.some(change => change.key === 'energy' && change.value < 0),
+    'The confirmed training receipt includes its Energy reduction alongside the stat gain.');
   assert.deepEqual((await state(page)).position, walkingPose);
   await page.locator('[data-city-training-close]').click();
   await panel(page, 'chat'); await page.locator('[data-city-chat-consent]').waitFor();
@@ -656,6 +659,16 @@ try {
   assert.match(await page.locator('.city-world__gains').textContent(), /Level 2 reached/);
   const afterLevel = (await app.inject({ method: 'GET', url: '/v1/projections/player', headers: viewer.headers })).json().player;
   assert.equal(afterLevel.level, 2); assert(afterLevel.respect > beforeLevel.respect);
+  const resourceReceipt = await page.evaluate(() => window.__worldReadScope().resourceReceipt);
+  assert.equal(resourceReceipt.state, 'confirmed');
+  const nerveChange = resourceReceipt.changes.find(change => change.key === 'nerve');
+  assert.equal(nerveChange?.value || 0, afterLevel.nerve - beforeLevel.nerve,
+    'The receipt reports the observed Nerve balance, including the real level-up refill.');
+  assert(resourceReceipt.changes.some(change => change.key === 'level' && change.after === 2));
+  assert(resourceReceipt.changes.every(change => Number.isFinite(change.before) && Number.isFinite(change.after) && change.value === change.after - change.before));
+  await refresh(page);
+  assert.equal((await page.evaluate(() => window.__worldReadScope().resourceReceipt)).id, resourceReceipt.id,
+    'A background balance refresh does not mint another feedback event.');
   await dismissCine(page); await page.locator('[data-city-training-close]').click();
   await page.locator('#toast.show').focus();
   const fullToast = await page.locator('#toast > span:not(.ti)').textContent();
@@ -706,14 +719,19 @@ try {
           const style = getComputedStyle(node), contentHeight = node.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
           return contentHeight >= parseFloat(style.lineHeight) * 2 - 1;
         }), 'The wider fallback font wraps the full real readiness warning into at least two lines.');
-        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.warning.bottom <= frameBeforeReading.hud.bottom,
-          'Resources and the complete warning are initially visible in the supported CI geometry.');
+        assert(frameBeforeReading.resources.top >= frameBeforeReading.hud.top && frameBeforeReading.resources.bottom <= frameBeforeReading.hud.bottom,
+          'Readable resource labels and values are initially visible in the supported CI geometry: ' + JSON.stringify(frameBeforeReading));
+        assert(frameBeforeReading.warning.height <= frameBeforeReading.hud.height,
+          'The complete wrapped warning fits when reached through the bounded HUD.');
         assert(await hud.evaluate(node => node.scrollHeight > node.clientHeight && node.tabIndex === 0 && node.getAttribute('aria-label').includes('Scroll')),
           'Only the actually overflowing HUD enters keyboard navigation with a scroll label.');
         await hud.focus(); await readHudEnd();
         const feedbackVisible = () => {
-          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect(), gain = document.querySelector('.city-world__gains').getBoundingClientRect();
-          return gain.top >= hud.top && gain.bottom <= hud.bottom;
+          const hud = document.querySelector('.omerta-city__world-hud').getBoundingClientRect();
+          const lastChange = document.querySelector('.city-world__gains').lastElementChild.getBoundingClientRect();
+          // A multi-resource receipt is taller than the smallest HUD. Native End
+          // reaches its final complete line while earlier content stays scrollable.
+          return lastChange.top >= hud.top && lastChange.bottom <= hud.bottom;
         };
         await page.waitForFunction(feedbackVisible);
         assert.equal(await page.locator('.city-world__gains').textContent(), gainCopy);
