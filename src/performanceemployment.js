@@ -122,3 +122,46 @@ export async function performanceEmploymentBoard(c,account){id(account);const ro
 export async function performanceEmploymentInvariant(c){const rows=(await c.query('SELECT * FROM performance_employment_contracts ORDER BY employment_id LIMIT 1001')).rows,issues=[];if(rows.length>1000)issues.push({reason:'check_limit'});for(const r of rows.slice(0,1000)){try{await validateContract(c,r);const assignments=(await c.query('SELECT * FROM performance_employment_assignments WHERE employment_id=$1 ORDER BY assignment_id LIMIT 6',[r.employment_id])).rows;if(assignments.length>r.slots)fail('assignment_count');let paid=0;for(const a of assignments){await validateFills(c,a,r);if(a.state==='paid'){await validatePaid(c,a,r);paid+=a.bonus_cash;}}
  const tx=(await c.query("SELECT * FROM transactions WHERE counterparty=$1 AND reason IN ('performance_employment:reserve','performance_employment:bonus','performance_employment:refund','performance_employment:estate:loot','death:performance_employment') ORDER BY id LIMIT 14",[r.employment_id])).rows,s=sum=>tx.filter(t=>t.reason===sum).reduce((v,t)=>v+Number(t.amount),0);if(tx.length>13||paid!==Number(r.paid_cash)||s('performance_employment:bonus')!==paid||s('performance_employment:refund')!==Number(r.refunded_cash)||-s('death:performance_employment')!==Number(r.burned_cash)||-s('performance_employment:estate:loot')!==Number(r.looted_cash)||Number(r.total_cash)!==Number(r.escrow_cash)+paid+Number(r.refunded_cash)+Number(r.burned_cash)+Number(r.looted_cash))fail('budget');}catch(e){issues.push({employmentId:r.employment_id,reason:e.message});}}
  const reserve=Number((await c.query('SELECT COALESCE(SUM(escrow_cash),0) AS n FROM performance_employment_contracts')).rows[0].n),transfers=Number((await c.query("SELECT COALESCE(SUM(amount),0) AS n FROM transactions WHERE currency='cash' AND character_id IS NOT NULL AND reason IN ('performance_employment:reserve','performance_employment:bonus','performance_employment:refund')")).rows[0].n),losses=Number((await c.query("SELECT COALESCE(SUM(amount),0) AS n FROM transactions WHERE currency='cash' AND character_id IS NULL AND reason IN ('death:performance_employment','performance_employment:estate:loot')")).rows[0].n);return{actual:reserve,expected:-transfers+losses,issues,ok:reserve===-transfers+losses&&!issues.length};}
+
+// Read-only original F12/N26 evidence. A later depot owner or location cannot
+// adopt the original employer's requests, wages, bonus reserve or worker claims.
+export async function inspectPerformanceEmploymentDepotHistory(c,depotId){
+ id(depotId);
+ const rows=(await c.query('SELECT * FROM performance_employment_contracts WHERE depot_id=$1 ORDER BY employment_id LIMIT 1001',[depotId])).rows;
+ const issues=[],activeContracts=[],contracts=[];
+ if(rows.length>1000)issues.push({reason:'check_limit'});
+ for(const r of rows.slice(0,1000)){
+  try{
+   const job=await validateContract(c,r);
+   if(!['open','closed'].includes(r.state)||!integer(r.slots,1,5)||!integer(r.minimum_units,1,40)||!integer(r.bonus_cash,1,10000)
+    ||['total_cash','escrow_cash','paid_cash','refunded_cash','burned_cash','looted_cash'].some(k=>!integer(Number(r[k]),0,Number.MAX_SAFE_INTEGER))
+    ||(r.state==='closed'&&Number(r.escrow_cash)!==0))fail('history_state');
+   const requests=(await c.query('SELECT account_id,request_key,original_character,terms,receipt FROM performance_employment_requests WHERE employment_id=$1 ORDER BY request_key LIMIT 2',[r.employment_id])).rows;
+   const receipt={ok:true,employmentId:r.employment_id,sourceHash:r.source_hash,minimumUnits:r.minimum_units,bonusCash:r.bonus_cash,reservedBonusCash:Number(r.total_cash),expiresAt:job.terms.expiresAt,wagesUnchanged:true};
+   if(requests.length!==1||requests[0].account_id!==r.employer_account||requests[0].original_character!==r.employer_character
+    ||typeof requests[0].request_key!=='string'||! /^[A-Za-z0-9_-]{1,128}$/.test(requests[0].request_key)
+    ||stable(requests[0].receipt)!==stable(receipt))fail('history_funding_ack');
+   const assignments=(await c.query('SELECT * FROM performance_employment_assignments WHERE employment_id=$1 ORDER BY assignment_id LIMIT 6',[r.employment_id])).rows;
+   if(assignments.length>r.slots)fail('assignment_count');
+   let paid=0;
+   for(const a of assignments){
+    if(!['assigned','paid'].includes(a.state))fail('history_assignment_state');
+    if(a.state==='paid'){
+     await validatePaid(c,a,r);
+     if(!a.paid_at||!Number.isFinite(+new Date(a.paid_at)))fail('history_assignment_state');
+     paid+=Number(a.bonus_cash);
+    }else{
+     await validateFills(c,a,r);
+     if(Number(a.bonus_cash)!==0||a.bonus_transaction!==null||a.wage_transaction!==null||a.claim_json!==null||a.paid_at!==null)fail('history_assignment_state');
+    }
+   }
+   if(paid!==Number(r.paid_cash))fail('history_paid_total');
+   contracts.push({employmentId:r.employment_id,sourceHash:r.source_hash,state:r.state,reservedBonusCash:Number(r.escrow_cash),paidBonusCash:paid,refundedBonusCash:Number(r.refunded_cash),burnedBonusCash:Number(r.burned_cash),lootedBonusCash:Number(r.looted_cash)});
+   if(r.state!=='closed'||Number(r.escrow_cash)!==0)activeContracts.push(r.employment_id);
+  }catch(error){
+   if(!(error instanceof GameError)||error.code!=='performance_employment')throw error;
+   issues.push({employmentId:r.employment_id,reason:error.message});
+  }
+ }
+ return{issues,activeContracts,contracts,contractCount:rows.length,historyVersion:'performance_employment_v1',executionAuthority:false};
+}

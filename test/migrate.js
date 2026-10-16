@@ -743,6 +743,9 @@ const DISPOSITION = {
   commercial_campaigns: 'special', // genuine estate retires owner-offered or signed active metadata; original IDs and independent commission/courier recovery remain intact
   commercial_campaign_roles: 'special', // genuine retirement closes original active role consent without replacing identities; unsigned invitations grant heirs no authority
   commercial_campaign_requests: 'ledger', // original six-party action and consent ACKs survive metadata retirement; no inherited performance or source authority
+  performance_employment_contracts: 'special', // canonical F12 estate resolves the original prefunded bonus reserve
+  performance_employment_assignments: 'metadata', // original worker/commitment source and paid delivery evidence remain historical
+  performance_employment_requests: 'ledger', // original employer/key/funding ACK survives title changes and estate resolution
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,

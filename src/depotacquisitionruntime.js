@@ -24,13 +24,16 @@ export const DEPOT_ACQUISITION_REFERENCES=Object.freeze([
  'contract_auctions:depot_id','business_partnerships:depot_id','company_acquisitions:depot_id',
  'worker_training_courses:depot_id','employment_organizations:depot_id',
  'company_restructuring_plans:depot_id','commercial_disputes:depot_id','infrastructure_concessions:business_id','territory_economics_profiles:business_id',
- 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','manufacturing_licenses:licensor_business','manufacturing_licenses:licensee_business','equipment_recovery_requests:business_id','workshop_floorplans:business_id','workshop_floor_requests:business_ref','business_relocation_plans:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id','commercial_campaigns:business_id']);
+ 'commissioned_crafting_contracts:business_id','picking_packing_jobs:depot_id','customer_vault_services:depot_id','production_slot_reservations:business_id','manufacturing_licenses:licensor_business','manufacturing_licenses:licensee_business','equipment_recovery_requests:business_id','workshop_floorplans:business_id','workshop_floor_requests:business_ref','business_relocation_plans:depot_id','agent_operating_memory_facts:business_id','economic_intelligence_publications:depot_id','funded_external_work_jobs:depot_id','strategy_laboratories:business_id','commercial_campaigns:business_id','performance_employment_contracts:depot_id']);
 
 // Closed new-feature relationships; canonical recoveries retain all original histories.
 export async function assertDepotFeatureObligations(c,depotId){assertItemTransaction(c);
  const campaigns=await (await import('./commercialcampaignruntime.js')).inspectCommercialCampaignBusinessHistory(c,depotId);
  if(campaigns.issues.length)fail('commercial_campaign_history_changed');
  if(campaigns.activeCampaigns.length)fail('commercial_campaign_obligation');
+ const performance=await (await import('./performanceemployment.js')).inspectPerformanceEmploymentDepotHistory(c,depotId);
+ if(performance.issues.length)fail('performance_employment_history_changed');
+ if(performance.activeContracts.length)fail('performance_employment_obligation');
  const relocations=(await c.query('SELECT id,state FROM business_relocation_plans WHERE (depot_id=$1) IS TRUE ORDER BY id',[depotId])).rows;
  if(relocations.length){const {collectBusinessRelocationIssues}=await import('./businessrelocationhistory.js');if((await collectBusinessRelocationIssues(c)).length)fail('relocation_history_changed');}
  if(relocations.some(row=>!['ready','executed','cancelled','expired','owner_dead'].includes(row.state)))fail('relocation_history_changed');
