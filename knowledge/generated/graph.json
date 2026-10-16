@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "686d9dc37d49aa7ca7cc0b2ad0368cfe3a939e39",
+  "sourceRevision": "2df4d8f1384199efa4e0827f5eccc947d062219e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15695,
-    "edges": 61912,
+    "nodes": 15699,
+    "edges": 61925,
     "byNodeType": {
       "Artifact": 6627,
       "Command": 286,
-      "Commit": 4147,
+      "Commit": 4151,
       "Contract": 134,
       "Document": 928,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5235,
-      "CHANGED": 23920,
+      "CHANGED": 23929,
       "CONTAINS": 6648,
       "DECLARES": 286,
       "DEFINED_IN": 1712,
       "DEPENDS_ON": 69,
       "EXECUTES": 1052,
       "HANDLED_BY": 923,
-      "HAS_COMMIT": 4147,
+      "HAS_COMMIT": 4151,
       "IMPLEMENTS": 124,
       "IMPORTS": 6636,
       "INHERITS": 45,
@@ -40045,18 +40045,18 @@
       "extension": ".md",
       "bytes": 55577,
       "lines": 180,
-      "version": "a62927098ce5d892",
+      "version": "1dc19549a1e4638c",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "a62927098ce5d892"
+          "version": "1dc19549a1e4638c"
         }
       ],
-      "lastChangedAt": "2026-10-16T13:35:33.000Z",
+      "lastChangedAt": "2026-10-16T13:48:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686d9dc37d49aa7ca7cc0b2ad0368cfe3a939e39"
+      "lastChangedCommit": "2df4d8f1384199efa4e0827f5eccc947d062219e"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -135717,20 +135717,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 346104,
+      "bytes": 346105,
       "lines": 4775,
-      "version": "6348e5d11be57056",
+      "version": "dc69fb8623cf6f45",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "6348e5d11be57056"
+          "version": "dc69fb8623cf6f45"
         }
       ],
-      "lastChangedAt": "2026-10-16T01:56:28.000Z",
+      "lastChangedAt": "2026-10-16T13:39:25.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9f74f1313af259173be7e8928ea82b7a4a23329f"
+      "lastChangedCommit": "44564fddc8813c5eca84b0b8efa75e164e689624"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -138456,18 +138456,18 @@
       "extension": ".js",
       "bytes": 4761,
       "lines": 50,
-      "version": "6c2ec6b5814e5005",
+      "version": "5907fb5c39f188b3",
       "text": true,
       "provenance": [
         {
           "file": "test/next-layer-source-compatibility.js",
           "line": 1,
-          "version": "6c2ec6b5814e5005"
+          "version": "5907fb5c39f188b3"
         }
       ],
-      "lastChangedAt": "2026-10-16T13:28:32.000Z",
+      "lastChangedAt": "2026-10-16T13:43:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4bae358e0f41d6932cb5a106236a204057bdbbc9"
+      "lastChangedCommit": "2bba2899d0cc08ceb85534651825d522f772fdeb"
     },
     {
       "key": "Artifact:test/nft-art.js",
@@ -148505,20 +148505,20 @@
       "path": "tools/next-layer-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 139751,
-      "lines": 340,
-      "version": "d39c91226260333c",
+      "bytes": 150115,
+      "lines": 344,
+      "version": "69c92a6ae8ae080d",
       "text": true,
       "provenance": [
         {
           "file": "tools/next-layer-source-compatibility.js",
           "line": 1,
-          "version": "d39c91226260333c"
+          "version": "69c92a6ae8ae080d"
         }
       ],
-      "lastChangedAt": "2026-10-16T13:28:32.000Z",
+      "lastChangedAt": "2026-10-16T13:43:03.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4bae358e0f41d6932cb5a106236a204057bdbbc9"
+      "lastChangedCommit": "2bba2899d0cc08ceb85534651825d522f772fdeb"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -151356,18 +151356,18 @@
       "extension": ".js",
       "bytes": 85178,
       "lines": 1107,
-      "version": "2c3a0ddbb5a4918a",
+      "version": "28c710b486f713ae",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "2c3a0ddbb5a4918a"
+          "version": "28c710b486f713ae"
         }
       ],
-      "lastChangedAt": "2026-10-16T13:35:33.000Z",
+      "lastChangedAt": "2026-10-16T13:48:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "686d9dc37d49aa7ca7cc0b2ad0368cfe3a939e39"
+      "lastChangedCommit": "2df4d8f1384199efa4e0827f5eccc947d062219e"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -165191,6 +165191,22 @@
       ]
     },
     {
+      "key": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "type": "Commit",
+      "id": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "label": "Refresh knowledge after reviewed CI timeout repair",
+      "title": "Refresh knowledge after reviewed CI timeout repair",
+      "date": "2026-10-16T13:38:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "provenance": [
+        {
+          "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+          "url": "https://github.com/OmertaDev/Omerta/commit/21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+        }
+      ]
+    },
+    {
       "key": "Commit:21c4575ddb731702f480cea437f04347f8e880f9",
       "type": "Commit",
       "id": "21c4575ddb731702f480cea437f04347f8e880f9",
@@ -167623,6 +167639,22 @@
       ]
     },
     {
+      "key": "Commit:2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "type": "Commit",
+      "id": "2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "label": "test: bind source proof to closed CI gate budget",
+      "title": "test: bind source proof to closed CI gate budget",
+      "date": "2026-10-16T13:43:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "provenance": [
+        {
+          "commit": "2bba2899d0cc08ceb85534651825d522f772fdeb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2bba2899d0cc08ceb85534651825d522f772fdeb"
+        }
+      ]
+    },
+    {
       "key": "Commit:2bbeccd6a5c9b4ebac4396b1398006c159506f37",
       "type": "Commit",
       "id": "2bbeccd6a5c9b4ebac4396b1398006c159506f37",
@@ -168163,6 +168195,22 @@
         {
           "commit": "2ddf984fb02621cdf7419cdf128b487cfaab7aa0",
           "url": "https://github.com/OmertaDev/Omerta/commit/2ddf984fb02621cdf7419cdf128b487cfaab7aa0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "type": "Commit",
+      "id": "2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "label": "Pin reviewed CI gate source for additive recovery",
+      "title": "Pin reviewed CI gate source for additive recovery",
+      "date": "2026-10-16T13:48:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "provenance": [
+        {
+          "commit": "2df4d8f1384199efa4e0827f5eccc947d062219e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2df4d8f1384199efa4e0827f5eccc947d062219e"
         }
       ]
     },
@@ -174323,6 +174371,22 @@
         {
           "commit": "444a7457209290ace2cb13fceac0fa8729d498bf",
           "url": "https://github.com/OmertaDev/Omerta/commit/444a7457209290ace2cb13fceac0fa8729d498bf"
+        }
+      ]
+    },
+    {
+      "key": "Commit:44564fddc8813c5eca84b0b8efa75e164e689624",
+      "type": "Commit",
+      "id": "44564fddc8813c5eca84b0b8efa75e164e689624",
+      "label": "test: require reviewed 120 minute native core bound",
+      "title": "test: require reviewed 120 minute native core bound",
+      "date": "2026-10-16T13:39:25.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/44564fddc8813c5eca84b0b8efa75e164e689624",
+      "provenance": [
+        {
+          "commit": "44564fddc8813c5eca84b0b8efa75e164e689624",
+          "url": "https://github.com/OmertaDev/Omerta/commit/44564fddc8813c5eca84b0b8efa75e164e689624"
         }
       ]
     },
@@ -234531,12 +234595,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 180,
-      "version": "a62927098ce5d892",
+      "version": "1dc19549a1e4638c",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "a62927098ce5d892"
+          "version": "1dc19549a1e4638c"
         }
       ]
     },
@@ -248741,6 +248805,9 @@
           "commit": "20d68fc18e3f7a44393ef3ef2c3c6ebd4f4fe103"
         },
         {
+          "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -250814,6 +250881,9 @@
           "commit": "20d68fc18e3f7a44393ef3ef2c3c6ebd4f4fe103"
         },
         {
+          "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+        },
+        {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
         },
         {
@@ -252885,6 +252955,9 @@
         },
         {
           "commit": "20d68fc18e3f7a44393ef3ef2c3c6ebd4f4fe103"
+        },
+        {
+          "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
@@ -255534,6 +255607,9 @@
         },
         {
           "commit": "20d68fc18e3f7a44393ef3ef2c3c6ebd4f4fe103"
+        },
+        {
+          "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
         },
         {
           "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
@@ -270467,7 +270543,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "686d9dc37d49aa7ca7cc0b2ad0368cfe3a939e39",
+      "revision": "2df4d8f1384199efa4e0827f5eccc947d062219e",
       "currentBranch": "codex/economy-next-layer-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -311081,12 +311157,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 4775,
-      "version": "6348e5d11be57056",
+      "version": "dc69fb8623cf6f45",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "6348e5d11be57056"
+          "version": "dc69fb8623cf6f45"
         }
       ]
     },
@@ -312851,12 +312927,12 @@
       "id": "test/next-layer-source-compatibility.js",
       "label": "test/next-layer-source-compatibility.js",
       "lines": 50,
-      "version": "6c2ec6b5814e5005",
+      "version": "5907fb5c39f188b3",
       "provenance": [
         {
           "file": "test/next-layer-source-compatibility.js",
           "line": 1,
-          "version": "6c2ec6b5814e5005"
+          "version": "5907fb5c39f188b3"
         }
       ]
     },
@@ -386177,6 +386253,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:21c4575ddb731702f480cea437f04347f8e880f9",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -393577,6 +393685,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "to": "Artifact:test/next-layer-source-compatibility.js",
+      "provenance": {
+        "commit": "2bba2899d0cc08ceb85534651825d522f772fdeb"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "to": "Artifact:tools/next-layer-source-compatibility.js",
+      "provenance": {
+        "commit": "2bba2899d0cc08ceb85534651825d522f772fdeb"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2bbeccd6a5c9b4ebac4396b1398006c159506f37",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -394845,6 +394969,22 @@
       "to": "Artifact:test/director-migration.js",
       "provenance": {
         "commit": "2ddf984fb02621cdf7419cdf128b487cfaab7aa0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "2df4d8f1384199efa4e0827f5eccc947d062219e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "2df4d8f1384199efa4e0827f5eccc947d062219e"
       }
     },
     {
@@ -410853,6 +410993,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "444a7457209290ace2cb13fceac0fa8729d498bf"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:44564fddc8813c5eca84b0b8efa75e164e689624",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "44564fddc8813c5eca84b0b8efa75e164e689624"
       }
     },
     {
@@ -657980,6 +658128,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:21a66448457c4fb1aa50e63cf7fcf3bb61595dff",
+      "provenance": {
+        "commit": "21a66448457c4fb1aa50e63cf7fcf3bb61595dff"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:21c4575ddb731702f480cea437f04347f8e880f9",
       "provenance": {
         "commit": "21c4575ddb731702f480cea437f04347f8e880f9"
@@ -659196,6 +659352,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2bba2899d0cc08ceb85534651825d522f772fdeb",
+      "provenance": {
+        "commit": "2bba2899d0cc08ceb85534651825d522f772fdeb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2bbeccd6a5c9b4ebac4396b1398006c159506f37",
       "provenance": {
         "commit": "2bbeccd6a5c9b4ebac4396b1398006c159506f37"
@@ -659463,6 +659627,14 @@
       "to": "Commit:2ddf984fb02621cdf7419cdf128b487cfaab7aa0",
       "provenance": {
         "commit": "2ddf984fb02621cdf7419cdf128b487cfaab7aa0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2df4d8f1384199efa4e0827f5eccc947d062219e",
+      "provenance": {
+        "commit": "2df4d8f1384199efa4e0827f5eccc947d062219e"
       }
     },
     {
@@ -662543,6 +662715,14 @@
       "to": "Commit:444a7457209290ace2cb13fceac0fa8729d498bf",
       "provenance": {
         "commit": "444a7457209290ace2cb13fceac0fa8729d498bf"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:44564fddc8813c5eca84b0b8efa75e164e689624",
+      "provenance": {
+        "commit": "44564fddc8813c5eca84b0b8efa75e164e689624"
       }
     },
     {
@@ -742509,7 +742689,7 @@
       "to": "Artifact:src/workertraining.js",
       "provenance": {
         "file": "tools/next-layer-source-compatibility.js",
-        "line": 327
+        "line": 331
       }
     },
     {
