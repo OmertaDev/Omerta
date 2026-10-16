@@ -2,8 +2,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {enterpriseSourceBaseline} from './enterprise-source-compatibility.js';
-export const MARKET_OPERATIONS_SOURCE_REVISION="922d0e3226b039d9c450fb63fbc02ca3fb336f28";
-export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="3e4e23269908e84d3c1d4ea39f55d0eeec3686e8";
+export const MARKET_OPERATIONS_SOURCE_REVISION="4fdb616de33658ba2b1397820843bcd696594349";
+export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="3e5169ae920abee55cbaa498d4ea0da0f1a63b65";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
   "package.json": {
@@ -374,6 +374,19 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
       {
         "current": "    0\n   ]\n  ],\n  \"sha256\": \"f7ee9960a2051ec607aa359d477d095d9ca3ff637c1e78d128e7c8dcb9f1f722\"\n }\n].map(freeze));\nexport function extractNextLayerHelperReconciliations(invariants,helpers){\n",
         "baseline": "    0\n   ]\n  ],\n  \"sha256\": \"d065c836bf0086b67b9a7ab385e7de9dd760675c266a7049d3de910f86f8b9bf\"\n }\n].map(freeze));\nexport function extractNextLayerHelperReconciliations(invariants,helpers){\n"
+      }
+    ]
+  },
+  "test/migrate.js": {
+    "currentSha256": "77a3efbab16c8075c4aec1d9fa9284ca596720745cb91f128785381958fb7ae0",
+    "currentBlob": "34932800e4e95359c60bb69e734a62bb49a7bf53",
+    "baselineSha256": "accc5aadb2e20c1341180f1f268144f48045aa90a6e9032ec10b81b8ac064b2d",
+    "baselineBlob": "0e5faac0270a2bb8ab4e7eb1ffbddd381bd4a3eb",
+    "contextLines": 3,
+    "inverses": [
+      {
+        "current": "  worker_training_courses: 'escrow', // original employer death burns reserve; surviving original employer recovers after apprentice death, without heir training rights\n  worker_training_requests: 'ledger', // immutable original-account and actor request acknowledgements grant no fresh training authority\n  worker_training_sessions: 'ledger', // original apprentice stat, energy and canonical wage journal history retains source identity\n  cross_dock_links: 'special', // canonical courier terminal/estate recovery retires live link metadata; expired original-party history grants no heir execution authority\n  cross_dock_requests: 'ledger', // original actor consent/replay receipts preserve source identity and grant no new courier or hub authority\n  production_slot_reservations: 'special', // canonical commission refund/estate recovery retires reservations; original maker/customer history cannot authorize heir production\n  production_slot_requests: 'ledger', // immutable original actor request acknowledgements confer no new capacity or crafting authority\n  merchant_return_rights: 'escrow', // prefunded original seller reserve is refunded by canonical seller/buyer estate recovery; heirs receive no return execution authority\n  merchant_return_requests: 'ledger', // original actor return/refund acknowledgements preserve history without new payment authority\n  employment_organizations: 'special', // original founder death retires consent; actual Crew roster, leader and Depot checks govern fresh publication\n  employment_organization_requests: 'ledger', // original actor request receipts retain historical Crew consent and budgets\n  business_partnerships: 'special', // original-party death retires relationship; at-risk capital remains in canonical Depot estate, without a principal guarantee\n",
+        "baseline": "  worker_training_courses: 'escrow', // original employer death burns reserve; surviving original employer recovers after apprentice death, without heir training rights\n  worker_training_requests: 'ledger', // immutable original-account and actor request acknowledgements grant no fresh training authority\n  worker_training_sessions: 'ledger', // original apprentice stat, energy and canonical wage journal history retains source identity\n  employment_organizations: 'special', // original founder death retires consent; actual Crew roster, leader and Depot checks govern fresh publication\n  employment_organization_requests: 'ledger', // original actor request receipts retain historical Crew consent and budgets\n  business_partnerships: 'special', // original-party death retires relationship; at-risk capital remains in canonical Depot estate, without a principal guarantee\n"
       }
     ]
   }
