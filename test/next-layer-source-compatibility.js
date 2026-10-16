@@ -6,7 +6,7 @@ import {NEXT_LAYER_SOURCE_REVISION,NEXT_LAYER_SOURCE_PREDECESSOR,NEXT_LAYER_SOUR
 import {releasePhase2MigrationPredecessor,nextFiveNativePredecessor} from '../tools/next-five-release-phase2-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32e6});
 assert.equal(NEXT_LAYER_SOURCE_PHASE,'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.equal(NEXT_LAYER_SOURCE_REVISION,'44564fddc8813c5eca84b0b8efa75e164e689624');
+assert.equal(NEXT_LAYER_SOURCE_REVISION,'3c6a1c7cdd747ef80ae8ad246126019f4c18afd0');
 assert.equal(NEXT_LAYER_SOURCE_PREDECESSOR,'2a057d375cb8f8d94ec30c8e4559832b5be63011');
 assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/depotacquisitionruntime.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json','test/phase2-postgres.js','test/director-migration.js','.github/workflows/ci.yml','test/gates.js','test/coldstart.js','src/workertraining.js','test/company-workforce-contracts.js']);
 let negatives=0,hunks=0;
