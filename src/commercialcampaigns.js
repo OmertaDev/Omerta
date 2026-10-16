@@ -327,6 +327,17 @@ async function releaseStaleMembership(c, account, allowedCampaign = null, reject
   }
 }
 
+// All peer/campaign/role locks have already been acquired before this one
+// nonblocking manufacturer-business lock. Unsupported adapters fail before SQL.
+async function activationBusiness(c,row) {
+  if (!dbCaps.skipLocked) fail('activation_nonblocking_backend_required');
+  const business=(await c.query('SELECT id,owner_character,status FROM business_depots WHERE id=$1 FOR UPDATE NOWAIT',[row.business_id])).rows[0];
+  if (!business||business.status!=='open'||business.owner_character!==row.manufacturer_character) fail('manufacturer_business');
+  await live(c,row);
+  // The native row lock remains held through role/campaign and actual Game ACKs.
+  // SQLSTATE55P03 is propagated; only the outer real rollback may map contention.
+}
+
 async function metadata(c, actor, action, body, key) {
   const row = await immutable(c, body.campaignId, body.sourceHash), roles = await roleRows(c, row);
   const own = roles.find(role => role.account_id === actor.account_id && role.original_character === actor.id);
@@ -344,6 +355,7 @@ async function metadata(c, actor, action, body, key) {
       const signed = await roleRows(c, row);
       for (const role of signed) await consentWitness(c, row, role);
       for (const role of signed) await releaseStaleMembership(c, role.account_id, row.id);
+      await activationBusiness(c,row);
       // Account order is fixed. Native partial unique indexes serialize active
       // membership without introducing extra character or account actor roots.
       for (const role of signed) await saveRole(c, role, 'active');

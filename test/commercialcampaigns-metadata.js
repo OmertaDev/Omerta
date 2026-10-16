@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { managementFixture } from './managementteams-fixture.js';
 import * as E from '../src/commercialcampaigns.js';
+import {inspectCommercialCampaignBusinessHistory} from '../src/commercialcampaignruntime.js';
 
 assert(!process.argv.includes('--postgres'), 'Metadata memory phase only; full native source campaign is separate.');
 const f = await managementFixture(), pool = f.app.pool;
@@ -42,6 +43,7 @@ const metadataState = async () => ({
 try {
   const manufacturer = f.customer, guard = f.stranger, first = f.supplier, second = await f.create();
   const businessId = (await f.open(manufacturer)).id;
+  const history=async()=>{const before=await metadataState(),seen=[];const result=await inspectCommercialCampaignBusinessHistory({query:async(sql,args)=>{assert(sql.startsWith('SELECT ')&&!/FOR UPDATE|;|--/.test(sql));seen.push(sql);return pool.query(sql,args);}},businessId);assert.deepEqual(result.issues,[]);assert.deepEqual(result.activeCampaigns,[]);assert(seen.length);assert.deepEqual(await metadataState(),before,'History reads mutate no metadata or cash');return result;};
   const team = await relation(f.owner, f.partner, f.depotId);
   const otherOwner = await f.create(), otherScout = await f.create(), otherDepot = (await f.open(otherOwner)).id;
   const otherTeam = await relation(otherOwner, otherScout, otherDepot);
@@ -57,82 +59,37 @@ try {
   const beforeMoney = await metadataState();
   const one = await invoke(f.owner, 'create', body(team), 'original-create');
   assert.equal(one.campaign.state, 'offered');
-  assert.equal(one.campaign.executionAuthority, false);
+  assert.equal(one.campaign.executionAuthority, false);await history();
   assert.deepEqual(await invoke(f.owner, 'create', body(team), 'original-create'), one);
   const two = await invoke(otherOwner, 'create', body(otherTeam));
   assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM commercial_campaign_roles WHERE state='active'")).rows[0].n), 0);
   await assert.rejects(invoke(f.owner, 'create', body(team)), e => e.code === 'commercial_campaign' && e.message === 'owner_capacity');
-  for (const player of [f.partner, manufacturer, guard, first, second]) await invoke(player, 'consent', ref(one));
-  assert.equal((await pool.query('SELECT state FROM commercial_campaigns WHERE id=$1', [one.campaign.campaignId])).rows[0].state, 'active');
-  for (const player of [otherScout, manufacturer, guard, first]) await invoke(player, 'consent', ref(two));
-  const capacity = await metadataState();
-  await assert.rejects(invoke(second, 'consent', ref(two)), e => e.code === 'commercial_campaign' && e.message === 'active_capacity');
-  assert.deepEqual(await metadataState(), capacity, 'A genuine other active membership refuses the complete metadata change and request ACK');
-  const oldConsent = await pool.query("SELECT receipt FROM commercial_campaign_requests WHERE campaign_id=$1 AND account_id=$2 AND action='consent'", [one.campaign.campaignId, guard.account]);
-  const withdrawn = await invoke(guard, 'withdraw', ref(one));
-  assert.equal(withdrawn.campaign.state, 'suspended');
-  assert.equal(withdrawn.retiredMetadataOnly, true);
-  assert.equal((await pool.query('SELECT receipt FROM commercial_campaign_requests WHERE campaign_id=$1 AND account_id=$2 AND action=$3', [one.campaign.campaignId, guard.account, 'consent'])).rows[0].receipt.campaign.sourceHash, oldConsent.rows[0].receipt.campaign.sourceHash);
-  await assert.rejects(invoke(guard, 'consent', ref(one)), e => e.code === 'commercial_campaign' && e.message === 'closed');
-
-  const beforeAck = await metadataState(), connect = pool.connect.bind(pool);
-  let acknowledged = false, injected = false;
-  pool.connect = async (...args) => {
-    if (args.length) return connect(...args);
-    const c = await connect(), query = c.query.bind(c), release = c.release.bind(c);
-    c.query = async (sql, values, ...rest) => {
-      const result = await query(sql, values, ...rest);
-      if (typeof sql === 'string' && sql.startsWith('INSERT INTO commercial_campaign_requests') && values?.[2] === 'consent') acknowledged = true;
-      if (acknowledged && !injected && typeof sql === 'string' && sql.startsWith('UPDATE account_persistent SET') && values?.[0] === second.account) {
-        injected = true;
-        throw Error('Actual final campaign account ACK fault');
-      }
-      return result;
-    };
-    c.release = (...args) => { c.query = query; c.release = release; return release(...args); };
-    return c;
-  };
-  try { await assert.rejects(invoke(second, 'consent', ref(two)), /Actual final campaign account ACK fault/); }
-  finally { pool.connect = connect; }
-  assert(acknowledged && injected);
-  assert.deepEqual(await metadataState(), beforeAck, 'Memory metadata undo follows the genuine final account ACK; not a native allocator qualification');
-  const activeTwo = await invoke(second, 'consent', ref(two));
-  assert.equal(activeTwo.campaign.state, 'active');
-  assert.equal((await invoke(otherOwner, 'cancel', ref(two))).campaign.state, 'cancelled');
-  const afterMoney = await metadataState();
-  assert.deepEqual(afterMoney.cash, beforeMoney.cash);
-  assert.deepEqual(afterMoney.ledger, beforeMoney.ledger, 'Campaign metadata grants no fee, reserve, reward or peer cash authority');
-  assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM commercial_campaign_roles WHERE state='active'")).rows[0].n), 0);
-
-  const stale = await invoke(f.owner, 'create', body(team));
-  for (const player of [f.partner, manufacturer, guard, first, second]) await invoke(player, 'consent', ref(stale));
-  const pending = await invoke(otherOwner, 'create', body(otherTeam));
-  for (const player of [otherScout, manufacturer, guard, first]) await invoke(player, 'consent', ref(pending));
-  const killer = await f.create(), oldGuard = guard.id;
-  process.env.PEN_YARD_EVENT = 'quiet';
-  process.env.SHANK_P = '1';
-  for (const player of [killer, guard]) await pool.query('UPDATE characters SET jail_until=$2 WHERE id=$1', [player.id, new Date(Date.now() + 1800000)]);
-  assert.equal((await f.call(killer, 'POST', '/v1/pen/buy/shiv')).code, 200);
-  const killed = await f.call(killer, 'POST', '/v1/pen/shank/' + oldGuard);
-  assert.equal(killed.code, 200, JSON.stringify(killed));
-  assert.equal(killed.body.kill, true);
-  assert.equal((await pool.query('SELECT state FROM commercial_campaigns WHERE id=$1', [stale.campaign.campaignId])).rows[0].state, 'suspended');
-  const afterDeath = await metadataState();
-  await assert.rejects(invoke(second, 'consent', ref(pending)), e => e.code === 'commercial_campaign' && e.message === 'original_changed');
-  assert.deepEqual(await metadataState(), afterDeath, 'An actual provider replacement cannot activate old original terms');
-  await invoke(otherOwner, 'cancel', ref(pending));
-  const currentGuard = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true', [guard.account])).rows[0];
-  assert.notEqual(currentGuard.id, oldGuard);
-  const fresh = await invoke(otherOwner, 'create', body(otherTeam));
-  const beforeFresh = await metadataState();
-  for (const player of [otherScout, manufacturer, guard, first, second]) await invoke(player, 'consent', ref(fresh));
-  const old = (await pool.query('SELECT state,closure_reason,closure_original FROM commercial_campaigns WHERE id=$1', [stale.campaign.campaignId])).rows[0];
-  assert.deepEqual(old, { state: 'suspended', closure_reason: 'estate_scope', closure_original: oldGuard });
-  assert.equal((await pool.query('SELECT state FROM commercial_campaigns WHERE id=$1', [fresh.campaign.campaignId])).rows[0].state, 'active');
-  const afterFresh = await metadataState();
-  assert.deepEqual(afterFresh.cash, beforeFresh.cash);
-  assert.deepEqual(afterFresh.ledger, beforeFresh.ledger, 'The heir clears only inert indexed metadata; no old task, reserve or peer cash execution');
-  await invoke(otherOwner, 'cancel', ref(fresh));
+  for (const player of [f.partner, manufacturer, guard, first]) await invoke(player, 'consent', ref(one));
+  await history();const beforeUnsupported=await metadataState();
+  await assert.rejects(invoke(second,'consent',ref(one)),e=>e.code==='commercial_campaign'&&e.message==='activation_nonblocking_backend_required');
+  assert.deepEqual(await metadataState(),beforeUnsupported,'Unsupported final activation refuses all request/role changes before any NOWAIT SQL');
+  assert.equal((await pool.query('SELECT state FROM commercial_campaigns WHERE id=$1',[one.campaign.campaignId])).rows[0].state,'offered');
+  for (const player of [otherScout,manufacturer,guard,first]) await invoke(player,'consent',ref(two));
+  const pendingTwo=await metadataState();await assert.rejects(invoke(second,'consent',ref(two)),e=>e.code==='commercial_campaign'&&e.message==='activation_nonblocking_backend_required');assert.deepEqual(await metadataState(),pendingTwo,'Unsigned invitations and partial signatures cannot claim active capacity');
+  const oldConsent=(await pool.query("SELECT receipt FROM commercial_campaign_requests WHERE campaign_id=$1 AND account_id=$2 AND action='consent'",[one.campaign.campaignId,guard.account])).rows[0].receipt;
+  const withdrawn=await invoke(guard,'withdraw',ref(one));assert.equal(withdrawn.campaign.state,'suspended');assert.equal(withdrawn.retiredMetadataOnly,true);assert.deepEqual((await pool.query("SELECT receipt FROM commercial_campaign_requests WHERE campaign_id=$1 AND account_id=$2 AND action='consent'",[one.campaign.campaignId,guard.account])).rows[0].receipt,oldConsent);await assert.rejects(invoke(guard,'consent',ref(one)),e=>e.code==='commercial_campaign'&&e.message==='closed');
+  // Partial consent still goes through the actual final Game account ACK and exact undo.
+  const beforeAck=await metadataState(),connect=pool.connect.bind(pool);let acknowledged=false,injected=false;
+  pool.connect=async(...args)=>{if(args.length)return connect(...args);const c=await connect(),query=c.query.bind(c),release=c.release.bind(c);c.query=async(sql,values,...rest)=>{const result=await query(sql,values,...rest);if(typeof sql==='string'&&sql.startsWith('INSERT INTO commercial_campaign_requests')&&values?.[2]==='consent')acknowledged=true;if(acknowledged&&!injected&&typeof sql==='string'&&sql.startsWith('UPDATE account_persistent SET')&&values?.[0]===second.account){injected=true;throw Error('Actual final campaign account ACK fault');}return result;};c.release=(...a)=>{c.query=query;c.release=release;return release(...a);};return c;};
+  const partial=await invoke(f.owner,'create',body(team)),beforePartialFault=await metadataState();
+  try{await assert.rejects(invoke(second,'consent',ref(partial)),/Actual final campaign account ACK fault/);}finally{pool.connect=connect;}assert(acknowledged&&injected);
+  const afterPartialFault=await metadataState();assert.deepEqual(afterPartialFault,beforePartialFault,'Only the separate genuine create survives the later partial-consent final-account-ACK fault');
+  await invoke(f.owner,'cancel',ref(partial));await invoke(otherOwner,'cancel',ref(two));await history();
+  const afterMoney=await metadataState();assert.deepEqual(afterMoney.cash,beforeMoney.cash);assert.deepEqual(afterMoney.ledger,beforeMoney.ledger);assert.equal(Number((await pool.query("SELECT COUNT(*) n FROM commercial_campaign_roles WHERE state='active'")).rows[0].n),0);
+  const stale=await invoke(f.owner,'create',body(team));for(const player of[f.partner,manufacturer,guard,first])await invoke(player,'consent',ref(stale));
+  const pending=await invoke(otherOwner,'create',body(otherTeam));for(const player of[otherScout,manufacturer,guard,first])await invoke(player,'consent',ref(pending));
+  const killer=await f.create(),oldGuard=guard.id;process.env.PEN_YARD_EVENT='quiet';process.env.SHANK_P='1';for(const player of[killer,guard])await pool.query('UPDATE characters SET jail_until=$2 WHERE id=$1',[player.id,new Date(Date.now()+1800000)]);assert.equal((await f.call(killer,'POST','/v1/pen/buy/shiv')).code,200);const killed=await f.call(killer,'POST','/v1/pen/shank/'+oldGuard);assert.equal(killed.code,200,JSON.stringify(killed));assert.equal(killed.body.kill,true);
+  await history();const afterDeath=await metadataState();await assert.rejects(invoke(second,'consent',ref(pending)),e=>e.code==='commercial_campaign'&&e.message==='original_changed');assert.deepEqual(await metadataState(),afterDeath,'An actual provider replacement cannot activate the old partial signatures');
+  // Offered provider proposals were never active obligations: their original owner can retire them.
+  await invoke(f.owner,'cancel',ref(stale));await invoke(otherOwner,'cancel',ref(pending));const currentGuard=(await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true',[guard.account])).rows[0];assert.notEqual(currentGuard.id,oldGuard);
+  const fresh=await invoke(otherOwner,'create',body(otherTeam)),beforeFresh=await metadataState();for(const player of[otherScout,manufacturer,guard,first])await invoke(player,'consent',ref(fresh));const freshPartial=await metadataState();await assert.rejects(invoke(second,'consent',ref(fresh)),e=>e.code==='commercial_campaign'&&e.message==='activation_nonblocking_backend_required');assert.deepEqual(await metadataState(),freshPartial);const afterFresh=await metadataState();assert.deepEqual(afterFresh.cash,beforeFresh.cash);assert.deepEqual(afterFresh.ledger,beforeFresh.ledger);await invoke(otherOwner,'cancel',ref(fresh));
+  await history();
+  const sourceRow=(await pool.query('SELECT source_hash FROM commercial_campaigns WHERE id=$1',[one.campaign.campaignId])).rows[0];try{await pool.query('UPDATE commercial_campaigns SET source_hash=$2 WHERE id=$1',[one.campaign.campaignId,'0'.repeat(64)]);assert((await inspectCommercialCampaignBusinessHistory(pool,businessId)).issues.some(i=>i.campaignId===one.campaign.campaignId&&i.reason==='source_hash'));}finally{await pool.query('UPDATE commercial_campaigns SET source_hash=$2 WHERE id=$1',[one.campaign.campaignId,sourceRow.source_hash]);}await history();
   await f.invariants();
-  console.log('PASS actual consenting management-team metadata, six distinct canonical originals/business, unsigned proposal freedom, explicit active capacity, final-account-ACK undo, terminal withdrawal, genuine public provider death between signatures, original-replacement refusal, heir stale-index retirement and zero campaign cash movement. No paid stage or native source proof claimed.');
+  console.log('PASS memory offered/partial original consent, fail-closed unsupported final activation, final-account-ACK undo, withdrawal/cancel recovery, genuine provider death and replacement refusal, zero campaign cash. Former active capacity/final activation assertions are retained in the separate strict native successor and remain unexecuted here.');
 } finally { await f.close(); }

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { managementFixture } from './managementteams-fixture.js';
 import { canonicalDatabaseSnapshot } from '../tools/rc1-native-proof.js';
 import * as E from '../src/commercialcampaigns.js';
+import {inspectCommercialCampaignBusinessHistory} from '../src/commercialcampaignruntime.js';
 import * as I from '../src/items.js';
 import * as Commission from '../src/commissionedcrafting.js';
 import * as Courier from '../src/multihopcourier.js';
@@ -193,7 +194,51 @@ async function lateFailure(a, action, campaign, who, expectedEvents) {
   }
   return invoke(who, action, ref(campaign), 'same-key-' + action);
 }
+// These projections tamper only this SELECT-only reader's returned immutable records.
+// They never delete or rewrite canonical rows and use the real completed source ACKs.
+async function historyRefusal(campaignId,businessId,mutate,label) {
+  const reader={query:async(sql,args)=>{
+    assert(sql.startsWith('SELECT ')&&!/\bFOR\s+(?:UPDATE|SHARE)|;|--/i.test(sql));
+    const result=await pool.query(sql,args);return{...result,rows:mutate(sql,args,structuredClone(result.rows))};
+  }};
+  const inspected=await inspectCommercialCampaignBusinessHistory(reader,businessId);
+  assert(inspected.issues.some(issue=>issue.campaignId===campaignId),label+': corrupt original history refused');
+  return{label,reasons:inspected.issues.map(issue=>issue.reason)};
+}
+async function courierHistory(r,label) {
+  const business=(await pool.query('SELECT business_id FROM commercial_campaigns WHERE id=$1',[r.campaignId])).rows[0].business_id;
+  const before=await snapshot('history-'+label+'-before');
+  assert.deepEqual((await inspectCommercialCampaignBusinessHistory(pool,business)).issues,[]);
+  const requests=(await pool.query("SELECT * FROM commercial_campaign_requests WHERE campaign_id=$1 ORDER BY account_id,key_hash",[r.campaignId])).rows.filter(q=>q.action.startsWith('courier-'));
+  assert(requests.length>0,'genuine nonempty courier lineage');const results=[];
+  for(const request of requests){
+    results.push(await historyRefusal(r.campaignId,business,(sql,args,rows)=>sql==='SELECT * FROM commercial_campaign_requests WHERE campaign_id=$1 ORDER BY account_id,key_hash'&&args[0]===r.campaignId?rows.filter(q=>q.account_id!==request.account_id||q.key_hash!==request.key_hash):rows,label+' missing campaign '+request.action+':'+request.account_id));
+    const canonicalKey='commercial:'+r.campaignId+':courier:'+request.action.slice(8)+':'+request.account_id;
+    results.push(await historyRefusal(r.campaignId,business,(sql,args,rows)=>sql==='SELECT * FROM multi_hop_courier_requests WHERE account_id=$1 AND request_key=$2'&&args[0]===request.account_id&&args[1]===canonicalKey?[]:rows,label+' missing canonical '+request.action+':'+request.account_id));
+  }
+  const stage=(await pool.query("SELECT * FROM commercial_campaign_stages WHERE campaign_id=$1 AND kind='courier'",[r.campaignId])).rows[0],proof=stage.proof_json;
+  const events=[];
+  if(proof.reservedCash||proof.earnedFirst||proof.earnedSecond)events.push(['courier:'+stage.courier_network_id+':deposit',[0]]);
+  if(proof.earnedFirst)events.push(['courier:'+stage.courier_network_id+':handoff',[0,1]]);
+  if(proof.earnedSecond)events.push(['courier:'+stage.courier_network_id+':arrival',[0]]);
+  for(const[key,positions]of events){
+    results.push(await historyRefusal(r.campaignId,business,(sql,args,rows)=>sql==='SELECT * FROM item_events WHERE idempotency_key=$1 ORDER BY sequence'&&args[0]===key?[]:rows,label+' missing '+key));
+    for(const at of positions)for(const field of['from_owner_scope','from_owner_id','to_owner_scope','to_owner_id'])results.push(await historyRefusal(r.campaignId,business,(sql,args,rows)=>{if(sql==='SELECT * FROM item_events WHERE idempotency_key=$1 ORDER BY sequence'&&args[0]===key){assert(rows[at]);rows[at][field]='foreign';}return rows;},label+' wrong '+key+':'+at+'.'+field));
+  }
+  const after=await snapshot('history-'+label+'-after');assert.deepEqual(after.tables,before.tables);assert.deepEqual(after.sequences,before.sequences);save('history-'+label+'-refusals',results);
+}
+async function allHistorySourceDTOs(r) {
+  const business=(await pool.query('SELECT business_id FROM commercial_campaigns WHERE id=$1',[r.campaignId])).rows[0].business_id;
+  const before=await snapshot('history-all-source-dtos-before'),requests=(await pool.query('SELECT * FROM commercial_campaign_requests WHERE campaign_id=$1 ORDER BY account_id,key_hash',[r.campaignId])).rows.filter(q=>q.receipt.source),results=[];
+  assert.deepEqual([...new Set(requests.map(q=>q.action.split('-')[0]))].sort(),['courier','guard','manufacture','scout']);
+  for(const request of requests)for(const field of Object.keys(request.receipt.source)){
+    results.push(await historyRefusal(r.campaignId,business,(sql,args,rows)=>{if(sql==='SELECT * FROM commercial_campaign_requests WHERE campaign_id=$1 ORDER BY account_id,key_hash'&&args[0]===r.campaignId){const saved=rows.find(q=>q.account_id===request.account_id&&q.key_hash===request.key_hash);assert(saved);const v=saved.receipt.source[field];saved.receipt.source[field]=typeof v==='number'?v+1:typeof v==='boolean'?!v:typeof v==='string'?v+'x':v===null?{}:null;}return rows;},request.action+':'+request.account_id+'.'+field));
+  }
+  const after=await snapshot('history-all-source-dtos-after');assert.deepEqual(after.tables,before.tables);assert.deepEqual(after.sequences,before.sequences);save('history-all-source-dto-refusals',results);
+}
+
 async function books() {
+  for(const {business_id} of(await pool.query('SELECT DISTINCT business_id FROM commercial_campaigns ORDER BY business_id')).rows){const before=await canonicalDatabaseSnapshot(pool),history=await inspectCommercialCampaignBusinessHistory(pool,business_id);assert.deepEqual(history.issues,[],JSON.stringify(history));assert.deepEqual(await canonicalDatabaseSnapshot(pool),before,'Paid/terminal history is read only after canonical transfers/refunds');}
   assert.deepEqual(await Commission.collectCommissionedCraftingIssues(pool), []);
   assert.deepEqual(await Courier.collectMultiHopCourierIssues(pool), []);
   for (const row of (await pool.query('SELECT id,cash,bank FROM characters WHERE is_npc=false ORDER BY id')).rows) {
@@ -225,17 +270,23 @@ try {
   assert(!JSON.stringify(coverage).includes('intercepted'));
   const published = await invoke(a.owner, 'courier-publish', r);
   assert.equal(published.source.itemId, output);
+  await courierHistory(r, 'published');
   await invoke(a.first, 'courier-consent', r);
   await unchanged('missing-second-real-courier-consent', transport => invoke(a.owner, 'courier-dispatch', r, undefined, transport));
   await invoke(a.second, 'courier-consent', r);
+  await courierHistory(r, 'both-consented');
   await lateFailure(a, 'courier-dispatch', campaign, a.owner, 1);
+  await courierHistory(r, 'dispatched');
   await invoke(a.first, 'courier-travel', r);
   const race = await Promise.allSettled([invoke(a.first, 'courier-handoff', r, 'handoff-race-a'), invoke(a.first, 'courier-handoff', r, 'handoff-race-b')]);
   assert.equal(race.filter(value => value.status === 'fulfilled').length, 1);
+  await courierHistory(r, 'handed-off');
   await f.single(a.owner, (ch, c, h) => f.G.travel(ch, 'neon', c, h));
   await invoke(a.second, 'courier-travel', r);
   const done = await lateFailure(a, 'courier-arrive', campaign, a.second, 1);
   assert.equal(done.campaign.state, 'completed');
+  await courierHistory(r, 'arrived');
+  await allHistorySourceDTOs(r);
   assert.equal(done.source.itemId, output);
   assert.deepEqual([done.source.paidFirstCash, done.source.paidSecondCash], [30, 40]);
   const stages = (await pool.query('SELECT kind,state FROM commercial_campaign_stages WHERE campaign_id=$1 ORDER BY kind', [r.campaignId])).rows;
