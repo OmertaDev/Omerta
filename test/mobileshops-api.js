@@ -1,6 +1,5 @@
 // Component registrar/auth/DTO proof only. Actual shared server registration is coordinator-owned.
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import Fastify from 'fastify';
 import jwt from '@fastify/jwt';
 import Ajv from 'ajv';
@@ -10,7 +9,7 @@ const {makeDb}=await import('../src/db.js'),{register}=await import('../src/rout
 const {MOBILE_SHOP_BOARD}=await import('../src/mobileshops-contracts.js');
 const pool=await makeDb(),app=Fastify();
 try {
-  await pool.query(fs.readFileSync(new URL('../docs/mobile-shops-proposal.sql',import.meta.url),'utf8'));
+  for(const table of ['mobile_shops','mobile_shop_requests'])assert.equal((await pool.query('SELECT COUNT(*)::int AS n FROM '+table)).rows[0].n,0,'Use fresh canonical migrated mobile shop tables');
   await app.register(jwt,{secret:'mobile-shop-component-fixture-only'});
   app.setErrorHandler((e,req,reply)=>reply.code(e.statusCode||400).send({error:e.code||'error',message:e.message}));
   register(app,{pool,auth:req=>req.jwtVerify()});

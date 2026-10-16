@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import crypto from 'node:crypto';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
@@ -9,7 +8,7 @@ const {makeDb}=await import('../src/db.js'),I=await import('../src/items.js'),S=
 const {MOBILE_SHOP_BOARD}=await import('../src/mobileshops-contracts.js');
 const pool=await makeDb();
 try {
-  await pool.query(fs.readFileSync(new URL('../docs/mobile-shops-proposal.sql',import.meta.url),'utf8'));
+  for(const table of ['mobile_shops','mobile_shop_requests'])assert.equal((await pool.query('SELECT COUNT(*)::int AS n FROM '+table)).rows[0].n,0,'Use fresh canonical migrated mobile shop tables');
   const good={quantity:2,unitPrice:50,lifetimeSeconds:60,consent:true};
   assert.deepEqual(S.mobileShopTerms('open',good),{action:'open',...good});
   for(const body of [{...good,quantity:0},{...good,quantity:11},{...good,unitPrice:0},{...good,unitPrice:500001},{...good,lifetimeSeconds:59},{...good,lifetimeSeconds:3601},{...good,consent:false},{...good,foreignAccount:'private'},{...good,quantity:'2'}])assert.throws(()=>S.mobileShopTerms('open',body),/terms/);
