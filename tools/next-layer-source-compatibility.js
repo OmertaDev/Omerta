@@ -1,7 +1,7 @@
 // Exact next-layer source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_LAYER_SOURCE_REVISION="a6ef74dce51bd5becf8c65ec1602d9d0eeca481c";
+export const NEXT_LAYER_SOURCE_REVISION="4c19bef786f333eae58b1e0cf9090e2558d63a6b";
 export const NEXT_LAYER_SOURCE_PREDECESSOR="2a057d375cb8f8d94ec30c8e4559832b5be63011";
 export const NEXT_LAYER_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_LAYER_SOURCE_DOMAINS={
@@ -237,12 +237,16 @@ export const NEXT_LAYER_SOURCE_DOMAINS={
     ]
   },
   ".github/workflows/ci.yml": {
-    "currentSha256": "6b53deeac9b7229f51dca88e4974c354a48c553f606a1aa962f825ab7edac8a8",
-    "currentBlob": "f74826938e14fb14387dd82c938496b195516cfb",
+    "currentSha256": "aaf3044fcfd3cbb2e3295b7585c5a1b8b08794652d47fd15ac8eb4209300d65a",
+    "currentBlob": "5b98b68a6e3c4de9fe186f42071e544f02e632c2",
     "baselineSha256": "db85adf71b185ee3f920b7df8fb1a1970d9b1e76b79acc750ca7992bd07bb765",
     "baselineBlob": "d60c4f8c6373490e739fcc64d5c84b5b1be885e6",
     "contextLines": 3,
     "inverses": [
+      {
+        "current": "    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    # Expanded core coverage reached the former 90m cap during the final loadtest.\n    # Keep the complete required suite and its step order within a 120m bound.\n    timeout-minutes: 120\n    strategy:\n      fail-fast: false\n      matrix:\n",
+        "baseline": "    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    # Expanded native coverage exhausted the former 20m lane after loadtest's\n    # success report, before process exit and concurrency. Keep a 30m bound.\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n"
+      },
       {
         "current": "          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-five:postgres\n\n      - name: Courier networks, layaway, reserved vaults and observed decision intelligence (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          NEXT_LAYER_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-layer:postgres\n\n      - name: Nonempty loan expiry process recovery (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n",
         "baseline": "          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-five:postgres\n\n      - name: Nonempty loan expiry process recovery (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n"
