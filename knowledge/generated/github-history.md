@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `affccab56f7d`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6df737c0f921`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4040 |
+| Commits in clone | 4044 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — Pin first-five additive rehearsal to reviewed autonomy predecessor |
+| Latest commit | 2026-10-16 — Merge current main before refreshing UI release knowledge |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3080 |
+| OmertaDev | 3084 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 678 | historical |
-| knowledge/generated/graph-summary.md | 678 | historical |
-| knowledge/generated/graph.json | 678 | historical |
-| knowledge/generated/inventory.md | 678 | historical |
+| knowledge/generated/github-history.md | 679 | historical |
+| knowledge/generated/graph-summary.md | 679 | historical |
+| knowledge/generated/graph.json | 679 | historical |
+| knowledge/generated/inventory.md | 679 | historical |
 | [SPEC.md](../../SPEC.md) | 546 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 467 | yes |
+| [public/index.html](../../public/index.html) | 468 | yes |
 | [src/server.js](../../src/server.js) | 430 | yes |
 | [schema.sql](../../schema.sql) | 361 | yes |
 | knowledge/generated/documents.md | 334 | historical |
@@ -50,7 +50,7 @@
 | [src/invariants.js](../../src/invariants.js) | 157 | yes |
 | [src/worker.js](../../src/worker.js) | 140 | yes |
 | knowledge/generated/schema.md | 134 | historical |
-| [test/client.js](../../test/client.js) | 132 | yes |
+| [test/client.js](../../test/client.js) | 133 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
 | knowledge/generated/routes.md | 120 | historical |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
