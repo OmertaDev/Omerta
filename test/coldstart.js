@@ -24,6 +24,10 @@ process.env.CHAIN_RPC_URL = ''; // this fixture deliberately has no funded-chain
 import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { buildServer } from './server-fixture.js';
+import * as Game from '../src/game.js';
+import * as Depot from '../src/depot.js';
+import * as Items from '../src/items.js';
+import * as Craft from '../src/crafting.js';
 
 const app = await buildServer();
 
@@ -69,6 +73,59 @@ assert(token, 'and gets a token');
 
 const made = await j('POST', '/v1/character', token, { name: 'Cold Start' });
 assert(made.code < 400, `the first character can be created (got ${made.code} ${JSON.stringify(made.body)})`);
+
+// A scoped recovery read needs genuine owned business/tool provenance, even for the first player.
+// Explicit memory-fixture cash/materials fund the real canonical depot and standard craft.
+const recoveryAccount = app.jwt.verify(token).sub;
+const recoveryActor = (await app.pool.query('SELECT id,cash FROM characters WHERE account_id=$1 AND alive=true', [recoveryAccount])).rows[0];
+assert(recoveryActor, 'the original first player owns the recovery fixture');
+await app.pool.query("UPDATE characters SET cash=20000,loc='foundry',respect=10000 WHERE id=$1", [recoveryActor.id]);
+await Game.ledger(app.pool, { characterId: recoveryActor.id, currency: 'cash',
+  amount: 20000 - Number(recoveryActor.cash), reason: 'crime:cold-start-equipment-fixture' });
+const originalDepotPilot = process.env.DEPOT_PILOT;
+let recoveryBusinessId;
+try {
+  process.env.DEPOT_PILOT = 'on';
+  recoveryBusinessId = (await Game.withCharacter(app.pool, recoveryAccount, (ch, c, h) =>
+    Depot.openDepot(ch, { salePrice: 600, bidPrice: 500, targetStock: 2, reorderAt: 0, restockBudget: 2000 }, c, h))).id;
+} finally {
+  if (originalDepotPilot === undefined) delete process.env.DEPOT_PILOT;
+  else process.env.DEPOT_PILOT = originalDepotPilot;
+}
+await app.pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network')", [recoveryActor.id]);
+const recoveryOwner = { scope: 'account', id: recoveryAccount };
+const recoveryCraft = await Items.withItemTransaction(app.pool, async c => {
+  await Items.grantStack(c, recoveryOwner, 'mat:hardened_steel', 1, 'standard', 'explicit cold-start recovery test input', 'cold-start-recovery-steel');
+  await Items.grantStack(c, recoveryOwner, 'mat:salvage_parts', 2, 'standard', 'explicit cold-start recovery test input', 'cold-start-recovery-parts');
+  return Craft.craftWorldGraphRecipe(c, { accountId: recoveryAccount }, 'recipe:precision_lock_tool', 'cold-start-recovery-craft');
+});
+assert.equal(recoveryCraft.outputs.length, 1, 'the actual standard recipe creates one supported tool');
+const recoveryItemId = recoveryCraft.outputs[0].id;
+const equipmentRecoveryReadPath = '/v1/equipment-recovery?' + new URLSearchParams({ businessId: recoveryBusinessId, itemId: recoveryItemId });
+const assertEquipmentRecoveryInspection = response => {
+  assert.equal(response.code, 200, 'a valid owned equipment query must serve the first player');
+  assert.deepEqual(Object.keys(response.body).sort(), ['businessId', 'eligible', 'itemId', 'maximum', 'originalCharacterId', 'remaining', 'revision', 'sourceHash']);
+  assert.equal(response.body.businessId, recoveryBusinessId);
+  assert.equal(response.body.itemId, recoveryItemId);
+  assert.equal(response.body.originalCharacterId, recoveryActor.id);
+  assert.equal(response.body.remaining, 100);
+  assert.equal(response.body.maximum, 100);
+  assert.equal(response.body.eligible, false, 'inspection does not turn a new tool into worn recovery');
+  assert(Number.isSafeInteger(response.body.revision) && response.body.revision >= 0);
+  assert.match(response.body.sourceHash, /^[a-f0-9]{64}$/);
+};
+for (const [url, error, message] of [
+  ['/v1/equipment-recovery', 'equipment_recovery_terms', 'query'],
+  [equipmentRecoveryReadPath + '&owner=foreign', 'equipment_recovery_terms', 'query'],
+  ['/v1/equipment-recovery?' + new URLSearchParams({ businessId: recoveryBusinessId, itemId: '' }), 'equipment_recovery_identity', 'Phase 2 registry operation could not complete.'],
+]) {
+  const malformed = await j('GET', url, token);
+  assert.equal(malformed.code, 400, 'missing, additional and invalid query terms remain malformed');
+  assert.equal(malformed.body?.error, error); assert.equal(malformed.body?.message, message);
+  assert.throws(() => assertEquipmentRecoveryInspection(malformed), { name: 'AssertionError' },
+    'a malformed equipment request cannot pass as a successful inspection');
+}
+assertEquipmentRecoveryInspection(await j('GET', equipmentRecoveryReadPath, token));
 
 // Nearby reads require the current viewer tuple issued by the private social board.
 const social = await j('GET', '/v1/city/social', token);
@@ -187,6 +244,7 @@ assert(paths.includes('/v1/market/feed'), 'the public feed remains in the comple
 assert(paths.includes('/v1/city/homes'), 'the home directory remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/agent/decision-replay'), 'the history board remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/equipment-recovery'), 'the equipment inspection remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -200,11 +258,13 @@ for (const p of paths) {
     : p === '/v1/market/feed' ? '/v1/market/feed?districtId=docks&goodId=gin'
       : p === '/v1/city/homes' ? homesReadPath
         : p === '/v1/city/home/interior' ? interiorReadPath
-          : p === '/v1/agent/decision-replay' ? decisionReplayReadPath : p;
+          : p === '/v1/agent/decision-replay' ? decisionReplayReadPath
+            : p === '/v1/equipment-recovery' ? equipmentRecoveryReadPath : p;
   const r = await j('GET', readPath, token);
   if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
   if (p === '/v1/city/homes') assertEmptyHomes(r);
   if (p === '/v1/agent/decision-replay') assertEmptyDecisionReplay(r, 'intelligence_purchase');
+  if (p === '/v1/equipment-recovery') assertEquipmentRecoveryInspection(r);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (p === '/v1/genesis-auction') {
