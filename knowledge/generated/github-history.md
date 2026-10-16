@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `bc94e8877de0`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `48e24a401acd`.
 
 ## Repository
 
@@ -9,7 +9,7 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4129 |
+| Commits in clone | 4133 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
@@ -19,7 +19,7 @@
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3169 |
+| OmertaDev | 3173 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 684 | historical |
-| knowledge/generated/graph-summary.md | 684 | historical |
-| knowledge/generated/graph.json | 684 | historical |
-| knowledge/generated/inventory.md | 684 | historical |
+| knowledge/generated/github-history.md | 685 | historical |
+| knowledge/generated/graph-summary.md | 685 | historical |
+| knowledge/generated/graph.json | 685 | historical |
+| knowledge/generated/inventory.md | 685 | historical |
 | [SPEC.md](../../SPEC.md) | 552 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 467 | yes |
@@ -63,8 +63,8 @@
 | [test/migrate.js](../../test/migrate.js) | 87 | yes |
 | [test/growth.js](../../test/growth.js) | 83 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 81 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 75 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 73 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 76 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 74 | yes |
 | [test/hardening.js](../../test/hardening.js) | 69 | yes |
 | [src/preflight.js](../../src/preflight.js) | 67 | yes |
 | [tools/sim.js](../../tools/sim.js) | 61 | yes |
