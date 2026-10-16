@@ -64,10 +64,10 @@
       return list(entity && (entity.uiActions || entity.actions)).map(action => {
         if (!validAction(action)) return '';
         const key = String(++actionSequence);
-        actions.set(key, { action, context });
-        const preview = consequence(action, context);
-        return '<div class="fieldwork-action">' + (preview ? '<p class="fieldwork-consequence" id="fieldwork-terms-' + key + '"><b>Before you choose</b> ' + escape(preview) + '</p>' : '')
-          + '<button type="button" data-fieldwork-action="' + key + '"' + (preview ? ' aria-describedby="fieldwork-terms-' + key + '"' : '')
+        const description = consequence(action, context, entity), preview = description || 'No cost or reward estimate is available for this action.';
+        actions.set(key, { action, context, description });
+        return '<div class="fieldwork-action"><p class="fieldwork-consequence" id="fieldwork-terms-' + key + '"><b>Before you act</b> ' + escape(preview) + '</p>'
+          + '<button type="button" data-fieldwork-action="' + key + '" aria-describedby="fieldwork-terms-' + key + '"'
           + (busy || loading || panes[view].error || sessionUnavailable || action.available === false ? ' disabled' : '') + '>' + escape(action.label || 'Continue') + '</button>'
           + (action.available === false ? blockers(list(action.blockedBy).filter(blocker => !shown.has(blockerText(blocker)))) : '') + '</div>';
       }).join('');
@@ -97,7 +97,7 @@
       return '<div class="fieldwork-intro"><h2>The workbench</h2><p>Choose what to make. Each recipe shows the materials you need, the cost and what you will receive.</p></div><div class="fieldwork-grid">'
         + (recipes.map(recipe => '<article class="fieldwork-card" data-fieldwork-recipe="' + escape(recipe.id) + '"><header><h3>' + escape(title(recipe)) + '</h3>' + stamp(recipe.available ? 'ready' : 'requirements') + '</header>'
           + (recipe.description ? '<p>' + escape(recipe.description) + '</p>' : '') + ingredients(recipe.inputs, 'Consumes') + ingredients(recipe.outputs, 'Creates')
-          + (recipe.cashCost ? '<p class="fieldwork-cost">Cost: $' + count(recipe.cashCost) + '</p>' : '') + blockers(recipe.blockedBy)
+          + (Number.isFinite(recipe.cashCost) ? '<p class="fieldwork-cost">Cash cost: $' + count(recipe.cashCost) + '</p>' : '') + blockers(recipe.blockedBy)
           + actionButtons(recipe, title(recipe), true) + '</article>').join('') || empty('No recipes are currently issued.')) + '</div>';
     }
 
@@ -300,7 +300,17 @@
       }
     }
 
-    function consequence(action, context) {
+    function consequence(action, context, entity) {
+      if (action.path.includes('/recipes/') && entity) {
+        const terms = [];
+        for (const [key, label] of [['inputs', 'Consumes'], ['outputs', 'Creates']]) {
+          const items = list(entity[key]).filter(item => Number.isFinite(item.quantity ?? item.qty) && (item.quantity ?? item.qty) > 0);
+          if (items.length) terms.push(label + ': ' + items.map(item => count(item.quantity ?? item.qty) + '× ' + (item.title || words(item.templateId || item.assetType || 'item'))).join(', ') + '.');
+        }
+        if (Number.isFinite(entity.cashCost)) terms.push('Cash cost: $' + count(entity.cashCost) + '.');
+        if (action.consequence) terms.push(action.consequence);
+        if (terms.length) return terms.join(' ');
+      }
       if (action.consequence) return action.consequence;
       if (action.path.includes('/salvage/')) return 'This consumes the selected vehicle. The server determines the materials recovered.';
       if (action.path.endsWith('/craft')) return 'This consumes the listed materials and cash cost for ' + context + '.';
@@ -310,8 +320,7 @@
       return '';
     }
 
-    async function confirmAction(action, context) {
-      const description = consequence(action, context);
+    async function confirmAction(action, description) {
       if (!description) return true;
       if (options.confirm) return await options.confirm(action.label || 'Confirm this action', description, { yes: 'Confirm', danger: true }) === true;
       return new Promise(resolve => {
@@ -343,7 +352,7 @@
       const attemptedCharacter = characterId;
       busy = true; draw();
       try {
-        if (!alreadyConfirmed && !await confirmAction(action, entry.context)) return;
+        if (!alreadyConfirmed && !await confirmAction(action, entry.description)) return;
         if (!active() || attemptedCharacter !== characterId) return;
         const response = await options.act(action.method, action.path, action.body || {}, { label: action.label || entry.context, idempotencyKey: key });
         if (destroyed) return;

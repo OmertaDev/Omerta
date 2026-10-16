@@ -33,6 +33,9 @@ try {
   }
   assert.equal(presence.actors.find(a => a.id === npc.id).name, 'City Resident', 'Public resident lore remains visible.');
   const action = presence.actors.find(a => a.id === npc.id).actions[0];
+  assert.match(action.label, /^Ask about /); assert.match(action.topic.id, /^docks-/);
+  assert(action.topic.teaser.length > 30);
+  for (const target of [agent, human]) assert.match(presence.actors.find(a => a.id === target.id).actions[0].label, /^Compare rumors about /);
   const headers = { ...me.headers, 'Idempotency-Key': crypto.randomUUID() };
   const fields = 'id,cash,bank,respect,health,energy,nerve,heat,muscle,cunning,speed,train_at';
   const before = (await app.pool.query(`SELECT ${fields} FROM characters ORDER BY id`)).rows;
@@ -43,6 +46,12 @@ try {
   const first = await app.inject({ method: action.method, url: action.path, headers, payload: action.body });
   assert.equal(first.statusCode, 200, first.body); assert.equal(first.json().journal.length, 1);
   assert.equal(first.json().objectives[0].status, 'available');
+  assert.equal(first.json().intel.tipId, action.topic.id); assert.equal(first.json().intel.title, action.topic.title);
+  assert.equal(first.json().intel.category, 'rumor'); assert.equal(first.json().intel.attribution, 'resident');
+  assert(first.json().intel.description.length > action.topic.teaser.length);
+  assert.equal(first.json().intel.lead.districtId, 'docks'); assert.equal(first.json().intel.lead.venueId, 'fixer');
+  assert.match(first.json().intel.lead.label, /The Last Ferry Receipt/);
+  assert.deepEqual(first.json().intel, first.json().journal[0]);
   assert.equal(first.headers['cache-control'], 'private, no-store');
   const sighting = await readPlayerIntel(app.pool, meAccount, npc.id);
   assert.equal(sighting.name, 'City Resident'); assert.equal(sighting.loc, 'docks'); assert.equal(sighting.source, 'city_encounter');
@@ -103,6 +112,8 @@ try {
   const privateReceipt = await app.inject({ method: privateAction.method, url: privateAction.path, headers: privateHeaders, payload: privateAction.body });
   assert.equal(privateReceipt.statusCode, 200, privateReceipt.body);
   const privateBody = privateReceipt.json(), learned = await readPlayerIntel(app.pool, privateAccount, privateSource.id);
+  assert.equal(privateBody.intel.tipId, privateAction.topic.id); assert.equal(privateBody.intel.attribution, 'street');
+  assert.match(privateBody.intel.sourceContext, /own observation of this player/);
   assert.equal(privateBody.encounteredActor.name, 'Notebook Old Name');
   assert.equal(privateBody.encounteredActor.observedAt, privateBody.intel.collectedAt);
   assert.equal(privateBody.encounteredActor.source, 'city_encounter');
@@ -177,6 +188,6 @@ try {
   const heirReplay = await app.inject({ method: heirReceipt.issued.method, url: heirReceipt.issued.path, headers: heirReceipt.headers, payload: heirReceipt.issued.body });
   assert.equal(heirReplay.body, heirReceipt.response.body);
   assert.equal((await app.inject({ url: '/v1/city/intel', headers: me.headers })).json().progress.totalEncounters, 1, 'Only one new heir encounter grants intel.');
-  console.log('city-presence-api PASS: authenticated DTOs, exact HTTP replay/body binding, generic bypass denial, private generation state, OpenAPI, neutral resources');
+  console.log('city-presence-api PASS: topic previews and full rumor receipts, authenticated DTOs, exact HTTP replay/body binding, generic bypass denial, private generation state, OpenAPI, neutral resources');
   console.log('city-presence-api lifecycle PASS: actual estate, owner wipe, other-source cards, immutable historical HTTP receipts and one fresh heir grant');
 } finally { await app.close(); }

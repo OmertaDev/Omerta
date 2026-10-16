@@ -6,7 +6,9 @@ import { withTwoCharacters } from '../src/game.js';
 import { runEstate } from '../src/social/estate.js';
 import { retireResident } from '../src/population.js';
 import { readPlayerIntel, recordPlayerIntel } from '../src/playerintel.js';
-import { M3 } from '../src/rules.js';
+import { DISTRICTS, M3 } from '../src/rules.js';
+import { CITY_RUMOR_TOPICS } from '../src/content/city-rumors.js';
+import { DISTRICT_STORY_ARCS } from '../src/content/district-story-arcs.js';
 
 const db = await commandDatabase('city_presence'), pool = db.pool;
 const uuid = () => crypto.randomUUID();
@@ -26,6 +28,9 @@ const neutral = async () => ({
   ledger: Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n),
   contacts: Number((await pool.query('SELECT COUNT(*) n FROM contacts')).rows[0].n),
   calls: Number((await pool.query('SELECT COUNT(*) n FROM contact_calls')).rows[0].n),
+  mysteries: Number((await pool.query('SELECT COUNT(*) n FROM mystery_instances')).rows[0].n),
+  mysteryNodes: Number((await pool.query('SELECT COUNT(*) n FROM mystery_node_state')).rows[0].n),
+  mysteryChoices: Number((await pool.query('SELECT COUNT(*) n FROM mystery_choices')).rows[0].n),
 });
 function wrappedPool(onQuery) {
   return { async connect() {
@@ -62,6 +67,23 @@ async function concurrent(actions) {
   return results;
 }
 try {
+  assert.deepEqual(Object.keys(CITY_RUMOR_TOPICS).sort(), DISTRICTS.map(d => d.id).sort());
+  const allRumors = Object.values(CITY_RUMOR_TOPICS).flat();
+  assert.equal(allRumors.length, 18); assert.equal(new Set(allRumors.map(r => r.id)).size, 18);
+  for (const district of DISTRICTS) {
+    const story = DISTRICT_STORY_ARCS.find(s => s.presentation.districtId === district.id);
+    assert.equal(CITY_RUMOR_TOPICS[district.id].length, 3);
+    for (const rumor of CITY_RUMOR_TOPICS[district.id]) {
+      assert.equal(rumor.lead.districtId, district.id, 'A saved rumor retains its original district.');
+      assert.equal(rumor.lead.venueId, story.presentation.startVenueId, 'A rumor points to the real case opening.');
+      assert.equal(rumor.lead.label, 'Ask the Fixer about ' + story.presentation.title);
+      assert(rumor.teaser.length > 30 && rumor.description.length > rumor.teaser.length);
+      for (const node of story.package.nodes.filter(n => n.visibility !== 'public')) {
+        assert(!JSON.stringify(rumor).includes(node.id), 'A rumor exposes no private quest node.');
+        assert(!JSON.stringify(rumor).includes(node.metadata.description), 'A rumor does not copy a later account or reward.');
+      }
+    }
+  }
   const me = await actor('Viewer'), npc = await actor('Resident', 'npc'), machine = await actor('Machine', 'agent'), human = await actor('Human');
   const away = await actor('Elsewhere', 'player', 'midtown'), dead = await actor('Dead');
   await pool.query('UPDATE characters SET alive=false WHERE id=$1', [dead.id]);
@@ -87,6 +109,10 @@ try {
     assert.deepEqual(Object.keys(row).sort(), ['actions','district','gangTag','generation','id','kind','lastSeenDistrict','level','name','observedAt','online','source','sourceName']);
     for (const secret of [me.account, npc.account, machine.account, human.account, 'cash', 'bank', 'omr', 'health', 'account_id']) assert(!JSON.stringify(row).includes(secret));
     assert.deepEqual(row.actions[0].body, request(me, { generation: row.generation }));
+    const action = row.actions[0], rumor = CITY_RUMOR_TOPICS.docks.find(r => r.id === action.topic.id);
+    assert(rumor); assert.deepEqual(action.topic, { id: rumor.id, title: rumor.title, teaser: rumor.teaser });
+    assert.equal(action.label, (row.kind === 'npc' ? 'Ask about ' : 'Compare rumors about ') + rumor.subject);
+    assert.match(action.consequence, /unverified rumor/);
   }
   await assert.rejects(cityPresence(pool, me.account, [], { limit: 41 }), e => e.code === 'bad_city_presence');
   await assert.rejects(cityPresence(pool, me.account, [], { district: 'midtown' }), e => e.code === 'bad_city_presence');
@@ -98,16 +124,28 @@ try {
   await assert.rejects(recordCityEncounter(pool, me.account, npc.id, { ...request(me, npc), targetGeneration: 2 }, uuid()), e => e.code === 'city_actor_unavailable');
   const firstKey = uuid(), first = await encounter(me, npc, firstKey);
   assert.equal(first.journal.length, 1); assert.equal(first.objectives[0].status, 'available');
+  const npcTopic = cards.find(c => c.id === npc.id).actions[0].topic;
+  assert.equal(first.intel.tipId, npcTopic.id); assert.equal(first.intel.title, npcTopic.title);
+  assert.equal(first.intel.category, 'rumor'); assert.equal(first.intel.attribution, 'resident');
+  assert.equal(first.intel.description, CITY_RUMOR_TOPICS.docks.find(r => r.id === npcTopic.id).description);
+  assert.equal(first.intel.lead.districtId, 'docks'); assert.equal(first.intel.lead.venueId, 'fixer'); assert.match(first.intel.sourceContext, /resident/);
   assert.deepEqual(await encounter(me, npc, firstKey), first);
   await assert.rejects(encounter(me, human, firstKey), e => e.code === 'idempotency_conflict');
   const repeated = await encounter(me, npc);
   assert.equal(repeated.progress.totalEncounters, 2); assert.equal(repeated.objectives[0].status, 'available');
+  assert.equal(repeated.intel.tipId, first.intel.tipId); assert.equal(repeated.intel.description, first.intel.description);
+  assert.deepEqual((await cityPresence(pool, me.account)).actors.find(c => c.id === npc.id).actions[0].topic, npcTopic,
+    'Recording a rumor cannot switch the advertised subject.');
   const distinct = await encounter(me, human);
   assert.deepEqual(distinct.objectives.map(o => o.status), ['completed', 'available']);
+  assert.equal(distinct.intel.tipId, cards.find(c => c.id === human.id).actions[0].topic.id);
+  assert.equal(distinct.intel.attribution, 'street'); assert.match(distinct.intel.sourceContext, /own observation of this player/);
   const cross = await encounter(me, human);
   assert.deepEqual(cross.objectives.map(o => o.status), ['completed', 'completed', 'available']);
   const third = await encounter(me, machine);
   assert(third.objectives.every(o => o.status === 'completed'));
+  assert.equal(third.intel.tipId, cards.find(c => c.id === machine.id).actions[0].topic.id);
+  assert.equal(third.intel.attribution, 'street'); assert.match(third.intel.sourceContext, /own observation of this agent/);
   assert.deepEqual((await cityIntel(pool, human.account)).journal, [], 'Private journal does not follow another actor.');
   for (let i = 0; i < CITY_JOURNAL_LIMIT + 2; i++) await encounter(me, npc);
   const bounded = await cityIntel(pool, me.account);
@@ -125,7 +163,20 @@ try {
   assert.deepEqual(await cityIntel(pool, me.account), rollbackBefore);
   assert.deepEqual(await knowledgeRows(), knowledgeBefore, 'Receipt failure restores exact notebook snapshots and phone contacts.');
   assert.equal((await encounter(me, npc, failureKey)).progress.totalEncounters, 40);
-  assert.deepEqual(await neutral(), before, 'Encounters do not change resources, ledgers or contacts.');
+  assert.deepEqual(await neutral(), before, 'Rumors do not change resources, ledgers, contacts or quest progression.');
+  const rumorReader = await actor('District rumor reader'), rumorSource = await actor('District rumor resident', 'npc');
+  const beforeDistrictRumors = await neutral();
+  for (const district of DISTRICTS) {
+    await pool.query('UPDATE characters SET loc=$1 WHERE id IN ($2,$3)', [district.id, rumorReader.id, rumorSource.id]);
+    const roster = await cityPresence(pool, rumorReader.account, [], { limit: 40 });
+    const issued = roster.actors.find(row => row.id === rumorSource.id).actions[0];
+    const result = await recordCityEncounter(pool, rumorReader.account, rumorSource.id, issued.body, uuid());
+    const topic = CITY_RUMOR_TOPICS[district.id].find(r => r.id === issued.topic.id);
+    assert(topic, 'Every district advertises its own case.');
+    assert.equal(result.intel.tipId, issued.topic.id); assert.equal(result.intel.description, topic.description);
+    assert.deepEqual(result.intel.lead, topic.lead);
+  }
+  assert.deepEqual(await neutral(), beforeDistrictRumors, 'Every district lead is a journal entry, not an automatic quest start.');
   // A real past observation is not refreshed by a current district projection. The
   // canonical row still issues the district/generation preconditions for an encounter.
   const observer = await actor('Private notebook owner'), stranger = await actor('Old human name'), bot = await actor('Old agent name', 'agent');
@@ -160,6 +211,7 @@ try {
   await pool.query('UPDATE characters SET name=$2,respect=400000 WHERE id=$1', [stranger.id, 'Newer live name']);
   const datedCard = (await cityPresence(pool, observer.account, [stranger.account], { limit: 40 })).actors.find(row => row.id === stranger.id);
   assert.equal(datedCard.name, learned.encounteredActor.name); assert.equal(datedCard.level, learned.encounteredActor.level);
+  assert.equal(datedCard.actions[0].topic.id, learned.intel.tipId, 'Changing private facts cannot change a public rumor topic.');
   assert.deepEqual(await encounter(observer, stranger, learnedKey), learned, 'The original encounter receipt remains immutable after live facts change.');
   assert.deepEqual(await readPlayerIntel(pool, observer.account, stranger.id), learnedSnapshot, 'Old-key replay is not a new sighting.');
   assert.deepEqual(await cityIntel(pool, observer.account), learnedJournal);
@@ -303,6 +355,6 @@ try {
       assert.deepEqual(await neutral(), afterLifecycle, 'Fresh heir intel adds no economic/stat/resource effect.');
     }
   }
-  console.log('city-presence PASS: public types/pagination, scoped32-card intel, encounter objectives, replay/isolation/rollback, neutral resources' + (postgres ? ', real concurrent replay and opposite-target locks' : ' (pg-mem; native locking not claimed)'));
+  console.log('city-presence PASS: 18 district rumors, stable preview/receipt, honest source attribution, public types/pagination, scoped32-card intel, encounter objectives, replay/isolation/rollback, neutral resources/quests' + (postgres ? ', real concurrent replay and opposite-target locks' : ' (pg-mem; native locking not claimed)'));
   console.log('city-presence lifecycle PASS: actual estate/retirement wipe all owner generations, retain other source cards/receipts and preserve existing economics' + (postgres ? ', native late rollback and retry' : ' (native lifecycle rollback not claimed)'));
 } finally { await db.cleanup(pool); }
