@@ -29,6 +29,9 @@ import { speakeasyOwnedOf } from './speakeasy.js';
 import { fightersOf } from './boxing.js';
 import { withItemTransaction, assertItemTransactionHealthy } from './items.js';
 import { prelockEquipmentRentalDeathActors } from './equipmentrentals.js';
+import {executeSyndicatedLoanAction as syndicatedLoanDispatch} from './syndicatedloans.js';
+export {syndicatedLoanDispatch};
+import {assertItemTransaction,itemTransactionIdentity,registerItemTransactionUndo,poisonItemTransaction} from './items.js';
 
 const uid = () => crypto.randomUUID();
 import { startFirstBlood } from './firstblood.js';   // THE AHA MOMENT — assign a fresh player their first rival
@@ -99,8 +102,9 @@ bus.setMaxListeners(0);
 // Write a notification row AND push it live if the player is connected.
 // Delivery over the socket doesn't mark it delivered — GET /notifications does.
 export async function notify(client, characterId, type, payload = {}) {
+  const notificationId=uid();if(syndicatedRootsByClient.get(client)?.active)registerItemTransactionUndo(client,()=>client.query('DELETE FROM notifications WHERE id=$1',[notificationId]));
   await client.query('INSERT INTO notifications (id, character_id, type, payload) VALUES ($1,$2,$3,$4)',
-    [uid(), characterId, type, JSON.stringify(payload)]);
+    [notificationId, characterId, type, JSON.stringify(payload)]);
   bus.emit(`me:${characterId}`, { type, payload });
 }
 
@@ -183,6 +187,7 @@ export async function ledger(client, { characterId = null, accountId = null, cur
     throw new GameError('bad_ledger_hook', 'Ledger preparation requires an internal callback.');
   }
   const transactionId = uid();
+  const syndication=syndicatedRootsByClient.get(client);if(syndication?.active){registerItemTransactionUndo(client,()=>client.query('DELETE FROM transactions WHERE id=$1',[transactionId]));syndication.journals.push(transactionId);}
   // Trusted integration seam for the PRIMARY audit row only. The ledger retains ID generation;
   // this does not register compensation for the separate OMR recycling side effects below.
   if (beforeInsert) await beforeInsert(transactionId);
@@ -988,8 +993,9 @@ async function persistKitchen(client, ch, owned) {
 
 // §12 telemetry — one row per event, queried by the mod dashboards.
 export async function track(client, accountId, event, props = {}) {
+  const telemetryId=uid();if(syndicatedRootsByClient.get(client)?.active)registerItemTransactionUndo(client,()=>client.query('DELETE FROM telemetry WHERE id=$1',[telemetryId]));
   await client.query('INSERT INTO telemetry (id, account_id, event, props) VALUES ($1,$2,$3,$4)',
-    [uid(), accountId, event, JSON.stringify(props)]);
+    [telemetryId, accountId, event, JSON.stringify(props)]);
 }
 
 // §7.4 daily-contract counters (drawn jobs claim against these in growth.js)
@@ -2800,4 +2806,50 @@ export async function sweepGrandReferrals(pool) {
     catch (e) { console.error('[sweepGrandReferrals]', r2, e?.code || e?.message || e); }
   }
   return { candidates: cand.length, paid };
+}
+
+// N22: fixed source-resolved dispatch. No caller callback or actor/helper factory.
+const syndicatedRootRequests=new WeakMap(),syndicatedRootsByClient=new WeakMap();
+export async function assertSyndicatedLoanRootRequest(c,account,action,input,key,token){
+  assertItemTransaction(c);const s=syndicatedRootRequests.get(token);
+  if(!s?.active||s.client!==c||s.transaction!==itemTransactionIdentity(c)||s.account!==account||s.action!==action||s.input!==input||s.key!==key)throw new GameError('syndicated_loan','canonical_root');return s;
+}
+export async function assertSyndicatedLoanActionScope(c,account,action,input,key,token){
+  const s=await assertSyndicatedLoanRootRequest(c,account,action,input,key,token);if(!s.context||!s.rentalScope)throw new GameError('syndicated_loan','canonical_context');
+  const R=await import('./equipmentrentals.js');await R.assertSyndicatedLoanActors(c,account,action,input,key,token,s.rentalScope);
+  for(const ch of s.context.parties){const row=(await c.query('SELECT id,account_id,alive,is_npc FROM characters WHERE id=$1',[ch.id])).rows[0];if(!ch?.alive||ch.is_npc||!Number.isSafeInteger(Number(ch.cash))||Number(ch.cash)<0||!row?.alive||row.is_npc||row.account_id!==ch.account_id||s.context.parties.find(p=>p.id===row.id)!==ch)throw new GameError('syndicated_loan','canonical_original');}
+  return s.context;
+}
+async function rememberSyndicatedOriginal(c,table,column,value,row){
+  if(!['characters','account_persistent'].includes(table)||!['id','account_id'].includes(column))throw new GameError('syndicated_loan','canonical_original');
+  const keys=Object.keys(row).filter(k=>k!==column);if(keys.some(k=>!/^[a-z][a-z0-9_]*$/.test(k)))throw new GameError('syndicated_loan','canonical_original');
+  registerItemTransactionUndo(c,()=>c.query('UPDATE '+table+' SET '+keys.map((k,i)=>'"'+k+'"=$'+(i+2)).join(',')+' WHERE '+column+'=$1',[value,...keys.map(k=>Array.isArray(row[k])?JSON.stringify(row[k]):row[k])]));
+}
+export async function runSyndicatedLoanAction(pool,account,action,body,key){
+  const S=await import('./syndicatedloans.js'),R=await import('./equipmentrentals.js'),input=S.syndicatedLoanTerms(action,body);
+  const prior=await S.replaySyndicatedLoanRequest(pool,account,action,input,key);if(prior)return prior;
+  if(action==='propose')await withItemTransaction(pool,c=>S.clearExpiredSyndicatedLoanMembership(c,account));
+  const source=await S.syndicatedLoanScopeSource(pool,account,action,input,key);
+  for(const a of [...new Set(source.parties.map(p=>p.account_id))].sort())await settleIfDue(pool,a);
+  try{return await withItemTransaction(pool,async c=>{
+    const token=Object.freeze({}),s={active:true,client:c,transaction:itemTransactionIdentity(c),account,action,input,key,context:null,rentalScope:null,journals:[]};
+    if(syndicatedRootsByClient.has(c))throw new GameError('syndicated_loan','canonical_root');syndicatedRootRequests.set(token,s);syndicatedRootsByClient.set(c,s);
+    try{
+      const prelock=await R.prelockSyndicatedLoanActors(c,account,action,input,key,token);s.rentalScope=prelock.scope;
+      if(prelock.source.sourceHash!==source.sourceHash)throw new GameError('contention','Syndicated originals changed; retry the whole action.');
+      const parties=prelock.source.parties.map(p=>prelock.characters.find(ch=>ch.id===p.id));if(parties.some((ch,i)=>!ch?.alive||ch.is_npc||ch.account_id!==prelock.source.parties[i].account_id))throw new GameError('syndicated_loan','canonical_original');
+      const accounts=new Map(),owned=new Map(),helpers=new Map();for(const ch of [...parties].sort((a,b)=>a.account_id.localeCompare(b.account_id))){
+        const acct=(await c.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE',[ch.account_id])).rows[0];if(!acct)throw new GameError('syndicated_loan','canonical_original');accounts.set(ch.account_id,acct);
+        await rememberSyndicatedOriginal(c,'characters','id',ch.id,{...ch});await rememberSyndicatedOriginal(c,'account_persistent','account_id',ch.account_id,{...acct});
+      }
+      for(const ch of parties){const acct=accounts.get(ch.account_id),o=await loadOwned(c,ch);owned.set(ch.id,o);await accrueAndLedger(c,ch,acct,o);helpers.set(ch.id,{ledger,rngLog,notify,track,bumpDaily,acct,owned:o,accountId:ch.account_id});}
+      const actor=parties.find(p=>p.account_id===account);s.context={client:c,actor,parties,journals:s.journals,helpersFor:character=>{const h=helpers.get(character);if(!h)throw new GameError('syndicated_loan','canonical_original');return h;}};
+      await assertSyndicatedLoanActionScope(c,account,action,input,key,token);
+      const result=await syndicatedLoanDispatch(c,account,action,input,key,token);await assertSyndicatedLoanActionScope(c,account,action,input,key,token);assertItemTransactionHealthy(c);
+      for(const ch of [...parties].sort((a,b)=>a.id.localeCompare(b.id))){await persistCharacter(c,ch);await persistKitchen(c,ch,owned.get(ch.id));}
+      for(const a of [...accounts.keys()].sort())await persistAccount(c,a,accounts.get(a));
+      await assertSyndicatedLoanActionScope(c,account,action,input,key,token);for(const ch of parties){const saved=(await c.query('SELECT cash FROM characters WHERE id=$1',[ch.id])).rows[0];if(Number(saved.cash)!==Number(ch.cash))throw new GameError('syndicated_loan','canonical_persistence');}
+      await S.assertSyndicatedLoanCompletion(c,account,action,input,key,token,result);return result;
+    }catch(error){poisonItemTransaction(c,error);throw error;}finally{s.active=false;syndicatedRootRequests.delete(token);syndicatedRootsByClient.delete(c);}
+  });}catch(error){throw deadlockToRetry(error);}
 }

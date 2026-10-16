@@ -1,3 +1,4 @@
+import {retireSyndicatedLoansAtDeath} from '../syndicatedloans.js';
 import {recoverMerchantReturnsAtEstateStart,recoverMerchantReturnsInEstate} from '../merchantreturns.js';
 import {recoverMultiHopCourierAtEstateStart,assertMultiHopCourierEstateCleared} from '../multihopcourier.js';
 import { recoverCustomerVaultsAtEstateStart } from '../customervaults.js';
@@ -484,6 +485,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // survives — SIGN-OFF Tier 4, §10.4-neutral); a debt owed BY the dead borrower is uncollectable.
   const ln = await voidLoansAtDeath(client, victim.id, h, opts.killerCh, estateLootRate, heirId);
   if (opts.killerCh && ln.looted) report.loanLoot = ln.looted;
+  await retireSyndicatedLoansAtDeath(client,victim.id,h);
   // THE FAVOR: a dead poster's open escrow is the same loot surface as a market order or a loan
   // offer — a PLAYER fire-kill takes its share, the rest burns (never a loot-proof vault).
   const fv = await voidFavorsAtDeath(client, victim.id, opts.killerCh, estateLootRate);

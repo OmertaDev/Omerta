@@ -25,6 +25,7 @@ import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { employmentCashInvariant } from './gameemploymentinvariants.js';
 import {performanceEmploymentInvariant} from './performanceemployment.js';
+import {collectSyndicatedLoanIssues} from './syndicatedloans.js';
 import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
@@ -745,6 +746,8 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('buyer cooperative GIN custody', cooperatives.ginEscrow, cooperativeCapturedGin - cooperativeClaimedGin + cooperativeDeathGin, 0);
   push('buyer cooperative settlement provenance', cooperatives.issues.length, 0, 0, { issues: cooperatives.issues });
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
+  const syndicatedIssues=await collectSyndicatedLoanIssues(pool);
+  push('syndicated loan canonical facility provenance',syndicatedIssues.length,0,0,{issues:syndicatedIssues});
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
   const courierReserve = await one(pool, 'SELECT COALESCE(SUM(reserved_cash),0) s FROM multi_hop_couriers');

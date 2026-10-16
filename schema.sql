@@ -9619,3 +9619,20 @@ CREATE TABLE IF NOT EXISTS performance_employment_requests (
  original_character TEXT NOT NULL REFERENCES characters(id), terms JSONB NOT NULL, receipt JSONB NOT NULL,
  employment_id TEXT NOT NULL UNIQUE REFERENCES performance_employment_contracts(employment_id),
  PRIMARY KEY(account_id,request_key));
+
+
+CREATE TABLE IF NOT EXISTS syndicated_loan_facilities (
+ id TEXT PRIMARY KEY,borrower_account TEXT NOT NULL REFERENCES accounts(id),borrower_character TEXT NOT NULL REFERENCES characters(id),
+ terms JSONB NOT NULL,terms_hash TEXT NOT NULL,state TEXT NOT NULL CHECK(state IN ('funding','funded','active','repaid','cancelled','retired')),
+ created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,CHECK(expires_at>created_at));
+CREATE TABLE IF NOT EXISTS syndicated_loan_legs (
+ facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id),lender_account TEXT NOT NULL REFERENCES accounts(id),lender_character TEXT NOT NULL REFERENCES characters(id),
+ loan_id TEXT NOT NULL UNIQUE,principal INT NOT NULL CHECK(principal>0),funded_at TIMESTAMPTZ NOT NULL,source_hash TEXT NOT NULL,
+ fund_transaction TEXT NOT NULL UNIQUE REFERENCES transactions(id),canonical_receipt JSONB NOT NULL,
+ PRIMARY KEY(facility_id,lender_account));
+CREATE TABLE IF NOT EXISTS syndicated_loan_members (
+ account_id TEXT PRIMARY KEY REFERENCES accounts(id),character_id TEXT NOT NULL REFERENCES characters(id),facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id));
+CREATE TABLE IF NOT EXISTS syndicated_loan_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,
+ original_character TEXT NOT NULL REFERENCES characters(id),facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id),
+ action TEXT NOT NULL CHECK(action IN ('propose','fund','take','repay','cancel')),request_json JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));

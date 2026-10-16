@@ -143,6 +143,7 @@ import { withCrewTwoCharacters, withAcquisitionCharacters } from './company-midd
 import { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';
 import { register as registerGameEmployment } from './routes/gameemployment.js';
 import {register as registerPerformanceEmployment} from './routes/performanceemployment.js';
+import {register as registerSyndicatedLoans} from './routes/syndicatedloans.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
 import { register as registerCompanyOpportunities } from './routes/companyopportunities.js';
 import { register as registerCommercialReputation } from './routes/commercialreputation.js';
@@ -2541,6 +2542,7 @@ export async function buildServer() {
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
   registerPerformanceEmployment(app,{pool,auth});
+  registerSyndicatedLoans(app,{pool,auth});
   registerCompanyWorkflows(app, { pool, auth });
   registerCompanyOpportunities(app, { pool, auth });
   registerCommercialReputation(app, { pool, auth });
