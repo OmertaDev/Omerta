@@ -1215,7 +1215,6 @@ try {
     const requestStart = cityRequests.length, name = mapBoard.districts.find(district => district.id === 'cathedral').name;
     const caption = cityPage.locator('.city-world__atlas-diagram text').filter({ hasText: name });
     assert.equal(await caption.count(), 1);
-    await caption.scrollIntoViewIfNeeded();
     await cityPage.evaluate(() => {
       window.__atlasCaptionActivation = null;
       window.__atlasCaptionObserver = event => {
