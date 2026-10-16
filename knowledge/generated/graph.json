@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1c65006c86ee0ba2376d4c8be532b2498acfd9db",
+  "sourceRevision": "36cb42f9971e731df6e48deec81028d3e8d15384",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15667,
-    "edges": 61814,
+    "nodes": 15672,
+    "edges": 61834,
     "byNodeType": {
       "Artifact": 6627,
       "Command": 286,
-      "Commit": 4119,
+      "Commit": 4124,
       "Contract": 134,
       "Document": 928,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5235,
-      "CHANGED": 23856,
+      "CHANGED": 23868,
       "CONTAINS": 6648,
       "DECLARES": 286,
       "DEFINED_IN": 1712,
       "DEPENDS_ON": 69,
       "EXECUTES": 1052,
       "HANDLED_BY": 923,
-      "HAS_COMMIT": 4119,
+      "HAS_COMMIT": 4124,
       "IMPLEMENTS": 124,
-      "IMPORTS": 6632,
+      "IMPORTS": 6634,
       "INHERITS": 45,
       "REFERENCES": 3709,
       "REPRESENTS": 2309,
-      "TESTS": 2117,
+      "TESTS": 2118,
       "TRACKS": 126,
       "USES_TABLE": 2852
     }
@@ -40045,18 +40045,18 @@
       "extension": ".md",
       "bytes": 55577,
       "lines": 180,
-      "version": "d8c1d1be88bbc73c",
+      "version": "9b6f22c924b4d96b",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "d8c1d1be88bbc73c"
+          "version": "9b6f22c924b4d96b"
         }
       ],
-      "lastChangedAt": "2026-10-16T03:09:11.000Z",
+      "lastChangedAt": "2026-10-16T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1c65006c86ee0ba2376d4c8be532b2498acfd9db"
+      "lastChangedCommit": "36cb42f9971e731df6e48deec81028d3e8d15384"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -117250,18 +117250,18 @@
       "extension": ".md",
       "bytes": 57050,
       "lines": 760,
-      "version": "6bde2b01ef75fd45",
+      "version": "0c6b50fded6e4970",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6bde2b01ef75fd45"
+          "version": "0c6b50fded6e4970"
         }
       ],
-      "lastChangedAt": "2026-10-16T03:09:10.000Z",
+      "lastChangedAt": "2026-10-16T03:43:59.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "bd898f8d015618c49fe557a1def26174a48f3da4"
+      "lastChangedCommit": "a42671b5fac9c1cd3948377d004d836d610ebadb"
     },
     {
       "key": "Artifact:src/access.js",
@@ -120928,20 +120928,20 @@
       "path": "src/customervaults.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 26858,
-      "lines": 190,
-      "version": "fbce32ae943b274b",
+      "bytes": 27030,
+      "lines": 192,
+      "version": "24d851143dd7ebc5",
       "text": true,
       "provenance": [
         {
           "file": "src/customervaults.js",
           "line": 1,
-          "version": "fbce32ae943b274b"
+          "version": "24d851143dd7ebc5"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:40:51.000Z",
+      "lastChangedAt": "2026-10-16T03:27:33.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77257a15573731304592a4dd0dac55d49e2204b9"
+      "lastChangedCommit": "166b658a206c785f7121f168bb4c6d81ee66f705"
     },
     {
       "key": "Artifact:src/dailyreminder.js",
@@ -133118,20 +133118,20 @@
       "path": "test/customervaults-fixture.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4925,
+      "bytes": 4932,
       "lines": 26,
-      "version": "d2a53ffe9c62342c",
+      "version": "dffbe30a894b529e",
       "text": true,
       "provenance": [
         {
           "file": "test/customervaults-fixture.js",
           "line": 1,
-          "version": "d2a53ffe9c62342c"
+          "version": "dffbe30a894b529e"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:40:51.000Z",
+      "lastChangedAt": "2026-10-16T03:27:33.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77257a15573731304592a4dd0dac55d49e2204b9"
+      "lastChangedCommit": "166b658a206c785f7121f168bb4c6d81ee66f705"
     },
     {
       "key": "Artifact:test/customervaults-guards.js",
@@ -133187,20 +133187,20 @@
       "path": "test/customervaults.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10459,
-      "lines": 45,
-      "version": "a16c19fbc9c56d15",
+      "bytes": 12484,
+      "lines": 58,
+      "version": "27ce1874d16249aa",
       "text": true,
       "provenance": [
         {
           "file": "test/customervaults.js",
           "line": 1,
-          "version": "a16c19fbc9c56d15"
+          "version": "27ce1874d16249aa"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:40:51.000Z",
+      "lastChangedAt": "2026-10-16T03:27:33.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "77257a15573731304592a4dd0dac55d49e2204b9"
+      "lastChangedCommit": "166b658a206c785f7121f168bb4c6d81ee66f705"
     },
     {
       "key": "Artifact:test/dailyreminder.js",
@@ -148507,18 +148507,18 @@
       "extension": ".js",
       "bytes": 119183,
       "lines": 285,
-      "version": "e0c56fd7466789d5",
+      "version": "51cf32ffbfe2e014",
       "text": true,
       "provenance": [
         {
           "file": "tools/next-layer-source-compatibility.js",
           "line": 1,
-          "version": "e0c56fd7466789d5"
+          "version": "51cf32ffbfe2e014"
         }
       ],
-      "lastChangedAt": "2026-10-16T02:58:33.000Z",
+      "lastChangedAt": "2026-10-16T03:34:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fbdbcf14731fb0d6a3b490bb65245112ee303b0f"
+      "lastChangedCommit": "48763e7f471534f65f738a4480c4e3b74214f97b"
     },
     {
       "key": "Artifact:tools/nft-art-preview.js",
@@ -151356,18 +151356,18 @@
       "extension": ".js",
       "bytes": 85178,
       "lines": 1107,
-      "version": "bbd9762ecf6b8756",
+      "version": "30d19df335018059",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "bbd9762ecf6b8756"
+          "version": "30d19df335018059"
         }
       ],
-      "lastChangedAt": "2026-10-16T03:09:11.000Z",
+      "lastChangedAt": "2026-10-16T03:44:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1c65006c86ee0ba2376d4c8be532b2498acfd9db"
+      "lastChangedCommit": "36cb42f9971e731df6e48deec81028d3e8d15384"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -158967,6 +158967,22 @@
       ]
     },
     {
+      "key": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "type": "Commit",
+      "id": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "label": "Refresh generated next-layer knowledge after final source pin",
+      "title": "Refresh generated next-layer knowledge after final source pin",
+      "date": "2026-10-16T03:12:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "provenance": [
+        {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+        }
+      ]
+    },
+    {
       "key": "Commit:0afe9c677d9e331a76968d7c1788a156d6f6ca5c",
       "type": "Commit",
       "id": "0afe9c677d9e331a76968d7c1788a156d6f6ca5c",
@@ -162099,6 +162115,22 @@
         {
           "commit": "165ae911f01d67ee108063776f41d931fe108d89",
           "url": "https://github.com/OmertaDev/Omerta/commit/165ae911f01d67ee108063776f41d931fe108d89"
+        }
+      ]
+    },
+    {
+      "key": "Commit:166b658a206c785f7121f168bb4c6d81ee66f705",
+      "type": "Commit",
+      "id": "166b658a206c785f7121f168bb4c6d81ee66f705",
+      "label": "Preserve safehouse restrictions for fresh customer vault deposits",
+      "title": "Preserve safehouse restrictions for fresh customer vault deposits",
+      "date": "2026-10-16T03:27:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/166b658a206c785f7121f168bb4c6d81ee66f705",
+      "provenance": [
+        {
+          "commit": "166b658a206c785f7121f168bb4c6d81ee66f705",
+          "url": "https://github.com/OmertaDev/Omerta/commit/166b658a206c785f7121f168bb4c6d81ee66f705"
         }
       ]
     },
@@ -170455,6 +170487,22 @@
       ]
     },
     {
+      "key": "Commit:36cb42f9971e731df6e48deec81028d3e8d15384",
+      "type": "Commit",
+      "id": "36cb42f9971e731df6e48deec81028d3e8d15384",
+      "label": "Pin next-layer additive relation to reviewed first-five source",
+      "title": "Pin next-layer additive relation to reviewed first-five source",
+      "date": "2026-10-16T03:44:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/36cb42f9971e731df6e48deec81028d3e8d15384",
+      "provenance": [
+        {
+          "commit": "36cb42f9971e731df6e48deec81028d3e8d15384",
+          "url": "https://github.com/OmertaDev/Omerta/commit/36cb42f9971e731df6e48deec81028d3e8d15384"
+        }
+      ]
+    },
+    {
       "key": "Commit:36cd7c5d300e7f0cd14315f3410a1ac6197406d9",
       "type": "Commit",
       "id": "36cd7c5d300e7f0cd14315f3410a1ac6197406d9",
@@ -175027,6 +175075,22 @@
         {
           "commit": "48238abed0b399c329097e4d20c516c660a77ba1",
           "url": "https://github.com/OmertaDev/Omerta/commit/48238abed0b399c329097e4d20c516c660a77ba1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:48763e7f471534f65f738a4480c4e3b74214f97b",
+      "type": "Commit",
+      "id": "48763e7f471534f65f738a4480c4e3b74214f97b",
+      "label": "Pin next-layer source identity after protected-deposit repair",
+      "title": "Pin next-layer source identity after protected-deposit repair",
+      "date": "2026-10-16T03:34:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/48763e7f471534f65f738a4480c4e3b74214f97b",
+      "provenance": [
+        {
+          "commit": "48763e7f471534f65f738a4480c4e3b74214f97b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/48763e7f471534f65f738a4480c4e3b74214f97b"
         }
       ]
     },
@@ -199283,6 +199347,22 @@
         {
           "commit": "a4116db2db04316a6571de4e8032f8e64a7845e0",
           "url": "https://github.com/OmertaDev/Omerta/commit/a4116db2db04316a6571de4e8032f8e64a7845e0"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a42671b5fac9c1cd3948377d004d836d610ebadb",
+      "type": "Commit",
+      "id": "a42671b5fac9c1cd3948377d004d836d610ebadb",
+      "label": "Refresh next-layer census after protected-deposit repair",
+      "title": "Refresh next-layer census after protected-deposit repair",
+      "date": "2026-10-16T03:43:59.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a42671b5fac9c1cd3948377d004d836d610ebadb",
+      "provenance": [
+        {
+          "commit": "a42671b5fac9c1cd3948377d004d836d610ebadb",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a42671b5fac9c1cd3948377d004d836d610ebadb"
         }
       ]
     },
@@ -234083,12 +234163,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 180,
-      "version": "d8c1d1be88bbc73c",
+      "version": "9b6f22c924b4d96b",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "d8c1d1be88bbc73c"
+          "version": "9b6f22c924b4d96b"
         }
       ]
     },
@@ -239155,12 +239235,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 760,
-      "version": "6bde2b01ef75fd45",
+      "version": "0c6b50fded6e4970",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "6bde2b01ef75fd45"
+          "version": "0c6b50fded6e4970"
         }
       ]
     },
@@ -239857,7 +239937,7 @@
         },
         {
           "file": "test/customervaults.js",
-          "line": 37
+          "line": 45
         },
         {
           "file": "test/decisionreplay-integration.js",
@@ -247042,6 +247122,9 @@
           "commit": "0a59554664bbf60a2f5d754c5718ea532208ba5f"
         },
         {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+        },
+        {
           "commit": "0c72a29748df6b1c6955ebcb648efe5f20fec6a1"
         },
         {
@@ -248105,6 +248188,9 @@
         },
         {
           "commit": "0abec2cbf1c3db79e044787b09d789515c403a83"
+        },
+        {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
@@ -250162,6 +250248,9 @@
           "commit": "0abec2cbf1c3db79e044787b09d789515c403a83"
         },
         {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+        },
+        {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
         },
         {
@@ -252215,6 +252304,9 @@
         },
         {
           "commit": "0abec2cbf1c3db79e044787b09d789515c403a83"
+        },
+        {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
@@ -254840,6 +254932,9 @@
         },
         {
           "commit": "0abec2cbf1c3db79e044787b09d789515c403a83"
+        },
+        {
+          "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
         },
         {
           "commit": "0bdc0af79261fbbb00acab5e4516747f40cbe365"
@@ -261352,13 +261447,13 @@
       "type": "Module",
       "id": "src/customervaults.js",
       "label": "src/customervaults.js",
-      "lines": 190,
-      "version": "fbce32ae943b274b",
+      "lines": 192,
+      "version": "24d851143dd7ebc5",
       "provenance": [
         {
           "file": "src/customervaults.js",
           "line": 1,
-          "version": "fbce32ae943b274b"
+          "version": "24d851143dd7ebc5"
         }
       ]
     },
@@ -269932,7 +270027,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1c65006c86ee0ba2376d4c8be532b2498acfd9db",
+      "revision": "36cb42f9971e731df6e48deec81028d3e8d15384",
       "currentBranch": "codex/economy-next-layer-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -309001,12 +309096,12 @@
       "id": "test/customervaults-fixture.js",
       "label": "test/customervaults-fixture.js",
       "lines": 26,
-      "version": "d2a53ffe9c62342c",
+      "version": "dffbe30a894b529e",
       "provenance": [
         {
           "file": "test/customervaults-fixture.js",
           "line": 1,
-          "version": "d2a53ffe9c62342c"
+          "version": "dffbe30a894b529e"
         }
       ]
     },
@@ -309045,13 +309140,13 @@
       "type": "TestSuite",
       "id": "test/customervaults.js",
       "label": "test/customervaults.js",
-      "lines": 45,
-      "version": "a16c19fbc9c56d15",
+      "lines": 58,
+      "version": "27ce1874d16249aa",
       "provenance": [
         {
           "file": "test/customervaults.js",
           "line": 1,
-          "version": "a16c19fbc9c56d15"
+          "version": "27ce1874d16249aa"
         }
       ]
     },
@@ -370306,6 +370401,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0afe9c677d9e331a76968d7c1788a156d6f6ca5c",
       "to": "Artifact:src/deliveryfinance.js",
       "provenance": {
@@ -376630,6 +376765,30 @@
       "to": "Artifact:docs/equipment-insurance-security-review.md",
       "provenance": {
         "commit": "165ae911f01d67ee108063776f41d931fe108d89"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:166b658a206c785f7121f168bb4c6d81ee66f705",
+      "to": "Artifact:src/customervaults.js",
+      "provenance": {
+        "commit": "166b658a206c785f7121f168bb4c6d81ee66f705"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:166b658a206c785f7121f168bb4c6d81ee66f705",
+      "to": "Artifact:test/customervaults-fixture.js",
+      "provenance": {
+        "commit": "166b658a206c785f7121f168bb4c6d81ee66f705"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:166b658a206c785f7121f168bb4c6d81ee66f705",
+      "to": "Artifact:test/customervaults.js",
+      "provenance": {
+        "commit": "166b658a206c785f7121f168bb4c6d81ee66f705"
       }
     },
     {
@@ -399450,6 +399609,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:36cb42f9971e731df6e48deec81028d3e8d15384",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "36cb42f9971e731df6e48deec81028d3e8d15384"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:36cb42f9971e731df6e48deec81028d3e8d15384",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "36cb42f9971e731df6e48deec81028d3e8d15384"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:36cd7c5d300e7f0cd14315f3410a1ac6197406d9",
       "to": "Artifact:docs/storefront-fulfillment-security-review.md",
       "provenance": {
@@ -411982,6 +412157,14 @@
       "to": "Artifact:test/agent-alpha.js",
       "provenance": {
         "commit": "481ef6aa9a7f80a0dea309c75c77e6897bdc295e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:48763e7f471534f65f738a4480c4e3b74214f97b",
+      "to": "Artifact:tools/next-layer-source-compatibility.js",
+      "provenance": {
+        "commit": "48763e7f471534f65f738a4480c4e3b74214f97b"
       }
     },
     {
@@ -474518,6 +474701,14 @@
       "to": "Artifact:public/index.html",
       "provenance": {
         "commit": "a4116db2db04316a6571de4e8032f8e64a7845e0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a42671b5fac9c1cd3948377d004d836d610ebadb",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "a42671b5fac9c1cd3948377d004d836d610ebadb"
       }
     },
     {
@@ -633406,7 +633597,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1558
+      "weight": 1559
     },
     {
       "type": "DEPENDS_ON",
@@ -653821,6 +654012,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0af036f5c0753ba5cf3ba4c9d933d81473d889a4",
+      "provenance": {
+        "commit": "0af036f5c0753ba5cf3ba4c9d933d81473d889a4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0afe9c677d9e331a76968d7c1788a156d6f6ca5c",
       "provenance": {
         "commit": "0afe9c677d9e331a76968d7c1788a156d6f6ca5c"
@@ -655384,6 +655583,14 @@
       "to": "Commit:165ae911f01d67ee108063776f41d931fe108d89",
       "provenance": {
         "commit": "165ae911f01d67ee108063776f41d931fe108d89"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:166b658a206c785f7121f168bb4c6d81ee66f705",
+      "provenance": {
+        "commit": "166b658a206c785f7121f168bb4c6d81ee66f705"
       }
     },
     {
@@ -659565,6 +659772,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:36cb42f9971e731df6e48deec81028d3e8d15384",
+      "provenance": {
+        "commit": "36cb42f9971e731df6e48deec81028d3e8d15384"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:36cd7c5d300e7f0cd14315f3410a1ac6197406d9",
       "provenance": {
         "commit": "36cd7c5d300e7f0cd14315f3410a1ac6197406d9"
@@ -661848,6 +662063,14 @@
       "to": "Commit:48238abed0b399c329097e4d20c516c660a77ba1",
       "provenance": {
         "commit": "48238abed0b399c329097e4d20c516c660a77ba1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:48763e7f471534f65f738a4480c4e3b74214f97b",
+      "provenance": {
+        "commit": "48763e7f471534f65f738a4480c4e3b74214f97b"
       }
     },
     {
@@ -673976,6 +674199,14 @@
       "to": "Commit:a4116db2db04316a6571de4e8032f8e64a7845e0",
       "provenance": {
         "commit": "a4116db2db04316a6571de4e8032f8e64a7845e0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a42671b5fac9c1cd3948377d004d836d610ebadb",
+      "provenance": {
+        "commit": "a42671b5fac9c1cd3948377d004d836d610ebadb"
       }
     },
     {
@@ -691568,6 +691799,15 @@
       "provenance": {
         "file": "src/customervaults.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/customervaults.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "src/customervaults.js",
+        "line": 7
       }
     },
     {
@@ -713194,7 +713434,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/customervaults.js",
-        "line": 34
+        "line": 42
       }
     },
     {
@@ -713203,7 +713443,7 @@
       "to": "Artifact:src/operatingpolicy.js",
       "provenance": {
         "file": "test/customervaults.js",
-        "line": 28
+        "line": 36
       }
     },
     {
@@ -713213,6 +713453,15 @@
       "provenance": {
         "file": "test/customervaults.js",
         "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/customervaults.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/customervaults.js",
+        "line": 19
       }
     },
     {
@@ -713239,7 +713488,7 @@
       "to": "ExternalDependency:ajv",
       "provenance": {
         "file": "test/customervaults.js",
-        "line": 37
+        "line": 45
       }
     },
     {
@@ -805939,7 +806188,7 @@
       "to": "Artifact:src/items.js",
       "provenance": {
         "file": "test/customervaults.js",
-        "line": 34
+        "line": 42
       }
     },
     {
@@ -805948,7 +806197,7 @@
       "to": "Artifact:src/operatingpolicy.js",
       "provenance": {
         "file": "test/customervaults.js",
-        "line": 28
+        "line": 36
       }
     },
     {
@@ -805958,6 +806207,15 @@
       "provenance": {
         "file": "test/customervaults.js",
         "line": 10
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/customervaults.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/customervaults.js",
+        "line": 19
       }
     },
     {
@@ -827827,7 +828085,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -827836,7 +828094,7 @@
       "to": "Table:business_depots",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -827845,7 +828103,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -827854,7 +828112,7 @@
       "to": "Table:customer_vault_positions",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 17
+        "line": 18
       }
     },
     {
@@ -827863,7 +828121,7 @@
       "to": "Table:customer_vault_requests",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 27
+        "line": 28
       }
     },
     {
@@ -827872,7 +828130,7 @@
       "to": "Table:customer_vault_services",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -827881,7 +828139,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/customervaults.js",
-        "line": 21
+        "line": 22
       }
     },
     {

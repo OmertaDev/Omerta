@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1c65006c86ee`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `36cb42f9971e`.
 
 ## Repository
 
@@ -9,7 +9,7 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4119 |
+| Commits in clone | 4124 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
@@ -19,7 +19,7 @@
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3159 |
+| OmertaDev | 3164 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,16 +30,16 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 682 | historical |
-| knowledge/generated/graph-summary.md | 682 | historical |
-| knowledge/generated/graph.json | 682 | historical |
-| knowledge/generated/inventory.md | 682 | historical |
-| [SPEC.md](../../SPEC.md) | 550 | yes |
+| knowledge/generated/github-history.md | 683 | historical |
+| knowledge/generated/graph-summary.md | 683 | historical |
+| knowledge/generated/graph.json | 683 | historical |
+| knowledge/generated/inventory.md | 683 | historical |
+| [SPEC.md](../../SPEC.md) | 551 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 467 | yes |
 | [src/server.js](../../src/server.js) | 434 | yes |
 | [schema.sql](../../schema.sql) | 364 | yes |
-| knowledge/generated/documents.md | 336 | historical |
+| knowledge/generated/documents.md | 337 | historical |
 | [package.json](../../package.json) | 321 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
 | knowledge/generated/modules.md | 241 | historical |
@@ -63,8 +63,8 @@
 | [test/migrate.js](../../test/migrate.js) | 87 | yes |
 | [test/growth.js](../../test/growth.js) | 83 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 81 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 73 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 71 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 74 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 72 | yes |
 | [test/hardening.js](../../test/hardening.js) | 69 | yes |
 | [src/preflight.js](../../src/preflight.js) | 67 | yes |
 | [tools/sim.js](../../tools/sim.js) | 61 | yes |

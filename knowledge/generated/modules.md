@@ -161,7 +161,7 @@
 | [src/customerlayaway-contracts.js](../../src/customerlayaway-contracts.js) | 13 | platform-core | 0 / 1 | 0 | 1 | 0 |
 | [src/customerlayaway.js](../../src/customerlayaway.js) | 46 | platform-core | 6 / 5 | 0 | 10 | 1 |
 | [src/customervaults-contracts.js](../../src/customervaults-contracts.js) | 24 | platform-core | 0 / 2 | 0 | 1 | 1 |
-| [src/customervaults.js](../../src/customervaults.js) | 190 | platform-core | 5 / 7 | 2 | 7 | 2 |
+| [src/customervaults.js](../../src/customervaults.js) | 192 | platform-core | 6 / 7 | 2 | 7 | 2 |
 | [src/dailyreminder.js](../../src/dailyreminder.js) | 23 | platform-core | 2 / 3 | 0 | 3 | 1 |
 | [src/day.js](../../src/day.js) | 72 | world-progression | 6 / 2 | 1 | 0 | 0 |
 | [src/db-rls.js](../../src/db-rls.js) | 46 | platform-core | 0 / 2 | 0 | 0 | 1 |
@@ -447,7 +447,7 @@
 | [src/routes/world-kernel.js](../../src/routes/world-kernel.js) | 87 | platform-core | 8 / 1 | 6 | 1 | 0 |
 | [src/routes/worldgraph.js](../../src/routes/worldgraph.js) | 675 | world-graph | 5 / 7 | 21 | 7 | 5 |
 | [src/rules.generated.js](../../src/rules.generated.js) | 475 | platform-core | 0 / 2 | 0 | 10 | 1 |
-| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 372 | 0 | 0 | 200 |
+| [src/rules.js](../../src/rules.js) | 14 | platform-core | 2 / 374 | 0 | 0 | 201 |
 | [src/rules.tail.js](../../src/rules.tail.js) | 6154 | platform-core | 0 / 1 | 0 | 55 | 0 |
 | [src/rwahealth.js](../../src/rwahealth.js) | 684 | platform-core | 1 / 1 | 0 | 0 | 1 |
 | [src/rwahealthclearance.js](../../src/rwahealthclearance.js) | 1092 | platform-core | 4 / 0 | 0 | 6 | 0 |
