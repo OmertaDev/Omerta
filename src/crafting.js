@@ -640,7 +640,8 @@ export function recipeCatalog(ctx = {}, craftingContext = DEFAULT_CRAFTING_CONTE
   const runtime = contextOf(craftingContext);
   const context = previewContext(ctx);
   return [...CRAFTING_DEFINITIONS.get(runtime).values()]
-    .filter((recipe) => recipe.visibility === 'public')
+    // Exact UID recovery has its own source quote and consent action.
+    .filter((recipe) => recipe.visibility === 'public' && recipe.id !== 'recipe:recover_worn_precision_tool')
     .flatMap((recipe) => {
       const revealed = recipe.discovery.mode === 'public' || (SERVER_PREVIEWS.has(ctx) && discovered(recipe, ctx));
       if (!revealed) return recipe.discovery.mode === 'partial' ? [{ ...partialRecipe(recipe), available: false, blockedBy: [{ adapter: 'discovery' }] }] : [];
@@ -896,7 +897,8 @@ export async function planCraftingSnapshot(client, accountId, craftingContext, r
   if (!character) return { groups: [], render: async () => [] };
   // A public recipe does not declassify its input/output definitions. This public
   // crafting board omits recipes whose entries would name hidden objects.
-  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId)).filter((recipe) => publicRecipe(runtime, recipe));
+  const recipes = recipeIds.map((recipeId) => recipeOf(runtime, recipeId))
+    .filter((recipe) => publicRecipe(runtime, recipe) && recipe.id !== 'recipe:recover_worn_precision_tool');
   for (const recipe of recipes) {
     assertNoUnsupportedEconomy(recipe);
     if (inputsOf(recipe).some((entry) => entry.assetType)) fail('unsupported_salvage_recipe', 'Salvage uses its dedicated board.');

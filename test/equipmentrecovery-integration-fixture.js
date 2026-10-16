@@ -20,6 +20,13 @@ try{
   const maker={scope:'account',id:'recovery-wear-0'};
   await tx(async c=>{await I.grantStack(c,maker,'mat:hardened_steel',1,'standard','explicit recovery input fixture','worn-steel');await I.grantStack(c,maker,'mat:salvage_parts',2,'standard','explicit recovery input fixture','worn-parts');});
   const craft=await tx(c=>C.craftWorldGraphRecipe(c,{accountId:maker.id},'recipe:precision_lock_tool','worn-real-craft')),itemId=craft.outputs[0].id;
+  assert(!C.recipeCatalog().some(r=>r.id===R.EQUIPMENT_RECOVERY.recipeId),'F01 and generic crafting catalog must omit the dedicated recovery action');
+  const {companyProductionRecipes}=await import('../src/companyproduction.js');
+  assert(!companyProductionRecipes().some(r=>r.id===R.EQUIPMENT_RECOVERY.recipeId),'A commissioned production offer cannot advertise dedicated recovery as a generic recipe');
+  const homeCards=await I.withItemRead(pool,c=>C.homeRecipeCatalogForPlayer(c,maker.id));
+  assert(!homeCards.some(r=>r.id===R.EQUIPMENT_RECOVERY.recipeId),'The genuine home workbench omits the unavailable generic action');
+  const genericToken=app.jwt.sign({sub:maker.id,agent:true}),genericCards=await app.inject({method:'GET',url:'/v1/worldgraph/recipes',headers:{authorization:'Bearer '+genericToken}});
+  assert.equal(genericCards.statusCode,200,genericCards.body);assert(!genericCards.json().recipes.some(r=>r.id===R.EQUIPMENT_RECOVERY.recipeId),'Actual agent recipe API must not advertise a permanently rejected generic craft');
   let accountOwner=maker;
   for(let n=0;n<8;n++){
     const account='recovery-wear-'+n,owner={scope:'character',id:account+'-actor'};
