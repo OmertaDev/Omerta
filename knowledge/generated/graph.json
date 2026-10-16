@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e012dfbdcccdedd29af58bff074604f91456df76",
+  "sourceRevision": "a090af5acd78d6725b8d62f02aa40e8c729cb419",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 14951,
-    "edges": 58931,
+    "nodes": 14954,
+    "edges": 58940,
     "byNodeType": {
       "Artifact": 6465,
       "Command": 275,
-      "Commit": 3777,
+      "Commit": 3780,
       "Contract": 133,
       "Document": 910,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5075,
-      "CHANGED": 22984,
+      "CHANGED": 22990,
       "CONTAINS": 6486,
       "DECLARES": 275,
       "DEFINED_IN": 1652,
       "DEPENDS_ON": 69,
       "EXECUTES": 979,
       "HANDLED_BY": 907,
-      "HAS_COMMIT": 3777,
+      "HAS_COMMIT": 3780,
       "IMPLEMENTS": 124,
       "IMPORTS": 6038,
       "INHERITS": 45,
@@ -128725,20 +128725,20 @@
       "path": "test/city-world-host-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 136994,
-      "lines": 1574,
-      "version": "0c0ec450cf0d3b79",
+      "bytes": 138182,
+      "lines": 1594,
+      "version": "d701505e3f5cf591",
       "text": true,
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "0c0ec450cf0d3b79"
+          "version": "d701505e3f5cf591"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:42:49.000Z",
+      "lastChangedAt": "2026-10-16T00:45:48.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "569296be60e8cdcfd66fa88b8439184475e5a107"
+      "lastChangedCommit": "8d3672caa150e2753a4fb8116b3228663194d812"
     },
     {
       "key": "Artifact:test/city-world-opportunities.js",
@@ -148433,20 +148433,20 @@
       "path": "tools/scale.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 50086,
-      "lines": 683,
-      "version": "12bb081a85d626e3",
+      "bytes": 51720,
+      "lines": 711,
+      "version": "2fda8e7d45fb753e",
       "text": true,
       "provenance": [
         {
           "file": "tools/scale.js",
           "line": 1,
-          "version": "12bb081a85d626e3"
+          "version": "2fda8e7d45fb753e"
         }
       ],
-      "lastChangedAt": "2026-10-15T01:07:10.000Z",
+      "lastChangedAt": "2026-10-16T00:51:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "cff145882d9e84c575587699ef97821d26677d77"
+      "lastChangedCommit": "a090af5acd78d6725b8d62f02aa40e8c729cb419"
     },
     {
       "key": "Artifact:tools/setup-contextplus.ps1",
@@ -182058,6 +182058,22 @@
       ]
     },
     {
+      "key": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "type": "Commit",
+      "id": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "label": "Refresh generated knowledge for City lifecycle proof repair",
+      "title": "Refresh generated knowledge for City lifecycle proof repair",
+      "date": "2026-10-15T23:34:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "provenance": [
+        {
+          "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+        }
+      ]
+    },
+    {
       "key": "Commit:7d4b1ffce56136bafddb46bb6bc609233b21712b",
       "type": "Commit",
       "id": "7d4b1ffce56136bafddb46bb6bc609233b21712b",
@@ -185814,6 +185830,22 @@
         {
           "commit": "8d2e5117b9c78b6c6f95211820d0b5ccb1a6a658",
           "url": "https://github.com/OmertaDev/Omerta/commit/8d2e5117b9c78b6c6f95211820d0b5ccb1a6a658"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8d3672caa150e2753a4fb8116b3228663194d812",
+      "type": "Commit",
+      "id": "8d3672caa150e2753a4fb8116b3228663194d812",
+      "label": "test: admit the real social read before token revocation",
+      "title": "test: admit the real social read before token revocation",
+      "date": "2026-10-16T00:45:48.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8d3672caa150e2753a4fb8116b3228663194d812",
+      "provenance": [
+        {
+          "commit": "8d3672caa150e2753a4fb8116b3228663194d812",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8d3672caa150e2753a4fb8116b3228663194d812"
         }
       ]
     },
@@ -190870,6 +190902,22 @@
         {
           "commit": "a08c5a546db6637503042af460c6cb5363c6595a",
           "url": "https://github.com/OmertaDev/Omerta/commit/a08c5a546db6637503042af460c6cb5363c6595a"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a090af5acd78d6725b8d62f02aa40e8c729cb419",
+      "type": "Commit",
+      "id": "a090af5acd78d6725b8d62f02aa40e8c729cb419",
+      "label": "test: prove car auction reachability through canonical routes",
+      "title": "test: prove car auction reachability through canonical routes",
+      "date": "2026-10-16T00:51:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a090af5acd78d6725b8d62f02aa40e8c729cb419",
+      "provenance": [
+        {
+          "commit": "a090af5acd78d6725b8d62f02aa40e8c729cb419",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a090af5acd78d6725b8d62f02aa40e8c729cb419"
         }
       ]
     },
@@ -239056,6 +239104,9 @@
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
         },
         {
+          "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+        },
+        {
           "commit": "7d4b1ffce56136bafddb46bb6bc609233b21712b"
         },
         {
@@ -241021,6 +241072,9 @@
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
         },
         {
+          "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+        },
+        {
           "commit": "7d4b1ffce56136bafddb46bb6bc609233b21712b"
         },
         {
@@ -242984,6 +243038,9 @@
         },
         {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
+        },
+        {
+          "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
         },
         {
           "commit": "7d4b1ffce56136bafddb46bb6bc609233b21712b"
@@ -245495,6 +245552,9 @@
         },
         {
           "commit": "7d03ee5748c2bee319ddefba4034300a5d71c817"
+        },
+        {
+          "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
         },
         {
           "commit": "7d4b1ffce56136bafddb46bb6bc609233b21712b"
@@ -258802,7 +258862,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e012dfbdcccdedd29af58bff074604f91456df76",
+      "revision": "a090af5acd78d6725b8d62f02aa40e8c729cb419",
       "currentBranch": "codex/city-browser-release-gates-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -294930,13 +294990,13 @@
       "type": "TestSuite",
       "id": "test/city-world-host-browser.js",
       "label": "test/city-world-host-browser.js",
-      "lines": 1574,
-      "version": "0c0ec450cf0d3b79",
+      "lines": 1594,
+      "version": "d701505e3f5cf591",
       "provenance": [
         {
           "file": "test/city-world-host-browser.js",
           "line": 1,
-          "version": "0c0ec450cf0d3b79"
+          "version": "d701505e3f5cf591"
         }
       ]
     },
@@ -431123,6 +431183,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7d4b1ffce56136bafddb46bb6bc609233b21712b",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -439887,6 +439979,14 @@
       "to": "Artifact:test/rc1-car-melt-provenance.js",
       "provenance": {
         "commit": "8d2e5117b9c78b6c6f95211820d0b5ccb1a6a658"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8d3672caa150e2753a4fb8116b3228663194d812",
+      "to": "Artifact:test/city-world-host-browser.js",
+      "provenance": {
+        "commit": "8d3672caa150e2753a4fb8116b3228663194d812"
       }
     },
     {
@@ -453103,6 +453203,14 @@
       "to": "Artifact:test/hardening.js",
       "provenance": {
         "commit": "a08c5a546db6637503042af460c6cb5363c6595a"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a090af5acd78d6725b8d62f02aa40e8c729cb419",
+      "to": "Artifact:tools/scale.js",
+      "provenance": {
+        "commit": "a090af5acd78d6725b8d62f02aa40e8c729cb419"
       }
     },
     {
@@ -642516,6 +642624,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7d0de8119b1e73a1890fcc886676aaf234e3a7bd",
+      "provenance": {
+        "commit": "7d0de8119b1e73a1890fcc886676aaf234e3a7bd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7d4b1ffce56136bafddb46bb6bc609233b21712b",
       "provenance": {
         "commit": "7d4b1ffce56136bafddb46bb6bc609233b21712b"
@@ -644391,6 +644507,14 @@
       "to": "Commit:8d2e5117b9c78b6c6f95211820d0b5ccb1a6a658",
       "provenance": {
         "commit": "8d2e5117b9c78b6c6f95211820d0b5ccb1a6a658"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8d3672caa150e2753a4fb8116b3228663194d812",
+      "provenance": {
+        "commit": "8d3672caa150e2753a4fb8116b3228663194d812"
       }
     },
     {
@@ -646919,6 +647043,14 @@
       "to": "Commit:a08c5a546db6637503042af460c6cb5363c6595a",
       "provenance": {
         "commit": "a08c5a546db6637503042af460c6cb5363c6595a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a090af5acd78d6725b8d62f02aa40e8c729cb419",
+      "provenance": {
+        "commit": "a090af5acd78d6725b8d62f02aa40e8c729cb419"
       }
     },
     {
