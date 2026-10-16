@@ -6,6 +6,7 @@
 // it. This proves: the derived set is well-formed (no constraint/multi-column leakage), it's a clean no-op on
 // a fresh DB, and — the actual fix — it RE-ADDS a column an "old" DB is missing. pg-mem, zero infra.
 import assert from 'node:assert';
+import {createHash} from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -1143,6 +1144,43 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     }
     return mutations;
   };
+  // Refine only this unchanged, closed module's rollback helper. The original
+  // mutation scanner still handles every other source and every Phase 1 table.
+  const finitePerformanceMutations = (entry, index) => {
+    if (entry.name !== 'remember' || entry.file !== 'src/performanceemployment.js') return null;
+    const definitions = (index.get('remember') || []).filter(candidate => candidate.file === entry.file);
+    assert.equal(definitions.length, 1, 'N26 rollback helper requires one actual module definition');
+    const definition = definitions[0];
+    assert(moduleBinding(definition), 'N26 rollback helper must retain its unrebound module binding');
+    assert.equal(definition.parameters, 'c,table,column,value', 'N26 rollback parameter scope changed');
+    const uniform = value => {
+      assert(!value.includes('\r') || (!/(^|[^\r])\n/.test(value) && !/\r(?!\n)/.test(value)),
+        'N26 rollback source must use whole LF or whole CRLF');
+      return value.replaceAll('\r\n', '\n');
+    };
+    const source = uniform(definition.source), code = lexicalMask(source), targets = new Set();
+    let calls = 0, declarations = 0;
+    for (const match of code.matchAll(/(?<![.\w$])remember\s*\(/g)) {
+      if (/\bfunction\s*$/.test(code.slice(0, match.index))) { declarations++; continue; }
+      const call = source.slice(match.index).match(/^remember\(\s*c\s*,\s*'([a-z_][a-z0-9_]*)'\s*,\s*'([a-z_][a-z0-9_]*)'\s*,/);
+      assert(call, 'N26 rollback calls require literal original table and column targets');
+      calls++; targets.add(`${call[1]}:${call[2]}`);
+    }
+    const expected = ['game_employment_assignments:id', 'game_employment_jobs:id',
+      'performance_employment_assignments:assignment_id', 'performance_employment_contracts:employment_id'];
+    assert.equal(declarations, 1); assert.equal(calls, 11);
+    assert.deepEqual([...targets].sort(), expected, 'N26 rollback target census changed');
+    assert.equal(createHash('sha256').update(source).digest('hex'),
+      'b0e7fdbeb0fd518869a04fb66d1f50e652127e7dbd1470a87d86bd2cbbd98328',
+      'N26 rollback finite targets require the exact reviewed whole module');
+    assert.equal(uniform(entry.body), uniform(functionBlock(definition.source, definition.open, entry.file)),
+      'N26 rollback body must be the actual indexed helper');
+    const original = mutationsFor(entry.name, entry.body);
+    assert.deepEqual(original.map(({ verb, table }) => `${verb}:${table}`).sort(),
+      ['DELETE_FROM:<dynamic:table>', 'UPDATE:<dynamic:table>'], 'N26 rollback SQL shape changed');
+    return original.flatMap(mutation => expected.map(target => ({ ...mutation, table: target.split(':')[0] })));
+  };
+
   assert.deepEqual(mutationsFor('tripwire', [
     "await client.query('INSERT INTO item_stacks (owner_scope) VALUES ($1)', ['character']);",
     "await client.query('MERGE INTO operation_escrow target USING source ON false WHEN NOT MATCHED THEN INSERT DEFAULT VALUES');",
@@ -1175,7 +1213,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
     const unknown = localIndex('named', ' return 1; '); unknown.get('advance')[0].file = 'elsewhere.js';
     assert(crawlDeathSources(unknown).names.has('startMystery'), 'Unknown module binding retains full global fallback');
   }
-  const mutations = deathSources.flatMap(({ name, body }) => mutationsFor(name, body));
+  const mutations = deathSources.flatMap(entry => finitePerformanceMutations(entry, functionIndex) ?? mutationsFor(entry.name, entry.body));
   const phase1DeathMutations = mutations
     .filter(({ table }) => tables.has(table) || table.startsWith('<dynamic:'))
     .map(({ handler, verb, table }) => `${handler}:${verb}:${table}`);
