@@ -1,8 +1,8 @@
 // Exact market-operations source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const MARKET_OPERATIONS_SOURCE_REVISION="665931b358401987d720c9dc16006037b56ab498";
-export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="2e6f84caf7b74834f03cf00f7c0b2aa45147206b";
+export const MARKET_OPERATIONS_SOURCE_REVISION="4fdb616de33658ba2b1397820843bcd696594349";
+export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="3e5169ae920abee55cbaa498d4ea0da0f1a63b65";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
   "package.json": {
