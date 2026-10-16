@@ -279,7 +279,7 @@
 | [src/itemdefinitions.js](../../src/itemdefinitions.js) | 201 | platform-core | 4 / 13 | 0 | 6 | 9 |
 | [src/itemdurability.js](../../src/itemdurability.js) | 227 | platform-core | 4 / 32 | 0 | 13 | 15 |
 | [src/itemlots.js](../../src/itemlots.js) | 707 | platform-core | 5 / 5 | 0 | 7 | 11 |
-| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 194 | 15 | 11 | 103 |
+| [src/items.js](../../src/items.js) | 1372 | world-graph | 6 / 195 | 15 | 11 | 104 |
 | [src/keepertransactions.js](../../src/keepertransactions.js) | 421 | platform-core | 0 / 5 | 0 | 1 | 1 |
 | [src/kitchen.js](../../src/kitchen.js) | 374 | platform-core | 3 / 3 | 13 | 8 | 0 |
 | [src/landmarks.js](../../src/landmarks.js) | 53 | world-progression | 3 / 1 | 2 | 2 | 0 |
