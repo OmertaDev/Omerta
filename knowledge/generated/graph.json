@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1441f87debeea86d5c691fd8410c8c92ba986ef4",
+  "sourceRevision": "02430c7d51e0241b05e7da22b9d28b9c024e63ec",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15784,
-    "edges": 62376,
+    "nodes": 15786,
+    "edges": 62383,
     "byNodeType": {
       "Artifact": 6646,
       "Command": 289,
-      "Commit": 4191,
+      "Commit": 4193,
       "Contract": 134,
       "Document": 928,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5257,
-      "CHANGED": 24128,
+      "CHANGED": 24133,
       "CONTAINS": 6667,
       "DECLARES": 289,
       "DEFINED_IN": 1719,
       "DEPENDS_ON": 69,
       "EXECUTES": 1063,
       "HANDLED_BY": 926,
-      "HAS_COMMIT": 4191,
+      "HAS_COMMIT": 4193,
       "IMPLEMENTS": 124,
       "IMPORTS": 6720,
       "INHERITS": 45,
@@ -133693,20 +133693,20 @@
       "path": "test/deedbuildings-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 6608,
-      "lines": 99,
-      "version": "bb38159fe7ade085",
+      "bytes": 7136,
+      "lines": 109,
+      "version": "a78858bf13c9f892",
       "text": true,
       "provenance": [
         {
           "file": "test/deedbuildings-browser.js",
           "line": 1,
-          "version": "bb38159fe7ade085"
+          "version": "a78858bf13c9f892"
         }
       ],
-      "lastChangedAt": "2026-10-16T16:18:55.000Z",
+      "lastChangedAt": "2026-10-16T22:01:41.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "220a4e75cc339a606a1d50385f3676f3b5e68d7f"
+      "lastChangedCommit": "02430c7d51e0241b05e7da22b9d28b9c024e63ec"
     },
     {
       "key": "Artifact:test/deedbuildings.js",
@@ -157263,6 +157263,22 @@
         {
           "commit": "0239d95c132e20541db92af76b21bad94a1a3305",
           "url": "https://github.com/OmertaDev/Omerta/commit/0239d95c132e20541db92af76b21bad94a1a3305"
+        }
+      ]
+    },
+    {
+      "key": "Commit:02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+      "type": "Commit",
+      "id": "02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+      "label": "test: discover installed Chromium for deed browser proof",
+      "title": "test: discover installed Chromium for deed browser proof",
+      "date": "2026-10-16T22:01:41.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+      "provenance": [
+        {
+          "commit": "02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+          "url": "https://github.com/OmertaDev/Omerta/commit/02430c7d51e0241b05e7da22b9d28b9c024e63ec"
         }
       ]
     },
@@ -221859,6 +221875,22 @@
       ]
     },
     {
+      "key": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "type": "Commit",
+      "id": "f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "label": "Refresh knowledge for historical fixture repair",
+      "title": "Refresh knowledge for historical fixture repair",
+      "date": "2026-10-16T21:31:14.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "provenance": [
+        {
+          "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f89df180aa54e71cb17431d5324d3d9344ca7de0"
+        }
+      ]
+    },
+    {
       "key": "Commit:f8aae4e6232f9c7a26231c56fefc16b13f0c9631",
       "type": "Commit",
       "id": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631",
@@ -251718,6 +251750,9 @@
           "commit": "f8657f9c5ce8c19b8af1fdb2c625f712cf07fa57"
         },
         {
+          "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+        },
+        {
           "commit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
         },
         {
@@ -253836,6 +253871,9 @@
           "commit": "f8657f9c5ce8c19b8af1fdb2c625f712cf07fa57"
         },
         {
+          "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+        },
+        {
           "commit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
         },
         {
@@ -255952,6 +255990,9 @@
         },
         {
           "commit": "f8657f9c5ce8c19b8af1fdb2c625f712cf07fa57"
+        },
+        {
+          "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
         },
         {
           "commit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
@@ -258667,6 +258708,9 @@
         },
         {
           "commit": "f8657f9c5ce8c19b8af1fdb2c625f712cf07fa57"
+        },
+        {
+          "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
         },
         {
           "commit": "f8aae4e6232f9c7a26231c56fefc16b13f0c9631"
@@ -271998,7 +272042,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1441f87debeea86d5c691fd8410c8c92ba986ef4",
+      "revision": "02430c7d51e0241b05e7da22b9d28b9c024e63ec",
       "currentBranch": "codex/deed-quest-release-harness",
       "defaultBranch": "main",
       "visibility": "public",
@@ -311510,13 +311554,13 @@
       "type": "TestSuite",
       "id": "test/deedbuildings-browser.js",
       "label": "test/deedbuildings-browser.js",
-      "lines": 99,
-      "version": "bb38159fe7ade085",
+      "lines": 109,
+      "version": "a78858bf13c9f892",
       "provenance": [
         {
           "file": "test/deedbuildings-browser.js",
           "line": 1,
-          "version": "bb38159fe7ade085"
+          "version": "a78858bf13c9f892"
         }
       ]
     },
@@ -368267,6 +368311,14 @@
       "to": "Artifact:docs/commercial-premises-literal-sql-review.md",
       "provenance": {
         "commit": "0239d95c132e20541db92af76b21bad94a1a3305"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+      "to": "Artifact:test/deedbuildings-browser.js",
+      "provenance": {
+        "commit": "02430c7d51e0241b05e7da22b9d28b9c024e63ec"
       }
     },
     {
@@ -555159,6 +555211,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f8aae4e6232f9c7a26231c56fefc16b13f0c9631",
       "to": "Artifact:docs/business-shadow-security-review.md",
       "provenance": {
@@ -657872,6 +657956,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:02430c7d51e0241b05e7da22b9d28b9c024e63ec",
+      "provenance": {
+        "commit": "02430c7d51e0241b05e7da22b9d28b9c024e63ec"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:024ac5d2b899a4bb7a3c3153937c4dc2247b8537",
       "provenance": {
         "commit": "024ac5d2b899a4bb7a3c3153937c4dc2247b8537"
@@ -690163,6 +690255,14 @@
       "to": "Commit:f88aecdd1cd58a498014dbd2d40fac02507fcd1d",
       "provenance": {
         "commit": "f88aecdd1cd58a498014dbd2d40fac02507fcd1d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f89df180aa54e71cb17431d5324d3d9344ca7de0",
+      "provenance": {
+        "commit": "f89df180aa54e71cb17431d5324d3d9344ca7de0"
       }
     },
     {

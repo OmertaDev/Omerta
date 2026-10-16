@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1441f87debee`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `02430c7d51e0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4191 |
+| Commits in clone | 4193 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — Repair historical worker fixture provenance for earned deeds |
+| Latest commit | 2026-10-16 — test: discover installed Chromium for deed browser proof |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3229 |
+| OmertaDev | 3231 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 117 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 703 | historical |
-| knowledge/generated/graph-summary.md | 703 | historical |
-| knowledge/generated/graph.json | 703 | historical |
-| knowledge/generated/inventory.md | 703 | historical |
+| knowledge/generated/github-history.md | 704 | historical |
+| knowledge/generated/graph-summary.md | 704 | historical |
+| knowledge/generated/graph.json | 704 | historical |
+| knowledge/generated/inventory.md | 704 | historical |
 | [SPEC.md](../../SPEC.md) | 555 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 473 | yes |
