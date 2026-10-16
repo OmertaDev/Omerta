@@ -16,6 +16,7 @@ import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import {ENTERPRISE_STRUCTURAL_CHECKS,ENTERPRISE_HELPER_PROFILES,extractEnterpriseHelperReconciliations} from '../tools/enterprise-graph-helpers.js';
 import {COMMERCE_STRUCTURAL_CHECKS} from '../tools/commerce-graph-helpers.js';
+import {FINAL_SERVICES_STRUCTURAL_CHECKS,FINAL_SERVICES_HELPER_PROFILES,extractFinalServicesHelperReconciliations} from '../tools/final-services-graph-helpers.js';
 import {
   build,
   extractCommercialHelperReconciliations,
@@ -82,6 +83,7 @@ assert.deepEqual(inv.mute.sort(), [
   'cross docking canonical source and handoff history',
   'delivery finance bindings',
   'desk inventory backed',
+  'equipment collateral canonical loan and custody history',
   'equipment recovery consumed UID and material history',
   'equipment rental physical title',
   'family operation capital',
@@ -95,7 +97,9 @@ assert.deepEqual(inv.mute.sort(), [
   'mobile shop canonical source/history',
   'physical equipment condition provenance',
   'player funded event history',
+  'production booking canonical history',
   'production slot canonical reservation history',
+  'protection contracts canonical history',
   'reason vocabulary',
   'sale attribution completed sale and consent bindings',
   'service subscription repair bindings',
@@ -103,6 +107,7 @@ assert.deepEqual(inv.mute.sort(), [
   'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
+  'syndicated loan canonical facility provenance',
   'warehouse journal ownership',
   'worker training canonical source',
   'workshop floor source and allocation history',
@@ -119,6 +124,7 @@ for (const [check, reasons] of [
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
   ...ENTERPRISE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ...COMMERCE_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
+  ...FINAL_SERVICES_STRUCTURAL_CHECKS.map(p => [p.check, p.why]),
   ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
   ['cross docking canonical source and handoff history', 'original courier/hub/item/handoff receipt bindings; canonical courier fees reconcile separately'],
   ['production slot canonical reservation history', 'original commission/profile/window/production receipt bindings; canonical commission fees reconcile separately'],
@@ -196,6 +202,24 @@ for(const [check,prefix,suffixes]of[
  ['consignment sale books','consignment',['purchase','proceeds','host_fee']],
 ])for(const suffix of suffixes)assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Commerce cash coverage lost: '+check+'/'+suffix);
 for(const[check,prefix]of[['multi-hop courier custody and fee source','multi_hop_courier'],['commissioned crafting canonical sources','commissioned_crafting']])for(const suffix of['reserve','fee','refund'])assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Reviewed canonical cash/source helper lost: '+check+'/'+suffix);
+// Final-service histories retain genuine cash edges and complete closed-source witnesses.
+assert.equal(FINAL_SERVICES_STRUCTURAL_CHECKS.length,4);
+for(const p of FINAL_SERVICES_STRUCTURAL_CHECKS){
+ const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8').replace(/\r\n?/g,'\n');
+ assert.equal(crypto.createHash('sha256').update(helper).digest('hex'),p.sha256,'Reviewed final-service history changed');
+ assert.equal(enterpriseInvariant.split('\n').filter(line=>line.trim()===p.push).length,1,'Unknown final-service history arithmetic/binding');
+}
+assert.equal(FINAL_SERVICES_HELPER_PROFILES.length,5);
+for(const p of FINAL_SERVICES_HELPER_PROFILES){
+ const helper=fs.readFileSync(new URL('../'+p.file,import.meta.url),'utf8'),terms=extractFinalServicesHelperReconciliations(enterpriseInvariant,{[p.file]:helper}).filter(t=>t.check===p.check);
+ assert.deepEqual(terms.map(t=>t.reason),p.terms.map(t=>t[0]),'Current final-service accounting witnesses lost');
+ for(const reason of p.terms.map(t=>t[0]))assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+p.check&&e.to==='Reason:'+reason),'Final-service cash edge lost: '+p.check+'/'+reason);
+}
+for(const[check,prefix,suffixes]of[
+ ['production booking reserved bonus','production_booking',['bonus_reserve','bonus','bonus_refund']],
+ ['protection contracts reserved cash','protection',['reserve','release','refund']],
+ ['loan escrow','loan',['offer','take','refund','death','loot']],
+])for(const suffix of suffixes)assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+check&&e.to==='Reason:'+prefix+':'+suffix),'Dedicated original cash edge lost: '+check+'/'+suffix);
 // Ownership checks structural journal references; warehouse cash still needs its
 // separate literal ledger reconciliation, which must not join the mute list.
 const warehouseAudit = fs.readFileSync(new URL('../src/invariants.js', import.meta.url), 'utf8');
