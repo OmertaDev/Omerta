@@ -3,7 +3,7 @@ import {nextFiveSourceBaseline} from './next-five-source-compatibility.js';
 // Historical pins remain immutable. This is source evidence, never native migration clearance.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const COMPOSITION_REVISION = '7303e906a8fa510d607c3e770716e48848f3c74a';
+export const COMPOSITION_REVISION = 'd388a4237da233c74bef6510f896a1f8e90f98e7';
 export const COMPOSITION_PHASE = 'exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const COMPOSITION_PROFILES = {
   "commercial": {

@@ -1019,9 +1019,29 @@ try {
   assert.equal((await state(authPage.page)).look, 'wine');
   assert.deepEqual(mutations(authPage.requests.slice(restoredAt)), [], 'Restoration and its read queue are read-only before real revocation.');
   await authPage.page.locator('[data-city-world-close]').click();
-  await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1', [authActor.character.account_id]);
+  // Authenticated reads share one queue. Admit this real Social read before
+  // revoking so an earlier background player401 cannot retire it before dispatch.
+  let releaseRevokedRead, observedRevokedRead, fulfilledRevokedRead;
+  const revokedReadGate = new Promise(resolve => { releaseRevokedRead = resolve; });
+  const revokedReadObserved = new Promise(resolve => { observedRevokedRead = resolve; });
+  const revokedReadFulfilled = new Promise(resolve => { fulfilledRevokedRead = resolve; });
+  let revokedReadOnce = false;
+  await authPage.page.route('**/v1/city/social', async route => {
+    if (revokedReadOnce) return route.continue(); revokedReadOnce = true;
+    observedRevokedRead(); await revokedReadGate;
+    const reply = await route.fetch(); assert.equal(reply.status(), 401);
+    await route.fulfill({ response: reply }); fulfilledRevokedRead();
+  });
   const revokedResponse = authPage.page.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/city/social' && reply.status() === 401);
-  await panel(authPage.page, 'style'); await revokedResponse;
+  try {
+    await panel(authPage.page, 'style');
+    await bounded(revokedReadObserved, 'the current Social request before real token revocation');
+    await app.pool.query('UPDATE accounts SET token_version=token_version+1 WHERE id=$1', [authActor.character.account_id]);
+    releaseRevokedRead(); await revokedResponse;
+    await bounded(revokedReadFulfilled, 'the actual revoked Social401 route completion');
+  } finally {
+    releaseRevokedRead(); await authPage.page.unroute('**/v1/city/social');
+  }
   await authPage.page.locator('#screen-auth:not(.hidden)').waitFor();
   assert.equal(await authPage.page.locator('[data-city-world-tools],.city-world__receipt,.city-world__speech').count(), 0);
   const afterAuth = authPage.requests.length;
