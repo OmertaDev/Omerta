@@ -269,15 +269,17 @@ try {
   const assertPanelLoading = async (page, label) => {
     await page.waitForFunction(label => document.querySelector('.city-world__content').getAttribute('aria-busy') === 'true'
       && document.querySelector('.city-world__dock-bar strong').textContent === label, label);
+    await frames(page);
     const loading = await page.locator('.city-world__dock').evaluate(dock => {
       const title = dock.querySelector('.city-world__dock-bar strong'), content = dock.querySelector('.city-world__content');
       const notice = dock.querySelector('.city-world__notice'), bounds = title.getBoundingClientRect(), box = dock.getBoundingClientRect();
       const hit = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
       return { copy: notice.textContent, busy: content.getAttribute('aria-busy'), outsideBusy: !content.contains(notice),
+        title: bounds.toJSON(), dock: box.toJSON(), hit: hit?.className, viewport: { width: innerWidth, height: innerHeight },
         visible: bounds.height > 0 && bounds.top >= box.top && bounds.bottom <= box.bottom && (hit === title || title.contains(hit)) };
     });
     assert.equal(loading.copy, 'Loading ' + label + '…'); assert.equal(loading.busy, 'true');
-    assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content.');
+    assert(loading.outsideBusy && loading.visible, 'The sticky loading title is visible and its live notice stays outside the busy content: ' + JSON.stringify(loading));
     await assertFrame(page);
   };
   const assertPanelReadFeedback = async viewport => {
@@ -898,7 +900,9 @@ try {
   await fallback.page.locator('[data-destination="training"]').click();
   await fallback.page.locator('[data-city-open]').click();
   await fallback.page.locator('#tab-life.on').waitFor();
-  assert.equal(await fallback.page.locator('[data-city-world-tools]').count(), 0, 'Fallback destination navigation retires its external Tools control.');
+  assert.equal((await state(fallback.page)).externalPanel, true, 'Fallback navigation keeps the scene behind the canonical action panel.');
+  assert.equal(await fallback.page.locator('#city-panel-body #tab-life.on').count(), 1);
+  assert(await fallback.page.locator('[data-city-world-tools]').isDisabled(), 'World tools remain locked while a hosted panel is open.');
   await fallback.context.close(); await page.bringToFront();
   const optional = await newPage({ width: 375, height: 812 }, { moduleFailure: true });
   const optionalPose = (await state(optional.page)).position, optionalAt = optional.requests.length;
@@ -1524,7 +1528,8 @@ try {
   await cityPage.route('**/v1/deeds', holdRetiredDeed);
   try {
     await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(retiredDeedObserved, 'the retired navigation deed GET');
-    await activate(cityPage.locator('#bnav [data-go="streets"]')); releaseRetiredDeed(); await frames(cityPage);
+    await activate(cityPage.locator('#city-all-actions'));
+    await activate(cityPage.locator('#jump-list [data-jump="streets"]')); releaseRetiredDeed(); await frames(cityPage);
     assert.notEqual(await cityPage.evaluate(() => document.activeElement?.id), 'city-owned-deed');
     assert.equal(await cityPage.locator('#tab-streets:not(.hidden)').count(), 1, 'A late deed read cannot override a newer human navigation.');
   } finally { releaseRetiredDeed(); await cityPage.unroute('**/v1/deeds', holdRetiredDeed); }
@@ -1557,6 +1562,7 @@ try {
   await cityPage.route('**/v1/access/logout', holdLogout);
   try {
     await activate(cityPage.getByRole('button', { name: 'Open Street Deeds →', exact: true })); await bounded(privateDeedObserved, 'the old owner\'s held real deed GET');
+    await cityPage.locator('[data-city-utility="account"]').click();
     await cityPage.locator('#btn-logout').click();
     const logout = cityPage.locator('.modal-bg[data-managed-dialog]').last(); await logout.waitFor({ state: 'visible' }); await logout.locator('[data-yes]').click();
     await cityPage.locator('#screen-auth:not(.hidden)').waitFor(); releasePrivateDeed(); await frames(cityPage);

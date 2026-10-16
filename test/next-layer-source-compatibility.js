@@ -1,3 +1,4 @@
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';
@@ -13,7 +14,7 @@ assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
   const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(deedQuestSourceBaseline(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
+  assert.equal(deedQuestSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;

@@ -1,3 +1,4 @@
+import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { buyerCooperativeSourceBaseline } from '../tools/rc1-buyer-cooperative-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -17,7 +18,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS),['src/server.js','src/invariants.js','src/social/estate.js']);
 for(const file of Object.keys(P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS)) {
- const current=buyerCooperativeSourceBaseline(file,fs.readFileSync(file,'utf8')),prior=git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=buyerCooperativeSourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))),prior=git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.COMPANY_LOGISTICS_HUB_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`880f494311b3aad625ce06af99fcb245b146a351:${file}`));
  entire(current,git('show',P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_PINS,P.COMPANY_LOGISTICS_HUB_SOURCE_CURRENT_BLOBS],[prior,P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_PINS,P.COMPANY_LOGISTICS_HUB_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}

@@ -76,6 +76,23 @@
 .omerta-city__hud .omerta-city__resource { padding: 0; }
 .omerta-city__world-hud { background: #232723; border-bottom: 1px solid #796543; max-height: var(--city-hud-height, none); overflow-y: auto; overscroll-behavior: contain; }
 .omerta-city__world-hud:focus-visible { outline: 2px solid var(--city-gold); outline-offset: -2px; }
+.omerta-city__activity { display: grid; gap: 3px; padding: 6px 10px; border-top: 1px solid #50664e; background: #243128; font: 12px/1.35 var(--mono, monospace); }
+.omerta-city__activity-title { color: #c5ddad; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; }
+.omerta-city__activity-line { color: #ede4d1; overflow-wrap: anywhere; }
+.omerta-city.has-external-panel .omerta-city__canvas canvas { pointer-events: none; cursor: default; }
+.omerta-city.has-external-panel { margin: 0; }
+.omerta-city.has-external-panel > .omerta-city__header,
+.omerta-city.has-external-panel > .omerta-city__next-move,
+.omerta-city.has-external-panel > .omerta-city__instructions,
+.omerta-city.has-external-panel > .omerta-city__journal,
+.omerta-city.has-external-panel > .omerta-city__destinations,
+.omerta-city.has-external-panel > .omerta-city__homes,
+.omerta-city.has-external-panel > .omerta-city__presence,
+.omerta-city.has-external-panel .omerta-city__controls,
+.omerta-city.has-external-panel .omerta-city__map-tools,
+.omerta-city.has-external-panel .omerta-city__presence-caption,
+.omerta-city.has-external-panel .omerta-city__resource-help,
+.omerta-city.has-external-panel .city-world__toolbar > :not(.city-world__gains) { display: none; }
 .omerta-city__resources {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

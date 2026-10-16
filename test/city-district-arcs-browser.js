@@ -165,6 +165,7 @@ try {
   };
   const learn = async (fixture, skillId) => {
     await visit(fixture, 'training'); const before = await pose(fixture);
+    const entry = await fixture.page.evaluateHandle(() => window.__arcHandles.at(-1));
     const previousLayout = await fixture.page.evaluateHandle(() => document.querySelector('#tab-life').firstChild);
     const skillsRead = fixture.page.waitForResponse(reply => reply.request().method() === 'GET'
       && new URL(reply.url()).pathname === '/v1/skills');
@@ -182,8 +183,11 @@ try {
     await activate(fixture, fixture.page.locator(`[data-learn="${skillId}"]`));
     const learned = await response; assert.equal(learned.status(), 200, await learned.text());
     assert.equal((await learned.json()).learned, skillId); assert(learned.request().headers()['idempotency-key']);
-    await fixture.page.locator('#city-return').waitFor({ state: 'visible' });
-    await activate(fixture, fixture.page.locator('#city-return')); await ready(fixture);
+    await fixture.page.locator('#city-panel-close').waitFor({ state: 'visible' });
+    assert.equal((await state(fixture)).externalPanel, true, 'Canonical skill controls pause the retained neighborhood.');
+    await activate(fixture, fixture.page.locator('#city-panel-close')); await ready(fixture);
+    assert.equal((await state(fixture)).externalPanel, false);
+    await sameScenePose(fixture, before, entry); await entry.dispose();
     assert.deepEqual(await pose(fixture), before, 'Canonical skill navigation returns to its saved world pose.');
   };
   const queuedClose = async (fixture, story) => {
