@@ -371,7 +371,7 @@
 | [docs/buyer-cooperative-source-transfer-review.md](../../docs/buyer-cooperative-source-transfer-review.md) | documentation | 28 | 2026-10-12 |
 | [docs/buyer-cooperatives-security-review.md](../../docs/buyer-cooperatives-security-review.md) | documentation | 188 | 2026-10-12 |
 | [docs/character-deed-policy-2026-10-14.md](../../docs/character-deed-policy-2026-10-14.md) | documentation | 31 | 2026-10-14 |
-| [docs/city-dashboard-security-review.md](../../docs/city-dashboard-security-review.md) | documentation | 410 | 2026-10-16 |
+| [docs/city-dashboard-security-review.md](../../docs/city-dashboard-security-review.md) | documentation | 468 | 2026-10-16 |
 | [docs/city-gameplay-security-review.md](../../docs/city-gameplay-security-review.md) | documentation | 164 | 2026-10-13 |
 | [docs/city-homes-security-review.md](../../docs/city-homes-security-review.md) | documentation | 138 | 2026-10-12 |
 | [docs/city-presence-security-review.md](../../docs/city-presence-security-review.md) | documentation | 72 | 2026-10-10 |
