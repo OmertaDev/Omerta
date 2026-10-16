@@ -4,6 +4,7 @@ import { withItemRead, assertItemTransaction, registerItemTransactionUndo, poiso
 import { guardDelegatedControl, latestPolicy } from './operatingpolicy.js';
 import { assertEquipmentRentalDeathScope } from './equipmentrentals.js';
 import { assertEstateResolutionScope } from './social/estate.js';
+import { safeHoused } from './rules.js';
 
 export const CUSTOMER_VAULT = Object.freeze({ maximumCustomers:3, maximumPrincipal:100000, maximumReserve:300000, maximumFee:1000 });
 // Component DDL only. Coordinator owns canonical schema and global cash-book wiring.
@@ -101,6 +102,7 @@ async function execute(ch,other,action,b,key,c,agent) {
     registerItemTransactionUndo(c,()=>c.query('DELETE FROM customer_vault_services WHERE id=$1',[r.id]));await c.query('INSERT INTO customer_vault_services(id,depot_id,operator_account,operator_character,fee_cash,source_hash,policy_hash,state,created_at,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[r.id,r.depot_id,account,ch.id,r.fee_cash,r.source_hash,r.policy_hash,r.state,r.created_at,r.expires_at]);return receipt(c,account,key,bodyHash,{ok:true,service:serviceView(r)});
   }
   if(action==='deposit') {
+    if(safeHoused(ch))throw new G.GameError('safe', "The courier won't come to a safehouse — banking waits until you surface.");
     if(!other||other.id===ch.id||other.account_id===account)fail('party');
     const hint=(await c.query('SELECT depot_id,operator_character FROM customer_vault_services WHERE id=$1',[b.serviceId])).rows[0];if(!hint||hint.operator_character!==other.id)fail('original_operator');
     if(!(await c.query("SELECT id FROM business_depots WHERE id=$1 AND owner_character=$2 AND status='open' FOR UPDATE",[hint.depot_id,other.id])).rows.length)fail('depot');

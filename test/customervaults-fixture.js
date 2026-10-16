@@ -21,5 +21,5 @@ export async function customerVaultFixture(){
   const cash=async p=>Number((await pool.query('SELECT cash FROM characters WHERE id=$1',[p.id])).rows[0].cash);
   const state=async()=>({characters:(await pool.query('SELECT id,account_id,alive,cash,bank FROM characters ORDER BY id')).rows,services:(await pool.query('SELECT * FROM customer_vault_services ORDER BY id')).rows,positions:(await pool.query('SELECT * FROM customer_vault_positions ORDER BY id')).rows,requests:(await pool.query('SELECT * FROM customer_vault_requests ORDER BY account_id,key_hash')).rows,transactions:(await pool.query("SELECT * FROM transactions WHERE reason LIKE 'customer_vault:%' ORDER BY id")).rows});
   const books=async()=>{assert.deepEqual((await V.customerVaultAccounting(pool)).issues,[]);};
-  return {app,http,pool,G,V,Depot,owner,customers,stranger,depotId:depot.id,single,pair,runtime,api,call,cash,state,books,native,close:async()=>{await app.close();await pool.end();}};
+  return {app,http,pool,G,V,Depot,owner,customers,stranger,create,depotId:depot.id,single,pair,runtime,api,call,cash,state,books,native,close:async()=>{await app.close();await pool.end();}};
 }

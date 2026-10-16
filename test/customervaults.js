@@ -13,7 +13,15 @@ try{
   const opened=await api(owner,'open',{depotId:f.depotId,feeCash:100,lifetimeSeconds:3600,consent:true},'open');assert.equal(opened.code,200,JSON.stringify(opened));const service=opened.body.service;
   const get=async(p,path,agent=false)=>(await f.http.inject({method:'GET',url:path,headers:{authorization:'Bearer '+(agent?p.agent:p.token)}})).json();
   const availability=await get(customers[0],'/v1/company/vaults/availability'),offers=await get(customers[0],'/v1/company/vaults/offers',true);assert.equal(availability.available,true);assert(offers.offers.some(v=>v.id===service.id));assert(!JSON.stringify(offers).includes(owner.account));
-  const terms={serviceId:service.id,sourceHash:service.sourceHash,principal:10000,maxFeeCash:100,consent:true};const beforeOwner=await f.cash(owner),beforeCustomer=await f.cash(customers[0]);
+  const terms={serviceId:service.id,sourceHash:service.sourceHash,principal:10000,maxFeeCash:100,consent:true};
+  // Real paid shelter must preserve the ordinary bank's fresh-deposit restriction.
+  const sheltered=await f.create(),shelter=await f.call(sheltered,'POST','/v1/safehouse',{},'vault-paid-shelter');assert.equal(shelter.code,200,JSON.stringify(shelter));
+  const {safeHoused}=await import('../src/rules.js');assert(safeHoused((await pool.query('SELECT * FROM characters WHERE id=$1',[sheltered.id])).rows[0]));
+  const bankRefusal=await f.call(sheltered,'POST','/v1/bank/deposit',{amount:1000},'vault-ordinary-safe');assert.equal(bankRefusal.code,400);assert.equal(bankRefusal.body.error,'safe');
+  const protectedState=await f.state();
+  for(const agent of [false,true]){const refused=await api(sheltered,'deposit',terms,'vault-safe-'+agent,agent);assert.equal(refused.code,400,JSON.stringify(refused));assert.equal(refused.body.error,'safe');assert.deepEqual(await f.state(),protectedState);}
+  await assert.rejects(invoke(sheltered,'deposit',terms,'vault-safe-runtime'),e=>e.code==='safe');assert.deepEqual(await f.state(),protectedState);await f.books();
+  const beforeOwner=await f.cash(owner),beforeCustomer=await f.cash(customers[0]);
   const deposited=await api(customers[0],'deposit',terms,'deposit',true);assert.equal(deposited.code,200,JSON.stringify(deposited));const position=deposited.body.position;assert.equal(await f.cash(customers[0]),beforeCustomer-10100);assert.equal(await f.cash(owner),beforeOwner+100);assert.equal((await V.customerVaultAccounting(pool)).reserve,10000);await f.books();
   const replay=await api(customers[0],'deposit',terms,'deposit',true);assert.equal(replay.code,200);assert.deepEqual({...replay.body,replayed:undefined},{...deposited.body,replayed:undefined});assert.equal((await pool.query('SELECT id FROM customer_vault_positions')).rows.length,1);
   const unchanged=await f.state();assert.notEqual((await api(customers[0],'deposit',{...terms,principal:9999},'deposit')).code,200);assert.deepEqual(await f.state(),unchanged);
@@ -40,5 +48,10 @@ try{
   for(const body of [[],null,2,{...terms2,authority:true},{...terms2,consent:false}])assert.notEqual((await api(stranger,'deposit',body)).code,200);
   const badQuery=await f.http.inject({method:'GET',url:'/v1/company/vaults?account='+owner.account,headers:{authorization:'Bearer '+customers[2].token}});assert.equal(badQuery.statusCode,400);assert.equal((await f.http.inject({method:'GET',url:'/v1/company/vaults'})).statusCode,401);
   for(const route of Object.keys(CUSTOMER_VAULT_CONTRACTS)){const [method,url]=route.split(' ');assert.equal((await f.http.inject({method,url,payload:method==='POST'?{}:undefined})).statusCode,401);assert.equal((await f.http.inject({method,url:url+'?unknown=1',payload:method==='POST'?{}:undefined,headers:{authorization:'Bearer '+customers[0].token,'idempotency-key':'query-negative'}})).statusCode,400);}
-  console.log('Customer vault '+(f.native?'native18.4':'memory')+' component PASS: real canonical cash principal/fee legs, strict consent/caps/private board/replay/closure/policy+title-independent withdrawals/source refusal/sealed-estate refusal. Readiness is component-only; real estate bridge tested separately.');
+  // Existing original-customer recovery remains available after entering real shelter.
+  const recoveryShelter=await f.call(customers[2],'POST','/v1/safehouse',{},'vault-funded-paid-shelter');assert.equal(recoveryShelter.code,200,JSON.stringify(recoveryShelter));
+  const protectedCash=await f.cash(customers[2]),protectedWithdrawal=await api(customers[2],'withdraw',{positionId:r.id,sourceHash:r.source_hash,consent:true},'vault-sheltered-withdraw',true);
+  assert.equal(protectedWithdrawal.code,200,JSON.stringify(protectedWithdrawal));assert.equal(await f.cash(customers[2]),protectedCash+Number(r.principal));assert.equal((await V.customerVaultAccounting(pool)).reserve,0);
+  assert.deepEqual((await api(customers[2],'withdraw',{positionId:r.id,sourceHash:r.source_hash,consent:true},'vault-sheltered-withdraw',true)).body,protectedWithdrawal.body);await f.books();
+  console.log('Customer vault '+(f.native?'native18.4':'memory')+' component PASS: real canonical cash principal/fee legs, paid-safehouse fresh-deposit refusals/human-agent parity and protected original withdrawals, strict consent/caps/private board/replay/closure/policy+title-independent withdrawals/source refusal/sealed-estate refusal. Readiness is component-only; real estate bridge tested separately.');
 }finally{await f.close();}
