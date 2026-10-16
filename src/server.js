@@ -1,3 +1,4 @@
+import { register as registerCoverageMutual } from './routes/coverage-mutual.js';
 import {register as registerEquipmentRecovery} from './routes/equipmentrecovery.js';
 import {register as registerManufacturingLicenses} from './manufacturinglicensesroutes.js';
 import {register as registerCrossDocking} from './routes/crossdocking.js';
@@ -2506,6 +2507,7 @@ export async function buildServer() {
   registerEquipmentMaintenance(app, { pool, auth });
   registerCommercialDisputes(app, { pool, auth, workflowGuard: assertCommercialDisputeAccess });
   registerEquipmentInsurance(app, { pool, auth });
+  registerCoverageMutual(app, { pool, auth });
   registerConsignments(app, { pool, auth });
   registerSaleAttribution(app, { pool, auth });
   registerMerchantLoyalty(app, { pool, auth });

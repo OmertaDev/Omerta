@@ -9711,3 +9711,44 @@ CREATE TABLE IF NOT EXISTS syndicated_loan_requests (
  account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,receipt JSONB NOT NULL,
  original_character TEXT NOT NULL REFERENCES characters(id),facility_id TEXT NOT NULL REFERENCES syndicated_loan_facilities(id),
  action TEXT NOT NULL CHECK(action IN ('propose','fund','take','repay','cancel')),request_json JSONB NOT NULL,PRIMARY KEY(account_id,key_hash));
+
+
+-- N25: explicit original-member equipment underwriting mutual reserves.
+
+CREATE TABLE IF NOT EXISTS coverage_mutual_pools (
+ id TEXT PRIMARY KEY, creator_account TEXT NOT NULL REFERENCES accounts(id), creator_character TEXT NOT NULL REFERENCES characters(id),
+ partner_account TEXT NOT NULL REFERENCES accounts(id), partner_character TEXT NOT NULL REFERENCES characters(id),
+ contribution_cash INT NOT NULL CHECK(contribution_cash BETWEEN 1 AND 1000),
+ deductible_cash INT NOT NULL CHECK(deductible_cash BETWEEN 1 AND contribution_cash),
+ creator_policy TEXT NOT NULL REFERENCES equipment_insurance_policies(id), partner_policy TEXT NOT NULL REFERENCES equipment_insurance_policies(id),
+ policy_sources JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ state TEXT NOT NULL CHECK(state IN ('offered','active','closed')), created_at TIMESTAMPTZ NOT NULL,
+ offer_expires_at TIMESTAMPTZ NOT NULL, activated_at TIMESTAMPTZ, closed_at TIMESTAMPTZ, close_reason TEXT,
+ contributed_cash INT NOT NULL CHECK(contributed_cash BETWEEN 1 AND 2000), reserve_cash INT NOT NULL CHECK(reserve_cash BETWEEN 0 AND 2000),
+ paid_cash INT NOT NULL DEFAULT 0 CHECK(paid_cash BETWEEN 0 AND 2000), refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND 2000),
+ closure JSONB, CHECK(creator_account<>partner_account AND creator_character<>partner_character AND creator_policy<>partner_policy),
+ CHECK(contributed_cash=reserve_cash+paid_cash+refunded_cash), CHECK(state<>'closed' OR reserve_cash=0));
+CREATE TABLE IF NOT EXISTS coverage_mutual_positions (
+ pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id), original_account TEXT NOT NULL REFERENCES accounts(id),
+ original_character TEXT NOT NULL REFERENCES characters(id), contribution_cash INT NOT NULL CHECK(contribution_cash BETWEEN 1 AND 1000),
+ contribution_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), state TEXT NOT NULL CHECK(state IN ('funded','released')),
+ refunded_cash INT NOT NULL DEFAULT 0 CHECK(refunded_cash BETWEEN 0 AND contribution_cash), refund_id TEXT UNIQUE REFERENCES transactions(id),
+ PRIMARY KEY(pool_id,original_character));
+CREATE UNIQUE INDEX IF NOT EXISTS coverage_mutual_one_funded_position ON coverage_mutual_positions(original_character) WHERE state='funded';
+CREATE TABLE IF NOT EXISTS coverage_mutual_enrollments (
+ policy_id TEXT PRIMARY KEY REFERENCES equipment_insurance_policies(id), pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id),
+ member_account TEXT NOT NULL REFERENCES accounts(id), member_character TEXT NOT NULL REFERENCES characters(id),
+ source JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), enrolled_at TIMESTAMPTZ NOT NULL,
+ UNIQUE(pool_id,member_character));
+CREATE TABLE IF NOT EXISTS coverage_mutual_claims (
+ policy_id TEXT PRIMARY KEY REFERENCES coverage_mutual_enrollments(policy_id), pool_id TEXT NOT NULL REFERENCES coverage_mutual_pools(id),
+ repair_id TEXT NOT NULL UNIQUE REFERENCES equipment_maintenance_repairs(id), wear_event_id TEXT NOT NULL UNIQUE REFERENCES item_durability_uses(event_id),
+ canonical_payout_id TEXT NOT NULL UNIQUE REFERENCES transactions(id), member_account TEXT NOT NULL REFERENCES accounts(id),
+ member_character TEXT NOT NULL REFERENCES characters(id), gross_payout_cash INT NOT NULL CHECK(gross_payout_cash BETWEEN 1 AND 1000),
+ premium_cash INT NOT NULL CHECK(premium_cash BETWEEN 1 AND 1000), deductible_cash INT NOT NULL CHECK(deductible_cash BETWEEN 1 AND 1000),
+ payout_cash INT NOT NULL CHECK(payout_cash BETWEEN 1 AND 1000), payout_id TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ source JSONB NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS coverage_mutual_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), request_key TEXT NOT NULL, action TEXT NOT NULL CHECK(action IN ('open','join','claim','close','estate_close')),
+ identity JSONB NOT NULL, request_hash TEXT NOT NULL CHECK(char_length(request_hash)=64), receipt JSONB NOT NULL,
+ PRIMARY KEY(account_id,request_key));

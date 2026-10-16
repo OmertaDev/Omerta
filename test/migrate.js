@@ -747,6 +747,17 @@ const DISPOSITION = {
   performance_employment_contracts: 'special', // canonical F12 estate resolves the original prefunded bonus reserve
   performance_employment_assignments: 'metadata', // original worker/commitment source and paid delivery evidence remain historical
   performance_employment_requests: 'ledger', // original employer/key/funding ACK survives title changes and estate resolution
+  collateral_lending_pledges: 'special', // original item custody resolves only through genuine loan terminal or original estate scope
+  collateral_lending_requests: 'ledger', // immutable original pledge request acknowledgements
+  collateral_lending_terminals: 'ledger', // original canonical repayment/collection journal provenance
+  collateral_auction_agreements: 'metadata', // original terms signatures hold no cash or item title
+  collateral_auctions: 'special', // canonical funded bid settlement or original estate refund
+  collateral_auction_bids: 'escrow', // actual bidder-held cash is settled or refunded under original scope
+  collateral_auction_requests: 'ledger', // original bidder and lender request acknowledgements
+  coverage_mutual_pools: 'escrow', // original prefunded reserve settles genuine claims and original refunds at estate-start before death cash
+  coverage_mutual_positions: 'ledger', // original contribution/refund journals and released positions survive as immutable recovery history
+  coverage_mutual_enrollments: 'metadata', // original policy/member source enrollment survives with no independent cash or inherited underwriting authority
+  coverage_mutual_claims: 'ledger', // original repair/wear/canonical payout and mutual benefit history remains once-only after estate closure
   syndicated_loan_facilities: 'metadata', // canonical ordinary loans resolve value; estate retirement retains the original facility source
   syndicated_loan_legs: 'ledger', // original lender funding journals and loan identities survive metadata retirement
   syndicated_loan_members: 'metadata', // actual canonical loan estate resolution retires consenting current memberships
@@ -795,6 +806,11 @@ const unclassified = [...charTables].filter((t) => !DISPOSITION[t]);
 assert.equal(unclassified.length, 0, `unclassified character_id table(s) — a dead street would ORPHAN them: ${unclassified.join(', ')}. Wipe in runEstate (add to DISPOSITION 'wiped'/'special') or document as 'escrow'/'ledger'.`);
 const stale = Object.keys(DISPOSITION).filter((t) => !charTables.has(t));
 assert.equal(stale.length, 0, `stale DISPOSITION entr(y/ies) no longer a character_id table: ${stale.join(', ')}`);
+// Account-scoped ledger disposition: immutable coverage_mutual_requests action/key/identity ACKs
+// survive original-member estate closure without creating a new character or spending authority.
+const mutualRequestBody = SCHEMA.match(/CREATE TABLE IF NOT EXISTS coverage_mutual_requests\s*\(([\s\S]*?)\);/i)?.[1];
+assert(mutualRequestBody && /account_id TEXT NOT NULL REFERENCES accounts\s*\(id\)/i.test(mutualRequestBody), 'Mutual request history retains its actual account FK');
+assert(!charTables.has('coverage_mutual_requests'), 'Account-only mutual ACKs must not become a stale character disposition');
 // (b) every 'wiped'/'special' table actually has a DELETE FROM somewhere in src/ (classification ⇒ code)
 const srcDir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'src');
 const allSrc = srcText();  // RECURSIVE — a flat listing missed src/social/ and hid the whole estate wipe
@@ -1053,6 +1069,34 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
       : header.match(/=\s*(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/)?.[1] ?? null;
   };
 
+  // The mutual's read-only accounting verifier has one genuine nested journal
+  // binding. Crawl that actual body, never unrelated same-name global helpers.
+  const exactCoverageJournalBinding = (entry, candidate) => {
+    if (entry.file !== 'src/coverage-mutual-invariants.js' || entry.name !== 'coverageMutualAccounting'
+      || candidate.file !== entry.file || candidate.name !== 'journal') return false;
+    assert.equal(candidate.source, entry.source, 'Mutual journal must share its actual lexical source');
+    assert.equal(entry.parameters, 'c');
+    assert.equal(candidate.parameters, 'txId, character, account, amount, reason, poolId');
+    const source = entry.source, code = lexicalMask(source);
+    const caller = [...code.matchAll(/export\s+async\s+function\s+coverageMutualAccounting\(c\)\s*\{/g)];
+    const local = [...code.matchAll(/const\s+journal\s*=\s*\(txId, character, account, amount, reason, poolId\)\s*=>\s*\{/g)];
+    assert.equal(caller.length, 1); assert.equal(local.length, 1);
+    assert.equal(entry.open, caller[0].index + caller[0][0].length - 1);
+    assert.equal(candidate.open, local[0].index + local[0][0].length - 1);
+    const callerEnd = entry.open + functionBlock(source, entry.open, entry.file).length + 1;
+    assert(candidate.open > entry.open && candidate.open < callerEnd, 'Mutual journal must be nested in this actual caller');
+    assert.equal([...code.matchAll(/(?<![.\w$])journal\s*(?:[+*/%&|^-]?=(?!=|>)|\+\+|--)/g)].length, 1,
+      'Mutual journal binding cannot be rebound');
+    assert(!/(?:\[[^;\]]*\bjournal\b[^;\]]*\]|\{[^;}]*\bjournal\b[^;}]*\})\s*=/.test(code),
+      'Mutual journal destructuring cannot replace the binding');
+    assert(!source.includes('\r') || (!/(^|[^\r])\n/.test(source) && !/\r(?!\n)/.test(source)),
+      'Mutual accounting source must use whole LF or whole CRLF');
+    assert.equal(createHash('sha256').update(source.replaceAll('\r\n', '\n')).digest('hex'),
+      'a9f4e974b85c42cecc258ad22429097a4204d5cf19d6cf834c953cfcbd64e1d5',
+      'Mutual journal lexical refinement requires the exact reviewed whole source');
+    return true;
+  };
+
   const crawlDeathSources = (index) => {
     const sources = [], names = new Set(), visited = new Set();
     const queue = [...(index.get('runEstate') || [])];
@@ -1066,7 +1110,7 @@ const PHASE1_OWNER_TUPLE_DISPOSITION = {
         const candidates = index.get(call[1]) || [];
         const shadowed = entry.parameters === null || (typeof entry.parameters === 'string'
           && new RegExp('\\b' + call[1].replace(/[$]/g, '\\$&') + '\\b').test(entry.parameters));
-        const localBindings = shadowed ? [] : candidates.filter(candidate => candidate.file === entry.file && moduleBinding(candidate));
+        const localBindings = shadowed ? [] : candidates.filter(candidate => candidate.file === entry.file && (moduleBinding(candidate) || exactCoverageJournalBinding(entry, candidate)));
         // A proven module binding wins; unresolved/ambiguous legacy names still
         // traverse every definition, never a handler/table exemption.
         queue.push(...(localBindings.length ? localBindings : candidates));

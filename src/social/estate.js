@@ -200,6 +200,8 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
     actor.cash = before + receipt.refundedCash;
   }
   await (await import('../commercialcampaigns.js')).recoverCommercialCampaignAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
+  const { recoverCoverageMutualsAtEstateStart } = await import('../coverage-mutual.js');
+  await recoverCoverageMutualsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });
   const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   await assertMultiHopCourierEstateCleared(client,victim.id);

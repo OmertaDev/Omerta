@@ -1,3 +1,6 @@
+async function coverageMutualDeathCounterparts(c, id) {
+  return (await import('./coverage-mutual.js')).coverageMutualDeathCounterparts(c, id);
+}
 import {syndicatedLoanScopeSource as syndicatedLoanSource} from './syndicatedloans.js';
 export {syndicatedLoanSource};
 import {assertSyndicatedLoanRootRequest} from './game.js';
@@ -238,7 +241,7 @@ async function prelockCourierAwareSubjects(client,characterIds) {
   for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);
-  // Per subject: existing 54 originals plus at most 3 merchant-return counterparts = 57.
+  // Per subject: 54 originals + 3 merchant-return + 3 signed funded auction + 1 funded mutual = 61.
   for (const subject of subjects) for (const counterpart of await customerLayawayDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await customerVaultDeathCounterparts(client, subject)) ids.add(counterpart);
   for (const subject of subjects) for (const counterpart of await multiHopCourierDeathCounterparts(client, subject)) ids.add(counterpart);
@@ -246,7 +249,8 @@ async function prelockCourierAwareSubjects(client,characterIds) {
   // N07 and N09 reuse existing courier/commission originals; N10 adds at most 3 combined return counterparts.
   // N24 adds at most three signed, funded auction counterparts per original subject.
   for (const subject of subjects) for (const counterpart of await collateralAuctionCounterparts(client, subject)) ids.add(counterpart);
-  if (ids.size > subjects.length * 60) fail('death_limit');
+  for (const subject of subjects) for (const counterpart of await coverageMutualDeathCounterparts(client, subject)) ids.add(counterpart);
+  if (ids.size > subjects.length * 61) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -285,6 +289,9 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   }
   for (const counterpart of await customerVaultDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Vault counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await coverageMutualDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Coverage mutual counterpart changed; retry the whole action.');
   }
   for (const counterpart of await multiHopCourierDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Courier counterpart changed; retry the whole action.');

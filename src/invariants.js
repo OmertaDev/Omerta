@@ -1,3 +1,4 @@
+import { coverageMutualAccounting } from './coverage-mutual-invariants.js';
 const collectSaleAttributionIssues=async(c)=>(await import('./saleattribution.js')).collectSaleAttributionIssues(c);
 const collectMerchantLoyaltyIssues=async(c)=>(await import('./merchantloyalty.js')).collectMerchantLoyaltyIssues(c);
 const collectShoppingBasketIssues=async(c)=>(await import('./shoppingbasket.js')).collectShoppingBasketIssues(c);
@@ -84,6 +85,7 @@ const KNOWN_REASONS = {
     'law:', 'world:', 'pen:', 'loan:', 'speakeasy:', 'boxing:', 'race:', 'port:', 'stable:', 'family:', 'maintenance:pay', 'maintenance:receive',
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
+    'coverage_mutual:contribute', 'coverage_mutual:payout', 'coverage_mutual:refund',
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
@@ -771,6 +773,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const rentalIssues = await collectEquipmentRentalIssues(pool);
   push('equipment rental physical title', rentalIssues.length, 0, 0, { issues: rentalIssues });
   push('equipment maintenance transfers', 0, await sum(pool, "currency='cash' AND reason IN ('maintenance:pay','maintenance:receive')"), 0);
+  const mutual = await coverageMutualAccounting(pool);
+  push('coverage mutual original reserves', mutual.reserve, -mutual.ledgerDelta, 0);
+  push('coverage mutual canonical equipment losses', mutual.issues.length, 0, 0, { issues: mutual.issues });
   const equipmentInsuranceEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM equipment_insurance_policies');
   const equipmentInsuranceReserve = -(await sum(pool, "currency='cash' AND reason='equipment_insurance:reserve'"));
   const equipmentInsurancePaid = await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:claim','equipment_insurance:refund')");
@@ -1427,7 +1432,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('coverage_mutual:') ? cur === 'cash' && ['coverage_mutual:contribute','coverage_mutual:payout','coverage_mutual:refund'].includes(r.reason) : r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 
