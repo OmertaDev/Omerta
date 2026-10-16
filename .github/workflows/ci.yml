@@ -912,7 +912,7 @@ jobs:
       - name: Phase 2 dormant item boundary (real PostgreSQL)
         if: '!cancelled()'
         env:
-          TEST_DATABASE_URL: postgres://postgres:pgcheck@localhost:5432/omerta_check
+          TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check
         run: npm run phase2:lots:postgres
 
       # Each runner uses a fresh private schema and refuses a non-loopback endpoint.

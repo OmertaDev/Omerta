@@ -123,6 +123,26 @@ assert.throws(() => assertInteriorRefusal(missingHome), { name: 'AssertionError'
 assert.throws(() => assertInteriorRefusal({ code: 400, body: { error: 'unrelated_refusal' } }),
   { name: 'AssertionError' }, 'a different refusal cannot inherit the home declaration');
 
+// Decision replay requires an explicit supported history kind, even on an empty world.
+const decisionReplayReadPath = '/v1/agent/decision-replay?kind=intelligence_purchase';
+const assertEmptyDecisionReplay = (response, kind) => {
+  assert.equal(response.code, 200, 'a valid history query serves the first player');
+  assert.equal(response.body?.kind, kind);
+  assert.deepEqual(response.body?.candidates, []);
+  assert.equal(response.body?.next, null);
+  assert.equal(response.body?.windowDays, 30);
+  assert.equal(response.body?.readOnly, true);
+  assert.equal(response.body?.performanceClaim, 'none');
+};
+const missingReplayKind = await j('GET', '/v1/agent/decision-replay', token);
+assert.equal(missingReplayKind.code, 400, 'omitting the required history kind is malformed');
+assert.equal(missingReplayKind.body?.error, 'decision_replay');
+assert.equal(missingReplayKind.body?.message, 'terms');
+assert.throws(() => assertEmptyDecisionReplay(missingReplayKind, 'intelligence_purchase'),
+  { name: 'AssertionError' }, 'a malformed history query cannot pass as a valid empty board');
+for (const kind of ['intelligence_purchase', 'forecast_memory'])
+  assertEmptyDecisionReplay(await j('GET', '/v1/agent/decision-replay?kind=' + kind, token), kind);
+
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
 const parameterlessGets = (app.routes || [])
@@ -166,6 +186,7 @@ assert(paths.includes('/v1/city/nearby-chat'), 'the nearby route remains in the 
 assert(paths.includes('/v1/market/feed'), 'the public feed remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/city/homes'), 'the home directory remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/agent/decision-replay'), 'the history board remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -178,10 +199,12 @@ for (const p of paths) {
   const readPath = p === '/v1/city/nearby-chat' ? nearbyReadPath
     : p === '/v1/market/feed' ? '/v1/market/feed?districtId=docks&goodId=gin'
       : p === '/v1/city/homes' ? homesReadPath
-        : p === '/v1/city/home/interior' ? interiorReadPath : p;
+        : p === '/v1/city/home/interior' ? interiorReadPath
+          : p === '/v1/agent/decision-replay' ? decisionReplayReadPath : p;
   const r = await j('GET', readPath, token);
   if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
   if (p === '/v1/city/homes') assertEmptyHomes(r);
+  if (p === '/v1/agent/decision-replay') assertEmptyDecisionReplay(r, 'intelligence_purchase');
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (p === '/v1/genesis-auction') {
