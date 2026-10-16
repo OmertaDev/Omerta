@@ -441,7 +441,7 @@ export async function recoverCollateralAuctionsAtEstateStart(client, victimId, r
     const ids = [victimId, ...counterpartIds];
     const auctions = (await client.query(`SELECT a.id FROM collateral_auctions a JOIN collateral_auction_agreements g ON g.id=a.agreement_id
       LEFT JOIN loans l ON l.id=g.loan_id WHERE (a.state='open' OR a.id IN (SELECT auction_id FROM collateral_auction_bids WHERE state='held')) AND (g.borrower_character=$1 OR l.lender_character=$1
-      OR a.id IN (SELECT auction_id FROM collateral_auction_bids WHERE bidder_character=$1 AND state='held')) ORDER BY a.id LIMIT 2 FOR UPDATE OF a`, [victimId])).rows;
+      OR a.id IN (SELECT auction_id FROM collateral_auction_bids WHERE bidder_character=$1 AND state='held')) ORDER BY a.id LIMIT 2${dbCaps.skipLocked ? ' FOR UPDATE OF a' : ' FOR UPDATE'}`, [victimId])).rows;
     if (auctions.length > 1) fail('estate_capacity'); const receipts = [];
     for (const row of auctions) {
       const ctx = await context(client, row.id, true);
