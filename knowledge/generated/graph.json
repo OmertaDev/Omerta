@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+  "sourceRevision": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 15508,
-    "edges": 61283,
+    "nodes": 15510,
+    "edges": 61294,
     "byNodeType": {
       "Artifact": 6585,
       "Command": 287,
-      "Commit": 4045,
+      "Commit": 4047,
       "Contract": 134,
       "Document": 924,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5197,
-      "CHANGED": 23733,
+      "CHANGED": 23740,
       "CONTAINS": 6606,
       "DECLARES": 287,
       "DEFINED_IN": 1704,
       "DEPENDS_ON": 69,
       "EXECUTES": 1035,
       "HANDLED_BY": 920,
-      "HAS_COMMIT": 4045,
+      "HAS_COMMIT": 4047,
       "IMPLEMENTS": 124,
-      "IMPORTS": 6517,
+      "IMPORTS": 6518,
       "INHERITS": 45,
       "REFERENCES": 3705,
       "REPRESENTS": 2273,
-      "TESTS": 2082,
+      "TESTS": 2083,
       "TRACKS": 126,
       "USES_TABLE": 2815
     }
@@ -129806,20 +129806,20 @@
       "path": "test/city-district-arcs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 16992,
-      "lines": 225,
-      "version": "09e3d20f3c60f6f2",
+      "bytes": 17785,
+      "lines": 233,
+      "version": "1ebb6adaae9dc197",
       "text": true,
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "09e3d20f3c60f6f2"
+          "version": "1ebb6adaae9dc197"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:38:28.000Z",
+      "lastChangedAt": "2026-10-16T16:35:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d789b5b1d320d4768d3a97f51ee9256da95c590c"
+      "lastChangedCommit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
     },
     {
       "key": "Artifact:test/city-encounters-native-proof.js",
@@ -132865,20 +132865,20 @@
       "path": "test/deeddiscovery-postgres.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 9851,
-      "lines": 149,
-      "version": "5e00f394fbce738e",
+      "bytes": 10252,
+      "lines": 152,
+      "version": "8633c7b4d9b9ed88",
       "text": true,
       "provenance": [
         {
           "file": "test/deeddiscovery-postgres.js",
           "line": 1,
-          "version": "5e00f394fbce738e"
+          "version": "8633c7b4d9b9ed88"
         }
       ],
-      "lastChangedAt": "2026-10-16T15:46:13.000Z",
+      "lastChangedAt": "2026-10-16T16:35:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "531ac106cb5b3a1768cfd1383e2fb1f0064caca8"
+      "lastChangedCommit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
     },
     {
       "key": "Artifact:test/deeddiscovery.js",
@@ -187006,6 +187006,22 @@
       ]
     },
     {
+      "key": "Commit:7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "type": "Commit",
+      "id": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "label": "test(deeds): align native quest fixtures with release schema",
+      "title": "test(deeds): align native quest fixtures with release schema",
+      "date": "2026-10-16T16:35:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "provenance": [
+        {
+          "commit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
+        }
+      ]
+    },
+    {
       "key": "Commit:7c029c6559901128dd07fe7576de5b1baa4a094c",
       "type": "Commit",
       "id": "7c029c6559901128dd07fe7576de5b1baa4a094c",
@@ -211402,6 +211418,22 @@
         {
           "commit": "dd200919507ce5eb7cb07c1c25778da5673b8a93",
           "url": "https://github.com/OmertaDev/Omerta/commit/dd200919507ce5eb7cb07c1c25778da5673b8a93"
+        }
+      ]
+    },
+    {
+      "key": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "type": "Commit",
+      "id": "dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "label": "chore(knowledge): refresh native gate fix artifacts",
+      "title": "chore(knowledge): refresh native gate fix artifacts",
+      "date": "2026-10-16T16:22:53.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "provenance": [
+        {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dd3cd3ceac068ce3efb507f7320f088b370c107e"
         }
       ]
     },
@@ -238040,7 +238072,7 @@
         },
         {
           "file": "test/city-district-arcs.js",
-          "line": 34
+          "line": 35
         },
         {
           "file": "test/city-encounters-native-proof.js",
@@ -247493,6 +247525,9 @@
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+        },
+        {
           "commit": "dedddb26a51cac88a325d5d21df0d9d5d4612b45"
         },
         {
@@ -249542,6 +249577,9 @@
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+        },
+        {
           "commit": "dedddb26a51cac88a325d5d21df0d9d5d4612b45"
         },
         {
@@ -251589,6 +251627,9 @@
         },
         {
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
+        },
+        {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
         },
         {
           "commit": "dedddb26a51cac88a325d5d21df0d9d5d4612b45"
@@ -254207,6 +254248,9 @@
           "commit": "dc00ebd46c2bcd052c7566c1206025ab0db26c9f"
         },
         {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+        },
+        {
           "commit": "dedddb26a51cac88a325d5d21df0d9d5d4612b45"
         },
         {
@@ -255099,6 +255143,9 @@
         },
         {
           "commit": "d641c99d15350fc9ca8f8080ba0e4f12b3d04db4"
+        },
+        {
+          "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
         },
         {
           "commit": "dedddb26a51cac88a325d5d21df0d9d5d4612b45"
@@ -267473,7 +267520,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "220a4e75cc339a606a1d50385f3676f3b5e68d7f",
+      "revision": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
       "currentBranch": "codex/complex-deed-quests",
       "defaultBranch": "main",
       "visibility": "public",
@@ -304483,13 +304530,13 @@
       "type": "TestSuite",
       "id": "test/city-district-arcs.js",
       "label": "test/city-district-arcs.js",
-      "lines": 225,
-      "version": "09e3d20f3c60f6f2",
+      "lines": 233,
+      "version": "1ebb6adaae9dc197",
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "09e3d20f3c60f6f2"
+          "version": "1ebb6adaae9dc197"
         }
       ]
     },
@@ -306478,13 +306525,13 @@
       "type": "TestSuite",
       "id": "test/deeddiscovery-postgres.js",
       "label": "test/deeddiscovery-postgres.js",
-      "lines": 149,
-      "version": "5e00f394fbce738e",
+      "lines": 152,
+      "version": "8633c7b4d9b9ed88",
       "provenance": [
         {
           "file": "test/deeddiscovery-postgres.js",
           "line": 1,
-          "version": "5e00f394fbce738e"
+          "version": "8633c7b4d9b9ed88"
         }
       ]
     },
@@ -445487,6 +445534,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "to": "Artifact:test/city-district-arcs.js",
+      "provenance": {
+        "commit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "to": "Artifact:test/deeddiscovery-postgres.js",
+      "provenance": {
+        "commit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:7c02cbd6b9229045e96587d5c8468b73f77990a1",
       "to": "Artifact:AUDIT-tier2-deepening.md",
       "provenance": {
@@ -523323,6 +523386,46 @@
       "to": "Artifact:test/rc1-native-omr-window-boundaries.js",
       "provenance": {
         "commit": "dcfb07a8226016cac54729b51a3a88df2546cc7f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
       }
     },
     {
@@ -628682,7 +628785,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 1541
+      "weight": 1542
     },
     {
       "type": "DEPENDS_ON",
@@ -663410,6 +663513,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe",
+      "provenance": {
+        "commit": "7c00e4cdd9194cf25ac60ccdc2bb089ffb2040fe"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:7c029c6559901128dd07fe7576de5b1baa4a094c",
       "provenance": {
         "commit": "7c029c6559901128dd07fe7576de5b1baa4a094c"
@@ -675605,6 +675716,14 @@
       "to": "Commit:dd200919507ce5eb7cb07c1c25778da5673b8a93",
       "provenance": {
         "commit": "dd200919507ce5eb7cb07c1c25778da5673b8a93"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:dd3cd3ceac068ce3efb507f7320f088b370c107e",
+      "provenance": {
+        "commit": "dd3cd3ceac068ce3efb507f7320f088b370c107e"
       }
     },
     {
@@ -701716,7 +701835,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 8
@@ -701725,10 +701844,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/city-district-arcs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/city-district-arcs.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-district-arcs.js",
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 43
+        "line": 44
       }
     },
     {
@@ -701755,7 +701883,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -795262,10 +795390,19 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/city-district-arcs.js",
-      "to": "Artifact:src/rules.js",
+      "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
         "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-district-arcs.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/city-district-arcs.js",
+        "line": 9
       }
     },
     {

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `220a4e75cc33`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `7c00e4cdd919`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4045 |
+| Commits in clone | 4047 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — fix(deeds): satisfy native query and release gate checks |
+| Latest commit | 2026-10-16 — test(deeds): align native quest fixtures with release schema |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3085 |
+| OmertaDev | 3087 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,10 +30,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 680 | historical |
-| knowledge/generated/graph-summary.md | 680 | historical |
-| knowledge/generated/graph.json | 680 | historical |
-| knowledge/generated/inventory.md | 680 | historical |
+| knowledge/generated/github-history.md | 681 | historical |
+| knowledge/generated/graph-summary.md | 681 | historical |
+| knowledge/generated/graph.json | 681 | historical |
+| knowledge/generated/inventory.md | 681 | historical |
 | [SPEC.md](../../SPEC.md) | 546 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 469 | yes |
@@ -42,7 +42,7 @@
 | knowledge/generated/documents.md | 335 | historical |
 | [package.json](../../package.json) | 321 | yes |
 | [BALANCE.md](../../BALANCE.md) | 256 | yes |
-| knowledge/generated/modules.md | 240 | historical |
+| knowledge/generated/modules.md | 241 | historical |
 | [src/game.js](../../src/game.js) | 189 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | knowledge/generated/graph.mmd | 186 | historical |

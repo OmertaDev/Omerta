@@ -139,7 +139,7 @@
 | [src/content/phase1.js](../../src/content/phase1.js) | 26 | world-graph | 10 / 15 | 0 | 0 | 9 |
 | [src/content/phase2-transactions.js](../../src/content/phase2-transactions.js) | 138 | platform-core | 2 / 15 | 0 | 0 | 6 |
 | [src/content/progression-admission.js](../../src/content/progression-admission.js) | 274 | platform-core | 9 / 3 | 0 | 1 | 1 |
-| [src/content/property-investigation.js](../../src/content/property-investigation.js) | 143 | platform-core | 0 / 2 | 0 | 0 | 0 |
+| [src/content/property-investigation.js](../../src/content/property-investigation.js) | 143 | platform-core | 0 / 3 | 0 | 0 | 1 |
 | [src/content/runtime.js](../../src/content/runtime.js) | 1095 | platform-core | 2 / 3 | 9 | 12 | 1 |
 | [src/content/staged-crew-missions.js](../../src/content/staged-crew-missions.js) | 104 | platform-core | 0 / 4 | 0 | 0 | 3 |
 | [src/content/world-kernel-pilot.js](../../src/content/world-kernel-pilot.js) | 34 | platform-core | 6 / 18 | 0 | 1 | 12 |
