@@ -5,6 +5,15 @@ on:
 
 env:
   RC1_EVIDENCE_PUBLIC_KEY: ${{ vars.RC1_EVIDENCE_PUBLIC_KEY }}
+  LEGAL_OPERATOR_NAME: CI Test Operator
+  LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+  PRIVACY_CONTACT_EMAIL: privacy@example.test
+  DMCA_AGENT_NAME: CI Test Agent
+  DMCA_AGENT_EMAIL: copyright@example.test
+  DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+  DMCA_AGENT_PHONE: '+1 202 555 0100'
+  DMCA_AGENT_REGISTERED: 'true'
+  PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
 
 permissions:
   contents: read
