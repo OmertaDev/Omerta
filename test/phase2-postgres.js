@@ -15,7 +15,7 @@ import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createReleasePhase2MigrationCatalog, readReleasePhase2Metadata,
-  verifyReleasePhase2CausalNegatives } from '../tools/combined-release-phase2-migration-catalog.js';
+  verifyReleasePhase2CausalNegatives } from '../tools/next-five-release-phase2-migration-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));
@@ -108,6 +108,7 @@ async function parent(url) {
           encoding: 'utf8', timeout: 240000, maxBuffer: 8*1024*1024, windowsHide: true,
         });
         process.stdout.write(result.stdout ?? ''); process.stderr.write(result.stderr ?? '');
+        if (result.error || result.signal) console.error('phase2-postgres: isolated child termination ' + JSON.stringify({ mode, status: result.status, signal: result.signal, code: result.error?.code }));
         assert.equal(result.status,0,`isolated ${mode} child must pass (status ${result.status}, signal ${result.signal}, spawn ${result.error?.code ?? 'none'})`);
       } finally { await admin.query(`DROP SCHEMA "${ownedName(name)}" CASCADE`); }
     }

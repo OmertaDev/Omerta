@@ -1,3 +1,7 @@
+import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
+import { collectFreightHistoryIssues } from './freight-history.js';
+import { economicIntelligenceTransferBooks } from './economicintelligence.js';
+import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';
 import { collectCompanyRestructuringIssues, collectCommercialHistoryIssues } from './company-commercial-invariants.js';
 // §10.4 — the nightly ledger-invariant job. Value transfers, it is never minted:
 // every bucket of value must reconcile against the enumerated faucet/sink reasons
@@ -20,6 +24,9 @@ import { collectServiceSubscriptionIssues } from './servicesubscriptions.js';
 import { collectWorkerTrainingIssues } from './workertraining.js';
 import { collectMiddleFiveIssues } from './company-middle-five-invariants.js';
 import { collectEquipmentInsuranceIssues } from './equipmentinsurance.js';
+import { collectConsignmentIssues } from './consignments.js';
+import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';
+import { collectPickingPackingIssues } from './pickingpackinginvariants.js';
 import { collectTerritoryEconomicsIssues } from './territoryeconomics.js';
 import { dbCaps } from './db.js';
 import { withPhase2Read } from './content/phase2-transactions.js';
@@ -61,10 +68,14 @@ const KNOWN_REASONS = {
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
+    'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
+    'picking_packing:pay', 'picking_packing:receive',
+    'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
     'business_partnership:fund:pay', 'business_partnership:fund:receive', 'business_partnership:profit:pay', 'business_partnership:profit:receive',
     'company_acquisition:pay', 'company_acquisition:receive',
+    'economic_intelligence:pay', 'economic_intelligence:receive',
     // FIVE PILLARS: `sov:` — pure treasury sinks (build/upgrade/upkeep/siege, gang-level, no faucet);
     // `campaign:` — the authored-chain reward, a once-per-street-per-chain character_id'd faucet
     // (the missions precedent — check (a) reconciles it per character).
@@ -729,6 +740,21 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance premium transfers', 0, await sum(pool, "currency='cash' AND reason IN ('equipment_insurance:premium_pay','equipment_insurance:premium_receive')"), 0);
   const equipmentInsuranceIssues = await collectEquipmentInsuranceIssues(pool);
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
+  const barterIssues = await collectAtomicBarterIssues(pool);
+  push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const pickingIssues = await collectPickingPackingIssues(pool);
+  const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
+  push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
+  const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
+  const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
+  push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
+  const commissionIssues = await collectCommissionedCraftingIssues(pool);
+  push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });
+  const freightIssues = await collectFreightHistoryIssues(pool);
+  push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });
+  const consignmentIssues = await collectConsignmentIssues(pool);
+  const consignmentNet = await sum(pool, "currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')");
+  push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });
   const territoryIssues = await collectTerritoryEconomicsIssues(pool);
   push('territory economics source and tribute bindings', territoryIssues.length, 0, 0, { issues: territoryIssues });
   const subscriptionEscrow = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM service_subscriptions');
@@ -745,6 +771,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('worker training canonical source', trainingIssues.length, 0, 0, { issues: trainingIssues });
   push('partnership capital transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:fund:pay','business_partnership:fund:receive')"), 0);
   push('partnership profit transfers', 0, await sum(pool, "currency='cash' AND reason IN ('business_partnership:profit:pay','business_partnership:profit:receive')"), 0);
+  const intelligenceBooks = await economicIntelligenceTransferBooks(pool);
+  push('economic intelligence transfers', 0, await sum(pool, "currency='cash' AND reason IN ('economic_intelligence:pay','economic_intelligence:receive')"), 0);
+  push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });
+  const labIssues = await collectStrategyLaboratoryIssues(pool);
+  push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });
   push('company acquisition transfers', 0, await sum(pool, "currency='cash' AND reason IN ('company_acquisition:pay','company_acquisition:receive')"), 0);
   const restructuringIssues = await collectCompanyRestructuringIssues(pool);
   push('company restructuring canonical receipt books', restructuringIssues.length, 0, 0, { issues: restructuringIssues });

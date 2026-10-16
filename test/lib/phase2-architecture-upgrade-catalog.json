@@ -5240,6 +5240,981 @@
       "table_name": "territory_economics_sources",
       "name": "territory_economics_sources_profile_id_fkey",
       "definition": "FOREIGN KEY (profile_id) REFERENCES territory_economics_profiles(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_account_id_source_kind_source__key",
+      "definition": "UNIQUE (account_id, source_kind, source_key_hash)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_check",
+      "definition": "CHECK (expires_at > source_at AND expires_at <= (source_at + '30 days'::interval))"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_source_key_hash_check",
+      "definition": "CHECK (char_length(source_key_hash) = 64)"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_source_kind_check",
+      "definition": "CHECK (source_kind = ANY (ARRAY['production'::text, 'forecast'::text]))"
+    },
+    {
+      "table_name": "agent_operating_memory_facts",
+      "name": "agent_operating_memory_facts_source_proof_hash_check",
+      "definition": "CHECK (char_length(source_proof_hash) = 64)"
+    },
+    {
+      "table_name": "agent_operating_memory_policies",
+      "name": "agent_operating_memory_policies_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_policies",
+      "name": "agent_operating_memory_policies_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "agent_operating_memory_policies",
+      "name": "agent_operating_memory_policies_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "agent_operating_memory_requests",
+      "name": "agent_operating_memory_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_price_check",
+      "definition": "CHECK (price >= 1 AND price <= 100000)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "economic_intelligence_publications",
+      "name": "economic_intelligence_publications_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['published'::text, 'withdrawn'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchase_publication_id_buyer_account_key",
+      "definition": "UNIQUE (publication_id, buyer_account)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_buyer_account_fkey",
+      "definition": "FOREIGN KEY (buyer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_pay_journal_fkey",
+      "definition": "FOREIGN KEY (pay_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_pay_journal_key",
+      "definition": "UNIQUE (pay_journal)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_price_check",
+      "definition": "CHECK (price >= 1 AND price <= 100000)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_publication_id_fkey",
+      "definition": "FOREIGN KEY (publication_id) REFERENCES economic_intelligence_publications(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_receive_journal_fkey",
+      "definition": "FOREIGN KEY (receive_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_receive_journal_key",
+      "definition": "UNIQUE (receive_journal)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "economic_intelligence_purchases",
+      "name": "economic_intelligence_purchases_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "economic_intelligence_requests",
+      "name": "economic_intelligence_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "economic_intelligence_requests",
+      "name": "economic_intelligence_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_job_id_fkey",
+      "definition": "FOREIGN KEY (job_id) REFERENCES funded_external_work_jobs(id)"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_job_id_key",
+      "definition": "UNIQUE (job_id)"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['allocation'::text, 'recovery'::text]))"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_outcome_hash_key",
+      "definition": "UNIQUE (outcome_hash)"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "funded_external_work_events",
+      "name": "funded_external_work_events_receipt_hash_key",
+      "definition": "UNIQUE (receipt_hash)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_course_id_fkey",
+      "definition": "FOREIGN KEY (course_id) REFERENCES worker_training_courses(id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_course_id_ordinal_key",
+      "definition": "UNIQUE (course_id, ordinal)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_ordinal_check",
+      "definition": "CHECK (ordinal >= 1 AND ordinal <= 8)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_phase_check",
+      "definition": "CHECK (phase = 'synthetic_control_only'::text)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_source_identity_key",
+      "definition": "UNIQUE (source_identity)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'allocated'::text, 'recoverable'::text, 'recovered'::text]))"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_worker_account_fkey",
+      "definition": "FOREIGN KEY (worker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "funded_external_work_jobs",
+      "name": "funded_external_work_jobs_worker_character_fkey",
+      "definition": "FOREIGN KEY (worker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "funded_external_work_requests",
+      "name": "funded_external_work_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "funded_external_work_requests",
+      "name": "funded_external_work_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_grant_hash_check",
+      "definition": "CHECK (char_length(grant_hash) = 64)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_original_owner_fkey",
+      "definition": "FOREIGN KEY (original_owner) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_original_planner_fkey",
+      "definition": "FOREIGN KEY (original_planner) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_pkey",
+      "definition": "PRIMARY KEY (plan_id)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_plan_id_fkey",
+      "definition": "FOREIGN KEY (plan_id) REFERENCES management_team_plans(id)"
+    },
+    {
+      "table_name": "management_team_autonomy_grants",
+      "name": "management_team_autonomy_grants_revision_check",
+      "definition": "CHECK (revision >= 1)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_creator_character_fkey",
+      "definition": "FOREIGN KEY (creator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES management_teams(partnership_id)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_proposal_id_fkey",
+      "definition": "FOREIGN KEY (proposal_id) REFERENCES company_governance_proposals(id)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_proposal_id_key",
+      "definition": "UNIQUE (proposal_id)"
+    },
+    {
+      "table_name": "management_team_plans",
+      "name": "management_team_plans_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['planned'::text, 'executed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "management_team_requests",
+      "name": "management_team_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "management_team_requests",
+      "name": "management_team_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "management_team_requests",
+      "name": "management_team_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "management_teams",
+      "name": "management_teams_partnership_id_fkey",
+      "definition": "FOREIGN KEY (partnership_id) REFERENCES company_governance(partnership_id)"
+    },
+    {
+      "table_name": "management_teams",
+      "name": "management_teams_pkey",
+      "definition": "PRIMARY KEY (partnership_id)"
+    },
+    {
+      "table_name": "management_teams",
+      "name": "management_teams_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_arm_index_check",
+      "definition": "CHECK (arm_index >= 0 AND arm_index <= 2)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_check",
+      "definition": "CHECK (owner_arm_grant = false OR allow_autonomous = true)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_observed_cost_check",
+      "definition": "CHECK (observed_cost >= 0::numeric)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_original_account_fkey",
+      "definition": "FOREIGN KEY (original_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_policy_hash_check",
+      "definition": "CHECK (char_length(policy_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'completed'::text, 'retired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_terms_hash_check",
+      "definition": "CHECK (char_length(terms_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_territory_profile_id_fkey",
+      "definition": "FOREIGN KEY (territory_profile_id) REFERENCES territory_economics_profiles(id)"
+    },
+    {
+      "table_name": "strategy_laboratories",
+      "name": "strategy_laboratories_territory_revision_check",
+      "definition": "CHECK (territory_revision >= 1)"
+    },
+    {
+      "table_name": "strategy_laboratory_arms",
+      "name": "strategy_laboratory_arms_lab_id_fkey",
+      "definition": "FOREIGN KEY (lab_id) REFERENCES strategy_laboratories(id)"
+    },
+    {
+      "table_name": "strategy_laboratory_arms",
+      "name": "strategy_laboratory_arms_lab_id_ordinal_key",
+      "definition": "UNIQUE (lab_id, ordinal)"
+    },
+    {
+      "table_name": "strategy_laboratory_arms",
+      "name": "strategy_laboratory_arms_ordinal_check",
+      "definition": "CHECK (ordinal >= 0 AND ordinal <= 2)"
+    },
+    {
+      "table_name": "strategy_laboratory_arms",
+      "name": "strategy_laboratory_arms_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "strategy_laboratory_arms",
+      "name": "strategy_laboratory_arms_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['observing'::text, 'completed'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_check",
+      "definition": "CHECK (receipt IS NULL AND original_actor IS NULL AND account_ref IS NULL OR receipt IS NOT NULL AND original_actor IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_original_actor_fkey",
+      "definition": "FOREIGN KEY (original_actor) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "strategy_laboratory_requests",
+      "name": "strategy_laboratory_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "strategy_laboratory_sources",
+      "name": "strategy_laboratory_sources_arm_id_fkey",
+      "definition": "FOREIGN KEY (arm_id) REFERENCES strategy_laboratory_arms(id)"
+    },
+    {
+      "table_name": "strategy_laboratory_sources",
+      "name": "strategy_laboratory_sources_journal_id_fkey",
+      "definition": "FOREIGN KEY (journal_id) REFERENCES business_depot_journal(id)"
+    },
+    {
+      "table_name": "strategy_laboratory_sources",
+      "name": "strategy_laboratory_sources_pkey",
+      "definition": "PRIMARY KEY (journal_id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_check",
+      "definition": "CHECK (maker_account <> taker_account AND maker_character <> taker_character AND offered_item <> requested_item)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_check1",
+      "definition": "CHECK ((state = 'completed'::text) = (receipt IS NOT NULL))"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_maker_account_fkey",
+      "definition": "FOREIGN KEY (maker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_maker_character_fkey",
+      "definition": "FOREIGN KEY (maker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_offered_item_fkey",
+      "definition": "FOREIGN KEY (offered_item) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_requested_item_fkey",
+      "definition": "FOREIGN KEY (requested_item) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'completed'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_taker_account_fkey",
+      "definition": "FOREIGN KEY (taker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "atomic_barter_offers",
+      "name": "atomic_barter_offers_taker_character_fkey",
+      "definition": "FOREIGN KEY (taker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_request_hash_check",
+      "definition": "CHECK (char_length(request_hash) = 64)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "atomic_barter_requests",
+      "name": "atomic_barter_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_check",
+      "definition": "CHECK (customer_account <> maker_account AND customer_character <> maker_character)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_check1",
+      "definition": "CHECK (fee_total = (fee_remaining + fee_paid + fee_refunded))"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_check2",
+      "definition": "CHECK ((status = ANY (ARRAY['funded'::text, 'accepted'::text])) AND fee_remaining = fee_total AND fee_paid = 0 AND fee_refunded = 0 AND settlement IS NULL OR status = 'completed'::text AND fee_remaining = 0 AND fee_paid = fee_total AND fee_refunded = 0 AND settlement IS NOT NULL OR status = 'refunded'::text AND fee_remaining = 0 AND fee_refunded = fee_total AND fee_paid = 0 AND settlement IS NOT NULL)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_customer_account_fkey",
+      "definition": "FOREIGN KEY (customer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_customer_character_fkey",
+      "definition": "FOREIGN KEY (customer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fee_paid_check",
+      "definition": "CHECK (fee_paid >= 0)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fee_refunded_check",
+      "definition": "CHECK (fee_refunded >= 0)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fee_remaining_check",
+      "definition": "CHECK (fee_remaining >= 0)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fee_total_check",
+      "definition": "CHECK (fee_total >= 1 AND fee_total <= 100000)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fund_guard_fkey",
+      "definition": "FOREIGN KEY (fund_guard) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_fund_guard_key",
+      "definition": "UNIQUE (fund_guard)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_maker_account_fkey",
+      "definition": "FOREIGN KEY (maker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_maker_character_fkey",
+      "definition": "FOREIGN KEY (maker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "commissioned_crafting_contracts",
+      "name": "commissioned_crafting_contracts_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['funded'::text, 'accepted'::text, 'completed'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "commissioned_crafting_requests",
+      "name": "commissioned_crafting_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "consignment_requests",
+      "name": "consignment_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_buyer_character_fkey",
+      "definition": "FOREIGN KEY (buyer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_check",
+      "definition": "CHECK (owner_account <> host_account AND owner_character <> host_character)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_check1",
+      "definition": "CHECK (status = 'sold'::text AND buyer_character IS NOT NULL AND buyer_character <> owner_character AND buyer_character <> host_character AND settlement IS NOT NULL OR status <> 'sold'::text AND buyer_character IS NULL AND settlement IS NULL)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_host_account_fkey",
+      "definition": "FOREIGN KEY (host_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_host_character_fkey",
+      "definition": "FOREIGN KEY (host_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_host_fee_bps_check",
+      "definition": "CHECK (host_fee_bps >= 0 AND host_fee_bps <= 2000)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_owner_account_fkey",
+      "definition": "FOREIGN KEY (owner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_owner_character_fkey",
+      "definition": "FOREIGN KEY (owner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_price_check",
+      "definition": "CHECK (price >= 1 AND price <= 1000000)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "consignments",
+      "name": "consignments_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'sold'::text, 'cancelled'::text, 'expired'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "freight_consolidation_acceptances",
+      "name": "freight_consolidation_acceptances_batch_id_commitment_id_key",
+      "definition": "UNIQUE (batch_id, commitment_id)"
+    },
+    {
+      "table_name": "freight_consolidation_acceptances",
+      "name": "freight_consolidation_acceptances_batch_id_fkey",
+      "definition": "FOREIGN KEY (batch_id) REFERENCES freight_consolidations(id)"
+    },
+    {
+      "table_name": "freight_consolidation_acceptances",
+      "name": "freight_consolidation_acceptances_batch_id_order_id_key",
+      "definition": "UNIQUE (batch_id, order_id)"
+    },
+    {
+      "table_name": "freight_consolidation_acceptances",
+      "name": "freight_consolidation_acceptances_pkey",
+      "definition": "PRIMARY KEY (batch_id, buyer_account)"
+    },
+    {
+      "table_name": "freight_consolidation_requests",
+      "name": "freight_consolidation_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "freight_consolidations",
+      "name": "freight_consolidations_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "freight_consolidations",
+      "name": "freight_consolidations_revision_check",
+      "definition": "CHECK (revision > 0)"
+    },
+    {
+      "table_name": "freight_consolidations",
+      "name": "freight_consolidations_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['proposed'::text, 'ready'::text, 'completed'::text, 'cancelled'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_check",
+      "definition": "CHECK (tenant_account <> provider_account AND tenant_character <> provider_character)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_check1",
+      "definition": "CHECK ((state = 'fulfilled'::text) = (receipt IS NOT NULL))"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_lease_id_fkey",
+      "definition": "FOREIGN KEY (lease_id) REFERENCES business_warehouse_leases(id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_provider_account_fkey",
+      "definition": "FOREIGN KEY (provider_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_provider_character_fkey",
+      "definition": "FOREIGN KEY (provider_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_quantity_check",
+      "definition": "CHECK (quantity >= 1 AND quantity <= 10)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['requested'::text, 'accepted'::text, 'fulfilled'::text, 'cancelled'::text, 'party_dead'::text]))"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_tenant_account_fkey",
+      "definition": "FOREIGN KEY (tenant_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "picking_packing_jobs",
+      "name": "picking_packing_jobs_tenant_character_fkey",
+      "definition": "FOREIGN KEY (tenant_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_job_id_fkey",
+      "definition": "FOREIGN KEY (job_id) REFERENCES picking_packing_jobs(id)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_request_hash_check",
+      "definition": "CHECK (char_length(request_hash) = 64)"
+    },
+    {
+      "table_name": "picking_packing_requests",
+      "name": "picking_packing_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
     }
   ],
   "removed": [
@@ -6809,6 +7784,304 @@
       "journal_id",
       "profile_id",
       "payment_id"
+    ],
+    "economic_intelligence_publications": [
+      "id",
+      "depot_id",
+      "seller_account",
+      "seller_character",
+      "window_hours",
+      "horizon_hours",
+      "evaluation_at",
+      "source_hash",
+      "report_hash",
+      "terms_hash",
+      "report",
+      "price",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "economic_intelligence_purchases": [
+      "id",
+      "publication_id",
+      "buyer_account",
+      "buyer_character",
+      "seller_account",
+      "seller_character",
+      "price",
+      "report_hash",
+      "report",
+      "purchased_at",
+      "pay_journal",
+      "receive_journal"
+    ],
+    "economic_intelligence_requests": [
+      "account_id",
+      "request_key",
+      "identity",
+      "receipt"
+    ],
+    "agent_operating_memory_policies": [
+      "account_id",
+      "revision",
+      "enabled"
+    ],
+    "agent_operating_memory_facts": [
+      "id",
+      "account_id",
+      "original_character",
+      "business_id",
+      "source_kind",
+      "source_key_hash",
+      "source_proof_hash",
+      "source_at",
+      "captured_at",
+      "expires_at",
+      "summary",
+      "baseline_ids",
+      "baseline_truncated",
+      "outcome"
+    ],
+    "agent_operating_memory_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "created_at"
+    ],
+    "funded_external_work_jobs": [
+      "id",
+      "source_identity",
+      "depot_id",
+      "course_id",
+      "ordinal",
+      "stat",
+      "owner_account",
+      "owner_character",
+      "terms",
+      "work_hash",
+      "funding_hash",
+      "funding_proof",
+      "phase",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "funded_external_work_events": [
+      "id",
+      "job_id",
+      "kind",
+      "receipt_hash",
+      "receipt",
+      "recorded_at"
+    ],
+    "funded_external_work_requests": [
+      "account_id",
+      "key_hash",
+      "identity",
+      "receipt"
+    ],
+    "management_teams": [
+      "partnership_id",
+      "relationship_hash",
+      "operator_opted",
+      "planner_opted",
+      "revision",
+      "retired",
+      "created_at",
+      "allow_autonomous"
+    ],
+    "management_team_plans": [
+      "id",
+      "partnership_id",
+      "creator_character",
+      "proposal_id",
+      "proposal_hash",
+      "team_revision",
+      "snapshot_hash",
+      "turn_id",
+      "selection_hash",
+      "plan_hash",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "management_team_requests": [
+      "account_id",
+      "key_hash",
+      "identity",
+      "receipt"
+    ],
+    "management_team_autonomy_grants": [
+      "plan_id",
+      "original_owner",
+      "original_planner",
+      "owner_account",
+      "team_revision",
+      "plan_hash",
+      "proposal_hash",
+      "snapshot_hash",
+      "policy_hash",
+      "before_config",
+      "config",
+      "revision",
+      "enabled",
+      "consumed",
+      "expires_at",
+      "grant_hash",
+      "next_attempt_at"
+    ],
+    "strategy_laboratories": [
+      "id",
+      "original_account",
+      "original_character",
+      "business_id",
+      "territory_profile_id",
+      "territory_revision",
+      "policy_hash",
+      "terms",
+      "terms_hash",
+      "allow_autonomous",
+      "owner_arm_grant",
+      "arm_index",
+      "observed_cost",
+      "expires_at",
+      "next_run_at",
+      "state"
+    ],
+    "strategy_laboratory_arms": [
+      "id",
+      "lab_id",
+      "ordinal",
+      "config",
+      "baseline",
+      "start_receipt",
+      "started_at",
+      "end_at",
+      "state"
+    ],
+    "strategy_laboratory_sources": [
+      "journal_id",
+      "arm_id"
+    ],
+    "strategy_laboratory_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "consignments": [
+      "id",
+      "item_id",
+      "owner_account",
+      "owner_character",
+      "host_account",
+      "host_character",
+      "price",
+      "host_fee_bps",
+      "expires_at",
+      "source_hash",
+      "status"
+    ],
+    "consignment_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "atomic_barter_requests": [
+      "account_id",
+      "request_key",
+      "request_hash",
+      "run_id"
+    ],
+    "atomic_barter_offers": [
+      "id",
+      "maker_account",
+      "taker_account",
+      "maker_character",
+      "taker_character",
+      "offered_item",
+      "requested_item",
+      "expires_at",
+      "state"
+    ],
+    "commissioned_crafting_contracts": [
+      "id",
+      "business_id",
+      "customer_account",
+      "customer_character",
+      "maker_account",
+      "maker_character",
+      "fee_total",
+      "fee_remaining",
+      "fee_paid",
+      "fee_refunded",
+      "source_pin",
+      "source_hash",
+      "expires_at",
+      "reserve_transaction",
+      "fund_guard",
+      "status"
+    ],
+    "commissioned_crafting_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "picking_packing_jobs": [
+      "id",
+      "tenant_account",
+      "provider_account",
+      "tenant_character",
+      "provider_character",
+      "lease_id",
+      "depot_id",
+      "quantity",
+      "fee_cash",
+      "source_hash",
+      "source",
+      "expires_at",
+      "state"
+    ],
+    "picking_packing_requests": [
+      "account_id",
+      "request_key",
+      "request_hash",
+      "actor_ref",
+      "receipt",
+      "job_id"
+    ],
+    "freight_consolidations": [
+      "id",
+      "supplier_account",
+      "supplier_character",
+      "buyer_a_account",
+      "buyer_a_character",
+      "buyer_b_account",
+      "buyer_b_character",
+      "manifest",
+      "manifest_hash",
+      "state",
+      "revision",
+      "expires_at"
+    ],
+    "freight_consolidation_acceptances": [
+      "batch_id",
+      "buyer_account",
+      "buyer_character",
+      "order_id",
+      "commitment_id",
+      "manifest_hash",
+      "accepted_at"
+    ],
+    "freight_consolidation_requests": [
+      "account_id",
+      "request_key",
+      "identity",
+      "receipt"
     ]
   }
 }

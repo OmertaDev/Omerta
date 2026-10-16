@@ -16,6 +16,9 @@ import { spawnSync } from 'node:child_process';
 import {
   build,
   extractCommercialHelperReconciliations,
+  extractNextFiveMetadataChecks,
+  extractAutonomyHelperReconciliations,
+  extractAutonomyObservationChecks,
   checkGraph,
   QUERIES,
   census,
@@ -63,6 +66,7 @@ assert(inv.ok, `graph invariants failed:\n  ${inv.problems.join('\n  ')}`);
 // read that one — which is why the literal lives in its SQL.
 assert.deepEqual(inv.mute.sort(), [
   'agent acquisition budget accounting',
+  'atomic barter canonical two-item bindings',
   // Consent/provenance checks introduce no money bucket; canonical cash/GIN
   // custody remains independently reconciled by the corresponding ledger checks.
   'buyer cooperative settlement provenance',
@@ -79,10 +83,12 @@ assert.deepEqual(inv.mute.sort(), [
   'family operation history',
   'franchise royalty conservation',
   'franchise royalty provenance',
+  'freight metadata history bindings',
   'logistics coverage bindings',
   'physical equipment condition provenance',
   'reason vocabulary',
   'service subscription repair bindings',
+  'strategy laboratory canonical observations',
   'strategy league bindings',
   'strategy license bindings',
   'warehouse journal ownership',
@@ -98,8 +104,11 @@ for (const [check, reasons] of [
   ['buyer cooperative GIN custody', ['buyer_cooperative:claim', 'buyer_cooperative:death_gin']],
 ]) for (const reason of reasons) assert(g.edges.some(edge => edge.type === 'RECONCILES' && edge.from === 'Check:' + check && edge.to === 'Reason:' + reason), 'cooperative currency graph coverage lost: ' + check + ' / ' + reason);
 const NON_CURRENCY_WORLD_GRAPH_CHECKS = new Map([
+  ['atomic barter canonical two-item bindings', 'original-party exact two physical-item transfer and replay witnesses; no cash'],
+  ['freight metadata history bindings', 'original manifest/consent/completion receipt identities; canonical cash and GIN remain independently reconciled'],
   ['equipment rental physical title', 'exact physical custody/title and original paid lease bindings'],
   ['service subscription repair bindings', 'original consent, actual repair and exact cycle payment bindings'],
+  ['strategy laboratory canonical observations', 'recorded canonical observation amounts, sources and exposure; no payout or currency custody'],
   ['strategy league bindings', 'original-account cohort consent, private rules/licenses and shared prospective outcome bindings'],
   ['warehouse journal ownership', 'warehouse lease/depot/tenant journal ownership'],
   ['family operation custody', 'Family promise, actual contribution, and escrow conservation'],
@@ -336,6 +345,55 @@ for (const spec of commercialControls) {
  absent(invariantSource,{...commercialHelpers,[spec.file]:undefined});
 }
 console.log('✓ imported commercial accounting:12 actual monetary reason edges, LF/CRLF, '+commercialNegativeControls+' causal unknown/import/call/result/amount/reason/party controls');
+
+
+// V imported paired cash must not become a mute; observation provenance has no ledger effect.
+const autonomyHelpers = Object.fromEntries(['src/economicintelligence.js','src/strategylaboratories.js'].map(file=>[file,fs.readFileSync(new URL('../'+file,import.meta.url),'utf8')]));
+const autonomyTerms = extractAutonomyHelperReconciliations(invariantSource,autonomyHelpers);
+assert.deepEqual(autonomyTerms.map(t=>[t.check,t.reason]),[["economic intelligence paired provenance","economic_intelligence:pay"],["economic intelligence paired provenance","economic_intelligence:receive"]]);
+assert.deepEqual(extractAutonomyObservationChecks(invariantSource,autonomyHelpers),['strategy laboratory canonical observations']);
+assert.deepEqual(extractAutonomyHelperReconciliations(normalizeText(invariantSource).replaceAll('\n','\r\n'),Object.fromEntries(Object.entries(autonomyHelpers).map(([f,s])=>[f,normalizeText(s).replaceAll('\n','\r\n')]))),autonomyTerms);
+for(const term of autonomyTerms){
+ assert(!inv.mute.includes(term.check));
+ assert(g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+term.check&&e.to==='Reason:'+term.reason&&e.prov.file===term.file&&e.prov.binding.file==='src/invariants.js'));
+}
+let autonomyNegativeControls=0;
+const autonomySpecs=[{"check":"economic intelligence paired provenance","file":"src/economicintelligence.js","fn":"economicIntelligenceTransferBooks","variable":"intelligenceBooks","import":"import { economicIntelligenceTransferBooks } from './economicintelligence.js';","call":"const intelligenceBooks = await economicIntelligenceTransferBooks(pool);","binding":"push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });","sha256":"6d93a9c38e7543fad2158a2939c832be21c043d4b5a6f7a0b7a61a5ab7a5571e","reasons":["economic_intelligence:pay","economic_intelligence:receive"]},{"check":"strategy laboratory canonical observations","file":"src/strategylaboratories.js","fn":"collectStrategyLaboratoryIssues","variable":"labIssues","import":"import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';","call":"const labIssues = await collectStrategyLaboratoryIssues(pool);","binding":"push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });","sha256":"ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9","reasons":[]}];
+for(const spec of autonomySpecs){
+ const absent=(source,helpers)=>{assert.equal(extractAutonomyHelperReconciliations(source,helpers).some(t=>t.check===spec.check),false);assert.equal(extractAutonomyObservationChecks(source,helpers).includes(spec.check),false);autonomyNegativeControls++;};
+ for(const literal of [spec.import,spec.call,spec.binding]){
+  assert(invariantSource.includes(literal));
+  absent(invariantSource.replace(literal,literal+' /* changed */'),autonomyHelpers);
+  absent(invariantSource.replace(literal,''),autonomyHelpers);
+  absent(invariantSource.replace(literal,literal+'\n'+literal),autonomyHelpers);
+ }
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:undefined});
+ absent(invariantSource,{...autonomyHelpers,[spec.file]:autonomyHelpers[spec.file]+'\n// unknown shape'});
+ const source=autonomyHelpers[spec.file];
+ const anchors=spec.reasons.length?["-Number(p.price)","Number(p.price),'economic_intelligence:receive'","j.character_id!==character","j.currency!=='cash'","Number(j.amount)!==amount","j.reason!==reason","j.counterparty!==p.id","ids.has(journal)","ids.size!==legs.length","status:'unknown'","publication.terms_hash!==publicationHash(publication)","p.buyer_account===p.seller_account"]:["digest(l.terms)!==l.terms_hash","digest(frame)!==a.baseline.hash","a.baseline.ids.includes(sourceId)","r.depot_id!==l.business_id","customer.account_id===l.original_account","net+=Number(r.cash_delta)+Number(r.cost_delta)","net-=Number(r.expense)","net!==Number(view.observedProfitCash)","cost!==Number(l.observed_cost)","!view.noGuaranteedIncome","reason:'unbound_source'"];
+ for(const literal of anchors){assert(source.includes(literal),literal);absent(invariantSource,{...autonomyHelpers,[spec.file]:source.replace(literal,literal+' /* altered */')});}
+}
+console.log('✓ autonomy graph: 2 actual intelligence monetary terms; source-bound observation provenance; '+autonomyNegativeControls+' causal refusals');
+
+
+// These exact source-bound classifiers cannot supply fictitious cash edges.
+const nextFiveMetadataHelpers=Object.fromEntries(["src/atomicbarterinvariants.js","src/freight-history.js"].map(file=>[file,fs.readFileSync(new URL('../'+file,import.meta.url),'utf8')]));
+const nextFiveMetadataSpecs=[{"check":"atomic barter canonical two-item bindings","file":"src/atomicbarterinvariants.js","import":"import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';","call":"const barterIssues = await collectAtomicBarterIssues(pool);","binding":"push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });","anchors":["request.account_ref !== request.account_id","request.actor_ref !==","guard.mutation_kind !== 'transfer_item'","guard.owner_id !== from","legs.length !== 1","legs[0].item_id !== itemId","legs[0].template_id !== 'item:precision_lock_tool'","legs[0].from_owner_id !== from","legs[0].to_owner_id !== to","!used.has(row.idempotency_key)"],"sha256":"9b85aa69ac3841f569957f60f9965964cdda8f22bab81b8f04bfe95ec218b18c"},{"check":"freight metadata history bindings","file":"src/freight-history.js","import":"import { collectFreightHistoryIssues } from './freight-history.js';","call":"const freightIssues = await collectFreightHistoryIssues(pool);","binding":"push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });","anchors":["hash(m)!==b.manifest_hash","e[0].buyerAccount!==b.buyer_a_account","e[1].buyerCharacter!==b.buyer_b_character","e.reduce((n,v)=>n+v.quantity,0)!==m.quantity","a.manifest_hash===b.manifest_hash","accepts.length!==2","r.manifestHash!==b.manifest_hash","h.commitmentId!==e[i].commitmentId","h.receipt?.earned+h.receipt?.take!==h.receipt?.gross","r.earned!==r.handoffs.reduce((n,h)=>n+h.receipt.earned,0)"],"sha256":"48193e9c4c999bc8ab076fc2d4871d3e1fe88b0b4fb761dcdf7d9dec64538643"}];
+assert.deepEqual(extractNextFiveMetadataChecks(invariantSource,nextFiveMetadataHelpers),["atomic barter canonical two-item bindings","freight metadata history bindings"]);
+assert.deepEqual(extractNextFiveMetadataChecks(normalizeText(invariantSource).replaceAll('\n','\r\n'),Object.fromEntries(Object.entries(nextFiveMetadataHelpers).map(([f,s])=>[f,normalizeText(s).replaceAll('\n','\r\n')]))),["atomic barter canonical two-item bindings","freight metadata history bindings"]);
+let nextFiveMetadataNegatives=0;
+for(const spec of nextFiveMetadataSpecs){
+ const absent=(inv,helpers)=>{assert(!extractNextFiveMetadataChecks(inv,helpers).includes(spec.check));nextFiveMetadataNegatives++;};
+ assert(inv.mute.includes(spec.check));assert(!g.edges.some(e=>e.type==='RECONCILES'&&e.from==='Check:'+spec.check));
+ for(const literal of [spec.import,spec.call,spec.binding]){assert(invariantSource.includes(literal));for(const value of ['',literal+' /* altered */',literal+'\n'+literal])absent(invariantSource.replace(literal,()=>value),nextFiveMetadataHelpers);}
+ absent(invariantSource.replace(spec.call,'').replace(spec.binding,()=>spec.binding+'\n'+spec.call),nextFiveMetadataHelpers);
+ absent(invariantSource.replace(spec.import,'').replace(spec.call,()=>spec.call+'\n'+spec.import),nextFiveMetadataHelpers);
+ absent(invariantSource,{...nextFiveMetadataHelpers,[spec.file]:undefined});
+ absent(invariantSource,{...nextFiveMetadataHelpers,[spec.file]:nextFiveMetadataHelpers[spec.file]+'\n// unknown source shape'});
+ for(const literal of spec.anchors){assert(nextFiveMetadataHelpers[spec.file].includes(literal),literal);absent(invariantSource,{...nextFiveMetadataHelpers,[spec.file]:nextFiveMetadataHelpers[spec.file].replace(literal,()=>literal+'__altered')});}
+}
+assert.deepEqual(extractNextFiveMetadataChecks(invariantSource,{unknown:'unknown helper'}),[]);nextFiveMetadataNegatives++;
+console.log('✓ first-five exact metadata classification:2 physical/history checks; LF/CRLF; '+nextFiveMetadataNegatives+' import/call/result/order/duplicate/party/title/source/unknown causal refusals; no invented cash edges');
 
 console.log('✓ write invariants: provenance, authoring run, content hash, named rubrics, no dangling edges');
 

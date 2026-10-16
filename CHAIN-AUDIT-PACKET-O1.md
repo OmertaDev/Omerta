@@ -1,6 +1,6 @@
 # CHAIN-AUDIT-PACKET (O1) — current source inventory and review provenance
 
-> **LIVE PACKET — source inventory refreshed 2026-10-14; historical baseline measured 2026-09-14.** This supersedes
+> **LIVE PACKET — source inventory refreshed 2026-10-15; historical baseline measured 2026-09-14.** This supersedes
 > `CHAIN-AUDIT-PACKET.md`, which is retained unmodified as historical audit evidence from the
 > pre-O1 tree and must not be sent as a current engagement scope. **`CHAIN-DEPLOY.md` remains the
 > operational runbook**; this document is the SCOPE and the ATTACK SURFACE.
@@ -31,7 +31,8 @@ unreproducible for 19 hours on 2026-08-29. Hence:
 
 | what | value | how it was measured |
 |---|---|---|
-| current source snapshot | merge working tree over `53671d23` and `353e05b1` | source inventory measured 2026-09-14; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
+| historical inventory snapshot | merge working tree over `53671d23` and `353e05b1` | source inventory measured 2026-09-14; the base commit does not identify the working-tree changes. The new review's source/artifact manifests identify the final reviewed bytes |
+| current owned source inventory | `15c03fa8e869f29f866d374e5b96bf63a2a8a81b` | inventory refreshed 2026-10-13: 65 owned Solidity files, 54 contracts and 11 interfaces; 35 pinned vendor files, 100 total source files. Inventory only, not a new aggregate audit or Foundry result |
 | historical suite baseline | `b0a214ca` | the earlier CI `forge test (contracts)` run cited below; it predates the new liquidity contracts and is not a test result for this working tree |
 | toolchain | **forge v1.7.1** | pinned in `.github/workflows/forge.yml`, which also prints `forge --version` as its own step |
 | compiler | **solc 0.8.26**, optimizer on, `optimizer_runs = 800`, `evm_version = "cancun"` | `omerta-contracts/foundry.toml` |
@@ -52,14 +53,14 @@ aggregated reporting model it reports **1**. A count quoted without its compiler
 
 ---
 
-## 1. SCOPE — 56 contracts + 12 interfaces, current owned source inventory
+## 1. SCOPE — 57 contracts + 12 interfaces, current owned source inventory
 
 *"Batch, not dribble"* (`omerta-dynasty-machine-design.md`): the scope must be KNOWN before it is
 sent, because a contract added afterwards means paying to re-audit. The set below is the complete
-owned `omerta-contracts/src` modules — 68 Solidity files, 56 contracts and 12 interfaces.
+owned `omerta-contracts/src` modules — 69 Solidity files, 57 contracts and 12 interfaces.
 The additional 35 vendored Solidity files are included through the complete pinned
 [dependency manifest](omerta-contracts/src/genesis-auction/vendor/SOURCE-MANIFEST.json),
-including its declared local CCA patch. Together these identify all 103 source files; libraries
+including its declared local CCA patch. Together these identify all 104 source files; libraries
 and data types in that closure are source-review dependencies, not independently deployable contracts.
 This is the complete source inventory, not a claim that one review package clears every component.
 The market candidates in `src/market-v2/` have separate scoped evidence in `docs/market/`;
@@ -141,6 +142,10 @@ retain their original scopes and conclusions.
 | 66 | `OmertaSwapRouterV2` | bounded ETH/OMR router settling the restricted manager's final fee-adjusted deltas; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedMarketIntegrationV2.t.sol` |
 | 67 | `OmertaProtocolFeesV2` | abstract protocol-fee base in `market-v2/core/OmertaPoolManagerV2.sol`; the same source file includes the restricted `OmertaPoolManagerV2` and its immutable 5% base revenue policy on buys and sells; independent review and launch gates apply | `test/market-v2/RestrictedPoolManagerV2.t.sol`, `test/market-v2/RestrictedRevenueBoundariesV2.t.sol` |
 | 68 | `IOmertaRestrictedOMRV2` | interface only; sealed token policy, operator roles and runtime bindings | `test/market-v2/RestrictedOMRV2.t.sol`, `test/market-v2/RestrictedPoolManagerV2.t.sol` |
+
+| 69 | `OmertaWorkEscrowV2` | immutable original-party ETH/native issuer USDC work escrow candidate: funded reserve, acceptance, allocation, payee settlement and unused original-funder recovery; no admin, redirect, upgrade or sweep. Public financial activation remains OFF | `test/market-v2/WorkEscrowV2.t.sol` |
+
+The new escrow source has separate scoped evidence in the [current autonomy review](docs/agent-economy-autonomy-release-review.md). Its retained genuine compiler/EVM proof records **10 passed tests, zero failures/skips**, including **512 native-ETH plus 512 USDC conservation fuzz cases (1,024 total)** under Forge1.7.1/Solc0.8.26, viaIR, optimizer800 and Cancun. These are isolated-EVM tests with mock USDC, not production token custody, a chain fork or a new aggregate full-suite/audit result. Original-party rights, exact token deltas, allocation/payout/refund, replay/deadlines, reentrancy and failed-recipient liabilities are scoped to the reviewed source/artifact. No approved deployed escrow/provider, actual external funding/payment, crypto backing or public activation is established. Financial activation and paid compute remain **OFF**. The September historical counts, dates and toolchain below retain their original point-in-time meaning.
 
 The [current red-team package](omerta-contracts/audits/2026-10-01-red-team/report.md) binds the
 complete source closure and remediation evidence. Its excluded activation paths and chain-specific

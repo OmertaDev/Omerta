@@ -3,6 +3,16 @@ import { GameError, ledger } from './game.js';
 import { jailed, safeHoused } from './rules.js';
 import { assertItemTransaction, itemTransactionIdentity, withItemMutation, escrowItem, relayEscrowCustody, releaseEscrow, poisonItemTransaction, registerItemTransactionUndo } from './items.js';
 import { assertEquipmentUsable } from './itemdurability.js';
+import { consignmentDeathCounterparts } from './consignments.js';
+import { atomicBarterCounterparts } from './atomicbarter.js';
+import { pickingPackingCounterparts } from './pickingpacking.js';
+
+// Commission recovery depends on crafting, whose default graph is validated at module load.
+// Defer this reader inside the existing async death hooks to avoid an initialization cycle.
+async function commissionedCraftingDeathCounterparts(client, characterId) {
+  const { commissionedCraftingDeathCounterparts: discover } = await import('./commissionedcrafting.js');
+  return discover(client, characterId);
+}
 
 export const EQUIPMENT_RENTALS = Object.freeze({ templateId: 'item:precision_lock_tool', offers: 5, leases: 3, maximumCash: 100000, maximumSeconds: 3600 });
 export const equipmentRentalDDL = `CREATE TABLE IF NOT EXISTS equipment_rental_requests (
@@ -212,6 +222,12 @@ export async function prelockEquipmentRentalDeathActors(client, characterIds) {
   if (!Array.isArray(characterIds) || characterIds.length < 1 || characterIds.length > 2) fail('death_scope');
   const subjects = [...new Set(characterIds.map(id))].sort(), ids = new Set(subjects);
   for (const subject of subjects) for (const counterpart of await equipmentRentalDeathCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await consignmentDeathCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await atomicBarterCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await commissionedCraftingDeathCounterparts(client, subject)) ids.add(counterpart);
+  for (const subject of subjects) for (const counterpart of await pickingPackingCounterparts(client, subject)) ids.add(counterpart);
+  // Per subject: self + 3 rental + 24 consignment + 3 barter + 8 accepted commission + 3 picking originals.
+  if (ids.size > subjects.length * 42) fail('death_limit');
   const ordered = [...ids].sort(), locked = [];
   for (const characterId of ordered) {
     const row = (await client.query('SELECT * FROM characters WHERE id=$1 FOR UPDATE', [characterId])).rows[0];
@@ -232,6 +248,18 @@ export async function assertEquipmentRentalDeathScope(client, characterId, scope
   if (!state || state.client !== client || state.transaction !== itemTransactionIdentity(client) || !state.subjects.includes(characterId)) fail('death_scope');
   for (const counterpart of await equipmentRentalDeathCounterparts(client, characterId)) {
     if (!state.ids.has(counterpart)) throw new GameError('contention', 'Rental counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await consignmentDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Consignment counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await atomicBarterCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Barter counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await commissionedCraftingDeathCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Commission counterpart changed; retry the whole action.');
+  }
+  for (const counterpart of await pickingPackingCounterparts(client, characterId)) {
+    if (!state.ids.has(counterpart)) throw new GameError('contention', 'Picking counterpart changed; retry the whole action.');
   }
   return state;
   } catch (error) { poisonItemTransaction(client, error); throw error; }

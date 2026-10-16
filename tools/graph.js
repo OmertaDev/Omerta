@@ -231,8 +231,184 @@ export function extractCommercialHelperReconciliations(invariants, helpers) {
   return terms;
 }
 
+// Reviewed V imported witnesses: real paired cash versus recorded observation provenance.
+// Complete normalized helper pins bind SQL, amount/party checks, and bounded UNKNOWN behavior.
+const AUTONOMY_GRAPH_WITNESSES = [
+  {
+    "check": "economic intelligence paired provenance",
+    "file": "src/economicintelligence.js",
+    "fn": "economicIntelligenceTransferBooks",
+    "variable": "intelligenceBooks",
+    "import": "import { economicIntelligenceTransferBooks } from './economicintelligence.js';",
+    "call": "const intelligenceBooks = await economicIntelligenceTransferBooks(pool);",
+    "binding": "push('economic intelligence paired provenance', intelligenceBooks.status === 'reconciled' ? 0 : 1, 0, 0, { source: intelligenceBooks });",
+    "sha256": "6d93a9c38e7543fad2158a2939c832be21c043d4b5a6f7a0b7a61a5ab7a5571e",
+    "reasons": [
+      "economic_intelligence:pay",
+      "economic_intelligence:receive"
+    ]
+  },
+  {
+    "check": "strategy laboratory canonical observations",
+    "file": "src/strategylaboratories.js",
+    "fn": "collectStrategyLaboratoryIssues",
+    "variable": "labIssues",
+    "import": "import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';",
+    "call": "const labIssues = await collectStrategyLaboratoryIssues(pool);",
+    "binding": "push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });",
+    "sha256": "ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9",
+    "reasons": []
+  }
+];
+function autonomyWitness(invariants, helpers, spec) {
+  invariants = normalizeText(invariants);
+  const raw = helpers[spec.file];
+  if (typeof raw !== 'string') return null;
+  const source = normalizeText(raw), once = literal => invariants.split('\n').filter(line => line.trim() === literal).length === 1;
+  if (crypto.createHash('sha256').update(source).digest('hex') !== spec.sha256
+      || !once(spec.import) || !once(spec.call) || !once(spec.binding)
+      || invariants.indexOf(spec.import) > invariants.indexOf(spec.call)
+      || invariants.indexOf(spec.call) > invariants.indexOf(spec.binding)) return null;
+  return { source, bindingLine: invariants.slice(0,invariants.indexOf(spec.binding)).split('\n').length };
+}
+export function extractAutonomyHelperReconciliations(invariants, helpers) {
+  const terms = [];
+  for (const spec of AUTONOMY_GRAPH_WITNESSES) {
+    const witness = autonomyWitness(invariants,helpers,spec);
+    if (!witness) continue;
+    for (const reason of spec.reasons) {
+      const index = witness.source.indexOf("'"+reason+"'", witness.source.indexOf('export async function '+spec.fn+'('));
+      if (index < 0) continue;
+      terms.push({check:spec.check,reason,file:spec.file,line:witness.source.slice(0,index).split('\n').length,bindingLine:witness.bindingLine});
+    }
+  }
+  return terms;
+}
+export function extractAutonomyObservationChecks(invariants, helpers) {
+  return AUTONOMY_GRAPH_WITNESSES.filter(spec => spec.reasons.length === 0 && autonomyWitness(invariants,helpers,spec)).map(spec => spec.check);
+}
+
 // Comparing import.meta.url with `file://${process.argv[1]}` is not portable: on Windows argv is a
 // drive-letter path while import.meta.url is a file URL. Compare platform-native absolute paths.
+// Source-bound physical-commerce money witnesses. Unknown helper bytes/shapes yield no inferred coverage.
+export const NEXT_FIVE_HELPER_PROFILES=Object.freeze([
+  {
+    "file": "src/consignments.js",
+    "fn": "collectConsignmentIssues",
+    "check": "consignment sale books",
+    "variable": "consignmentIssues",
+    "reasons": [
+      "consignment:purchase",
+      "consignment:proceeds",
+      "consignment:host_fee"
+    ],
+    "anchors": [
+      "['consignment:host_fee',row.host_character,fee]",
+      "['consignment:proceeds',row.owner_character,Number(row.price)-fee]",
+      "['consignment:purchase',row.buyer_character,-Number(row.price)]",
+      "legs[i]?.currency!=='cash'",
+      "Number(legs[i]?.amount)!==amount"
+    ],
+    "sha256": "a922fc2b2017838aba0fdfc65b20355809673bd5d33a27b6c4b98d1262cf539f",
+    "import": "import { collectConsignmentIssues } from './consignments.js';",
+    "call": "const consignmentIssues = await collectConsignmentIssues(pool);",
+    "push": "push('consignment sale books', consignmentIssues.length + Math.abs(consignmentNet), 0, 0, { issues: consignmentIssues, net: consignmentNet });",
+    "sql": "SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee') ORDER BY reason",
+    "extraBindings": [
+      "const consignmentNet = await sum(pool, \"currency='cash' AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee')\");"
+    ]
+  },
+  {
+    "file": "src/commissionedcrafting.js",
+    "fn": "collectCommissionedCraftingIssues",
+    "check": "commissioned crafting canonical sources",
+    "variable": "commissionIssues",
+    "reasons": [
+      "commissioned_crafting:reserve",
+      "commissioned_crafting:fee",
+      "commissioned_crafting:refund"
+    ],
+    "anchors": [
+      "reserve[0].character_id!==row.customer_character",
+      "Number(reserve[0].amount)!==-Number(row.fee_total)",
+      "t.character_id!==row.maker_character:t.character_id!==row.customer_character",
+      "Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)"
+    ],
+    "sha256": "37df979150ed5085ac9c91ec46c23b4449c34f68d125acaf4d787d8183f32985",
+    "import": "import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';",
+    "call": "const commissionIssues = await collectCommissionedCraftingIssues(pool);",
+    "push": "push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });",
+    "sql": "SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund') ORDER BY id",
+    "extraBindings": []
+  },
+  {
+    "file": "src/pickingpackinginvariants.js",
+    "fn": "collectPickingPackingIssues",
+    "check": "picking packing paid custody books",
+    "variable": "pickingIssues",
+    "reasons": [
+      "picking_packing:pay",
+      "picking_packing:receive"
+    ],
+    "anchors": [
+      "debit.character_id!==job.tenant_character",
+      "credit.character_id!==job.provider_character",
+      "debit.account_id!==job.tenant_account",
+      "credit.account_id!==job.provider_account",
+      "Number(debit.amount)!==-Number(job.fee_cash)",
+      "Number(credit.amount)!==Number(job.fee_cash)"
+    ],
+    "sha256": "0f6f6576f2de6403b7375d1d65ce12f1e7d740f59f75d4cbe5a793fe6acb1baa",
+    "import": "import { collectPickingPackingIssues } from './pickingpackinginvariants.js';",
+    "call": "const pickingIssues = await collectPickingPackingIssues(pool);",
+    "push": "push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });",
+    "sql": "SELECT * FROM transactions WHERE reason IN ('picking_packing:pay','picking_packing:receive') ORDER BY id",
+    "extraBindings": [
+      "const pickingNet = await sum(pool, \"currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')\");"
+    ]
+  }
+].map(p=>Object.freeze({...p,reasons:Object.freeze(p.reasons),anchors:Object.freeze(p.anchors),extraBindings:Object.freeze(p.extraBindings)})));
+export function extractNextFiveHelperReconciliations(invariants,helpers){
+ invariants=normalizeText(invariants);if(!helpers||typeof helpers!=='object'||Object.keys(helpers).some(file=>!NEXT_FIVE_HELPER_PROFILES.some(p=>p.file===file)))return[];
+ const lines=invariants.split('\n'),terms=[],exact=statement=>lines.flatMap((line,i)=>line.trim()===statement?[i]:[]);
+ for(const p of NEXT_FIVE_HELPER_PROFILES){if(typeof helpers[p.file]!=='string')continue;const helper=normalizeText(helpers[p.file]);if(crypto.createHash('sha256').update(helper).digest('hex')!==p.sha256)continue;
+  const imports=exact(p.import),calls=exact(p.call),pushes=exact(p.push);if(imports.length!==1||calls.length!==1||pushes.length!==1||imports[0]>=calls[0]||calls[0]>=pushes[0]||p.extraBindings.some(s=>exact(s).length!==1||exact(s)[0]>=pushes[0]))continue;
+  const start=helper.indexOf('export async function '+p.fn+'(');if(start<0)continue;const body=helper.slice(start),query=body.indexOf(p.sql);if(query<0||body.indexOf(p.sql,query+1)!==-1||!body.includes('return issues;')||p.anchors.some(a=>!body.includes(a)))continue;
+  for(const reason of p.reasons)terms.push({check:p.check,reason,file:p.file,line:helper.slice(0,start+query).split('\n').length,bindingLine:pushes[0]+1,sourceSha256:p.sha256});
+ }return terms;
+}
+
+// Exact reviewed physical-trade metadata checks; these introduce no cash ledger reason.
+const NEXT_FIVE_METADATA_WITNESSES = [
+  {
+    "check": "atomic barter canonical two-item bindings",
+    "file": "src/atomicbarterinvariants.js",
+    "import": "import { collectAtomicBarterIssues } from './atomicbarterinvariants.js';",
+    "call": "const barterIssues = await collectAtomicBarterIssues(pool);",
+    "binding": "push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });",
+    "sha256": "9b85aa69ac3841f569957f60f9965964cdda8f22bab81b8f04bfe95ec218b18c"
+  },
+  {
+    "check": "freight metadata history bindings",
+    "file": "src/freight-history.js",
+    "import": "import { collectFreightHistoryIssues } from './freight-history.js';",
+    "call": "const freightIssues = await collectFreightHistoryIssues(pool);",
+    "binding": "push('freight metadata history bindings', freightIssues.length, 0, 0, { issues: freightIssues });",
+    "sha256": "48193e9c4c999bc8ab076fc2d4871d3e1fe88b0b4fb761dcdf7d9dec64538643"
+  }
+];
+export function extractNextFiveMetadataChecks(invariants,helpers){
+ invariants=normalizeText(invariants);
+ const once=literal=>invariants.split('\n').filter(line=>line.trim()===literal).length===1;
+ return NEXT_FIVE_METADATA_WITNESSES.filter(spec=>{
+  const raw=helpers[spec.file];if(typeof raw!=='string')return false;
+  return crypto.createHash('sha256').update(normalizeText(raw)).digest('hex')===spec.sha256
+   &&[spec.import,spec.call,spec.binding].every(once)
+   &&invariants.indexOf(spec.import)<invariants.indexOf(spec.call)
+   &&invariants.indexOf(spec.call)<invariants.indexOf(spec.binding);
+ }).map(spec=>spec.check);
+}
+
 export function isMainModule(moduleUrl, argvEntry) {
   if (!argvEntry) return false;
   try {
@@ -475,6 +651,19 @@ export function build() {
       binding: { file: 'src/invariants.js', line: term.bindingLine, hash: sha(inv) } };
     node('Reason', term.reason, {}, prov);
     edge('RECONCILES', 'Check:' + term.check, 'Reason:' + term.reason, prov);
+  }
+
+  const autonomyHelpers = Object.fromEntries(AUTONOMY_GRAPH_WITNESSES.map(spec=>spec.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for (const term of extractAutonomyHelperReconciliations(inv,autonomyHelpers)) {
+    const prov = {file:term.file,line:term.line,hash:sha(autonomyHelpers[term.file]),binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);
+    edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
+  }
+
+  const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));
+  for(const term of extractNextFiveHelperReconciliations(inv,nextFiveHelpers)){
+    const prov={file:term.file,line:term.line,hash:sha(nextFiveHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};
+    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);
   }
 
   // ── Suites: what they cover, what they pin ─────────────────────────────────────────────────────

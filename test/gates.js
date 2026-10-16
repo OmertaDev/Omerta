@@ -265,7 +265,45 @@ assert.equal(undeclared.length, 0,
 
 // Every collect* action must be classified. EXEMPT needs a reason, so "it was inconvenient" cannot
 // pass as one.
+// This one collector is an internal read oracle, never a routed player verb. Bind
+// its complete reviewed body and sole invariant consumer before classifying it.
+const laboratoryOracleAdmission = (sources) => {
+  try {
+    const name='collectStrategyLaboratoryIssues', owner='strategylaboratories.js';
+    const source=sources[owner].replaceAll('\r\n','\n');
+    const ast=parse(source,{ecmaVersion:'latest',sourceType:'module'});
+    const exports=ast.body.filter(n=>n.type==='ExportNamedDeclaration'&&n.declaration?.id?.name===name);
+    if(exports.length!==1)return false;
+    const fn=exports[0].declaration;
+    if(fn.params.length!==1||fn.params[0].name!=='pool')return false;
+    if(createHash('sha256').update(source.slice(fn.start,fn.end)).digest('hex')!=='abd9395b0ee4cf0e64d04c3110141f362d63d4dfd480daa1de126f2b438a5a4f')return false;
+    const references=[];
+    const walk=(node,file)=>{if(!node||typeof node!=='object')return;if(node.type==='Identifier'&&node.name===name)references.push(file);for(const value of Object.values(node))if(Array.isArray(value))value.forEach(n=>walk(n,file));else if(value&&typeof value==='object')walk(value,file);};
+    for(const[file,text]of Object.entries(sources))walk(parse(text,{ecmaVersion:'latest',sourceType:'module'}),file);
+    if(references.some(file=>file!==owner&&file!=='invariants.js'))return false;
+    const invariant=sources['invariants.js'].replaceAll('\r\n','\n');
+    return references.filter(file=>file===owner).length===1&&references.filter(file=>file==='invariants.js').length===3
+      &&invariant.includes("import { collectStrategyLaboratoryIssues } from './strategylaboratories.js';")
+      &&invariant.includes("const labIssues = await collectStrategyLaboratoryIssues(pool);\n  push('strategy laboratory canonical observations', labIssues.length, 0, 0, { issues: labIssues });");
+  }catch{return false;}
+};
+const laboratorySources=Object.fromEntries(files.map(file=>[relPath(SRC,file),fs.readFileSync(file,'utf8')]));
+assert(laboratoryOracleAdmission(laboratorySources),'Laboratory read oracle body/caller/issue-only return scope drift');
+assert(laboratoryOracleAdmission(Object.fromEntries(Object.entries(laboratorySources).map(([f,s])=>[f,s.replaceAll('\r\n','\n').replaceAll('\n','\r\n')]))),'CRLF remains the same exact reviewed oracle');
+for(const bad of [
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','return pool;')},
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','await pool.query("UPDATE characters SET cash=1");return issues;')},
+  {...laboratorySources,'strategylaboratories.js':laboratorySources['strategylaboratories.js'].replace('return issues;','issues.push({actor:pool});return issues;')},
+  {...laboratorySources,'routes/forged-laboratory.js':"import {collectStrategyLaboratoryIssues as exposed} from '../strategylaboratories.js'; export const route=exposed;"},
+  {...laboratorySources,'invariants.js':laboratorySources['invariants.js'].replace('labIssues.length, 0, 0','labIssues.length, 1, 0')},
+])assert(!laboratoryOracleAdmission(bad),'Mutation, raw/private DTO exposure, routed alias or monetary-credit drift must reject');
 const COLLECT_EXEMPT = {
+  collectAtomicBarterIssues: 'read-only original-item transfer and receipt provenance oracle; no player collection or mutation authority',
+  collectCommissionedCraftingIssues: 'read-only actual material, output, fee reserve and refund witness oracle; no player collection or mutation authority',
+  collectConsignmentIssues: 'read-only original seller title, buyer cash and host-fee source oracle; no player collection or mutation authority',
+  collectFreightHistoryIssues: 'read-only transport-history structure oracle; canonical GIN and cash books remain independent authority',
+  collectPickingPackingIssues: 'read-only real warehouse withdrawal and paired game-cash fee provenance; no player collection or mutation authority',
+  collectStrategyLaboratoryIssues: 'exact read-only internal invariant oracle: original arm/source/horizon/observed books issues only; no routed actor, payment, mutation or private board authority',
   collectContractAuctionIssues: 'read-only canonical award/source binding oracle; no player collection, income or mutation authority',
   collectCompanyRestructuringIssues: 'read-only original-plan, request, source and canonical effect history oracle; no player collection or mutation authority',
   collectCommercialHistoryIssues: 'read-only original dispute, concession and territory history bindings; no player collection or mutation authority',
@@ -2224,10 +2262,30 @@ const SCENERY_WAIVED = {
       && source.includes('account_ref=$1,actor_ref=$5')
       && source.includes('return value.receipt;');
   };
+  // Closed memory receipt discriminators are not authored catalog handles. Team
+  // actor objects below are private context, consumed internally before any DTO.
+  // Complete module seals retain validators/callers/return boundaries; only these
+  // exact literal fields inherit the classification, never a generic kind/actor.
+  const exactAutonomyField = (base, source, lit, match) => {
+    const normalized=source.replaceAll('\r\n','\n');
+    const seals={
+      'agentoperatingmemory.js':'050e9ca4eb908b61b16a30361b6ea82eca305c610d21b2ebf58fe8e203b77b24',
+      'managementteams.js':'6e4eafdc12fbb4717c739888af6cf30c3c28b5b5265f2c683f37f5b4c5b956d1',
+    };
+    if(!seals[base]||createHash('sha256').update(normalized).digest('hex')!==seals[base]||source.split(lit).length!==2)return false;
+    const [,key,variable,member]=match;
+    if(base==='agentoperatingmemory.js')return key==='kind'&&variable==='t'&&member==='kind'&&[
+      '{actorId:ch.id,receipt:{ok:true,factId:prior.id,kind:t.kind,expiresAt:new Date(prior.expires_at).toISOString(),duplicate:true}}',
+      '{actorId:ch.id,receipt:{ok:true,factId,kind:t.kind,expiresAt:expires.toISOString(),sourceVerified:true}}',
+    ].includes(lit);
+    return ['owner','planner'].includes(key)&&variable==='ch'&&member==='id'
+      &&lit==='{relationship:r,governance,team,owner:ch.id===r.owner_character?ch:other,planner:ch.id===r.partner_character?ch:other}';
+  };
   let logisticsClassified = 0;
   let acquisitionHashClassified = 0;
   let restructuringClassified = 0;
   let concessionActorClassified = 0;
+  let autonomyMemoryClassified=0,autonomyActorClassified=0;
   const cityClassified = [];
   const cityRawProblems = source => {
     const problems = [];
@@ -2251,6 +2309,7 @@ const SCENERY_WAIVED = {
         if (exactAcquisitionHashField(base, s, lit, m)) { acquisitionHashClassified++; continue; }
         if (exactRestructuringDiscriminator(base, s, lit, m)) { restructuringClassified++; continue; }
         if (exactConcessionActorCapsule(base, s, lit, m)) { concessionActorClassified++; continue; }
+        if(exactAutonomyField(base,s,lit,m)){if(base==='agentoperatingmemory.js')autonomyMemoryClassified++;else autonomyActorClassified++;continue;}
         // the SHORTHAND spelling of the same assertion: `{ kind: r.kind, kindName }` ships the
           // display name exactly as `kindName: kindName` would, and a matcher that only knows the
           // colon form stops seeing a companion the moment it is written the other legal way — the
@@ -2281,6 +2340,29 @@ const SCENERY_WAIVED = {
   assert.equal(acquisitionHashClassified, 2, 'Only both actual private acquisition hash fields are classified.');
   assert.equal(restructuringClassified, 3, 'Exactly three closed canonical restructuring step discriminators are classified.');
   assert.equal(concessionActorClassified, 1, 'Only the private concession actor/receipt persistence capsule is classified.');
+  assert.equal(autonomyMemoryClassified,2,'Only two closed production/forecast capture receipt kinds are classified');
+  assert.equal(autonomyActorClassified,2,'Only the two private original-owner/planner context fields are classified');
+  for(const base of ['agentoperatingmemory.js','managementteams.js']){
+    const source=fs.readFileSync('src/'+base,'utf8');
+    const changed=base==='agentoperatingmemory.js'?[
+      source.replace("body?.kind==='production'","body?.kind==='unbounded'"),
+      source.replace('kind:t.kind','kind:t.kind,externalOwnerAuthority:true'),
+      source.replace('const t=captureTerms(account,body)','const t={kind:body.kind}'),
+      source+'\nfunction publicNarrative(t){return {kind:t.kind};}\n',
+    ]:[
+      source.replace('owner:ch.id===r.owner_character?ch:other','owner:other'),
+      source.replace('owner:ch.id===r.owner_character?ch:other','owner:ch.id===r.owner_character?ch:other,capability:true'),
+      source.replace('const governance=await V.companyGovernanceSnapshot','const governance=await queryPublicContext'),
+      source+'\nexport function publicNarrative(ch){return {owner:ch.id,planner:ch.id};}\n',
+    ];
+    for(const mutation of changed){assert.notEqual(mutation,source,'The autonomy negative must alter actual source');for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactAutonomyField(base,source,lit,match))assert(!exactAutonomyField(base,mutation,lit,match),'Changed validator/preimage/query/authority/public narrative cannot inherit private classification');}
+    for(const lit of literals(source))for(const match of rawKeyFields(lit))if(exactAutonomyField(base,source,lit,match)){
+      assert(exactAutonomyField(base,source.replaceAll('\r\n','\n').replaceAll('\n','\r\n'),lit,match));
+      assert(!exactAutonomyField('other.js',source,lit,match));
+      const publicLiteral=base==='agentoperatingmemory.js'?'{kind:t.kind}':'{owner:ch.id,planner:ch.id}';
+      for(const publicMatch of rawKeyFields(publicLiteral))assert(!exactAutonomyField(base,source,publicLiteral,publicMatch));
+    }
+  }
   const restructuringSource = fs.readFileSync('src/companyrestructuring.js', 'utf8');
   for (const lit of literals(restructuringSource)) for (const match of rawKeyFields(lit)) {
     if (!exactRestructuringDiscriminator('companyrestructuring.js', restructuringSource, lit, match)) continue;
@@ -3518,6 +3600,11 @@ scopedSocialContext = async function(db) {
   // Declared: a suite the chain cannot run, each with the property that makes that true. A reason,
   // not a category — "it fails in CI" is a description of the symptom and would waive a real break.
   const DECLARED = {
+    'test/commissionedcrafting-fixture.js': 'Import-only actual funded commission/F01/F03 fixture; required commissioned-crafting core/API/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
+    'test/freightconsolidation-fixture.js': 'Import-only actual funded orders and canonical delivery fixture; required freight core/security/integration memory suites and the closed fourteen-proof native runner execute its exported factory.',
+    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',
+    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',
+    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',
     'test/auth-fixture.js': 'Import-only synthetic-adult request fixture used by gameplay suites; the independent age suite exercises missing and ineligible birth dates against the real server.',
     'test/server-fixture.js': 'Import-only wrapper around the real server for unrelated gameplay suites; it supplies synthetic-adult auth bodies and exports no standalone assertions.',
     'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',
@@ -3570,6 +3657,42 @@ scopedSocialContext = async function(db) {
       + 'uses. It is the clean-machine check for the published MCP server and belongs to that '
       + 'package\'s own verification, run from omerta-mcp/ after its install.',
   };
+
+  const {AUTONOMY_NATIVE_PROOFS:fixtureNativeProofs}=await import('../tools/company-autonomy-native.js');
+  const fixtureConsumers={
+    'test/economicintelligence-fixture.js':{factory:'intelligenceFixture',suites:['economicintelligence','company-autonomy-contracts']},
+    'test/fundedexternalwork-fixture.js':{factory:'externalWorkFixture',suites:['fundedexternalwork']},
+    'test/managementteams-fixture.js':{factory:'managementFixture',suites:['managementteams']},
+  };
+  const fixtureAdmission=(file,source,consumerSources,memory,proofs)=>{
+    try{
+      const spec=fixtureConsumers[file];if(!spec)return false;
+      const ast=parse(source,{ecmaVersion:'latest',sourceType:'module'});
+      const exported=ast.body.filter(n=>n.type.startsWith('Export'));
+      if(exported.length!==1||exported[0].declaration?.type!=='FunctionDeclaration'||!exported[0].declaration.async||exported[0].declaration.id?.name!==spec.factory)return false;
+      for(const suite of spec.suites){
+        if(!memory.split(' && ').includes('node test/'+suite+'.js')||!proofs.some(([f,,,mode])=>f===suite&&!mode))return false;
+        const text=consumerSources[suite];if(!text)return false;let imported=false;
+        const walk=node=>{if(!node||typeof node!=='object')return;if((node.type==='ImportDeclaration'||node.type==='ImportExpression')&&node.source?.value==='./'+path.basename(file))imported=true;for(const value of Object.values(node))if(Array.isArray(value))value.forEach(walk);else if(value&&typeof value==='object')walk(value);};
+        walk(parse(text,{ecmaVersion:'latest',sourceType:'module'}));
+        if(!imported||!text.includes('await '+spec.factory+'('))return false;
+      }
+      return memory.split(' && ').includes('node test/company-autonomy-contracts.js --laboratories')&&proofs.some(([file,,,_mode])=>file==='company-autonomy-contracts'&&_mode==='--laboratories');
+    }catch{return false;}
+  };
+  for(const[file,spec]of Object.entries(fixtureConsumers)){
+    const source=fs.readFileSync(path.join(ROOT,file),'utf8'),consumers=Object.fromEntries(spec.suites.map(suite=>[suite,fs.readFileSync(path.join(ROOT,'test',suite+'.js'),'utf8')])),memory=scripts['test:company-autonomy'];
+    assert(fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs),'Import-only fixture requires its actual memory/native/default/lab consumers');
+    assert(!fixtureAdmission('test/unknown-fixture.js',source,consumers,memory,fixtureNativeProofs));
+    assert(!fixtureAdmission(file,source+'\nexport function standaloneAuthority(){}',consumers,memory,fixtureNativeProofs));
+    for(const suite of spec.suites){
+      assert(!fixtureAdmission(file,source,consumers,memory.replace('node test/'+suite+'.js',''),fixtureNativeProofs));
+      assert(!fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs.filter(([f])=>f!==suite)));
+      assert(!fixtureAdmission(file,source,{...consumers,[suite]:consumers[suite].replaceAll('./'+path.basename(file),'./unknown-fixture.js')},memory,fixtureNativeProofs));
+    }
+    assert(!fixtureAdmission(file,source,consumers,memory.replace('node test/company-autonomy-contracts.js --laboratories',''),fixtureNativeProofs));
+    assert(!fixtureAdmission(file,source,consumers,memory,fixtureNativeProofs.filter(([,,,mode])=>!mode)));
+  }
 
   const onDisk = fs.readdirSync(path.join(ROOT, 'test'))
     .filter((f) => f.endsWith('.js')).map((f) => `test/${f}`).sort();
@@ -3624,13 +3747,39 @@ scopedSocialContext = async function(db) {
   }
   const headers = [...jobsText.matchAll(/^ {2}([A-Za-z0-9_-]+):\s*$/gm)];
   const jobNames = headers.map((m) => m[1]);
-  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck'],
-    '.github/workflows/ci.yml must retain exactly `suites`, dependent `browser`, and `pgcheck` jobs');
+  assert.deepEqual(jobNames, ['suites', 'browser', 'pgcheck_core', 'pgcheck_economy', 'pgcheck'],
+    '.github/workflows/ci.yml must retain exactly suites, browser, both isolated native cohorts and their required aggregate');
   const jobs = new Map(headers.map((header, i) => [header[1], jobsText.slice(
     header.index, i + 1 < headers.length ? headers[i + 1].index : jobsText.length)]));
   const suites = jobs.get('suites');
   const browser = jobs.get('browser');
-  const pgcheck = jobs.get('pgcheck');
+  const coreNative = jobs.get('pgcheck_core');
+  const economyNative = jobs.get('pgcheck_economy');
+  const nativeGate = jobs.get('pgcheck');
+  const nativeShape = block => block.replaceAll('\r\n', '\n').split('\n')
+    .filter(line => line.trim() && !/^\s*#/.test(line)).map(line => line.trimEnd()).join('\n');
+  assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require both complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
+  const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
+  const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative);
+  assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
+  assert.equal(nativeShape(economyParts.header), "  pgcheck_economy:\n    if: ${{ !inputs.tail_only }}\n    name: native economy (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native economy service, matrix and finite bound are closed');
+  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
+  assert.deepEqual(economyParts.steps.map(nativeShape), expectedEconomyParts, 'Every native economy setup, command, environment and condition remains exact');
+  const expectedNextFiveStep = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-five:postgres";
+  const nextFiveParts = coreParts.steps.filter(part => part.includes('      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)'));
+  assert.equal(nextFiveParts.length, 1, 'Exactly one complete first-five strict-fresh native step is required');
+  assert.equal(nativeShape(nextFiveParts[0]), nativeShape(expectedNextFiveStep), 'First-five native condition, financial OFF, owned admin endpoint and unfiltered runner remain exact');
+  const coreAsOriginal = coreNative.replace('  pgcheck_core:', '  pgcheck:').replace('name: native core (', 'name: real Postgres (').replaceAll('\r\n','\n');
+  const artifactParts = ["      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
+  const economyProofParts = ["      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres\n\n","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres\n\n","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres\n\n","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres\n\n"];
+  const buildBoundary = '      - name: Install PostgreSQL client tools matching the server major';
+  const tailBoundary = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)";
+  assert.equal(coreAsOriginal.split(buildBoundary).length, 2);
+  assert.equal(coreAsOriginal.split(tailBoundary).length, 2);
+  const pgcheck = coreAsOriginal.replace(buildBoundary, artifactParts.join('') + buildBoundary)
+    .replace(tailBoundary, economyProofParts.join('') + tailBoundary);
+  // Reconstructed order is only an inventory view. Actual job blocks above
+  // retain independent finite services and the required aggregate is closed.
 
   assert.match(suites, /^    name: suites \+ sim \(pg-mem\)\s*$/m,
     'the `suites` job identity changed');
@@ -3659,10 +3808,10 @@ scopedSocialContext = async function(db) {
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
   assert.deepEqual(timeouts(pgcheck), [90],
-    'the FOURTH `pgcheck` job must retain exactly one finite 90-minute HANG bound for the measured baseline plus workforce and commercial chains');
+    'the FIFTH `pgcheck` job must retain exactly one finite 90-minute HANG bound for the measured baseline plus workforce and commercial chains');
   for (const invalid of ['0', '45', '60', '75', '120', '${{ inputs.native_timeout }}', 'unbounded']) {
     assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]),
-      'native wall bound must remain finite and exactly the finite FOURTH release budget');
+      'native wall bound must remain finite and exactly the finite FIFTH release budget');
   }
   assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 90\r?\n/m, '')), [90]),
     'an unset native wall bound must reject');
@@ -3795,9 +3944,9 @@ scopedSocialContext = async function(db) {
     return commands;
   };
   const expectedNativeCommands = [
-    'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
+    'build:funded-work-artifact', 'node test/db-rls.js --postgres', 'node test/payment-receipts-postgres.js', 'test:gateway:postgres',
     'node test/deeds-supply-postgres.js', 'node test/readiness-migration-failure.js',
-    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
+    'pgquery', 'test:goods-market:postgres', 'test:deed-upgrades:postgres', 'test:city:postgres', 'pgcheck', 'test:http-idempotency:postgres', 'test:resources:postgres', 'pilot:resources:postgres', 'test:decisionproofs:postgres', 'test:supply-tenders:postgres', 'test:warehouses:postgres', 'test:crew-logistics:postgres', 'test:franchises:postgres', 'test:intel-forecasts:postgres', 'test:intel-forecasts-api:postgres', 'test:delivery-finance:postgres', 'test:delivery-finance-guards:postgres', 'test:delivery-finance-api:postgres', 'test:logistics-coverage-clock:postgres', 'test:logistics-coverage:postgres', 'test:logistics-coverage-api:postgres', 'test:strategy-licenses:postgres', 'test:strategy-licenses-api:postgres', 'test:company-succession:postgres', 'test:company-succession-api:postgres', 'test:market-feed-api:postgres', 'test:strategy-leagues:postgres', 'test:strategy-leagues-api:postgres', 'test:company-operators:postgres', 'test:game-employment:postgres', 'test:company-workflows:postgres', 'test:commercial-premises:postgres', 'test:company-bank-portfolios:postgres', 'test:logistics-hubs:postgres', 'test:buyer-cooperatives:postgres', 'test:company-opportunities:postgres', 'test:commercial-reputation:postgres', 'test:business-seasons:postgres', 'test:company-economy:postgres', 'test:equipment-economy:postgres', 'test:company-workforce:postgres', 'test:company-commercial:postgres', 'test:company-autonomy:postgres', 'test:agent-economy-next-five:postgres', 'test:due-work:postgres', 'test:db-migration:postgres', 'test:rc1:security:postgres', 'test:rc1:mod-ingress:postgres', 'test:rc1:observers:postgres', 'test:rc1:resource:postgres', 'test:rc1:capital:postgres', 'phase2:definitions:postgres', 'phase2:lots:postgres',
     'test:coordination:postgres', 'test:world-kernel:postgres', 'test:family-operations:postgres', 'test:world-projections:postgres',
     'test:core-progression:postgres', 'test:player-commands:postgres', 'test:rc1:telemetry:postgres', 'test:director:postgres',
     'test:stockcatalogv2:postgres', 'test:rwahealth:postgres',
@@ -3917,6 +4066,25 @@ scopedSocialContext = async function(db) {
   assert.notEqual(badIndent, pgcheck);
   assert.throws(() => nativeCommandsFrom(badIndent), /unsupported inconsistent/,
     'a malformed literal scalar must not invent a command position');
+  const autonomyScripts=JSON.parse(fs.readFileSync('package.json','utf8')).scripts;
+  assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
+  const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
+  assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
+  const artifactAdmits=(job,command)=>job.includes('      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1')&&job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;
+  assert(artifactAdmits(suites.replaceAll('\r\n','\n'),expectedArtifactCommand));assert(artifactAdmits(pgcheck.replaceAll('\r\n','\n'),expectedArtifactCommand));
+  for(const bad of [expectedArtifactCommand.replace('v5.6.1','master'),'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json','echo synthetic'])assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n'),bad));
+  assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('version: v1.7.1','version: stable'),expectedArtifactCommand));
+  const {AUTONOMY_NATIVE_PROOFS}=await import('../tools/company-autonomy-native.js');
+  assert.equal(AUTONOMY_NATIVE_PROOFS.length,11,'All eleven fresh proofs required');
+  assert(AUTONOMY_NATIVE_PROOFS.some(([file,key,prefix])=>file==='fundedworkescrowadapter'&&key==='FUNDED_WORK_ADAPTER_TEST_DATABASE_URL'&&prefix==='funded_work_adapter_test_'));
+  for(const required of ['company-autonomy-native-guard','company-autonomy-fixture-guards','fundedworkchainobservations','company-late-five-integration'])assert(autonomyScripts['test:company-autonomy'].includes('node test/'+required+'.js'));
+  const autonomyStart=pgcheck.indexOf('      - name: Economic intelligence,');
+  const autonomyEnd=pgcheck.indexOf('\n      - name:',autonomyStart+1);
+  assert(autonomyStart>=0&&autonomyEnd>autonomyStart,'Exactly one complete autonomy workflow step is inspected');
+  const autonomyStep=pgcheck.slice(autonomyStart,autonomyEnd);
+  const admits=step=>step.includes("RESOURCE_ECONOMY: 'off'")&&step.includes('COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres')&&step.includes('run: npm run test:company-autonomy:postgres');
+  assert(admits(autonomyStep));
+  for(const drift of [autonomyStep.replace('127.0.0.1','remote.invalid'),autonomyStep.replace("RESOURCE_ECONOMY: 'off'",''),autonomyStep.replace('test:company-autonomy:postgres','test:company-autonomy')])assert(!admits(drift));
   const nativeCommands = nativeCommandsFrom(pgcheck);
   assert.equal(JSON.parse(fs.readFileSync('package.json', 'utf8')).scripts['test:due-work:postgres'],
     'node test/due-work-process-recovery.js', 'native due-work recovery must execute the nonempty loan process controls');
@@ -3925,7 +4093,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at finite120m, browser at 25m and FOURTH pgcheck at 90m, with every lane intact');
+  console.log('  ✓ CI keeps suites at finite120m, browser at25m, both native cohorts at90m and a closed5m required aggregate, with every proof intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
@@ -4491,9 +4659,19 @@ scopedSocialContext = async function(db) {
   // These two workflow refusal reasons describe immutable source uniqueness,
   // not wall-clock counters. Mask only their exact local error calls; a real
   // SQL column or variable with the same name must still fail closed.
+  const gameErrorHandler=fs.readFileSync('src/server.js','utf8');
+  const laboratorySourceConflict=(file,source,handler=gameErrorHandler)=>{
+    const mapping="if (err instanceof G.GameError) return reply.code(400).send({ error: err.code, message: err.message, ...(err.data || {}) });";
+    const original="if((await c.query('SELECT arm_id FROM strategy_laboratory_sources WHERE journal_id=$1 FOR UPDATE',[sourceId])).rows.length)fail('source_used');";
+    if(file!=='src/strategylaboratories.js'||source.split(original).length!==2||handler.split(mapping).length!==2)return source;
+    if(createHash('sha256').update(source.replaceAll('\r\n','\n')).digest('hex')!=='ab05631dfd519202317e099171449901add64b0ed83310b1a499eba2a60f61b9')return source;
+    // Permanent one-journal/one-arm primary-key binding, not a replenishing
+    // allowance. Mask only the reviewed error token; all counter names remain.
+    return source.replace(original,original.replace("fail('source_used')",'fail()'));
+  };
   const bucketSource = (file, source) => file === 'src/companyworkflows.js'
     ? source.replace(/\bfail\('(source_used|proof_used)'\)/g, '')
-    : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : source;
+    : ['src/commercialnegotiation.js', 'src/territoryeconomics.js'].includes(file) ? source.replace(/\bfail\('source_used'\)/g, '') : laboratorySourceConflict(file,source);
   const bucketNames = (file, source) => [...bucketSource(file, source).matchAll(/\b(\w+)_used\b/g)].map(m => `${m[1]}_used`);
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); fail('proof_used');"), []);
   assert.deepEqual(bucketNames('src/commercialnegotiation.js', "fail('source_used');"), []);
@@ -4504,6 +4682,21 @@ scopedSocialContext = async function(db) {
   assert.deepEqual(bucketNames('src/companyworkflows.js', "fail('source_used'); client.query('SELECT source_used,proof_used FROM meters');"), ['source_used', 'proof_used'],
     'Actual counter columns cannot hide behind same-named workflow refusal reasons');
   assert.deepEqual(bucketNames('src/unknown.js', "fail('source_used');"), ['source_used'], 'The exception is local to the reviewed workflow module');
+  const laboratoryBucket=fs.readFileSync('src/strategylaboratories.js','utf8');
+  assert.deepEqual(bucketNames('src/strategylaboratories.js',laboratoryBucket),[],'Only actual immutable laboratory journal conflict is classified');
+  assert.deepEqual(bucketNames('src/strategylaboratories.js',laboratoryBucket.replaceAll('\r\n','\n').replaceAll('\n','\r\n')),[]);
+  for(const changed of [
+    laboratoryBucket.replace('[sourceId])).rows.length', '[arm.id])).rows.length'),
+    laboratoryBucket.replace("new GameError('strategy_laboratory',message)","new GameError('rate_limit',message)"),
+    laboratoryBucket+'\nconst source_used=0; const source_at=Date.now();\n',
+    laboratoryBucket+'\nexport function publicLiveWork(){return {financialActivation:true,source_used:1};}\n',
+  ]){assert.notEqual(changed,laboratoryBucket);assert(bucketNames('src/strategylaboratories.js',changed).includes('source_used'),'Changed identity/status/refill/public authority must remain unclassified');}
+  for(const handler of [gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.code(429)'),gameErrorHandler.replace('if (err instanceof G.GameError) return reply.code(400)', 'if (err instanceof G.GameError) return reply.header("Retry-After",1).code(400)')]){
+    assert.notEqual(handler,gameErrorHandler);assert(laboratorySourceConflict('src/strategylaboratories.js',laboratoryBucket,handler).includes("fail('source_used')"),'Changed HTTP/refill status cannot retain immutable-conflict classification');
+  }
+  assert(bucketNames('src/unknown.js',laboratoryBucket).includes('source_used'));
+  assert(bucketNames('src/strategylaboratories.js',"fail('source_used');").includes('source_used'),'Same token without reviewed canonical source is not admitted');
+  assert(bucketNames('src/strategylaboratories.js',laboratoryBucket+'\nconst unknown_used=0;').includes('unknown_used'),'Unknown counter names still enter the completeness corpus');
   for (const f of files) for (const name of bucketNames(`src/${relPath(SRC, f)}`, fs.readFileSync(f, 'utf8'))) found.add(name);
   assert(found.size >= 8, `THE BUCKET LEDGER found only ${found.size} token buckets — the extractor is `
     + 'broken, not the tree. A scan that sees nothing passes for a clean sweep.');

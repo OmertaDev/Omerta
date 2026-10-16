@@ -1,21 +1,23 @@
+import {nextFiveSourceBaseline} from '../tools/next-five-source-compatibility.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { COMPOSITION_REVISION, COMPOSITION_PHASE, COMPOSITION_PROFILES,
   assertEconomyReleaseComposition, economyReleaseSource } from '../tools/economy-release-composition.js';
 import { fourthBatchMigrationSchema, fourthBatchSourceBaseline } from '../tools/rc1-fourth-batch-source-compatibility.js';
+import { fifthBatchMigrationSchema, fifthBatchSourceBaseline } from '../tools/rc1-fifth-batch-source-compatibility.js';
 
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
 const lf = text => text.replaceAll('\r\n', '\n');
 assert.match(COMPOSITION_REVISION, /^[a-f0-9]{40}$/);
 assert.equal(COMPOSITION_PHASE, 'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(COMPOSITION_PROFILES), ['commercial', 'main', 'city']);
+assert.deepEqual(Object.keys(COMPOSITION_PROFILES), ['commercial', 'main', 'autonomy', 'city']);
 let domains = 0, negatives = 0;
 for (const [profile, files] of Object.entries(COMPOSITION_PROFILES)) {
   for (const [file, pin] of Object.entries(files)) {
     const current = git('show', COMPOSITION_REVISION + ':' + file);
     const prior = git('cat-file', 'blob', pin.baselineBlob);
-    assert.equal(lf(fs.readFileSync(file, 'utf8')), current, 'Complete actual source retains its reviewed composition');
+    assert.equal(nextFiveSourceBaseline(file, lf(fs.readFileSync(file, 'utf8'))), current, 'Complete actual source retains its reviewed composition');
     const actual = []; let hunk;
     for (const line of git('diff', '--no-ext-diff', '--unified=' + pin.contextLines, pin.baselineBlob, pin.currentBlob).split('\n')) {
       if (line.startsWith('@@')) { hunk = { current: '', baseline: '' }; actual.push(hunk); }
@@ -57,4 +59,6 @@ const mergedSchema = git('show', COMPOSITION_REVISION + ':schema.sql');
 for (const text of [mergedSchema, mergedSchema.replaceAll('\n', '\r\n')]) {
   assert.notEqual(fourthBatchSourceBaseline('schema.sql', text), text, 'Exact source reconstruction is available');
   assert.equal(fourthBatchMigrationSchema(text), text, 'Source reconstruction never grants historical native schema admission');
+  assert.notEqual(fifthBatchSourceBaseline('schema.sql', text), text, 'Exact autonomy source reconstruction is available');
+  assert.equal(fifthBatchMigrationSchema(text), text, 'Autonomy source reconstruction never grants historical native schema admission');
 }

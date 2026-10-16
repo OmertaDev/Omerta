@@ -1,3 +1,5 @@
+import { runManagementTeams } from './managementteamautonomy.js';
+import { runStrategyLaboratories } from './strategylaboratories.js';
 // §7.12 buyback worker. Every 12h the accumulated street tax buys $OMR through the
 // same AMM curve as player swaps: 50% → event fund, 50% split pro-rata across the
 // top-25 families by standing (lifetime tribute + 10,000 per war won) into their
@@ -828,6 +830,8 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
     companyTicking = true;
     try {
       await safe('company operators', () => runCompanyOperators(pool, 20));
+      await safe('management teams', () => runManagementTeams(pool, 20));
+      await safe('strategy laboratories', () => runStrategyLaboratories(pool, 20));
       await safe('territory economics', () => runTerritoryEconomics(pool, 20));
       await safe('company workflows', () => runCompanyWorkflows(pool, 20));
       await safe('service subscriptions', () => runServiceSubscriptions(pool, 20));

@@ -1,0 +1,23 @@
+# Autonomy component lock-order proposal
+
+Source before this review: `e69afc057a81c0ff64b0095268c039adf837ef20`, based on coordinator source `78d4a1ee0cec79ed296c37f5043197fcdc9836ab` plus the separate CI and collector proposals. Scope is only `src/managementteamautonomy.js` and the explicitly authorized synthetic lifecycle `src/fundedexternalwork.js`. Canonical `fundedworkescrowadapter.js`, runtime registrars, privacy, schema, source envelopes and the lock-graph validator are unchanged. Financial activation remains off.
+
+## Actual source and validator distinction
+
+The validator in `test/gates.js` scans textual named-function segments, collapses repeated table locks and does not follow cross-module callees or distinguish rows. `companyGovernanceSnapshot` first locks the owned Depot, policy and original partnership. Team execution reaches that snapshot before its team/plan locks and before the private grant capsule. `withManagementTeamScope` prelocks original characters and accounts; the worker uses real `G.withTwoCharacters`. Retry deferral prelocks the same original parties. Consequently the six reported autonomy pairs do not themselves demonstrate a reachable deadlock: the same original owner character serializes overlapping business paths, and several reported acquisitions are already-held row rereads. No deadlock reproduction or exploit is claimed.
+
+The reported jobs/session pair belongs to `fundedexternalwork.js`, not the read-only canonical escrow adapter. Its `eventReceipt` function contains no SQL; the textual segment extends into the returned service methods. Those methods hold the same training-course row before reaching the job/session. The public registrar never invokes this synthetic-only control and responds unavailable before financial/provider effects. The original course lock already serializes the source, but allocation previously acquired its session after its job while acceptance/cancellation/recovery used the reverse order.
+
+## Minimal component changes
+
+Autonomy setup now explicitly repeats Depot/policy before the partnership, team and plan, with a fresh partnership-to-Depot equality check. Grant validation repeats Depot/policy, team, plan and grant in the retry path's order. The initial grant read in capsule construction is only a hint; mandatory private `validate` still locks and freshly checks the grant hash, enabled/consumed state, current policy/config, original living parties, relationship, cash, clocks and post-effect assets. No permission comes from the hint.
+
+The synthetic source uses one finite session-lock helper after the already-held course and before the job. Allocation requests that existing session lock through `bound(true)`, then rereads the session while held. Acceptance, cancellation and original recovery retain that same order. Funding/work/party hashes, exact F11 wage/stat/energy provenance, immutable event receipt, once-allocation, deadlines, replay, recovery recipient and simulated-only labels are unchanged. No actual crypto custody or backing is qualified.
+
+## Verification and limits
+
+The unchanged full lock graph now passes all seven reported pairs; full gates next stop at existing player-visible DTO display classifications in `agentoperatingmemory.js` and `managementteams.js`. Those were retained, not waived. Memory team, 21-team real scheduling/cooldown and synthetic external-work proofs pass. Fresh owned local PostgreSQL18.4 team and synthetic external-work suites pass, including genuine source waits, rollback, concurrency, estate/heir acknowledgement and original-source controls. The full native 21-team scheduling suite also passes on its separate fresh owned database, preserving the real30-second cooldown, concurrent one-CAS, stale-policy refusals, genuine21st agent configuration and272 global books checks.
+
+Evidence includes original graph rejection, proposed graph pass/next failure, all unmodified gameplay test logs, strict fresh database role/version preflight and exact source hashes under `team-evidence/company-workflows/company-autonomy-lock-order-proof`. The native endpoint is explicit loopback `35449`, `pilot_runner`, with no ambient endpoint and resource economy off. This is a component proposal, not PG16, hosted CI, full-gates, release, financial activation or broad deadlock clearance. Coordinator integration and source-envelope requalification remain required.
+
+Review adapts the repository-pinned Pashov original-authority/transition pass, Plamen acquisition/source/accounting traces and Trail of Bits specification/caller comparison. No privileged fault injection, upstream orchestration or external audit was performed.

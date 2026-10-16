@@ -1,3 +1,8 @@
+import { voidFreightConsolidationsAtDeath } from '../freightconsolidation.js';
+import { retireIntelligenceAtDeath } from '../economicintelligence.js';
+import { retireManagementTeamsAtDeath } from '../managementteams.js';
+import { voidStrategyLaboratoriesAtDeath } from '../strategylaboratories.js';
+import { markExternalWorkRecoveryAtDeath } from '../fundedexternalwork.js';
 // Death — the estate, the grudges it settles, and the blood feuds it swears.
 //
 // runEstate is the most consequential function in the game: it wipes ~35 character-scoped
@@ -33,6 +38,9 @@ import { assertEquipmentRentalDeathScope, recoverEquipmentRentalsAtDeath } from 
 import { voidCompanyRestructuringAtDeath } from '../companyrestructuring.js';
 import { voidCommercialDisputesAtDeath } from '../commercialdisputes.js';
 import { recoverEquipmentInsuranceAtDeath } from '../equipmentinsurance.js';
+import { recoverConsignmentsInEstate } from '../consignments.js';
+import { recoverAtomicBartersInEstate } from '../atomicbarter.js';
+import { recoverPickingPackingInEstate } from '../pickingpacking.js';
 import { voidInfrastructureConcessionsAtDeath } from '../infrastructureconcessions.js';
 import { voidTerritoryEconomicsAtDeath } from '../territoryeconomics.js';
 import { wipeSpeakeasyAtDeath } from '../speakeasy.js';
@@ -175,6 +183,15 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  // Commission recovery loads after module initialization, using the existing estate scope.
+  const { recoverCommissionedCraftingAtEstateStart, recoverCommissionedCraftingInEstate } = await import('../commissionedcrafting.js');
+  const commissionStart = await recoverCommissionedCraftingAtEstateStart(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of commissionStart) {
+    if (receipt.customerCharacter !== victim.id) throw new Error('Commission estate original mismatch');
+    const before = Number(victim.cash);
+    registerItemTransactionUndo(client, () => { victim.cash = before; });
+    victim.cash = before + receipt.refundedFee;
+  }
   await closeWarehouseClaimsAtDeath(client, victim.id);
   const acct = h.victimAcct;
   const lvl = levelOf(Number(victim.respect));
@@ -468,6 +485,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   await client.query('UPDATE characters SET alive=false, cash=0, bank=0, cb=0, ammo=0, gun=NULL, vest=NULL WHERE id=$1', [victim.id]);
   await voidCompanyRestructuringAtDeath(client, victim);
   await voidCommercialDisputesAtDeath(client, victim);
+  await voidFreightConsolidationsAtDeath(client, victim);
   await recoverEquipmentInsuranceAtDeath(client, h, victim);
   await voidInfrastructureConcessionsAtDeath(client, victim);
   await voidTerritoryEconomicsAtDeath(client, victim.id);
@@ -477,9 +495,25 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
     await voidEmploymentOrganizationsAtDeath(client, victim);
     await retireBusinessPartnershipsAtDeath(client, victim.id);
     await retireCompanyGovernanceAtDeath(client, victim.id);
+    await retireIntelligenceAtDeath(client, victim.id);
+    await retireManagementTeamsAtDeath(client, victim.id);
+    await voidStrategyLaboratoriesAtDeath(client, victim.id);
+    await markExternalWorkRecoveryAtDeath(client, victim.id);
     await retireAcquisitionsAtDeath(client, victim.id);
   }
   const rentalRecovery = await recoverEquipmentRentalsAtDeath(client, victim.id, h.rentalDeathScope);
+  await recoverConsignmentsInEstate(client, victim.id, h.rentalDeathScope, estateScope);
+  await recoverAtomicBartersInEstate(client, victim, h.rentalDeathScope, estateScope);
+  await recoverPickingPackingInEstate(client, victim, h.rentalDeathScope, estateScope);
+  const commissionRecovery = await recoverCommissionedCraftingInEstate(client, victim.id, h.rentalDeathScope, estateScope);
+  for (const receipt of commissionRecovery) {
+    for (const actor of new Set([h.actorCh, opts.killerCh].filter(Boolean))) {
+      if (actor.id !== receipt.customerCharacter || !actor.alive || !receipt.refundedFee) continue;
+      const before = Number(actor.cash);
+      registerItemTransactionUndo(client, () => { actor.cash = before; });
+      actor.cash = before + receipt.refundedFee;
+    }
+  }
   for (const receipt of rentalRecovery) {
     // The canonical refund already updated SQL. G subsequently persists its
     // original actor object, which may also hold unpersisted loot: merge DELTA.
