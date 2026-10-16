@@ -237,8 +237,16 @@ async function allHistorySourceDTOs(r) {
   const after=await snapshot('history-all-source-dtos-after');assert.deepEqual(after.tables,before.tables);assert.deepEqual(after.sequences,before.sequences);save('history-all-source-dto-refusals',results);
 }
 
+let booksSerial = 0;
 async function books() {
-  for(const {business_id} of(await pool.query('SELECT DISTINCT business_id FROM commercial_campaigns ORDER BY business_id')).rows){const before=await canonicalDatabaseSnapshot(pool),history=await inspectCommercialCampaignBusinessHistory(pool,business_id);assert.deepEqual(history.issues,[],JSON.stringify(history));assert.deepEqual(await canonicalDatabaseSnapshot(pool),before,'Paid/terminal history is read only after canonical transfers/refunds');}
+  for(const {business_id} of(await pool.query('SELECT DISTINCT business_id FROM commercial_campaigns ORDER BY business_id')).rows){
+    const label='books-history-'+(++booksSerial)+'-'+business_id, before=await snapshot(label+'-before');
+    const history=await inspectCommercialCampaignBusinessHistory(pool,business_id);assert.deepEqual(history.issues,[],JSON.stringify(history));
+    const after=await snapshot(label+'-after');
+    for(const observed of [before.capturedAt,after.capturedAt])assert(observed instanceof Date&&Number.isFinite(observed.getTime()),'Snapshot observation requires an actual finite timestamp');
+    const {capturedAt:beforeObserved,...beforeState}=before,{capturedAt:afterObserved,...afterState}=after;
+    assert.deepEqual(afterState,beforeState,'Paid/terminal history is read only after canonical transfers/refunds');
+  }
   assert.deepEqual(await Commission.collectCommissionedCraftingIssues(pool), []);
   assert.deepEqual(await Courier.collectMultiHopCourierIssues(pool), []);
   for (const row of (await pool.query('SELECT id,cash,bank FROM characters WHERE is_npc=false ORDER BY id')).rows) {
