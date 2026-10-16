@@ -96,3 +96,4 @@ try {
   if (browser) await browser.close();
   await app.close();
 }
+await import('./property-quest-city-browser.js');

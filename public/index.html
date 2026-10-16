@@ -9607,7 +9607,8 @@
     const entries = (Array.isArray(reply.body?.mysteries) ? reply.body.mysteries : []).filter(entry =>
       (entry.cityQuest === true || entry.graphId === 'neighborhood-initiation')
       && typeof entry.graphId === 'string' && /^[a-z0-9][a-z0-9:_-]{0,127}$/.test(entry.graphId)
-      && (!entry.districtId || entry.districtId === me.loc));
+      && (!entry.districtId || entry.districtId === me.loc
+        || entry.graphId === 'property-investigation' && entry.started === true && entry.status === 'active'));
     function add(graphId, venueId, title, dialogue, entries, started, questOrder) {
       const prefix = '/v1/worldgraph/mysteries/' + encodeURIComponent(graphId) + '/';
       const valid = (entries || []).filter(action => action.method === 'POST' && typeof action.available === 'boolean'
