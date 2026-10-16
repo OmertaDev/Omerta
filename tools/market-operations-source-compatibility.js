@@ -1,8 +1,8 @@
 // Exact market-operations source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const MARKET_OPERATIONS_SOURCE_REVISION="199cbc5328d004db9092baff6da4d6659909f645";
-export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="99edbb31928d3cafaf574be320b4b895f37b6f44";
+export const MARKET_OPERATIONS_SOURCE_REVISION="97f40ea22f25233584c68ccc5ac9613c98609a2f";
+export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="599b63be5857d9ae2ab529836b553641d0c8164c";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
   "package.json": {
@@ -309,10 +309,10 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
     ]
   },
   ".github/workflows/ci.yml": {
-    "currentSha256": "0fdcfe0278bc8079f1939625f9bd78cf72a98876fc9110da4270c0bceae0e681",
-    "currentBlob": "e10810877dceb03cc012bdf7a8c751b1bbce7cd0",
-    "baselineSha256": "c4198aea1dc4de1d1482ad7150eb8c8a3d1c4c652b09f7e78318c2ca152a9149",
-    "baselineBlob": "fc89708c7fb572af424e6bff73290191d17e3ffb",
+    "currentSha256": "33e457776cd46a3ca03da037915087145e727b9148bf5c72008e375ca5b8063a",
+    "currentBlob": "3698449f92969214fccf1021d61fb1db55843398",
+    "baselineSha256": "1ce2df86f8a4f87adeb0f520d49b4d654d3163f3911ae6ba3880047ee70e65d0",
+    "baselineBlob": "4f3fa820568eff86213b5e4954ac1f468d08729a",
     "contextLines": 3,
     "inverses": [
       {
@@ -322,10 +322,10 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
     ]
   },
   "test/gates.js": {
-    "currentSha256": "0103d01c67457a560d9b3bab31f8efcaab462a57225dcd14805af51b0ee55107",
-    "currentBlob": "292d7ee3068e302d70efe3479d9ad82f79fae7db",
-    "baselineSha256": "5e5001baba021506556dc10dcaaf21dffccb1c9f88d51eb54928da83edf8b1d9",
-    "baselineBlob": "0b4f68114511835d03f9fb0d76fa6c6edfbb8dd7",
+    "currentSha256": "bb4c961f4f2e10235d9fdbfd0260f51d981f20b61a8bf6f0dfcaf456bb841a8f",
+    "currentBlob": "850b1948514bb92bb68996a3647062596dc37ab9",
+    "baselineSha256": "6348e5d11be57056e4773e43b4f293400c40148f96147462c2f2055b5aba8e1d",
+    "baselineBlob": "f8cfa13a15c2af4962ef6ae4cd2da7e649814a71",
     "contextLines": 3,
     "inverses": [
       {
