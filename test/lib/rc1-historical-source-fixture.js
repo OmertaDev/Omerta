@@ -1,4 +1,5 @@
 // Closed pure-control fixtures. Historical source execution never admits the current release.
+import { enterpriseSourceBaseline } from '../../tools/enterprise-source-compatibility.js';
 import { economyReleaseSource } from '../../tools/economy-release-composition.js';
 import { fourthBatchSourceBaseline } from '../../tools/rc1-fourth-batch-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -89,7 +90,7 @@ function historical(file) {
   if (!checked.has(file)) {
     const actual = originalRead(path.join(root, file)), expected = blob(file, release);
     // Reconstruct only recognized current bytes; the frozen b12 tool graph stays separate.
-    let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, String(actual)));
+    let reviewed = economyReleaseSource('main', file, cityPlaySourceBaseline(file, enterpriseSourceBaseline(file, String(actual))));
     if (sha256(canonical(reviewed)) !== sha256(expected)) reviewed = fourthBatchSourceBaseline(file, reviewed);
     assert.equal(sha256(canonical(reviewed)), sha256(expected), 'Current release input changed outside historical fixture: ' + file);
     assert.equal(blobHash(Buffer.from(canonical(reviewed))), release.get(file), 'Current release input blob changed outside historical fixture: ' + file);

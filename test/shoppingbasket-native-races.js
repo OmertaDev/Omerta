@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { nativeFixture, assertExactRollback } from './shoppingbasket-native-fixture.js';
+import { nativeFixture, assertExactRollback } from "./shoppingbasket-current-native-fixture.js";
 import { runEstate } from '../src/social/estate.js';
 const f = await nativeFixture(), races = [];
 const run = async (name, calls) => {

@@ -690,6 +690,10 @@ export async function verifyCommerceNativeBranches(pool, endpoint) {
   const ci = address.port === '5432' && address.username === 'postgres' && address.password === 'pgcheck'; assert(local || ci);
   const settings = (await pool.query("SELECT current_user AS role,current_database() AS database,current_setting('server_version') AS version")).rows[0];
   assert.equal(settings.role,address.username); assert.equal('/'+settings.database,address.pathname); assert.match(settings.version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);
+  return verifyCommerceNativeBranchMetadata(pool,endpoint,settings);
+}
+
+async function verifyCommerceNativeBranchMetadata(pool,endpoint,settings) {
   const sources = commerceNativeBranchSources();
   // Compile and retire each owned reference sequentially; full schemas consume many locks.
   const current = freeze(await compileReference(pool, endpoint, sources.current));
@@ -773,4 +777,33 @@ export async function verifyCommerceNativeBranches(pool, endpoint) {
     }
   }
   return { current, iv, main, common, causal, verify, phase: 'independent native branch/catalog proof; no runtime/deployment clearance' };
+}
+
+export async function verifyCommerceEnterpriseSlotBranches(pool, endpoint, source) {
+  assert.equal(arguments.length,3,'Only the literal current-Commerce Enterprise catalog slot');
+  assert.equal(typeof endpoint,'string');assert.equal(typeof source,'string');assert.equal(typeof pool?.query,'function');
+  assert.equal(process.execArgv.length,0,'Bare original catalog test only');
+  const main=String(process.argv[1]).replaceAll('\\','/');
+  assert(main.endsWith('/test/enterprise-release-phase2-migration-catalog.js'));
+  assert.equal(process.argv.length,3);assert.equal(process.argv[2],'--postgres');
+  const endpointKey='ENTERPRISE_NATIVE_CATALOG_TEST_DATABASE_URL';
+  for(const key of Object.keys(process.env)){
+    const upper=key.toUpperCase();
+    if(/DATABASE_URL$/i.test(key))assert.equal(key,endpointKey,'Only the actual Enterprise slot endpoint');
+    else assert(!/^PG|^RC1|^P2_TEST/i.test(key)&&!['NODE_OPTIONS','NODE_PATH','NODE_PG_FORCE_NATIVE','LEGAL_PROFILE_DEFER','GENESIS_AUCTION_MANIFEST_PATH','GENESIS_AUCTION_MANIFEST_SHA256'].includes(upper),'No ambient backend/loader/caller override: '+key);
+  }
+  assert(Object.hasOwn(process.env,endpointKey));
+  assert.equal(process.env.CHAIN_ENABLED,'off');assert.equal(process.env.RESOURCE_ECONOMY,'off');
+  const address=new URL(endpoint);assert.equal(new URL(process.env[endpointKey]).href,address.href);
+  assert(['postgres:','postgresql:'].includes(address.protocol));assert.equal(address.hostname,'127.0.0.1');assert(!address.search&&!address.hash);
+  assert.match(address.pathname,/^\/enterprise_native_catalog_test_[a-f0-9]{12}$/);
+  const local=['35439','35449'].includes(address.port)&&address.username==='pilot_runner'&&!address.password;
+  const ci=address.port==='5432'&&address.username==='postgres'&&address.password==='pgcheck';assert(local||ci);
+  commerceMigrationPredecessor(source);
+  const settings=(await pool.query("SELECT current_user AS role,current_database() AS database,current_schema() AS schema,current_setting('server_version') AS version,current_setting('data_directory') AS directory,current_setting('port') AS port,(SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname=current_database()) AS owner")).rows[0];
+  assert.equal(settings.role,address.username);assert.equal(settings.owner,address.username);assert.equal('/'+settings.database,address.pathname);assert.equal(settings.schema,'public');assert.equal(settings.port,address.port);assert.match(settings.version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);
+  if(local){const directories={'35439':'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184','35449':'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof'};assert.equal(settings.directory.replaceAll('\\','/').toLowerCase(),directories[address.port]);}else assert.equal(typeof settings.directory,'string');
+  assert.deepEqual((await pool.query("SELECT nspname FROM pg_namespace WHERE nspname !~ '^pg_' AND nspname<>'information_schema' ORDER BY nspname")).rows.map(row=>row.nspname),['public'],'Fresh actual Enterprise-owned database only');
+  assert.deepEqual((await pool.query("SELECT c.relname AS name,c.relkind AS kind FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' ORDER BY c.relname,c.relkind")).rows,[],'No old table, view, index or sequence');
+  return verifyCommerceNativeBranchMetadata(pool,endpoint,settings);
 }
