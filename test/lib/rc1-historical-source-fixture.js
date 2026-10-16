@@ -13,6 +13,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { createRequire, registerHooks, syncBuiltinESMExports } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { cityPlaySourceBaseline } from '../../tools/city-play-source-transfer.js';
+import { deedQuestSourceBaseline } from '../../tools/deed-quest-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -56,6 +57,37 @@ const cold = process.argv[2] === childFlag;
 let hook, active = false, history, release;
 const attempts = { database: 0, network: 0 };
 const content = new Map(), checked = new Set();
+
+function composedHistoricalToolSource(file, input) {
+  // Exactly one newer tool is an existing whole-source Deed domain. The old pin remains authority.
+  return file === 'tools/release-source-transfer.js' ? deedQuestSourceBaseline(file, input) : input;
+}
+
+function rejectCurrentComposedTool() {
+  const file = 'tools/release-source-transfer.js', pin = composedHistoricalHelperPins[file];
+  const actual = String(originalRead(path.join(root, file))), frozen = String(blob(file, release));
+  let positives = 0, refusals = 0;
+  for (const supplied of [actual, canonical(actual).replaceAll('\n', '\r\n')]) {
+    const reviewed = canonical(composedHistoricalToolSource(file, supplied));
+    assert.equal(sha256(reviewed), pin.sha256, 'Complete reviewed Deed tool must reconstruct the original composed pin');
+    assert.equal(blobHash(Buffer.from(reviewed)), pin.blob, 'Complete reviewed Deed tool must reconstruct the original composed blob');
+    positives++;
+  }
+  const prior = String(git(['cat-file', 'blob', pin.blob]));
+  assert.equal(composedHistoricalToolSource(file, prior), prior, 'Previously reviewed composed tool remains exact'); positives++;
+  assert.equal(composedHistoricalToolSource(file, frozen), frozen, 'Immutable b12 tool remains exact'); positives++;
+  const lf = canonical(actual), mixed = lf.replace('\n', '\r\n');
+  for (const supplied of [lf + '\n// unreviewed tool source\n', mixed, lf.replace('deedQuestSourceBaseline(file, input)', 'deedQuestSourceBaseline(file, unknownInput)')]) {
+    assert.notEqual(supplied, actual, 'Tool refusal must change the actual supplied bytes');
+    const reviewed = canonical(composedHistoricalToolSource(file, supplied));
+    assert.notEqual(sha256(reviewed), pin.sha256, 'Unknown or mixed Deed tool must not reach the composed source branch');
+    assert.notEqual(sha256(canonical(supplied)), sha256(frozen), 'Unknown Deed tool must not reach the immutable tool branch');
+    refusals++;
+  }
+  assert.equal(composedHistoricalToolSource('tools/unknown-source-transfer.js', actual), actual, 'Unknown tool path never projects'); refusals++;
+  assert.equal(composedHistoricalToolSource('tools/rc1-first-batch-source-compatibility.js', actual), actual, 'Other reviewed tool paths never receive the Deed projection'); refusals++;
+  console.log(`PASS_HISTORICAL_COMPOSED_TOOL: ${positives} exact old/current tool controls; ${refusals} drift/mixed/unknown refusals; immutable b12 execution only`);
+}
 
 function inventory(revision, pins) {
   for (const [name, pin] of Object.entries(pins))
@@ -189,6 +221,7 @@ export async function executeHistoricalSourceFixture() {
 
 async function rejectCurrentNpcRules() {
   loadInventories();
+  rejectCurrentComposedTool();
   const { assertNpcCarSources } = await import('../../tools/rc1-npc-car-acquisition.js');
   const { assertNpcBoatSources } = await import('../../tools/rc1-npc-boat-journal.js');
   const { assertNpcMarketSources } = await import('../../tools/rc1-npc-market-order-journal.js');
@@ -250,8 +283,10 @@ if (cold) {
     }
     if (file?.startsWith('tools/') && /\.[cm]?js$/.test(file)) {
       const pin = composedHistoricalHelperPins[file];
-      if (pin && sha256(canonical(originalRead(path.join(root, file)))) === pin.sha256) {
-        assert.equal(blobHash(Buffer.from(canonical(originalRead(path.join(root, file))))), pin.blob, 'Reviewed composed helper blob changed');
+      const actual = String(originalRead(path.join(root, file)));
+      const reviewed = composedHistoricalToolSource(file, actual);
+      if (pin && sha256(canonical(reviewed)) === pin.sha256) {
+        assert.equal(blobHash(Buffer.from(canonical(reviewed))), pin.blob, 'Reviewed composed helper blob changed');
         return { ...nextLoad(url, context), source: blob(file, release) };
       }
       assert.equal(sha256(canonical(originalRead(path.join(root, file)))), sha256(blob(file, release)), 'Reviewed tool implementation changed: ' + file);
