@@ -215,9 +215,9 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: native core (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    # Expanded native coverage exhausted the former 20m lane after loadtest's
-    # success report, before process exit and concurrency. Keep a 30m bound.
-    timeout-minutes: 90
+    # Expanded core coverage reached the former 90m cap during the final loadtest.
+    # Keep the complete required suite and its step order within a 120m bound.
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
@@ -237,6 +237,30 @@ jobs:
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s --health-timeout 5s --health-retries 20
     steps:
+      - name: Set owned test PostgreSQL lock capacity for populated migrations
+        timeout-minutes: 3
+        shell: bash
+        env:
+          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          # The context identifies only this matrix job's disposable service container.
+          [[ "$POSTGRES_SERVICE_ID" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }
+          timeout 15s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'
+          timeout 45s docker restart --timeout 30 "$POSTGRES_SERVICE_ID"
+          ready=0
+          deadline=$((SECONDS + 60))
+          while (( SECONDS < deadline )); do
+            if timeout 3s docker exec "$POSTGRES_SERVICE_ID" pg_isready -q -t 1 -U postgres -d postgres; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          [[ "$ready" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }
+          actual="$(timeout 10s docker exec "$POSTGRES_SERVICE_ID" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')"
+          [[ "$actual" == 512 ]] || { echo "Unexpected test max_locks_per_transaction: $actual" >&2; exit 1; }
+
       # pgcheck §7b applies the OLDEST schema.sql in history and §7c the NEWEST one that still
       # declares an account column UUID, then boots the current build on top — what a deploy does.
       # A shallow checkout has ONE commit, so §7c finds nothing to migrate from (its anti-vacuity

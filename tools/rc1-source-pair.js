@@ -215,12 +215,12 @@ export const AUTONOMY_MAIN_ADDITIVE_PAIR = Object.freeze({
 // Exact merged source/schema/catalog pins; empty bootstrap is not native or activation clearance.
 // PREPARATION identity only; future final source must be genuinely reviewed and repinned.
 export const ENTERPRISE_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "0a6f40bffc30918238827d5107883ccec24ae3c8",
-  "reviewedCandidate": "2460e1628671d854d7065153b479a5a759fbbdbb",
-  "predecessorTree": "3aef130ebcf4b8715c4c479b0bf6269b332bf9e9829f31609eda99bb804106bf",
+  "predecessor": "f2dda53362a61107fb3b4107a94f9adc9b9e4182",
+  "reviewedCandidate": "a45ea4bc71399cc5e2e4783e7144c1e7265bdaaf",
+  "predecessorTree": "ec8fac368b0a098e42301895ce34df209a585f0f8392999f0b5871d643cb3973",
   "predecessorSchema": "d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9",
   "predecessorCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
-  "candidateTree": "daf19a78f4ffcebf44a383541f79f76ebb5dd4fe6b6279b312f674a35501cc18",
+  "candidateTree": "d44eebae3bd591e2dd1d7959106483411202f8dea73e15df08a457ee5cce6b4d",
   "candidateSchema": "50293aebc2fb963c46696869e4770232b4508972820cd1e709918b1df112e90a",
   "candidateCatalog": "f45eb6f97c65ee00d3ad97e0c3a50756acbde77558abd1a86220bf9780006a65",
   "constraints": 73,
@@ -240,12 +240,12 @@ export const ENTERPRISE_ADDITIVE_PAIR = Object.freeze({
 });
 
 export const MARKET_OPERATIONS_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "3e4e23269908e84d3c1d4ea39f55d0eeec3686e8",
-  "reviewedCandidate": "7e3c8fa398c76127e7b102e978e963244ca53566",
-  "predecessorTree": "e73e71db51863feddb16391d28237f30eb20c71f39d504ee74b105da6ee74edb",
+  "predecessor": "2c8eaacf104e8555d5140136b5ed19027ecd4766",
+  "reviewedCandidate": "30cbe42369554c6300585fca7534ec7c23b34d5d",
+  "predecessorTree": "9e0c30bb11369a8fedebcd5ae8fd8890ae64f08809e603637cc16f4529f7748f",
   "predecessorSchema": "d5ce9edf144b3bef438a5a086e3b6ea445de20fc82f0e3aaa636c099f62ea2b7",
   "predecessorCatalog": "24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522",
-  "candidateTree": "3aef130ebcf4b8715c4c479b0bf6269b332bf9e9829f31609eda99bb804106bf",
+  "candidateTree": "ec8fac368b0a098e42301895ce34df209a585f0f8392999f0b5871d643cb3973",
   "candidateSchema": "d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9",
   "candidateCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
   "constraints": 70,
@@ -263,11 +263,11 @@ export const MARKET_OPERATIONS_ADDITIVE_PAIR = Object.freeze({
 
 export const NEXT_LAYER_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "2a057d375cb8f8d94ec30c8e4559832b5be63011",
-  "reviewedCandidate": "6e99b22decbcf22a125cb75ecb906e233c2b49f8",
+  "reviewedCandidate": "5ce229173d5c315113e3c37c5e253aade6778f7f",
   "predecessorTree": "aafb54cc4fa9c662b92afe9ce1edb3bff7be358edf36990d276142023561cea0",
   "predecessorSchema": "e334badfba6c0b08bb13288fc702c6cd661546d47f460afbf38087a43ca52861",
   "predecessorCatalog": "301ebc59b074fb9e87f133e5b11cc5d467cd29d6848a7383a3969d982955bbe0",
-  "candidateTree": "e73e71db51863feddb16391d28237f30eb20c71f39d504ee74b105da6ee74edb",
+  "candidateTree": "9e0c30bb11369a8fedebcd5ae8fd8890ae64f08809e603637cc16f4529f7748f",
   "candidateSchema": "d5ce9edf144b3bef438a5a086e3b6ea445de20fc82f0e3aaa636c099f62ea2b7",
   "candidateCatalog": "24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522",
   "constraints": 89,
