@@ -11,7 +11,7 @@ const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),
 assert(executablePath, 'Set CHROMIUM_PATH to an installed Chromium executable.');
 const browser = await chromium.launch({ executablePath, headless: true });
 try {
-  for (const viewport of [{ width: 375, height: 812 }, { width: 1366, height: 768 }]) {
+  for (const viewport of [{ width: 320, height: 720 }, { width: 375, height: 812 }, { width: 1366, height: 768 }]) {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce', isMobile: viewport.width <= 680, hasTouch: viewport.width <= 680 });
     const page = await context.newPage(), errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -30,6 +30,7 @@ try {
         outfits: [{ id: 'classic', name: 'Classic', color: '#a89c7b' }, { id: 'moss', name: 'Moss', color: '#8ea986' }], emotes: [{ id: 'wave', name: 'Wave' }], furniture: [{ id: 'chair', name: 'Chair' }, { id: 'lamp', name: 'Lamp' }] };
       window.__fixture = {
         scopeKey: 'session-a', character: window.__character, district: { id: 'harbor', name: 'Harbor' },
+        resourceReceipt: { id: 'initial-confirmation', state: 'confirmed', label: 'Earlier move', changes: [{ key: 'cash', label: 'Cash', value: 5 }] },
         viewport: document.querySelector('#viewport'), mapLayer: document.querySelector('#map'), toolbar: document.querySelector('#toolbar'),
         toolsHost: document.querySelector('#tools-host'), trackerHost: document.querySelector('#guidance'),
         venues: [{ id: 'training', name: 'Training Room', x: 606, y: 504 }, { id: 'fixer', name: 'The Fixer', x: 144, y: 224 }],
@@ -71,6 +72,10 @@ try {
       if (panel && await page.locator('[data-city-panel-select]').isVisible()) return page.locator('[data-city-panel-select]').selectOption(panel);
       return viewport.width <= 680 ? page.locator(selector).tap() : page.locator(selector).click();
     };
+    assert.match(await page.locator('.city-world__gains').innerText(), /Cash \+5/);
+    assert.equal(await page.locator('.city-world__gains').getAttribute('aria-live'), 'off', 'A valid receipt on remount is static, without a fresh announcement.');
+    assert.equal(await page.locator('.city-world__gains').evaluate(node => node.classList.contains('has-motion')), false);
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: null }));
     assert.equal(await page.locator('[data-city-objective-tracker]').innerText(), '◆ Meet a different face');
     assert.equal(await page.locator('#tools-host [data-city-world-tools]').count(), 1);
     await page.evaluate(() => window.__ui.update({ trackerVisible: false }));
@@ -80,7 +85,7 @@ try {
     assert.equal(await page.locator('[data-city-minimap]').count(), 1);
     if (viewport.width <= 680) {
       assert.equal(await page.locator('[data-city-panel-select]').isVisible(), true);
-      assert.equal(await page.locator('.city-world__dock-bar > strong').innerText(), 'Map');
+      assert.equal(await page.locator('.city-world__dock-bar > strong').innerText(), 'Maps & travel');
       assert(await page.locator('[data-city-panel-select]').evaluate(node => node.getBoundingClientRect().height >= 44));
     }
     await page.locator('[data-city-tracked-objective]').selectOption('train');
@@ -116,6 +121,9 @@ try {
     await page.evaluate(() => window.__ui.update({ character: { ...window.__character, gun: 'starter', guns: ['starter', 'pocket'] } }));
     assert.match(await page.locator('.city-world__content').innerText(), /Firepower 5 · \+2 vs equipped/);
     assert.match(await page.locator('.city-world__content').innerText(), /Firepower 3 · Equipped/);
+    assert(await page.locator('.city-world__stats dt').evaluateAll(nodes => nodes.every(node => parseFloat(getComputedStyle(node).fontSize) >= 12)), 'Critical equipment labels remain readable on small phones.');
+    assert(await page.locator('.city-world__content button, .city-world__item-copy').evaluateAll(nodes => nodes.every(node => parseFloat(getComputedStyle(node).fontSize) >= 13)), 'Equipment actions and body copy stay at least 13px.');
+    assert(await page.locator('.city-world__dock').evaluate(node => node.scrollWidth <= node.clientWidth + 1), 'Tools fit the small-phone panel without horizontal scrolling.');
     await page.evaluate(() => window.__ui.update({ character: window.__character }));
     await page.evaluate(() => { window.__social.preferences.chatEnabled = true; window.__ui.update({ social: window.__social }); window.__holdInventory = true; window.__ui.open('bag'); });
     await page.waitForFunction(() => !!window.__releaseInventory);
@@ -290,8 +298,39 @@ try {
     await click('[data-city-room-save]');
     await page.waitForFunction(() => window.__social.preferences.room.furniture.some(item => item.id === 'chair' && item.x === 4 && item.y === 5));
     await page.evaluate(() => { window.__ui.update({ character: { ...window.__character, stats: { muscle: 6, cunning: 5, speed: 5 }, level: 2 } }); });
-    assert.match(await page.locator('.city-world__gains').innerText(), /muscle \+1.*Level 2 reached/);
-    assert.equal(await page.locator('.city-world__gains').evaluate(node => getComputedStyle(node).animationName), 'none', 'Confirmed gains respect reduced motion.');
+    assert.equal(await page.locator('.city-world__gains').textContent(), '', 'Character polling cannot create resource feedback or completion celebrations.');
+    await page.evaluate(() => {
+      window.__trainingReceipt = { id: 'training-confirmed', state: 'confirmed', label: 'Training', changes: [
+        { key: 'muscle', label: 'Muscle', value: 1, before: 5, after: 6 }, { key: 'cash', label: 'Cash', value: -50, before: 100, after: 50 },
+        { key: 'nerve', label: 'Nerve', value: -3, before: 10, after: 7 }, { key: 'level', label: 'Level', value: 1, before: 1, after: 2 },
+        { key: 'heat', label: 'Heat', value: 5, before: 0, after: 5 },
+        { key: 'invalid', label: 'Invalid', value: Infinity }, { key: 'coerced', label: 'Coerced', value: '5' }
+      ], questCompletion: { id: 'meet', title: 'Meet a different face' } };
+      window.__ui.update({ resourceReceipt: window.__trainingReceipt });
+    });
+    const trainingFeedback = await page.locator('.city-world__gains').innerText();
+    assert.match(trainingFeedback, /After this move[\s\S]*Muscle \+1[\s\S]*Cash -50[\s\S]*Nerve -3[\s\S]*Level 2 reached[\s\S]*Completed: Meet a different face/);
+    assert(!/Invalid|Coerced/.test(trainingFeedback), 'Only finite numeric changes are rendered.');
+    assert.equal(await page.locator('.city-world__gains').getAttribute('aria-live'), 'polite');
+    assert(await page.locator('[data-city-resource-change="heat"]').evaluate(node => node.classList.contains('is-cost')), 'Increased heat is marked as risk, even though its signed value is positive.');
+    assert(await page.locator('.city-world__gains > *').evaluateAll(nodes => nodes.every(node => getComputedStyle(node).animationName === 'none')), 'Confirmed feedback respects reduced motion.');
+    await page.evaluate(() => {
+      window.__firstFeedbackNode = document.querySelector('.city-world__gains').firstChild;
+      window.__ui.update({ resourceReceipt: { ...window.__trainingReceipt, changes: [{ key: 'cash', label: 'Cash', value: 999 }] } });
+      window.__ui.update({ character: { ...window.__character, cash: 99999, level: 9 } });
+    });
+    assert.equal(await page.locator('.city-world__gains').innerText(), trainingFeedback, 'Duplicate IDs and later polls cannot change the confirmed receipt.');
+    assert(await page.evaluate(() => window.__firstFeedbackNode === document.querySelector('.city-world__gains').firstChild), 'Duplicate confirmations do not recreate or reannounce feedback.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { id: 'cooldown-confirmed', state: 'confirmed', label: 'Lay low', changes: [{ key: 'heat', label: 'Heat', value: -2 }] } }));
+    assert(await page.locator('[data-city-resource-change="heat"]').evaluate(node => node.classList.contains('is-gain')), 'Reduced heat is marked as a favorable change.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { id: 'retry-move', state: 'pending', label: 'Training', changes: [] } }));
+    assert.equal(await page.locator('.city-world__gains').textContent(), '', 'Pending confirmation clears the older badges.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { ...window.__trainingReceipt, id: 'retry-move' } }));
+    assert.match(await page.locator('.city-world__gains').innerText(), /Muscle \+1/, 'A confirmed retry can display after its pending receipt.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { ...window.__trainingReceipt, id: 'failed-move', state: 'error' } }));
+    assert.equal(await page.locator('.city-world__gains').textContent(), '', 'Failed receipts cannot show resource gains or stale completion text.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { ...window.__trainingReceipt, id: 'failed-move' } }));
+    assert.match(await page.locator('.city-world__gains').innerText(), /Muscle \+1/, 'Failure does not consume a later confirmed same-key retry.');
 
     await page.evaluate(() => { window.__social.preferences.chatEnabled = true; window.__ui.open('chat'); });
     await page.waitForFunction(() => document.querySelector('.city-world__speech').textContent.includes('Public neighbor'));
@@ -299,7 +338,10 @@ try {
       onRetry: () => new Promise(resolve => { window.__releaseOldRetry = resolve; }) }));
     await click('[data-city-world-retry]');
     await page.waitForFunction(() => !!window.__releaseOldRetry);
-    await page.evaluate(() => { window.__ui.update({ scopeKey: 'session-b', character: { id: 'owner-b', generation: 1, stats: { muscle: 5, cunning: 5, speed: 5 }, guns: ['starter'] } }); });
+    await page.evaluate(() => { window.__ui.update({ scopeKey: 'session-b', character: { id: 'owner-b', generation: 1, stats: { muscle: 5, cunning: 5, speed: 5 }, guns: ['starter'] }, resourceReceipt: { ...window.__trainingReceipt, id: 'inherited-on-scope-change' } }); });
+    assert.equal(await page.locator('.city-world__gains').textContent(), '', 'Owner changes clear the former receipt, including completed quest titles.');
+    await page.evaluate(() => window.__ui.update({ resourceReceipt: { ...window.__trainingReceipt, id: 'inherited-on-scope-change' } }));
+    assert.equal(await page.locator('.city-world__gains').textContent(), '', 'A receipt inherited during scope change cannot resurface on a later update.');
     assert.equal(await page.locator('.city-world__speech').textContent(), '', 'Owner changes remove old opted-in chat text from the DOM.');
     assert.equal(await page.locator('.city-world__dialogue').textContent(), '', 'Short-frame dialogue is also cleared, not merely hidden.');
     assert.equal(await page.locator('[data-city-objective-tracker]').innerText(), '◆ Meet someone · collect your first clue', 'A successor does not inherit the former owner pinned progress.');
@@ -370,9 +412,9 @@ try {
     const firstSocial = await heldRead('social');
     assert.deepEqual(await readState(), { busy: 'true', title: 'Style', notice: 'Loading Style…' });
     await click('[data-city-world-panel="map"]');
-    assert.deepEqual(await readState(), { busy: 'false', title: 'Map', notice: '' }, 'A local panel switch retires the former loader.');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Maps & travel', notice: '' }, 'A local panel switch retires the former loader.');
     await settleRead(firstSocial, { code: 503, body: {} });
-    assert.deepEqual(await readState(), { busy: 'false', title: 'Map', notice: '' }, 'An old opening error cannot repaint the current panel.');
+    assert.deepEqual(await readState(), { busy: 'false', title: 'Maps & travel', notice: '' }, 'An old opening error cannot repaint the current panel.');
     assert.equal(await page.locator('[data-city-minimap]').count(), 1);
 
     await click('[data-city-world-panel="chat"]');
