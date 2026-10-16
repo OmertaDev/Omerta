@@ -13,7 +13,7 @@ Census refreshed from the current repository; these counts do not identify a dep
 | | |
 |---|---|
 | Backend modules | **505** files, **127865** lines (recursive source inventory) |
-| Test suites | **705** files, **175252** lines (recursive source inventory) |
+| Test suites | **705** files, **175274** lines (recursive source inventory) |
 | HTTP routes | **1198** registrations (**1198** unique; 1133 under `/v1`) |
 | Database tables | **528** (`schema.sql`, 9122 lines) |
 | Client | **15114** lines in `public/index.html`; City and Fieldwork modules use locally served Phaser |
