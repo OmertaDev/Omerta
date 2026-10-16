@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e7e318c22461`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `6219aacaf0c9`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4220 |
+| Commits in clone | 4224 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-16 — test: pin current market source relation after timeout repair |
+| Latest commit | 2026-10-16 — test: pin market source after provenance graph repair |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3260 |
+| OmertaDev | 3264 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 115 |
@@ -30,11 +30,11 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 698 | historical |
-| knowledge/generated/graph-summary.md | 698 | historical |
-| knowledge/generated/graph.json | 698 | historical |
-| knowledge/generated/inventory.md | 698 | historical |
-| [SPEC.md](../../SPEC.md) | 559 | yes |
+| knowledge/generated/github-history.md | 699 | historical |
+| knowledge/generated/graph-summary.md | 699 | historical |
+| knowledge/generated/graph.json | 699 | historical |
+| knowledge/generated/inventory.md | 699 | historical |
+| [SPEC.md](../../SPEC.md) | 560 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 467 | yes |
 | [src/server.js](../../src/server.js) | 435 | yes |
@@ -58,9 +58,9 @@
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 96 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [public/wiki.html](../../public/wiki.html) | 93 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 90 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 91 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 89 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 89 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 88 | yes |
 | [test/migrate.js](../../test/migrate.js) | 88 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [test/growth.js](../../test/growth.js) | 83 | yes |
