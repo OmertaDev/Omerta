@@ -1,3 +1,6 @@
+import { collectMultiHopCourierIssues } from './multihopcourier.js';
+import { customerVaultAccounting } from './customervaults.js';
+import { collectCustomerLayawayIssues } from './customerlayaway.js';
 import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';
 import { collectFreightHistoryIssues } from './freight-history.js';
 import { economicIntelligenceTransferBooks } from './economicintelligence.js';
@@ -70,6 +73,8 @@ const KNOWN_REASONS = {
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'picking_packing:pay', 'picking_packing:receive',
+    'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
+    'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
     'subscription:reserve', 'subscription:release', 'subscription:refund',
     'worker_training:reserve', 'worker_training:wage', 'worker_training:refund',
@@ -724,6 +729,14 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('strategy license transfers', 0, await sum(pool, "currency='cash' AND reason LIKE 'strategy:%'"), 0);
   const equipmentIssues = await collectItemConditionIssues(pool);
   push('physical equipment condition provenance', equipmentIssues.length, 0, 0, { issues: equipmentIssues });
+  const courierReserve = await one(pool, 'SELECT COALESCE(SUM(reserved_cash),0) s FROM multi_hop_couriers');
+  const courierNet = await sum(pool, "currency='cash' AND reason IN ('multi_hop_courier:reserve','multi_hop_courier:fee','multi_hop_courier:refund')");
+  push('multi-hop courier reserved fees', courierReserve, -courierNet, 0);
+  const courierIssues = await collectMultiHopCourierIssues(pool);
+  push('multi-hop courier custody and fee source', courierIssues.length, 0, 0, { issues: courierIssues });
+  const vault = await customerVaultAccounting(pool);
+  push('customer vault reserved custody', vault.reserve, -vault.ledgerDelta, 0);
+  push('customer vault canonical funding', vault.issues.length, 0, 0, { issues: vault.issues });
   const rentalDeposits = await one(pool, 'SELECT COALESCE(SUM(deposit_remaining),0) s FROM equipment_rental_leases');
   const rentalFunding = -(await sum(pool, "currency='cash' AND reason IN ('equipment_rental:deposit','equipment_rental:deposit_refund')"));
   const rentalBurn = await sum(pool, "currency='cash' AND reason='equipment_rental:deposit_burn'");
@@ -745,6 +758,11 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const pickingIssues = await collectPickingPackingIssues(pool);
   const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
   push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
+  const layawayReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM customer_layaways');
+  const layawayNet = await sum(pool, "currency='cash' AND reason IN ('customer_layaway:reserve','customer_layaway:proceeds','customer_layaway:refund')");
+  push('customer layaway reserved cash', layawayReserve, -layawayNet, 0);
+  const layawayIssues = await collectCustomerLayawayIssues(pool);
+  push('customer layaway source history', layawayIssues.length, 0, 0);
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
@@ -1345,7 +1363,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!prefixes.some((p) => r.reason === p || r.reason.startsWith(p))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 

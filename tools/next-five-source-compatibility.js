@@ -1,3 +1,4 @@
+import {nextLayerSourceBaseline} from './next-layer-source-compatibility.js';
 // Exact source-only envelope for the first five features. Native admission is separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -206,12 +207,14 @@ const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
 const blob=text=>crypto.createHash('sha1').update('blob '+Buffer.byteLength(text)+'\0').update(text).digest('hex');
 const uniform=text=>text===lf(text)||text===lf(text).replaceAll('\n','\r\n');
 export function assertNextFiveSourceTransfer(file,input){
+ input=nextLayerSourceBaseline(file,input);
  assert(Object.hasOwn(NEXT_FIVE_SOURCE_DOMAINS,file),'Unknown first-five source domain');assert.equal(typeof input,'string');assert(uniform(input),'Mixed first-five source line endings');
  const pin=NEXT_FIVE_SOURCE_DOMAINS[file],text=lf(input);assert.equal(hash(text),pin.currentSha256,'Complete first-five source drift');assert.equal(blob(text),pin.currentBlob,'Complete first-five blob drift');
  let baselineText=text;for(const h of pin.inverses){assert(h.current.length);assert.equal(baselineText.split(h.current).length,2,'Exact first-five inverse once');baselineText=baselineText.replace(h.current,()=>h.baseline);}
  assert.equal(hash(baselineText),pin.baselineSha256);assert.equal(blob(baselineText),pin.baselineBlob);return{baselineText,sourceRevision:NEXT_FIVE_SOURCE_REVISION,predecessorRevision:NEXT_FIVE_SOURCE_PREDECESSOR,phase:NEXT_FIVE_SOURCE_PHASE};
 }
 export function nextFiveSourceBaseline(file,input){
+ input=nextLayerSourceBaseline(file,input);
  if(typeof input!=='string'||!Object.hasOwn(NEXT_FIVE_SOURCE_DOMAINS,file)||!uniform(input))return input;
  return hash(lf(input))===NEXT_FIVE_SOURCE_DOMAINS[file].currentSha256?assertNextFiveSourceTransfer(file,input).baselineText:input;
 }

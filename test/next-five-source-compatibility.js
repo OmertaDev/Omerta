@@ -1,3 +1,4 @@
+import {nextLayerSourceBaseline} from '../tools/next-layer-source-compatibility.js';
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
@@ -11,7 +12,7 @@ assert.deepEqual(Object.keys(NEXT_FIVE_SOURCE_DOMAINS),['package.json','schema.s
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
  const current=git('show',NEXT_FIVE_SOURCE_REVISION+':'+file),prior=git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file);
- assert.equal(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n'),current,'Complete actual first-five source is independently pinned');
+ assert.equal(nextLayerSourceBaseline(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),current,'Complete actual first-five source is independently pinned');
  const actual=[];let chunk;
  for(const line of git('diff','--no-ext-diff','--unified='+pin.contextLines,pin.baselineBlob,pin.currentBlob).split('\n')){
   if(line.startsWith('@@')){chunk={current:'',baseline:''};actual.push(chunk);}
@@ -33,7 +34,7 @@ for(const[file,pin]of Object.entries(NEXT_FIVE_SOURCE_DOMAINS)){
 for(const file of['__proto__','src/unknown.js','schema.sql.extra','knowledge/generated/graph.json']){
  const text='unknown\r\nbytes\n';assert.throws(()=>assertNextFiveSourceTransfer(file,text));assert.equal(nextFiveSourceBaseline(file,text),text);negatives++;
 }
-const file='test/lib/phase2-architecture-upgrade-catalog.json',currentCatalog=JSON.parse(fs.readFileSync(file,'utf8'));
+const file='test/lib/phase2-architecture-upgrade-catalog.json',currentCatalog=JSON.parse(nextLayerSourceBaseline(file,fs.readFileSync(file,'utf8')));
 const oldCatalog=JSON.parse(git('show',NEXT_FIVE_SOURCE_PREDECESSOR+':'+file));
 assert.equal(oldCatalog.added.length,1153);assert.equal(currentCatalog.added.length,1243);
 assert.deepEqual(currentCatalog.added.slice(0,1153),oldCatalog.added);assert.deepEqual(currentCatalog.removed,oldCatalog.removed);
