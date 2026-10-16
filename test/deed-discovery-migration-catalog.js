@@ -10,7 +10,7 @@ import {readNextLayerReleasePhase2Metadata, nextLayerMigrationPredecessor, nextL
 const schema=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');
 const sources=deedDiscoveryMigrationSources(schema);
 assert(isDeedDiscoveryMigrationSource(schema));assert(isDeedDiscoveryMigrationSource(sources.current.replaceAll('\n','\r\n')));
-assert.throws(()=>nextLayerMigrationPredecessor(schema),error=>error?.code==='ERR_ASSERTION','Raw540 never enters old536 admission');
+assert.throws(()=>nextLayerMigrationPredecessor(schema),error=>error?.code==='ERR_ASSERTION','Raw current Deed source never enters the historical next-layer native adapter');
 let refusals=0;
 for(const source of[sources.current+'\n',sources.current.replace('\n','\r\n'),'\uFEFF'+sources.current,
   sources.predecessor,sources.current.replace('building_id','unknown_building_id')]) {
@@ -139,6 +139,6 @@ if(process.argv.includes('--postgres')) {
       }finally{await active.client.end();await admin.query(`DROP SCHEMA ${owned(active.name)} CASCADE`);}
     }
     assert.equal((await admin.query("SELECT nspname FROM pg_namespace WHERE nspname LIKE 'release_phase2_ref_%'")).rows.length,0);
-    console.log('Current Deed native catalog PASS: independently compiled fresh/phase2/director540, frozen536 retained, exact replay and every metadata field guarded');
+    console.log(`Current Deed native catalog PASS: independently compiled fresh/phase2/director${[...sources.current.matchAll(/^CREATE TABLE IF NOT EXISTS /gm)].length}, frozen${[...sources.predecessor.matchAll(/^CREATE TABLE IF NOT EXISTS /gm)].length} retained, exact replay and every metadata field guarded`);
   }finally{await admin.end();}
 }

@@ -1,3 +1,4 @@
+import {MARKET_OPERATIONS_NATIVE_FILES as combinedFiles} from "../tools/market-operations-native.js";
 import assert from 'node:assert/strict';import {NEXT_LAYER_NATIVE_PROOFS as proofs,NEXT_LAYER_NATIVE_FILES as files,assertNextLayerExecutionEnv,assertNextLayerInventory,assertNextLayerMode,nextLayerNativeEndpoint,assertNextLayerBackend,assertNextLayerResults,assertNextLayerTrackedBytes,nextLayerChildEnv}from'../tools/next-layer-native.js';
 import {NEXT_LAYER_DEED_DEPENDENCIES,assertNextLayerDeedDependencies} from '../tools/next-layer-native.js';
 import {NEXT_LAYER_CITY_DEPENDENCIES,assertNextLayerCityDependencies} from '../tools/next-layer-native.js';
@@ -30,3 +31,7 @@ assert(files.includes('public/genesis-snapshot-rpc.js'));
 for(const file of ['docs/decision-replay-integration.json','docs/economic-dependency-map-integration.json'])assert(files.includes(file));
 for(const flags of [['--require','unreviewed'],['--import','unreviewed'],['--loader','unreviewed'],['--inspect'],['--input-type=module']])reject(()=>assertNextLayerMode(['node','runner'],{},flags));
 console.log('Next-layer strict endpoint/inventory/completion guard unit PASS: '+controls+' causal refusals; synthetic completion records confer NO native qualification.');
+
+assert.equal(files.length,704,'Complete current Deed/market dependency union');
+assert.deepEqual([...files].sort(),[...combinedFiles].sort(),'Both native cohorts capture the same complete current dependency set');
+for(const file of ['tools/deed-market-source-compatibility.js','test/deed-market-source-compatibility.js'])assert(files.includes(file));

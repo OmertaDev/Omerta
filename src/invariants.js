@@ -1,3 +1,6 @@
+import {collectCrossDockIssues} from './crossdocking.js';
+import {collectProductionSlotIssues} from './productionslots.js';
+import {collectMerchantReturnIssues} from './merchantreturnsinvariants.js';
 import { collectMultiHopCourierIssues } from './multihopcourier.js';
 import { customerVaultAccounting } from './customervaults.js';
 import { collectCustomerLayawayIssues } from './customerlayaway.js';
@@ -73,6 +76,7 @@ const KNOWN_REASONS = {
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
     'picking_packing:pay', 'picking_packing:receive',
+    'merchant_return:reserve', 'merchant_return:payout', 'merchant_return:refund',
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
@@ -755,6 +759,15 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('equipment insurance original loss bindings', equipmentInsuranceIssues.length, 0, 0, { issues: equipmentInsuranceIssues });
   const barterIssues = await collectAtomicBarterIssues(pool);
   push('atomic barter canonical two-item bindings', barterIssues.length, 0, 0, { issues: barterIssues });
+  const crossDockIssues = await collectCrossDockIssues(pool);
+  push('cross docking canonical source and handoff history', crossDockIssues.length, 0, 0, {issues:crossDockIssues});
+  const productionSlotIssues = await collectProductionSlotIssues(pool);
+  push('production slot canonical reservation history', productionSlotIssues.length, 0, 0, {issues:productionSlotIssues});
+  const merchantReturnReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM merchant_return_rights');
+  const merchantReturnNet = await sum(pool, "currency='cash' AND reason IN ('merchant_return:reserve','merchant_return:payout','merchant_return:refund')");
+  push('merchant return escrow', merchantReturnReserve, -merchantReturnNet, 0);
+  const merchantReturnIssues = await collectMerchantReturnIssues(pool);
+  push('merchant return canonical books', merchantReturnIssues.length, 0, 0, {issues:merchantReturnIssues});
   const pickingIssues = await collectPickingPackingIssues(pool);
   const pickingNet = await sum(pool, "currency='cash' AND reason IN ('picking_packing:pay','picking_packing:receive')");
   push('picking packing paid custody books', pickingIssues.length + Math.abs(pickingNet), 0, 0, { issues: pickingIssues, net: pickingNet });
