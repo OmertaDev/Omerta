@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { nativeFixture, observeItemAllocations, assertExactRollback } from './shoppingbasket-native-fixture.js';
+import { nativeFixture, observeItemAllocations, assertExactRollback } from "./shoppingbasket-current-native-fixture.js";
 const f = await nativeFixture();
 try {
   const historical = await f.prepare(), history = await f.act('buyer', 'checkout', f.ref(historical.quote), 'native-history'), p = await f.prepare();

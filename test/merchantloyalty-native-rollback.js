@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { nativeFixture, observeItemAllocations, assertExactRollback } from './merchantloyalty-native-fixture.js';
+import { nativeFixture, observeItemAllocations, assertExactRollback } from "./merchantloyalty-current-native-fixture.js";
 const f = await nativeFixture();
 try {
   const p = await f.prepare(), body = f.buyBody(p.quote), before = await f.snapshot();

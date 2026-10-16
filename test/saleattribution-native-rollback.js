@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { nativeFixture, observeItemAllocations, assertExactRollback } from './saleattribution-native-fixture.js';
+import { nativeFixture, observeItemAllocations, assertExactRollback } from "./saleattribution-current-native-fixture.js";
 const f = await nativeFixture();
 try {
   const { sale, campaign, attribution } = await f.prepare();

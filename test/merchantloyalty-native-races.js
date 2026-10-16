@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { nativeFixture } from './merchantloyalty-native-fixture.js';
+import { nativeFixture } from "./merchantloyalty-current-native-fixture.js";
 import { runEstate } from '../src/social/estate.js';
 const f = await nativeFixture(), traces = [], results = [];
 const buy = (p,key)=>f.tx(async c=>{
