@@ -31,17 +31,21 @@ assert.deepEqual(results, [{ installedFirst: false, pools: 0, databaseSourceInst
   { installedFirst: true, pools: 1, databaseSourceInstrumented: true }]);
 console.log('PASS canonical observer load ordering: cached DB rejected; original source instrumented before pool admission; zero database connections');
 
-for (const sourceCase of ['release-c2', 'release-c2-crlf', 'unknown-release-c2']) {
+for (const sourceCase of ['release-c2', 'release-c2-crlf', 'unknown-release-c2', 'raw-current', 'raw-current-crlf', 'unknown-raw-current']) {
   execFileSync(process.execPath, ['--input-type=module', '-e', `
     import assert from 'node:assert/strict';
     import fs from 'node:fs';
+    import {assertDeedQuestSourceTransfer} from './tools/deed-quest-source-transfer.js';
     import {registerHooks} from 'node:module';
     import {historicalWorkerDatabaseSource} from './test/lib/rc1-historical-worker-source.js';
     import {createWorkerSchedule,installWorkerInstrumentation,makeWorkerDatabase} from './tools/rc1-native-worker.js';
     const sourceCase=${JSON.stringify(sourceCase)};
     const target=new URL('./src/db.js','file://'+process.cwd().replaceAll('\\\\','/')+'/').href;
     let supplied=historicalWorkerDatabaseSource('release-c2');
-    assert.equal(fs.readFileSync('./src/db.js','utf8').replaceAll('\\r\\n','\\n'),supplied);
+    const actual=fs.readFileSync('./src/db.js','utf8');
+    assert.equal(assertDeedQuestSourceTransfer('src/db.js',actual).baselineText,supplied);
+    if(sourceCase.includes('raw-current')) supplied=actual;
+    if(sourceCase==='raw-current-crlf') supplied=supplied.replaceAll('\\r\\n','\\n');
     if(sourceCase.endsWith('-crlf')) supplied=supplied.replaceAll('\\n','\\r\\n');
     if(sourceCase.startsWith('unknown')) supplied+='\\n// unsupported database source change\\n';
     const fixture=registerHooks({load(url,context,nextLoad){const result=nextLoad(url,context);return url===target?{...result,source:supplied}:result;}});
@@ -56,3 +60,4 @@ for (const sourceCase of ['release-c2', 'release-c2-crlf', 'unknown-release-c2']
   `], { stdio: 'pipe', env: { ...process.env, DATABASE_URL: 'postgres://postgres@127.0.0.1:1/no_database' } });
 }
 console.log('PASS: observer-first historical instrumentation rejects exact release C2, CRLF and tampering before any pool or transformation');
+console.log('PASS: observer-first actual current Deed raw, whole-CRLF and tampering refuse before any pool or transformation');
