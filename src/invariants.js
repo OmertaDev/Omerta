@@ -785,7 +785,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('merchant loyalty original purchase bindings', loyaltyIssues.length, 0, 0, {issues:loyaltyIssues});
   const basketIssues = await collectShoppingBasketIssues(pool);
   push('shopping basket canonical sale bindings', basketIssues.length, 0, 0, {issues:basketIssues});
-  const eventReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM event_markets');
+  const eventReserve = await one(pool, 'SELECT COALESCE(SUM(remaining_cash),0) s FROM event_markets');
   const eventNet = await sum(pool, "currency='cash' AND reason IN ('event_market:reserve','event_market:reward','event_market:refund')");
   push('player funded event reserves', eventReserve, -eventNet, 0);
   const eventIssues = await collectEventMarketIssues(pool);
