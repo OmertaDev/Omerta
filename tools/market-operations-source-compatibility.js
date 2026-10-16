@@ -1,7 +1,7 @@
 // Exact market-operations source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const MARKET_OPERATIONS_SOURCE_REVISION="5a7ec23b5eb261cd194f7949ac52a579b20cdecb";
+export const MARKET_OPERATIONS_SOURCE_REVISION="18b9fbc7d2cf0b6b770e69a595a385e9ebe8a390";
 export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="03730e511786dfce1808676adeb405ca80f9f9cc";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
@@ -343,8 +343,8 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
     ]
   },
   "tools/graph.js": {
-    "currentSha256": "89bbbeac15f264d8d4a9f109e7160b0cb4f0197047290e2c3f77c090e3c1e3fb",
-    "currentBlob": "f4d13a7e56fe21ab1745af11961e577450d62f56",
+    "currentSha256": "1d8423c6cd813104be4449a45fd982f23618c01df5faccb93a80b981e1494096",
+    "currentBlob": "59c2838c1c4c04bd0656cc7c70f7e3d9db21f88a",
     "baselineSha256": "5f85f61016f2c0809d7d41ec13975dcb0c4c0582d222948fb4f20cb822f888b4",
     "baselineBlob": "4fc59f018169f3fb5afec79fe08a114212596fb3",
     "contextLines": 3,
@@ -352,6 +352,10 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
       {
         "current": "//   node tools/graph.js query <name> [arg]    see QUERIES below\nimport fs from 'node:fs';\nimport {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';\nimport {MARKET_OPERATIONS_HELPER_PROFILES,extractMarketOperationsHelperReconciliations} from './market-operations-graph-helpers.js';\nimport path from 'node:path';\nimport crypto from 'node:crypto';\nimport { fileURLToPath } from 'node:url';\n",
         "baseline": "//   node tools/graph.js query <name> [arg]    see QUERIES below\nimport fs from 'node:fs';\nimport {NEXT_LAYER_HELPER_PROFILES,extractNextLayerHelperReconciliations} from './next-layer-graph-helpers.js';\nimport path from 'node:path';\nimport crypto from 'node:crypto';\nimport { fileURLToPath } from 'node:url';\n"
+      },
+      {
+        "current": "      \"t.character_id!==row.maker_character:t.character_id!==row.customer_character\",\n      \"Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)\"\n    ],\n    \"sha256\": \"9afbbcc81f5245971527810dbbace472e4d9bb2559f47402fb87e73be0a9d261\",\n    \"import\": \"import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';\",\n    \"call\": \"const commissionIssues = await collectCommissionedCraftingIssues(pool);\",\n    \"push\": \"push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });\",\n",
+        "baseline": "      \"t.character_id!==row.maker_character:t.character_id!==row.customer_character\",\n      \"Number(row.fee_total)!==Number(row.fee_remaining)+Number(row.fee_paid)+Number(row.fee_refunded)\"\n    ],\n    \"sha256\": \"37df979150ed5085ac9c91ec46c23b4449c34f68d125acaf4d787d8183f32985\",\n    \"import\": \"import { collectCommissionedCraftingIssues } from './commissionedcrafting.js';\",\n    \"call\": \"const commissionIssues = await collectCommissionedCraftingIssues(pool);\",\n    \"push\": \"push('commissioned crafting canonical sources', commissionIssues.length, 0, 0, { issues: commissionIssues });\",\n"
       },
       {
         "current": "    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);\n  }\n\n  const marketOperationsHelpers=Object.fromEntries(MARKET_OPERATIONS_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));\n  for(const term of extractMarketOperationsHelperReconciliations(inv,marketOperationsHelpers)){\n    const prov={file:term.file,line:term.line,hash:sha(marketOperationsHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};\n    node('Reason',term.reason,{},prov);edge('RECONCILES','Check:'+term.check,'Reason:'+term.reason,prov);\n  }\n\n  const nextFiveHelpers=Object.fromEntries(NEXT_FIVE_HELPER_PROFILES.map(p=>p.file).filter(file=>fs.existsSync(path.join(ROOT,file))).map(file=>[file,read(path.join(ROOT,file))]));\n  for(const term of extractNextFiveHelperReconciliations(inv,nextFiveHelpers)){\n    const prov={file:term.file,line:term.line,hash:sha(nextFiveHelpers[term.file]),reviewedSha256:term.sourceSha256,binding:{file:'src/invariants.js',line:term.bindingLine,hash:sha(inv)}};\n",
