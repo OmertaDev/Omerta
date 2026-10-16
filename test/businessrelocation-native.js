@@ -46,7 +46,7 @@ try{
  const opened=await ok(owner,'POST','/v1/depot',config),id=opened.id;
  await ok(owner,'POST','/v1/resources/company',{expectedRevision:0,name:'Portable Original Maker',published:false,premises:null});
  await pool.query("INSERT INTO character_skills(character_id,skill_id) VALUES($1,'fence_network') ON CONFLICT DO NOTHING",[owner.id]);
- await ok(owner,'POST','/v1/company/specializations',{businessId:id,expectedRevision:0,kind:'volume',recipeIds:[],toolItemId:null,allowAgentProduction:false,maxBatchCashCost:0,maxGrantCashCost:0,agentGrantSeconds:60,renewAgentGrant:false});
+ await ok(owner,'POST','/v1/company/specializations',{businessId:id,expectedRevision:0,kind:'volume',recipeIds:[],toolItemId:null,allowAgentProduction:false,maxBatchCashCost:0,maxGrantCashCost:0,agentGrantSeconds:0,renewAgentGrant:false});
  await manufacturingInputs(supplier);await manufacturingInputs(buyer);
  const commissionBase='/v1/company/commissions',commissionTerms={businessId:id,feeCash:100,lifetimeSeconds:3600,consent:true};
  const oldRequest=await ok(supplier,'POST',commissionBase+'/fund',commissionTerms),refundRequest=await ok(buyer,'POST',commissionBase+'/fund',commissionTerms);
