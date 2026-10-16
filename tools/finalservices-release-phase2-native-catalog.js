@@ -786,3 +786,117 @@ export async function verifyFinalservicesNativeBranches(pool, endpoint) {
   }
   return { current, iv, main, common, causal, verify, phase: 'independent native branch/catalog proof; no runtime/deployment clearance' };
 }
+
+
+// Separate strict ingress for the unchanged original Enterprise16 catalog slot.
+// The ordinary S/C factory endpoints and all prior verifier bytes stay unchanged.
+async function verifyFinalservicesEnterpriseSlotMetadata(pool,endpoint,settings){
+  const sources = finalservicesNativeBranchSources();
+  // Compile and retire each owned reference sequentially; full schemas consume many locks.
+  const current = freeze(await compileReference(pool, endpoint, sources.current));
+  const iv = freeze(await compileReference(pool, endpoint, sources.iv));
+  const main = freeze(await compileReference(pool, endpoint, sources.main));
+  const common = freeze(await compileReference(pool, endpoint, sources.common));
+  const ivNames = new Set(COMBINED_IV_TABLES), mainNames = new Set(COMMERCE_RELEASE_PHASE2_TABLES);
+  const name = (field, row) => field === 'relations' ? row.name : row.table_name;
+  const belongs = (names, field, row) => field === 'indexes' && names === mainNames ? ADDED_INDEX_KEYS.includes(key(row)) : names.has(name(field, row));
+  const without = (metadata, names, field) => metadata[field].filter(row => !belongs(names, field, row));
+  const only = (metadata, names, field) => metadata[field].filter(row => belongs(names, field, row));
+  for (const field of ['relations', 'columns', 'constraints', 'indexes']) {
+    same(without(iv, ivNames, field), common[field], `IV retains every common ${field}`);
+    same(without(main, mainNames, field), common[field], `Main retains every common ${field}`);
+    same(without(current, mainNames, field), iv[field], `Combined retains complete IV ${field}`);
+    same(without(current, ivNames, field), main[field], `Combined retains complete main ${field}`);
+    same(only(current, ivNames, field), only(iv, ivNames, field), `All IV additions preserve exact ${field}`);
+    same(only(current, mainNames, field), only(main, mainNames, field), `All main additions preserve exact ${field}`);
+  }
+  same(only(iv, ivNames, 'relations').map(row => row.name), COMBINED_IV_TABLES, 'Exactly107 pre-main tables preserving all81 prior plus26 final-services additions');
+  same(only(main, mainNames, 'relations').map(row => row.name), COMMERCE_RELEASE_PHASE2_TABLES, 'Exactly seven main tables');
+  same(only(main, mainNames, 'indexes').map(key), ADDED_INDEX_KEYS, 'All fifteen main index additions include two existing-table cursors');
+  assert.equal(only(main, mainNames, 'columns').length,60);
+  assert.equal(only(main, mainNames, 'columns').filter(row=>row.not_null).length,48);
+  const newNames=new Set(COMMERCE_TABLES),newCurrent=Object.fromEntries(['relations','columns','constraints','indexes'].map(field=>[field,only(current,newNames,field)]));
+  for(const field of ['relations','columns','constraints','indexes'])same(newCurrent[field],only(iv,newNames,field),'Independent new17 reference across568/561 '+field);
+  same(newCurrent.relations.map(row=>row.name),COMMERCE_TABLES,'Exactly17 Commerce relations');
+  assert.equal(newCurrent.columns.length,217);assert.equal(newCurrent.columns.filter(row=>row.not_null).length,181);
+  assert.equal(newCurrent.constraints.filter(row=>row.type!=='n').length,200);assert.equal(newCurrent.indexes.length,52);
+  if(/^18\.4\b/.test(settings.version)) {
+    assert.equal(newCurrent.constraints.filter(row=>row.type==='n').length,181);
+    for(const field of ['relations','columns','constraints','indexes'])same(newCurrent[field],COMMERCE_REFERENCE_18_4[field],'Independent frozen native18.4 new9 '+field);
+  } else assert.equal(newCurrent.constraints.filter(row=>row.type==='n').length,0,'Native16 fresh canonical source has no18.4 NOT NULL rows');
+  const finalNames=new Set(FINALSERVICES_TABLES),finalCurrent=Object.fromEntries(['relations','columns','constraints','indexes'].map(field=>[field,only(current,finalNames,field)]));
+  for(const field of ['relations','columns','constraints','indexes'])same(finalCurrent[field],only(iv,finalNames,field),'Independent new26 reference across594/587 '+field);
+  same(finalCurrent.relations.map(row=>row.name),FINALSERVICES_TABLES,'Exactly26 final-services relations');
+  assert.equal(finalCurrent.columns.length,329);assert.equal(finalCurrent.columns.filter(row=>row.not_null).length,283);
+  assert.equal(finalCurrent.constraints.filter(row=>row.type!=='n').length,332);assert.equal(finalCurrent.indexes.length,82);
+  if(/^18\.4\b/.test(settings.version)){assert.equal(finalCurrent.constraints.filter(row=>row.type==='n').length,283);for(const field of ['relations','columns','constraints','indexes'])same(finalCurrent[field],FINALSERVICES_REFERENCE_18_4[field],'Independent frozen actual18.4 new26 '+field);}
+  else assert.equal(finalCurrent.constraints.filter(row=>row.type==='n').length,0,'Native16 fresh canonical source has no18.4 NOT NULL rows');
+  const historicalCatalog = JSON.parse(sourcePin(COMBINED_BRANCH_PINS.catalog));
+  assert.equal(historicalCatalog.added.length,1153);
+  const priorCatalog={...historicalCatalog,added:[...historicalCatalog.added,...NEXT_FIVE_NATIVE_ADDITIONS.added],notNullColumns:{...historicalCatalog.notNullColumns,...NEXT_FIVE_NATIVE_ADDITIONS.notNullColumns}};
+  const ancestorCatalog=JSON.parse(sourcePin(FIRST_FIVE_CATALOG_ANCESTOR));
+  assert.equal(ancestorCatalog.added.length,1243); same(priorCatalog.added,ancestorCatalog.added,'All1243 independently pinned historical catalog rows stay exact');
+  assert.deepEqual(priorCatalog.notNullColumns,ancestorCatalog.notNullColumns,'Every old NOT NULL mapping stays verbatim');
+  const nextLayerCatalog=JSON.parse(sourcePin(MARKET_OPERATIONS_CATALOG_ANCESTOR));
+  const reconstructedNextLayer={...ancestorCatalog,added:[...ancestorCatalog.added,...PRIOR_NEXT_LAYER_ADDITIONS.added],notNullColumns:{...ancestorCatalog.notNullColumns,...PRIOR_NEXT_LAYER_ADDITIONS.notNullColumns}};
+  assert.equal(nextLayerCatalog.added.length,1332); assert.deepEqual(reconstructedNextLayer,nextLayerCatalog,'Whole1332 ancestor including all metadata/rows/NOT NULL mappings remains exact');
+  const marketCatalog=JSON.parse(sourcePin(ENTERPRISE_CATALOG_ANCESTOR));
+  const reconstructedMarket={...nextLayerCatalog,added:[...nextLayerCatalog.added,...PRIOR_MARKET_OPERATIONS_ADDITIONS.added],notNullColumns:{...nextLayerCatalog.notNullColumns,...PRIOR_MARKET_OPERATIONS_ADDITIONS.notNullColumns}};
+  assert.equal(marketCatalog.added.length,1402);assert.deepEqual(reconstructedMarket,marketCatalog,'Entire independent1402 ancestor remains exact');
+  const enterpriseCatalog={...marketCatalog,added:[...marketCatalog.added,...ENTERPRISE_ADDITIONS.added],notNullColumns:{...marketCatalog.notNullColumns,...ENTERPRISE_ADDITIONS.notNullColumns}};
+  assert.deepEqual(enterpriseCatalog,JSON.parse(sourcePin(COMMERCE_CATALOG_ANCESTOR)),'Every old1475 row/198 map and all catalog metadata remain exact');
+  const commerceCatalog={...enterpriseCatalog,added:[...enterpriseCatalog.added,...COMMERCE_ADDITIONS.added],notNullColumns:{...enterpriseCatalog.notNullColumns,...COMMERCE_ADDITIONS.notNullColumns}};
+  assert.deepEqual(commerceCatalog,JSON.parse(sourcePin(FINALSERVICES_CATALOG_ANCESTOR)),'Every old1675 row/215 map and all catalog metadata remain exact');
+  const catalog={...commerceCatalog,added:[...commerceCatalog.added,...FINALSERVICES_ADDITIONS.added],notNullColumns:{...commerceCatalog.notNullColumns,...FINALSERVICES_ADDITIONS.notNullColumns}};
+  const ivConstraints = only(iv, ivNames, 'constraints').filter(row => row.type !== 'n')
+    .map(({ table_name, name, definition }) => ({ table_name, name, definition }));
+  const expected = catalog.added.filter(row => ivNames.has(row.table_name));
+  assert.equal(catalog.added.length, 2007); assert.equal(expected.length, 1091); same(ivConstraints, expected, 'All1091 frozen pre-main structural constraints remain exact');
+  let required = 0;
+  for (const table of COMBINED_IV_TABLES) {
+    const columns = catalog.notNullColumns[table]; assert(Array.isArray(columns)); required += columns.length;
+    same(iv.columns.filter(row => row.table_name === table && row.not_null).map(row => row.column_name), columns,
+      `All original IV NOT NULL columns remain exact: ${table}`);
+  }
+  assert.equal(required, 1037);
+  const canonical = Object.fromEntries(['relations', 'columns', 'constraints', 'indexes']
+    .map(field => [field, sorted(current[field])]));
+  const verify = metadata => {
+    for (const field of ['relations', 'columns', 'constraints', 'indexes']) {
+      assert(Array.isArray(metadata[field]), `Complete combined ${field} must be an array`);
+      if (metadata[field] !== current[field])
+        assert(isDeepStrictEqual(sorted(metadata[field]), canonical[field]), `Complete combined ${field}`);
+    }
+  };
+  // Every added table in both branches receives full-field remove/change/unknown controls.
+  let causal = 0;
+  for (const table of [...COMBINED_IV_TABLES, ...COMMERCE_RELEASE_PHASE2_TABLES]) {
+    for (const field of ['relations', 'columns', 'constraints', 'indexes']) {
+      const row = current[field].find(row => name(field, row) === table); assert(row, `${table} has native ${field}`);
+      const removed = { ...current, [field]: current[field].filter(value => value !== row) };
+      assert.throws(() => verify(removed), error => error?.code === 'ERR_ASSERTION'); causal++;
+      for (const property of Object.keys(row)) {
+        const changed = { ...row, [property]: typeof row[property] === 'boolean' ? !row[property] : `${row[property]}_changed` };
+        assert.throws(() => verify({ ...current, [field]: current[field].map(value => value === row ? changed : value) }), error => error?.code === 'ERR_ASSERTION'); causal++;
+      }
+      assert.throws(() => verify({ ...current, [field]: [...current[field], { ...row, unexpected: true }] }), error => error?.code === 'ERR_ASSERTION'); causal++;
+    }
+  }
+  return { current, iv, main, common, causal, verify, phase: 'independent native branch/catalog proof; no runtime/deployment clearance' };
+}
+export async function verifyFinalservicesEnterpriseSlotBranches(pool,endpoint,source){
+ assert.equal(arguments.length,3,'Only the original Enterprise catalog slot');assert.equal(typeof endpoint,'string');assert.equal(typeof source,'string');assert.equal(typeof pool?.query,'function');
+ assert.equal(process.execArgv.length,0);assert(String(process.argv[1]).replaceAll('\\','/').endsWith('/test/enterprise-release-phase2-migration-catalog.js'));assert.equal(process.argv.length,3);assert.equal(process.argv[2],'--postgres');
+ const endpointKey='ENTERPRISE_NATIVE_CATALOG_TEST_DATABASE_URL';for(const key of Object.keys(process.env)){const upper=key.toUpperCase();if(/DATABASE_URL$/i.test(key))assert.equal(key,endpointKey);else assert(!/^PG|^RC1|^P2_TEST/i.test(key)&&!['NODE_OPTIONS','NODE_PATH','NODE_PG_FORCE_NATIVE','LEGAL_PROFILE_DEFER','GENESIS_AUCTION_MANIFEST_PATH','GENESIS_AUCTION_MANIFEST_SHA256'].includes(upper),'No ambient backend/loader/caller override: '+key);}
+ assert(Object.hasOwn(process.env,endpointKey));assert.equal(process.env.CHAIN_ENABLED,'off');assert.equal(process.env.RESOURCE_ECONOMY,'off');
+ const address=new URL(endpoint);assert.equal(new URL(process.env[endpointKey]).href,address.href);assert(['postgres:','postgresql:'].includes(address.protocol));assert.equal(address.hostname,'127.0.0.1');assert(!address.search&&!address.hash);assert.match(address.pathname,/^\/enterprise_native_catalog_test_[a-f0-9]{12}$/);
+ const local=['35439','35449'].includes(address.port)&&address.username==='pilot_runner'&&!address.password,ci=address.port==='5432'&&address.username==='postgres'&&address.password==='pgcheck';assert(local||ci);
+ const sourceLF=source.replaceAll('\r\n','\n');assert(!sourceLF.includes('\r')&&(source===sourceLF||source===sourceLF.replaceAll('\n','\r\n')));assert.equal(sourceLF,finalservicesNativeBranchSources().current,'Exact current594 source, no schema alias');
+ const settings=(await pool.query("SELECT current_user AS role,current_database() AS database,current_schema() AS schema,current_setting('server_version') AS version,current_setting('data_directory') AS directory,current_setting('port') AS port,(SELECT pg_get_userbyid(datdba) FROM pg_database WHERE datname=current_database()) AS owner")).rows[0];
+ assert.equal(settings.role,address.username);assert.equal(settings.owner,address.username);assert.equal('/'+settings.database,address.pathname);assert.equal(settings.schema,'public');assert.equal(settings.port,address.port);assert.match(settings.version,local?/^18\.4\b/:/^(?:16\b|18\.4\b)/);
+ if(local){const directories={'35439':'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184','35449':'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof'};assert.equal(settings.directory.replaceAll('\\','/').toLowerCase(),directories[address.port]);}else assert.equal(typeof settings.directory,'string');
+ assert.deepEqual((await pool.query("SELECT nspname FROM pg_namespace WHERE nspname !~ '^pg_' AND nspname<>'information_schema' ORDER BY nspname")).rows.map(row=>row.nspname),['public']);
+ assert.deepEqual((await pool.query("SELECT c.relname AS name,c.relkind AS kind FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' ORDER BY c.relname,c.relkind")).rows,[]);
+ assert.deepEqual((await pool.query("SELECT p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' ORDER BY p.proname")).rows,[]);
+ return verifyFinalservicesEnterpriseSlotMetadata(pool,endpoint,settings);
+}
