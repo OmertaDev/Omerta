@@ -1699,11 +1699,23 @@ try {
       && regional.destinations.every(venue => Math.hypot(venue.x - roadGoal.x, venue.y - roadGoal.y) > 35)
       && regional.exits.every(exit => Math.hypot(exit.x - roadGoal.x, exit.y - roadGoal.y) > 30),
     'The native road click retains actor, venue, and exit hit priority without selecting them.');
-    const regionalRequests = landRequests.length, roadCanvas = land.locator('.omerta-city__canvas canvas'), roadBox = await roadCanvas.boundingBox();
-    await roadCanvas.click({ position: {
-      x: (roadGoal.x - regional.camera.x) * regional.camera.zoom * roadBox.width / regional.camera.width,
-      y: (roadGoal.y - regional.camera.y) * regional.camera.zoom * roadBox.height / regional.camera.height,
-    } });
+    const regionalRequests = landRequests.length, roadCanvas = land.locator('.omerta-city__canvas canvas');
+    await roadCanvas.scrollIntoViewIfNeeded();
+    // ready precedes the rendered camera worldView. Use the actual unobscured
+    // road point after layout/render, retaining the native canvas click.
+    const roadPoint = await land.waitForFunction(goal => {
+      const scene = window.__cityHandles.at(-1)?.handle.getState();
+      const canvas = document.querySelector('.omerta-city__canvas canvas'), box = canvas?.getBoundingClientRect();
+      if (!scene?.ready || !scene.camera || !box?.width || !box.height) return false;
+      const camera = scene.camera, point = {
+        x: (goal.x - camera.x) * camera.zoom * box.width / camera.width,
+        y: (goal.y - camera.y) * camera.zoom * box.height / camera.height,
+      };
+      if (!(point.x > 0 && point.x < box.width && point.y > 0 && point.y < box.height)) return false;
+      return document.elementFromPoint(box.left + point.x, box.top + point.y) === canvas ? point : false;
+    }, roadGoal, { timeout: 5000 });
+    try { await roadCanvas.click({ position: await roadPoint.jsonValue() }); }
+    finally { await roadPoint.dispose(); }
     await waitForInput(land, () => window.__cityHandles.at(-1).handle.getState().pathLength > 0);
     await land.waitForFunction(goal => {
       const state = window.__cityHandles.at(-1).handle.getState();
@@ -1859,8 +1871,19 @@ try {
   await page.locator('[data-city-training-close]').click();
   await page.unroute('**/v1/projections/player');
   await page.unroute('**/v1/map');
+  const noLivingRead = page.waitForResponse(response =>
+    new URL(response.url()).pathname === '/v1/projections/player' && response.status() === 404);
   await app.pool.query('UPDATE characters SET alive=false WHERE id=$1', [characterId]);
-  await page.locator('#btn-refresh').click();
+  const [noLivingResponse] = await Promise.all([
+    noLivingRead,
+    page.locator('#btn-refresh').click().catch(async error => {
+      // A genuine background projection can finish this transition before the
+      // refresh click becomes actionable. Its authoritative404 remains required.
+      assert.equal(error.name, 'TimeoutError');
+      assert(await page.locator('#screen-create:not(.hidden)').isVisible(), 'A hidden refresh control is accepted only after actual no-character recovery.');
+    }),
+  ]);
+  assert.equal((await noLivingResponse.json()).error, 'no_character');
   await page.waitForSelector('#screen-create:not(.hidden)');
   assert.equal(await page.locator('.omerta-city__canvas canvas').count(), 0, 'No living character disposes the City renderer.');
   const authGuest = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { birthDate: '1990-01-01' } });

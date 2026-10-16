@@ -157,6 +157,7 @@ transitionBaseline = baseline;
 // Each round: every player takes one archetype action, then the world ticks (NPC residents act, the
 // clock warps a day). Failures are EXPECTED and counted — a gate refusing a bad move is the game
 // working, and a harness that treated every 4xx as fatal would only ever test the happy path.
+const reachability = { car: 0 }; // deliberate supply, reported separately from stochastic town flow
 const posted = { listing: 0, order: 0, loan: 0, contract: 0, guard: 0, duel: 0, fade: 0, car: 0, club: 0 };
 const taken = { listing: 0, order: 0, loan: 0, contract: 0, guard: 0, duel: 0 };
 const errors = new Map();
@@ -428,6 +429,32 @@ async function traceCoach(p) {
   coachEver.set(label, s.size);
 }
 
+// Reachability is a gate check, so prepare its probabilistic car prerequisite before the
+// stochastic town can jail the seller. Pin only this real boost's draw, as the client shape
+// fixtures do, and restore it even on failure. No direct car row or extra cash is seeded.
+// Both the canonical boost and fee/escrow post run AFTER the invariant baseline above.
+{
+  const seller = players.find((p) => p.kind === 'grinder');
+  const random = Math.random;
+  let boost;
+  try {
+    Math.random = () => 0.5;
+    boost = await call('POST', '/v1/garage/boost', seller.token);
+  } finally { Math.random = random; }
+  assert.equal(boost.code, 200, 'the car-auction fixture must reach the real boost route');
+  assert(boost.body?.car?.id, 'the real boost must produce the auction prerequisite');
+  seller.boosted = true;
+  const auction = note(await call('POST', '/v1/market', seller.token,
+    { kind: 'car', carId: boost.body.car.id, minBid: 5000, hours: 24 }));
+  assert.equal(auction.code, 200, 'the real car-auction reachability post must pass: ' + auction.body?.error);
+  assert(auction.body.character?.cars?.find((car) => car.id === boost.body.car.id)?.listed,
+    'the real auction must escrow the boosted car');
+  assert.equal(auction.body.character.cash, boost.body.character.cash - auction.body.fee,
+    'the seller must pay the ordinary auction fee');
+  posted.car++;
+  reachability.car++;
+}
+
 const ROUNDS_PER_DAY = 3;
 for (let day = 0; day < DAYS; day++) {
   for (let round = 0; round < ROUNDS_PER_DAY; round++) {
@@ -509,6 +536,7 @@ for (const [m, s] of Object.entries(shopped)) {
 }
 console.log('\nPOSTED (supply side — what the town put on the boards)');
 console.log('  ' + Object.entries(posted).map(([k, v]) => `${k} ${v}`).join(' · '));
+console.log(`  car supply: ${reachability.car} deliberate reachability post · ${posted.car - reachability.car} stochastic town posts`);
 console.log('  NOTE: posted-vs-taken is NOT a liquidity measure. Takes are bounded by per-player caps');
 console.log('  (one debt, one bodyguard, a duel cooldown), so the ratio is ~3/rounds whatever the');
 console.log('  population. Read AVAILABILITY above for density, not this.');
