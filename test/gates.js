@@ -3824,15 +3824,15 @@ scopedSocialContext = async function(db) {
   assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: 120\n    timeout-minutes: 120')),[120]),'Duplicate suites wall bound must reject');
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [90],
-    'the FIFTH `pgcheck` job must retain exactly one finite 90-minute HANG bound for the measured baseline plus workforce and commercial chains');
-  for (const invalid of ['0', '45', '60', '75', '120', '${{ inputs.native_timeout }}', 'unbounded']) {
-    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]),
-      'native wall bound must remain finite and exactly the finite FIFTH release budget');
+  assert.deepEqual(timeouts(pgcheck), [120],
+    'the complete native core cohort must retain exactly one finite 120-minute HANG bound after its observed90-minute timeout');
+  for (const invalid of ['0', '45', '60', '75', '90', '${{ inputs.native_timeout }}', 'unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 120', 'timeout-minutes: ' + invalid)), [120]),
+      'native wall bound must remain finite and exactly the reviewed core release budget');
   }
-  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 90\r?\n/m, '')), [90]),
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 120\r?\n/m, '')), [120]),
     'an unset native wall bound must reject');
-  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: 90\n    timeout-minutes: 90')), [90]),
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 120', 'timeout-minutes: 120\n    timeout-minutes: 120')), [120]),
     'duplicate native wall bounds must reject');
 
 
