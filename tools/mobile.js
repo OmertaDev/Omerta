@@ -413,10 +413,30 @@ for (const vp of VIEWPORTS) {
       } else {
         await replayOpener.click();
         await page.waitForSelector('#welcome:not(.hidden)', { timeout: 5000 });
-        await page.click('#tour-skip');
-        await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
-        await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
-          || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
+        // Closing replay starts a genuine Home render. Let that response replace the old controls
+        // after focus returns, so a fast response cannot conceal focus lost with a removed button.
+        let releaseReplayHome;
+        const replayHomeGate = new Promise((resolve) => { releaseReplayHome = resolve; });
+        const holdReplayHome = async (route) => {
+          const response = await route.fetch();
+          await replayHomeGate;
+          await route.fulfill({ response });
+        };
+        await page.route('**/v1/home', holdReplayHome);
+        const replayHomeRequest = page.waitForRequest((request) => new URL(request.url()).pathname === '/v1/home');
+        const replayHomeResponse = page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/home');
+        try {
+          await page.click('#tour-skip');
+          await page.waitForSelector('#welcome.hidden', { state: 'attached', timeout: 5000 });
+          await replayHomeRequest;
+          releaseReplayHome();
+          await replayHomeResponse;
+          await page.waitForFunction(() => document.querySelector('#tab-start')?.contains(document.activeElement)
+            || document.activeElement === document.querySelector('#tab-control-start'), { timeout: 5000 });
+        } finally {
+          releaseReplayHome();
+          await page.unroute('**/v1/home', holdReplayHome);
+        }
       }
     }
   }
