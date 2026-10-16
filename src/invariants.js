@@ -86,6 +86,7 @@ const KNOWN_REASONS = {
     'equipment_rental:rent_pay', 'equipment_rental:rent_receive', 'equipment_rental:deposit',
     'equipment_rental:deposit_refund', 'equipment_rental:deposit_burn',
     'coverage_mutual:contribute', 'coverage_mutual:payout', 'coverage_mutual:refund',
+    'protection:reserve', 'protection:release', 'protection:refund',
     'equipment_insurance:reserve', 'equipment_insurance:premium_pay', 'equipment_insurance:premium_receive',
     'equipment_insurance:claim', 'equipment_insurance:refund', 'equipment_insurance:burn', 'death:equipment_insurance',
     'consignment:purchase', 'consignment:proceeds', 'consignment:host_fee',
@@ -835,6 +836,10 @@ async function collectLedgerChecks(pool, activationPolicy) {
   const bookingNet=await sum(pool,"currency='cash' AND reason IN ('production_booking:bonus_reserve','production_booking:bonus','production_booking:bonus_refund')");
   push('production booking reserved bonus',bookingBooks.reservedCash,-bookingNet,0);
   push('production booking canonical history',bookingBooks.issues.length,0,0,{issues:bookingBooks.issues});
+  const protectionBooks = await (await import('./protectioncontracts.js')).protectionContractAccounting(pool);
+  const protectionNet = await sum(pool, "currency='cash' AND reason IN ('protection:reserve','protection:release','protection:refund')");
+  push('protection contracts reserved cash', protectionBooks.reservedCash, -protectionNet, 0);
+  push('protection contracts canonical history', protectionBooks.issues.length, 0, 0, { issues: protectionBooks.issues });
   const commissionReserve = await one(pool, 'SELECT COALESCE(SUM(fee_remaining),0) s FROM commissioned_crafting_contracts');
   const commissionNet = await sum(pool, "currency='cash' AND reason IN ('commissioned_crafting:reserve','commissioned_crafting:fee','commissioned_crafting:refund')");
   push('commissioned crafting reserved fee', commissionReserve, -commissionNet, 0);
@@ -1437,7 +1442,7 @@ async function collectLedgerChecks(pool, activationPolicy) {
   for (const [cur, prefixes] of Object.entries(KNOWN_REASONS)) {
     const rows = (await pool.query('SELECT DISTINCT reason FROM transactions WHERE currency=$1', [cur])).rows;
     for (const r of rows)
-      if (!(r.reason.startsWith('coverage_mutual:') ? cur === 'cash' && ['coverage_mutual:contribute','coverage_mutual:payout','coverage_mutual:refund'].includes(r.reason) : r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
+      if (!(r.reason.startsWith('protection:') ? cur === 'cash' && ['protection:reserve','protection:release','protection:refund'].includes(r.reason) : r.reason.startsWith('coverage_mutual:') ? cur === 'cash' && ['coverage_mutual:contribute','coverage_mutual:payout','coverage_mutual:refund'].includes(r.reason) : r.reason.startsWith('customer_vault:') ? cur === 'cash' && ['customer_vault:reserve','customer_vault:fee_pay','customer_vault:fee_receive','customer_vault:withdraw','customer_vault:estate_refund'].includes(r.reason) : prefixes.some((p) => r.reason === p || r.reason.startsWith(p)))) unknown.push(`${cur}:${r.reason}`);
   }
   push('reason vocabulary', unknown.length, 0, 0, { unknown });
 

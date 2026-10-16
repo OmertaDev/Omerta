@@ -1,4 +1,5 @@
 export const eventMarketCompletionRevision='event_market_v1';
+export const protectionContractCompletionRevision = 'funded_protection_v1';
 export const commercialCampaignCompletionRevision = 'commercial_campaign_v1';
 // M1 core + shared transaction machinery. Every formula cites spec §7 / prototype v24.
 import crypto from 'node:crypto';
@@ -1212,6 +1213,7 @@ export async function withCharacter(pool, accountId, fn, lockHooks = null) {
     await persistAccount(client, accountId, action.acct);
     await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,action.result);
     await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, action.result);
+    await (await import('./protectioncontracts.js')).finalizeProtectionContract(client, action.result);
     await finalizeCollateralLendingAction(client, action.result);
     await finalizeCollateralAuction(client, action.result);
     return action;
@@ -1507,6 +1509,7 @@ export async function withTwoCharacters(pool, accountId, targetCharacterId, fn, 
     await(await import('./mobileshops.js')).finalizeEventVisitPair(client,result);
     await(await import('./eventmarkets.js')).finalizeEventMarketCharacter(client,result);
     await (await import('./commercialcampaigns.js')).finalizeCommercialCampaignCharacter(client, result);
+    await (await import('./protectioncontracts.js')).finalizeProtectionContract(client, result);
     await finalizeCollateralLendingAction(client, result);
     await finalizeCollateralAuction(client, result);
     return { ch, acct, owned, result };

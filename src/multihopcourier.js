@@ -126,3 +126,23 @@ async function commercialWitness(c,receipt,consume){
 }
 export const inspectCommercialCourier=(c,receipt)=>commercialWitness(c,receipt,false);
 export const consumeCommercialCourier=(c,receipt)=>commercialWitness(c,receipt,true);
+
+// Source-owned, read-only N28 eligibility: the true funded leg, exact original
+// carrier, original owner reserve/fee journals and existing same-UID custody.
+export const protectionContractSourceRevision='funded_protection_v1';
+export async function multiHopProtectionSource(c,networkId,sourceHash,account){
+  const r=(await c.query('SELECT * FROM multi_hop_couriers WHERE id=$1',[id(networkId)])).rows[0];
+  if(!r||r.source_hash!==sourceHash||hash(source(r))!==sourceHash||!['first_leg','second_leg'].includes(r.status)
+    ||!r.first_consent||!r.second_consent||+await clock(c)>=+new Date(r.expires_at))fail('protection_source');
+  const first=r.status==='first_leg',payer=first?r.first_account:r.second_account,originalId=first?r.first_character:r.second_character;
+  if(id(account)!==payer)fail('protection_carrier');
+  await consentProof(c,r);await funding(c,r);await custody(c,r,r.id+(first?':first':':second'),true);
+  if(first?(Number(r.reserved_cash)!==Number(r.first_fee)+Number(r.second_fee)||Number(r.earned_first)!==0||Number(r.earned_second)!==0)
+    :(Number(r.reserved_cash)!==Number(r.second_fee)||Number(r.earned_first)!==Number(r.first_fee)||Number(r.earned_second)!==0))fail('protection_funding');
+  for(const[a,ch]of[[r.owner_account,r.owner_character],[r.first_account,r.first_character],[r.second_account,r.second_character]]){
+    if((await original(c,a)).id!==ch||(await c.query('SELECT status FROM accounts WHERE id=$1',[a])).rows[0]?.status!=='active')fail('protection_original');
+  }
+  return Object.freeze({courierId:r.id,courierSourceHash:r.source_hash,itemId:r.item_id,leg:r.status,protectedAccount:payer,protectedOriginal:originalId,
+    ownerAccount:r.owner_account,ownerOriginal:r.owner_character,firstAccount:r.first_account,firstOriginal:r.first_character,
+    secondAccount:r.second_account,secondOriginal:r.second_character,expiresAt:new Date(r.expires_at).toISOString()});
+}

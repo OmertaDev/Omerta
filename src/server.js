@@ -113,6 +113,7 @@ import { registerMerchantLoyalty } from './merchantloyalty-api.js';
 import { register as registerShoppingBaskets } from './shoppingbasket-api.js';
 import { register as registerEventMarkets } from './routes/eventmarkets.js';
 import { register as registerCommercialCampaigns } from './routes/commercialcampaigns.js';
+import * as protectionContractRoutes from './routes/protectioncontracts.js';
 import { register as registerMobileShops } from './routes/mobileshops.js';
 import { mobileShopListingReference, runMobileShop } from './mobileshops.js';
 import { register as registerAtomicBarter } from './routes/atomicbarter.js';
@@ -2515,6 +2516,7 @@ export async function buildServer() {
   registerShoppingBaskets(app, { pool, auth });
   registerEventMarkets(app, { pool, auth });
   registerCommercialCampaigns(app, { pool, auth });
+  protectionContractRoutes.register(app, { pool, auth });
   registerMobileShops(app, { pool, auth });
   registerCustomerLayaway(app, { pool, auth });
   registerMultiHopCourier(app, { pool, auth });

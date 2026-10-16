@@ -830,3 +830,21 @@ export async function recoverCommercialCampaignAtEstateStart(c, original, rental
     throw error;
   }
 }
+
+// N28 read-only source qualification. This grants no N20 execution authority,
+// receipt freshness, extra actor root or atomic six-role liveness guarantee.
+export const protectionContractSourceRevision='funded_protection_v1';
+export async function commercialProtectionSource(c,account,campaignId,campaignHash){
+  const row=await immutable(c,campaignId,campaignHash,false);
+  await live(c,row);
+  const ref=await courierTerms(c,id(account),'courier-travel',terms('courier-travel',{campaignId,sourceHash:campaignHash,consent:true}),false);
+  const roles=(await c.query('SELECT * FROM commercial_campaign_roles WHERE campaign_id=$1 ORDER BY account_id',[row.id])).rows;
+  if(roles.length!==6||roles.some(role=>role.state!=='active'))fail('consent_source');
+  for(const [role,accountColumn,characterColumn]of roleColumns){const actual=roles.find(value=>value.role===role);if(!actual||actual.account_id!==row[accountColumn]||actual.original_character!==row[characterColumn])fail('role_source');await consentWitness(c,row,actual);}
+  const item=(await c.query("SELECT output_item_id FROM commercial_campaign_stages WHERE campaign_id=$1 AND kind='manufacture'",[row.id])).rows[0];
+  return Object.freeze({campaignId:row.id,campaignSourceHash:row.source_hash,courierId:ref.networkId,courierSourceHash:ref.sourceHash,
+    itemId:item.output_item_id,ownerAccount:row.owner_account,ownerOriginal:row.owner_character,
+    firstAccount:row.first_carrier_account,firstOriginal:row.first_carrier_character,
+    secondAccount:row.second_carrier_account,secondOriginal:row.second_carrier_character,
+    guardAccount:row.guard_account,guardOriginal:row.guard_character,expiresAt:new Date(row.expires_at).toISOString()});
+}

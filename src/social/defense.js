@@ -131,6 +131,11 @@ export async function hireBodyguard(ch, guard, client, h) {
     price, net, fee, tax, payerJournal, guardJournal, until: new Date(ch.guarded_until).toISOString(),
     payerCash: Number(ch.cash), guardCash: Number(guard.cash),
     taxPool: Number((await client.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool) });
+  if(commercialTransaction) protectionGuardFresh.set(receipt,{client,transaction:commercialTransaction,
+    payer:ch.id,payerAccount:ch.account_id,guard:guard.id,guardAccount:guard.account_id,
+    price,net,fee,tax,payerJournal,guardJournal,until:new Date(ch.guarded_until).toISOString(),
+    payerCash:Number(ch.cash),guardCash:Number(guard.cash),
+    taxPool:Number((await client.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool)});
   return receipt;
 }
 
@@ -216,5 +221,38 @@ export async function consumeCommercialGuard(c,receipt){
     }
     const {client,transaction,...actual}=proof;
     return Object.freeze({family:'guard',evidence:'purchased_bodyguard_coverage',...actual});
+  }catch(error){poisonItemTransaction(c,error);throw error;}
+}
+
+// Independent N28 private proof minted only by the actual unchanged hire leaf.
+// A commercial proof/receipt constructor never creates this witness.
+export const protectionContractCompletionRevision='funded_protection_v1';
+const protectionGuardFresh=new WeakMap();
+export function inspectProtectionGuard(c,receipt){
+  assertItemTransaction(c);const p=receipt&&protectionGuardFresh.get(receipt);
+  if(!p||p.client!==c||p.transaction!==itemTransactionIdentity(c))throw new GameError('protection_contract','guard_fresh_source');
+  const{client,transaction,...actual}=p;
+  return Object.freeze({family:'protection_guard',evidence:'purchased_bodyguard_coverage',...actual});
+}
+export async function consumeProtectionGuard(c,receipt){
+  const actual=inspectProtectionGuard(c,receipt),p=protectionGuardFresh.get(receipt);protectionGuardFresh.delete(receipt);
+  try{
+    if(receipt.guard!==p.guard||receipt.price!==p.price||new Date(receipt.until).toISOString()!==p.until
+      ||p.fee!==Math.ceil(p.price*.01)||p.tax!==Math.ceil(p.price*.01)||p.net!==p.price-p.fee-p.tax)throw new GameError('protection_contract','guard_terms');
+    const payer=(await c.query('SELECT * FROM characters WHERE id=$1',[p.payer])).rows[0],guard=(await c.query('SELECT * FROM characters WHERE id=$1',[p.guard])).rows[0];
+    for(const[ch,account,cash]of[[payer,p.payerAccount,p.payerCash],[guard,p.guardAccount,p.guardCash]]){
+      const originals=(await c.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[account])).rows;
+      if(!ch?.alive||ch.account_id!==account||!Number.isSafeInteger(cash)||Number(ch.cash)!==cash
+        ||originals.length!==1||originals[0].id!==ch.id||(await c.query('SELECT status FROM accounts WHERE id=$1',[account])).rows[0]?.status!=='active')throw new GameError('protection_contract','guard_account_ack');
+    }
+    if(payer.guarded_by!==guard.id||new Date(payer.guarded_until).toISOString()!==p.until
+      ||+new Date((await c.query('SELECT clock_timestamp() AS observed')).rows[0].observed)>=+new Date(p.until)
+      ||Number((await c.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool)!==p.taxPool)throw new GameError('protection_contract','guard_coverage');
+    if(p.payerJournal===p.guardJournal)throw new GameError('protection_contract','guard_journals');
+    for(const[journal,ch,amount,other]of[[p.payerJournal,p.payer,-p.price,p.guard],[p.guardJournal,p.guard,p.net,p.payer]]){
+      const r=(await c.query('SELECT * FROM transactions WHERE id=$1',[journal])).rows[0];
+      if(!r||r.character_id!==ch||r.account_id!=null||r.currency!=='cash'||Number(r.amount)!==amount||r.reason!=='bodyguard:hire'||r.counterparty!==other)throw new GameError('protection_contract','guard_journals');
+    }
+    return actual;
   }catch(error){poisonItemTransaction(c,error);throw error;}
 }

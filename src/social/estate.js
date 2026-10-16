@@ -254,6 +254,7 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   // integer: the row is zeroed below, so flooring the ledger sink destroyed frac(cash+bank) ∈
   // [0,1) unledgered on every death → a slow, permanent §10.4 check-(a) drift (the sub-cent bank
   // interest bug, reintroduced at the estate boundary). Report keeps the whole-dollar figure.
+  await (await import('../protectioncontracts.js')).recoverProtectionContractsAtEstateStart(client,victim,h.rentalDeathScope,estateScope);
   const exactCash = Number(victim.cash) + Number(victim.bank);
   const lostCash = Math.floor(exactCash);
   const report = {

@@ -765,6 +765,9 @@ const DISPOSITION = {
   syndicated_loan_legs: 'ledger', // original lender funding journals and loan identities survive metadata retirement
   syndicated_loan_members: 'metadata', // actual canonical loan estate resolution retires consenting current memberships
   syndicated_loan_requests: 'ledger', // original account/key/source acknowledgements never become heir spending authority
+  protection_contracts: 'escrow', // original payer reserve refunds before estate cash; accepted guard death only blocks metadata and retains original paid/refunded history
+  protection_contract_requests: 'ledger', // immutable original-character/account/key/source acknowledgements survive estate closure without heir spending or coverage authority
+  protection_contract_acceptances: 'metadata', // signed original guard consent remains historical; estate blocks only the original accepted membership without moving payer or peer cash
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,
