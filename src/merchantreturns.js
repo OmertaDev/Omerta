@@ -1,3 +1,4 @@
+import { consignmentEconomySaleWitness } from './consignments.js';
 import crypto from 'node:crypto';
 import { GameError,ledger } from './game.js';
 import { assertItemTransaction,withItemTransaction,withItemRead,transferItem,registerItemTransactionUndo,poisonItemTransaction } from './items.js';
@@ -27,22 +28,9 @@ async function parties(c,ids,returning=false){
 }
 async function roleCount(c,account){return (await c.query("SELECT id FROM merchant_return_rights WHERE (seller_account=$1 AND state IN ('offered','accepted')) OR (buyer_account=$1 AND state='accepted') ORDER BY id LIMIT 4",[account])).rows.length;}
 async function sale(c,saleId,lock=true){
- const r=lock?(await c.query('SELECT * FROM consignments WHERE id=$1 FOR UPDATE',[saleId])).rows[0]:(await c.query('SELECT * FROM consignments WHERE id=$1',[saleId])).rows[0];
- if(!r||r.status!=='sold'||!r.buyer_character||!r.settlement||r.settlement.consignmentId!==r.id||r.settlement.itemId!==r.item_id||r.settlement.sourceHash!==r.source_hash||Number(r.settlement.paid)!==Number(r.price))fail('sale_source');
- const source={id:r.id,itemId:r.item_id,ownerAccount:r.owner_account,ownerCharacter:r.owner_character,hostAccount:r.host_account,hostCharacter:r.host_character,price:Number(r.price),hostFeeBps:Number(r.host_fee_bps),expiresAt:new Date(r.expires_at).toISOString()};if(hash(source)!==r.source_hash)fail('sale_source');
- const fee=Math.floor(Number(r.price)*Number(r.host_fee_bps)/10000);if(Number(r.settlement.hostFee)!==fee||!whole(Number(r.settlement.condition),10,150))fail('sale_source');
- const actors=(await c.query('SELECT id,account_id,is_npc FROM characters WHERE id=$1 OR id=$2 OR id=$3',[r.owner_character,r.host_character,r.buyer_character])).rows;
- const buyer=actors.find(a=>a.id===r.buyer_character);if(actors.length!==3||actors.some(a=>a.is_npc)||actors.find(a=>a.id===r.owner_character)?.account_id!==r.owner_account||actors.find(a=>a.id===r.host_character)?.account_id!==r.host_account||!buyer||new Set(actors.map(a=>a.account_id)).size!==3)fail('sale_source');
- const legs=(await c.query("SELECT id,character_id,currency,amount,reason FROM transactions WHERE counterparty=$1 AND reason IN ('consignment:purchase','consignment:proceeds','consignment:host_fee') ORDER BY reason",[r.id])).rows;
- const expected=[['consignment:host_fee',r.host_character,fee],['consignment:proceeds',r.owner_character,Number(r.price)-fee],['consignment:purchase',r.buyer_character,-Number(r.price)]];
- if(legs.length!==3||expected.some(([reason,actor,amount],i)=>legs[i].reason!==reason||legs[i].character_id!==actor||legs[i].currency!=='cash'||Number(legs[i].amount)!==amount)||stable(legs.map(l=>l.id).sort())!==stable([...(r.settlement.transactionIds||[])].sort()))fail('sale_source');
- const requests=(await c.query("SELECT run_id,account_id,original_character,receipt FROM consignment_requests WHERE receipt->>'consignmentId'=$1 AND receipt->>'status'='sold' ORDER BY key_hash LIMIT 2",[r.id])).rows;
- if(requests.length!==1||requests[0].account_id!==buyer.account_id||requests[0].original_character!==r.buyer_character||stable(requests[0].receipt)!==stable(r.settlement))fail('sale_receipt');
- const key='consignment:'+requests[0].run_id+':sale',guard=(await c.query('SELECT * FROM item_mutation_guards WHERE idempotency_key=$1',[key])).rows[0];
- let result;try{result=JSON.parse(guard?.result_json);}catch{fail('sale_guard');}const requestHash=crypto.createHash('sha256').update(JSON.stringify({kind:'operation_action',owner:title(r.owner_account),request:{consignmentId:r.id,sourceHash:r.source_hash,buyerAccount:buyer.account_id}})).digest('hex');if(!guard?.completed_at||guard.request_hash!==requestHash||guard.mutation_kind!=='operation_action'||guard.owner_scope!=='account'||guard.owner_id!==r.owner_account||stable(result)!==stable(r.settlement))fail('sale_guard');
- const events=(await c.query("SELECT * FROM item_events WHERE idempotency_key=$1 AND event_kind='transferred' ORDER BY sequence",[key])).rows;
- if(events.length!==1||events[0].item_id!==r.item_id||events[0].template_id!==MERCHANT_RETURNS.templateId||events[0].from_owner_scope!=='account'||events[0].from_owner_id!==r.owner_account||events[0].to_owner_scope!=='account'||events[0].to_owner_id!==buyer.account_id||events[0].reason!=='consignment buyer title transfer')fail('sale_transfer');
- return{row:r,buyerAccount:buyer.account_id,net:Number(r.price)-fee,saleEvent:events[0]};
+ if(lock)await c.query('SELECT id FROM consignments WHERE id=$1 FOR UPDATE',[saleId]);
+ const witness=await consignmentEconomySaleWitness(c,saleId),row=(await c.query('SELECT * FROM consignments WHERE id=$1',[saleId])).rows[0],saleEvent=(await c.query('SELECT * FROM item_events WHERE id=$1',[witness.transferEventId])).rows[0];
+ return{row,buyerAccount:witness.buyer.accountId,net:witness.sellerPaid,saleEvent};
 }
 async function custody(c,r,sourceSale){
  const condition=await equipmentCondition(c,{itemId:r.item_id,owner:title(r.buyer_account)});if(condition.remaining<Number(r.condition_floor))fail('condition');

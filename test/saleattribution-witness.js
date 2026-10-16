@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { fixture } from './saleattribution-fixture.js';
+const f = await fixture(), { pool, tx, C, act, list, ref, attributionRef, books } = f;
+try {
+  const sale = await list(), campaign = await act('owner', 'open', sale.open, 'witness-open');
+  await act('other', 'accept', ref(campaign), 'witness-accept');
+  const attribution = await act('buyer', 'attribute', ref(campaign), 'witness-attribute');
+  const bought = await act('buyer', 'buy', attributionRef(attribution), 'witness-buy');
+  const witness = await C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId);
+  assert.deepEqual(witness.transactionIds, bought.sale.transactionIds);
+  assert.equal(witness.grossPrice, 101); assert.equal(witness.buyerPaid, 101); assert.equal(witness.hostFee, 10); assert.equal(witness.sellerPaid, 91);
+  let controls = 0;
+  const purchase = bought.sale.transactionIds[0];
+  await pool.query('UPDATE transactions SET amount=-100 WHERE id=$1', [purchase]);
+  await assert.rejects(C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId), /sale_legs/); controls++;
+  await pool.query('UPDATE transactions SET amount=-101 WHERE id=$1', [purchase]);
+  const guard = (await pool.query('SELECT request_hash FROM item_mutation_guards WHERE idempotency_key=$1', [witness.mutationKey])).rows[0];
+  await pool.query('UPDATE item_mutation_guards SET request_hash=$2 WHERE idempotency_key=$1', [witness.mutationKey, '0'.repeat(64)]);
+  await assert.rejects(C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId), /sale_guard/); controls++;
+  await pool.query('UPDATE item_mutation_guards SET request_hash=$2 WHERE idempotency_key=$1', [witness.mutationKey, guard.request_hash]);
+  await pool.query("UPDATE item_events SET to_owner_id='other' WHERE id=$1", [witness.transferEventId]);
+  await assert.rejects(C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId), /sale_transfer/); controls++;
+  await pool.query("UPDATE item_events SET to_owner_id='buyer' WHERE id=$1", [witness.transferEventId]);
+  await pool.query('UPDATE consignments SET settlement=$2 WHERE id=$1', [sale.offer.consignmentId, { ...bought.sale, unknown: true }]);
+  await assert.rejects(C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId), /sale_source/); controls++;
+  await pool.query('UPDATE consignments SET settlement=$2 WHERE id=$1', [sale.offer.consignmentId, bought.sale]);
+  await assert.rejects(tx(c => C.buyConsignmentWithEconomyContext(c, 'buyer', f.consignmentRef(sale.offer), 'unknown-context', { attributionContext: {}, callback: () => {} })), /economy_context/); controls++;
+  await assert.rejects(tx(c => C.assertFreshConsignmentSaleProof(c, witness, { attributionContext: {} })), /fresh_sale_proof/); controls++;
+  assert.deepEqual(await C.consignmentEconomySaleWitness(pool, sale.offer.consignmentId), witness); await books();
+  console.log('Sale attribution canonical witness PASS:', controls, 'causal ledger/guard/transfer/closed-history/unknown-context/unbranded-proof refusals with exact source restoration.');
+} finally { await pool.end(); }

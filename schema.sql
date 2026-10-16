@@ -9372,3 +9372,223 @@ CREATE TABLE IF NOT EXISTS equipment_recovery_requests (
  craft_key TEXT NOT NULL UNIQUE,
  PRIMARY KEY(account_id,key_hash)
 );
+
+-- N16 merchant-funded advertising: no money is earned until genuine N01 sale completion.
+CREATE TABLE IF NOT EXISTS sale_attribution_campaigns (
+ id TEXT PRIMARY KEY, consignment_id TEXT NOT NULL UNIQUE REFERENCES consignments(id),
+ consignment_hash TEXT NOT NULL CHECK(char_length(consignment_hash)=64),
+ item_id TEXT NOT NULL REFERENCES item_instances(id),
+ merchant_account TEXT NOT NULL REFERENCES accounts(id), merchant_character TEXT NOT NULL REFERENCES characters(id),
+ host_account TEXT NOT NULL REFERENCES accounts(id), host_character TEXT NOT NULL REFERENCES characters(id),
+ publisher_account TEXT NOT NULL REFERENCES accounts(id), publisher_character TEXT NOT NULL REFERENCES characters(id),
+ commission_cash BIGINT NOT NULL CHECK(commission_cash BETWEEN 1 AND 1000000),
+ escrow_cash BIGINT NOT NULL CHECK(escrow_cash>=0), paid_cash BIGINT NOT NULL DEFAULT 0 CHECK(paid_cash>=0),
+ refunded_cash BIGINT NOT NULL DEFAULT 0 CHECK(refunded_cash>=0),
+ expires_at TIMESTAMPTZ NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ reserve_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),
+ state TEXT NOT NULL CHECK(state IN ('offered','active','paid','cancelled','expired','party_dead')),
+ accepted_at TIMESTAMPTZ, settlement JSONB,
+ CHECK(merchant_account<>host_account AND merchant_account<>publisher_account AND host_account<>publisher_account),
+ CHECK(merchant_character<>host_character AND merchant_character<>publisher_character AND host_character<>publisher_character),
+ CHECK(commission_cash=escrow_cash+paid_cash+refunded_cash),
+ CHECK((state IN ('offered','active') AND escrow_cash=commission_cash AND paid_cash=0 AND refunded_cash=0 AND settlement IS NULL)
+  OR (state='paid' AND escrow_cash=0 AND paid_cash=commission_cash AND refunded_cash=0 AND settlement IS NOT NULL)
+  OR (state IN ('cancelled','expired','party_dead') AND escrow_cash=0 AND paid_cash=0 AND refunded_cash=commission_cash AND settlement IS NOT NULL)),
+ CHECK(state NOT IN ('active','paid') OR accepted_at IS NOT NULL)
+);
+CREATE UNIQUE INDEX IF NOT EXISTS sale_attribution_once_paid_uid ON sale_attribution_campaigns(item_id) WHERE state='paid';
+CREATE INDEX IF NOT EXISTS sale_attribution_merchant_pending ON sale_attribution_campaigns(merchant_character,state);
+CREATE TABLE IF NOT EXISTS sale_attributions (
+ id TEXT PRIMARY KEY, campaign_id TEXT NOT NULL REFERENCES sale_attribution_campaigns(id),
+ campaign_hash TEXT NOT NULL CHECK(char_length(campaign_hash)=64),
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id),
+ created_at TIMESTAMPTZ NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ UNIQUE(campaign_id,buyer_account)
+);
+CREATE INDEX IF NOT EXISTS sale_attribution_buyer ON sale_attributions(buyer_character,campaign_id);
+CREATE TABLE IF NOT EXISTS sale_attribution_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), run_id TEXT NOT NULL UNIQUE,
+ request_json JSONB NOT NULL, receipt JSONB, account_ref TEXT REFERENCES accounts(id),
+ original_character TEXT REFERENCES characters(id), campaign_ref TEXT REFERENCES sale_attribution_campaigns(id),
+ PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND campaign_ref IS NULL)
+  OR (receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND campaign_ref IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS sale_attribution_request_campaign ON sale_attribution_requests(campaign_ref,original_character);
+
+
+CREATE TABLE IF NOT EXISTS merchant_loyalty_programs (
+ id TEXT PRIMARY KEY, seller_account TEXT NOT NULL REFERENCES accounts(id),
+ seller_character TEXT NOT NULL REFERENCES characters(id), required_purchases INTEGER NOT NULL CHECK(required_purchases BETWEEN 2 AND 5),
+ discount_bps INTEGER NOT NULL CHECK(discount_bps BETWEEN 1 AND 2000), maximum_discount INTEGER NOT NULL CHECK(maximum_discount BETWEEN 1 AND 100000),
+ maximum_uses INTEGER NOT NULL CHECK(maximum_uses BETWEEN 1 AND 20), used_count INTEGER NOT NULL DEFAULT 0 CHECK(used_count BETWEEN 0 AND 20),
+ observed_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL, source_hash TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('active','closed')), CHECK(expires_at>observed_at), CHECK(used_count<=maximum_uses)
+);
+CREATE TABLE IF NOT EXISTS merchant_loyalty_quotes (
+ id TEXT PRIMARY KEY, program_id TEXT NOT NULL REFERENCES merchant_loyalty_programs(id), program_hash TEXT NOT NULL,
+ consignment_id TEXT NOT NULL REFERENCES consignments(id), sale_hash TEXT NOT NULL, item_id TEXT NOT NULL REFERENCES item_instances(id),
+ seller_account TEXT NOT NULL REFERENCES accounts(id), seller_character TEXT NOT NULL REFERENCES characters(id),
+ host_account TEXT NOT NULL REFERENCES accounts(id), host_character TEXT NOT NULL REFERENCES characters(id),
+ buyer_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id),
+ gross_price INTEGER NOT NULL CHECK(gross_price BETWEEN 1 AND 1000000), buyer_paid INTEGER NOT NULL CHECK(buyer_paid BETWEEN 1 AND 1000000),
+ host_fee INTEGER NOT NULL CHECK(host_fee BETWEEN 0 AND 200000), seller_paid INTEGER NOT NULL CHECK(seller_paid>=0),
+ discount_cash INTEGER NOT NULL CHECK(discount_cash BETWEEN 1 AND 100000), qualification JSONB NOT NULL,
+ observed_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL, source_hash TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('quoted','consumed')), sale_witness JSONB, sale_receipt JSONB,
+ CHECK(buyer_paid+discount_cash=gross_price), CHECK(seller_paid+host_fee=buyer_paid), CHECK(expires_at>observed_at),
+ CHECK(seller_account<>host_account AND seller_account<>buyer_account AND host_account<>buyer_account),
+ CHECK(seller_character<>host_character AND seller_character<>buyer_character AND host_character<>buyer_character),
+ CHECK((status='quoted' AND sale_witness IS NULL AND sale_receipt IS NULL) OR (status='consumed' AND sale_witness IS NOT NULL AND sale_receipt IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS merchant_loyalty_one_buyer_use ON merchant_loyalty_quotes(program_id,buyer_character) WHERE status='consumed';
+CREATE UNIQUE INDEX IF NOT EXISTS merchant_loyalty_one_sale_use ON merchant_loyalty_quotes(consignment_id) WHERE status='consumed';
+CREATE TABLE IF NOT EXISTS merchant_loyalty_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL, body_hash TEXT NOT NULL, run_id TEXT NOT NULL UNIQUE,
+ request_json JSONB NOT NULL, receipt JSONB, account_ref TEXT REFERENCES accounts(id), original_character TEXT REFERENCES characters(id),
+ PRIMARY KEY(account_id,key_hash), CHECK(account_ref IS NULL OR account_ref=account_id),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL) OR (receipt IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL))
+);
+
+
+
+CREATE TABLE IF NOT EXISTS shopping_baskets (
+ id TEXT PRIMARY KEY, buyer_account TEXT NOT NULL REFERENCES accounts(id), buyer_character TEXT NOT NULL REFERENCES characters(id),
+ host_account TEXT NOT NULL REFERENCES accounts(id), host_character TEXT NOT NULL REFERENCES characters(id),
+ lines JSONB NOT NULL, total_cash INTEGER NOT NULL CHECK(total_cash BETWEEN 2 AND 2000000),
+ observed_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL, source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64),
+ status TEXT NOT NULL CHECK(status IN ('quoted','completed','cancelled')), settlement JSONB,
+ CHECK(buyer_account<>host_account AND buyer_character<>host_character), CHECK(expires_at>observed_at),
+ CHECK((status='completed' AND settlement IS NOT NULL) OR(status<>'completed' AND settlement IS NULL))
+);
+CREATE TABLE IF NOT EXISTS shopping_basket_requests (
+ account_id TEXT NOT NULL, key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64), body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64),
+ run_id TEXT NOT NULL UNIQUE, request_json JSONB NOT NULL, receipt JSONB, account_ref TEXT REFERENCES accounts(id),
+ original_character TEXT REFERENCES characters(id), basket_ref TEXT REFERENCES shopping_baskets(id), PRIMARY KEY(account_id,key_hash),
+ CHECK((receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND basket_ref IS NULL)
+  OR(receipt IS NOT NULL AND account_ref=account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND basket_ref IS NOT NULL))
+);
+CREATE INDEX IF NOT EXISTS shopping_basket_buyer_quotes ON shopping_baskets(buyer_character,status,expires_at);
+CREATE INDEX IF NOT EXISTS shopping_basket_request_history ON shopping_basket_requests(basket_ref,original_character);
+
+
+-- Player-funded market trails. Ordinary game cash only.
+
+CREATE TABLE IF NOT EXISTS event_markets (
+ id TEXT PRIMARY KEY,host_account TEXT NOT NULL REFERENCES accounts(id),host_character TEXT NOT NULL REFERENCES characters(id),
+ vendor_account TEXT NOT NULL REFERENCES accounts(id),vendor_character TEXT NOT NULL REFERENCES characters(id),
+ pickup_account TEXT NOT NULL REFERENCES accounts(id),pickup_character TEXT NOT NULL REFERENCES characters(id),
+ shop_id TEXT NOT NULL,shop_hash TEXT NOT NULL,
+ source_json JSONB NOT NULL,source_hash TEXT NOT NULL,district TEXT NOT NULL,
+ reward_cash INT NOT NULL CHECK(reward_cash BETWEEN 1 AND 100000),slots INT NOT NULL CHECK(slots BETWEEN 1 AND 3),
+ funded_cash INT NOT NULL,remaining_cash INT NOT NULL,paid_cash INT NOT NULL DEFAULT 0,refunded_cash INT NOT NULL DEFAULT 0,
+ reserve_journal TEXT NOT NULL UNIQUE REFERENCES transactions(id),refund_journal TEXT UNIQUE REFERENCES transactions(id),
+ state TEXT NOT NULL CHECK(state IN ('offered','active','suspended','closed','expired','party_dead')),created_at TIMESTAMPTZ NOT NULL,expires_at TIMESTAMPTZ NOT NULL,
+ CHECK(host_account<>vendor_account AND host_account<>pickup_account AND vendor_account<>pickup_account AND host_character<>vendor_character AND host_character<>pickup_character AND vendor_character<>pickup_character),CHECK(expires_at>created_at),
+ CHECK(funded_cash=reward_cash*slots AND remaining_cash>=0 AND paid_cash>=0 AND refunded_cash>=0 AND remaining_cash+paid_cash+refunded_cash=funded_cash));
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_host_capacity ON event_markets(host_account) WHERE state IN ('offered','active','suspended');
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_vendor_capacity ON event_markets(vendor_account) WHERE state='active';
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_pickup_capacity ON event_markets(pickup_account) WHERE state='active';
+CREATE TABLE IF NOT EXISTS event_market_vendor_consents (
+ event_id TEXT PRIMARY KEY REFERENCES event_markets(id),vendor_account TEXT NOT NULL REFERENCES accounts(id),vendor_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL,request_hash TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS event_market_venue_consents (
+ event_id TEXT PRIMARY KEY REFERENCES event_markets(id),pickup_account TEXT NOT NULL REFERENCES accounts(id),pickup_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL,request_hash TEXT NOT NULL,created_at TIMESTAMPTZ NOT NULL);
+CREATE TABLE IF NOT EXISTS event_market_participants (
+ id TEXT PRIMARY KEY,event_id TEXT NOT NULL REFERENCES event_markets(id),buyer_account TEXT NOT NULL REFERENCES accounts(id),buyer_character TEXT NOT NULL REFERENCES characters(id),
+ attribution_id TEXT NOT NULL,attribution_hash TEXT NOT NULL,campaign_id TEXT NOT NULL,campaign_hash TEXT NOT NULL,item_id TEXT NOT NULL,source_hash TEXT NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('joined','visited','completed','left','expired','party_dead')),
+ created_at TIMESTAMPTZ NOT NULL,visit_json JSONB,completion_json JSONB,reward_journal TEXT UNIQUE REFERENCES transactions(id),
+ reward_cash INT NOT NULL DEFAULT 0,CHECK(reward_cash>=0),UNIQUE(event_id,buyer_account),UNIQUE(event_id,attribution_id));
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_campaign_slot ON event_market_participants(event_id,campaign_id) WHERE state IN ('joined','visited','completed');
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_participant_capacity ON event_market_participants(buyer_account) WHERE state IN ('joined','visited');
+CREATE UNIQUE INDEX IF NOT EXISTS event_market_one_uid_completion ON event_market_participants((completion_json->>'itemId')) WHERE state='completed';
+CREATE TABLE IF NOT EXISTS event_market_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id),key_hash TEXT NOT NULL,body_hash TEXT NOT NULL,action TEXT NOT NULL CHECK(action IN ('fund','enroll','venue','withdraw','join','leave','visit','finish','cancel','expire')),
+ original_character TEXT NOT NULL REFERENCES characters(id),event_id TEXT NOT NULL REFERENCES event_markets(id),
+ request_json JSONB NOT NULL,receipt JSONB NOT NULL,created_at TIMESTAMPTZ NOT NULL,PRIMARY KEY(account_id,key_hash));
+
+
+-- N20 isolated metadata source proposal only.
+
+CREATE TABLE IF NOT EXISTS commercial_campaigns (
+ id TEXT PRIMARY KEY,
+ partnership_id TEXT NOT NULL REFERENCES management_teams(partnership_id),
+ relationship_hash TEXT NOT NULL CHECK(char_length(relationship_hash)=64),
+ team_revision INT NOT NULL CHECK(team_revision BETWEEN 1 AND 2147483647),
+ business_id TEXT NOT NULL REFERENCES business_depots(id),
+ owner_account TEXT NOT NULL REFERENCES accounts(id), owner_character TEXT NOT NULL REFERENCES characters(id),
+ scout_account TEXT NOT NULL REFERENCES accounts(id), scout_character TEXT NOT NULL REFERENCES characters(id),
+ manufacturer_account TEXT NOT NULL REFERENCES accounts(id), manufacturer_character TEXT NOT NULL REFERENCES characters(id),
+ guard_account TEXT NOT NULL REFERENCES accounts(id), guard_character TEXT NOT NULL REFERENCES characters(id),
+ first_carrier_account TEXT NOT NULL REFERENCES accounts(id), first_carrier_character TEXT NOT NULL REFERENCES characters(id),
+ second_carrier_account TEXT NOT NULL REFERENCES accounts(id), second_carrier_character TEXT NOT NULL REFERENCES characters(id),
+ source_hash TEXT NOT NULL CHECK(char_length(source_hash)=64), source_json JSONB NOT NULL,
+ state TEXT NOT NULL CHECK(state IN ('offered','active','completed','cancelled','expired','suspended')),
+ stage TEXT NOT NULL CHECK(stage IN ('scout','manufacture','guard','courier','complete')),
+ created_at TIMESTAMPTZ NOT NULL, expires_at TIMESTAMPTZ NOT NULL CHECK(expires_at>created_at),
+ activated_at TIMESTAMPTZ, closed_at TIMESTAMPTZ,
+ closure_reason TEXT CHECK(closure_reason IS NULL OR closure_reason IN
+ ('owner_cancel','provider_withdraw','source_expiry','original_dead','estate_scope','completed')),
+ closure_original TEXT REFERENCES characters(id),
+ CHECK(owner_account<>scout_account), CHECK(owner_character<>scout_character),
+ CHECK((state='offered' AND activated_at IS NULL) OR state<>'offered'),
+ CHECK((state IN ('offered','active') AND closed_at IS NULL AND closure_reason IS NULL AND closure_original IS NULL)
+ OR (state IN ('completed','cancelled','expired','suspended') AND closed_at IS NOT NULL
+ AND closure_reason IS NOT NULL AND closure_original IS NOT NULL))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS commercial_campaign_owner_capacity
+ ON commercial_campaigns(owner_account) WHERE state IN ('offered','active');
+CREATE TABLE IF NOT EXISTS commercial_campaign_requests (
+ account_id TEXT NOT NULL REFERENCES accounts(id), key_hash TEXT NOT NULL CHECK(char_length(key_hash)=64),
+ action TEXT NOT NULL CHECK(action IN ('create','consent','withdraw','cancel','expire','scout-fund','scout-report',
+ 'manufacture-fund','manufacture-accept','manufacture-complete','guard-hire','courier-publish','courier-consent',
+ 'courier-dispatch','courier-travel','courier-handoff','courier-arrive')),
+ body_hash TEXT NOT NULL CHECK(char_length(body_hash)=64), original_character TEXT NOT NULL REFERENCES characters(id),
+ campaign_id TEXT NOT NULL REFERENCES commercial_campaigns(id), receipt JSONB NOT NULL, acknowledged_at TIMESTAMPTZ NOT NULL,
+ PRIMARY KEY(account_id,key_hash)
+);
+CREATE TABLE IF NOT EXISTS commercial_campaign_roles (
+ campaign_id TEXT NOT NULL REFERENCES commercial_campaigns(id),
+ role TEXT NOT NULL CHECK(role IN ('owner','scout','manufacturer','guard','first_carrier','second_carrier')),
+ account_id TEXT NOT NULL REFERENCES accounts(id), original_character TEXT NOT NULL REFERENCES characters(id),
+ state TEXT NOT NULL CHECK(state IN ('invited','consented','active','retired')),
+ consent_key_hash TEXT CHECK(consent_key_hash IS NULL OR char_length(consent_key_hash)=64),
+ consent_terms_hash TEXT CHECK(consent_terms_hash IS NULL OR char_length(consent_terms_hash)=64),
+ consented_at TIMESTAMPTZ,
+ PRIMARY KEY(campaign_id,role), UNIQUE(campaign_id,account_id), UNIQUE(campaign_id,original_character),
+ FOREIGN KEY(account_id,consent_key_hash) REFERENCES commercial_campaign_requests(account_id,key_hash),
+ CHECK((consent_key_hash IS NULL AND consent_terms_hash IS NULL AND consented_at IS NULL AND state IN ('invited','retired'))
+ OR (consent_key_hash IS NOT NULL AND consent_terms_hash IS NOT NULL AND consented_at IS NOT NULL AND state IN ('consented','active','retired')))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS commercial_campaign_original_capacity
+ ON commercial_campaign_roles(account_id) WHERE state='active';
+CREATE TABLE IF NOT EXISTS commercial_campaign_stages (
+ campaign_id TEXT NOT NULL REFERENCES commercial_campaigns(id),
+ kind TEXT NOT NULL CHECK(kind IN ('scout','manufacture','guard','courier')),
+ state TEXT NOT NULL CHECK(state IN ('pending','prepared','funded','accepted','completed','retired')),
+ scout_job_id TEXT UNIQUE REFERENCES intel_forecast_jobs(id),
+ commission_id TEXT UNIQUE REFERENCES commissioned_crafting_contracts(id),
+ output_item_id TEXT REFERENCES item_instances(id),
+ courier_network_id TEXT UNIQUE REFERENCES multi_hop_couriers(id),
+ guard_payer_journal TEXT UNIQUE REFERENCES transactions(id), guard_payee_journal TEXT UNIQUE REFERENCES transactions(id),
+ guard_until TIMESTAMPTZ,
+ proof_json JSONB NOT NULL, started_at TIMESTAMPTZ, completed_at TIMESTAMPTZ,
+ PRIMARY KEY(campaign_id,kind),
+ CHECK((kind='scout' AND commission_id IS NULL AND output_item_id IS NULL AND courier_network_id IS NULL
+ AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL)
+ OR (kind='manufacture' AND scout_job_id IS NULL AND courier_network_id IS NULL
+ AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL)
+ OR (kind='guard' AND scout_job_id IS NULL AND commission_id IS NULL AND output_item_id IS NULL AND courier_network_id IS NULL)
+ OR (kind='courier' AND scout_job_id IS NULL AND commission_id IS NULL
+ AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND guard_until IS NULL)),
+ CHECK(state<>'completed' OR (completed_at IS NOT NULL AND
+ ((kind='scout' AND scout_job_id IS NOT NULL)
+ OR (kind='manufacture' AND commission_id IS NOT NULL AND output_item_id IS NOT NULL)
+ OR (kind='guard' AND guard_payer_journal IS NOT NULL AND guard_payee_journal IS NOT NULL AND guard_until IS NOT NULL)
+ OR (kind='courier' AND courier_network_id IS NOT NULL AND output_item_id IS NOT NULL))))
+);
+CREATE UNIQUE INDEX IF NOT EXISTS commercial_campaign_output_consumption
+ ON commercial_campaign_stages(output_item_id) WHERE kind='manufacture' AND output_item_id IS NOT NULL;

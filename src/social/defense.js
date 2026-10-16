@@ -6,6 +6,7 @@
 // Split out of the 2,003-line src/social.js; every function below is byte-identical to what was
 // there. Import from '../social.js' — it re-exports this package's public surface unchanged.
 import { GameError, bus, ledger } from '../game.js';
+import { assertItemTransaction, itemTransactionIdentity, poisonItemTransaction } from '../items.js';
 import { M3, CONSTANTS, COMMISSION, HONOR, seasonModOf, usd, safehouseSpentToday, safehouseLeftMs, safehouseRefillSeconds } from '../rules.js';
 import { activeDecree } from '../commission.js';
 import { isMadDog } from '../honor.js';
@@ -95,6 +96,7 @@ export async function offerBodyguard(ch, price, client, h) {
 
 // Two-party (withTwoCharacters): `guard` arrives locked as the second row.
 export async function hireBodyguard(ch, guard, client, h) {
+  const commercialTransaction = guardTransaction(client);
   const price = guard.guard_price != null ? Math.floor(Number(guard.guard_price)) : 0;
   if (!(price > 0)) throw new GameError('not_offering', "They're not in the protection business.");
   // FIVE PILLARS #1: nobody takes a bullet for a MAD DOG — infamy shuts the protection market
@@ -111,8 +113,8 @@ export async function hireBodyguard(ch, guard, client, h) {
   const net = price - fee - tax;
   ch.cash = Number(ch.cash) - price;
   guard.cash = Number(guard.cash) + net;
-  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -price, reason: 'bodyguard:hire', counterparty: guard.id });
-  await h.ledger(client, { characterId: guard.id, currency: 'cash', amount: net, reason: 'bodyguard:hire', counterparty: ch.id });
+  const payerJournal = await h.ledger(client, { characterId: ch.id, currency: 'cash', amount: -price, reason: 'bodyguard:hire', counterparty: guard.id });
+  const guardJournal = await h.ledger(client, { characterId: guard.id, currency: 'cash', amount: net, reason: 'bodyguard:hire', counterparty: ch.id });
   await client.query('UPDATE street_tax SET pool = pool + $1 WHERE id=1', [tax]);
   ch.guarded_by = guard.id;
   ch.guarded_until = new Date(Date.now() + M3.BODYGUARD_MS);
@@ -123,7 +125,13 @@ export async function hireBodyguard(ch, guard, client, h) {
   // (how long the cover lasts) could not be rendered at all. Every other clock in a reply ships as
   // *Seconds for exactly that reason (guardSeconds/madeSeconds/safeSeconds). `until` stays: it is
   // the field the board and the view already read.
-  return { ok: true, guard: guard.id, price, until: ch.guarded_until, guardSeconds: Math.ceil((ch.guarded_until.getTime() - Date.now()) / 1000) };
+  const receipt = { ok: true, guard: guard.id, price, until: ch.guarded_until, guardSeconds: Math.ceil((ch.guarded_until.getTime() - Date.now()) / 1000) };
+  if (commercialTransaction) guardFresh.set(receipt, { client, transaction: commercialTransaction,
+    payer: ch.id, payerAccount: ch.account_id, guard: guard.id, guardAccount: guard.account_id,
+    price, net, fee, tax, payerJournal, guardJournal, until: new Date(ch.guarded_until).toISOString(),
+    payerCash: Number(ch.cash), guardCash: Number(guard.cash),
+    taxPool: Number((await client.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool) });
+  return receipt;
 }
 
 // The absorb: called at the top of every lethal kill branch. Returns the guard ({name}) if the
@@ -174,3 +182,39 @@ export async function bodyguardAbsorbs(client, h, attacker, victim) {
 // (`npchit:hire`), the payer takes law heat + a cooldown, and it pays ZERO rep (no player
 // killer). On a landed hit the estate runs (no chop/bounty — nobody fulfilled a contract);
 // pre-paid revive insurance absorbs it exactly like a player hit.
+
+export const commercialCampaignCompletionRevision='commercial_campaign_v1';
+const guardFresh=new WeakMap();
+function guardTransaction(c){
+  // Legacy direct leaf tests outside an Items transaction retain their existing
+  // result. They receive no campaign witness and cannot compose paid N20 work.
+  try{return itemTransactionIdentity(c);}catch{return null;}
+}
+export function inspectCommercialGuard(c,receipt){
+  assertItemTransaction(c);
+  const proof=receipt&&guardFresh.get(receipt);
+  if(!proof||proof.client!==c||proof.transaction!==itemTransactionIdentity(c))throw new GameError('commercial_campaign','guard_fresh_source');
+  const {client,transaction,...actual}=proof;
+  return Object.freeze({family:'guard',evidence:'purchased_bodyguard_coverage',...actual});
+}
+export async function consumeCommercialGuard(c,receipt){
+  assertItemTransaction(c);
+  const proof=receipt&&guardFresh.get(receipt);
+  if(!proof||proof.client!==c||proof.transaction!==itemTransactionIdentity(c))throw new GameError('commercial_campaign','guard_fresh_source');
+  guardFresh.delete(receipt);
+  try{
+    if(receipt.guard!==proof.guard||receipt.price!==proof.price||new Date(receipt.until).toISOString()!==proof.until||proof.fee!==Math.ceil(proof.price*.01)||proof.tax!==Math.ceil(proof.price*.01)||proof.net!==proof.price-proof.fee-proof.tax)throw new GameError('commercial_campaign','guard_terms');
+    const payer=(await c.query('SELECT * FROM characters WHERE id=$1',[proof.payer])).rows[0],guard=(await c.query('SELECT * FROM characters WHERE id=$1',[proof.guard])).rows[0];
+    for(const [ch,account,cash]of [[payer,proof.payerAccount,proof.payerCash],[guard,proof.guardAccount,proof.guardCash]]){
+      const current=(await c.query('SELECT id FROM characters WHERE account_id=$1 AND alive=true ORDER BY id LIMIT 2',[account])).rows;
+      if(!ch?.alive||ch.account_id!==account||Number(ch.cash)!==cash||!Number.isSafeInteger(cash)||current.length!==1||current[0].id!==ch.id||(await c.query('SELECT status FROM accounts WHERE id=$1',[account])).rows[0]?.status!=='active')throw new GameError('commercial_campaign','guard_account_ack');
+    }
+    if(payer.guarded_by!==guard.id||new Date(payer.guarded_until).toISOString()!==proof.until||+new Date((await c.query('SELECT clock_timestamp() AS observed')).rows[0].observed)>=+new Date(proof.until)||Number((await c.query('SELECT pool FROM street_tax WHERE id=1')).rows[0].pool)!==proof.taxPool)throw new GameError('commercial_campaign','guard_coverage');
+    for(const [journal,original,amount,other]of [[proof.payerJournal,proof.payer,-proof.price,proof.guard],[proof.guardJournal,proof.guard,proof.net,proof.payer]]){
+      const row=(await c.query('SELECT * FROM transactions WHERE id=$1',[journal])).rows[0];
+      if(!row||row.character_id!==original||row.account_id!=null||row.currency!=='cash'||Number(row.amount)!==amount||row.reason!=='bodyguard:hire'||row.counterparty!==other)throw new GameError('commercial_campaign','guard_journals');
+    }
+    const {client,transaction,...actual}=proof;
+    return Object.freeze({family:'guard',evidence:'purchased_bodyguard_coverage',...actual});
+  }catch(error){poisonItemTransaction(c,error);throw error;}
+}

@@ -188,10 +188,14 @@ export async function runEstate(client, h, victim, killerName, opts = {}) {
   try {
   // Lock the sorted union before any existing depot/order lock, including
   // mutual rentals. A landlord's death never consumes surviving tenant goods.
+  await (await import('../commercialcampaigns.js')).recoverCommercialCampaignAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   const courierStart=await recoverMultiHopCourierAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of courierStart)for(const actor of new Set([victim,h.actorCh,opts.killerCh].filter(Boolean))){if(actor.id!==receipt.ownerOriginal||!actor.alive||!receipt.refundedCash)continue;const before=Number(actor.cash);registerItemTransactionUndo(client,()=>{actor.cash=before;});actor.cash=before+Number(receipt.refundedCash);}
   await assertMultiHopCourierEstateCleared(client,victim.id);
   await recoverCustomerVaultsAtEstateStart(client, victim, h, { killerCh: opts.killerCh });
+  await(await import('../eventmarkets.js')).recoverEventMarketsAtEstateStart(client,victim,h);
+  const saleAttributionStart=await(await import('../saleattribution.js')).recoverSaleAttributionAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
+  for(const receipt of saleAttributionStart){if(receipt.merchantCharacter!==victim.id)throw Error('Original advertising merchant');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const layawayStart=await recoverCustomerLayawayAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
   for(const receipt of layawayStart){if(receipt.buyerCharacter!==victim.id)throw new Error('layaway estate original mismatch');const before=Number(victim.cash);registerItemTransactionUndo(client,()=>{victim.cash=before;});victim.cash=before+Number(receipt.refundedCash);}
   const merchantReturnStart = await recoverMerchantReturnsAtEstateStart(client,victim.id,h.rentalDeathScope,estateScope);
