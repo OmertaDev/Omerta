@@ -8375,6 +8375,1666 @@
       "table_name": "shopping_baskets",
       "name": "shopping_baskets_total_cash_check",
       "definition": "CHECK (total_cash >= 2 AND total_cash <= 2000000)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_approve_key_fkey",
+      "definition": "FOREIGN KEY (approve_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_approve_key_key",
+      "definition": "UNIQUE (approve_key)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_auction_seconds_check",
+      "definition": "CHECK (auction_seconds >= 60 AND auction_seconds <= 3600)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_borrower_account_fkey",
+      "definition": "FOREIGN KEY (borrower_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_borrower_character_fkey",
+      "definition": "FOREIGN KEY (borrower_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_check",
+      "definition": "CHECK (owed >= principal)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_check1",
+      "definition": "CHECK (reserve_cash >= owed AND reserve_cash <= 2000000)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_check2",
+      "definition": "CHECK (borrower_account <> lender_account AND borrower_character <> lender_character)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_check3",
+      "definition": "CHECK (approved_at IS NULL AND approve_key IS NULL OR approved_at >= prepared_at AND approve_key IS NOT NULL)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_lender_account_fkey",
+      "definition": "FOREIGN KEY (lender_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_lender_character_fkey",
+      "definition": "FOREIGN KEY (lender_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_prepare_key_fkey",
+      "definition": "FOREIGN KEY (prepare_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_prepare_key_key",
+      "definition": "UNIQUE (prepare_key)"
+    },
+    {
+      "table_name": "collateral_auction_agreements",
+      "name": "collateral_auction_agreements_principal_check",
+      "definition": "CHECK (principal >= 5000 AND principal <= 1000000)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_amount_check",
+      "definition": "CHECK (amount >= 5000 AND amount <= 2000000)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_auction_id_bidder_account_key",
+      "definition": "UNIQUE (auction_id, bidder_account)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_auction_id_fkey",
+      "definition": "FOREIGN KEY (auction_id) REFERENCES collateral_auctions(id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_bidder_account_fkey",
+      "definition": "FOREIGN KEY (bidder_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_bidder_character_fkey",
+      "definition": "FOREIGN KEY (bidder_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_check",
+      "definition": "CHECK (state = 'held'::text AND refund_journal IS NULL AND resolved_at IS NULL OR state = 'spent'::text AND refund_journal IS NULL AND resolved_at IS NOT NULL OR state = 'refunded'::text AND refund_journal IS NOT NULL AND resolved_at IS NOT NULL)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_debit_journal_fkey",
+      "definition": "FOREIGN KEY (debit_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_debit_journal_key",
+      "definition": "UNIQUE (debit_journal)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_mutation_key_fkey",
+      "definition": "FOREIGN KEY (mutation_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_mutation_key_key",
+      "definition": "UNIQUE (mutation_key)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_refund_journal_fkey",
+      "definition": "FOREIGN KEY (refund_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_refund_journal_key",
+      "definition": "UNIQUE (refund_journal)"
+    },
+    {
+      "table_name": "collateral_auction_bids",
+      "name": "collateral_auction_bids_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['held'::text, 'spent'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_agreement_id_fkey",
+      "definition": "FOREIGN KEY (agreement_id) REFERENCES collateral_auction_agreements(id)"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_auction_id_fkey",
+      "definition": "FOREIGN KEY (auction_id) REFERENCES collateral_auctions(id)"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "collateral_auction_requests",
+      "name": "collateral_auction_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_agreement_id_fkey",
+      "definition": "FOREIGN KEY (agreement_id) REFERENCES collateral_auction_agreements(id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_agreement_id_key",
+      "definition": "UNIQUE (agreement_id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_check",
+      "definition": "CHECK (closes_at > opened_at AND settle_until > closes_at)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_check1",
+      "definition": "CHECK (state = 'open'::text AND closed_at IS NULL AND settled_at IS NULL AND winning_bid IS NULL OR state = 'cancelled'::text AND closed_at IS NOT NULL AND settled_at IS NULL AND winning_bid IS NULL OR state = 'settled'::text AND closed_at IS NOT NULL AND settled_at IS NOT NULL AND winning_bid IS NOT NULL AND proceeds_journal IS NOT NULL AND sale_event IS NOT NULL AND release_request IS NOT NULL)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_open_key_fkey",
+      "definition": "FOREIGN KEY (open_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_open_key_key",
+      "definition": "UNIQUE (open_key)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_opened_by_fkey",
+      "definition": "FOREIGN KEY (opened_by) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_pledge_id_fkey",
+      "definition": "FOREIGN KEY (pledge_id) REFERENCES collateral_lending_pledges(id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_pledge_id_key",
+      "definition": "UNIQUE (pledge_id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_proceeds_journal_fkey",
+      "definition": "FOREIGN KEY (proceeds_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_proceeds_journal_key",
+      "definition": "UNIQUE (proceeds_journal)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_sale_event_fkey",
+      "definition": "FOREIGN KEY (sale_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_sale_event_key",
+      "definition": "UNIQUE (sale_event)"
+    },
+    {
+      "table_name": "collateral_auctions",
+      "name": "collateral_auctions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'settled'::text, 'cancelled'::text]))"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_birth_event_fkey",
+      "definition": "FOREIGN KEY (birth_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_borrower_account_fkey",
+      "definition": "FOREIGN KEY (borrower_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_borrower_character_fkey",
+      "definition": "FOREIGN KEY (borrower_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_check",
+      "definition": "CHECK (borrower_account <> original_lender_account AND borrower_character <> original_lender_character)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_check1",
+      "definition": "CHECK (due_at > offered_at)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_check2",
+      "definition": "CHECK (state = 'held'::text AND released_at IS NULL AND release_event IS NULL AND release_kind IS NULL OR state = 'released'::text AND released_at IS NOT NULL AND release_event IS NOT NULL AND (release_kind = ANY (ARRAY['repaid'::text, 'collected'::text])) OR state = 'estate_released'::text AND released_at IS NOT NULL AND release_event IS NOT NULL AND release_kind = 'borrower_estate'::text)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_escrow_event_fkey",
+      "definition": "FOREIGN KEY (escrow_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_escrow_event_key",
+      "definition": "UNIQUE (escrow_event)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_hours_check",
+      "definition": "CHECK (hours >= 1 AND hours <= 72)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_initial_condition_check",
+      "definition": "CHECK (initial_condition >= 10 AND initial_condition <= 100)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_initial_condition_revision_check",
+      "definition": "CHECK (initial_condition_revision >= 0)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_original_lender_account_fkey",
+      "definition": "FOREIGN KEY (original_lender_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_original_lender_character_fkey",
+      "definition": "FOREIGN KEY (original_lender_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_principal_check",
+      "definition": "CHECK (principal >= 5000 AND principal <= 1000000)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_rate_check",
+      "definition": "CHECK (rate > 0::numeric AND rate <= 0.5)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_release_event_fkey",
+      "definition": "FOREIGN KEY (release_event) REFERENCES item_events(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_release_event_key",
+      "definition": "UNIQUE (release_event)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_release_kind_check",
+      "definition": "CHECK (release_kind = ANY (ARRAY['repaid'::text, 'collected'::text, 'borrower_estate'::text]))"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['held'::text, 'released'::text, 'estate_released'::text]))"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_take_journal_fkey",
+      "definition": "FOREIGN KEY (take_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_lending_pledges",
+      "name": "collateral_lending_pledges_take_journal_key",
+      "definition": "UNIQUE (take_journal)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['pledge'::text, 'repay'::text, 'release'::text]))"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND original_character IS NULL AND pledge_id IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND original_character IS NOT NULL AND pledge_id IS NOT NULL)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_pledge_id_fkey",
+      "definition": "FOREIGN KEY (pledge_id) REFERENCES collateral_lending_pledges(id)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "collateral_lending_requests",
+      "name": "collateral_lending_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_borrower_character_fkey",
+      "definition": "FOREIGN KEY (borrower_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_check",
+      "definition": "CHECK (paid_cash = (received_cash + vig_cash))"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_check1",
+      "definition": "CHECK (borrower_character <> holder_character)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_check2",
+      "definition": "CHECK (paid_cash = 0 AND pay_journal IS NULL AND receive_journal IS NULL OR paid_cash > 0 AND pay_journal IS NOT NULL AND receive_journal IS NOT NULL AND pay_journal <> receive_journal)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_holder_account_fkey",
+      "definition": "FOREIGN KEY (holder_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_holder_character_fkey",
+      "definition": "FOREIGN KEY (holder_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_kind_check",
+      "definition": "CHECK (kind = ANY (ARRAY['repaid'::text, 'collected'::text]))"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_mutation_key_fkey",
+      "definition": "FOREIGN KEY (mutation_key) REFERENCES item_mutation_guards(idempotency_key)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_mutation_key_key",
+      "definition": "UNIQUE (mutation_key)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_pay_journal_fkey",
+      "definition": "FOREIGN KEY (pay_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_pay_journal_key",
+      "definition": "UNIQUE (pay_journal)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_pkey",
+      "definition": "PRIMARY KEY (pledge_id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_pledge_id_fkey",
+      "definition": "FOREIGN KEY (pledge_id) REFERENCES collateral_lending_pledges(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_receive_journal_fkey",
+      "definition": "FOREIGN KEY (receive_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_receive_journal_key",
+      "definition": "UNIQUE (receive_journal)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_received_cash_check",
+      "definition": "CHECK (received_cash >= 0)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "collateral_lending_terminals",
+      "name": "collateral_lending_terminals_vig_cash_check",
+      "definition": "CHECK (vig_cash >= 0)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_canonical_payout_id_fkey",
+      "definition": "FOREIGN KEY (canonical_payout_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_canonical_payout_id_key",
+      "definition": "UNIQUE (canonical_payout_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_deductible_cash_check",
+      "definition": "CHECK (deductible_cash >= 1 AND deductible_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_gross_payout_cash_check",
+      "definition": "CHECK (gross_payout_cash >= 1 AND gross_payout_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_member_account_fkey",
+      "definition": "FOREIGN KEY (member_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_member_character_fkey",
+      "definition": "FOREIGN KEY (member_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_payout_cash_check",
+      "definition": "CHECK (payout_cash >= 1 AND payout_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_payout_id_fkey",
+      "definition": "FOREIGN KEY (payout_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_payout_id_key",
+      "definition": "UNIQUE (payout_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_pkey",
+      "definition": "PRIMARY KEY (policy_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES coverage_mutual_enrollments(policy_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_pool_id_fkey",
+      "definition": "FOREIGN KEY (pool_id) REFERENCES coverage_mutual_pools(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_premium_cash_check",
+      "definition": "CHECK (premium_cash >= 1 AND premium_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_repair_id_fkey",
+      "definition": "FOREIGN KEY (repair_id) REFERENCES equipment_maintenance_repairs(id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_repair_id_key",
+      "definition": "UNIQUE (repair_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_wear_event_id_fkey",
+      "definition": "FOREIGN KEY (wear_event_id) REFERENCES item_durability_uses(event_id)"
+    },
+    {
+      "table_name": "coverage_mutual_claims",
+      "name": "coverage_mutual_claims_wear_event_id_key",
+      "definition": "UNIQUE (wear_event_id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_member_account_fkey",
+      "definition": "FOREIGN KEY (member_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_member_character_fkey",
+      "definition": "FOREIGN KEY (member_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_pkey",
+      "definition": "PRIMARY KEY (policy_id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_policy_id_fkey",
+      "definition": "FOREIGN KEY (policy_id) REFERENCES equipment_insurance_policies(id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_pool_id_fkey",
+      "definition": "FOREIGN KEY (pool_id) REFERENCES coverage_mutual_pools(id)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_pool_id_member_character_key",
+      "definition": "UNIQUE (pool_id, member_character)"
+    },
+    {
+      "table_name": "coverage_mutual_enrollments",
+      "name": "coverage_mutual_enrollments_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_check",
+      "definition": "CHECK (deductible_cash >= 1 AND deductible_cash <= contribution_cash)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_check1",
+      "definition": "CHECK (creator_account <> partner_account AND creator_character <> partner_character AND creator_policy <> partner_policy)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_check2",
+      "definition": "CHECK (contributed_cash = (reserve_cash + paid_cash + refunded_cash))"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_check3",
+      "definition": "CHECK (state <> 'closed'::text OR reserve_cash = 0)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_contributed_cash_check",
+      "definition": "CHECK (contributed_cash >= 1 AND contributed_cash <= 2000)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_contribution_cash_check",
+      "definition": "CHECK (contribution_cash >= 1 AND contribution_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_creator_account_fkey",
+      "definition": "FOREIGN KEY (creator_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_creator_character_fkey",
+      "definition": "FOREIGN KEY (creator_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_creator_policy_fkey",
+      "definition": "FOREIGN KEY (creator_policy) REFERENCES equipment_insurance_policies(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0 AND paid_cash <= 2000)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_partner_account_fkey",
+      "definition": "FOREIGN KEY (partner_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_partner_character_fkey",
+      "definition": "FOREIGN KEY (partner_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_partner_policy_fkey",
+      "definition": "FOREIGN KEY (partner_policy) REFERENCES equipment_insurance_policies(id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0 AND refunded_cash <= 2000)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_reserve_cash_check",
+      "definition": "CHECK (reserve_cash >= 0 AND reserve_cash <= 2000)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "coverage_mutual_pools",
+      "name": "coverage_mutual_pools_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'active'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_check",
+      "definition": "CHECK (refunded_cash >= 0 AND refunded_cash <= contribution_cash)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_contribution_cash_check",
+      "definition": "CHECK (contribution_cash >= 1 AND contribution_cash <= 1000)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_contribution_id_fkey",
+      "definition": "FOREIGN KEY (contribution_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_contribution_id_key",
+      "definition": "UNIQUE (contribution_id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_original_account_fkey",
+      "definition": "FOREIGN KEY (original_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_pkey",
+      "definition": "PRIMARY KEY (pool_id, original_character)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_pool_id_fkey",
+      "definition": "FOREIGN KEY (pool_id) REFERENCES coverage_mutual_pools(id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_refund_id_fkey",
+      "definition": "FOREIGN KEY (refund_id) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_refund_id_key",
+      "definition": "UNIQUE (refund_id)"
+    },
+    {
+      "table_name": "coverage_mutual_positions",
+      "name": "coverage_mutual_positions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['funded'::text, 'released'::text]))"
+    },
+    {
+      "table_name": "coverage_mutual_requests",
+      "name": "coverage_mutual_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "coverage_mutual_requests",
+      "name": "coverage_mutual_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['open'::text, 'join'::text, 'claim'::text, 'close'::text, 'estate_close'::text]))"
+    },
+    {
+      "table_name": "coverage_mutual_requests",
+      "name": "coverage_mutual_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "coverage_mutual_requests",
+      "name": "coverage_mutual_requests_request_hash_check",
+      "definition": "CHECK (char_length(request_hash) = 64)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_assignment_id_fkey",
+      "definition": "FOREIGN KEY (assignment_id) REFERENCES game_employment_assignments(id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_bonus_cash_check",
+      "definition": "CHECK (bonus_cash >= 0 AND bonus_cash <= 10000)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_bonus_transaction_fkey",
+      "definition": "FOREIGN KEY (bonus_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_bonus_transaction_key",
+      "definition": "UNIQUE (bonus_transaction)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_check",
+      "definition": "CHECK ((state = 'paid'::text) = (paid_at IS NOT NULL))"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_check1",
+      "definition": "CHECK ((bonus_cash > 0) = (bonus_transaction IS NOT NULL))"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_commitment_id_fkey",
+      "definition": "FOREIGN KEY (commitment_id) REFERENCES delivery_commitments(id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_commitment_id_key",
+      "definition": "UNIQUE (commitment_id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_delivered_units_check",
+      "definition": "CHECK (delivered_units >= 0 AND delivered_units <= 40)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_employment_id_fkey",
+      "definition": "FOREIGN KEY (employment_id) REFERENCES performance_employment_contracts(employment_id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_pkey",
+      "definition": "PRIMARY KEY (assignment_id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['assigned'::text, 'paid'::text]))"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_wage_transaction_fkey",
+      "definition": "FOREIGN KEY (wage_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_wage_transaction_key",
+      "definition": "UNIQUE (wage_transaction)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_worker_account_fkey",
+      "definition": "FOREIGN KEY (worker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "performance_employment_assignments",
+      "name": "performance_employment_assignments_worker_character_fkey",
+      "definition": "FOREIGN KEY (worker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_bonus_cash_check",
+      "definition": "CHECK (bonus_cash >= 1 AND bonus_cash <= 10000)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_burned_cash_check",
+      "definition": "CHECK (burned_cash >= 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_check",
+      "definition": "CHECK (total_cash = (slots * bonus_cash))"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_check1",
+      "definition": "CHECK (total_cash = (escrow_cash + paid_cash + refunded_cash + burned_cash + looted_cash))"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_check2",
+      "definition": "CHECK (state <> 'closed'::text OR escrow_cash = 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_employer_account_fkey",
+      "definition": "FOREIGN KEY (employer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_employer_character_fkey",
+      "definition": "FOREIGN KEY (employer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_employment_id_fkey",
+      "definition": "FOREIGN KEY (employment_id) REFERENCES game_employment_jobs(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_escrow_cash_check",
+      "definition": "CHECK (escrow_cash >= 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_looted_cash_check",
+      "definition": "CHECK (looted_cash >= 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_minimum_units_check",
+      "definition": "CHECK (minimum_units >= 1 AND minimum_units <= 40)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_pkey",
+      "definition": "PRIMARY KEY (employment_id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_slots_check",
+      "definition": "CHECK (slots >= 1 AND slots <= 5)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "performance_employment_contracts",
+      "name": "performance_employment_contracts_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['open'::text, 'closed'::text]))"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_employment_id_fkey",
+      "definition": "FOREIGN KEY (employment_id) REFERENCES performance_employment_contracts(employment_id)"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_employment_id_key",
+      "definition": "UNIQUE (employment_id)"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "performance_employment_requests",
+      "name": "performance_employment_requests_request_key_check",
+      "definition": "CHECK (char_length(request_key) >= 1 AND char_length(request_key) <= 128)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_bonus_cash_check",
+      "definition": "CHECK (bonus_cash >= 1 AND bonus_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_check",
+      "definition": "CHECK (maker_account <> customer_account AND maker_character <> customer_character)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_customer_account_fkey",
+      "definition": "FOREIGN KEY (customer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_customer_character_fkey",
+      "definition": "FOREIGN KEY (customer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_lifetime_seconds_check",
+      "definition": "CHECK (lifetime_seconds >= 60 AND lifetime_seconds <= 1200)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_maker_account_fkey",
+      "definition": "FOREIGN KEY (maker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_maker_character_fkey",
+      "definition": "FOREIGN KEY (maker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['offered'::text, 'accepted'::text, 'cancelled'::text, 'expired'::text]))"
+    },
+    {
+      "table_name": "production_booking_offers",
+      "name": "production_booking_offers_tool_item_fkey",
+      "definition": "FOREIGN KEY (tool_item) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_booking_id_fkey",
+      "definition": "FOREIGN KEY (booking_id) REFERENCES production_booking_runs(id)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_booking_id_role_key",
+      "definition": "UNIQUE (booking_id, role)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_original_account_fkey",
+      "definition": "FOREIGN KEY (original_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_pkey",
+      "definition": "PRIMARY KEY (booking_id, original_character)"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_role_check",
+      "definition": "CHECK (role = ANY (ARRAY['maker'::text, 'customer'::text]))"
+    },
+    {
+      "table_name": "production_booking_positions",
+      "name": "production_booking_positions_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['held'::text, 'released'::text]))"
+    },
+    {
+      "table_name": "production_booking_requests",
+      "name": "production_booking_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_requests",
+      "name": "production_booking_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['offer'::text, 'accept'::text, 'complete'::text, 'cancel'::text, 'expire'::text]))"
+    },
+    {
+      "table_name": "production_booking_requests",
+      "name": "production_booking_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "production_booking_requests",
+      "name": "production_booking_requests_request_hash_check",
+      "definition": "CHECK (char_length(request_hash) = 64)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_bonus_cash_check",
+      "definition": "CHECK (bonus_cash >= 1 AND bonus_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_check",
+      "definition": "CHECK (bonus_cash = (remaining_cash + paid_cash + refunded_cash))"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_check1",
+      "definition": "CHECK (state = 'active'::text AND remaining_cash = bonus_cash AND release_transaction IS NULL AND closed_at IS NULL AND outcome IS NULL OR state <> 'active'::text AND remaining_cash = 0 AND release_transaction IS NOT NULL AND closed_at IS NOT NULL AND outcome IS NOT NULL)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_commission_id_fkey",
+      "definition": "FOREIGN KEY (commission_id) REFERENCES commissioned_crafting_contracts(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_commission_id_key",
+      "definition": "UNIQUE (commission_id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_commission_source_hash_check",
+      "definition": "CHECK (char_length(commission_source_hash) = 64)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_customer_account_fkey",
+      "definition": "FOREIGN KEY (customer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_customer_character_fkey",
+      "definition": "FOREIGN KEY (customer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_id_fkey",
+      "definition": "FOREIGN KEY (id) REFERENCES production_booking_offers(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_maker_account_fkey",
+      "definition": "FOREIGN KEY (maker_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_maker_character_fkey",
+      "definition": "FOREIGN KEY (maker_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0 AND paid_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0 AND refunded_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_release_transaction_fkey",
+      "definition": "FOREIGN KEY (release_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_release_transaction_key",
+      "definition": "UNIQUE (release_transaction)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_remaining_cash_check",
+      "definition": "CHECK (remaining_cash >= 0 AND remaining_cash <= 1000)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_reservation_id_fkey",
+      "definition": "FOREIGN KEY (reservation_id) REFERENCES production_slot_reservations(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_reservation_id_key",
+      "definition": "UNIQUE (reservation_id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_reservation_source_hash_check",
+      "definition": "CHECK (char_length(reservation_source_hash) = 64)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['active'::text, 'completed'::text, 'refunded'::text]))"
+    },
+    {
+      "table_name": "production_booking_runs",
+      "name": "production_booking_runs_tool_item_fkey",
+      "definition": "FOREIGN KEY (tool_item) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptanc_guard_account_request_key_ha_fkey",
+      "definition": "FOREIGN KEY (guard_account, request_key_hash) REFERENCES protection_contract_requests(account_id, key_hash)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_contract_id_fkey",
+      "definition": "FOREIGN KEY (contract_id) REFERENCES protection_contracts(id)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_guard_account_fkey",
+      "definition": "FOREIGN KEY (guard_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_guard_character_fkey",
+      "definition": "FOREIGN KEY (guard_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_pkey",
+      "definition": "PRIMARY KEY (contract_id)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_request_key_hash_check",
+      "definition": "CHECK (char_length(request_key_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contract_acceptances",
+      "name": "protection_contract_acceptances_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['fund'::text, 'accept'::text, 'activate'::text, 'refund'::text, 'expire'::text, 'withdraw'::text]))"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_contract_id_fkey",
+      "definition": "FOREIGN KEY (contract_id) REFERENCES protection_contracts(id)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "protection_contract_requests",
+      "name": "protection_contract_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_campaign_id_fkey",
+      "definition": "FOREIGN KEY (campaign_id) REFERENCES commercial_campaigns(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_campaign_source_hash_check",
+      "definition": "CHECK (char_length(campaign_source_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check1",
+      "definition": "CHECK (payer_account = protected_account AND payer_character = protected_character)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check2",
+      "definition": "CHECK (payer_account <> guard_account AND payer_character <> guard_character)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check3",
+      "definition": "CHECK (guard_payer_journal IS NULL OR guard_payer_journal <> guard_payee_journal)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check4",
+      "definition": "CHECK (coverage_until IS NULL OR coverage_until > activated_at)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check5",
+      "definition": "CHECK (price_cash = (remaining_cash + paid_cash + refunded_cash))"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check6",
+      "definition": "CHECK ((state = ANY (ARRAY['funded'::text, 'accepted'::text, 'blocked'::text])) AND remaining_cash = price_cash AND paid_cash = 0 AND refunded_cash = 0 AND release_transaction IS NULL AND refund_transaction IS NULL AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND coverage_until IS NULL AND coverage_proof IS NULL AND activated_at IS NULL OR state = 'activated'::text AND remaining_cash = 0 AND paid_cash = price_cash AND refunded_cash = 0 AND release_transaction IS NOT NULL AND refund_transaction IS NULL AND guard_payer_journal IS NOT NULL AND guard_payee_journal IS NOT NULL AND coverage_until IS NOT NULL AND coverage_proof IS NOT NULL AND activated_at IS NOT NULL AND accepted_at IS NOT NULL AND closed_at IS NOT NULL AND closure_reason = 'service_purchased'::text OR (state = ANY (ARRAY['refunded'::text, 'expired'::text])) AND remaining_cash = 0 AND paid_cash = 0 AND refunded_cash = price_cash AND release_transaction IS NULL AND refund_transaction IS NOT NULL AND guard_payer_journal IS NULL AND guard_payee_journal IS NULL AND coverage_until IS NULL AND coverage_proof IS NULL AND activated_at IS NULL AND closed_at IS NOT NULL AND closure_reason IS NOT NULL)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check7",
+      "definition": "CHECK (state <> 'funded'::text OR accepted_at IS NULL AND closed_at IS NULL AND closure_reason IS NULL)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check8",
+      "definition": "CHECK (state <> 'accepted'::text OR accepted_at IS NOT NULL AND closed_at IS NULL AND closure_reason IS NULL)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_check9",
+      "definition": "CHECK (state <> 'blocked'::text OR closed_at IS NOT NULL AND closure_reason IS NOT NULL)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_closure_reason_check",
+      "definition": "CHECK (closure_reason IS NULL OR (closure_reason = ANY (ARRAY['payer_refund'::text, 'source_expiry'::text, 'guard_withdraw'::text, 'guard_death'::text, 'payer_estate'::text, 'stale_source'::text, 'service_purchased'::text])))"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_courier_id_fkey",
+      "definition": "FOREIGN KEY (courier_id) REFERENCES multi_hop_couriers(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_courier_source_hash_check",
+      "definition": "CHECK (char_length(courier_source_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_account_fkey",
+      "definition": "FOREIGN KEY (guard_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_character_fkey",
+      "definition": "FOREIGN KEY (guard_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_payee_journal_fkey",
+      "definition": "FOREIGN KEY (guard_payee_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_payee_journal_key",
+      "definition": "UNIQUE (guard_payee_journal)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_payer_journal_fkey",
+      "definition": "FOREIGN KEY (guard_payer_journal) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_guard_payer_journal_key",
+      "definition": "UNIQUE (guard_payer_journal)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_leg_check",
+      "definition": "CHECK (leg = ANY (ARRAY['first_leg'::text, 'second_leg'::text]))"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_paid_cash_check",
+      "definition": "CHECK (paid_cash >= 0)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_payer_account_fkey",
+      "definition": "FOREIGN KEY (payer_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_payer_character_fkey",
+      "definition": "FOREIGN KEY (payer_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_price_cash_check",
+      "definition": "CHECK (price_cash >= 10000 AND price_cash <= 100000)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_protected_account_fkey",
+      "definition": "FOREIGN KEY (protected_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_protected_character_fkey",
+      "definition": "FOREIGN KEY (protected_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_refund_transaction_fkey",
+      "definition": "FOREIGN KEY (refund_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_refund_transaction_key",
+      "definition": "UNIQUE (refund_transaction)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_refunded_cash_check",
+      "definition": "CHECK (refunded_cash >= 0)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_release_transaction_fkey",
+      "definition": "FOREIGN KEY (release_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_release_transaction_key",
+      "definition": "UNIQUE (release_transaction)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_remaining_cash_check",
+      "definition": "CHECK (remaining_cash >= 0)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_reserve_transaction_fkey",
+      "definition": "FOREIGN KEY (reserve_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_reserve_transaction_key",
+      "definition": "UNIQUE (reserve_transaction)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "protection_contracts",
+      "name": "protection_contracts_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['funded'::text, 'accepted'::text, 'blocked'::text, 'activated'::text, 'refunded'::text, 'expired'::text]))"
+    },
+    {
+      "table_name": "syndicated_loan_facilities",
+      "name": "syndicated_loan_facilities_borrower_account_fkey",
+      "definition": "FOREIGN KEY (borrower_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "syndicated_loan_facilities",
+      "name": "syndicated_loan_facilities_borrower_character_fkey",
+      "definition": "FOREIGN KEY (borrower_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "syndicated_loan_facilities",
+      "name": "syndicated_loan_facilities_check",
+      "definition": "CHECK (expires_at > created_at)"
+    },
+    {
+      "table_name": "syndicated_loan_facilities",
+      "name": "syndicated_loan_facilities_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "syndicated_loan_facilities",
+      "name": "syndicated_loan_facilities_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['funding'::text, 'funded'::text, 'active'::text, 'repaid'::text, 'cancelled'::text, 'retired'::text]))"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_facility_id_fkey",
+      "definition": "FOREIGN KEY (facility_id) REFERENCES syndicated_loan_facilities(id)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_fund_transaction_fkey",
+      "definition": "FOREIGN KEY (fund_transaction) REFERENCES transactions(id)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_fund_transaction_key",
+      "definition": "UNIQUE (fund_transaction)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_lender_account_fkey",
+      "definition": "FOREIGN KEY (lender_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_lender_character_fkey",
+      "definition": "FOREIGN KEY (lender_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_loan_id_key",
+      "definition": "UNIQUE (loan_id)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_pkey",
+      "definition": "PRIMARY KEY (facility_id, lender_account)"
+    },
+    {
+      "table_name": "syndicated_loan_legs",
+      "name": "syndicated_loan_legs_principal_check",
+      "definition": "CHECK (principal > 0)"
+    },
+    {
+      "table_name": "syndicated_loan_members",
+      "name": "syndicated_loan_members_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "syndicated_loan_members",
+      "name": "syndicated_loan_members_character_id_fkey",
+      "definition": "FOREIGN KEY (character_id) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "syndicated_loan_members",
+      "name": "syndicated_loan_members_facility_id_fkey",
+      "definition": "FOREIGN KEY (facility_id) REFERENCES syndicated_loan_facilities(id)"
+    },
+    {
+      "table_name": "syndicated_loan_members",
+      "name": "syndicated_loan_members_pkey",
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "table_name": "syndicated_loan_requests",
+      "name": "syndicated_loan_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "syndicated_loan_requests",
+      "name": "syndicated_loan_requests_action_check",
+      "definition": "CHECK (action = ANY (ARRAY['propose'::text, 'fund'::text, 'take'::text, 'repay'::text, 'cancel'::text]))"
+    },
+    {
+      "table_name": "syndicated_loan_requests",
+      "name": "syndicated_loan_requests_facility_id_fkey",
+      "definition": "FOREIGN KEY (facility_id) REFERENCES syndicated_loan_facilities(id)"
+    },
+    {
+      "table_name": "syndicated_loan_requests",
+      "name": "syndicated_loan_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "syndicated_loan_requests",
+      "name": "syndicated_loan_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
     }
   ],
   "removed": [
@@ -10720,6 +12380,341 @@
       "kind",
       "state",
       "proof_json"
+    ],
+    "performance_employment_contracts": [
+      "employment_id",
+      "depot_id",
+      "employer_account",
+      "employer_character",
+      "source_json",
+      "source_hash",
+      "minimum_units",
+      "bonus_cash",
+      "slots",
+      "total_cash",
+      "escrow_cash",
+      "paid_cash",
+      "refunded_cash",
+      "burned_cash",
+      "looted_cash",
+      "reserve_transaction",
+      "state",
+      "created_at"
+    ],
+    "performance_employment_assignments": [
+      "assignment_id",
+      "employment_id",
+      "commitment_id",
+      "worker_account",
+      "worker_character",
+      "source_json",
+      "source_hash",
+      "delivered_units",
+      "fills",
+      "state",
+      "bonus_cash"
+    ],
+    "performance_employment_requests": [
+      "account_id",
+      "request_key",
+      "original_character",
+      "terms",
+      "receipt",
+      "employment_id"
+    ],
+    "collateral_lending_pledges": [
+      "id",
+      "loan_id",
+      "item_id",
+      "borrower_account",
+      "borrower_character",
+      "original_lender_account",
+      "original_lender_character",
+      "principal",
+      "rate",
+      "hours",
+      "offered_at",
+      "due_at",
+      "birth_event",
+      "birth_mutation",
+      "initial_condition",
+      "initial_condition_revision",
+      "take_journal",
+      "escrow_event",
+      "source_hash",
+      "created_at",
+      "state"
+    ],
+    "collateral_lending_requests": [
+      "account_id",
+      "request_key",
+      "run_id",
+      "action",
+      "body_hash",
+      "request_json"
+    ],
+    "collateral_lending_terminals": [
+      "pledge_id",
+      "loan_id",
+      "borrower_character",
+      "holder_character",
+      "holder_account",
+      "kind",
+      "paid_cash",
+      "received_cash",
+      "vig_cash",
+      "receipt",
+      "mutation_key",
+      "source_hash",
+      "created_at"
+    ],
+    "collateral_auction_agreements": [
+      "id",
+      "loan_id",
+      "item_id",
+      "quote_hash",
+      "borrower_account",
+      "borrower_character",
+      "lender_account",
+      "lender_character",
+      "principal",
+      "owed",
+      "reserve_cash",
+      "auction_seconds",
+      "offered_at",
+      "prepared_at",
+      "source_hash",
+      "prepare_key"
+    ],
+    "collateral_auctions": [
+      "id",
+      "agreement_id",
+      "pledge_id",
+      "pledge_hash",
+      "opened_at",
+      "closes_at",
+      "settle_until",
+      "opened_by",
+      "open_key",
+      "state"
+    ],
+    "collateral_auction_bids": [
+      "id",
+      "auction_id",
+      "agreement_hash",
+      "bidder_account",
+      "bidder_character",
+      "amount",
+      "debit_journal",
+      "created_at",
+      "source_hash",
+      "mutation_key",
+      "state"
+    ],
+    "collateral_auction_requests": [
+      "account_id",
+      "request_key",
+      "action",
+      "body_hash",
+      "body_json",
+      "run_id",
+      "original_character"
+    ],
+    "syndicated_loan_facilities": [
+      "id",
+      "borrower_account",
+      "borrower_character",
+      "terms",
+      "terms_hash",
+      "state",
+      "created_at",
+      "expires_at"
+    ],
+    "syndicated_loan_legs": [
+      "facility_id",
+      "lender_account",
+      "lender_character",
+      "loan_id",
+      "principal",
+      "funded_at",
+      "source_hash",
+      "fund_transaction",
+      "canonical_receipt"
+    ],
+    "syndicated_loan_members": [
+      "account_id",
+      "character_id",
+      "facility_id"
+    ],
+    "syndicated_loan_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "receipt",
+      "original_character",
+      "facility_id",
+      "action",
+      "request_json"
+    ],
+    "production_booking_offers": [
+      "id",
+      "maker_account",
+      "maker_character",
+      "customer_account",
+      "customer_character",
+      "business_id",
+      "tool_item",
+      "source_json",
+      "source_hash",
+      "created_at",
+      "offer_expires_at",
+      "expires_at",
+      "fee_cash",
+      "bonus_cash",
+      "lifetime_seconds",
+      "state"
+    ],
+    "production_booking_runs": [
+      "id",
+      "business_id",
+      "maker_account",
+      "maker_character",
+      "customer_account",
+      "customer_character",
+      "tool_item",
+      "commission_id",
+      "commission_source_hash",
+      "reservation_id",
+      "reservation_source_hash",
+      "state",
+      "bonus_cash",
+      "remaining_cash",
+      "paid_cash",
+      "refunded_cash",
+      "reserve_transaction",
+      "accepted_at",
+      "deadline"
+    ],
+    "production_booking_positions": [
+      "booking_id",
+      "original_account",
+      "original_character",
+      "role",
+      "state"
+    ],
+    "production_booking_requests": [
+      "account_id",
+      "request_key",
+      "action",
+      "identity",
+      "request_hash",
+      "receipt"
+    ],
+    "coverage_mutual_pools": [
+      "id",
+      "creator_account",
+      "creator_character",
+      "partner_account",
+      "partner_character",
+      "contribution_cash",
+      "deductible_cash",
+      "creator_policy",
+      "partner_policy",
+      "policy_sources",
+      "source_hash",
+      "state",
+      "created_at",
+      "offer_expires_at",
+      "contributed_cash",
+      "reserve_cash",
+      "paid_cash",
+      "refunded_cash"
+    ],
+    "coverage_mutual_positions": [
+      "pool_id",
+      "original_account",
+      "original_character",
+      "contribution_cash",
+      "contribution_id",
+      "state",
+      "refunded_cash"
+    ],
+    "coverage_mutual_enrollments": [
+      "policy_id",
+      "pool_id",
+      "member_account",
+      "member_character",
+      "source",
+      "source_hash",
+      "enrolled_at"
+    ],
+    "coverage_mutual_claims": [
+      "policy_id",
+      "pool_id",
+      "repair_id",
+      "wear_event_id",
+      "canonical_payout_id",
+      "member_account",
+      "member_character",
+      "gross_payout_cash",
+      "premium_cash",
+      "deductible_cash",
+      "payout_cash",
+      "payout_id",
+      "source",
+      "source_hash",
+      "created_at"
+    ],
+    "coverage_mutual_requests": [
+      "account_id",
+      "request_key",
+      "action",
+      "identity",
+      "request_hash",
+      "receipt"
+    ],
+    "protection_contracts": [
+      "id",
+      "campaign_id",
+      "campaign_source_hash",
+      "courier_id",
+      "courier_source_hash",
+      "item_id",
+      "leg",
+      "payer_account",
+      "payer_character",
+      "protected_account",
+      "protected_character",
+      "guard_account",
+      "guard_character",
+      "source_hash",
+      "source_snapshot",
+      "state",
+      "price_cash",
+      "remaining_cash",
+      "paid_cash",
+      "refunded_cash",
+      "reserve_transaction",
+      "created_at",
+      "expires_at"
+    ],
+    "protection_contract_requests": [
+      "account_id",
+      "key_hash",
+      "action",
+      "body_hash",
+      "original_character",
+      "contract_id",
+      "receipt",
+      "acknowledged_at"
+    ],
+    "protection_contract_acceptances": [
+      "contract_id",
+      "guard_account",
+      "guard_character",
+      "request_key_hash",
+      "source_hash",
+      "consented_at"
     ]
   }
 }
