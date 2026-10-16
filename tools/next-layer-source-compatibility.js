@@ -1,7 +1,7 @@
 // Exact next-layer source transfer only. Historical native admission remains separate.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-export const NEXT_LAYER_SOURCE_REVISION="65f98410c4e784c09c0dfca6b037aa7eb4f2bb7e";
+export const NEXT_LAYER_SOURCE_REVISION="166b658a206c785f7121f168bb4c6d81ee66f705";
 export const NEXT_LAYER_SOURCE_PREDECESSOR="2a057d375cb8f8d94ec30c8e4559832b5be63011";
 export const NEXT_LAYER_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const NEXT_LAYER_SOURCE_DOMAINS={
