@@ -1,6 +1,6 @@
 # Generated repository inventory
 
-> Source: worktree at `6bda7ed6035f`. Rebuild with `npm run knowledge`. Do not edit by hand.
+> Source: worktree at `d1ee66c258a9`. Rebuild with `npm run knowledge`. Do not edit by hand.
 
 ## Census
 
@@ -13,10 +13,10 @@
 | HTTP route registrations / unique routes | 1,045 / 1,045 |
 | Database tables | 540 |
 | Solidity declarations | 134 |
-| Git commits | 4,187 |
+| Git commits | 4,189 |
 | GitHub pull requests in snapshot | 126 |
 | GitHub issues in snapshot | 0 |
-| Graph nodes / edges | 15,780 / 62,357 |
+| Graph nodes / edges | 15,782 / 62,366 |
 
 ## Artifact kinds
 
