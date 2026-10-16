@@ -10,6 +10,7 @@ import { DISTRICT_STORY_ARC_PACKAGES } from './district-story-arcs.js';
 import { STAGED_CREW_MISSIONS_PACKAGE } from './staged-crew-missions.js';
 import { CITY_WORLD_OPPORTUNITY_PACKAGES } from './city-world-opportunities.js';
 import { NEIGHBORHOOD_BROADCAST_PACKAGE } from './neighborhood-broadcast.js';
+import { PROPERTY_INVESTIGATION_PACKAGE } from './property-investigation.js';
 
 export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   CORE_MATERIALS_PACKAGE,
@@ -21,5 +22,6 @@ export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   STAGED_CREW_MISSIONS_PACKAGE,
   ...CITY_WORLD_OPPORTUNITY_PACKAGES,
   NEIGHBORHOOD_BROADCAST_PACKAGE,
+  PROPERTY_INVESTIGATION_PACKAGE,
   EQUIPMENT_RECOVERY_PACKAGE,
 ]);

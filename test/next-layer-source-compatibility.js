@@ -1,7 +1,9 @@
 import {marketOperationsSourceBaseline} from '../tools/market-operations-source-compatibility.js';
+import {deedOverMarketSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 // Only the exact market-source inverse precedes this unchanged historical source proof. Native admission stays raw.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';
 import {execFileSync} from 'node:child_process';
 import {NEXT_LAYER_SOURCE_REVISION,NEXT_LAYER_SOURCE_PREDECESSOR,NEXT_LAYER_SOURCE_PHASE,
   NEXT_LAYER_SOURCE_DOMAINS,assertNextLayerSourceTransfer,nextLayerSourceBaseline} from '../tools/next-layer-source-compatibility.js';
@@ -14,7 +16,7 @@ assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
   const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);
-  assert.equal(marketOperationsSourceBaseline(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
+  assert.equal(marketOperationsSourceBaseline(file,deedQuestSourceBaseline(file,deedOverMarketSourceBaseline(file,fs.readFileSync(file,'utf8')))).replaceAll('\r\n','\n'),current,'Complete actual source is independently pinned');
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_REVISION+':'+file).trim(),pin.currentBlob);
   assert.equal(git('rev-parse',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file).trim(),pin.baselineBlob);
   const actual=[];let chunk;

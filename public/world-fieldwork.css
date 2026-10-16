@@ -5,7 +5,7 @@
 .world-fieldwork button:focus-visible { outline: 3px solid #825c2e; outline-offset: 3px; }
 .world-fieldwork button:disabled { opacity: .55; cursor: default; }
 .fieldwork-mast { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 26px; min-height: 210px; background: linear-gradient(0deg, rgba(20, 28, 28, .93), rgba(20, 28, 28, .26)), url('/art/city-neighborhood-v2.png') center 46% / cover; color: #f5ecd7; }
-.fieldwork-mast span { color: #e8bc72; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 700; }
+.fieldwork-mast span { color: #e8bc72; text-transform: uppercase; letter-spacing: .16em; font-size: 12px; font-weight: 700; }
 .fieldwork-mast h1 { font: 36px/1.1 Georgia, serif; margin: 9px 0 8px; color: #fff2d8; }
 .fieldwork-mast p { margin: 0; max-width: 420px; color: #e3dac6; font-size: 13px; }
 .fieldwork-mast button { flex: 0 0 auto; background: #e9d8b9; }
@@ -18,22 +18,22 @@
 .fieldwork-intro { margin-bottom: 20px; }
 .fieldwork-intro p { margin: 0; max-width: 650px; color: #625745; font-size: 13px; }
 .fieldwork-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr)); gap: 13px; }
-.fieldwork-card, .fieldwork-item, .fieldwork-node { padding: 18px; border: 1px solid #c7b69a; border-radius: 6px; background: rgba(255, 248, 232, .75); box-shadow: 0 2px 0 rgba(71, 51, 25, .07); min-width: 0; }
+.fieldwork-card, .fieldwork-item, .fieldwork-node { overflow-wrap: anywhere; padding: 18px; border: 1px solid #c7b69a; border-radius: 6px; background: rgba(255, 248, 232, .75); box-shadow: 0 2px 0 rgba(71, 51, 25, .07); min-width: 0; }
 .fieldwork-card header, .fieldwork-node header, .fieldwork-case__heading { display: flex; gap: 10px; justify-content: space-between; align-items: flex-start; }
 .fieldwork-card h3, .fieldwork-item h3, .fieldwork-node h3 { margin: 0 0 8px; font: 20px/1.3 Georgia, serif; }
 .fieldwork-card p, .fieldwork-item p, .fieldwork-node p { margin: 8px 0; font-size: 13px; }
 .fieldwork-item { display: flex; gap: 13px; }
 .fieldwork-item > div { min-width: 0; flex: 1; }
 .fieldwork-item__mark { color: #856535; font-size: 31px; line-height: 1.2; }
-.fieldwork-stamp { flex: 0 0 auto; max-width: 45%; padding: 4px 7px; background: #e3d9bf; border: 1px solid #c3b38e; border-radius: 3px; color: #65563a; text-transform: uppercase; letter-spacing: .04em; font: 700 11px/1.35 system-ui, sans-serif; }
+.fieldwork-stamp { flex: 0 0 auto; max-width: 45%; padding: 4px 7px; background: #e3d9bf; border: 1px solid #c3b38e; border-radius: 3px; color: #65563a; text-transform: uppercase; letter-spacing: .04em; font: 700 12px/1.35 system-ui, sans-serif; }
 .fieldwork-action { margin-top: 12px; }
 .fieldwork-action button { width: 100%; background: #495744; color: #fff0d0; border-color: #3c4937; }
 .fieldwork-action button:hover { background: #59694f; }
-.fieldwork-materials { display: flex; flex-direction: column; gap: 3px; margin: 12px 0; font-size: 12px; }
-.fieldwork-materials span { text-transform: uppercase; font-size: 11px; letter-spacing: .08em; color: #65563a; }
+.fieldwork-materials { display: flex; flex-direction: column; gap: 3px; margin: 12px 0; font-size: 13px; }
+.fieldwork-materials span { text-transform: uppercase; font-size: 12px; letter-spacing: .08em; color: #65563a; }
 .fieldwork-materials b { font-weight: 500; }
 .fieldwork-cost { padding-top: 10px; border-top: 1px solid #d5c5a8; font-weight: 700; }
-.fieldwork-blockers { padding-left: 17px; color: #796048; margin: 10px 0 0; font-size: 12px; }
+.fieldwork-blockers { padding-left: 17px; color: #796048; margin: 10px 0 0; font-size: 13px; }
 .fieldwork-consequence { color: #625033; font-size: 13px !important; padding: 10px; border-left: 3px solid #a57536; background: #eee1c7; }
 .fieldwork-consequence b { display: block; margin-bottom: 4px; }
 .fieldwork-empty { padding: 24px; color: #796c57; border: 1px dashed #bbaa8b; border-radius: 5px; font-size: 13px; }
@@ -47,13 +47,13 @@
 .fieldwork-node { margin-top: 13px; }
 .fieldwork-node--complete { background: #e5e3cf; border-color: #b8bd9f; }
 .fieldwork-dialogue { margin: 13px 0; padding: 12px 16px; border-left: 3px solid #a07c43; background: #e9d9b8; }
-.fieldwork-dialogue cite { color: #775d35; font: 700 11px system-ui, sans-serif; font-style: normal; }
+.fieldwork-dialogue cite { color: #775d35; font: 700 12px system-ui, sans-serif; font-style: normal; }
 .fieldwork-prompt { font-weight: 600; }
 .fieldwork-clue { margin: 12px 0; padding: 13px; background: #e0e6d8; color: #42533e; border-left: 3px solid #6f835e; font-size: 13px; }
 .fieldwork-choices { display: grid; gap: 9px; margin: 12px 0; }
 .fieldwork-choices > div { border: 1px solid #d1bc96; padding: 11px; background: #f3e7cd; font-size: 13px; }
-.fieldwork-choices small { color: #7f6949; }
-.fieldwork-progress { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; font-size: 12px; color: #5c6c47; }
+.fieldwork-choices small { color: #7f6949; font-size: 13px; }
+.fieldwork-progress { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 16px 0; font-size: 13px; color: #5c6c47; }
 .fieldwork-progress progress { width: 180px; max-width: 100%; height: 8px; accent-color: #6d7b55; }
 .fieldwork-role { margin-top: 24px; }
 .fieldwork-section-title { margin-top: 24px; }
@@ -68,4 +68,4 @@
 .fieldwork-next-lead--complete { background: #dfe7d3; border-color: #879772; }
 .fieldwork-next-lead--complete > span { font-size: 28px; color: #425b33; }
 .fieldwork-node:focus { outline: 3px solid #825c2e; outline-offset: 3px; }
-@media (max-width: 640px) { .fieldwork-mast { min-height: 210px; padding: 20px; display: block; } .fieldwork-mast h1 { font-size: 31px; } .fieldwork-mast button { margin-top: 16px; } .fieldwork-toolbar { padding: 12px; } .fieldwork-toolbar nav { width: 100%; display: grid; grid-template-columns: 1fr 1fr; } .fieldwork-toolbar nav button { padding: 10px 8px; } .fieldwork-body { padding: 15px; } .fieldwork-card, .fieldwork-item, .fieldwork-node { padding: 15px; } }
+@media (max-width: 640px) { .fieldwork-mast { min-height: 210px; padding: 20px; display: block; } .fieldwork-mast h1 { font-size: 31px; } .fieldwork-mast button { margin-top: 16px; } .fieldwork-toolbar { padding: 12px; } .fieldwork-toolbar nav { width: 100%; display: grid; grid-template-columns: 1fr 1fr; } .fieldwork-toolbar nav button { padding: 10px 8px; } .fieldwork-body { padding: 15px; } .fieldwork-card, .fieldwork-item, .fieldwork-node { overflow-wrap: anywhere; padding: 15px; } }

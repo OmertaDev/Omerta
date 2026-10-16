@@ -13,9 +13,11 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { buildServer } from './server-fixture.js';
 import { recordMeeting } from '../src/contacts.js';
 import { MAX_DEED_IDENTITIES } from '../src/deeds.js';
+import { DEED_BUILDINGS } from '../src/deedbuildings.js';
+import { DEED_DISCOVERY, deedInvestigationRoute } from '../src/deeddiscovery.js';
 import { DEEDS, deedRankOf, deedRenown, deedNeighborhoodsOpen,
          GOODS, goodPriceOf, CONSUMABLES, cityEventOf, dayOf, seasonModOf,
-         OPERATIONS, opSlotsOf, RACKETS, ASSETS } from '../src/rules.js';
+         OPERATIONS, opSlotsOf, RACKETS, ASSETS, PACING } from '../src/rules.js';
 import { deedChainConfig, DEED_VOUCHER_TYPES, deedTokenId, markDeedExtracted, reimportDeed,
          sweepDeedReimports } from '../src/chain.js';
 
@@ -35,7 +37,36 @@ const mk = async (name) => {
   const ch = await meOf(token);
   return { token, id: ch.id, acct: (await pool.query('SELECT account_id a FROM characters WHERE id=$1', [ch.id])).rows[0].a };
 };
-const txCount = async () => Number((await pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
+// Earn the discovery through ordinary authenticated objective and travel routes. Only starting
+// level/resources are test fixtures; no qualified flag, counter or evidence is seeded.
+async function discoveryFixture(player, district) {
+  const before = (await pool.query('SELECT loc,respect,cash,energy FROM characters WHERE id=$1', [player.id])).rows[0];
+  const used = new Set((await pool.query('SELECT building_id FROM street_deed_building_assignments')).rows.map(row => row.building_id));
+  const building = DEED_BUILDINGS.find(lot => lot.district === district && !used.has(lot.id));
+  await pool.query('UPDATE characters SET respect=$2,cash=1000000,energy=100 WHERE id=$1',
+    [player.id, Math.max(Number(before.respect), (DEED_DISCOVERY.minimumLevel - 1) ** 2 * PACING.LEVEL_DIVISOR)]);
+  let location = before.loc;
+  for (const objective of deedInvestigationRoute(building)) {
+    if (location !== objective.requiredDistrict) {
+      const travel = await call('POST', `/v1/travel/${objective.requiredDistrict}`, { token: player.token });
+      assert.equal(travel.code, 200, JSON.stringify(travel.body));
+      location = objective.requiredDistrict;
+    }
+    const result = await call('POST', '/v1/deeds/investigate', { token: player.token,
+      body: { buildingId: building.id, actionId: objective.actionId } });
+    assert.equal(result.code, 200, JSON.stringify(result.body));
+  }
+  return { buildingId: building.id, restore: () => pool.query(
+    'UPDATE characters SET loc=$2,respect=$3,cash=$4,energy=$5 WHERE id=$1',
+    [player.id, before.loc, before.respect, before.cash, before.energy]) };
+}
+async function claimFixture(player, body) {
+  const fixture = await discoveryFixture(player, body.district);
+  try { return await call('POST', '/v1/deeds/claim', { token: player.token, body: { ...body, buildingId: fixture.buildingId } }); }
+  finally { await fixture.restore(); }
+}
+// Travel has its established ledgered fare. These assertions isolate the deed lifecycle itself.
+const txCount = async () => Number((await pool.query("SELECT COUNT(*) n FROM transactions WHERE reason <> 'travel'")).rows[0].n);
 const notesFor = async (id, type) => (await pool.query(
   'SELECT payload FROM notifications WHERE character_id=$1 AND type=$2', [id, type]))
   .rows.map((r) => (typeof r.payload === 'string' ? JSON.parse(r.payload) : r.payload));
@@ -55,7 +86,7 @@ assert.equal(deedRenown([{ kind: 'claim' }, { kind: 'fell' }]), 6, 'renown sums 
 // ════════════ THE BOARD before a claim ════════════
 const b0 = (await call('GET', '/v1/deeds', { token: a.token })).body;
 assert.equal(b0.deed, null, 'no deed yet');
-assert.equal(b0.canClaim, true, 'a deedless account can claim');
+assert.equal(b0.canClaim, false, 'a fresh account must investigate a property before claiming');
 assert.deepEqual(b0.supply, { maximum: 2500, issued: 0, remaining: 2500 }, 'new city advertises the fixed lifetime supply');
 assert.equal(b0.districts.length, 6, 'all six core districts are shown to claim in');
 assert(b0.ranks.length >= 3, 'the renown-rank ladder is published');
@@ -69,7 +100,7 @@ assert.equal((await call('POST', '/v1/deeds/claim', { token: a.token, body: { na
   'name', `a name must be at least ${DEEDS.NAME_MIN} characters`);
 
 // ════════════ CLAIM ════════════
-const claim = await call('POST', '/v1/deeds/claim', { token: a.token, body: { name: '  Corvino   Way  ', district: 'neon' } });
+const claim = await claimFixture(a, { name: '  Corvino   Way  ', district: 'neon' });
 assert.equal(claim.code, 200, 'the claim lands');
 assert.equal(claim.body.name, 'Corvino Way', 'the name is whitespace-collapsed');
 assert.equal(claim.body.district, 'neon', 'mapped to the chosen district');
@@ -106,7 +137,7 @@ for (const [label, bad] of [['zero-width', 'Corvino​Way'], ['bidi', 'Corvino �
 assert.equal((await call('POST', '/v1/deeds/claim', { token: b.token, body: { name: 'Nine <b>Fingers</b> Row', district: 'brick' } })).body.error,
   'name', 'markup is refused rather than stripped into a mangled name');
 // …and an ordinary street name with real punctuation still claims fine
-const cx = await call('POST', '/v1/deeds/claim', { token: b.token, body: { name: "St. Mark's Row & Vine", district: 'brick' } });
+const cx = await claimFixture(b, { name: "St. Mark's Row & Vine", district: 'brick' });
 assert.equal(cx.code, 200, 'the second player claims their own street (punctuation is legitimate)');
 assert(!/[<>]/.test(cx.body.name), 'no markup can reach the stored name');
 
@@ -283,16 +314,18 @@ delete process.env.DEEDS_SHAKE_P;
   await pool.query("UPDATE districts SET holder_gang=NULL WHERE id='neon'");
   await pool.query("DELETE FROM gang_members WHERE gang_id='g2c'");
   await pool.query("DELETE FROM gangs WHERE id='g2c'");
-  // (3) THE FOUNDRY BILL — repoint b's OWN deed to foundry: their workshop bill drops to 0.75×.
+  // (3) THE FOUNDRY BILL — a separate discovered foundry property gets its district discount.
   await pool.query('UPDATE characters SET cash=10000000, cb=20 WHERE id=$1', [b.id]);
   const c0 = CONSUMABLES[0];
   const cashPre = await cashOf(b.id);
   await call('POST', `/v1/workshop/craft/${c0.id}`, { token: b.token });
   assert.equal(await cashOf(b.id), cashPre - c0.cost, "a brick corner buys no foundry discount — the bill is full");
-  await pool.query("UPDATE street_deeds SET district='foundry' WHERE account_id=$1", [b.acct]);
-  const cashPre2 = await cashOf(b.id);
-  await call('POST', `/v1/workshop/craft/${c0.id}`, { token: b.token });
-  assert.equal(await cashOf(b.id), cashPre2 - Math.floor(c0.cost * 0.75),
+  const smith = await mk('Foundry Smith');
+  assert.equal((await claimFixture(smith, { name: 'Smith Workshop', district: 'foundry' })).code, 200);
+  await pool.query('UPDATE characters SET cash=10000000, cb=20 WHERE id=$1', [smith.id]);
+  const cashPre2 = await cashOf(smith.id);
+  await call('POST', `/v1/workshop/craft/${c0.id}`, { token: smith.token });
+  assert.equal(await cashOf(smith.id), cashPre2 - Math.floor(c0.cost * 0.75),
     'a foundry corner controller crafts at the signed 0.75 — the workshop till reads the corner');
   // (4) THE OP SEAT — the board AND the till: level 11 seats opSlotsOf(11); the corner seats one more.
   const lvlA = 11; // respect 1000
@@ -446,7 +479,7 @@ const e = await mk('Enzo');
 const eAgentKey = await call('POST', '/v1/auth/agent-key', { token: e.token });
 assert.equal(eAgentKey.code, 200, 'the on-chain deed lifecycle starts from a real agent token');
 e.token = eAgentKey.body.token;
-assert.equal((await call('POST', '/v1/deeds/claim', { token: e.token, body: { name: 'Enzo Alley', district: 'docks' } })).code, 200,
+assert.equal((await claimFixture(e, { name: 'Enzo Alley', district: 'docks' })).code, 200,
   'an agent claims a street through the ordinary authenticated route');
 
 // GATE: not minted → can't extract (the Sybil bound — `minted` never travels with the token)
@@ -526,8 +559,8 @@ assert.equal((await call('POST', '/v1/deeds/corner', { token: e.token })).body.e
 // CONFIRM ON-CHAIN (the Extracted watcher): state 2→3 — re-key to onchain:<token>, freeing the extractor
 await markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId });
 const eFreed = (await call('GET', '/v1/deeds', { token: e.token })).body;
-assert.equal(eFreed.deed, null, 'once on-chain, the extractor is deedless — free to claim again');
-assert.equal(eFreed.canClaim, true, 'and canClaim is back');
+assert.equal(eFreed.deed, null, 'once on-chain, the extractor no longer holds an off-chain deed');
+assert.equal(eFreed.canClaim, false, 'extraction cannot refresh the lifetime discovery reward');
 await markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId }); // idempotent — a re-delivered event is a no-op
 
 // RE-IMPORT (the Redeemed watcher): a DEEDLESS burner with a linked wallet takes the on-chain deed back
@@ -698,7 +731,7 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
 {
   const sellerD = await mk('Rocco Doublecross'), buyerD = await mk('Marco Mark');
   await recordMeeting(pool, buyerD.acct, sellerD.acct);
-  await call('POST', '/v1/deeds/claim', { token: sellerD.token, body: { district: 'canal', name: 'Doublecross Row' } });
+  await claimFixture(sellerD, { district: 'canal', name: 'Doublecross Row' });
   await call('POST', '/v1/deeds/list', { token: sellerD.token, body: { price: 500000 } });
   await pool.query('UPDATE characters SET cash=9000000 WHERE id=$1', [buyerD.id]);
   // the exact state the race produced — listed AND extraction-pending
@@ -729,7 +762,7 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
 // legend, and the take keeps accruing so nothing is destroyed by waiting.
 {
   const rookie = await mk('Rookie Ricci');
-  await call('POST', '/v1/deeds/claim', { token: rookie.token, body: { district: 'brick', name: 'Rookie Lane' } });
+  await claimFixture(rookie, { district: 'brick', name: 'Rookie Lane' });
   await pool.query("UPDATE street_deeds SET corner_at = now() - interval '24 hours' WHERE account_id=$1", [rookie.acct]);
   const cash0 = Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [rookie.id])).rows[0].cash);
   const bd = (await call('GET', '/v1/deeds', { token: rookie.token })).body;
@@ -762,7 +795,7 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
     `a refusal must not tell a deedless player they own a street: ${JSON.stringify(r.body.message)}`);
   // the level message still reaches the player it was WRITTEN for — the fix must not hide the rule
   // from a deed-holding rookie, which is the withheld-terms class this project keeps closing.
-  await call('POST', '/v1/deeds/claim', { token: nobody.token, body: { district: 'canal', name: 'Delvecchio Alley' } });
+  await claimFixture(nobody, { district: 'canal', name: 'Delvecchio Alley' });
   const held = await call('POST', '/v1/deeds/corner', { token: nobody.token });
   assert.equal(held.body.error, 'rookie', 'a rookie who DOES hold a street still gets the level rule');
   assert.ok(/street is yours/i.test(String(held.body.message)), 'stated in the words it was written in');
@@ -774,23 +807,25 @@ assert.equal(await txCount(), chainTx0, 'the on-chain deed lifecycle moves NO §
   assert.equal(MAX_DEED_IDENTITIES, 2500);
   const last = await mk('Last Street Holder');
   const excess = await mk('Late Street Seeker');
+  const lastDiscovery = await discoveryFixture(last, 'neon');
   await pool.query('UPDATE street_deed_supply SET issued=$1 WHERE id=1', [MAX_DEED_IDENTITIES - 1]);
   const open = (await call('GET', '/v1/deeds', { token: last.token })).body;
   assert.equal(open.canClaim, true);
   assert.equal(open.supply.remaining, 1);
   assert.equal((await call('POST', '/v1/deeds/claim', { token: last.token,
-    body: { name: 'Final Street', district: 'neon' } })).code, 200, 'last permanent slot can be claimed');
+    body: { name: 'Final Street', district: 'neon', buildingId: lastDiscovery.buildingId } })).code, 200, 'last permanent slot can be claimed');
+  const excessDiscovery = await discoveryFixture(excess, 'neon');
   assert.equal(Number((await pool.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0].issued), 2500);
   const closed = (await call('GET', '/v1/deeds', { token: excess.token })).body;
   assert.equal(closed.canClaim, false, 'exhausted collection hides new issuance');
   assert.deepEqual(closed.supply, { maximum: 2500, issued: 2500, remaining: 0 });
   const no = await call('POST', '/v1/deeds/claim', { token: excess.token,
-    body: { name: 'Excess Street', district: 'neon' } });
+    body: { name: 'Excess Street', district: 'neon', buildingId: excessDiscovery.buildingId } });
   assert.equal(no.body.error, 'deed_supply_exhausted', 'API refuses the 2,501st identity');
   assert.equal((await pool.query("SELECT 1 FROM street_deeds WHERE name='Excess Street'")).rowCount, 0);
   await pool.query('DELETE FROM street_deeds WHERE account_id=$1', [last.acct]);
   assert.equal((await call('POST', '/v1/deeds/claim', { token: excess.token,
-    body: { name: 'Replacement Street', district: 'neon' } })).body.error, 'deed_supply_exhausted',
+    body: { name: 'Replacement Street', district: 'neon', buildingId: excessDiscovery.buildingId } })).body.error, 'deed_supply_exhausted',
   'even losing a database row cannot refill lifetime issuance');
 }
 

@@ -131,6 +131,8 @@
     let worldUI = null, worldOpening = false, look = 'classic';
     let trackedObjectiveId = null, trackedVenueId = null, venueStateSignature = '';
     let routePreview = [], routePreviewVenue = null;
+    let zoomPreference = 1, resourceReceipt = null;
+    const seenResourceReceipts = new Set();
     const lookTints = { classic: 0xffffff, moss: 0x9aad80, wine: 0xba8790, ink: 0x8795ae };
     let player = null, selected = null, pendingVenue = null, pendingHome = null, pendingExit = null, queuedHome = null, queuedVenue = null, path = [];
     let gameKind = '', gameOpening = 0, gameReturn = null, venueOpening = 0;
@@ -182,14 +184,24 @@
     worldHud.setAttribute('aria-label', 'Walking resources and readiness');
     const worldResources = element('dl', 'omerta-city__resources omerta-city__resources--walking');
     const worldHead = element('div', 'omerta-city__world-head');
-    const worldMapButton = element('button', 'omerta-city__world-map', 'World map');
+    const worldMapButton = element('button', 'omerta-city__world-map', 'Travel');
     worldMapButton.type = 'button'; worldMapButton.setAttribute('data-city-world-map', '');
-    worldMapButton.setAttribute('aria-label', 'Open the connected world map, district routes and street homes');
+    worldMapButton.setAttribute('aria-label', 'Travel: district routes and street homes');
     listen(worldMapButton, 'click', openWorldMap);
     const recenter = element('button', 'omerta-city__recenter', 'Find me');
     recenter.type = 'button'; recenter.setAttribute('data-city-recenter', '');
     recenter.setAttribute('aria-label', 'Center the map on your character');
     listen(recenter, 'click', centerPlayer);
+    const zoomOut = element('button', 'omerta-city__zoom', '−');
+    const zoomIn = element('button', 'omerta-city__zoom', '+');
+    for (const [button, direction, label] of [[zoomOut, -1, 'Zoom out'], [zoomIn, 1, 'Zoom in']]) {
+      button.type = 'button'; button.dataset.cityZoom = String(direction);
+      button.setAttribute('aria-label', label);
+      listen(button, 'click', () => {
+        zoomPreference = Math.max(.65, Math.min(1.6, Math.round((zoomPreference + direction * .15) * 100) / 100));
+        fitCamera();
+      });
+    }
     const resourceHelp = element('div', 'omerta-city__resource-help');
     resourceHelp.hidden = true; resourceHelp.setAttribute('role', 'region');
     resourceHelp.id = 'city-resource-help-' + (++instanceSequence);
@@ -197,7 +209,7 @@
     const helpCopy = element('p');
     const helpAction = element('button'); helpAction.type = 'button';
     const helpClose = element('button', '', 'Close'); helpClose.type = 'button';
-    let helpVenue = null, helpTrigger = null;
+    let helpVenue = null, helpTrigger = null, helpKey = null;
     listen(helpAction, 'click', () => { closeResourceHelp(false); if (helpVenue) showVenue(helpVenue); });
     listen(helpClose, 'click', () => closeResourceHelp(true));
     listen(resourceHelp, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); closeResourceHelp(true); } });
@@ -218,9 +230,11 @@
       listen(explain, 'click', () => showResourceHelp(key, explain));
       term.append(explain);
       const bonus = element('span', 'omerta-city__resource-bonus'); bonus.hidden = true;
-      group.append(term, value, bonus, meter);
+      const delta = element('span', 'omerta-city__resource-delta'); delta.hidden = true;
+      delta.setAttribute('data-city-resource-delta', '');
+      group.append(term, value, bonus, delta, meter);
       (['cash', 'health', 'energy', 'nerve'].includes(key) ? worldResources : resourceGrid).append(group);
-      resourceNodes.set(key, { group, value, meter, bonus });
+      resourceNodes.set(key, { group, value, meter, bonus, delta });
     }
     const progressRow = element('div', 'omerta-city__progress');
     const progressCopy = element('span');
@@ -240,9 +254,9 @@
     journal.setAttribute('data-city-journal', '');
     hud.append(resourceGrid, progressRow);
     const mapTools = element('div', 'omerta-city__map-tools');
-    mapTools.append(recenter, worldMapButton);
-    worldHead.append(worldResources, mapTools);
-    worldHud.append(worldHead, readiness, resourceHelp);
+    mapTools.append(recenter, worldMapButton, zoomOut, zoomIn);
+    worldHead.append(worldResources);
+    worldHud.append(worldHead, readiness, mapTools, resourceHelp);
     const presenceCaption = element('p', 'omerta-city__presence-caption', 'District presence · marker positions are approximate');
     presenceCaption.hidden = true;
     worldHud.append(presenceCaption);
@@ -419,6 +433,7 @@
     });
     renderPresence();
     host.replaceChildren(root);
+    acceptResourceReceipt(options.resourceReceipt);
     if (typeof window.OmertaCityWorldUI?.mount === 'function') {
       try {
         worldUI = window.OmertaCityWorldUI.mount(root, { ...worldOptions(), viewport, mapLayer,
@@ -459,7 +474,7 @@
       return { character, district, rules: options.rules, actors: options.actors || [], objectives: options.objectives || [],
         trackedObjectiveId,
         intel: options.intel || [], npcQuests: options.npcQuests || {}, progress: options.progress, reducedMotion,
-        scopeKey: options.worldScopeKey, receipt: options.worldReceipt, recovery: options.worldRecovery === true,
+        scopeKey: options.worldScopeKey, receipt: options.worldReceipt, resourceReceipt, recovery: options.worldRecovery === true,
         social: options.worldSocial, chat: options.worldChat, atlas: options.worldAtlas,
         collection: options.worldCollection, homes: options.worldHomes, onTravel: options.onWorldTravel, trackerVisible: tracked };
     }
@@ -764,6 +779,39 @@
         marker.ring.setPosition(position.x, position.y).setDepth(position.y - 1);
       }
     }
+    function intelLead(entry) {
+      const venue = VENUES.find(venue => venue.id === entry.lead?.venueId);
+      const districtId = entry.lead?.districtId || entry.source?.district;
+      if (!venue || typeof districtId !== 'string' || !Object.hasOwn(REGIONS, districtId)) return null;
+      const districts = [...(options.worldAtlas?.districts || []), ...(options.rules?.districts || [])];
+      const name = districtId === district.id ? district.name : districts.find(place => place.id === districtId)?.name;
+      return { venue, districtId, districtName: name || districtId.charAt(0).toUpperCase() + districtId.slice(1) };
+    }
+    function intelCard(entry, confirmed = false) {
+      const item = element('article', 'omerta-city__intel');
+      if (confirmed) { item.dataset.cityEncounterIntel = String(entry.id || ''); item.tabIndex = -1; }
+      else item.dataset.cityIntel = String(entry.id || '');
+      if (entry.category === 'rumor') item.append(element('small', 'omerta-city__rumor-label', 'Street rumor · unverified'));
+      item.append(element('strong', '', String(entry.title || 'Neighborhood lead')), element('p', '', String(entry.description || '')));
+      if (entry.sourceContext) item.append(element('p', 'omerta-city__intel-context', String(entry.sourceContext)));
+      if (entry.source) {
+        const attribution = entry.attribution === 'resident' && entry.source.kind === 'npc' ? 'Heard from ' : 'Recorded after meeting ';
+        item.append(element('small', '', attribution + actorName(entry.source) + ' · ' + String(entry.source.district || district.id)));
+      }
+      const collectedAt = new Date(entry.collectedAt || '').getTime();
+      if (Number.isFinite(collectedAt)) {
+        const time = element('time', '', 'Recorded ' + new Date(collectedAt).toLocaleString());
+        time.dateTime = new Date(collectedAt).toISOString(); item.append(time);
+      }
+      const destination = intelLead(entry);
+      if (destination && typeof entry.id === 'string') {
+        const lead = element('button', '', destination.districtId === district.id
+          ? String(entry.lead.label || 'Follow this lead at ' + destination.venue.name) : 'Travel to ' + destination.districtName + ' to follow up');
+        lead.type = 'button'; lead.dataset.cityIntelLead = entry.id; item.append(lead);
+        item.append(element('small', '', 'Visit ' + destination.venue.name + ' in ' + destination.districtName + ' to follow up.'));
+      }
+      return item;
+    }
     function renderActorDock() {
       if (actorDock.hidden) return;
       const actor = findActor(selectedActor);
@@ -773,7 +821,8 @@
       const signature = JSON.stringify([actorView, actor, home, exit, journalEntries, objectives, options.encounterReceipt, options.encounterRecovery, actorNotice, encounterPending]);
       if (signature === actorRenderSignature) return;
       actorRenderSignature = signature;
-      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || '' : null;
+      const oldFocus = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounter || document.activeElement.dataset.cityIntelAction || document.activeElement.dataset.cityHomeAction || document.activeElement.dataset.cityIntelLead || '' : null;
+      const focusedIntel = actorBody.contains(document.activeElement) ? document.activeElement.dataset.cityEncounterIntel : null;
       const scroll = actorDock.scrollTop;
       actorBody.replaceChildren();
       if (actorView === 'person') {
@@ -789,11 +838,12 @@
               + (Number.isFinite(observation) ? ' · observed ' + new Date(observation).toLocaleString() : '')
               + '. These are recorded facts, not live tracking.' : 'Meet this person or hear about them to learn their name and other facts.'));
           }
-          actorBody.append(element('p', '', 'Collect a neighborhood clue and advance your intel objectives.'));
           for (const action of actorActions(actor)) {
-            const button = element('button', '', String(action.label || 'Collect intel'));
+            if (action.topic?.teaser) actorBody.append(element('p', 'omerta-city__intel-teaser', String(action.topic.teaser)));
+            const button = element('button', '', String(action.label || 'Review a neighborhood lead'));
             button.type = 'button'; button.dataset.cityEncounter = action.id;
             button.disabled = action.available !== true || encounterPending || options.encounterRecovery === true || typeof options.onEncounter !== 'function';
+            appendActionPreview(button, action);
             actorBody.append(button);
           }
           const nextObjective = objectives.find(objective => objective?.status === 'available');
@@ -812,7 +862,7 @@
           actorBody.append(element('p', 'omerta-city__actor-facts', home.owner ? home.owner.name + ' · ' + home.owner.kind.toUpperCase() + ' steward'
             : home.ownership === 'external' ? 'External deed · no in-city steward published' : home.ownership === 'estate' ? 'Estate street · no living steward published' : 'Steward not published'));
           actorBody.append(element('p', '', 'This is an illustrative home plot for a confirmed street deed. It does not show where the steward is standing.'));
-          if (!ready) actorBody.append(element('p', '', 'Walking is unavailable. You can inspect the street or use World map and the deed board.'));
+          if (!ready) actorBody.append(element('p', '', 'Walking is unavailable. You can inspect the street or use Travel and the deed board.'));
           if (home.mine) {
             actorBody.append(element('p', '', 'This is your street. Your account keeps the deed across character generations.'));
             for (const [kind, label] of [['hideout', 'Your hideout'], ['deeds', 'Your deed board']]) {
@@ -820,17 +870,17 @@
               if (kind === 'hideout' && !worldUI) button.disabled = true;
             }
           }
-        } else actorBody.append(element('p', '', 'This street is outside the current directory window. Open World map to inspect more homes.'));
-        const map = element('button', '', 'World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
+        } else actorBody.append(element('p', '', 'This street is outside the current directory window. Open Travel to inspect more homes.'));
+        const map = element('button', '', 'Travel'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else if (actorView === 'exit') {
         actorBody.append(element('h4', '', exit ? 'Route to ' + exit.name : 'District routes'));
         const fare = Number(options.rules?.travelCost);
-        actorBody.append(element('p', '', 'Choose your destination on World map. District travel is an explicit choice'
+        actorBody.append(element('p', '', 'Choose your destination in Travel. District travel is an explicit choice'
           + (Number.isFinite(fare) ? ' with a $' + fare.toLocaleString('en-US') + ' ride fare.' : '; check its current fare before confirming.')));
-        const map = element('button', '', 'Choose a district on World map'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
+        const map = element('button', '', 'Travel: choose a district'); map.type = 'button'; map.dataset.cityHomeAction = 'map'; actorBody.append(map);
       } else {
         actorBody.append(element('h4', '', 'Street intel & objectives'));
-        actorBody.append(element('p', '', 'Public world tips collected through confirmed encounters. Objectives advance through later encounters, not by reading this journal.'));
+        actorBody.append(element('p', '', 'Rumors and leads recorded around the neighborhood. Compare sources, then visit the people and places named in your notes.'));
         for (const objective of objectives.filter(Boolean)) {
           const item = element('article', 'omerta-city__objective'); item.dataset.cityObjective = String(objective.id || '');
           item.append(element('strong', '', String(objective.title || 'Objective')), element('span', '', String(objective.status || '')),
@@ -838,17 +888,14 @@
           for (const action of Array.isArray(objective.actions) ? objective.actions : []) if (action && typeof action.id === 'string' && action.method === 'POST') {
             const button = element('button', '', String(action.label || 'Continue'));
             button.type = 'button'; button.dataset.cityIntelAction = action.id;
-            button.disabled = action.available !== true || typeof options.onIntelAction !== 'function'; item.append(button);
+            button.disabled = action.available !== true || typeof options.onIntelAction !== 'function';
+            appendActionPreview(button, action); item.append(button);
           }
           actorBody.append(item);
         }
-        if (!journalEntries.length) actorBody.append(element('p', '', 'No intel collected yet. Inspect a reported person, then explicitly record the encounter.'));
+        if (!journalEntries.length) actorBody.append(element('p', '', 'Your notebook is empty. Inspect someone in the neighborhood and choose a topic to hear about.'));
         for (const entry of Array.isArray(journalEntries) ? journalEntries.filter(Boolean) : []) {
-          const item = element('article', 'omerta-city__intel'); item.dataset.cityIntel = String(entry.id || '');
-          item.append(element('strong', '', String(entry.title || 'World tip')), element('p', '', String(entry.description || '')));
-          if (Number.isInteger(entry.sequence)) item.append(element('small', '', 'Intel #' + entry.sequence));
-          if (entry.source) item.append(element('small', '', 'Source: ' + String(entry.source.name || 'Unnamed person') + ' · ' + String(entry.source.kind || '') + ' · ' + String(entry.source.district || '')));
-          actorBody.append(item);
+          actorBody.append(intelCard(entry));
         }
       }
       const receipt = ['person', 'journal'].includes(actorView) ? options.encounterReceipt : null;
@@ -856,6 +903,7 @@
         const region = element('section', 'omerta-city__encounter-receipt');
         region.setAttribute('data-city-encounter-receipt', ''); region.setAttribute('aria-label', 'Encounter receipt');
         region.append(element('strong', '', String(receipt.label || 'Encounter result')), element('p', '', String(receipt.summary || '')));
+        if (receipt.state === 'success' && receipt.intel && typeof receipt.intel === 'object') region.append(intelCard(receipt.intel, true));
         if (typeof receipt.delta === 'string' && receipt.delta) region.append(element('p', '', receipt.delta));
         else if (Array.isArray(receipt.delta) && receipt.delta.length) region.append(element('p', '', receipt.delta.map(String).join(' · ')));
         if (receipt.recoveryText) region.append(element('p', '', String(receipt.recoveryText)));
@@ -867,7 +915,8 @@
       }
       if (actorNotice) { const notice = element('p', 'omerta-city__actor-notice', actorNotice); notice.setAttribute('role', 'status'); actorBody.append(notice); }
       actorDock.scrollTop = scroll;
-      if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus)) || actorBody).focus({ preventScroll: true });
+      if (focusedIntel) (Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === focusedIntel) || actorBody).focus({ preventScroll: true });
+      else if (oldFocus !== null) (Array.from(actorBody.querySelectorAll('button')).find(button => !button.disabled && (button.dataset.cityEncounter === oldFocus || button.dataset.cityIntelAction === oldFocus || button.dataset.cityHomeAction === oldFocus || button.dataset.cityIntelLead === oldFocus)) || actorBody).focus({ preventScroll: true });
     }
     function showActor(id, trigger) {
       if (destroyed || !findActor(id)) return;
@@ -904,6 +953,17 @@
     listen(intelOpen, 'click', showIntel);
     listen(actorDock, 'keydown', event => { if (event.key === 'Escape') { event.preventDefault(); hideActor(true); } });
     listen(actorBody, 'click', event => {
+      const button = event.target.closest('[data-city-intel-lead]'); if (!button || !actorBody.contains(button)) return;
+      const entries = Array.isArray(options.intel) ? options.intel : options.intel?.journal || [];
+      const confirmed = options.encounterReceipt?.state === 'success' ? options.encounterReceipt.intel : null;
+      const entry = [confirmed, ...entries].find(entry => entry && entry.id === button.dataset.cityIntelLead);
+      const destination = entry && intelLead(entry);
+      if (destination) {
+        if (destination.districtId === district.id) walkToVenue(destination.venue.id);
+        else openWorldMap(destination.districtId);
+      }
+    });
+    listen(actorBody, 'click', event => {
       const button = event.target.closest('[data-city-home-action]'); if (!button || !actorBody.contains(button)) return;
       if (button.dataset.cityHomeAction === 'map') openWorldMap(selectedExit || district.id);
       else if (homes.some(home => home.key === selectedHome && home.mine)) {
@@ -930,18 +990,23 @@
       if (button.dataset.cityIntelAction && typeof options.onIntelAction !== 'function') return;
       const retrying = button.hasAttribute('data-city-encounter-retry');
       if (retrying && (options.encounterRecovery !== true || typeof options.onEncounterRetry !== 'function')) return;
-      const identity = sceneIdentity(), opening = actorOpening; encounterPending = true;
+      const identity = sceneIdentity(), opening = actorOpening; let confirmedIntelId = ''; encounterPending = true;
       actorNotice = retrying ? 'Recovering the previous encounter…' : 'Recording the encounter…'; renderActorDock();
       try {
         const result = retrying ? await options.onEncounterRetry() : button.dataset.cityEncounter
           ? await options.onEncounter(actor.id, action.id) : await options.onIntelAction(button.dataset.cityIntelAction);
+        if (result?.code < 400 && typeof result.body?.intel?.id === 'string') confirmedIntelId = result.body.intel.id;
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = options.encounterRecovery === true
           ? 'This encounter is not confirmed. Recover the previous encounter before recording another.' : result?.code >= 400
           ? String(result.body?.message || 'The encounter could not be recorded. Check the current requirements and retry.')
           : result?.body?.intel ? 'Intel recorded: ' + String(result.body.intel.title || 'World tip') : 'Review your journal for the encounter result.';
       } catch {
         if (!destroyed && identity === sceneIdentity() && opening === actorOpening) actorNotice = 'The encounter result is unavailable. Use the game receipt to recover it safely.';
-      } finally { if (!destroyed && identity === sceneIdentity()) { encounterPending = false; renderActorDock(); fitWorldFrame(); } }
+      } finally { if (!destroyed && identity === sceneIdentity()) {
+        encounterPending = false; renderActorDock(); fitWorldFrame();
+        const revealed = opening === actorOpening && Array.from(actorBody.querySelectorAll('[data-city-encounter-intel]')).find(item => item.dataset.cityEncounterIntel === confirmedIntelId);
+        if (revealed) { revealed.focus({ preventScroll: true }); actorDock.scrollTop += revealed.getBoundingClientRect().top - actorDock.getBoundingClientRect().top - 8; }
+      } }
     });
 
     function listen(target, event, callback, config) {
@@ -955,6 +1020,36 @@
     }
     function format(value) { return value === null ? '—' : value.toLocaleString('en-US', { maximumFractionDigits: 1 }); }
     function setText(node, value) { if (node.textContent !== value) node.textContent = value; }
+    function acceptResourceReceipt(next) {
+      if (!next || next.state !== 'confirmed' || !['string', 'number'].includes(typeof next.id) || !String(next.id)) {
+        resourceReceipt = null; return;
+      }
+      const id = String(next.id);
+      if (String(resourceReceipt?.id) === id || seenResourceReceipts.has(id)) return;
+      seenResourceReceipts.add(id);
+      resourceReceipt = next;
+    }
+    function appendActionPreview(button, action) {
+      const label = element('span', '', button.textContent);
+      label.setAttribute('data-city-action-label', '');
+      button.setAttribute('aria-label', label.textContent);
+      button.replaceChildren(label);
+      const preview = element('span', 'omerta-city__action-preview');
+      preview.setAttribute('data-city-action-preview', '');
+      preview.id = 'city-action-preview-' + (++instanceSequence);
+      button.setAttribute('aria-describedby', preview.id);
+      preview.append(element('strong', '', 'Before you act'), element('span', '',
+        typeof action.consequence === 'string' && action.consequence.trim() ? action.consequence : 'No cost or reward estimate is available for this action.'));
+      const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
+      const reasons = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
+      if (reasons) preview.append(element('span', '', 'Requires: ' + reasons));
+      button.append(preview);
+    }
+    function nerveRecoveryCopy() {
+      const rate = numeric(options.rules?.pacing?.nerveRegenPerMin);
+      return 'Nerve is used by street jobs and recovers over time up to your normal capacity. '
+        + (rate !== null && rate > 0 ? 'Base recovery: ' + format(rate) + ' Nerve/min; bonuses may increase this.' : 'Check your current Nerve before choosing a job.');
+    }
     function resourceState() {
       const progress = options.progress;
       return {
@@ -985,12 +1080,13 @@
         cash: 'Cash pays for street operations and equipment. Inspect a job before choosing its costs and risks.',
         health: 'Health is your current condition. Low health makes fighting risky. The Life shows your recovery options.',
         energy: 'Energy is spent by training and other operations. The Life shows your current recovery and training options.',
-        nerve: 'Nerve is used by street jobs. Check the job requirements before committing to an operation.',
+        nerve: nerveRecoveryCopy(),
         heat: 'Heat reflects attention on your character. Check the risks and requirements of a job before acting.',
         level: 'Earn respect through confirmed activities to progress. The Life shows your skills and next milestone.'
       };
       helpVenue = VENUES.find(venue => venue.id === (['cash', 'nerve', 'heat'].includes(key) ? 'fixer' : 'training'));
       helpCopy.textContent = notes[key];
+      helpKey = key;
       helpAction.textContent = 'Inspect ' + helpVenue.name;
       helpTrigger?.setAttribute('aria-expanded', 'false');
       helpTrigger = trigger; helpTrigger.setAttribute('aria-expanded', 'true');
@@ -1010,12 +1106,18 @@
         const overcap = value !== null && maximum > 0 && value > maximum;
         nodes.bonus.hidden = !overcap;
         setText(nodes.bonus, overcap ? '+' + format(value - maximum) + ' bonus' : '');
+        const change = (Array.isArray(resourceReceipt?.changes) ? resourceReceipt.changes : []).find(change => change?.key === key && typeof change.value === 'number' && Number.isFinite(change.value) && change.value !== 0);
+        nodes.delta.hidden = !change;
+        setText(nodes.delta, change ? (change.value > 0 ? '+' : '−') + (key === 'cash' ? '$' : '') + format(Math.abs(change.value)) : '');
+        nodes.delta.dataset.direction = (key === 'heat' ? change?.value < 0 : change?.value > 0) ? 'gain' : 'cost';
+        nodes.delta.setAttribute('aria-label', change ? String(change.label || key) + ' ' + (change.value > 0 ? 'increased by ' : 'decreased by ') + format(Math.abs(change.value)) + ', ' + String(resourceReceipt.label || 'confirmed action') : '');
         nodes.value.setAttribute('aria-label', key + ': ' + format(value) + (maximum > 0 ? ' of ' + format(maximum) : '') + (overcap ? ', above normal capacity' : ''));
         nodes.meter.hidden = value === null || maximum === undefined || maximum === null || maximum <= 0;
         if (!nodes.meter.hidden) { nodes.meter.max = maximum; nodes.meter.value = Math.max(0, Math.min(value, maximum)); }
         nodes.group.classList.toggle('is-low', key === 'health' && value !== null && value < 30);
         nodes.group.classList.toggle('is-hot', key === 'heat' && value !== null && value >= 60);
       }
+      if (!resourceHelp.hidden && helpKey === 'nerve') setText(helpCopy, nerveRecoveryCopy());
       const p = resources.progress;
       progressRow.hidden = !p || p.respect === null || p.floor === null || p.next === null || p.level === null || p.next <= p.floor;
       if (!progressRow.hidden) {
@@ -1161,9 +1263,7 @@
           button.type = 'button';
           button.dataset.cityQuestAction = action.id;
           button.disabled = action.available === false || options.worldRecovery === true;
-          const blockers = Array.isArray(action.blockedBy) ? action.blockedBy : action.blockedBy ? [action.blockedBy] : [];
-          const blockerText = blockers.map(reason => typeof reason === 'string' ? reason : reason?.message || reason?.label || reason?.reason || reason?.code || '').filter(Boolean).join(' · ');
-          if (button.disabled && blockerText) { button.title = blockerText; button.append(element('small', '', blockerText)); }
+          appendActionPreview(button, action);
           questButtons.append(button);
         }
       }
@@ -1456,16 +1556,20 @@
       const shortFrame = phone && bottom - top < 500;
       root.classList.toggle('is-short-frame', shortFrame);
       controls.style.setProperty('--city-controls-bottom', Math.max(0, window.innerHeight - bottom) + 'px');
+      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
+        ? nextMove.getBoundingClientRect().height : 0;
       if (phone && (inspecting || shortFrame)) {
         // Reserve the real map and dock floors before measuring the HUD. Long
         // warnings and confirmed feedback remain available by keyboard scroll.
-        worldHud.style.setProperty('--city-hud-height', Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height)) + 'px');
+        let hudHeight = Math.max(0, bottom - top - 16 - 96 - (inspecting ? 64 : controls.getBoundingClientRect().height));
+        // Keep the issued objective with the map when the resource row still
+        // fits. More severe chrome pressure retains the existing scroll budget.
+        if (guidanceHeight && hudHeight - guidanceHeight >= worldHead.getBoundingClientRect().height) hudHeight -= guidanceHeight;
+        worldHud.style.setProperty('--city-hud-height', hudHeight + 'px');
         const overflow = worldHud.scrollHeight > worldHud.clientHeight;
         if (overflow) worldHud.tabIndex = 0; else worldHud.removeAttribute('tabindex');
         worldHud.setAttribute('aria-label', overflow ? 'Walking resources and readiness. Scroll to read all resources, warnings, district details and latest feedback.' : 'Walking resources and readiness');
       }
-      const guidanceHeight = document.body.classList.contains('city-player-view') && !inspecting && !nextMove.hidden
-        ? nextMove.getBoundingClientRect().height : 0;
       const frameAvailable = bottom - top - worldHud.getBoundingClientRect().height - controls.getBoundingClientRect().height - 16;
       const available = frameAvailable - (guidanceHeight + 96 <= frameAvailable ? guidanceHeight : 0);
       if (!actorDock.hidden) actorDock.style.setProperty('--city-actor-height', Math.max(64, Math.min(240, available - 96)) + 'px');
@@ -1494,10 +1598,16 @@
       const camera = scene.cameras.main;
       // Scale the neighborhood to the usable width; narrow phones retain context
       // without shrinking labels or revealing empty bars around the town art.
-      const zoom = Math.min(size.height / 110, size.width <= 680
+      const automaticZoom = size.width <= 680
         ? Math.max(.65, Math.min(1, size.width / 430))
-        : Math.max(.9, Math.min(1.35, size.width / WORLD.width)));
+        : Math.max(.9, Math.min(1.35, size.width / WORLD.width));
+      const maximumZoom = Math.min(2, size.height / 110);
+      const minimumZoom = Math.min(maximumZoom, Math.max(.35, size.width / world.width, size.height / world.height));
+      const zoom = Math.max(minimumZoom, Math.min(maximumZoom, automaticZoom * zoomPreference));
       camera.setZoom(zoom);
+      zoomOut.disabled = zoomPreference <= .65 || zoom <= minimumZoom + .001;
+      zoomIn.disabled = zoomPreference >= 1.6 || zoom >= maximumZoom - .001;
+      zoomOut.title = zoomIn.title = 'Neighborhood zoom: ' + Math.round(zoom * 100) + '%';
       camera.setBounds(0, 0, world.width, world.height);
       // Retain the avatar and its name above the feet in a short viewport.
       const followOffsetY = Math.max(0, (170 * zoom - size.height) / (2 * zoom));
@@ -1779,7 +1889,8 @@
       const nameCamera = s.cameras.main, nameEvents = s.sys.events;
       function placePlayerName() {
         if (destroyed || !ready || !player || !playerName.scene) return;
-        playerName.setScale(Math.max(1, .9 / nameCamera.zoom));
+        playerName.setScale(Math.min(Math.max(1, 13 / (parseFloat(playerName.style.fontSize) * nameCamera.zoom)),
+          (nameCamera.width - 4) / (playerName.width * nameCamera.zoom)));
         // Followupdate runs after the camera's rendered transform is refreshed,
         // including stationary frames and viewport resizes. Keep the full label.
         const half = playerName.displayWidth / 2, y = nameCamera.y + nameCamera.height / 2;
@@ -1790,11 +1901,12 @@
         // available in the roster, venue buttons and inspector while occluded.
         const bounds = playerName.getBounds(), gap = 2 / nameCamera.zoom;
         const reveal = label => {
+          label.setScale(Math.min(Math.max(1, 12 / (parseFloat(label.style.fontSize) * nameCamera.zoom)),
+            (nameCamera.width - 10) / (label.width * nameCamera.zoom)));
           const npcVenue = label.getData?.('npcVenue'), venueId = label.getData?.('venueId');
           const focusVenue = selected?.id || pendingVenue?.id || nearVenue()?.id;
           if (npcVenue && npcVenue !== focusVenue) { label.setVisible(false); return; }
           if (venueId) {
-            label.setScale(Math.max(1, .9 / nameCamera.zoom));
             const anchor = label.getData('anchorX'), half = label.displayWidth / 2;
             const screenLeft = nameCamera.worldView.x + 5 / nameCamera.zoom;
             const screenRight = nameCamera.worldView.right - 5 / nameCamera.zoom;
@@ -1845,7 +1957,8 @@
         if (keys.has(key)) { keys.delete(key); event.preventDefault(); }
       });
       listen(canvas, 'blur', event => {
-        if (event.relatedTarget?.closest('[data-city-world-map], [data-city-world-tools], .city-world__dock')) pauseRoute();
+        if (event.relatedTarget?.closest('[data-city-zoom], [data-city-recenter]')) { keys.clear(); heldMoves.clear(); }
+        else if (event.relatedTarget?.closest('[data-city-world-map], [data-city-world-tools], .city-world__dock')) pauseRoute();
         else stopMovement();
       });
       listen(window, 'blur', () => stopMovement());
@@ -1902,6 +2015,7 @@
       status.textContent = '';
       fitCamera();
       updateScene(0, 0);
+      fitWorldFrame();
       reportPosition(true);
       const waiting = queuedHome; queuedHome = null;
       if (waiting && waiting.identity === sceneIdentity() && waiting.scope === options.worldScopeKey) walkHome(waiting.key);
@@ -1984,10 +2098,13 @@
       const target = nearTarget(), nearby = target?.venue || target?.actor || target?.home || target?.exit;
       interact.disabled = !nearby;
       const nearbyName = target?.actor ? actorName(target.actor.actor) : target?.home?.street || target?.exit?.name || target?.venue?.name;
-      setText(interact, target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
-        : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact');
+      const interactionCopy = target?.actor ? 'Talk to ' + nearbyName : target?.home ? 'Inspect street' : target?.exit ? 'Route to ' + nearbyName
+        : target?.venue ? 'Enter ' + nearbyName : 'Move closer to interact';
+      const controlsChanged = interact.textContent !== interactionCopy || cancel.disabled !== (!moving && !path.length && !keys.size && !heldMoves.size);
+      setText(interact, interactionCopy);
       cancel.disabled = !moving && !path.length && !keys.size && !heldMoves.size;
       root.classList.toggle('is-walking', !cancel.disabled);
+      if (controlsChanged && !hudObserver) fitWorldFrame();
       for (const [id, marker] of actorSprites) {
         const copy = id === selectedActor || id === target?.actor?.id
           ? actorName(marker.actor).slice(0, 22) + '\n' + marker.actor.kind.toUpperCase() : marker.actor.kind.toUpperCase();
@@ -2019,7 +2136,7 @@
           obstacles: obstacles.map(r => ({ ...r })), homes: homeState(), roads: roadState(), exits: exits.map(exit => ({ ...exit })),
           selectedHome, selectedExit, region: { id: district.id, landmark: region.landmark?.name || 'The Waterfront' },
           ambient: scene && ready ? scene.data.get('npcs').filter(n => !n.title).map(n => ({ x: n.sprite.x, y: n.sprite.y })) : [],
-          camera: camera ? { x: camera.worldView.x, y: camera.worldView.y, zoom: camera.zoom, width: camera.width, height: camera.height } : null,
+          camera: camera ? { x: camera.worldView.x, y: camera.worldView.y, zoom: camera.zoom, preference: zoomPreference, width: camera.width, height: camera.height } : null,
           world: { ...world }, pathLength: path.length,
           trackedObjectiveId, questVenueId: questVenueId(), nearbyVenue: nearVenue()?.id || null,
           routeVenueId: pendingVenue?.id || routePreviewVenue || null, route: (path.length ? path : routePreview).map(point => ({ ...point })), routeActive: path.length > 0
@@ -2039,6 +2156,8 @@
           options.actors = []; options.intel = []; options.objectives = []; options.encounterReceipt = null; options.encounterRecovery = false;
         }
         if (identity !== sceneIdentity() || worldScopeChanged) {
+          for (const receipt of [resourceReceipt, nextOptions.resourceReceipt]) if (receipt?.id !== undefined) seenResourceReceipts.add(String(receipt.id));
+          resourceReceipt = null;
           trackedObjectiveId = null; trackedVenueId = null;
           hideGameDock(false); hideVenue(false);
           options.worldSocial = null; options.worldChat = null; options.worldReceipt = null; options.worldRecovery = false;
@@ -2053,6 +2172,7 @@
         for (const key of ['onPresencePage', 'onEncounter', 'onIntelAction', 'onEncounterRetry']) if (key in nextOptions) options[key] = typeof nextOptions[key] === 'function' ? nextOptions[key] : null;
         for (const key of ['venueActions', 'progress', 'npcQuests', 'actors', 'hasMore', 'intel', 'objectives', 'encounterReceipt', 'encounterRecovery']) if (key in nextOptions) options[key] = nextOptions[key];
         for (const key of ['worldScopeKey', 'worldReceipt', 'worldRecovery', 'worldSocial', 'worldChat', 'worldAtlas', 'worldCollection', 'worldHomes', 'onWorldTravel', 'rules']) if (key in nextOptions) options[key] = nextOptions[key];
+        if ('resourceReceipt' in nextOptions && identity === sceneIdentity() && !worldScopeChanged) acceptResourceReceipt(nextOptions.resourceReceipt);
         region = REGIONS[district.id] || REGIONS.docks;
         walkBottom = district.id === 'docks' || !REGIONS[district.id] ? 540 : WORLD.height - 20;
         if ('worldHomes' in nextOptions && nextOptions.worldHomes === null) { homeBoard = null; homes = []; homeSlots.clear(); permeableHomes.clear(); }

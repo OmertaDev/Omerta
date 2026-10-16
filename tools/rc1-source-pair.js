@@ -242,11 +242,11 @@ export const ENTERPRISE_ADDITIVE_PAIR = Object.freeze({
 
 export const ROOT_MARKET_COMBINED_ADDITIVE_PAIR = Object.freeze({
   "predecessor": "2a057d375cb8f8d94ec30c8e4559832b5be63011",
-  "reviewedCandidate": "f9203aa4e788163608d37b8bc3d24db35a9b6d7b",
+  "reviewedCandidate": "8e109fcfeceaf9a233735c343a98059f69ec9dde",
   "predecessorTree": "aafb54cc4fa9c662b92afe9ce1edb3bff7be358edf36990d276142023561cea0",
   "predecessorSchema": "e334badfba6c0b08bb13288fc702c6cd661546d47f460afbf38087a43ca52861",
   "predecessorCatalog": "301ebc59b074fb9e87f133e5b11cc5d467cd29d6848a7383a3969d982955bbe0",
-  "candidateTree": "f1c9d16afc3dbf397e7e43bb305f0f7a7c859b3e21fa9843a8c47dd1776c6d06",
+  "candidateTree": "58f73db90b57043c4226364f1c9e8c401a57d6ab5b1094fdcaaa86cfe5fb6ee6",
   "candidateSchema": "d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9",
   "candidateCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
   "constraints": 159,
@@ -256,13 +256,13 @@ export const ROOT_MARKET_COMBINED_ADDITIVE_PAIR = Object.freeze({
 });
 
 export const MARKET_OPERATIONS_ADDITIVE_PAIR = Object.freeze({
-  "predecessor": "2c8eaacf104e8555d5140136b5ed19027ecd4766",
-  "reviewedCandidate": "92f1a71a6c3233a67575a0865946ce73257c193f",
-  "predecessorTree": "9e0c30bb11369a8fedebcd5ae8fd8890ae64f08809e603637cc16f4529f7748f",
-  "predecessorSchema": "d5ce9edf144b3bef438a5a086e3b6ea445de20fc82f0e3aaa636c099f62ea2b7",
+  "predecessor": "b8fcce7baaa91b29661921a17e5510a47e9f725a",
+  "reviewedCandidate": "f318f36ba459a2f29bc88927f39cba4ba8e0a4ca",
+  "predecessorTree": "dfbf7b9de5b71641b1f975bba74046552a7434034ccda892fa2da8f1d6da12ed",
+  "predecessorSchema": "1fbe97d1f971d908623d5cd7cbd7aab4e2411844c1d8be2688cdbaaba558f137",
   "predecessorCatalog": "24643ba13f016271634dbbdef3590ee09b6688f844cbc80b7ffacf64da303522",
-  "candidateTree": "594940e90fde4d00a88544d6105056378d8367a2a4de1560fd673d38486b045a",
-  "candidateSchema": "d8016c8f0ccfe0caa29184a0df2d25d46e5a2597d143f33ac167382832418dc9",
+  "candidateTree": "dea80ada4bb4748eca84204b3ce7dda0bc7cbed71e6d6b90ccfeadf5c726baa6",
+  "candidateSchema": "ee531119833166dd64e2316d23576248fbbaf8ca0a90bfc297b220eaf4b0282b",
   "candidateCatalog": "e36821d46a0ba1b63b1e2f19b4522bb399bf416a9dbda38c73b4389234f51af9",
   "constraints": 70,
   "notNull": 66,

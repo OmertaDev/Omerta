@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import Ajv from 'ajv';
+import { earnBuildingClaim } from './deed-discovery-fixture.js';
 
 const postgres = process.argv.includes('--postgres');
 let admin, namespace, app, createdSchema = false;
@@ -59,14 +60,26 @@ try {
       [row.id, kind === 'npc', new Date(Date.now() + 86400000)]);
     await ledger(app.pool, { characterId: row.id, currency: 'cash', amount: 100000 - Number(row.cash), reason: 'crime:homes-fixture' });
     if (kind === 'agent') await app.pool.query('UPDATE account_persistent SET agent_flag=true WHERE account_id=$1', [account]);
-    return { ...row, name, account, headers };
+    return { ...row, name, account, headers, kind };
   };
   const viewer = await actor('Home Directory Viewer'), seller = await actor('Home Directory Seller');
   const agent = await actor('Home Directory Agent', 'agent'), npc = await actor('Home Directory Resident', 'npc');
   const buyer = await actor('Home Directory Buyer');
+  let nextProperty = 0;
   const claim = async (owner, name, district = 'docks') => {
-    const result = await post(owner, '/v1/deeds/claim', { name, district });
+    const buildingId = district + '-' + String(++nextProperty).padStart(4, '0');
+    if (owner.kind === 'npc') {
+      // This test projects a pre-existing NPC steward; NPCs cannot earn player primary rewards.
+      await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,building_id) VALUES($1,$2,$3,$4,$5)',
+        [owner.account, name, name.toLowerCase(), district, buildingId]);
+      return;
+    }
+    await app.pool.query('UPDATE characters SET respect=100000 WHERE id=$1', [owner.id]);
+    await earnBuildingClaim(app, owner.headers.authorization.slice(7), buildingId);
+    const result = await post(owner, '/v1/deeds/claim', { name, district, buildingId });
     assert.equal(result.statusCode, 200, result.body);
+    const receipt = (await app.pool.query('SELECT source,building_id FROM street_deed_primary_claims WHERE account_id=$1', [owner.account])).rows[0];
+    assert.deepEqual(receipt, { source: 'exploration', building_id: buildingId }, 'Directory player fixtures earn their exact property.');
   };
   await claim(seller, 'Alpha Street'); await claim(agent, 'Agent Avenue');
   await claim(npc, 'Resident Road'); await claim(viewer, 'Zulu Home');

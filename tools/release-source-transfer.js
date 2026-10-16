@@ -1,3 +1,4 @@
+import { deedQuestSourceBaseline } from './deed-quest-source-transfer.js';
 import { economyReleaseSource } from './economy-release-composition.js';
 // Test/tool-only reconstruction of one frozen release's predecessor source bytes.
 // This grants no historical runtime, PostgreSQL, migration, financial, genesis or deployment qualification.
@@ -819,6 +820,7 @@ export function assertReleaseSourceTransfer(file, input) {
 
 // No runtime discovery or pin refresh: only the literal candidate bytes above have an alias.
 export function releaseSourceBaseline(file, input) {
+  input = deedQuestSourceBaseline(file, input);
   input = economyReleaseSource('main', file, cityPlaySourceBaseline(file, input));
   if (!Object.hasOwn(RELEASE_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;
   return hash(lf(input)) === RELEASE_SOURCE_DOMAINS[file].currentSha256
