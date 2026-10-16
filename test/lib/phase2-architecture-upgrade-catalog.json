@@ -7010,6 +7010,371 @@
       "table_name": "production_slot_reservations",
       "name": "production_slot_reservations_status_check",
       "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'active'::text, 'consumed'::text, 'released'::text, 'expired'::text, 'void'::text]))"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_check",
+      "definition": "CHECK ((state = 'executed'::text) = (receipt IS NOT NULL))"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_depot_id_fkey",
+      "definition": "FOREIGN KEY (depot_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "business_relocation_plans",
+      "name": "business_relocation_plans_state_check",
+      "definition": "CHECK (state = ANY (ARRAY['ready'::text, 'executed'::text, 'cancelled'::text, 'expired'::text, 'owner_dead'::text]))"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_actor_ref_fkey",
+      "definition": "FOREIGN KEY (actor_ref) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_check",
+      "definition": "CHECK (receipt IS NULL AND account_ref IS NULL AND actor_ref IS NULL OR receipt IS NOT NULL AND account_ref = account_id AND account_ref IS NOT NULL AND actor_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "business_relocation_requests",
+      "name": "business_relocation_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_craft_key_key",
+      "definition": "UNIQUE (craft_key)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_item_id_fkey",
+      "definition": "FOREIGN KEY (item_id) REFERENCES item_instances(id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_item_id_key",
+      "definition": "UNIQUE (item_id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "equipment_recovery_requests",
+      "name": "equipment_recovery_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "manufacturing_license_requests",
+      "name": "manufacturing_license_request_hash",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "manufacturing_license_requests",
+      "name": "manufacturing_license_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "manufacturing_license_requests",
+      "name": "manufacturing_license_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, request_key)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_license_business",
+      "definition": "CHECK ((status <> ALL (ARRAY['accepted'::text, 'exhausted'::text])) OR licensee_business IS NOT NULL)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_license_distinct",
+      "definition": "CHECK (licensor_account <> licensee_account AND licensor_character <> licensee_character)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_license_exhaustion",
+      "definition": "CHECK ((status = 'exhausted'::text) = (completed_runs = maximum_runs))"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_license_hashes",
+      "definition": "CHECK (char_length(production_hash) = 64 AND char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_check",
+      "definition": "CHECK (completed_runs >= 0 AND completed_runs <= maximum_runs)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_fee_cash_check",
+      "definition": "CHECK (fee_cash >= 1 AND fee_cash <= 10000)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensee_account_fkey",
+      "definition": "FOREIGN KEY (licensee_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensee_business_fkey",
+      "definition": "FOREIGN KEY (licensee_business) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensee_character_fkey",
+      "definition": "FOREIGN KEY (licensee_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensor_account_fkey",
+      "definition": "FOREIGN KEY (licensor_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensor_business_fkey",
+      "definition": "FOREIGN KEY (licensor_business) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_licensor_character_fkey",
+      "definition": "FOREIGN KEY (licensor_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_maximum_runs_check",
+      "definition": "CHECK (maximum_runs >= 1 AND maximum_runs <= 8)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "manufacturing_licenses",
+      "name": "manufacturing_licenses_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['offered'::text, 'accepted'::text, 'cancelled'::text, 'exhausted'::text]))"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_body_hash_check",
+      "definition": "CHECK (char_length(body_hash) = 64)"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_key_hash_check",
+      "definition": "CHECK (char_length(key_hash) = 64)"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "mobile_shop_requests",
+      "name": "mobile_shop_requests_shop_id_fkey",
+      "definition": "FOREIGN KEY (shop_id) REFERENCES mobile_shops(id)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_check",
+      "definition": "CHECK (remaining_quantity >= 0 AND remaining_quantity <= initial_quantity)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_check1",
+      "definition": "CHECK ((initial_quantity * unit_price) <= 1000000)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_check2",
+      "definition": "CHECK (expires_at <= listing_expires_at)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_initial_quantity_check",
+      "definition": "CHECK (initial_quantity >= 1 AND initial_quantity <= 10)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_listing_id_key",
+      "definition": "UNIQUE (listing_id)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_pkey",
+      "definition": "PRIMARY KEY (id)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_seller_account_fkey",
+      "definition": "FOREIGN KEY (seller_account) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_seller_character_fkey",
+      "definition": "FOREIGN KEY (seller_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_status_check",
+      "definition": "CHECK (status = ANY (ARRAY['active'::text, 'cancelled'::text, 'sold'::text, 'estate_scattered'::text]))"
+    },
+    {
+      "table_name": "mobile_shops",
+      "name": "mobile_shops_unit_price_check",
+      "definition": "CHECK (unit_price >= 1 AND unit_price <= 1000000)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_account_ref_fkey",
+      "definition": "FOREIGN KEY (account_ref) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_business_ref_fkey",
+      "definition": "FOREIGN KEY (business_ref) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_check",
+      "definition": "CHECK (account_ref IS NULL OR account_ref = account_id)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_check1",
+      "definition": "CHECK (receipt IS NULL AND source_json IS NULL AND account_ref IS NULL AND original_character IS NULL AND business_ref IS NULL OR receipt IS NOT NULL AND source_json IS NOT NULL AND account_ref IS NOT NULL AND original_character IS NOT NULL AND business_ref IS NOT NULL)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_pkey",
+      "definition": "PRIMARY KEY (account_id, key_hash)"
+    },
+    {
+      "table_name": "workshop_floor_requests",
+      "name": "workshop_floor_requests_run_id_key",
+      "definition": "UNIQUE (run_id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_account_id_fkey",
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_business_id_fkey",
+      "definition": "FOREIGN KEY (business_id) REFERENCES business_depots(id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_id_key",
+      "definition": "UNIQUE (id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_original_character_fkey",
+      "definition": "FOREIGN KEY (original_character) REFERENCES characters(id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_pkey",
+      "definition": "PRIMARY KEY (business_id)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_revision_check",
+      "definition": "CHECK (revision >= 1 AND revision <= 2147483647)"
+    },
+    {
+      "table_name": "workshop_floorplans",
+      "name": "workshop_floorplans_source_hash_check",
+      "definition": "CHECK (char_length(source_hash) = 64)"
     }
   ],
   "removed": [
@@ -9049,6 +9414,97 @@
       "body_hash",
       "run_id",
       "request_json"
+    ],
+    "workshop_floorplans": [
+      "business_id",
+      "id",
+      "account_id",
+      "original_character",
+      "revision",
+      "source_json",
+      "source_hash",
+      "allocations"
+    ],
+    "workshop_floor_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id",
+      "request_json"
+    ],
+    "manufacturing_licenses": [
+      "id",
+      "licensor_account",
+      "licensor_character",
+      "licensee_account",
+      "licensee_character",
+      "licensor_business",
+      "production_key",
+      "production_hash",
+      "source_pin",
+      "source_hash",
+      "fee_cash",
+      "maximum_runs",
+      "completed_runs",
+      "expires_at",
+      "status"
+    ],
+    "manufacturing_license_requests": [
+      "account_id",
+      "request_key",
+      "body_hash",
+      "receipt"
+    ],
+    "mobile_shops": [
+      "id",
+      "seller_account",
+      "seller_character",
+      "listing_id",
+      "district",
+      "initial_quantity",
+      "remaining_quantity",
+      "unit_price",
+      "source_hash",
+      "expires_at",
+      "listing_expires_at",
+      "status"
+    ],
+    "mobile_shop_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "original_character",
+      "shop_id",
+      "receipt",
+      "journal_ids"
+    ],
+    "business_relocation_plans": [
+      "id",
+      "depot_id",
+      "account_id",
+      "original_character",
+      "destination",
+      "source_hash",
+      "source_snapshot",
+      "expires_at",
+      "revision",
+      "state"
+    ],
+    "business_relocation_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "run_id"
+    ],
+    "equipment_recovery_requests": [
+      "account_id",
+      "key_hash",
+      "body_hash",
+      "original_character",
+      "business_id",
+      "item_id",
+      "receipt",
+      "craft_key"
     ]
   }
 }
