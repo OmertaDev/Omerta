@@ -142,6 +142,7 @@ import { canonicalDepotAcquisitionRuntime } from './depotacquisitionruntime.js';
 import { withCrewTwoCharacters, withAcquisitionCharacters } from './company-middle-five-runtime.js';
 import { assertCompanySpecializationBeforeCraft } from './companyspecialization.js';
 import { register as registerGameEmployment } from './routes/gameemployment.js';
+import {register as registerPerformanceEmployment} from './routes/performanceemployment.js';
 import { register as registerCompanyWorkflows } from './routes/companyworkflows.js';
 import { register as registerCompanyOpportunities } from './routes/companyopportunities.js';
 import { register as registerCommercialReputation } from './routes/commercialreputation.js';
@@ -2539,6 +2540,7 @@ export async function buildServer() {
   registerCompanyRestructuring(app, { pool, auth });
   registerCompanyAcquisitions(app, { pool, auth, canonicalAcquisition: canonicalDepotAcquisitionRuntime, withAcquisitionCharacters });
   registerGameEmployment(app, { pool, auth });
+  registerPerformanceEmployment(app,{pool,auth});
   registerCompanyWorkflows(app, { pool, auth });
   registerCompanyOpportunities(app, { pool, auth });
   registerCommercialReputation(app, { pool, auth });

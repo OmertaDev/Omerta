@@ -1,4 +1,7 @@
 import crypto from 'node:crypto';
+import {performanceEmploymentHook} from './performanceemployment.js';
+export {performanceEmploymentHook};
+import {assertItemTransaction,itemTransactionIdentity} from './items.js';
 import { GameError } from './game.js';
 import { guardDelegatedControl } from './operatingpolicy.js';
 
@@ -19,7 +22,7 @@ export function employmentTerms(body) {
 async function money(ch, amount, client, h, reason) {
   const next = Number(ch.cash) + amount;
   if (!Number.isFinite(next) || next < 0 || next > Number.MAX_SAFE_INTEGER) fail('cash');
-  await h.ledger(client, { characterId: ch.id, currency: 'cash', amount, reason }); ch.cash = next;
+  const transaction=await h.ledger(client, { characterId: ch.id, currency: 'cash', amount, reason }); ch.cash = next;return transaction;
 }
 async function replay(ch, action, key, terms, client) {
   if (typeof key !== 'string' || !key.length || key.length > 200) fail('request_key');
@@ -82,8 +85,12 @@ export async function acceptEmployment(ch, employer, body, key, client, _h, { ag
   const count = (await client.query('SELECT id FROM game_employment_assignments WHERE employment_id=$1', [job.id])).rows.length;
   if (count >= job.terms.slots) fail('slots');
   const assignmentId = crypto.randomUUID();
+  const performanceContext={job,depot,commitment:c,assignmentId,worker:ch,employer,key,terms};
+  await performanceCheck(client,'pre_accept',performanceContext);
   await client.query('INSERT INTO game_employment_assignments(id,employment_id,commitment_id,worker_character,worker_account,worker_kind) VALUES($1,$2,$3,$4,$5,$6)', [assignmentId, job.id, c.id, ch.id, ch.account_id, agent ? 'agent' : 'human']);
-  return receipt(ch, 'accept', key, terms, { ok: true, employmentId: job.id, assignmentId, commitmentId: c.id, wageCash: job.terms.wageCash }, client);
+  const performanceBonus=await performanceCheck(client,'accept',performanceContext);
+  const result=await receipt(ch, 'accept', key, terms, { ok: true, employmentId: job.id, assignmentId, commitmentId: c.id, wageCash: job.terms.wageCash,...(performanceBonus?{performanceBonus}:{}) }, client);
+  await performanceCheck(client,'final_accept',{...performanceContext,result});return result;
 }
 export async function claimEmployment(ch, employer, employmentId, commitmentId, key, client, h) {
   const terms = { employmentId: id(employmentId), commitmentId: id(commitmentId) };
@@ -95,10 +102,14 @@ export async function claimEmployment(ch, employer, employmentId, commitmentId, 
       || job.state !== 'open' || now >= +new Date(job.expires_at) || c.status !== 'delivered' || Number(c.remaining) !== 0
       || c.supplier_character !== ch.id || c.buyer_character !== employer.id || c.depot_id !== depot.id) fail('evidence');
   const wage = job.terms.wageCash; if (Number(job.escrow_cash) < wage) fail('insolvent');
+  const performanceContext={job,depot,commitment:c,assignment:a,worker:ch,employer,key,terms,h};
+  await performanceCheck(client,'pre_claim',performanceContext);
   await client.query("UPDATE game_employment_assignments SET state='paid',paid_at=clock_timestamp() WHERE id=$1", [a.id]);
   await client.query('UPDATE game_employment_jobs SET escrow_cash=escrow_cash-$2,paid_cash=paid_cash+$2 WHERE id=$1', [job.id, wage]);
-  await money(ch, wage, client, h, `employment:wage:${a.id}`);
-  return receipt(ch, 'claim', key, terms, { ok: true, employmentId: job.id, commitmentId: c.id, wageCash: wage }, client);
+  const wageTransaction=await money(ch, wage, client, h, `employment:wage:${a.id}`);
+  const performanceBonus=await performanceCheck(client,'claim',{...performanceContext,wageTransaction});
+  const result=await receipt(ch, 'claim', key, terms, { ok: true, employmentId: job.id, commitmentId: c.id, wageCash: wage,...(performanceBonus?{performanceBonus}:{}) }, client);
+  await performanceCheck(client,'final_claim',{...performanceContext,wageTransaction,result});return result;
 }
 // A living original employer can recover expired/unused reserve. Original-account
 // receipts remain replayable by successors; unused street wealth burns at death.
@@ -110,10 +121,14 @@ export async function closeEmployment(ch, employmentId, key, client, h) {
   const assignments = (await client.query("SELECT id FROM game_employment_assignments WHERE employment_id=$1 AND state='assigned'", [job.id])).rows;
   const original = (await client.query('SELECT alive FROM characters WHERE id=$1', [job.employer_character])).rows[0];
   if (assignments.length && now < +new Date(job.expires_at) && original?.alive) fail('active_assignments');
+  const performanceContext={job,owner:ch,key,terms,h};
+  await performanceCheck(client,'pre_close',performanceContext);
   const refund = Number(job.escrow_cash);
   await client.query("UPDATE game_employment_jobs SET state='closed',escrow_cash=0,refunded_cash=refunded_cash+$2 WHERE id=$1", [job.id, refund]);
   await money(ch, refund, client, h, `employment:refund:${job.id}`);
-  return receipt(ch, 'close', key, terms, { ok: true, employmentId: job.id, refundedCash: refund }, client);
+  const performanceBonus=await performanceCheck(client,'close',performanceContext);
+  const result=await receipt(ch, 'close', key, terms, { ok: true, employmentId: job.id, refundedCash: refund,...(performanceBonus?{performanceBonus}:{}) }, client);
+  await performanceCheck(client,'final_close',{...performanceContext,result});return result;
 }
 export async function ownEmploymentBoard(client, accountId) {
   return (await client.query(`SELECT j.* FROM game_employment_jobs j WHERE employer_account=$1 OR j.id IN
@@ -154,6 +169,7 @@ export async function voidEmploymentAtDeath(client, h, victim, killerCh = null, 
   const jobs = (await client.query("SELECT * FROM game_employment_jobs WHERE employer_character=$1 AND employer_account=$2 AND state='open' ORDER BY id FOR UPDATE", [victim.id, victim.account_id])).rows;
   let burnedCash = 0, lootedCash = 0;
   for (const job of jobs) {
+    await performanceCheck(client,'estate',{job,victim,killer:killerCh,lootRate,h});
     const reserve=Number(job.escrow_cash), loot=killerCh ? Math.floor(reserve*lootRate) : 0, burn=reserve-loot;
     if (loot) {
       const next=Number(killerCh.cash)+loot;
@@ -182,3 +198,7 @@ export async function replayEmploymentRequest(accountId, action, body, key, clie
   } else fail('terms');
   return replay({ account_id: id(accountId) }, action, key, terms, client);
 }
+
+const performanceScopes=new WeakMap();
+async function performanceCheck(c,action,ctx){if(!(await c.query('SELECT employment_id FROM performance_employment_contracts WHERE employment_id=$1',[ctx.job.id])).rows.length)return null;const token=Object.freeze({}),scope={c,action,ctx,transaction:itemTransactionIdentity(c),active:true};performanceScopes.set(token,scope);try{return await performanceEmploymentHook(c,action,ctx,token);}finally{scope.active=false;}}
+export function assertPerformanceEmploymentScope(c,action,ctx,token){assertItemTransaction(c);const scope=performanceScopes.get(token);if(!scope?.active||scope.c!==c||scope.action!==action||scope.ctx!==ctx||scope.transaction!==itemTransactionIdentity(c))throw new GameError('performance_employment','canonical_scope');return true;}

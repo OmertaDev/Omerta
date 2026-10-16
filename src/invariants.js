@@ -24,6 +24,7 @@ import { strategyLicenseFaults } from './strategylicenseinvariants.js';
 import { companySuccessionFaults } from './companysuccessioninvariants.js';
 import { strategyLeagueFaults } from './strategyleagueinvariants.js';
 import { employmentCashInvariant } from './gameemploymentinvariants.js';
+import {performanceEmploymentInvariant} from './performanceemployment.js';
 import { runCompanyWorkflowInvariants } from './companyworkflowinvariants.js';
 import { commercialPremisesInvariant } from './commercialpremisesinvariants.js';
 import { runCompanyBankPortfolioInvariants } from './companybankportfolioinvariants.js';
@@ -158,6 +159,7 @@ const KNOWN_REASONS = {
     // by the per-character check (a) AND its own `favor escrow` identity below.
     'favor:',
     'intel_job:', 'employment:reserve:', 'employment:wage:', 'employment:refund:', 'employment:estate:loot:',
+    'performance_employment:reserve', 'performance_employment:bonus', 'performance_employment:refund', 'performance_employment:estate:loot',
     'commercial_premises:rent:pay', 'commercial_premises:rent:receive',
     'buyer_cooperative:fund', 'buyer_cooperative:refund', 'buyer_cooperative:death_cash', 'buyer_cooperative:loot_cash',
     // COMMISSION step three: proposal deposits — treasury→escrow (`commission:proposal`, NULL char),
@@ -720,6 +722,9 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('logistics coverage bindings', await logisticsCoverageFaults(pool), 0, 0);
   const employment = await employmentCashInvariant(pool);
   push('game employment escrow', employment.actual, employment.expected, 0);
+  const performance=await performanceEmploymentInvariant(pool);
+  push('performance employment funded bonus escrow',performance.actual,performance.expected,0);
+  push('performance employment actual outcome provenance',performance.issues.length,0,0,{issues:performance.issues});
   push('game employment loot ledger', employment.lootedCash, employment.lootedCash - employment.lootDelta, 0);
   const workflows = await runCompanyWorkflowInvariants(pool);
   push('company workflow provenance', workflows.issues.length, 0, 0, { issues: workflows.issues });
