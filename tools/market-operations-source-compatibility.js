@@ -2,8 +2,8 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {enterpriseSourceBaseline} from './enterprise-source-compatibility.js';
-export const MARKET_OPERATIONS_SOURCE_REVISION="18b9fbc7d2cf0b6b770e69a595a385e9ebe8a390";
-export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="03730e511786dfce1808676adeb405ca80f9f9cc";
+export const MARKET_OPERATIONS_SOURCE_REVISION="922d0e3226b039d9c450fb63fbc02ca3fb336f28";
+export const MARKET_OPERATIONS_SOURCE_PREDECESSOR="3e4e23269908e84d3c1d4ea39f55d0eeec3686e8";
 export const MARKET_OPERATIONS_SOURCE_PHASE='exact-source-transfer-only; no native, migration, financial or deployment clearance';
 export const MARKET_OPERATIONS_SOURCE_DOMAINS={
   "package.json": {
@@ -310,10 +310,10 @@ export const MARKET_OPERATIONS_SOURCE_DOMAINS={
     ]
   },
   ".github/workflows/ci.yml": {
-    "currentSha256": "33e457776cd46a3ca03da037915087145e727b9148bf5c72008e375ca5b8063a",
-    "currentBlob": "3698449f92969214fccf1021d61fb1db55843398",
-    "baselineSha256": "1ce2df86f8a4f87adeb0f520d49b4d654d3163f3911ae6ba3880047ee70e65d0",
-    "baselineBlob": "4f3fa820568eff86213b5e4954ac1f468d08729a",
+    "currentSha256": "753bf189ac47ef44c7b6f0d9ee886c5998cbf27a5b43bdfb7c4497a7f5070f04",
+    "currentBlob": "bc3fd8fd1f6deb366b18f8888150b391a0da7171",
+    "baselineSha256": "6b53deeac9b7229f51dca88e4974c354a48c553f606a1aa962f825ab7edac8a8",
+    "baselineBlob": "f74826938e14fb14387dd82c938496b195516cfb",
     "contextLines": 3,
     "inverses": [
       {

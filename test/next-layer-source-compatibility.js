@@ -8,7 +8,9 @@ import {NEXT_LAYER_SOURCE_REVISION,NEXT_LAYER_SOURCE_PREDECESSOR,NEXT_LAYER_SOUR
 import {releasePhase2MigrationPredecessor,nextFiveNativePredecessor} from '../tools/next-five-release-phase2-migration-catalog.js';
 const git=(...args)=>execFileSync('git',args,{encoding:'utf8',maxBuffer:32e6});
 assert.equal(NEXT_LAYER_SOURCE_PHASE,'exact-source-transfer-only; no native, migration, financial or deployment clearance');
-assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/depotacquisitionruntime.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json','test/phase2-postgres.js','test/director-migration.js','.github/workflows/ci.yml','test/gates.js']);
+assert.equal(NEXT_LAYER_SOURCE_REVISION,'5c6830d386098408c2d9d6723ccc32db2290d817');
+assert.equal(NEXT_LAYER_SOURCE_PREDECESSOR,'2a057d375cb8f8d94ec30c8e4559832b5be63011');
+assert.deepEqual(Object.keys(NEXT_LAYER_SOURCE_DOMAINS),['package.json','schema.sql','src/agentgateway.js','src/depotacquisitionruntime.js','src/equipmentrentals.js','src/invariants.js','src/server.js','src/social/estate.js','test/lib/phase2-architecture-upgrade-catalog.json','test/phase2-postgres.js','test/director-migration.js','.github/workflows/ci.yml','test/gates.js','test/coldstart.js']);
 let negatives=0,hunks=0;
 for(const[file,pin]of Object.entries(NEXT_LAYER_SOURCE_DOMAINS)){
   const current=git('show',NEXT_LAYER_SOURCE_REVISION+':'+file),prior=git('show',NEXT_LAYER_SOURCE_PREDECESSOR+':'+file);
@@ -46,4 +48,4 @@ assert.equal(added.length,8);assert.equal(added.reduce((n,name)=>n+current.notNu
 const schema=fs.readFileSync('schema.sql','utf8');
 assert.throws(()=>releasePhase2MigrationPredecessor(schema),'Raw536 source does not enter the old528 native profile');
 assert.throws(()=>nextFiveNativePredecessor(schema),'Source transfer never creates historical native admission');
-console.log(`Next-layer source-only proof PASS:13 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);
+console.log(`Next-layer source-only proof PASS:14 full domains/${hunks} immutable inverses/${negatives} refusals; all1243 prior rows preserved plus89/78; native admission remains separate`);
