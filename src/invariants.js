@@ -1,3 +1,7 @@
+const collectSaleAttributionIssues=async(c)=>(await import('./saleattribution.js')).collectSaleAttributionIssues(c);
+const collectMerchantLoyaltyIssues=async(c)=>(await import('./merchantloyalty.js')).collectMerchantLoyaltyIssues(c);
+const collectShoppingBasketIssues=async(c)=>(await import('./shoppingbasket.js')).collectShoppingBasketIssues(c);
+const collectEventMarketIssues=async(c)=>(await import('./eventmarkets.js')).collectEventMarketIssues(c);
 import {collectCrossDockIssues} from './crossdocking.js';
 const collectBusinessRelocationIssues=async(c)=>(await import('./businessrelocationhistory.js')).collectBusinessRelocationIssues(c);
 import {collectProductionSlotIssues} from './productionslots.js';
@@ -80,6 +84,8 @@ const KNOWN_REASONS = {
     'picking_packing:pay', 'picking_packing:receive',
     'manufacturing_license:pay','manufacturing_license:receive',
     'merchant_return:reserve', 'merchant_return:payout', 'merchant_return:refund',
+    'sale_attribution:reserve', 'sale_attribution:commission', 'sale_attribution:refund',
+    'event_market:reserve', 'event_market:reward', 'event_market:refund',
     'customer_layaway:reserve', 'customer_layaway:proceeds', 'customer_layaway:refund',
     'multi_hop_courier:reserve', 'multi_hop_courier:fee', 'multi_hop_courier:refund',
     'commissioned_crafting:reserve', 'commissioned_crafting:fee', 'commissioned_crafting:refund',
@@ -770,6 +776,20 @@ async function collectLedgerChecks(pool, activationPolicy) {
   push('production slot canonical reservation history', productionSlotIssues.length, 0, 0, {issues:productionSlotIssues});
   const floorIssues=await (await import('./workshopfloor.js')).collectWorkshopFloorIssues(pool);
   push('workshop floor source and allocation history',floorIssues.length,0,0,{issues:floorIssues});
+  const saleAttributionReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM sale_attribution_campaigns');
+  const saleAttributionNet = await sum(pool, "currency='cash' AND reason IN ('sale_attribution:reserve','sale_attribution:commission','sale_attribution:refund')");
+  push('sale attribution merchant cash reserve', saleAttributionReserve, -saleAttributionNet, 0);
+  const saleAttributionIssues = await collectSaleAttributionIssues(pool);
+  push('sale attribution completed sale and consent bindings', saleAttributionIssues.length, 0, 0, {issues:saleAttributionIssues});
+  const loyaltyIssues = await collectMerchantLoyaltyIssues(pool);
+  push('merchant loyalty original purchase bindings', loyaltyIssues.length, 0, 0, {issues:loyaltyIssues});
+  const basketIssues = await collectShoppingBasketIssues(pool);
+  push('shopping basket canonical sale bindings', basketIssues.length, 0, 0, {issues:basketIssues});
+  const eventReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM event_markets');
+  const eventNet = await sum(pool, "currency='cash' AND reason IN ('event_market:reserve','event_market:reward','event_market:refund')");
+  push('player funded event reserves', eventReserve, -eventNet, 0);
+  const eventIssues = await collectEventMarketIssues(pool);
+  push('player funded event history', eventIssues.length, 0, 0, {issues:eventIssues});
   const merchantReturnReserve = await one(pool, 'SELECT COALESCE(SUM(escrow_cash),0) s FROM merchant_return_rights');
   const merchantReturnNet = await sum(pool, "currency='cash' AND reason IN ('merchant_return:reserve','merchant_return:payout','merchant_return:refund')");
   push('merchant return escrow', merchantReturnReserve, -merchantReturnNet, 0);
