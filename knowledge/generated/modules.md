@@ -510,7 +510,7 @@
 | [src/watcher.js](../../src/watcher.js) | 512 | chain-economy | 7 / 7 | 0 | 5 | 9 |
 | [src/wire.js](../../src/wire.js) | 479 | law-intelligence | 6 / 7 | 11 | 18 | 2 |
 | [src/worker.js](../../src/worker.js) | 1109 | platform-core | 73 / 12 | 0 | 35 | 11 |
-| [src/workertraining.js](../../src/workertraining.js) | 93 | platform-core | 3 / 9 | 0 | 8 | 5 |
+| [src/workertraining.js](../../src/workertraining.js) | 94 | platform-core | 3 / 11 | 0 | 8 | 6 |
 | [src/world-consequences.js](../../src/world-consequences.js) | 97 | platform-core | 3 / 2 | 0 | 1 | 1 |
 | [src/world-kernel-invariants.js](../../src/world-kernel-invariants.js) | 40 | platform-core | 1 / 16 | 0 | 5 | 13 |
 | [src/world-kernel-query.js](../../src/world-kernel-query.js) | 337 | platform-core | 6 / 8 | 0 | 20 | 5 |
