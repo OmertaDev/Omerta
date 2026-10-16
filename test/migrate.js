@@ -747,6 +747,10 @@ const DISPOSITION = {
   performance_employment_contracts: 'special', // canonical F12 estate resolves the original prefunded bonus reserve
   performance_employment_assignments: 'metadata', // original worker/commitment source and paid delivery evidence remain historical
   performance_employment_requests: 'ledger', // original employer/key/funding ACK survives title changes and estate resolution
+  syndicated_loan_facilities: 'metadata', // canonical ordinary loans resolve value; estate retirement retains the original facility source
+  syndicated_loan_legs: 'ledger', // original lender funding journals and loan identities survive metadata retirement
+  syndicated_loan_members: 'metadata', // actual canonical loan estate resolution retires consenting current memberships
+  syndicated_loan_requests: 'ledger', // original account/key/source acknowledgements never become heir spending authority
 };
 // SCOPE: this guard covers the literal `character_id` column convention (42 tables). Tables that
 // reference a character via a DIFFERENTLY-NAMED column (npc_hits payer/target, searches hunter/target,
