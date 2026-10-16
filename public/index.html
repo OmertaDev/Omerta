@@ -6665,6 +6665,8 @@
     } else {
       setTab(tourReturnTab);
       const fallbackCandidates = [
+        // The panel survives the async refresh started by setTab; its old controls do not.
+        $(`#tab-${tourReturnTab}`),
         ...document.querySelectorAll(`#tab-${tourReturnTab} button:not([disabled]), #tab-${tourReturnTab} [href], #tab-${tourReturnTab} input:not([disabled]), #tab-${tourReturnTab} select:not([disabled])`),
         $(`#tab-control-${tourReturnTab}`),
       ];
