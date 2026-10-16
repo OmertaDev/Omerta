@@ -1549,16 +1549,38 @@ async function seedLists() {
   // THE STRIP — a rival's car taking a wager. Newly reachable: the comma-chain alias fix exposed
   // three Port/races lists that had been invisible, and an invisible list is not a covered list.
   await trySeed('races strip', async () => {
-    for (let i = 0; i < 12; i++) {
-      await q("UPDATE characters SET energy=200, nerve=50, jail_until=NULL, gta_at=NULL WHERE id=$1", [two]);
-      const r = await si('POST', '/v1/garage/boost', t2, {});
-      if (r.code < 400 && r.body?.success !== false) break;
-    }
-    const car2 = (await si('GET', '/v1/races', t2)).body?.cars?.[0]?.id;
-    if (car2) await si('POST', `/v1/races/list/${car2}`, t2, { limit: 50000 });
+    // The mirror needs a real listed rival, not twelve chances of one. Pin only
+    // this fixture's draw; the genuine boost route creates and owns the car.
+    await q("UPDATE characters SET energy=200, nerve=50, jail_until=NULL, gta_at=NULL WHERE id=$1", [two]);
+    const random = Math.random;
+    let boosted;
+    try {
+      Math.random = () => 0;
+      boosted = await si('POST', '/v1/garage/boost', t2, {});
+    } finally { Math.random = random; }
+    assert.equal(boosted.code, 200, 'The strip fixture must reach the real rival boost route.');
+    assert.equal(boosted.body?.success, true, 'The strip fixture must boost the rival car successfully.');
+    const car2 = boosted.body?.car?.id;
+    assert.ok(car2, 'The strip fixture must create an actual rival-owned car.');
+    const rival = await si('GET', '/v1/races', t2);
+    assert.equal(rival.code, 200);
+    assert.ok(rival.body?.cars?.some(car => car.id === car2 && car.model === boosted.body.car.model),
+      'The exact boosted UID must be raceable in the original rival garage.');
+    const listed = await si('POST', `/v1/races/list/${car2}`, t2, { limit: 50000 });
+    assert.equal(listed.code, 200, 'The rival must genuinely consent to the wager listing.');
+    assert.equal(listed.body?.ok, true);
+    assert.equal(listed.body?.carId, car2);
+    assert.equal(listed.body?.limit, 50000);
+    const observed = await si('GET', '/v1/races', token);
+    assert.equal(observed.code, 200);
+    const row = observed.body?.strip?.find(car => car.carId === car2 && car.ownerId === two);
+    assert.ok(row, 'The mirror player must observe the exact rival-owned listing on the strip.');
+    assert.equal(row.model, boosted.body.car.model);
+    assert.equal(row.limit, 50000);
+    assert.equal(row.forPinks, false);
+    assert.ok(typeof row.owner === 'string' && row.owner.length && typeof row.band === 'string' && row.band.length);
   });
-  // The preceding random boost can leave the second shape-fixture player jailed.
-  // These boards require a free player; crime odds are exercised by gameplay suites.
+  // These later boards require a free player; crime odds are exercised by gameplay suites.
   await q('UPDATE characters SET jail_until=NULL WHERE id=$1', [two]);
   // THE GALA — a live party in the city, so the guest-side list has a row to render. The host needs
   // a Row House (tier 2 — two upgrades, the ladder is sequential) AND a Butler on the door, and the
