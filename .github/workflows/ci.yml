@@ -215,9 +215,9 @@ jobs:
     if: ${{ !inputs.tail_only }}
     name: native core (${{ matrix.postgres }})
     runs-on: ubuntu-latest
-    # Expanded native coverage exhausted the former 20m lane after loadtest's
-    # success report, before process exit and concurrency. Keep a 30m bound.
-    timeout-minutes: 90
+    # Expanded core coverage reached the former 90m cap during the final loadtest.
+    # Keep the complete required suite and its step order within a 120m bound.
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:

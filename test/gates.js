@@ -3775,7 +3775,7 @@ scopedSocialContext = async function(db) {
 // ═══ THE CI JOB-SHAPE LEDGER — timeout headroom belongs to one measured job ══════════════════════
 // The full local suites lifecycle now takes 38m14.983s on Windows/Node 24, so its old 30-minute
 // HANG bound cannot contain the expanded property coverage. Browser and real-Postgres checks have
-// separate 25-minute browser and 90-minute FOURTH native bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
+// separate 25-minute browser, 120-minute native core and 90-minute native economy bounds. Check each JOB BLOCK: whole-file substring checks let the values trade
 // places, or let an untracked job inherit one, while still finding both numbers somewhere.
 {
   const ROOT = fileURLToPath(new URL('../', import.meta.url));
@@ -3804,7 +3804,7 @@ scopedSocialContext = async function(db) {
   assert.equal(nativeShape(nativeGate), "  pgcheck:\n    if: ${{ always() && !inputs.tail_only }}\n    name: real Postgres (${{ matrix.postgres }})\n    needs: [pgcheck_core, pgcheck_economy, pgcheck_enterprise]\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    steps:\n      - name: Require all three complete native cohorts\n        env:\n          CORE_RESULT: ${{ needs.pgcheck_core.result }}\n          ECONOMY_RESULT: ${{ needs.pgcheck_economy.result }}\n          ENTERPRISE_RESULT: ${{ needs.pgcheck_enterprise.result }}\n        run: |\n          test \"$CORE_RESULT\" = success\n          test \"$ECONOMY_RESULT\" = success\n          test \"$ENTERPRISE_RESULT\" = success", 'Required native identities must fail closed on failure, cancellation or a skipped cohort');
   const splitNative = block => { const pieces = block.replaceAll('\r\n', '\n').split(/(?=^      - (?:uses:|run:|name:))/m); return { header: pieces.shift(), steps: pieces }; };
   const coreParts = splitNative(coreNative), economyParts = splitNative(economyNative), enterpriseParts = splitNative(enterpriseNative);
-  assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
+  assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 120\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
   assert.equal(nativeShape(economyParts.header), "  pgcheck_economy:\n    if: ${{ !inputs.tail_only }}\n    name: native economy (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native economy service, matrix and finite bound are closed');
   const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
   assert.deepEqual(economyParts.steps.map(nativeShape), expectedEconomyParts, 'Every native economy setup, command, environment and condition remains exact');
@@ -3858,15 +3858,15 @@ scopedSocialContext = async function(db) {
   assert.throws(() => assert.deepEqual(timeouts(suites.replace('timeout-minutes: 120','timeout-minutes: 120\n    timeout-minutes: 120')),[120]),'Duplicate suites wall bound must reject');
   assert.deepEqual(timeouts(browser), [25],
     'the `browser` job must have exactly one 25-minute HANG bound');
-  assert.deepEqual(timeouts(pgcheck), [90],
-    'the FIFTH `pgcheck` job must retain exactly one finite 90-minute HANG bound for the measured baseline plus workforce and commercial chains');
-  for (const invalid of ['0', '45', '60', '75', '120', '${{ inputs.native_timeout }}', 'unbounded']) {
-    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: ' + invalid)), [90]),
-      'native wall bound must remain finite and exactly the finite FIFTH release budget');
+  assert.deepEqual(timeouts(pgcheck), [120],
+    'the complete native core cohort must retain exactly one finite 120-minute HANG bound after its observed90-minute timeout');
+  for (const invalid of ['0', '45', '60', '75', '90', '${{ inputs.native_timeout }}', 'unbounded']) {
+    assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 120', 'timeout-minutes: ' + invalid)), [120]),
+      'native wall bound must remain finite and exactly the reviewed core release budget');
   }
-  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 90\r?\n/m, '')), [90]),
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace(/^    timeout-minutes: 120\r?\n/m, '')), [120]),
     'an unset native wall bound must reject');
-  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 90', 'timeout-minutes: 90\n    timeout-minutes: 90')), [90]),
+  assert.throws(() => assert.deepEqual(timeouts(pgcheck.replace('timeout-minutes: 120', 'timeout-minutes: 120\n    timeout-minutes: 120')), [120]),
     'duplicate native wall bounds must reject');
 
 
@@ -4144,7 +4144,7 @@ scopedSocialContext = async function(db) {
     'native HTTP receipt recovery must execute both reservation and full-server controls');
   assert.deepEqual(nativeCommands, expectedNativeCommands,
     'the `pgcheck` job must retain every current native command in order');
-  console.log('  ✓ CI keeps suites at finite120m, browser at25m, both original native cohorts at90m, enterprise at120m and a closed5m required aggregate, with every proof intact');
+  console.log('  ✓ CI keeps suites at finite120m, browser at25m, native core at120m and native economy at90m, enterprise at120m and a closed5m required aggregate, with every proof intact');
 }
 
 // ═══ THE SINGLE-INSTANCE LEDGER — state that does not exist across boxes ══════════════════════════
