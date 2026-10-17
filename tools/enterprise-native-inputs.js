@@ -1,5 +1,5 @@
 // Genuine immutable authored-source proposal; no raw/native admission.
-export const ENTERPRISE_NATIVE_BASE_REVISION="cf3dd76566135563270fe2825b518e722e535f08";
+export const ENTERPRISE_NATIVE_BASE_REVISION="ff0a2f14ecfccc2fd14141e6e8a5ef38df11b237";
 export const ENTERPRISE_NATIVE_FILES=Object.freeze([
   ".github/workflows/ci.yml",
   ".github/workflows/forge.yml",
@@ -7935,8 +7935,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "test/lib/rc1-historical-source-fixture.js",
-    "blob": "3ccc1df70aa4b585ee7f6ecef5ea7cfa7f5051cd",
-    "sha256": "663dddf6a07faa6b676982ff60f57f7c6cc64c2150f22425adfc6844763cc3c5"
+    "blob": "4eb0767a9633486805d89b09dd65cad64041266c",
+    "sha256": "7980a1acc4380d6a274138b4d88013dfdd58b0672d384f8e1a2e1c643c5d0418"
   },
   {
     "file": "test/lib/rc1-historical-worker-source.js",
@@ -8885,8 +8885,8 @@ export const ENTERPRISE_NATIVE_BASE_INPUTS=Object.freeze([
   },
   {
     "file": "tools/enterprise-current-source-data.js",
-    "blob": "622113a4c492f9662de56b02d1c05729fe364757",
-    "sha256": "732d646f466082d49cdffea3e957d8e33f2a9e74af2bad16bb76e690a372d42a"
+    "blob": "950d30da391e47518fdc996a0f8e5a0f1b3a7ec9",
+    "sha256": "b7f397046d209ac44b61203ba0a7993d020c87290be9271d03b2bebdeec9525b"
   },
   {
     "file": "tools/enterprise-current-source-compatibility.js",
