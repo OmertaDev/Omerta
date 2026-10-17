@@ -320,6 +320,9 @@ export async function recordCollateralLendingTerminal(client, token) {
     if (typeof Loans.assertCollateralLendingTerminalProof !== 'function' || typeof Loans.getCollateralLendingTerminalVerifier !== 'function'
       || await Loans.getCollateralLendingTerminalVerifier() !== Loans.assertCollateralLendingTerminalProof) fail('terminal_integration_required');
     const proof = await Loans.assertCollateralLendingTerminalProof(client, token);
+    // Match the ordinary repay/release leaves: lock the loan before its pledge,
+    // then revalidate the private terminal proof against both locked sources.
+    const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [proof.loan.id])).rows[0];
     const matches = (await client.query('SELECT * FROM collateral_lending_pledges WHERE loan_id=$1 FOR UPDATE', [proof.loan.id])).rows;
     if (!matches.length) return;
     if (matches.length !== 1 || dbCaps.skipLocked !== true) fail('native_terminal_required');
@@ -331,7 +334,6 @@ export async function recordCollateralLendingTerminal(client, token) {
     await cashParty(client, proof.borrower.id, proof.borrower.account_id);
     await cashParty(client, proof.holder.id, proof.holder.account_id);
     await held(client, pledge);
-    const loan = (await client.query('SELECT * FROM loans WHERE id=$1 FOR UPDATE', [pledge.loan_id])).rows[0];
     sameDebt(pledge, loan);
     if (loan.status !== proof.kind || loan.lender_character !== proof.holder.id) fail('terminal_holder');
     const terminal = { pledge_id: pledge.id, loan_id: pledge.loan_id, borrower_character: pledge.borrower_character,

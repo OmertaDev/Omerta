@@ -53,7 +53,19 @@ try {
   assert(traded, 'Causal holder drift uses the actual canonical paper purchase');
   assert.equal((await f.pool.query('SELECT lender_character FROM loans WHERE id=$1', [loan.id])).rows[0].lender_character, trader.id);
   const oldHolder = Number((await f.pool.query('SELECT cash FROM characters WHERE id=$1', [lender.id])).rows[0].cash);
-  const paid = await f.C.collateralLendingAction(f.pool, borrower.account, 'repay', ref, f.key('repay'));
+  // Observe the real private terminal callback reached by ordinary repayment,
+  // after its association read, rather than counting the caller's earlier loan lock.
+  // This is an actual SQL-order witness, not a reproduced PostgreSQL deadlock.
+  const terminalLocks = []; let terminalAssociation = false;
+  const terminalOrderPool = observedPool(f.pool, async (_client, sql, values) => {
+    if (sql === 'SELECT id FROM collateral_lending_pledges WHERE loan_id=$1' && values?.[0] === loan.id) terminalAssociation = true;
+    if (!terminalAssociation) return;
+    if (sql === 'SELECT * FROM loans WHERE id=$1 FOR UPDATE' && values?.[0] === loan.id) terminalLocks.push('loans');
+    if (sql === 'SELECT * FROM collateral_lending_pledges WHERE loan_id=$1 FOR UPDATE' && values?.[0] === loan.id) terminalLocks.push('collateral_lending_pledges');
+  });
+  const paid = await f.C.collateralLendingAction(terminalOrderPool, borrower.account, 'repay', ref, f.key('repay'));
+  assert(terminalAssociation, 'Actual canonical Loans callback association read was delivered');
+  assert.deepEqual(terminalLocks.slice(0, 2), ['loans', 'collateral_lending_pledges'], 'Private terminal recording uses the same loan-before-pledge order as ordinary repay/release');
   assert.equal(paid.loan.paid, 5250); assert.equal(paid.loan.toLender, 4987); assert.equal(paid.loan.vig, 263);
   assert.equal(paid.pledge.state, 'released');
   assert.equal(Number((await f.pool.query('SELECT cash FROM characters WHERE id=$1', [lender.id])).rows[0].cash), oldHolder);

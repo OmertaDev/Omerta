@@ -81,8 +81,8 @@ async function assertScope(c,ch,h,{agent}){
 async function authorities(c,businessId){return {
  policy:await latestPolicy(c,businessId,true),cadence:await latestSupplyContract(c,businessId,true),
  operator:(await c.query('SELECT * FROM company_operators WHERE depot_id=$1 FOR UPDATE',[businessId])).rows[0]||null,
- specialization:(await c.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[businessId])).rows[0]||null,
- floor:(await c.query('SELECT * FROM workshop_floorplans WHERE business_id=$1 FOR UPDATE',[businessId])).rows[0]||null};}
+ floor:(await c.query('SELECT * FROM workshop_floorplans WHERE business_id=$1 FOR UPDATE',[businessId])).rows[0]||null,
+ specialization:(await c.query('SELECT * FROM company_specializations WHERE business_id=$1 FOR UPDATE',[businessId])).rows[0]||null};}
 async function inspect(c,ch,h,{businessId,destination,agent,purpose}){
  await assertScope(c,ch,h,{agent});const s=scope(c);
  const d=(await c.query('SELECT * FROM business_depots WHERE id=$1 FOR UPDATE',[businessId])).rows[0];
