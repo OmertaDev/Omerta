@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "251cb3fd5ed10a12624a9e803a1cc65087ddba74",
+  "sourceRevision": "a064256ebb2b5e6126f8481e1aa317ae6165c30f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 16298,
-    "edges": 64903,
+    "nodes": 16302,
+    "edges": 64919,
     "byNodeType": {
       "Artifact": 6787,
       "Command": 293,
-      "Commit": 4426,
+      "Commit": 4430,
       "Contract": 134,
       "Document": 939,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5381,
-      "CHANGED": 24874,
+      "CHANGED": 24882,
       "CONTAINS": 6808,
       "DECLARES": 293,
       "DEFINED_IN": 1737,
       "DEPENDS_ON": 69,
       "EXECUTES": 1126,
       "HANDLED_BY": 929,
-      "HAS_COMMIT": 4426,
+      "HAS_COMMIT": 4430,
       "IMPLEMENTS": 124,
-      "IMPORTS": 7307,
+      "IMPORTS": 7311,
       "INHERITS": 45,
       "REFERENCES": 3814,
       "REPRESENTS": 2441,
@@ -40482,18 +40482,18 @@
       "extension": ".md",
       "bytes": 59888,
       "lines": 191,
-      "version": "ce8dd22d10d10fff",
+      "version": "7b7fc49c434076b0",
       "text": true,
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "ce8dd22d10d10fff"
+          "version": "7b7fc49c434076b0"
         }
       ],
-      "lastChangedAt": "2026-10-17T06:39:29.000Z",
+      "lastChangedAt": "2026-10-17T07:23:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "251cb3fd5ed10a12624a9e803a1cc65087ddba74"
+      "lastChangedCommit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f"
     },
     {
       "key": "Artifact:docs/rc1-third-batch-source-transfer-review.md",
@@ -135257,20 +135257,20 @@
       "path": "test/deed-discovery-migration-catalog.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 12294,
-      "lines": 145,
-      "version": "ffb5a5ad114f6e0c",
+      "bytes": 12567,
+      "lines": 148,
+      "version": "4e71b7c75d6b6354",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-discovery-migration-catalog.js",
           "line": 1,
-          "version": "ffb5a5ad114f6e0c"
+          "version": "4e71b7c75d6b6354"
         }
       ],
-      "lastChangedAt": "2026-10-16T20:56:46.000Z",
+      "lastChangedAt": "2026-10-17T07:13:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "9581aae4dfe1fe2158d1c9b084c35663b3553ca2"
+      "lastChangedCommit": "2f716bc9623016beeb0ca4d93d1d26dd472610c6"
     },
     {
       "key": "Artifact:test/deed-discovery-ui.js",
@@ -135326,20 +135326,20 @@
       "path": "test/deed-quest-source-compatibility.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 23967,
-      "lines": 288,
-      "version": "e0426a2ff6041b4e",
+      "bytes": 31744,
+      "lines": 355,
+      "version": "c2a92900fae60d08",
       "text": true,
       "provenance": [
         {
           "file": "test/deed-quest-source-compatibility.js",
           "line": 1,
-          "version": "e0426a2ff6041b4e"
+          "version": "c2a92900fae60d08"
         }
       ],
-      "lastChangedAt": "2026-10-16T23:13:02.000Z",
+      "lastChangedAt": "2026-10-17T07:23:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "43ecc8e7faaebf60d0a0685b844a2ad556570c99"
+      "lastChangedCommit": "463b048c709a3dc4eb534a108fc0313e3b75e9ce"
     },
     {
       "key": "Artifact:test/deed-upgrade-ownership.js",
@@ -155036,18 +155036,18 @@
       "extension": ".js",
       "bytes": 101431,
       "lines": 1287,
-      "version": "825026e0444d9e4d",
+      "version": "935e79bcf452c1be",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-source-pair.js",
           "line": 1,
-          "version": "825026e0444d9e4d"
+          "version": "935e79bcf452c1be"
         }
       ],
-      "lastChangedAt": "2026-10-17T06:39:29.000Z",
+      "lastChangedAt": "2026-10-17T07:23:31.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "251cb3fd5ed10a12624a9e803a1cc65087ddba74"
+      "lastChangedCommit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f"
     },
     {
       "key": "Artifact:tools/rc1-strategy-league-source-compatibility.js",
@@ -164786,6 +164786,22 @@
       ]
     },
     {
+      "key": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "type": "Commit",
+      "id": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "label": "Refresh enterprise release knowledge after GUI source integration",
+      "title": "Refresh enterprise release knowledge after GUI source integration",
+      "date": "2026-10-17T06:52:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "provenance": [
+        {
+          "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+          "url": "https://github.com/OmertaDev/Omerta/commit/11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+        }
+      ]
+    },
+    {
       "key": "Commit:11fc9153ab6e17e87e5721c05966278d54e68dad",
       "type": "Commit",
       "id": "11fc9153ab6e17e87e5721c05966278d54e68dad",
@@ -173186,6 +173202,22 @@
       ]
     },
     {
+      "key": "Commit:2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+      "type": "Commit",
+      "id": "2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+      "label": "Project Enterprise schema for synthetic deed catalog controls",
+      "title": "Project Enterprise schema for synthetic deed catalog controls",
+      "date": "2026-10-17T07:13:46.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+      "provenance": [
+        {
+          "commit": "2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2f716bc9623016beeb0ca4d93d1d26dd472610c6"
+        }
+      ]
+    },
+    {
       "key": "Commit:2fa4a08bfa168640116dafe6a4cadbe3b936ae8e",
       "type": "Commit",
       "id": "2fa4a08bfa168640116dafe6a4cadbe3b936ae8e",
@@ -179918,6 +179950,22 @@
         {
           "commit": "46341d551fa5626c13d0662b6f93c06319b83555",
           "url": "https://github.com/OmertaDev/Omerta/commit/46341d551fa5626c13d0662b6f93c06319b83555"
+        }
+      ]
+    },
+    {
+      "key": "Commit:463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+      "type": "Commit",
+      "id": "463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+      "label": "Compose Enterprise source checks with the retained Deed quest proofs",
+      "title": "Compose Enterprise source checks with the retained Deed quest proofs",
+      "date": "2026-10-17T07:23:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+      "provenance": [
+        {
+          "commit": "463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+          "url": "https://github.com/OmertaDev/Omerta/commit/463b048c709a3dc4eb534a108fc0313e3b75e9ce"
         }
       ]
     },
@@ -205438,6 +205486,22 @@
         {
           "commit": "a0610d9d71d2b71b3e11f1c043a4e3acace62d46",
           "url": "https://github.com/OmertaDev/Omerta/commit/a0610d9d71d2b71b3e11f1c043a4e3acace62d46"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "type": "Commit",
+      "id": "a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "label": "Bind Enterprise recovery review after Deed guard repairs",
+      "title": "Bind Enterprise recovery review after Deed guard repairs",
+      "date": "2026-10-17T07:23:31.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "provenance": [
+        {
+          "commit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a064256ebb2b5e6126f8481e1aa317ae6165c30f"
         }
       ]
     },
@@ -242926,12 +242990,12 @@
       "label": "docs/rc1-source-pair-additive-review.md",
       "documentType": "documentation",
       "lines": 191,
-      "version": "ce8dd22d10d10fff",
+      "version": "7b7fc49c434076b0",
       "provenance": [
         {
           "file": "docs/rc1-source-pair-additive-review.md",
           "line": 1,
-          "version": "ce8dd22d10d10fff"
+          "version": "7b7fc49c434076b0"
         }
       ]
     },
@@ -257290,6 +257354,9 @@
           "commit": "11af7d8f8637e8e791c9be1b36106c69936607ac"
         },
         {
+          "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+        },
+        {
           "commit": "1204ce97f24b11bd9a837887db4220f65e7947e4"
         },
         {
@@ -259501,6 +259568,9 @@
           "commit": "11af7d8f8637e8e791c9be1b36106c69936607ac"
         },
         {
+          "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+        },
+        {
           "commit": "1204ce97f24b11bd9a837887db4220f65e7947e4"
         },
         {
@@ -261710,6 +261780,9 @@
         },
         {
           "commit": "11af7d8f8637e8e791c9be1b36106c69936607ac"
+        },
+        {
+          "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
         },
         {
           "commit": "1204ce97f24b11bd9a837887db4220f65e7947e4"
@@ -264548,6 +264621,9 @@
         },
         {
           "commit": "11af7d8f8637e8e791c9be1b36106c69936607ac"
+        },
+        {
+          "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
         },
         {
           "commit": "1204ce97f24b11bd9a837887db4220f65e7947e4"
@@ -280423,7 +280499,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "251cb3fd5ed10a12624a9e803a1cc65087ddba74",
+      "revision": "a064256ebb2b5e6126f8481e1aa317ae6165c30f",
       "currentBranch": "codex/economy-enterprise-spaces-oct15",
       "defaultBranch": "main",
       "visibility": "public",
@@ -320487,13 +320563,13 @@
       "type": "TestSuite",
       "id": "test/deed-discovery-migration-catalog.js",
       "label": "test/deed-discovery-migration-catalog.js",
-      "lines": 145,
-      "version": "ffb5a5ad114f6e0c",
+      "lines": 148,
+      "version": "4e71b7c75d6b6354",
       "provenance": [
         {
           "file": "test/deed-discovery-migration-catalog.js",
           "line": 1,
-          "version": "ffb5a5ad114f6e0c"
+          "version": "4e71b7c75d6b6354"
         }
       ]
     },
@@ -320532,13 +320608,13 @@
       "type": "TestSuite",
       "id": "test/deed-quest-source-compatibility.js",
       "label": "test/deed-quest-source-compatibility.js",
-      "lines": 288,
-      "version": "e0426a2ff6041b4e",
+      "lines": 355,
+      "version": "c2a92900fae60d08",
       "provenance": [
         {
           "file": "test/deed-quest-source-compatibility.js",
           "line": 1,
-          "version": "e0426a2ff6041b4e"
+          "version": "c2a92900fae60d08"
         }
       ]
     },
@@ -387770,6 +387846,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:11fc9153ab6e17e87e5721c05966278d54e68dad",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -409906,6 +410014,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+      "to": "Artifact:test/deed-discovery-migration-catalog.js",
+      "provenance": {
+        "commit": "2f716bc9623016beeb0ca4d93d1d26dd472610c6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2fa4a08bfa168640116dafe6a4cadbe3b936ae8e",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -427278,6 +427394,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+      "to": "Artifact:test/deed-quest-source-compatibility.js",
+      "provenance": {
+        "commit": "463b048c709a3dc4eb534a108fc0313e3b75e9ce"
       }
     },
     {
@@ -491246,6 +491370,22 @@
       "to": "Artifact:test/equipmentinsurance.js",
       "provenance": {
         "commit": "a0610d9d71d2b71b3e11f1c043a4e3acace62d46"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "to": "Artifact:docs/rc1-source-pair-additive-review.md",
+      "provenance": {
+        "commit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "to": "Artifact:tools/rc1-source-pair.js",
+      "provenance": {
+        "commit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f"
       }
     },
     {
@@ -678979,6 +679119,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad",
+      "provenance": {
+        "commit": "11e2f3812e77dddbf6d7fcbff12c57ee38b5e7ad"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:11fc9153ab6e17e87e5721c05966278d54e68dad",
       "provenance": {
         "commit": "11fc9153ab6e17e87e5721c05966278d54e68dad"
@@ -683179,6 +683327,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2f716bc9623016beeb0ca4d93d1d26dd472610c6",
+      "provenance": {
+        "commit": "2f716bc9623016beeb0ca4d93d1d26dd472610c6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2fa4a08bfa168640116dafe6a4cadbe3b936ae8e",
       "provenance": {
         "commit": "2fa4a08bfa168640116dafe6a4cadbe3b936ae8e"
@@ -686542,6 +686698,14 @@
       "to": "Commit:46341d551fa5626c13d0662b6f93c06319b83555",
       "provenance": {
         "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:463b048c709a3dc4eb534a108fc0313e3b75e9ce",
+      "provenance": {
+        "commit": "463b048c709a3dc4eb534a108fc0313e3b75e9ce"
       }
     },
     {
@@ -699302,6 +699466,14 @@
       "to": "Commit:a0610d9d71d2b71b3e11f1c043a4e3acace62d46",
       "provenance": {
         "commit": "a0610d9d71d2b71b3e11f1c043a4e3acace62d46"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a064256ebb2b5e6126f8481e1aa317ae6165c30f",
+      "provenance": {
+        "commit": "a064256ebb2b5e6126f8481e1aa317ae6165c30f"
       }
     },
     {
@@ -742394,6 +742566,15 @@
       "to": "Artifact:src/city-home-migration.js",
       "provenance": {
         "file": "test/deed-discovery-migration-catalog.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-discovery-migration-catalog.js",
+      "to": "Artifact:tools/enterprise-current-source-compatibility.js",
+      "provenance": {
+        "file": "test/deed-discovery-migration-catalog.js",
         "line": 6
       }
     },
@@ -742403,7 +742584,7 @@
       "to": "Artifact:tools/next-layer-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "test/deed-discovery-migration-catalog.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -742439,7 +742620,7 @@
       "to": "Artifact:src/city-home-migration.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 250
+        "line": 317
       }
     },
     {
@@ -742448,7 +742629,7 @@
       "to": "Artifact:test/deed-discovery-migration-catalog.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 249
+        "line": 316
       }
     },
     {
@@ -742466,7 +742647,16 @@
       "to": "Artifact:tools/deed-quest-source-transfer.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 242
+        "line": 309
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-quest-source-compatibility.js",
+      "to": "Artifact:tools/enterprise-current-source-compatibility.js",
+      "provenance": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "line": 5
       }
     },
     {
@@ -742475,7 +742665,7 @@
       "to": "Artifact:tools/next-five-source-compatibility.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -742484,7 +742674,7 @@
       "to": "Artifact:tools/next-layer-release-phase2-migration-catalog.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -742493,16 +742683,7 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 129
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/deed-quest-source-compatibility.js",
-      "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
-      "provenance": {
-        "file": "test/deed-quest-source-compatibility.js",
-        "line": 176
+        "line": 130
       }
     },
     {
@@ -742520,7 +742701,34 @@
       "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 7
+        "line": 178
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-quest-source-compatibility.js",
+      "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
+      "provenance": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "line": 265
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-quest-source-compatibility.js",
+      "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
+      "provenance": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "line": 266
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/deed-quest-source-compatibility.js",
+      "to": "Artifact:tools/rc1-city-activity-source-compatibility.js",
+      "provenance": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "line": 8
       }
     },
     {
@@ -742529,7 +742737,7 @@
       "to": "Artifact:tools/rc1-fifth-batch-source-compatibility.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -742538,7 +742746,7 @@
       "to": "Artifact:tools/rc1-fourth-batch-source-compatibility.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 11
+        "line": 12
       }
     },
     {
@@ -841448,7 +841656,7 @@
       "to": "Artifact:src/city-home-migration.js",
       "provenance": {
         "file": "test/deed-discovery-migration-catalog.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -841466,7 +841674,7 @@
       "to": "Artifact:src/city-home-migration.js",
       "provenance": {
         "file": "test/deed-quest-source-compatibility.js",
-        "line": 250
+        "line": 317
       }
     },
     {
