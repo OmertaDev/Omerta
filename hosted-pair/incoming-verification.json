@@ -1,0 +1,40 @@
+{
+  "phase": "READ_ONLY_CLOSED_INPUT_VERIFICATION_NO_PACKET_EXECUTION",
+  "verifiedAt": "2026-10-17T05:25:37.5568707Z",
+  "inputs": [
+    {
+      "name": "priorGui",
+      "root": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materialization-preparation-9f433ed9-c268-47fe-bb6f-21d632794a76",
+      "manifestBytes": 16832,
+      "manifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+      "closedFiles": 72,
+      "links": 0
+    },
+    {
+      "name": "upstreamCorrection",
+      "root": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/rootd8-bg-hosted-reference-permissions-successor-20261017",
+      "manifestBytes": 3383,
+      "manifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+      "closedFiles": 12,
+      "links": 0
+    },
+    {
+      "name": "upstreamPeer",
+      "root": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/hosted-reference-permissions-independent-6170177d-20261017",
+      "manifestBytes": 2272,
+      "manifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+      "closedFiles": 9,
+      "links": 0
+    },
+    {
+      "name": "cause",
+      "root": "C:/Users/Jorge/.codex/visualizations/2026/10/08/01a118f5-257a-7ea0-9c7e-471785acde84/agent-economy-state/team-evidence/component-review/hosted-npm-mode-analysis-39004762233-20261017",
+      "manifestBytes": 3506,
+      "manifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+      "closedFiles": 14,
+      "links": 0
+    }
+  ],
+  "rawArchiveOpened": false,
+  "localControl793516Touched": false
+}

@@ -1,0 +1,1 @@
+{"phase":"PASS_FOCUSED_REFERENCE_PERMISSION_MEMORY_MOCK_ONLY","positive":1,"refusals":1,"realCapabilityAttempts":{"filesystem":0,"subprocess":0,"import":0}}

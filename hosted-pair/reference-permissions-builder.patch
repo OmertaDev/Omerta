@@ -1,0 +1,5 @@
+--- prior-gui/build-preparation.cjs
++++ successor/build-preparation.cjs
+@@ -68,1 +68,1 @@
+-  cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});
++  cp.execFileSync('tar',['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});

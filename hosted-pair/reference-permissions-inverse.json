@@ -1,0 +1,60 @@
+{
+  "phase": "EXACT_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR_DELTA",
+  "finding": "HO-NPM-UMASK-R1",
+  "priorGuiManifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+  "upstreamManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+  "upstreamPeerManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+  "exactUpstreamCallVerified": true,
+  "upstreamWholeInverseVerified": true,
+  "beforePrefix": "['--extract','--gzip','--file',job.nodeArchive,'--directory'",
+  "afterPrefix": "['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory'",
+  "sourceChanges": [
+    {
+      "file": "materialize-hosted.cjs",
+      "before": {
+        "bytes": 18983,
+        "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5"
+      },
+      "after": {
+        "bytes": 19004,
+        "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    },
+    {
+      "file": "build-preparation.cjs",
+      "before": {
+        "bytes": 19503,
+        "sha256": "c5687463e0a759912f79fcd80603e7d407d5936930fea501d855559645e05d26"
+      },
+      "after": {
+        "bytes": 19524,
+        "sha256": "90f4c2eb5b311747bafd11d8bfa7b81578905869d3443688d0c9eea372edec49"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    },
+    {
+      "file": "synthetic-cases.js",
+      "before": {
+        "bytes": 21646,
+        "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+      },
+      "after": {
+        "bytes": 21667,
+        "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    }
+  ],
+  "allOtherOperationalSourceBytesUnchanged": true,
+  "wholeModeContentComparatorUnchanged": true,
+  "workflowUmask": "077",
+  "actualApproval": null,
+  "actualRuntime": null
+}

@@ -1,76 +1,71 @@
 {
-  "phase": "AUTHOR_VALIDATION_DISABLED_GUI_MATERIALIZER_ONLY",
-  "createdAt": "2026-10-17T05:02:10.5025908Z",
-  "syntaxFiles": 13,
+  "phase": "AUTHOR_VALIDATION_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR_ONLY",
+  "createdAt": "2026-10-17T05:31:20.6415016Z",
+  "syntaxFiles": 4,
   "syntaxOnly": true,
   "syntaxReceipt": {
     "file": "syntax-check.json",
-    "bytes": 3516,
-    "sha256": "3365e96539e5d358ef60fb8a5cb39fac8094ca75df7d5ef44c4227ce737c4347"
+    "bytes": 1152,
+    "sha256": "68be246a60bf3d4cdda91ae4ac2b1e4fae4b7135b2c78f1db6c25aabb6a8cba5"
   },
-  "synthetic": {
+  "exactInverseReceipt": {
+    "file": "reference-permissions-inverse.json",
+    "bytes": 2113,
+    "sha256": "c649fccbdd40cfdfac557fc65c353f7061aadec28398f3af3d793f75e3c832bf"
+  },
+  "focused": {
     "harness": {
-      "file": "synthetic-tests.cjs",
-      "bytes": 4488,
-      "sha256": "76940e9977a00307ec23341f8b7aa7656ab8440688a9ce68b16f4092c7ca78ad"
+      "file": "reference-permissions-checks.cjs",
+      "bytes": 6298,
+      "sha256": "dea98c209440071bde968f51ceefbb55faa780c087df41c6bcd50179047109d0"
     },
-    "cases": {
+    "existingCases": {
       "file": "synthetic-cases.js",
-      "bytes": 21646,
-      "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+      "bytes": 21667,
+      "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd"
     },
     "result": {
-      "file": "synthetic-results.json",
-      "bytes": 15868,
-      "sha256": "97aaba9063cdf2ddb0cf080ce0814bc6100a77c319f03425dbac1bc823e9e182"
+      "file": "reference-permissions-checks.json",
+      "bytes": 1605,
+      "sha256": "3d73754d9ff51092296c19fc4a7b2df7209eb35636854ae4319f73de691e69a8"
     },
-    "finalExitCode": 0,
     "stdout": {
-      "file": "synthetic-run2.stdout.txt",
-      "bytes": 220,
-      "sha256": "17ec1560ba4e6afe02ce2c3350b1d54cbea122dbf91ec01470db2c5f4bd3f0bd"
+      "file": "reference-permissions-checks.stdout.txt",
+      "bytes": 157,
+      "sha256": "629c251920d4e6e4690929594e9d88862e03cef5c1c15a48de48eed68482cf6c"
     },
     "stderr": {
-      "file": "synthetic-run2.stderr.txt",
+      "file": "reference-permissions-checks.stderr.txt",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
-    "positive": 22,
-    "refusals": 135,
-    "unexpectedCapabilities": 0,
-    "environment": "Installed Node launched with cleared environment except SystemRoot/WINDIR; packet helpers see only isolated VM and fixture capabilities.",
-    "actualLinuxRuntimeObserved": false,
-    "actualRunnerBindingWritten": false,
-    "actualApprovalWritten": false,
-    "firstFailure": {
-      "exitCode": 1,
-      "kind": "TEST_AUTHORING_MISSING_SYNTHETIC_SOURCE_PRED_CONSTANTS",
-      "source": {
-        "file": "provenance/synthetic-cases-run1.js",
-        "bytes": 19760,
-        "sha256": "9aa28f154b7ac11f6fa046234736ceb4eecc92fb5545f5ee6a768365e7313968"
-      },
-      "stderr": {
-        "file": "synthetic-run1.stderr.txt",
-        "bytes": 1350,
-        "sha256": "a64fff02325bfda1683ca8ac0762e740e3c64afa202cb84decb0252858d717b8"
-      },
-      "productionCodeChangedForCorrection": false
-    }
+    "exitCode": 0,
+    "positive": 1,
+    "refusals": 1,
+    "actualTarCalls": 0,
+    "realCapabilityAttempts": {
+      "filesystem": 0,
+      "subprocess": 0,
+      "import": 0
+    },
+    "environment": "Installed Node launched with cleared environment except SystemRoot/WINDIR; target code sees only isolated VM and memory fixtures."
   },
   "staticReview": {
     "file": "preparation-review.json",
-    "bytes": 5993,
-    "sha256": "be1a3632a234a280be74bdf38b20f348523b27bbe2ab338c5e89eb11e08b4d58"
+    "bytes": 9019,
+    "sha256": "f9c4559cde5d3a0f4a466c7eb7be10d58402c517a82422e75e0fa3cc9c68e8d0"
   },
-  "inheritedFailure": {
-    "file": "inherited-service-initialization-finding.json",
-    "bytes": 819,
-    "sha256": "cda7b168f781c74042ed8539d6e258f5f14ecd8f43403faf0c4c9a81f295797d"
+  "reusedPriorValidation": {
+    "file": "provenance/prior-gui/validation-receipt.json",
+    "bytes": 2662,
+    "sha256": "bed468ec0da0098f70fe2e971db262fff3f0d957b5707cce71dc699d725eec1c"
   },
-  "independentPeerReview": null,
+  "priorBroadSuiteRerun": false,
   "operationalApproval": null,
+  "actualRuntime": null,
+  "actualRunnerBinding": null,
   "runtimeAdmission": null,
   "sourceReservation": null,
-  "sourcePairResult": null
+  "sourcePairResult": null,
+  "independentSuccessorReview": null
 }

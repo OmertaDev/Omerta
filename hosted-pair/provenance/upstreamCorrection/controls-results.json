@@ -1,0 +1,44 @@
+{
+  "phase": "SOURCE_ONLY_EXACT_REFERENCE_TAR_PERMISSION_FIX",
+  "wholeInverse": 1,
+  "unchangedFunctions": 16,
+  "totalFunctions": 17,
+  "syntaxParses": 2,
+  "actualPrepareCommandPrefixes": [
+    {
+      "oldArgs": [
+        "--extract",
+        "--gzip",
+        "--file",
+        "/job/temp/runtime/node.tar.gz",
+        "--directory",
+        "/job/temp/rc1-hosted-runtime-reference"
+      ],
+      "newArgs": [
+        "--extract",
+        "--same-permissions",
+        "--gzip",
+        "--file",
+        "/job/temp/runtime/node.tar.gz",
+        "--directory",
+        "/job/temp/rc1-hosted-runtime-reference"
+      ],
+      "actualExecCalls": 0
+    }
+  ],
+  "comparatorPositives": 1,
+  "comparatorRefusals": 10,
+  "modeModel": "Explicit archive modes preserved; pure command/strict-comparator checks, not a new Linux extraction run",
+  "capabilityAttempts": {
+    "tarExecution": 0,
+    "PG": 0,
+    "Docker": 0,
+    "network": 0,
+    "CI": 0,
+    "currentSource": 0,
+    "canonicalWrites": 0
+  },
+  "actualApproval": null,
+  "actualBinding": null,
+  "actualExecution": null
+}

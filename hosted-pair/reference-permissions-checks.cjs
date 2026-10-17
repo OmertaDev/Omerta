@@ -1,0 +1,42 @@
+'use strict';
+// Focused builtin-only successor check; uses the existing exact memory mock.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),vm=require('node:vm');
+const root=__dirname,read=n=>fs.readFileSync(path.join(root,n)),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const inverse=JSON.parse(read('reference-permissions-inverse.json'));
+for(const row of inverse.sourceChanges){const before=read('provenance/prior-gui/'+row.file),after=read(row.file);assert.equal(before.length,row.before.bytes);assert.equal(after.length,row.after.bytes);assert.equal(sha(before),row.before.sha256);assert.equal(sha(after),row.after.sha256);assert.equal(after.toString().split(inverse.afterPrefix).length,2);assert(Buffer.from(after.toString().replace(inverse.afterPrefix,inverse.beforePrefix)).equals(before));}
+const files={},names=['materialize-hosted.cjs','root-approval.UNBOUND.json','source-binding.template.json','module-barrier-inverses.json'];
+const modules=JSON.parse(read('module-barrier-inverses.json')).modules;
+for(const s of Object.values(modules))names.push(s.preparation,s.postimage);
+for(const name of fs.readdirSync(path.join(root,'inputs')))names.push('inputs/'+name);
+for(const name of ['gui-original-disabled-static-review.json','gui-startup-correction-static-review.json','gui-corrected-observer-synthetic-receipt.json'])names.push('provenance/'+name);
+for(const name of [...new Set(names)])files[name]=read(name).toString('base64');
+const attempts={filesystem:0,subprocess:0,import:0},denied=key=>new Proxy({}, {get(){return()=>{attempts[key]++;throw new Error('Denied '+key);};}});
+const mockRequire=name=>{if(name==='node:fs')return denied('filesystem');if(name==='node:child_process')return denied('subprocess');if(name==='node:path')return path.posix;if(name==='node:crypto')return crypto;if(name==='node:assert/strict')return assert;attempts.import++;throw new Error('Unexpected import '+name);};
+const context=vm.createContext({Buffer,require:mockRequire});
+context.materializerText=read('materialize-hosted.cjs').toString();
+vm.runInContext(`const INPUT_FILES=${JSON.stringify(files)};
+const assert=require('node:assert/strict'),path=require('node:path');
+const read=n=>{assert(INPUT_FILES[n],n);return Buffer.from(INPUT_FILES[n],'base64');},clone=o=>JSON.parse(JSON.stringify(o));
+const m=(()=>{const module={exports:{}};new Function('require','module','exports','__dirname','__filename',materializerText)(require,module,module.exports,'/packet','/packet/materialize-hosted.cjs');return module.exports;})();
+const base=JSON.parse(read('root-approval.UNBOUND.json'));
+const approved={...clone(base),enabled:true,materializerSHA256:m.sha(read('materialize-hosted.cjs')),packageManifestSHA256:'b'.repeat(64),independentReviewSHA256:'c'.repeat(64),observerPeerSHA256:'c'.repeat(64),rootConfigReviewSHA256:'d'.repeat(64),repository:'example/private-proof',workflowCommit:'e'.repeat(40),proofRef:'refs/heads/codex/gui-proof-only',privateWorkflowRef:'example/private-proof/.github/workflows/rc1-recovery.yml@refs/heads/codex/gui-proof-only',checkoutActionSHA:'1'.repeat(40),uploadActionSHA:'2'.repeat(40)};
+const env={GITHUB_SHA:approved.workflowCommit,GITHUB_REPOSITORY:approved.repository,GITHUB_WORKFLOW_REF:approved.privateWorkflowRef,GITHUB_JOB:'gui19f-d8-pair',GITHUB_RUN_ID:'100',GITHUB_RUN_ATTEMPT:'1',HOSTED_PAIR_SERVICE_ID:'3'.repeat(64),GITHUB_WORKSPACE:'/job/work',RUNNER_TEMP:'/job/temp',CHAIN_ENABLED:'off',RESOURCE_ECONOMY:'off'};
+const job=m.jobPaths(env),ref=(name,bytes=100,sha256='4'.repeat(64))=>({path:'/job/temp/rc1-hosted-controls/'+name,bytes,sha256});
+const actualFunction=(fn,names,values)=>new Function(...names,'return ('+fn.toString()+');')(...values);
+`,context);
+function modelText(name){const text=read(name).toString(),line=text.split('\n').find(x=>x.startsWith('function prepareModel(mutate){'));assert(line&&line.endsWith('}'));return line;}
+context.currentMockText=modelText('synthetic-cases.js');context.priorMockText=modelText('provenance/prior-gui/synthetic-cases.js');
+vm.runInContext(`const currentMock=new Function('return ('+currentMockText+');')();
+const current=currentMock();
+assert.equal(current.result.phase,'GUI_JOB_INPUT_MATERIALIZATION_ONLY');assert.equal(current.tar.length,1);
+assert.deepEqual(current.tar[0].args,['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory','/job/temp/rc1-hosted-runtime-reference']);
+const priorMock=new Function('return ('+priorMockText+');')();
+assert.throws(()=>priorMock(),e=>e.code==='ERR_ASSERTION'&&e.message.includes('--same-permissions'));
+globalThis.SCOPED_RESULT={phase:'PASS_FOCUSED_REFERENCE_PERMISSION_MEMORY_MOCK_ONLY',positive:1,refusals:1,existingUpdatedMockAccepted:true,oldArgvExpectationRefused:true,tarCallsInMemoryOnly:current.tar.length,actualTarCalls:0,actualBinding:null,actualApproval:null};`,context,{timeout:10000});
+assert.deepEqual(attempts,{filesystem:0,subprocess:0,import:0});
+const result=JSON.parse(vm.runInContext('JSON.stringify(SCOPED_RESULT)',context));
+result.controller={bytes:read('materialize-hosted.cjs').length,sha256:sha(read('materialize-hosted.cjs'))};result.realCapabilityAttempts=attempts;result.exactInverseSpans=inverse.sourceChanges.map(r=>({file:r.file,addedBytes:21,wholeInverse:true}));
+result.reusedReviewOnly={priorGuiManifest:'79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188',priorGuiPeer:'6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2',upstreamPeer:'aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e',unchangedFourModulesAndComparatorNotRerun:true};
+result.limitations=['Only source/inverse checks and existing updated memory mock ran. No full prior GUI suite rerun.','Actual prepare function evaluated with memory files, synthetic authority and mock tar/runtime; no operational input binding.','No tar/archive extraction, Node/npm/Git installation, source/dependency capture, application/native/PG/Docker/CIM/network/port/workflow/repository action.'];
+fs.writeFileSync(path.join(root,'reference-permissions-checks.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify({phase:result.phase,positive:1,refusals:1,realCapabilityAttempts:attempts}));

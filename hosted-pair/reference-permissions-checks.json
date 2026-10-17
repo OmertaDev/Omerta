@@ -1,0 +1,48 @@
+{
+  "phase": "PASS_FOCUSED_REFERENCE_PERMISSION_MEMORY_MOCK_ONLY",
+  "positive": 1,
+  "refusals": 1,
+  "existingUpdatedMockAccepted": true,
+  "oldArgvExpectationRefused": true,
+  "tarCallsInMemoryOnly": 1,
+  "actualTarCalls": 0,
+  "actualBinding": null,
+  "actualApproval": null,
+  "controller": {
+    "bytes": 19004,
+    "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+  },
+  "realCapabilityAttempts": {
+    "filesystem": 0,
+    "subprocess": 0,
+    "import": 0
+  },
+  "exactInverseSpans": [
+    {
+      "file": "materialize-hosted.cjs",
+      "addedBytes": 21,
+      "wholeInverse": true
+    },
+    {
+      "file": "build-preparation.cjs",
+      "addedBytes": 21,
+      "wholeInverse": true
+    },
+    {
+      "file": "synthetic-cases.js",
+      "addedBytes": 21,
+      "wholeInverse": true
+    }
+  ],
+  "reusedReviewOnly": {
+    "priorGuiManifest": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+    "priorGuiPeer": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2",
+    "upstreamPeer": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+    "unchangedFourModulesAndComparatorNotRerun": true
+  },
+  "limitations": [
+    "Only source/inverse checks and existing updated memory mock ran. No full prior GUI suite rerun.",
+    "Actual prepare function evaluated with memory files, synthetic authority and mock tar/runtime; no operational input binding.",
+    "No tar/archive extraction, Node/npm/Git installation, source/dependency capture, application/native/PG/Docker/CIM/network/port/workflow/repository action."
+  ]
+}

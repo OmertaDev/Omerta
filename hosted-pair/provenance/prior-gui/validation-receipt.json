@@ -1,0 +1,76 @@
+{
+  "phase": "AUTHOR_VALIDATION_DISABLED_GUI_MATERIALIZER_ONLY",
+  "createdAt": "2026-10-17T05:02:10.5025908Z",
+  "syntaxFiles": 13,
+  "syntaxOnly": true,
+  "syntaxReceipt": {
+    "file": "syntax-check.json",
+    "bytes": 3516,
+    "sha256": "3365e96539e5d358ef60fb8a5cb39fac8094ca75df7d5ef44c4227ce737c4347"
+  },
+  "synthetic": {
+    "harness": {
+      "file": "synthetic-tests.cjs",
+      "bytes": 4488,
+      "sha256": "76940e9977a00307ec23341f8b7aa7656ab8440688a9ce68b16f4092c7ca78ad"
+    },
+    "cases": {
+      "file": "synthetic-cases.js",
+      "bytes": 21646,
+      "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+    },
+    "result": {
+      "file": "synthetic-results.json",
+      "bytes": 15868,
+      "sha256": "97aaba9063cdf2ddb0cf080ce0814bc6100a77c319f03425dbac1bc823e9e182"
+    },
+    "finalExitCode": 0,
+    "stdout": {
+      "file": "synthetic-run2.stdout.txt",
+      "bytes": 220,
+      "sha256": "17ec1560ba4e6afe02ce2c3350b1d54cbea122dbf91ec01470db2c5f4bd3f0bd"
+    },
+    "stderr": {
+      "file": "synthetic-run2.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "positive": 22,
+    "refusals": 135,
+    "unexpectedCapabilities": 0,
+    "environment": "Installed Node launched with cleared environment except SystemRoot/WINDIR; packet helpers see only isolated VM and fixture capabilities.",
+    "actualLinuxRuntimeObserved": false,
+    "actualRunnerBindingWritten": false,
+    "actualApprovalWritten": false,
+    "firstFailure": {
+      "exitCode": 1,
+      "kind": "TEST_AUTHORING_MISSING_SYNTHETIC_SOURCE_PRED_CONSTANTS",
+      "source": {
+        "file": "provenance/synthetic-cases-run1.js",
+        "bytes": 19760,
+        "sha256": "9aa28f154b7ac11f6fa046234736ceb4eecc92fb5545f5ee6a768365e7313968"
+      },
+      "stderr": {
+        "file": "synthetic-run1.stderr.txt",
+        "bytes": 1350,
+        "sha256": "a64fff02325bfda1683ca8ac0762e740e3c64afa202cb84decb0252858d717b8"
+      },
+      "productionCodeChangedForCorrection": false
+    }
+  },
+  "staticReview": {
+    "file": "preparation-review.json",
+    "bytes": 5993,
+    "sha256": "be1a3632a234a280be74bdf38b20f348523b27bbe2ab338c5e89eb11e08b4d58"
+  },
+  "inheritedFailure": {
+    "file": "inherited-service-initialization-finding.json",
+    "bytes": 819,
+    "sha256": "cda7b168f781c74042ed8539d6e258f5f14ecd8f43403faf0c4c9a81f295797d"
+  },
+  "independentPeerReview": null,
+  "operationalApproval": null,
+  "runtimeAdmission": null,
+  "sourceReservation": null,
+  "sourcePairResult": null
+}

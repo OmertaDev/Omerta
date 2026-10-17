@@ -1,0 +1,324 @@
+{
+  "phase": "INDEPENDENT_REVIEW_DISABLED_STRICT_GUI_MATERIALIZER_SUCCESSOR",
+  "createdAtUtc": "2026-10-17T05:10:26.018Z",
+  "result": "PASS_SCOPED_DISABLED_NO_CONFIRMED_FINDINGS",
+  "subject": {
+    "directory": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materialization-preparation-9f433ed9-c268-47fe-bb6f-21d632794a76",
+    "manifest": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materialization-preparation-9f433ed9-c268-47fe-bb6f-21d632794a76/manifest.json",
+      "bytes": 16832,
+      "sha256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188"
+    },
+    "controller": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materialization-preparation-9f433ed9-c268-47fe-bb6f-21d632794a76/materialize-hosted.cjs",
+      "bytes": 18983,
+      "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5"
+    },
+    "source": "19f174540b0b65870800317ed98085ef36696976",
+    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849"
+  },
+  "findings": [],
+  "verified": {
+    "closedInventory": {
+      "indexed": 71,
+      "totalFiles": 72,
+      "directories": 3,
+      "symlinks": 0
+    },
+    "copiedOriginals": 37,
+    "baselineReferences": 14,
+    "unchangedRuntimeHelpers": [
+      {
+        "name": "physical",
+        "bytes": 278,
+        "sha256": "f2354c76ad104b3f0025b85ec2230ded29fdd06ae681ec3e448020f023386e5c"
+      },
+      {
+        "name": "bytes",
+        "bytes": 66,
+        "sha256": "7506c2f334c3104e2f9d1fcca93c90a1fad5bedd9a9cce11db72aa3529f3294f"
+      },
+      {
+        "name": "descriptor",
+        "bytes": 94,
+        "sha256": "cdb359aef6fe781d786d5c32121fd7eec3ee45fd48957f5f0d89432c590a05cb"
+      },
+      {
+        "name": "pinned",
+        "bytes": 87,
+        "sha256": "89f72c240176558045df2606757f9d54a35108541ff5444be994ba60a3512a7f"
+      },
+      {
+        "name": "put",
+        "bytes": 135,
+        "sha256": "86afee2870035bce1bd778e6dad02b6aa8dc85038a5d6682871e21531e58fa87"
+      },
+      {
+        "name": "tree",
+        "bytes": 691,
+        "sha256": "de3773210afb3b588455d26eede90ba185a0a9adfc4cc7d7210391dba3848b6e"
+      },
+      {
+        "name": "compareNpm",
+        "bytes": 171,
+        "sha256": "7eae4f2246ac220efa0b6898117d931a061bfa18b784e866b763832cdd700745"
+      },
+      {
+        "name": "runtimeCheck",
+        "bytes": 981,
+        "sha256": "d6319eeb8194a9eebccf49467f962700493071c29ca9cb855e57d5501e1eb576"
+      },
+      {
+        "name": "rootApproval",
+        "bytes": 223,
+        "sha256": "c2cbcb485ea18a72e348c66f3ccfaf8d3afa63c5cb984eafddd0ca3e68ccaaec"
+      },
+      {
+        "name": "jobPaths",
+        "bytes": 594,
+        "sha256": "e4a72dfc802b469f7833df0cea621efb4f16face9d13f34bc7aef5c74dc6476e"
+      },
+      {
+        "name": "verifyRuntime",
+        "bytes": 421,
+        "sha256": "1c16669edf6861f1cb8e560a56babf5d63fcfbd5bc4713aa36a2b1165717052e"
+      },
+      {
+        "name": "renderWorkflow",
+        "bytes": 286,
+        "sha256": "e532250a64a50dbbeabca12913c606aa4bd5ca465a90b709a50cb1f414e24c7a"
+      }
+    ],
+    "installerUnchanged": true,
+    "fourWholeByteBarrierInverses": [
+      {
+        "name": "observer",
+        "preparation": "inputs/hosted-observer-PREPARATION.cjs",
+        "postimage": "postimages/hosted-observer.EXECUTABLE.cjs",
+        "output": "hosted-observer.cjs",
+        "before": {
+          "bytes": 27019,
+          "sha256": "a6e7cb13e2d31aa9fa7bcdb54b1f806e7a1fc0d228a9132a75072aad49e81720"
+        },
+        "after": {
+          "bytes": 26901,
+          "sha256": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+        },
+        "barrierLiteral": "throw new Error('PREPARATION ONLY: strict GUI controller is disabled pending independent review and bound admission');",
+        "barrierOffset": 14,
+        "wholeFileInverse": true,
+        "deltaBytes": 118
+      },
+      {
+        "name": "guard",
+        "preparation": "inputs/hosted-source-guard-PREPARATION.mjs",
+        "postimage": "postimages/hosted-source-guard.EXECUTABLE.mjs",
+        "output": "hosted-source-guard.mjs",
+        "before": {
+          "bytes": 36295,
+          "sha256": "f83f3ff71614b4ce0772bdf6943806e8b61b6053232db1f873df588b77868d93"
+        },
+        "after": {
+          "bytes": 36185,
+          "sha256": "b044281889a3b7b01f47b36abc58e6a816e3c15b5416679ea4d57d1fd6b247f0"
+        },
+        "barrierLiteral": "throw new Error('PREPARATION ONLY: independently bind and review a separate executable successor before use');",
+        "barrierOffset": 0,
+        "wholeFileInverse": true,
+        "deltaBytes": 110
+      },
+      {
+        "name": "adapter",
+        "preparation": "inputs/strict-source-proof-adapter-PREPARATION.mjs",
+        "postimage": "postimages/strict-source-proof-adapter.EXECUTABLE.mjs",
+        "output": "strict-source-proof-adapter.mjs",
+        "before": {
+          "bytes": 8302,
+          "sha256": "7c4152c97a4de9ffa10adae82a0a18a9000720eba37dc023155bf27c3576fd9b"
+        },
+        "after": {
+          "bytes": 8199,
+          "sha256": "9b942d5afe7d79aacfab96106884a00e4c5a9d55e4041666bfbcad8aa97a312d"
+        },
+        "barrierLiteral": "throw new Error('PREPARATION ONLY: no executable source/proof integration or admission is authorized');",
+        "barrierOffset": 0,
+        "wholeFileInverse": true,
+        "deltaBytes": 103
+      },
+      {
+        "name": "proofValidator",
+        "preparation": "inputs/proof-validator-PREPARATION.mjs",
+        "postimage": "postimages/proof-validator.EXECUTABLE.mjs",
+        "output": "proof-validator.mjs",
+        "before": {
+          "bytes": 6995,
+          "sha256": "daceafac88fc1f122dba6079bcbc2af621f6000f780651ee6b74441ae5627956"
+        },
+        "after": {
+          "bytes": 6892,
+          "sha256": "9266bc453bc0863065fd7ff0d2fed9fd85af7c7e96ae2d10b2a8854b874f15e2"
+        },
+        "barrierLiteral": "throw new Error('PREPARATION_ONLY_UNBOUND: hosted proof validator is not executable or an admission.');",
+        "barrierOffset": 0,
+        "wholeFileInverse": true,
+        "deltaBytes": 103
+      }
+    ],
+    "workflowExactListedAdaptationsAndSingleHealthOptionRemoval": true
+  },
+  "sourceAndStrictProof": {
+    "candidate": "19f174540b0b65870800317ed98085ef36696976",
+    "candidateTree": "c04003a12493eea9b725daa016a32159ec5e64b4",
+    "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
+    "predecessorTree": "c9a572fb40d0b89c716919624a1cdd228c0f2a48",
+    "actualDeployedPredecessor": null,
+    "sourceTemplateSHA256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde",
+    "strictContractSHA256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace",
+    "unchangedCanonicalCliSHA256": "2f379b3ed16a8b59bb4ac7aee72752a42a5e3b34f082d479eb6ef1079843fcce",
+    "equalExpectedSchemaLockAppVersion": true,
+    "perSideSourceAndPackageIdentityPreserved": true,
+    "strictConfigDescriptors": [
+      "guardModule",
+      "guardBinding",
+      "adapterModule",
+      "proofModule",
+      "proofContract"
+    ],
+    "proofClosure": "Unchanged corrected GUI observer/adapter/proof enforce 16 ordered assertions, five strict equalities, four normal IPC children, 41 indexed artifacts and 42-file closure. Additive statuses remain refused.",
+    "interval": "Exactly one strict adapter before and afterAndValidate surrounds unchanged canonical command; fresh failure-finally guard capture remains unchanged."
+  },
+  "admissionAndAuthority": {
+    "guiSpecificSchemasAndVariableNames": true,
+    "registeredWorkflowPath": ".github/workflows/rc1-recovery.yml",
+    "job": "gui19f-d8-pair",
+    "immutableActionPlaceholderCounts": {
+      "checkout": 5,
+      "upload": 1
+    },
+    "splitOrder": "Reviewed static configuration with operationalAuthority false, source-only workflow rendering, separate actual workflow/control commit, then external Root approval.",
+    "exactExternalApprovalByteHashAndControllerSelfHashRequired": true,
+    "exactManifestInputHashesSizesAndFourModulePrePostDescriptorsRequired": true,
+    "distinctWorkflowCommitAndActualRepositoryRefRunAttemptJobServiceRequired": true,
+    "fiveConfigDescriptorsReachActualObserverAdmission": true,
+    "oldRootObserverPeerCannotSubstituteForFreshGUIAggregatePeer": true,
+    "allPreparedApprovalsAndConfigurationsDisabledOrNull": true,
+    "reviewCreatesApproval": false,
+    "actualApproval": null,
+    "actualWorkflow": null,
+    "actualAdmission": null
+  },
+  "runtimeAndRetention": {
+    "inheritedRuntimeHelpersAndInstallerExact": true,
+    "scope": "Approved complete Node22.23.3 archive, node binary, bundled npm10.9.9 tree and exact Git package/binary; no OS-wide or all dependency-body attestation.",
+    "before": "Fresh extraction of approved archive and complete npm membership/bytes/modes/contained-relative-link comparison.",
+    "after": "Always-run verification repeats approved runtime hashes/tree and requires equality with retained runtime-before.",
+    "expectedDependenciesSHA256": "f94d2897c9f035cd5f35a941a9778d1a257dc1bbc88c4f01639f4ec87a183ac7",
+    "expectedDependencyBytes": 239089,
+    "siblingSourcesAndSeparateNpmCi": true,
+    "retainedControls": "Four originals and postimages, five strict config descriptors, source binding, independent input receipt and Root approval, strict contract, dependency expectations, three guard references, Node/Git provenance, runtime-before/after and scoped GUI reviews.",
+    "committedRetainerAndEnvelopeFilesEqualBetweenD8And19f": true,
+    "retentionJoins": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/retention-source-joins.json",
+      "bytes": 1041,
+      "sha256": "2970d2015375e4defa4c98ba751ee20620a5392693185f6c865ff8585bd3d527"
+    },
+    "rc1PrefixedGUIAndRuntimeEvidenceCollected": true,
+    "encryptedOnlyUpload": "rc1-retention/evidence.rc1enc",
+    "alwaysRuntimeEncryptionAndUpload": true,
+    "errorOnMissing": true,
+    "retentionDays": 30,
+    "jobBoundsMinutes": [
+      5,
+      30
+    ],
+    "missingOrCanceledEvidenceCannotCreateCompletion": true
+  },
+  "inheritedHealthRepair": {
+    "externalProvenance": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/external-health-repair-provenance.json",
+      "bytes": 2898,
+      "sha256": "cd286535ae3c33e8142caa278aea49a32e8a95224548ee29a6f4ceb44cd60ff0"
+    },
+    "originalFailureRetained": true,
+    "onlyExplicitOptionsLineRemovedBeyondGUIAdaptations": true,
+    "actualHealthAnd50SecondReadinessGuardsUnchanged": true,
+    "noHostedRetryOrProofClaim": true
+  },
+  "validation": {
+    "static": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/static-results.json",
+      "bytes": 19574,
+      "sha256": "fef96ca28d15b2f9c8c5f4093a2794aacf27bf71b9f414f4958e9e244e95ddcb"
+    },
+    "syntax": {
+      "files": 5,
+      "passed": 5,
+      "receipt": {
+        "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/syntax-results.json",
+        "bytes": 1303,
+        "sha256": "7af753f88d18244115620c39614f36483f23125a4416db91a83c4f33cbb2c5b7"
+      }
+    },
+    "independentSynthetic": {
+      "positive": 9,
+      "refusals": 103,
+      "unexpectedCapabilityAttempts": 0,
+      "finalExitCode": 0,
+      "receipt": {
+        "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/synthetic-results-final.json",
+        "bytes": 20683,
+        "sha256": "28915aa2e19be47339277a1f8bbeee799c1e80db0440865ab11ece135efa58da"
+      },
+      "functions": [
+        "removeBarrier",
+        "admission",
+        "renderBinding",
+        "jobPaths",
+        "observerConfig",
+        "workflowAdmission",
+        "renderWorkflow",
+        "compareNpm",
+        "observer.admission"
+      ],
+      "prepareExecuted": false,
+      "runtimeCheckExecuted": false,
+      "packetModulesImported": false,
+      "packetMainExecuted": false,
+      "filesystemOrProcessCapabilitiesProvidedToVM": false
+    },
+    "authorResults": "Retained and hashed separately: 13 syntax checks and22 positives/135 refusals. These remain author evidence; they are not relabeled as this reviewer execution.",
+    "localSyntheticNode": "v24.19.0; this is not observed Linux/Node22 hosted qualification.",
+    "reviewerHarnessDiagnostics": {
+      "path": "C:/Users/Jorge/AppData/Local/Temp/omerta-dashboard-strict-gui-materializer-independent-review-7bd3426a-3e8b-424f-8bc1-a8d114f66250/reviewer-harness-diagnostics.json",
+      "bytes": 1739,
+      "sha256": "09a0b0be6a8b5a845667782f134aa8ebe6df5fc5a07c8d4c80f6dbb40a5f3af6"
+    },
+    "packetRecheckedUnchangedAtSeal": true
+  },
+  "scope": {
+    "staticSourceAndByteReads": true,
+    "readOnlyCommittedRetentionBlobJoins": true,
+    "syntaxOnly": true,
+    "isolatedBuiltinsPureFunctionControls": true,
+    "applicationImports": false,
+    "dependencyImports": false,
+    "actualSourceCapture": false,
+    "installsOrNpm": false,
+    "network": false,
+    "Docker": false,
+    "PG": false,
+    "CIM": false,
+    "ports": false,
+    "GitMutations": false,
+    "repositoryVariableReadsOrWrites": false,
+    "workflowPublishOrDispatch": false,
+    "frozenPacketMutation": false,
+    "approvalCreated": false
+  },
+  "limitations": [
+    "This is a disabled preparation/materialization review for the exact subject manifest; no operational authorization or runtime observation is created.",
+    "No actual Linux runner, source/dependency capture, PostgreSQL service, canonical proof, IPC closure, encrypted retention/upload or live deployment was exercised.",
+    "Root must separately review/bind actual immutable action refs, control commit, exact approval/config hashes and fresh aggregate peer, and retain applicable Root pairedLIVE/final19f cohort prerequisites before any authorized GUI dispatch.",
+    "Expected predecessor d8 remains a committed source expectation, not observed deployed or paired LIVE."
+  ]
+}

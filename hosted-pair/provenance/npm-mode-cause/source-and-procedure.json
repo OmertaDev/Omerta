@@ -1,0 +1,96 @@
+{
+  "phase": "CONFIRMED_HO_NPM_UMASK_R1_REFERENCE_EXTRACTION_FIX_PENDING",
+  "workflowSource": "398e2a6cca3ce439a633cde6f62d06761b69a09f",
+  "workflowSHA256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05",
+  "actualMaterializerEqualsFrozen": true,
+  "materializerSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61",
+  "frozenManifestSHA256": "ca22beb17ddcb6990459695406a299a8ec9dff45fc276168dac00d1b4f5b4840",
+  "installerSHA256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932",
+  "source": {
+    "referenceExtraction": {
+      "line": 56,
+      "before": "cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});"
+    },
+    "fullModeComparator": {
+      "line": 39,
+      "rootEntryExcluded": true,
+      "unchanged": true
+    },
+    "restrictedEvidenceUmask": {
+      "workflowLine": 105,
+      "value": "077",
+      "preserve": true
+    },
+    "installer": {
+      "separatePriorStep": true,
+      "explicitUmask": false,
+      "actualResultMatchesOfficialModes": true
+    }
+  },
+  "actualLog": {
+    "path": "C:/Users/Jorge/.codex/restart-handoffs/2026-10-15/agent-economy-resume/hosted-health-39004762233-main-job.log",
+    "bytes": 5256258,
+    "sha256": "036b1d952cace276f0962e914c22ed84364456d00b4adc4b60e7e1ab47a073d3",
+    "firstRuntimeFailureLine": 1436,
+    "firstTimestamp": "2026-10-17T05:09:22.8719602Z",
+    "excerpt": "actual-failure-excerpt.log",
+    "canonicalM6Reached": false
+  },
+  "counts": {
+    "rootInclusiveTarNpmEntries": 2464,
+    "actualComparatorDescendantEntries": 2463,
+    "rootInclusiveModePatterns": {
+      "Directory:755>700": 500,
+      "File:644>600": 1925,
+      "File:755>700": 39
+    },
+    "actualComparatorModePatterns": {
+      "Directory:755>700": 499,
+      "File:644>600": 1925,
+      "File:755>700": 39
+    },
+    "allPathTypeLinkByteDifferences": 0,
+    "actualInstalledVsOfficialModes": 0
+  },
+  "notComparedByRuntimeTree": {
+    "runtimeVsreference": {
+      "uid": 0,
+      "gid": 0,
+      "mtime": 0
+    },
+    "runtimeVsofficial": {
+      "uid": 2464,
+      "gid": 2464,
+      "mtime": 0
+    },
+    "referenceVsofficial": {
+      "uid": 2464,
+      "gid": 2464,
+      "mtime": 0
+    }
+  },
+  "interpretation": "Reference extraction inherits explicit materialization umask077. Installed distribution exactly matches official archived bytes/modes. No general npm integrity failure was observed; current proof fails before canonical M6.",
+  "fixProposal": {
+    "kind": "literal source delta only; not applied",
+    "before": "cp.execFileSync('tar',['--extract','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});",
+    "after": "cp.execFileSync('tar',['--extract','--same-permissions','--gzip','--file',job.nodeArchive,'--directory',runtimeOutput],{timeout:60000,maxBuffer:65536});",
+    "preserve": [
+      "full tree modes/content/membership/link comparison",
+      "installer and approved archive/binary hashes",
+      "restricted evidence umask077",
+      "timeouts/actual payloads/source/guard authority"
+    ],
+    "actualLinuxRetest": false
+  },
+  "operations": {
+    "keysRead": 0,
+    "decryptions": 0,
+    "extractToFilesystem": 0,
+    "symlinksFollowed": 0,
+    "payloadExecutions": 0,
+    "network": 0,
+    "PG": 0,
+    "CIM": 0,
+    "canonicalWrites": 0
+  }
+}

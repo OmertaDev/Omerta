@@ -1,0 +1,97 @@
+{
+  "phase": "SOURCE_ONLY_DISABLED_REFERENCE_PERMISSIONS_SUCCESSOR_PEER_PENDING",
+  "finding": "HO-NPM-UMASK-R1",
+  "findingManifest": {
+    "path": "C:\\Users\\Jorge\\.codex\\visualizations\\2026\\10\\08\\01a118f5-257a-7ea0-9c7e-471785acde84\\agent-economy-state\\team-evidence\\component-review\\hosted-npm-mode-analysis-39004762233-20261017\\manifest.json",
+    "sha256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db"
+  },
+  "source": "398e2a6cca3ce439a633cde6f62d06761b69a09f",
+  "proposedOnly": [
+    {
+      "file": "hosted-pair/materialize-hosted.cjs",
+      "sha256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5",
+      "beforeSHA256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    }
+  ],
+  "wholeInverse": 1,
+  "unchangedFunctions": 16,
+  "unchangedWorkflowSHA256": "b14593d3ee14e3ec375d0e8af76f20366ddf99897ef30ba1800de90b230fad05",
+  "observerSHA256": "b90ee561c293bee7be59e293ee7d4370ccd4d049827bf0bdcc1f670f19ab40c2",
+  "preservedComparison": "Whole paths/types/linktargets/modes/bytes/SHA256; no ignored fields",
+  "evidenceMaskUnchanged": "077",
+  "actualFailureRun": 39004762233,
+  "actualCanonicalM6Started": false,
+  "archiveVerification": "Independent f166 analysis of Root-authenticated retained plaintext; no repeated extraction/decryption by fix author",
+  "actualWorkflow": null,
+  "actualApproval": null,
+  "actualService": null,
+  "actualBinding": null,
+  "actualExecution": null,
+  "actualResult": null,
+  "capabilities": {
+    "tarExecution": 0,
+    "PG": 0,
+    "Docker": 0,
+    "network": 0,
+    "CI": 0,
+    "currentSource": 0,
+    "canonicalWrites": 0
+  },
+  "files": [
+    {
+      "file": "baseline/materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "controls-results.json",
+      "bytes": 1084,
+      "sha256": "5d3c4b2bed958ac652252597598d3e8200781c213e342fd3e082a4b6fa69a1df"
+    },
+    {
+      "file": "HANDOFF.md",
+      "bytes": 2863,
+      "sha256": "3d06abcfee20f4ffb8a8db117ae6624e8f485f3d32b387ff9b75a100e9b45661"
+    },
+    {
+      "file": "minimal.patch",
+      "bytes": 1084,
+      "sha256": "1f8301fc2b7a16b742ddbd0f7784e6594f9eaaecdc0fcd61069ad3c2e7ae4c6d"
+    },
+    {
+      "file": "prepare.cjs",
+      "bytes": 2099,
+      "sha256": "be4764c65af72c7f0542b2d82a1df81ae0ff72d51c3d9fa8c2595474b87517e2"
+    },
+    {
+      "file": "proposed/hosted-pair/materialize-hosted.cjs",
+      "bytes": 14538,
+      "sha256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5"
+    },
+    {
+      "file": "retained-harness-failure.json",
+      "bytes": 421,
+      "sha256": "f678e221a34ad0c9a8fdfe9143d0b7c53904579664a6788ff364b9d28fd2c963"
+    },
+    {
+      "file": "seal.cjs",
+      "bytes": 2929,
+      "sha256": "dc5587bc055248bda249cf57541557b3f5d1915ef758d42ab4d74c05d3d69731"
+    },
+    {
+      "file": "source-inverse.json",
+      "bytes": 784,
+      "sha256": "b60769911fac0579cf9608b22438e7173045d92ae61c95eec5c622abc774bce6"
+    },
+    {
+      "file": "test-initial-missing-assert.cjs",
+      "bytes": 3972,
+      "sha256": "593340123aef101f14b92cad75a229ef5badf00897a80a3b1f43c09cc68c7a64"
+    },
+    {
+      "file": "test.cjs",
+      "bytes": 3981,
+      "sha256": "4f17dde1dfcea7c80df311c96600a2aee933e894a823eb2932e444bcfb6749cf"
+    }
+  ]
+}

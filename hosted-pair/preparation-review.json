@@ -1,11 +1,61 @@
 {
-  "phase": "AUTHOR_STATIC_REVIEW_DISABLED_GUI_MATERIALIZER_PREPARATION_ONLY",
-  "createdAt": "2026-10-17T05:01:18.866Z",
+  "phase": "AUTHOR_SCOPED_REVIEW_DISABLED_GUI_REFERENCE_PERMISSIONS_SUCCESSOR",
+  "createdAt": "2026-10-17T05:31:20.6124724Z",
   "source": "19f174540b0b65870800317ed98085ef36696976",
   "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
-  "sourceTemplateSHA256": "8523320c6ef6b26ff7998320a6b608866ab23eb93cba56d90e6d5489660c2bde",
-  "strictContractSHA256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace",
-  "allCopiedFrozenInputsRehashedAndUnchanged": 37,
+  "priorGuiManifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+  "priorGuiPeerManifestSHA256": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2",
+  "upstreamCorrectionManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+  "upstreamPeerManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+  "causeManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+  "finding": "HO-NPM-UMASK-R1",
+  "operationalChange": "Add '--same-permissions' to the existing fresh Node archive reference extraction, immediately after '--extract'.",
+  "sourceChanges": [
+    {
+      "file": "materialize-hosted.cjs",
+      "before": {
+        "bytes": 18983,
+        "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5"
+      },
+      "after": {
+        "bytes": 19004,
+        "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    },
+    {
+      "file": "build-preparation.cjs",
+      "before": {
+        "bytes": 19503,
+        "sha256": "c5687463e0a759912f79fcd80603e7d407d5936930fea501d855559645e05d26"
+      },
+      "after": {
+        "bytes": 19524,
+        "sha256": "90f4c2eb5b311747bafd11d8bfa7b81578905869d3443688d0c9eea372edec49"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    },
+    {
+      "file": "synthetic-cases.js",
+      "before": {
+        "bytes": 21646,
+        "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+      },
+      "after": {
+        "bytes": 21667,
+        "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd"
+      },
+      "addedBytes": 21,
+      "changedSpans": 1,
+      "wholeInverse": true
+    }
+  ],
+  "exactWholeFileInverses": true,
+  "wholeModeContentComparatorUnchanged": true,
   "preservedHelpers": [
     {
       "name": "physical",
@@ -68,7 +118,7 @@
       "sha256": "e532250a64a50dbbeabca12913c606aa4bd5ca465a90b709a50cb1f414e24c7a"
     }
   ],
-  "installerUnchanged": true,
+  "fourModulesUnchanged": true,
   "moduleBarriers": {
     "observer": {
       "preparation": "inputs/hosted-observer-PREPARATION.cjs",
@@ -131,34 +181,61 @@
       "barrierOffset": 0
     }
   },
-  "allFourWholeByteInverses": true,
-  "allApprovalAndConfigTemplatesDisabled": true,
-  "freshAggregatePeerReview": null,
+  "strictContract": {
+    "file": "inputs/proof-contract.json",
+    "bytes": 1670,
+    "sha256": "77acfe2a27ca8e088a1ce1dd9aa7b24c09c280eac41559d28689bd7f356d9ace"
+  },
+  "installer": {
+    "file": "install-approved-runtime.sh",
+    "bytes": 1748,
+    "sha256": "766f977fe691a837bf092edcaf270999bf6c6c6a7ab038f0e488619d4d397932"
+  },
+  "workflow": {
+    "file": "workflow.yml.template",
+    "bytes": 6108,
+    "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
+  },
+  "workflowEvidenceUmask": "077",
+  "approvedRuntimeAndDependencyPinsUnchanged": true,
+  "sourceBindingSchemaAndSourcePinsUnchanged": true,
+  "allApprovalAndConfigTemplatesByteExactDisabled": true,
+  "closureScopeReceipt": "reference-permissions-scope.json",
+  "focusedValidation": {
+    "syntaxFiles": 4,
+    "positive": 1,
+    "refusals": 1,
+    "actualTarCalls": 0,
+    "realCapabilityAttempts": {
+      "filesystem": 0,
+      "subprocess": 0,
+      "import": 0
+    },
+    "result": "reference-permissions-checks.json"
+  },
+  "reusedReview": {
+    "priorGuiAuthor": "provenance/prior-gui/preparation-review.json",
+    "priorGuiPeer": "provenance/prior-gui/independent-review-receipt.json",
+    "upstreamPeer": "provenance/upstreamPeer/manifest.json",
+    "unchangedModulesAndComparator": true,
+    "priorBroadSuiteRerun": false,
+    "priorResultsRemainHistorical": true
+  },
   "actualApproval": null,
   "actualWorkflow": null,
   "actualRuntime": null,
+  "actualBinding": null,
   "actualReservation": null,
   "actualAdmission": null,
+  "actualExecution": null,
   "actualResult": null,
   "actualRetention": null,
+  "independentSuccessorReview": null,
   "confirmedNewDefects": [],
-  "inheritedFailure": "inherited-service-initialization-finding.json",
-  "synthetic": {
-    "receipt": "synthetic-results.json",
-    "counts": {
-      "positive": 22,
-      "refusals": 135
-    },
-    "capabilities": {
-      "unexpectedFilesystem": 0,
-      "unexpectedProcess": 0,
-      "unexpectedImport": 0,
-      "dynamicImport": 0
-    },
-    "firstFailure": "Synthetic prepare fixture omitted SOURCE/PRED. Preserved source and stderr; only test fixture scope corrected. Not a product/runtime failure."
-  },
-  "limits": [
-    "Author static and builtin synthetic preparation verification, not independent approval or hosted qualification.",
-    "No original packet/product mutation, app/dependency import, source capture, install/npm, PG, Docker, CIM, ports, network, Git command, repository variable, publication or dispatch."
+  "limitations": [
+    "Author scoped source and memory-mock validation only. Independent successor review remains required.",
+    "No actual tar or archive extraction, install, source or dependency capture, application import/process, PostgreSQL, Docker, CIM, network, port, Git command, repository variable, publication or dispatch.",
+    "Cause evidence and upstream review were reused by exact identity; underlying authenticated archive was not opened or decrypted.",
+    "Prior frozen packets and local control 793516 remain untouched."
   ]
 }

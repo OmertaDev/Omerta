@@ -1,13 +1,13 @@
 {
   "phase": "GUI_SOURCE_ONLY_HOSTED_MATERIALIZATION_PREPARATION",
-  "frozenAt": "2026-10-17T05:02:10.9258101Z",
+  "frozenAt": "2026-10-17T05:31:21.0189840Z",
   "source": "19f174540b0b65870800317ed98085ef36696976",
   "expectedPredecessor": "d8e9f2e1feaf1df1f64584268069ba9917e30849",
-  "parentManifestSHA256": "3355d6d2942cd726994d649c74c0e4929e31b7aed7b9282b8214c86247ee2fce",
-  "parentPeerManifestSHA256": "6e261f6037162e521b072f046c5a8e1868d896f72fee31e95c2e5e48ef04754b",
+  "parentManifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+  "parentPeerManifestSHA256": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2",
   "adaptationMapManifestSHA256": "d994357bd6c4dda703fc07876c090acb90c017b15271dbe91657aeb969e60aaf",
   "entry": "materialize-hosted.cjs",
-  "entrySHA256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5",
+  "entrySHA256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca",
   "moduleBarriers": {
     "observer": {
       "preparation": "inputs/hosted-observer-PREPARATION.cjs",
@@ -85,11 +85,13 @@
     "bytes": 6108,
     "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
   },
-  "syntaxFiles": 13,
+  "syntaxFiles": 4,
   "controls": {
-    "positive": 22,
-    "refusals": 135,
-    "realCapabilityAttempts": 0
+    "positive": 1,
+    "refusals": 1,
+    "realCapabilityAttempts": 0,
+    "actualTarCalls": 0,
+    "scope": "Focused existing memory mock and three exact inverses only"
   },
   "inheritedServiceFailure": "run39003881167 controlc98 pre-checkout; only explicit service options line removed; observed health/readiness guards exact",
   "operationalAuthority": false,
@@ -109,8 +111,8 @@
   "files": [
     {
       "file": "build-preparation.cjs",
-      "bytes": 19503,
-      "sha256": "c5687463e0a759912f79fcd80603e7d407d5936930fea501d855559645e05d26"
+      "bytes": 19524,
+      "sha256": "90f4c2eb5b311747bafd11d8bfa7b81578905869d3443688d0c9eea372edec49"
     },
     {
       "file": "build.stderr.txt",
@@ -129,13 +131,18 @@
     },
     {
       "file": "HANDOFF.md",
-      "bytes": 8507,
-      "sha256": "c6dd356a1ae621c3da27fa99c0367763cc770817dea790924b05fa72a062b5f9"
+      "bytes": 4394,
+      "sha256": "ac5bb189208698bb1bb8e3ef3eb39a6b62cfd7e5fcdc2456b0dc38d010cbe793"
     },
     {
       "file": "hosted-binding.UNBOUND.json",
       "bytes": 840,
       "sha256": "066dfbad5608afbb183554bcc685524f9812ecc8a3b6b3124d05199ad3943b31"
+    },
+    {
+      "file": "incoming-verification.json",
+      "bytes": 1830,
+      "sha256": "435c18a8d043ccfd1821ab52565117b671e30d5e86fca7d2975e19b2f3ce6173"
     },
     {
       "file": "inherited-service-initialization-finding.json",
@@ -214,8 +221,8 @@
     },
     {
       "file": "materialize-hosted.cjs",
-      "bytes": 18983,
-      "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5"
+      "bytes": 19004,
+      "sha256": "52078f09a5da0e0c25841c491564d1ffc09a43b6b329b7b3dead85db674ac5ca"
     },
     {
       "file": "materializer-parent-to-gui.patch",
@@ -249,8 +256,8 @@
     },
     {
       "file": "preparation-review.json",
-      "bytes": 5993,
-      "sha256": "be1a3632a234a280be74bdf38b20f348523b27bbe2ab338c5e89eb11e08b4d58"
+      "bytes": 9019,
+      "sha256": "f9c4559cde5d3a0f4a466c7eb7be10d58402c517a82422e75e0fa3cc9c68e8d0"
     },
     {
       "file": "provenance/adaptation-map-ADAPTATION.md",
@@ -313,6 +320,26 @@
       "sha256": "f4d30426dbb085f1c987c42f49ca7b7e982e77d2176a7bb6bf8884aeb76f3526"
     },
     {
+      "file": "provenance/npm-mode-cause/actual-failure-excerpt.log",
+      "bytes": 2569,
+      "sha256": "db6cf777736fd1bbcfd6114adb0d13d2989f8ecc50eb48405c292749687f1834"
+    },
+    {
+      "file": "provenance/npm-mode-cause/FINDING.md",
+      "bytes": 5640,
+      "sha256": "5d74e1322e110f0bb48a381a1112ed09a715bc0d74aa9f01d56f9cb4c905acc3"
+    },
+    {
+      "file": "provenance/npm-mode-cause/manifest.json",
+      "bytes": 3506,
+      "sha256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db"
+    },
+    {
+      "file": "provenance/npm-mode-cause/source-and-procedure.json",
+      "bytes": 3413,
+      "sha256": "64a65663ebbb3884d404f5f16eed8d8c99cc22855738a5f5e1af9ae90889d3a4"
+    },
+    {
       "file": "provenance/parent-materialize-hosted.cjs",
       "bytes": 14517,
       "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
@@ -336,6 +363,66 @@
       "file": "provenance/parent-workflow.yml.template",
       "bytes": 6080,
       "sha256": "bf944655f899dd0f8e4d96530413aaa700316de3607756a756099b259b051e5b"
+    },
+    {
+      "file": "provenance/prior-gui/build-preparation.cjs",
+      "bytes": 19503,
+      "sha256": "c5687463e0a759912f79fcd80603e7d407d5936930fea501d855559645e05d26"
+    },
+    {
+      "file": "provenance/prior-gui/HANDOFF.md",
+      "bytes": 8507,
+      "sha256": "c6dd356a1ae621c3da27fa99c0367763cc770817dea790924b05fa72a062b5f9"
+    },
+    {
+      "file": "provenance/prior-gui/independent-manifest.json",
+      "bytes": 3783,
+      "sha256": "6299d024302a7016bdd41d4c79d567ba4fda8041f0b2e1d5515cf3d92c1246c2"
+    },
+    {
+      "file": "provenance/prior-gui/independent-review-receipt.json",
+      "bytes": 14337,
+      "sha256": "6e28491341690730de8be2b72ef85430d0b19f40ccb945caca91c67e2c1961d6"
+    },
+    {
+      "file": "provenance/prior-gui/manifest.json",
+      "bytes": 16832,
+      "sha256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188"
+    },
+    {
+      "file": "provenance/prior-gui/materialize-hosted.cjs",
+      "bytes": 18983,
+      "sha256": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5"
+    },
+    {
+      "file": "provenance/prior-gui/materializer-parent-to-gui.patch",
+      "bytes": 24767,
+      "sha256": "ac81eadbb9effd2646be24a41f55d4e432bd32cf58dd932c673e6546b4891e05"
+    },
+    {
+      "file": "provenance/prior-gui/preparation-review.json",
+      "bytes": 5993,
+      "sha256": "be1a3632a234a280be74bdf38b20f348523b27bbe2ab338c5e89eb11e08b4d58"
+    },
+    {
+      "file": "provenance/prior-gui/syntax-check.json",
+      "bytes": 3516,
+      "sha256": "3365e96539e5d358ef60fb8a5cb39fac8094ca75df7d5ef44c4227ce737c4347"
+    },
+    {
+      "file": "provenance/prior-gui/synthetic-cases.js",
+      "bytes": 21646,
+      "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+    },
+    {
+      "file": "provenance/prior-gui/synthetic-results.json",
+      "bytes": 15868,
+      "sha256": "97aaba9063cdf2ddb0cf080ce0814bc6100a77c319f03425dbac1bc823e9e182"
+    },
+    {
+      "file": "provenance/prior-gui/validation-receipt.json",
+      "bytes": 2662,
+      "sha256": "bed468ec0da0098f70fe2e971db262fff3f0d957b5707cce71dc699d725eec1c"
     },
     {
       "file": "provenance/proof-validator-manifest.json",
@@ -378,6 +465,156 @@
       "sha256": "9aa28f154b7ac11f6fa046234736ceb4eecc92fb5545f5ee6a768365e7313968"
     },
     {
+      "file": "provenance/upstreamCorrection/baseline/materialize-hosted.cjs",
+      "bytes": 14517,
+      "sha256": "f5f731f0ece24a110f22b6284a8a921c3366ea8f33a88b45613ec42027edde61"
+    },
+    {
+      "file": "provenance/upstreamCorrection/controls-results.json",
+      "bytes": 1084,
+      "sha256": "5d3c4b2bed958ac652252597598d3e8200781c213e342fd3e082a4b6fa69a1df"
+    },
+    {
+      "file": "provenance/upstreamCorrection/HANDOFF.md",
+      "bytes": 2863,
+      "sha256": "3d06abcfee20f4ffb8a8db117ae6624e8f485f3d32b387ff9b75a100e9b45661"
+    },
+    {
+      "file": "provenance/upstreamCorrection/manifest.json",
+      "bytes": 3383,
+      "sha256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22"
+    },
+    {
+      "file": "provenance/upstreamCorrection/minimal.patch",
+      "bytes": 1084,
+      "sha256": "1f8301fc2b7a16b742ddbd0f7784e6594f9eaaecdc0fcd61069ad3c2e7ae4c6d"
+    },
+    {
+      "file": "provenance/upstreamCorrection/prepare.cjs",
+      "bytes": 2099,
+      "sha256": "be4764c65af72c7f0542b2d82a1df81ae0ff72d51c3d9fa8c2595474b87517e2"
+    },
+    {
+      "file": "provenance/upstreamCorrection/proposed/hosted-pair/materialize-hosted.cjs",
+      "bytes": 14538,
+      "sha256": "6170177d557697d118d5b00cf7f7a93c1f6875899cabefc5faee36e0b38467d5"
+    },
+    {
+      "file": "provenance/upstreamCorrection/retained-harness-failure.json",
+      "bytes": 421,
+      "sha256": "f678e221a34ad0c9a8fdfe9143d0b7c53904579664a6788ff364b9d28fd2c963"
+    },
+    {
+      "file": "provenance/upstreamCorrection/seal.cjs",
+      "bytes": 2929,
+      "sha256": "dc5587bc055248bda249cf57541557b3f5d1915ef758d42ab4d74c05d3d69731"
+    },
+    {
+      "file": "provenance/upstreamCorrection/source-inverse.json",
+      "bytes": 784,
+      "sha256": "b60769911fac0579cf9608b22438e7173045d92ae61c95eec5c622abc774bce6"
+    },
+    {
+      "file": "provenance/upstreamCorrection/test-initial-missing-assert.cjs",
+      "bytes": 3972,
+      "sha256": "593340123aef101f14b92cad75a229ef5badf00897a80a3b1f43c09cc68c7a64"
+    },
+    {
+      "file": "provenance/upstreamCorrection/test.cjs",
+      "bytes": 3981,
+      "sha256": "4f17dde1dfcea7c80df311c96600a2aee933e894a823eb2932e444bcfb6749cf"
+    },
+    {
+      "file": "provenance/upstreamPeer/author-manifest.json",
+      "bytes": 3383,
+      "sha256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22"
+    },
+    {
+      "file": "provenance/upstreamPeer/manifest.json",
+      "bytes": 2272,
+      "sha256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e"
+    },
+    {
+      "file": "provenance/upstreamPeer/results.json",
+      "bytes": 3618,
+      "sha256": "639276fbba9b52a7a4e1ec500f517624feebdf980000c19f7ea9a85b0a0bf824"
+    },
+    {
+      "file": "provenance/upstreamPeer/retained-tar-order-model-failure.json",
+      "bytes": 515,
+      "sha256": "5364acaed7b3eab16e66b755f49119e49689096ea8a0d349fef46ac6324bd09d"
+    },
+    {
+      "file": "provenance/upstreamPeer/review-initial-tar-order.cjs",
+      "bytes": 6591,
+      "sha256": "9506bcc54c474afae262602eebea2a10f8b455b3a017c9968aa7881a1f1cec5f"
+    },
+    {
+      "file": "provenance/upstreamPeer/review.cjs",
+      "bytes": 6790,
+      "sha256": "a44bbd9d8cc348d3051eeac9be41bf637d88c8a98aa4fa0f7a1f396b6bf50fb5"
+    },
+    {
+      "file": "provenance/upstreamPeer/REVIEW.md",
+      "bytes": 3196,
+      "sha256": "e5f65d33104f4b4304aaee215a381be964caf42a4474efbc99a569ff25557c80"
+    },
+    {
+      "file": "provenance/upstreamPeer/seal.cjs",
+      "bytes": 2008,
+      "sha256": "7238a30141e53913d7958705de5405d785bb56a99ce0f0559e9bec5901099880"
+    },
+    {
+      "file": "provenance/upstreamPeer/source-inverse.json",
+      "bytes": 784,
+      "sha256": "b60769911fac0579cf9608b22438e7173045d92ae61c95eec5c622abc774bce6"
+    },
+    {
+      "file": "reference-permissions-builder.patch",
+      "bytes": 381,
+      "sha256": "11e13a743d6b1abbc1a9edee8ce2ebb3b96fe657ebd3cbb2bea5023d085aadbd"
+    },
+    {
+      "file": "reference-permissions-checks.cjs",
+      "bytes": 6298,
+      "sha256": "dea98c209440071bde968f51ceefbb55faa780c087df41c6bcd50179047109d0"
+    },
+    {
+      "file": "reference-permissions-checks.json",
+      "bytes": 1605,
+      "sha256": "3d73754d9ff51092296c19fc4a7b2df7209eb35636854ae4319f73de691e69a8"
+    },
+    {
+      "file": "reference-permissions-checks.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "reference-permissions-checks.stdout.txt",
+      "bytes": 157,
+      "sha256": "629c251920d4e6e4690929594e9d88862e03cef5c1c15a48de48eed68482cf6c"
+    },
+    {
+      "file": "reference-permissions-controller.patch",
+      "bytes": 383,
+      "sha256": "be197019928edc5288544cdc825330697e51a3214173ba230d43b3bee8ac28dc"
+    },
+    {
+      "file": "reference-permissions-inverse.json",
+      "bytes": 2113,
+      "sha256": "c649fccbdd40cfdfac557fc65c353f7061aadec28398f3af3d793f75e3c832bf"
+    },
+    {
+      "file": "reference-permissions-mock.patch",
+      "bytes": 4983,
+      "sha256": "e46bc3fbbf0aa35bd3c9e99dbbc779bfeb1744b743f6f83503339599b85a1577"
+    },
+    {
+      "file": "reference-permissions-scope.json",
+      "bytes": 14057,
+      "sha256": "31be2c2528f832f3914719e95942ffecfaba9963eb23cfe0cdf3cc5ce8597849"
+    },
+    {
       "file": "review-preparation.cjs",
       "bytes": 7381,
       "sha256": "01a6a3eb898ac30b6e906b4b9f5dc8e2b8bfdc8628482979b5f6d23bc4a01f2e"
@@ -404,13 +641,13 @@
     },
     {
       "file": "syntax-check.json",
-      "bytes": 3516,
-      "sha256": "3365e96539e5d358ef60fb8a5cb39fac8094ca75df7d5ef44c4227ce737c4347"
+      "bytes": 1152,
+      "sha256": "68be246a60bf3d4cdda91ae4ac2b1e4fae4b7135b2c78f1db6c25aabb6a8cba5"
     },
     {
       "file": "synthetic-cases.js",
-      "bytes": 21646,
-      "sha256": "9ab5652cf20837d32e6aaf7c2bc1ec139130eaec6759ab71381aafa3b5822a58"
+      "bytes": 21667,
+      "sha256": "fe38ad44adac989f182620c47bd2dafe11cbcf08c0a227e47d21fedcd0fbd7fd"
     },
     {
       "file": "synthetic-results.json",
@@ -444,8 +681,8 @@
     },
     {
       "file": "validation-receipt.json",
-      "bytes": 2662,
-      "sha256": "bed468ec0da0098f70fe2e971db262fff3f0d957b5707cce71dc699d725eec1c"
+      "bytes": 2433,
+      "sha256": "9b94445eefdd641b17c88dbd651b009694d5209fffe0dcce0029b9de447ae57d"
     },
     {
       "file": "workflow-parent-to-gui.patch",
@@ -462,5 +699,22 @@
       "bytes": 6108,
       "sha256": "adf35f85a053fcb1a72f15361a53d83cca4dafa99f8a1ce74e9434f23da4778b"
     }
-  ]
+  ],
+  "successorKind": "REFERENCE_PERMISSIONS",
+  "finding": "HO-NPM-UMASK-R1",
+  "upstreamCorrectionManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+  "upstreamPeerManifestSHA256": "aa14f2c4d0a21cee0a50c855a74552a0004eb7db6e095ae586dcc4f3059e6d8e",
+  "causeManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+  "deltaReceipt": "reference-permissions-inverse.json",
+  "scopeReceipt": "reference-permissions-scope.json",
+  "focusedValidationReceipt": "validation-receipt.json",
+  "priorControlsReused": {
+    "manifestSHA256": "79e929b98e9a89d6bd9f625d0f4c1c6e9667940a4b2380dcfda65f0956ad6188",
+    "positive": 22,
+    "refusals": 135,
+    "syntaxFiles": 13,
+    "rerun": false,
+    "currentSourceQualifiedByThoseCounts": false
+  },
+  "actualRuntime": null
 }

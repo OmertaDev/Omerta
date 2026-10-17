@@ -1,0 +1,156 @@
+{
+  "phase": "PASS_SCOPED_DISABLED_ONE_FLAG_REFERENCE_PERMISSION_FIX",
+  "authorManifestSHA256": "e1fdbb6b7d19dc40f212a3009b6587886f8495b0db81964805f5962487854a22",
+  "findingManifestSHA256": "f166f30631b8b46be7d081d7b46efc29c8fa2f462122810482bfd0d4e58254db",
+  "source": "398e2a6cca3ce439a633cde6f62d06761b69a09f",
+  "authorFilesRehashed": 11,
+  "findingFilesRehashed": 13,
+  "wholeInverse": true,
+  "changedLiteralSpans": 1,
+  "addedBytes": 21,
+  "unchangedFunctions": [
+    "physical",
+    "bytes",
+    "descriptor",
+    "pinned",
+    "put",
+    "removeBarrier",
+    "admission",
+    "renderBinding",
+    "tree",
+    "compareNpm",
+    "runtimeCheck",
+    "rootApproval",
+    "jobPaths",
+    "verifyRuntime",
+    "workflowAdmission",
+    "renderWorkflow"
+  ],
+  "prefixModels": {
+    "old": [
+      {
+        "kind": "pin",
+        "args": [
+          "/proof/hosted-pair/manifest.json",
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      },
+      {
+        "kind": "mkdir",
+        "args": [
+          "/job/temp/rc1-hosted-controls",
+          {
+            "mode": 448
+          }
+        ]
+      },
+      {
+        "kind": "mkdir",
+        "args": [
+          "/job/temp/rc1-hosted-runtime-reference",
+          {
+            "mode": 448
+          }
+        ]
+      },
+      {
+        "kind": "pin",
+        "args": [
+          "/job/temp/rc1-hosted-runtime/node.tar.gz",
+          "1084aa36196bba4c3a5e69a1ee388a6e4ff729dad09445fbcd434b28fe3c24af"
+        ]
+      },
+      {
+        "kind": "command",
+        "args": [
+          "tar",
+          [
+            "--extract",
+            "--gzip",
+            "--file",
+            "/job/temp/rc1-hosted-runtime/node.tar.gz",
+            "--directory",
+            "/job/temp/rc1-hosted-runtime-reference"
+          ],
+          {
+            "timeout": 60000,
+            "maxBuffer": 65536
+          }
+        ]
+      }
+    ],
+    "next": [
+      {
+        "kind": "pin",
+        "args": [
+          "/proof/hosted-pair/manifest.json",
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      },
+      {
+        "kind": "mkdir",
+        "args": [
+          "/job/temp/rc1-hosted-controls",
+          {
+            "mode": 448
+          }
+        ]
+      },
+      {
+        "kind": "mkdir",
+        "args": [
+          "/job/temp/rc1-hosted-runtime-reference",
+          {
+            "mode": 448
+          }
+        ]
+      },
+      {
+        "kind": "pin",
+        "args": [
+          "/job/temp/rc1-hosted-runtime/node.tar.gz",
+          "1084aa36196bba4c3a5e69a1ee388a6e4ff729dad09445fbcd434b28fe3c24af"
+        ]
+      },
+      {
+        "kind": "command",
+        "args": [
+          "tar",
+          [
+            "--extract",
+            "--same-permissions",
+            "--gzip",
+            "--file",
+            "/job/temp/rc1-hosted-runtime/node.tar.gz",
+            "--directory",
+            "/job/temp/rc1-hosted-runtime-reference"
+          ],
+          {
+            "timeout": 60000,
+            "maxBuffer": 65536
+          }
+        ]
+      }
+    ],
+    "onlyNewFlag": true,
+    "actualExecCalls": 0,
+    "privateOutputModes700": true
+  },
+  "strictComparator": {
+    "actualArchiveEntries": 2463,
+    "positive": 3,
+    "refusal": 11,
+    "oldAndNewRejectOriginalMaskedReference": true,
+    "pathsTypesModeBytesHashesAndLinksRemainStrict": true
+  },
+  "syntaxParses": 2,
+  "actualLinuxTarRetest": false,
+  "unboundFieldsPreserved": true,
+  "tarExecution": 0,
+  "PG": 0,
+  "Docker": 0,
+  "network": 0,
+  "currentRaw": 0,
+  "canonicalWrites": 0,
+  "dispatch": 0
+}

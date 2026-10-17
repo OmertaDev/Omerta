@@ -1,0 +1,659 @@
+{
+  "phase": "PASS_SYNTHETIC_DISABLED_GUI_MATERIALIZER_CONTROLS_ONLY",
+  "counts": {
+    "positive": 22,
+    "refusals": 135
+  },
+  "observations": [
+    {
+      "name": "observer exact barrier inverse",
+      "pass": true
+    },
+    {
+      "name": "observer changed preimage",
+      "refused": true
+    },
+    {
+      "name": "observer missing barrier",
+      "refused": true
+    },
+    {
+      "name": "observer duplicate barrier",
+      "refused": true
+    },
+    {
+      "name": "guard exact barrier inverse",
+      "pass": true
+    },
+    {
+      "name": "guard changed preimage",
+      "refused": true
+    },
+    {
+      "name": "guard missing barrier",
+      "refused": true
+    },
+    {
+      "name": "guard duplicate barrier",
+      "refused": true
+    },
+    {
+      "name": "adapter exact barrier inverse",
+      "pass": true
+    },
+    {
+      "name": "adapter changed preimage",
+      "refused": true
+    },
+    {
+      "name": "adapter missing barrier",
+      "refused": true
+    },
+    {
+      "name": "adapter duplicate barrier",
+      "refused": true
+    },
+    {
+      "name": "proofValidator exact barrier inverse",
+      "pass": true
+    },
+    {
+      "name": "proofValidator changed preimage",
+      "refused": true
+    },
+    {
+      "name": "proofValidator missing barrier",
+      "refused": true
+    },
+    {
+      "name": "proofValidator duplicate barrier",
+      "refused": true
+    },
+    {
+      "name": "unknown module removal",
+      "refused": true
+    },
+    {
+      "name": "disabled external approval refuses",
+      "refused": true
+    },
+    {
+      "name": "synthetic exact GUI admission",
+      "pass": true
+    },
+    {
+      "name": "missing approval materializerSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval packageManifestSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval independentReviewSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval observerPeerSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval rootConfigReviewSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval repository",
+      "refused": true
+    },
+    {
+      "name": "missing approval workflowCommit",
+      "refused": true
+    },
+    {
+      "name": "missing approval privateWorkflowRef",
+      "refused": true
+    },
+    {
+      "name": "missing approval proofRef",
+      "refused": true
+    },
+    {
+      "name": "missing approval checkoutActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing approval uploadActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing approval observerSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval proofContractSHA256",
+      "refused": true
+    },
+    {
+      "name": "missing approval observerReviews",
+      "refused": true
+    },
+    {
+      "name": "missing approval modulePreimages",
+      "refused": true
+    },
+    {
+      "name": "missing approval modulePostimages",
+      "refused": true
+    },
+    {
+      "name": "changed observer modulePreimages",
+      "refused": true
+    },
+    {
+      "name": "changed observer modulePostimages",
+      "refused": true
+    },
+    {
+      "name": "changed guard modulePreimages",
+      "refused": true
+    },
+    {
+      "name": "changed guard modulePostimages",
+      "refused": true
+    },
+    {
+      "name": "changed adapter modulePreimages",
+      "refused": true
+    },
+    {
+      "name": "changed adapter modulePostimages",
+      "refused": true
+    },
+    {
+      "name": "changed proofValidator modulePreimages",
+      "refused": true
+    },
+    {
+      "name": "changed proofValidator modulePostimages",
+      "refused": true
+    },
+    {
+      "name": "Root materialization schema cannot admit GUI",
+      "refused": true
+    },
+    {
+      "name": "Root pair source cannot admit GUI",
+      "refused": true
+    },
+    {
+      "name": "Root peer cannot alias GUI peer",
+      "refused": true
+    },
+    {
+      "name": "preparation observer hash cannot alias executable",
+      "refused": true
+    },
+    {
+      "name": "wrong scoped GUI review originalDisabledStatic",
+      "refused": true
+    },
+    {
+      "name": "wrong scoped GUI review startupCorrectionStatic",
+      "refused": true
+    },
+    {
+      "name": "wrong scoped GUI review correctedSynthetic",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_SHA",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_REPOSITORY",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_WORKFLOW_REF",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_JOB",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_RUN_ID",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job GITHUB_RUN_ATTEMPT",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job HOSTED_PAIR_SERVICE_ID",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job CHAIN_ENABLED",
+      "refused": true
+    },
+    {
+      "name": "wrong actual job RESOURCE_ECONOMY",
+      "refused": true
+    },
+    {
+      "name": "ambient selector DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector OTHER_DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector OTHER_DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGHOST=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGHOST=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGDATABASE=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGDATABASE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGUNKNOWN=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector PGUNKNOWN=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector RC1_PAIR_DATABASE_URL=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector RC1_PAIR_DATABASE_URL=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_OPTIONS=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_OPTIONS=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_PATH=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_PATH=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_PG_FORCE_NATIVE=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NODE_PG_FORCE_NATIVE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector GENESIS_AUCTION_MANIFEST_FILE=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector GENESIS_AUCTION_MANIFEST_FILE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NEXT_LAYER_NATIVE_SOURCE=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector NEXT_LAYER_NATIVE_SOURCE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "ambient selector MARKET_OPERATIONS_NATIVE_SOURCE=",
+      "refused": true
+    },
+    {
+      "name": "ambient selector MARKET_OPERATIONS_NATIVE_SOURCE=unexpected",
+      "refused": true
+    },
+    {
+      "name": "workflow source alias 19f174540b0b65870800317ed98085ef36696976",
+      "refused": true
+    },
+    {
+      "name": "workflow source alias d8e9f2e1feaf1df1f64584268069ba9917e30849",
+      "refused": true
+    },
+    {
+      "name": "loader flags",
+      "refused": true
+    },
+    {
+      "name": "exact candidate/predecessor schema pins",
+      "pass": true
+    },
+    {
+      "name": "corrected actual/historical reference shape",
+      "pass": true
+    },
+    {
+      "name": "input receipt preserves independent authority descriptors",
+      "pass": true
+    },
+    {
+      "name": "strict schema/lock baseline joined",
+      "pass": true
+    },
+    {
+      "name": "strict77ac Linux canonical contract preserved",
+      "pass": true
+    },
+    {
+      "name": "runtime PATH and all roots exactly derived",
+      "pass": true
+    },
+    {
+      "name": "actual GUI observer accepts rendered strict binding",
+      "pass": true
+    },
+    {
+      "name": "actual GUI observer rejects candidate:source",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects candidate:tree",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects candidate:expectedSchema",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects candidate:expectedDependencies",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects predecessor:source",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects predecessor:tree",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects predecessor:expectedSchema",
+      "refused": true
+    },
+    {
+      "name": "actual GUI observer rejects predecessor:expectedDependencies",
+      "refused": true
+    },
+    {
+      "name": "five exact config descriptors satisfy actual GUI admission",
+      "pass": true
+    },
+    {
+      "name": "actual observer missing descriptor guardModule",
+      "refused": true
+    },
+    {
+      "name": "actual observer missing descriptor guardBinding",
+      "refused": true
+    },
+    {
+      "name": "actual observer missing descriptor adapterModule",
+      "refused": true
+    },
+    {
+      "name": "actual observer missing descriptor proofModule",
+      "refused": true
+    },
+    {
+      "name": "actual observer missing descriptor proofContract",
+      "refused": true
+    },
+    {
+      "name": "config module substitution observer",
+      "refused": true
+    },
+    {
+      "name": "config module substitution guard",
+      "refused": true
+    },
+    {
+      "name": "config module substitution adapter",
+      "refused": true
+    },
+    {
+      "name": "config module substitution proofValidator",
+      "refused": true
+    },
+    {
+      "name": "config contract substitution",
+      "refused": true
+    },
+    {
+      "name": "strict observer operational controls retained",
+      "pass": true
+    },
+    {
+      "name": "observed absent healthcheck and health state accepted",
+      "pass": true
+    },
+    {
+      "name": "historical NONE observer rule remains unchanged",
+      "pass": true
+    },
+    {
+      "name": "recurring healthcheck remains refused",
+      "refused": true
+    },
+    {
+      "name": "any recurring health state remains refused",
+      "refused": true
+    },
+    {
+      "name": "accepted runtime helper bodies and installer byte-exact",
+      "pass": true
+    },
+    {
+      "name": "complete bundled npm tree comparator positive",
+      "pass": true
+    },
+    {
+      "name": "complete npm tree mutation 101",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 102",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 103",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 104",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 105",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 106",
+      "refused": true
+    },
+    {
+      "name": "complete npm tree mutation 107",
+      "refused": true
+    },
+    {
+      "name": "actual runtime checker synthetic complete distribution",
+      "pass": true
+    },
+    {
+      "name": "runtime hash mutation /job/temp/rc1-hosted-runtime/node.tar.gz",
+      "refused": true
+    },
+    {
+      "name": "runtime hash mutation /job/temp/rc1-hosted-runtime/git.deb",
+      "refused": true
+    },
+    {
+      "name": "runtime hash mutation /job/temp/rc1-hosted-runtime/node-v22.23.3-linux-x64/bin/node",
+      "refused": true
+    },
+    {
+      "name": "runtime hash mutation /job/temp/rc1-hosted-runtime/node-v22.23.3-linux-x64/lib/node_modules/npm/bin/npm-cli.js",
+      "refused": true
+    },
+    {
+      "name": "runtime hash mutation /job/temp/rc1-hosted-runtime/git/usr/bin/git",
+      "refused": true
+    },
+    {
+      "name": "runtime process identity platform",
+      "refused": true
+    },
+    {
+      "name": "runtime process identity arch",
+      "refused": true
+    },
+    {
+      "name": "runtime process identity execPath",
+      "refused": true
+    },
+    {
+      "name": "runtime process identity version",
+      "refused": true
+    },
+    {
+      "name": "runtime loader flag",
+      "refused": true
+    },
+    {
+      "name": "runtime complete npm mutation",
+      "refused": true
+    },
+    {
+      "name": "actual prepare orchestration writes only mock complete GUI inputs",
+      "pass": true
+    },
+    {
+      "name": "prepare refuses stale output before runtime extraction",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses wrong GUI manifest phase",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses tampered observer input",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses tampered guard input",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses tampered adapter input",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses tampered proofValidator input",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses missing adapter postimage",
+      "refused": true
+    },
+    {
+      "name": "prepare refuses altered strict contract",
+      "refused": true
+    },
+    {
+      "name": "workflow exact expected accepted-template adaptation",
+      "pass": true
+    },
+    {
+      "name": "workflow preserves approved runtime and proof topology",
+      "pass": true
+    },
+    {
+      "name": "disabled workflow renderer",
+      "refused": true
+    },
+    {
+      "name": "Root workflow schema cannot admit GUI",
+      "refused": true
+    },
+    {
+      "name": "static workflow never grants operational authority",
+      "refused": true
+    },
+    {
+      "name": "changed checkout placeholder count",
+      "refused": true
+    },
+    {
+      "name": "changed upload placeholder count",
+      "refused": true
+    },
+    {
+      "name": "missing static workflow checkoutActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing static workflow uploadActionSHA",
+      "refused": true
+    },
+    {
+      "name": "missing static workflow rootTemplateReviewSHA256",
+      "refused": true
+    }
+  ],
+  "actualApproval": null,
+  "actualRuntime": null,
+  "actualSourcePair": null,
+  "actualReservation": null,
+  "postimagesExecutedOnlyAsVmHelpers": true,
+  "realCapabilityAttempts": {
+    "unexpectedFilesystem": 0,
+    "unexpectedProcess": 0,
+    "unexpectedImport": 0,
+    "dynamicImport": 0
+  },
+  "packetSourceSHA256": {
+    "materializer": "1043f22a6f45312a46749ef0a8cc98678f2a880371f97f47052cd023b91e52b5",
+    "observerPostimage": "f6d910cb6cc5bb5a05bf9635ae588350f6ea9d1a9bc55f5ff89164ce36d6ad0c"
+  },
+  "limitations": [
+    "Only builtins loaded by the test harness; materializer and observer exported helpers evaluated in a VM with denied fs/process/import capabilities.",
+    "prepare() orchestration ran solely against an in-memory filesystem, mocked tar/runtime observations and synthetic authority. No actual runner input approval or binding was written.",
+    "Runtime checker used an extracted actual function with synthetic file/hash/tree inputs. No Node/Git archive installation or real dependency observation.",
+    "Workflow validation is exact accepted-template transformation and structural assertions, not a newly installed YAML parser.",
+    "No application, dependency, guard capture, canonical CLI, PostgreSQL, Docker, CIM, network, ports, Git command, workflow publication, repository variable or dispatch occurred."
+  ]
+}
