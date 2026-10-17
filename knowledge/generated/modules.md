@@ -64,7 +64,7 @@
 | [src/clues.js](../../src/clues.js) | 114 | platform-core | 4 / 5 | 3 | 5 | 0 |
 | [src/collection.js](../../src/collection.js) | 112 | law-intelligence | 2 / 13 | 2 | 7 | 1 |
 | [src/collision.js](../../src/collision.js) | 38 | engagement-growth | 2 / 4 | 1 | 2 | 2 |
-| [src/command-diagnostics.js](../../src/command-diagnostics.js) | 49 | platform-core | 0 / 3 | 2 | 0 | 1 |
+| [src/command-diagnostics.js](../../src/command-diagnostics.js) | 50 | platform-core | 0 / 3 | 2 | 0 | 1 |
 | [src/commercialdisputes.js](../../src/commercialdisputes.js) | 56 | platform-core | 6 / 9 | 0 | 11 | 2 |
 | [src/commercialnegotiation.js](../../src/commercialnegotiation.js) | 76 | platform-core | 3 / 2 | 4 | 7 | 1 |
 | [src/commercialpremises.js](../../src/commercialpremises.js) | 261 | platform-core | 1 / 9 | 0 | 10 | 5 |
@@ -378,7 +378,7 @@
 | [src/routes/city-world-opportunities.js](../../src/routes/city-world-opportunities.js) | 48 | platform-core | 2 / 2 | 1 | 1 | 1 |
 | [src/routes/city.js](../../src/routes/city.js) | 22 | platform-core | 2 / 1 | 3 | 1 | 0 |
 | [src/routes/cityhomes.js](../../src/routes/cityhomes.js) | 11 | platform-core | 1 / 1 | 1 | 0 | 0 |
-| [src/routes/commands.js](../../src/routes/commands.js) | 73 | platform-core | 6 / 2 | 3 | 2 | 1 |
+| [src/routes/commands.js](../../src/routes/commands.js) | 76 | platform-core | 6 / 2 | 3 | 2 | 1 |
 | [src/routes/commercialdisputes.js](../../src/routes/commercialdisputes.js) | 5 | platform-core | 3 / 2 | 0 | 2 | 1 |
 | [src/routes/commercialnegotiation.js](../../src/routes/commercialnegotiation.js) | 9 | platform-core | 2 / 1 | 4 | 1 | 0 |
 | [src/routes/commercialpremises.js](../../src/routes/commercialpremises.js) | 25 | platform-core | 2 / 1 | 0 | 2 | 0 |

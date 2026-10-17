@@ -375,9 +375,9 @@
 | GET | `/v1/clues` | authenticated | platform-core | [src/server.js:3828](../../src/server.js#L3828) | `Clues.clueBoard` |
 | POST | `/v1/clues/dig` | authenticated | platform-core | [src/server.js:3830](../../src/server.js#L3830) | `Clues.dig` |
 | GET | `/v1/collection` | authenticated | law-intelligence | [src/server.js:3597](../../src/server.js#L3597) | `Collection.collectionBoard` |
-| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:43](../../src/routes/commands.js#L43) | `traceAuthorizedCommand` |
-| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:55](../../src/routes/commands.js#L55) | `traceAuthorizedCommand` |
-| POST | `/v1/commands/observations` | authenticated | platform-core | [src/routes/commands.js:50](../../src/routes/commands.js#L50) | — |
+| GET | `/v1/commands` | public | platform-core | [src/routes/commands.js:46](../../src/routes/commands.js#L46) | `traceAuthorizedCommand` |
+| POST | `/v1/commands/execute` | public | platform-core | [src/routes/commands.js:58](../../src/routes/commands.js#L58) | `traceAuthorizedCommand` |
+| POST | `/v1/commands/observations` | authenticated | platform-core | [src/routes/commands.js:53](../../src/routes/commands.js#L53) | — |
 | GET | `/v1/commission` | public | platform-core | [src/server.js:2245](../../src/server.js#L2245) | `Commission.commissionBoard` |
 | POST | `/v1/commission/override` | authenticated | platform-core | [src/server.js:2254](../../src/server.js#L2254) | `Commission.overrideVeto` |
 | POST | `/v1/commission/propose` | authenticated | platform-core | [src/server.js:2251](../../src/server.js#L2251) | `Commission.proposeDecree` |
