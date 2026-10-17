@@ -1,3 +1,4 @@
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import assert from 'node:assert/strict';
 import { gameEmploymentSourceBaseline } from '../tools/rc1-game-employment-source-compatibility.js';
@@ -21,7 +22,7 @@ let wholeFileComparisons = 0, sha256Comparisons = 0, blobComparisons = 0, negati
 const entire = (actual, expected, message) => { assert.equal(actual, expected, message); wholeFileComparisons++; };
 const currentFiles = new Map();
 for (const file of Object.keys(COMPANY_OPERATOR_SOURCE_CURRENT_PINS)) {
-  const current = normalize(gameEmploymentSourceBaseline(file,cityGameplaySourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))))), baseline = git('show', COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS[file]);
+  const current = normalize(gameEmploymentSourceBaseline(file,cityGameplaySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))))), baseline = git('show', COMPANY_OPERATOR_SOURCE_BASELINE_BLOBS[file]);
   currentFiles.set(file, current);
   entire(current, git('show', COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS[file]), 'Full working source equals frozen Git blob');
   entire(current, git('show', `${COMPANY_OPERATOR_SOURCE_REVIEWED_REVISION}:${file}`), 'Full current revision source');

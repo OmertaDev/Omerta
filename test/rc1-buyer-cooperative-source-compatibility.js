@@ -1,3 +1,4 @@
+import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import { cityActivitySourceBaseline } from '../tools/rc1-city-activity-source-compatibility.js';
 import { companyOpportunitySourceBaseline } from '../tools/rc1-company-opportunity-source-compatibility.js';
 import assert from 'node:assert/strict';
@@ -22,7 +23,7 @@ let texts=0,hashes=0,blobs=0,negatives=0,hunks=0;
 const entire=(a,b)=>{assert.equal(a,b);texts++;};
 assert.deepEqual(Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS),['src/server.js','src/worker.js','src/invariants.js','src/social/estate.js','src/market.js']);
 for(const file of Object.keys(P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS)) {
- const current=companyOpportunitySourceBaseline(file,cityActivitySourceBaseline(file,fs.readFileSync(file,'utf8'))),prior=git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`);
+ const current=companyOpportunitySourceBaseline(file,cityActivitySourceBaseline(file,(hasEnterpriseOverRootSource(file)?enterpriseOverRootSourceBaseline(file,fs.readFileSync(file,'utf8')):fs.readFileSync(file,'utf8')))),prior=git('show',`${P.BUYER_COOPERATIVE_SOURCE_PREDECESSOR_REVISION}:${file}`);
  entire(current,git('show',`${P.BUYER_COOPERATIVE_SOURCE_REVIEWED_REVISION}:${file}`));entire(current,git('show',`ac843ad2c444784a78cae377ab3b99aebb9f8a8f:${file}`));
  entire(current,git('show',P.BUYER_COOPERATIVE_SOURCE_CURRENT_BLOBS[file]));entire(prior,git('show',P.BUYER_COOPERATIVE_SOURCE_BASELINE_BLOBS[file]));
  for(const [text,pins,bs]of [[current,P.BUYER_COOPERATIVE_SOURCE_CURRENT_PINS,P.BUYER_COOPERATIVE_SOURCE_CURRENT_BLOBS],[prior,P.BUYER_COOPERATIVE_SOURCE_BASELINE_PINS,P.BUYER_COOPERATIVE_SOURCE_BASELINE_BLOBS]]) {assert.equal(hash(text),pins[file]);hashes++;assert.equal(blob(text),bs[file]);blobs++;}
