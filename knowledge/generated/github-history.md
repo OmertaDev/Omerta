@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `9664ff11829d`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ac453bea002d`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 4451 |
+| Commits in clone | 4455 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-10-17 — Bind enterprise recovery metadata to the reviewed test repair |
+| Latest commit | 2026-10-17 — Bind enterprise recovery metadata to the deed claim busy guard |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 3488 |
+| OmertaDev | 3492 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 118 |
@@ -30,13 +30,13 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 740 | historical |
-| knowledge/generated/graph-summary.md | 740 | historical |
-| knowledge/generated/graph.json | 740 | historical |
-| knowledge/generated/inventory.md | 740 | historical |
+| knowledge/generated/github-history.md | 741 | historical |
+| knowledge/generated/graph-summary.md | 741 | historical |
+| knowledge/generated/graph.json | 741 | historical |
+| knowledge/generated/inventory.md | 741 | historical |
 | [SPEC.md](../../SPEC.md) | 579 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 476 | yes |
+| [public/index.html](../../public/index.html) | 477 | yes |
 | [src/server.js](../../src/server.js) | 441 | yes |
 | [schema.sql](../../schema.sql) | 371 | yes |
 | knowledge/generated/documents.md | 351 | historical |
@@ -55,8 +55,8 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 123 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 119 | yes |
-| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 114 | yes |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 112 | yes |
+| [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 115 | yes |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 113 | yes |
 | [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 103 | yes |
 | [test/levers.js](../../test/levers.js) | 96 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 95 | yes |
