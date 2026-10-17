@@ -21,7 +21,7 @@ export async function fixture(api = false) {
     } finally { await client.end(); }
     process.env.DATABASE_URL = u.href;
   }
-  Object.assign(process.env, { RESOURCE_ECONOMY: 'off', SOCIAL_VERIFY_MODE: 'off', RATE_LIMIT: 'off', INVITE_MODE: 'off', JWT_SECRET: 'shopping-basket-component-only', MARKET_SEED: 'shopping-basket-component-only' });
+  Object.assign(process.env, { RESOURCE_ECONOMY: 'off', SOCIAL_VERIFY_MODE: 'off', RATE_LIMIT: 'off', INVITE_MODE: 'off', JWT_SECRET: 'shopping-basket-component-only', MOD_KEY: 'shopping-basket-component-moderator-only', MARKET_SEED: 'shopping-basket-component-only' });
   const { makeDb } = await import('../src/db.js'), I = await import('../src/items.js'), C = await import('../src/consignments.js'),
     B = await import('../src/shoppingbasket.js'), Craft = await import('../src/crafting.js'), G = await import('../src/game.js');
   const app = api ? await (await import('../src/server.js')).buildServer() : null, pool = app?.pool || await makeDb();
