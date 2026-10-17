@@ -391,6 +391,7 @@
 | [docs/commercial-reputation-migration-review.md](../../docs/commercial-reputation-migration-review.md) | documentation | 12 | 2026-10-12 |
 | [docs/commercial-reputation-security-review.md](../../docs/commercial-reputation-security-review.md) | documentation | 61 | 2026-10-12 |
 | [docs/commercial-reputation-source-transfer-review.md](../../docs/commercial-reputation-source-transfer-review.md) | documentation | 18 | 2026-10-12 |
+| [docs/commercialcampaigns-design.md](../../docs/commercialcampaigns-design.md) | design | 33 | 2026-10-16 |
 | [docs/company-acquisitions-seam-design.md](../../docs/company-acquisitions-seam-design.md) | design | 31 | 2026-10-13 |
 | [docs/company-acquisitions-security-review.md](../../docs/company-acquisitions-security-review.md) | documentation | 14 | 2026-10-13 |
 | [docs/company-autonomy-lock-order-proposal.md](../../docs/company-autonomy-lock-order-proposal.md) | documentation | 24 | 2026-10-13 |
@@ -494,6 +495,8 @@
 | [docs/equipment-rentals-integration-design.md](../../docs/equipment-rentals-integration-design.md) | design | 33 | 2026-10-13 |
 | [docs/equipment-rentals-proposal-security-review.md](../../docs/equipment-rentals-proposal-security-review.md) | documentation | 133 | 2026-10-13 |
 | [docs/equipment-rentals-security-review.md](../../docs/equipment-rentals-security-review.md) | documentation | 41 | 2026-10-13 |
+| [docs/event-market-census.md](../../docs/event-market-census.md) | documentation | 21 | 2026-10-16 |
+| [docs/event-markets.md](../../docs/event-markets.md) | documentation | 10 | 2026-10-16 |
 | [docs/f16-f20-contract-integration-review.md](../../docs/f16-f20-contract-integration-review.md) | documentation | 30 | 2026-10-13 |
 | [docs/f17-f20-integration-proposal-review.md](../../docs/f17-f20-integration-proposal-review.md) | documentation | 32 | 2026-10-13 |
 | [docs/first-batch-source-transfer-review.md](../../docs/first-batch-source-transfer-review.md) | documentation | 36 | 2026-10-13 |
@@ -526,6 +529,8 @@
 | [docs/management-teams-design.md](../../docs/management-teams-design.md) | design | 26 | 2026-10-13 |
 | [docs/management-teams-security-review.md](../../docs/management-teams-security-review.md) | documentation | 18 | 2026-10-13 |
 | [docs/manufacturing-license-design.md](../../docs/manufacturing-license-design.md) | design | 15 | 2026-10-15 |
+| [docs/merchant-loyalty-integration.md](../../docs/merchant-loyalty-integration.md) | documentation | 26 | 2026-10-16 |
+| [docs/merchant-loyalty-native.md](../../docs/merchant-loyalty-native.md) | documentation | 16 | 2026-10-16 |
 | [docs/merchant-returns-security-review.md](../../docs/merchant-returns-security-review.md) | documentation | 46 | 2026-10-15 |
 | [docs/mobile-shops-security-review.md](../../docs/mobile-shops-security-review.md) | documentation | 82 | 2026-10-15 |
 | [docs/multi-hop-courier-security-review.md](../../docs/multi-hop-courier-security-review.md) | documentation | 45 | 2026-10-15 |
@@ -551,7 +556,7 @@
 | [docs/rc1-native-mobile-adversity.md](../../docs/rc1-native-mobile-adversity.md) | documentation | 46 | 2026-09-21 |
 | [docs/rc1-npc-car-acquisition.md](../../docs/rc1-npc-car-acquisition.md) | documentation | 40 | 2026-09-21 |
 | [docs/rc1-resource-boundary-repair-review.md](../../docs/rc1-resource-boundary-repair-review.md) | documentation | 24 | 2026-10-13 |
-| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 191 | 2026-10-17 |
+| [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | documentation | 196 | 2026-10-17 |
 | [docs/rc1-third-batch-source-transfer-review.md](../../docs/rc1-third-batch-source-transfer-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/rc1-world-car-melt-witness.md](../../docs/rc1-world-car-melt-witness.md) | documentation | 36 | 2026-09-21 |
 | [docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md](../../docs/release/2026-10-14-all-changes/BACKEND-REVIEW.md) | documentation | 92 | 2026-10-14 |
@@ -636,9 +641,13 @@
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
+| [docs/sale-attribution-native.md](../../docs/sale-attribution-native.md) | documentation | 12 | 2026-10-16 |
+| [docs/sale-attribution.md](../../docs/sale-attribution.md) | documentation | 16 | 2026-10-16 |
 | [docs/second-batch-source-compatibility-proposal-review.md](../../docs/second-batch-source-compatibility-proposal-review.md) | documentation | 18 | 2026-10-13 |
 | [docs/service-subscriptions-integration-review.md](../../docs/service-subscriptions-integration-review.md) | documentation | 12 | 2026-10-13 |
 | [docs/service-subscriptions-review.md](../../docs/service-subscriptions-review.md) | documentation | 20 | 2026-10-13 |
+| [docs/shopping-baskets-native.md](../../docs/shopping-baskets-native.md) | documentation | 14 | 2026-10-16 |
+| [docs/shopping-baskets.md](../../docs/shopping-baskets.md) | documentation | 16 | 2026-10-16 |
 | [docs/storefront-fulfillment-security-review.md](../../docs/storefront-fulfillment-security-review.md) | documentation | 202 | 2026-10-11 |
 | [docs/strategy-laboratories-integration-design.md](../../docs/strategy-laboratories-integration-design.md) | design | 21 | 2026-10-13 |
 | [docs/strategy-laboratories-security-review.md](../../docs/strategy-laboratories-security-review.md) | documentation | 62 | 2026-10-13 |
