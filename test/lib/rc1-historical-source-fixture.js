@@ -187,7 +187,7 @@ function currentHistoricalApplicationSource(file,input){
 function historical(file) {
   loadInventories();
   if (!checked.has(file)) {
-    const selected = currentHistoricalApplicationSource(file, originalRead(path.join(root, file)));
+    const selected = currentHistoricalApplicationSource(file, String(originalRead(path.join(root, file))));
     checked.add(file);
     return selected;
   }
