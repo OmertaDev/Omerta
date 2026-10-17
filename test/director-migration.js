@@ -7,7 +7,7 @@ import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
 import { createFinalservicesReleasePhase2MigrationCatalog, readFinalservicesReleasePhase2Metadata,
-  verifyFinalservicesReleasePhase2CausalNegatives, FINALSERVICES_NATIVE_TABLES } from '../tools/finalservices-release-phase2-native-catalog.js';
+  verifyFinalservicesReleasePhase2CausalNegatives, FINALSERVICES_NATIVE_TABLES } from '../tools/finalservices-deed-release-phase2-native-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';
 import { boostCar } from '../src/economy.js';
